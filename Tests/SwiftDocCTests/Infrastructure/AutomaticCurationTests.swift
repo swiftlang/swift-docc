@@ -29,8 +29,8 @@ class AutomaticCurationTests: XCTestCase {
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         moduleName: "ModuleName",
                         symbols: [
-                            makeSymbol(identifier: containerID, kind: .class, pathComponents: ["SomeClass"]),
-                            makeSymbol(identifier: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
+                            makeSymbol(id: containerID, kind: .class, pathComponents: ["SomeClass"]),
+                            makeSymbol(id: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
                         ],
                         relationships: [
                             .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
@@ -64,15 +64,17 @@ class AutomaticCurationTests: XCTestCase {
                             //     func someFunction() { }
                             // }
                             makeSymbol(
-                                identifier: extensionID,
+                                id: extensionID,
                                 kind: .extension,
                                 // The extension has the path component of the extended type
                                 pathComponents: ["Something"],
                                 // Specify the extended symbol's symbol kind
-                                swiftExtension: .init(extendedModule: "ExtendedModule", typeKind: nonExtensionKind, constraints: [])
+                                otherMixins: [
+                                    SymbolGraph.Symbol.Swift.Extension(extendedModule: "ExtendedModule", typeKind: nonExtensionKind, constraints: [])
+                                ]
                             ),
                             // No matter what type `ExtendedModule.Something` is, always add a function in the extension
-                            makeSymbol(identifier: memberID, kind: .func, pathComponents: ["Something", "someFunction()"]),
+                            makeSymbol(id: memberID, kind: .func, pathComponents: ["Something", "someFunction()"]),
                         ],
                         relationships: [
                             .init(source: extensionID, target: containerID, kind: .extensionTo, targetFallback: "ExtendedModule.Something"),
@@ -446,7 +448,56 @@ class AutomaticCurationTests: XCTestCase {
             )
         }
     }
-    
+
+    func testNoAutoCuratedMixedLanguageDuplicates() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+
+            // Load the existing Obj-C symbol graph from this fixture.
+            let path = "symbol-graphs/clang/MixedLanguageFramework.symbols.json"
+            var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent(path)))
+
+            // Add an Objective-C relationship between MixedLanguageClassConformingToProtocol.mixedLanguageMethod
+            // and the protocol requirement: MixedLanguageProtocol.mixedLanguageMethod. This matches an existing
+            // Swift relationship, causing duplicate memberOf relationships.
+            var relationship = SymbolGraph.Relationship(
+                source: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
+                target: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+                kind: .memberOf,
+                targetFallback: nil
+            )
+            relationship.mixins["sourceOrigin"] = SymbolKit.SymbolGraph.Relationship.SourceOrigin(
+                identifier: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+                displayName: "MixedLanguageProtocol.mixedLanguageMethod()"
+            )
+            graph.relationships.append(relationship)
+            let newGraphData = try JSONEncoder().encode(graph)
+            try newGraphData.write(to: url.appendingPathComponent("symbol-graphs/clang/MixedLanguageFramework.symbols.json"))
+        }
+
+        // Load the "MixedLanguageProtocol Implementations" API COllection
+        let protocolImplementationsNode = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+                sourceLanguages: [.swift, .objectiveC]
+            )
+        )
+
+        // This page should contain an auto-curated "Instance Methods" task group.
+        let protocolImplementationsArticle = try XCTUnwrap(protocolImplementationsNode.semantic as? Article)
+        XCTAssertEqual(1, protocolImplementationsArticle.automaticTaskGroups.count)
+        let instanceMethodsTaskGroup = protocolImplementationsArticle.automaticTaskGroups.first!
+        XCTAssertEqual("Instance Methods", instanceMethodsTaskGroup.title)
+
+        // And this task group should contain only one reference, to a combined Swift/Obj-C child node.
+        XCTAssertEqual(1, instanceMethodsTaskGroup.references.count)
+        let ref = instanceMethodsTaskGroup.references.first!
+        XCTAssertEqual(
+            "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
+            ref.absoluteString
+        )
+    }
+
     func testRelevantLanguagesAreAutoCuratedInMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
@@ -463,7 +514,7 @@ class AutomaticCurationTests: XCTestCase {
             withTraits: [.swift],
             context: context
         )
-        
+
         XCTAssertEqual(
             swiftTopics.flatMap { taskGroup in
                 [taskGroup.title] + taskGroup.references.map(\.path)
@@ -684,11 +735,11 @@ class AutomaticCurationTests: XCTestCase {
 
         XCTAssertEqual(protocolTopicSection.title, "Instance Methods")
         XCTAssertEqual(protocolTopicSection.identifiers, [
-            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)"
         ])
 
         let overloadGroupRenderNode = try renderNode(
-            atPath: "/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be",
+            atPath: "/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
             fromTestBundleNamed: "OverloadedSymbols")
 
         XCTAssertEqual(
@@ -727,7 +778,7 @@ class AutomaticCurationTests: XCTestCase {
 
             XCTAssertEqual(overloadTopic.title, "Instance Methods", file: file, line: line)
             XCTAssertEqual(overloadTopic.references.map(\.absoluteString), [
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)"
             ], file: file, line: line)
         }
 
@@ -790,8 +841,8 @@ class AutomaticCurationTests: XCTestCase {
              let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
                  JSONFile(name: "ModuleName.symbols.json",
                           content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                             makeSymbol(identifier: containerID, kind: .class, pathComponents: ["SomeClass"]),
-                             makeSymbol(identifier: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
+                             makeSymbol(id: containerID, kind: .class, pathComponents: ["SomeClass"]),
+                             makeSymbol(id: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
                           ], relationships: [
                              .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
                           ])),
@@ -836,25 +887,4 @@ class AutomaticCurationTests: XCTestCase {
              XCTAssertFalse(renderNode.topicSections.first?.generated ?? false)
          }
      }
-}
-
-private func makeSymbol(
-    identifier: String,
-    kind: SymbolGraph.Symbol.KindIdentifier,
-    pathComponents: [String],
-    swiftExtension: SymbolGraph.Symbol.Swift.Extension? = nil
-) -> SymbolGraph.Symbol {
-    var mixins = [String: Mixin]()
-    if let swiftExtension {
-        mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] = swiftExtension
-    }
-    return SymbolGraph.Symbol(
-        identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
-        names: .init(title: pathComponents.last!, navigator: nil, subHeading: nil, prose: nil),
-        pathComponents: pathComponents,
-        docComment: nil,
-        accessLevel: .public,
-        kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
-        mixins: mixins
-    )
 }

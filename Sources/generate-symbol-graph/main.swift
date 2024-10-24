@@ -91,7 +91,7 @@ let supportedDirectives: [Directive] = [
 
     .init(
         name: "Tutorials",
-        implementationName: "Technology",
+        implementationName: "TutorialTableOfContents",
         introducedVersion: "5.5",
         isLeaf: false
     ),

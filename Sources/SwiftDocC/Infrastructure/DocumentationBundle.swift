@@ -63,6 +63,7 @@ public struct DocumentationBundle {
 
      It's not safe to make computations based on assumptions about the format of bundle's version. The version can be in any format.
      */
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     public var version: String? {
         info.version
     }
@@ -127,8 +128,8 @@ public struct DocumentationBundle {
         self.themeSettings = themeSettings
         self.rootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
         self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
-        self.tutorialsRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
-        self.technologyTutorialsRootReference = tutorialsRootReference.appendingPath(urlReadablePath(info.displayName))
+        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+        self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }
     
@@ -153,12 +154,22 @@ public struct DocumentationBundle {
     /// Default path to resolve symbol links.
     public private(set) var documentationRootReference: ResolvedTopicReference
 
-    /// Default path to resolve technology links.
-    public var tutorialsRootReference: ResolvedTopicReference
+    @available(*, deprecated, renamed: "tutorialTableOfContentsContainer", message: "Use 'tutorialTableOfContentsContainer' instead. This deprecated API will be removed after 6.2 is released")
+    public var tutorialsRootReference: ResolvedTopicReference {
+        tutorialTableOfContentsContainer
+    }
 
-    /// Default path to resolve tutorials.
-    public var technologyTutorialsRootReference: ResolvedTopicReference
-    
+    /// Default path to resolve tutorial table-of-contents links.
+    public var tutorialTableOfContentsContainer: ResolvedTopicReference
+
+    @available(*, deprecated, renamed: "tutorialsContainerReference", message: "Use 'tutorialsContainerReference' instead. This deprecated API will be removed after 6.2 is released")
+    public var technologyTutorialsRootReference: ResolvedTopicReference {
+        tutorialsContainerReference
+    }
+
+    /// Default path to resolve tutorial links.
+    public var tutorialsContainerReference: ResolvedTopicReference
+
     /// Default path to resolve articles.
     public var articlesDocumentationRootReference: ResolvedTopicReference
 }

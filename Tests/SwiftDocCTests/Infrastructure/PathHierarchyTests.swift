@@ -166,6 +166,9 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp", in: tree, asSymbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF")
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2", in: tree, asSymbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF")
         
+        try assertFindsPath("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)", in: tree, asSymbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF")
+        try assertFindsPath("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)", in: tree, asSymbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF")
+        
         // public enum CollisionsWithDifferentSubscriptArguments {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
@@ -173,6 +176,9 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsO")
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip")
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip")
+        
+        try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(Int)", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip")
+        try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(String)", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip")
         
         // @objc(MySwiftClassObjectiveCName)
         // public class MySwiftClassSwiftName: NSObject {
@@ -312,23 +318,23 @@ class PathHierarchyTests: XCTestCase {
         //     public typealias Something = Int
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentKinds/something", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingyA2CmF", disambiguation: "enum.case"),
-            (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingSSvp", disambiguation: "property"),
+            (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingyA2CmF", disambiguation: "-enum.case"),
+            (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingSSvp", disambiguation: "-property"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something", in: tree, context: context, expectedErrorMessage: """
         'something' is ambiguous at '/MixedFramework/CollisionsWithDifferentKinds'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'enum.case' for\n'case something'", replacements: [("-enum.case", 54, 54)]),
-                .init(summary: "Insert 'property' for\n'var something: String { get }'", replacements: [("-property", 54, 54)]),
+                .init(summary: "Insert '-enum.case' for \n'case something'", replacements: [("-enum.case", 54, 54)]),
+                .init(summary: "Insert '-property' for \n'var something: String { get }'", replacements: [("-property", 54, 54)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something-class", in: tree, context: context, expectedErrorMessage: """
         'class' isn't a disambiguation for 'something' at '/MixedFramework/CollisionsWithDifferentKinds'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace '-class' with '-enum.case' for\n'case something'", replacements: [("-enum.case", 54, 60)]),
-                .init(summary: "Replace '-class' with '-property' for\n'var something: String { get }'", replacements: [("-property", 54, 60)]),
+                .init(summary: "Replace 'class' with 'enum.case' for \n'case something'", replacements: [("-enum.case", 54, 60)]),
+                .init(summary: "Replace 'class' with 'property' for \n'var something: String { get }'", replacements: [("-property", 54, 60)]),
             ])
         }
         
@@ -342,26 +348,26 @@ class PathHierarchyTests: XCTestCase {
         //     public static func `init`() { }
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCACycfc", disambiguation: "init"),
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyF", disambiguation: "method"),
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyFZ", disambiguation: "type.method"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCACycfc", disambiguation: "-init"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyF", disambiguation: "-method"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyFZ", disambiguation: "-type.method"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace '-abc123' with '-method' for\n'func `init`()'", replacements: [("-method", 52, 59)]),
-                .init(summary: "Replace '-abc123' with '-init' for\n'init()'", replacements: [("-init", 52, 59)]),
-                .init(summary: "Replace '-abc123' with '-type.method' for\n'static func `init`()'", replacements: [("-type.method", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'method' for \n'func `init`()'", replacements: [("-method", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'init' for \n'init()'", replacements: [("-init", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'type.method' for \n'static func `init`()'", replacements: [("-type.method", 52, 59)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: """
         'init()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' for\n'func `init`()'", replacements: [("-method", 52, 52)]),
-                .init(summary: "Insert 'init' for\n'init()'", replacements: [("-init", 52, 52)]),
-                .init(summary: "Insert 'type.method' for\n'static func `init`()'", replacements: [("-type.method", 52, 52)]),
+                .init(summary: "Insert '-method' for \n'func `init`()'", replacements: [("-method", 52, 52)]),
+                .init(summary: "Insert '-init' for \n'init()'", replacements: [("-init", 52, 52)]),
+                .init(summary: "Insert '-type.method' for \n'static func `init`()'", replacements: [("-type.method", 52, 52)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `()` is missing in the last path component
@@ -388,17 +394,17 @@ class PathHierarchyTests: XCTestCase {
         }
         
         try assertPathCollision("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyF", disambiguation: "method"),
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCSiycip", disambiguation: "subscript"),
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyFZ", disambiguation: "type.method"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyF", disambiguation: "-method"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCSiycip", disambiguation: "-subscript"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyFZ", disambiguation: "-type.method"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, context: context, expectedErrorMessage: """
         'subscript()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' for\n'func `subscript`()'", replacements: [("-method", 57, 57)]),
-                .init(summary: "Insert 'type.method' for\n'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
-                .init(summary: "Insert 'subscript' for\n'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
+                .init(summary: "Insert '-method' for \n'func `subscript`()'", replacements: [("-method", 57, 57)]),
+                .init(summary: "Insert '-type.method' for \n'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
+                .init(summary: "Insert '-subscript' for \n'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
             ])
         }
         
@@ -407,15 +413,15 @@ class PathHierarchyTests: XCTestCase {
         //     public func something(argument: String) -> Int { 0 }
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF", disambiguation: "1cyvp"),
-            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "2vke2"),
+            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF", disambiguation: "-(Int)"),
+            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "-(String)"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context, expectedErrorMessage: """
         'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 77)]),
-                .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 77)]),
+                .init(summary: "Insert '-(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 77)]),
+                .init(summary: "Insert '-(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 77)]),
             ])
         }
         // The path starts with "/documentation" which is optional
@@ -423,16 +429,16 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 91, 91)]),
-                .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 91, 91)]),
+                .init(summary: "Insert '-(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 91)]),
+                .init(summary: "Insert '-(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 91)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace '-abc123' with '-1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
-                .init(summary: "Replace '-abc123' with '-2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 84)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component
@@ -455,8 +461,8 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
-                .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+                .init(summary: "Replace 'method' with '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 84)]),
+                .init(summary: "Replace 'method' with '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 84)]),
             ])
         }
         // The path starts with "/documentation" which is optional
@@ -464,8 +470,8 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 91, 98)]),
-                .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 91, 98)]),
+                .init(summary: "Replace 'method' with '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 98)]),
+                .init(summary: "Replace 'method' with '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 98)]),
             ])
         }
         
@@ -474,15 +480,15 @@ class PathHierarchyTests: XCTestCase {
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "4fd0l"),
-            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "757cj"),
+            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "-(Int)"),
+            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "-(String)"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: """
         'subscript(_:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '4fd0l' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 71)]),
-                .init(summary: "Insert '757cj' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 71)]),
+                .init(summary: "Insert '-(Int)' for \n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 71)]),
+                .init(summary: "Insert '-(String)' for \n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 71)]),
             ])
         }
         
@@ -490,8 +496,8 @@ class PathHierarchyTests: XCTestCase {
         'subscript(_:)-subscript' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'subscript' with '4fd0l' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 81)]),
-                .init(summary: "Replace 'subscript' with '757cj' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '(Int)' for \n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '(String)' for \n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 81)]),
             ])
         }
         
@@ -699,7 +705,7 @@ class PathHierarchyTests: XCTestCase {
         
         // The protocol requirement and the default implementation both exist at the @_export imported Something protocol.
         let paths = tree.caseInsensitiveDisambiguatedPaths()
-        XCTAssertEqual(paths["s:5Inner9SomethingP02doB0yyF"],    "/DefaultImplementationsWithExportedImport/Something/doSomething()-8skxc")
+        XCTAssertEqual(paths["s:5Inner9SomethingP02doB0yyF"],    "/DefaultImplementationsWithExportedImport/Something/doSomething()") // This is the only favored symbol so it doesn't require any disambiguation
         XCTAssertEqual(paths["s:5Inner9SomethingPAAE02doB0yyF"], "/DefaultImplementationsWithExportedImport/Something/doSomething()-scj9")
         
         // Test disfavoring a default implementation in a symbol collision
@@ -814,9 +820,18 @@ class PathHierarchyTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF"],
-            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp")
+            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)")
         XCTAssertEqual(
             paths["s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF"],
+            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)")
+            
+        let hashAndKindDisambiguatedPaths = tree.caseInsensitiveDisambiguatedPaths(allowAdvancedDisambiguation: false)
+
+        XCTAssertEqual(
+            hashAndKindDisambiguatedPaths["s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF"],
+            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp")
+        XCTAssertEqual(
+            hashAndKindDisambiguatedPaths["s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF"],
             "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2")
         
         // public enum CollisionsWithDifferentSubscriptArguments {
@@ -825,9 +840,16 @@ class PathHierarchyTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip"],
-            "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l")
+            "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(Int)")
         XCTAssertEqual(
             paths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip"],
+            "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(String)")
+        
+        XCTAssertEqual(
+            hashAndKindDisambiguatedPaths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip"],
+            "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l")
+        XCTAssertEqual(
+            hashAndKindDisambiguatedPaths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip"],
             "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj")
     }
     
@@ -836,6 +858,7 @@ class PathHierarchyTests: XCTestCase {
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
+        let hashAndKindDisambiguatedPaths = tree.caseInsensitiveDisambiguatedPaths(allowAdvancedDisambiguation: false)
         
         // Operators where all characters in the operator name are also allowed in URL paths
         
@@ -869,6 +892,10 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(
             // static func > (lhs: Self, rhs: Self) -> Bool
             paths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"],
+            "/Operators/MyNumber/_(_:_:)-(Self,_)")
+        XCTAssertEqual(
+            // static func > (lhs: Self, rhs: Self) -> Bool
+            hashAndKindDisambiguatedPaths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"],
             "/Operators/MyNumber/_(_:_:)-21jxf")
         XCTAssertEqual(
             // static func >= (lhs: Self, rhs: Self) -> Bool
@@ -880,11 +907,20 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(
             // static func / (lhs: MyNumber, rhs: MyNumber) -> MyNumber
             paths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"],
-            "/Operators/MyNumber/_(_:_:)-7am4")
+            "/Operators/MyNumber/_(_:_:)->MyNumber")
         XCTAssertEqual(
             // static func /= (lhs: inout MyNumber, rhs: MyNumber) -> MyNumber
             paths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"],
-            "/Operators/MyNumber/_=(_:_:)-3m4ko")
+            "/Operators/MyNumber/_=(_:_:)") // This is the only favored symbol so it doesn't require any disambiguation
+        XCTAssertEqual(
+            // static func / (lhs: MyNumber, rhs: MyNumber) -> MyNumber
+            hashAndKindDisambiguatedPaths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"],
+            "/Operators/MyNumber/_(_:_:)-7am4")
+        XCTAssertEqual(
+            // static func /= (lhs: inout MyNumber, rhs: MyNumber) -> MyNumber
+            hashAndKindDisambiguatedPaths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"],
+            "/Operators/MyNumber/_=(_:_:)") // This is the only favored symbol so it doesn't require any disambiguation
+        
     }
     
     func testFindingRelativePaths() throws {
@@ -1148,17 +1184,17 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction:error:", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
 
         try assertPathCollision("MixedLanguageFramework/Foo", in: tree, collisions: [
-            ("c:@E@Foo", "enum"),
-            ("c:@E@Foo", "struct"),
-            ("c:MixedLanguageFramework.h@T@Foo", "typealias"),
+            ("c:@E@Foo", "-enum"),
+            ("c:@E@Foo", "-struct"),
+            ("c:MixedLanguageFramework.h@T@Foo", "-typealias"),
         ])
         try assertPathRaisesErrorMessage("MixedLanguageFramework/Foo", in: tree, context: context, expectedErrorMessage: """
         'Foo' is ambiguous at '/MixedLanguageFramework'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'struct' for\n'struct Foo'", replacements: [("-struct", 26, 26)]),
-                .init(summary: "Insert 'enum' for\n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
-                .init(summary: "Insert 'typealias' for\n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
+                .init(summary: "Insert '-struct' for \n'struct Foo'", replacements: [("-struct", 26, 26)]),
+                .init(summary: "Insert '-enum' for \n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
+                .init(summary: "Insert '-typealias' for \n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
             ])
         } // The 'enum' and 'typealias' symbols have multi-line declarations that are presented on a single line
         
@@ -1254,17 +1290,46 @@ class PathHierarchyTests: XCTestCase {
         // This is the only enum case and can be disambiguated as such
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyACSScACmF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-enum.case")
-        // These are all methods and can only be disambiguated with the USR hash
+        
+        // These methods have different parameter types and use that for disambiguation.
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Int)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ife")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Float)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ob0")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(String)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Double)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-([Double])")
+        
+        let hashAndKindDisambiguatedPaths = tree.caseInsensitiveDisambiguatedPaths(allowAdvancedDisambiguation: false)
+        
+        XCTAssertEqual(hashAndKindDisambiguatedPaths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s")
+        XCTAssertEqual(hashAndKindDisambiguatedPaths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ife")
+        XCTAssertEqual(hashAndKindDisambiguatedPaths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ob0")
+        
+        // Verify suggested parameter type value disambiguation
+        try assertPathCollision("/ShapeKit/OverloadedEnum/firstTestMemberName(_:)", in: tree, collisions: [
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF", disambiguation: "-(Double)"),
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF", disambiguation: "-(Float)"),
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF", disambiguation: "-(Int)"),
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF", disambiguation: "-(String)"),
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF", disambiguation: "-([Double])"),
+            // This enum case is in the same collision as the functions are
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyACSScACmF", disambiguation: "-enum.case"),
+        ])
+        
+        // Verify suggested return type disambiguation
+        try assertPathCollision("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)", in: tree, collisions: [
+            (symbolID: "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSdSS_tF", disambiguation: "->Double"),
+            (symbolID: "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSfSS_tF", disambiguation: "->Float"),
+            (symbolID: "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSiSS_tF", disambiguation: "->Int"),
+            (symbolID: "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testS2S_tF", disambiguation: "->String"),
+        ])
     }
 
     func testOverloadedSymbolsWithOverloadGroups() throws {
@@ -1289,19 +1354,474 @@ class PathHierarchyTests: XCTestCase {
         // This is the only enum case and can be disambiguated as such
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyACSScACmF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-enum.case")
-        // These are all methods and can only be disambiguated with the USR hash
+        // These 4 methods have different parameter types and use that for disambiguation.
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Int)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ife")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Float)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ob0")
-        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(String)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-([Double])")
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Double)")
     }
-
+    
+    func testApplyingSyntaxSugarToTypeName() {
+        func functionSignatureParameterTypeName(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
+            return PathHierarchy.functionSignatureTypeNames(for: SymbolGraph.Symbol(
+                identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display NAme"), mixins: [
+                    SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
+                        parameters: [
+                            .init(name: "someName", externalName: "with", declarationFragments: [
+                                .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                                .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                            ] + fragments, children: [])
+                        ],
+                        returns: []
+                    )
+                ])
+            )?.parameterTypeNames.first
+        }
+        
+        // Int
+        XCTAssertEqual("Int", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+        ]))
+        
+        // Array<Int>
+        XCTAssertEqual("[Int]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // NSArray
+        XCTAssertEqual("NSArray", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "NSArray", preciseIdentifier: "c:objc(cs)NSArray"),
+        ]))
+        
+        // MyArray<Int>
+        XCTAssertEqual("MyArray<Int>", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "MyArray", preciseIdentifier: "s:8MyModule0A5ArrayV"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // some Sequence<Int>
+        XCTAssertEqual("Sequence<Int>", functionSignatureParameterTypeName([
+            .init(kind: .keyword, spelling: "some", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Sequence", preciseIdentifier: "s:ST"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // Array<(Int,Double)>
+        XCTAssertEqual("[(Int,Double)]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ")>", preciseIdentifier: nil),
+        ]))
+        
+        // Optional<Int>
+        XCTAssertEqual("Int?", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // Optional<(Int,Double)>
+        XCTAssertEqual("(Int,Double)?", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ")>", preciseIdentifier: nil),
+        ]))
+        
+        // Array<(Array<Int>,Optional<Optional<Double>>)>
+        XCTAssertEqual("[([Int],Double??)]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">,", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ">>)>", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<Double,Int>
+        XCTAssertEqual("[Double:Int]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // (Dictionary<Double,Int>)->Array<String>
+        XCTAssertEqual("([Double:Int])->[String]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">) -> ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<Double,(Int)->Array<String>>
+        XCTAssertEqual("[Double:(Int)->[String]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ", (", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ">>", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<Double,Array<(Optional<Int>)->Dictionary<String,Int>>>
+        XCTAssertEqual("[Double:[(Int?)->[String:Int]]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">) -> ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">>>", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<(Optional<Int>,String),Array<Optional<Double>>>
+        XCTAssertEqual("[(Int?,String):[Double?]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">,", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: "),", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ">>>", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<Optional<Dictionary<Int,Dictionary<String,Double>>>,Array<Dictionary<Int,Dictionary<String,Double>>>>
+        XCTAssertEqual("[[Int:[String:Double]]?:[[Int:[String:Double]]]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ">>>,", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ">>>>", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<(Optional<Å𝔹>,𝄡Δ),Array<Optional<Double>>>
+        XCTAssertEqual("[(Å𝔹?,𝄡Δ):[𝄞ℌℹ︎?]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Å𝔹", preciseIdentifier: "s:8MyModule008IbaCGJAvV"),
+            .init(kind: .text, spelling: ">,", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "𝄡Δ", preciseIdentifier: "s:8MyModule008swaHCEHuV"),
+            .init(kind: .text, spelling: "),", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "𝄞ℌℹ︎", preciseIdentifier: "s:8MyModule0014cCgzfxCCIeJoAgV"),
+            .init(kind: .text, spelling: ">>>", preciseIdentifier: nil),
+        ]))
+    }
+    
+    func testTypeNamesFromSymbolSignature() throws {
+        func _functionSignatureTypeNames(_ signature: SymbolGraph.Symbol.FunctionSignature, language: SourceLanguage) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
+            return PathHierarchy.functionSignatureTypeNames(for: SymbolGraph.Symbol(
+                identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: language.id),
+                names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display NAme"), mixins: [
+                    SymbolGraph.Symbol.FunctionSignature.mixinKey: signature
+                ])
+            )
+        }
+        
+        // Objective-C types
+        do {
+            func functionSignatureTypeNames(_ signature: SymbolGraph.Symbol.FunctionSignature) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
+                _functionSignatureTypeNames(signature, language: .objectiveC)
+            }
+            
+            // - (id)doSomething:(NSString *)someName;
+            let stringArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSString", preciseIdentifier: "c:objc(cs)NSString"),
+                        .init(kind: .text, spelling: " * )", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "someName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [
+                    .init(kind: .typeIdentifier, spelling: "id", preciseIdentifier: "c:*Qo"),
+                ])
+            )
+            XCTAssertEqual(stringArgument?.parameterTypeNames, ["NSString*"])
+            XCTAssertEqual(stringArgument?.returnTypeNames, ["id"])
+            
+            // - (void)doSomething:(NSArray<NSString *> *)someName;
+            let genericArrayArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSArray<NSString *>", preciseIdentifier: "c:Q$objc(cs)NSArray"),
+                        .init(kind: .text, spelling: " * )", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "someName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [
+                    .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v"),
+                ])
+            )
+            XCTAssertEqual(genericArrayArgument?.parameterTypeNames, ["NSArray<NSString*>*"])
+            XCTAssertEqual(genericArrayArgument?.returnTypeNames, [])
+            
+            // // - (void)doSomething:(id<MyProtocol>)someName;
+            let protocolArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "id<MyProtocol>", preciseIdentifier: "c:Qoobjc(pl)MyProtocol"),
+                        .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "someName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(protocolArgument?.parameterTypeNames, ["id<MyProtocol>"])
+            
+            // - (void)doSomething:(NSError **)someName;
+            let errorArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSError", preciseIdentifier: "c:objc(cs)NSError"),
+                        .init(kind: .text, spelling: " * *)", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "someName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(errorArgument?.parameterTypeNames, ["NSError**"])
+            
+            // - (void)doSomething:(NSString * (^)(CGFloat, NSInteger))blockName;
+            let blockArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "blockName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSString", preciseIdentifier: "c:objc(cs)NSString"),
+                        .init(kind: .text, spelling: " * (^", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ")(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "CGFloat", preciseIdentifier: "c:@T@CGFloat"),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSInteger", preciseIdentifier: "c:@T@NSInteger"),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: "))", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "blockName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(blockArgument?.parameterTypeNames, ["NSString*(^)(CGFloat,NSInteger)"])
+        }
+        
+        // Swift types
+        do {
+            func functionSignatureTypeNames(_ signature: SymbolGraph.Symbol.FunctionSignature) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
+                _functionSignatureTypeNames(signature, language: .swift)
+            }
+            
+            // func doSomething(someName: ((Int, String), Date)) -> ([Int, String?])
+            let tupleArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ((", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                        .init(kind: .text, spelling: "), ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Date", preciseIdentifier: "s:10Foundation4DateV"),
+                        .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [
+                    .init(kind: .text, spelling: "([", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: "], ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                    .init(kind: .text, spelling: "?)", preciseIdentifier: nil),
+                ])
+            )
+            XCTAssertEqual(tupleArgument?.parameterTypeNames, ["((Int,String),Date)"])
+            XCTAssertEqual(tupleArgument?.returnTypeNames, ["([Int],String?)"])
+            
+            // func doSomething(with someName: [Int?: String??])
+            let dictionaryWithOptionalsArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: "with", declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": [", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: "? : ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                        .init(kind: .text, spelling: "??]", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [
+                    .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida"),
+                ])
+            )
+            XCTAssertEqual(dictionaryWithOptionalsArgument?.parameterTypeNames, ["[Int?:String??]"])
+            XCTAssertEqual(dictionaryWithOptionalsArgument?.returnTypeNames, [])
+            
+            // func doSomething(with someName: Dictionary<Optional<Int>, Optional<(Optional<String>, Array<Double>)>>)
+            let unsugaredDictionaryWithOptionalsArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: "with", declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+                        .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                        .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: ">, ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                        .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                        .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                        .init(kind: .text, spelling: ">, ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+                        .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                        .init(kind: .text, spelling: ">)>>", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(unsugaredDictionaryWithOptionalsArgument?.parameterTypeNames, ["[Int?:(String?,[Double])?]"])
+            
+            // doSomething<each Value>(someName: repeat each Value) {}
+            let parameterPackArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "repeat", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "each", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Value", preciseIdentifier: "s:24ComplicatedArgumentTypes11doSomething8someNameyxxQp_tRvzlF5ValueL_xmfp"),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(parameterPackArgument?.parameterTypeNames, ["Value"])
+            
+            // func doSomething<Value>(someName: @escaping ((inout Int?, consuming Double, (String, Value)) -> ((Int) -> Value?)))
+            let complicatedClosureArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                        .init(kind: .attribute, spelling: "@escaping", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ((", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "inout", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: "?, ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "consuming", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                        .init(kind: .text, spelling: ", (", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                        .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Value", preciseIdentifier: "s:24ComplicatedArgumentTypes11doSomething8someNameyxSgSicSiSgz_SdnSS_xttcSg_tlF5ValueL_xmfp"),
+                        .init(kind: .text, spelling: ")) -> ((", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Value", preciseIdentifier: "s:24ComplicatedArgumentTypes11doSomething8someNameyxSgSicSiSgz_SdnSS_xttcSg_tlF5ValueL_xmfp"),
+                        .init(kind: .text, spelling: "))", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(complicatedClosureArgument?.parameterTypeNames, ["(Int?,Double,(String,Value))->((Int)->Value)"])
+        }
+    }
+    
     func testOverloadGroupSymbolsResolveLinksWithoutHash() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
@@ -1328,13 +1848,15 @@ class PathHierarchyTests: XCTestCase {
         try assertPathRaisesErrorMessage("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
         """) { error in
-            XCTAssertEqual(error.solutions, [
-                .init(summary: "Remove '-abc123' for\n'fourthTestMemberName(test:)'", replacements: [("", 56, 63)]),
-                .init(summary: "Replace '-abc123' with '-8iuz7' for\n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("-8iuz7", 56, 63)]),
-                .init(summary: "Replace '-abc123' with '-1h173' for\n'func fourthTestMemberName(test: String) -> Float\'", replacements: [("-1h173", 56, 63)]),
-                .init(summary: "Replace '-abc123' with '-91hxs' for\n'func fourthTestMemberName(test: String) -> Int\'", replacements: [("-91hxs", 56, 63)]),
-                .init(summary: "Replace '-abc123' with '-961zx' for\n'func fourthTestMemberName(test: String) -> String\'", replacements: [("-961zx", 56, 63)]),
-            ])
+            XCTAssertEqual(error.solutions.count, 5)
+            
+            XCTAssertEqual(error.solutions.dropFirst(0).first, .init(summary: "Remove '-abc123' for \n'fourthTestMemberName(test:)'", replacements: [("", 56, 63)]))
+            // The overload group is cloned from this symbol and therefore have the same function signature.
+            // Because there are two collisions with the same signature, this method can only be uniquely disambiguated with its hash.
+            XCTAssertEqual(error.solutions.dropFirst(1).first, .init(summary: "Replace '-abc123' with '->Double' for \n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("->Double", 56, 63)]))
+            XCTAssertEqual(error.solutions.dropFirst(2).first, .init(summary: "Replace '-abc123' with '->Float' for \n'func fourthTestMemberName(test: String) -> Float\'", replacements: [("->Float", 56, 63)]))
+            XCTAssertEqual(error.solutions.dropFirst(3).first, .init(summary: "Replace '-abc123' with '->Int' for \n'func fourthTestMemberName(test: String) -> Int\'", replacements: [("->Int", 56, 63)]))
+            XCTAssertEqual(error.solutions.dropFirst(4).first, .init(summary: "Replace '-abc123' with '->String' for \n'func fourthTestMemberName(test: String) -> String\'", replacements: [("->String", 56, 63)]))
         }
     }
 
@@ -1430,13 +1952,13 @@ class PathHierarchyTests: XCTestCase {
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         try assertPathCollision("Outer/Inner", in: tree, collisions: [
-            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "module.extension"),
-            ("s:5Outer5InnerV", "struct"),
+            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "-module.extension"),
+            ("s:5Outer5InnerV", "-struct"),
         ])
         // If the first path component is ambiguous, it should have the same error as if that was a later path component.
         try assertPathCollision("Inner", in: tree, collisions: [
-            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "module.extension"),
-            ("s:5Outer5InnerV", "struct"),
+            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "-module.extension"),
+            ("s:5Outer5InnerV", "-struct"),
         ])
         
         try assertFindsPath("Inner-struct", in: tree, asSymbolID: "s:5Outer5InnerV")
@@ -1457,7 +1979,7 @@ class PathHierarchyTests: XCTestCase {
     func testContinuesSearchingIfNonSymbolMatchesSymbolLink() throws {
         let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                ("some-class-id", .swift, ["SomeClass"], .class),
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"])
             ])),
             
             TextFile(name: "Some-Article.md", utf8Content: """
@@ -1494,6 +2016,37 @@ class PathHierarchyTests: XCTestCase {
             let error = untypedError as! PathHierarchy.Error
             let referenceError = error.makeTopicReferenceResolutionErrorInfo() { context.linkResolver.localResolver.fullName(of: $0, in: context) }
             XCTAssertEqual(referenceError.message, "Symbol links can only resolve symbols")
+        }
+    }
+    
+    func testDiagnosticDoesNotSuggestReplacingPartOfSymbolName() throws {
+        let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-class-id-1", kind: .class, pathComponents: ["SomeClass-(Something)"]),
+                makeSymbol(id: "some-class-id-2", kind: .class, pathComponents: ["SomeClass-(Something)"]),
+            ])),
+        ])
+        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
+        let (_, _, context) = try loadBundle(from: catalogURL)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        
+        try assertPathCollision("ModuleName/SomeClass-(Something)", in: tree, collisions: [
+            ("some-class-id-1", "-5bq4k"),
+            ("some-class-id-2", "-5bq4n"),
+        ])
+        
+        XCTAssertThrowsError(
+            try tree.findNode(path: "ModuleName/SomeClass-(Something)", onlyFindSymbols: true, parent: nil)
+        ) { untypedError in
+            let error = untypedError as! PathHierarchy.Error
+            let referenceError = error.makeTopicReferenceResolutionErrorInfo() { context.linkResolver.localResolver.fullName(of: $0, in: context) }
+            XCTAssertEqual(referenceError.message, "'SomeClass-(Something)' is ambiguous at '/ModuleName'")
+            XCTAssertEqual(referenceError.solutions.map(\.summary), [
+                "Insert \'-5bq4k\' for \n\'SomeClass-(Something)\'",
+                "Insert \'-5bq4n\' for \n\'SomeClass-(Something)\'",
+            ])
         }
     }
     
@@ -1549,8 +2102,11 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "/(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1doiyA2C_ACtFZ")
         XCTAssertEqual(try tree.findSymbol(path: "/=(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ")
         
+        XCTAssertEqual(try tree.findSymbol(path: "...(_:)->PartialRangeFrom<Self>", parent: myNumberID).identifier.precise, "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "...(_:)-28faz", parent: myNumberID).identifier.precise, "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "...(_:)->PartialRangeThrough<Self>", parent: myNumberID).identifier.precise, "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "...(_:)-8ooeh", parent: myNumberID).identifier.precise, "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        
         XCTAssertEqual(try tree.findSymbol(path: "...(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "..<(_:)", parent: myNumberID).identifier.precise, "s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "..<(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE3zzloiySnyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
@@ -1568,9 +2124,9 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "-(_:)-func.op", parent: myNumberID).identifier.precise, "s:s13SignedNumericPsE1sopyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "-=(_:_:)-func.op", parent: myNumberID).identifier.precise, "s:s18AdditiveArithmeticPsE2seoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         
-        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        let paths = tree.caseInsensitiveDisambiguatedPaths(allowAdvancedDisambiguation: false)
         
-        // Unmodified operator name in URL
+        // Unmodified operator name in the path
         XCTAssertEqual("/Operators/MyNumber/!=(_:_:)", paths["s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         XCTAssertEqual("/Operators/MyNumber/+(_:_:)", paths["s:9Operators8MyNumberV1poiyA2C_ACtFZ"])
         XCTAssertEqual("/Operators/MyNumber/+(_:)", paths["s:s18AdditiveArithmeticPsE1popyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
@@ -1596,7 +2152,29 @@ class PathHierarchyTests: XCTestCase {
         
         // "/" is an allowed character in URL paths.
         XCTAssertEqual("/Operators/MyNumber/_(_:_:)-7am4", paths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"])
-        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-3m4ko", paths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)", paths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"]) // This is the only favored symbol so it doesn't require any disambiguation
+        
+        // Some of these have more human readable disambiguation alternatives
+        let humanReadablePaths = tree.caseInsensitiveDisambiguatedPaths()
+        
+        XCTAssertEqual("/Operators/MyNumber/...(_:)->PartialRangeFrom<Self>", humanReadablePaths["s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/...(_:)->PartialRangeThrough<Self>", humanReadablePaths["s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        
+        XCTAssertEqual("/Operators/MyNumber/_(_:_:)-(Self,_)",  /* >(_:_:) */ humanReadablePaths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        
+        XCTAssertEqual("/Operators/MyNumber/_(_:_:)->MyNumber", humanReadablePaths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)", humanReadablePaths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"]) // This is the only favored symbol so it doesn't require any disambiguation
+        
+        // Verify that all paths are unique
+        let repeatedPaths: [String: Int] = paths.values.reduce(into: [:], { acc, path in acc[path, default: 0] += 1 })
+            .filter { _, frequency in frequency > 1 }
+        
+        XCTAssertEqual(repeatedPaths.keys.sorted(), [], "Every path should be unique")
+        
+        let repeatedHumanReadablePaths: [String: Int] = humanReadablePaths.values.reduce(into: [:], { acc, path in acc[path, default: 0] += 1 })
+            .filter { _, frequency in frequency > 1 }
+        
+        XCTAssertEqual(repeatedHumanReadablePaths.keys.sorted(), [], "Every path should be unique")
     }
     
     func testSameNameForSymbolAndContainer() throws {
@@ -1689,11 +2267,11 @@ class PathHierarchyTests: XCTestCase {
         }
         
         do {
-            let (_, _, context) = try loadBundle(from: bundleURL) { context in
-                context.knownDisambiguatedSymbolPathComponents = [
-                    "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
-                ]
-            }
+            var configuration = DocumentationContext.Configuration()
+            configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = [
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
+            ]
+            let (_, _, context) = try loadBundle(from: bundleURL, configuration: configuration)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertFindsPath("/MyKit/MyClass-swift.class/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
@@ -1708,18 +2286,17 @@ class PathHierarchyTests: XCTestCase {
         }
         
         do {
-            let (_, _, context) = try loadBundle(from: bundleURL) { context in
-                context.knownDisambiguatedSymbolPathComponents = [
-                    "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class-hash", "myFunction()"]
-                ]
-            }
+            var configuration = DocumentationContext.Configuration()
+            configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = [
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class-hash", "myFunction()"]
+            ]
+            let (_, _, context) = try loadBundle(from: bundleURL, configuration: configuration)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertFindsPath("/MyKit/MyClass-swift.class-hash/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
             try assertPathNotFound("/MyKit/MyClass", in: tree)
             try assertPathNotFound("/MyKit/MyClass-swift.class", in: tree)
             try assertPathNotFound("/MyKit/MyClass-swift.class-hash", in: tree)
-            
             
             XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
                            "/MyKit/MyClass-class-hash/myFunction()")
@@ -1803,7 +2380,9 @@ class PathHierarchyTests: XCTestCase {
         let exampleDocumentation = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "Module.symbols.json", content: makeSymbolGraph(
                 moduleName: "Module",
-                symbols: symbolPaths.map { ($0.joined(separator: "."), .swift, $0, .class) }
+                symbols: symbolPaths.map { 
+                    makeSymbol(id: $0.joined(separator: "."), kind: .class, pathComponents: $0)
+                }
             )),
         ])
         let tempURL = try createTemporaryDirectory()
@@ -1840,7 +2419,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
                     symbols: [
-                        (containerID, .objectiveC, ["ContainerName"], .class)
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
                     ]
                 )),
             ]),
@@ -1849,14 +2428,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .swift, ["ContainerName"], .class)
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        (memberID, .swift, ["ContainerName", "MemberName"], .property)
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -1883,7 +2462,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .objectiveC, ["ContainerName"], .typealias)
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .typealias, pathComponents: ["ContainerName"]),
                     ]
                 )),
             ]),
@@ -1892,14 +2471,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .swift, ["ContainerName"], .struct)
+                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        (memberID, .swift, ["ContainerName", "MemberName"], .property)
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -1926,8 +2505,8 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
                     symbols: [
-                        (containerID, .objectiveC, ["ContainerName"], .class),
-                        (memberID, .objectiveC, ["ContainerName", "MemberName"], .property), // member starts with uppercase "M"
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: memberID, language: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"]), // member starts with uppercase "M"
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -1939,8 +2518,8 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .swift, ["ContainerName"], .class),
-                        (memberID, .swift, ["ContainerName", "memberName"], .property), // member starts with lowercase "m"
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "memberName"]), // member starts with lowercase "m"
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -1967,7 +2546,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .objectiveC, ["ObjectiveCContainerName"], .class)
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ObjectiveCContainerName"]),
                     ]
                 )),
             ]),
@@ -1976,14 +2555,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .swift, ["SwiftContainerName"], .class)
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["SwiftContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        (memberID, .swift, ["SwiftContainerName", "MemberName"], .property)
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["SwiftContainerName", "MemberName"])
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -2010,9 +2589,9 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    (containerID, .swift, ["ContainerName"], .class),
-                    (otherID, .swift, ["ContainerName"], .class),
-                    (memberID, .swift, ["ContainerName", "MemberName1"], .property),
+                    makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
+                    makeSymbol(id: otherID, kind: .class, pathComponents: ["ContainerName"]),
+                    makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName1"]),
                 ],
                 relationships: [
                     .init(source: memberID, target: containerID, kind: .optionalMemberOf, targetFallback: nil),
@@ -2035,7 +2614,7 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    ("some-symbol-id", .swift, ["SymbolName"], .class),
+                    makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SymbolName"]),
                 ],
                 relationships: []
             )),
@@ -2134,7 +2713,7 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    (symbolID, .swift, ["SymbolName"], .class),
+                    makeSymbol(id: symbolID, kind: .class, pathComponents: ["SymbolName"]),
                 ],
                 relationships: []
             )),
@@ -2166,11 +2745,11 @@ class PathHierarchyTests: XCTestCase {
         func makeSymbolGraphFile(platformName: String) -> JSONFile<SymbolGraph> {
             JSONFile(name: "\(platformName)-ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
-                platformName: platformName,
+                platform: .init(operatingSystem: .init(name: platformName)),
                 symbols: [
-                    (protocolID, .swift, ["SomeProtocolName"], .class),
-                    (protocolRequirementID, .swift, ["SomeProtocolName", "someProtocolRequirement()"], .class),
-                    (defaultImplementationID, .swift, ["SomeConformingType", "someProtocolRequirement()"], .class),
+                    makeSymbol(id: protocolID, kind: .class, pathComponents: ["SomeProtocolName"]),
+                    makeSymbol(id: protocolRequirementID, kind: .class, pathComponents: ["SomeProtocolName", "someProtocolRequirement()"]),
+                    makeSymbol(id: defaultImplementationID, kind: .class, pathComponents: ["SomeConformingType", "someProtocolRequirement()"]),
                 ],
                 relationships: [
                     .init(source: protocolRequirementID, target: protocolID, kind: .requirementOf, targetFallback: nil),
@@ -2188,7 +2767,7 @@ class PathHierarchyTests: XCTestCase {
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
-        XCTAssertEqual(paths[protocolRequirementID], "/ModuleName/SomeProtocolName/someProtocolRequirement()-8lcpm")
+        XCTAssertEqual(paths[protocolRequirementID], "/ModuleName/SomeProtocolName/someProtocolRequirement()") // This is the only favored symbol so it doesn't require any disambiguation
         XCTAssertEqual(paths[defaultImplementationID], "/ModuleName/SomeProtocolName/someProtocolRequirement()-3docm")
         
         // Verify that the multi platform paths are the same as the single platform paths
@@ -2209,6 +2788,239 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MainModule/TopLevelProtocol/InnerStruct/extensionMember(_:)", in: tree, asSymbolID: "extensionMember2")
     }
     
+    func testLinksToCxxOperators() throws {
+        let (_, context) = try testBundleAndContext(named: "CxxOperators")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        // MyClass operator+() const;                     // unary plus
+        // MyClass operator+(const MyClass& other) const; // addition
+        try assertPathCollision("/CxxOperators/MyClass/operator+", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator+#1", disambiguation: "-()"),
+            (symbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1", disambiguation: "-(_)"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator+-15qb6", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator+-8k1ef", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1")
+
+        try assertFindsPath("/CxxOperators/MyClass/operator+-()", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator+-(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator+-(MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1")
+        
+        // MyClass operator-() const;                     // unary minus
+        // MyClass operator-(const MyClass& other) const; // subtraction
+        try assertPathCollision("/CxxOperators/MyClass/operator-", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator-#1", disambiguation: "-()"),
+            (symbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1", disambiguation: "-(_)"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator--1c6gw", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator--6knvo", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1")
+
+        try assertFindsPath("/CxxOperators/MyClass/operator--()", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator--(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator--(MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1")
+
+        // MyClass& operator*();                          // indirect access
+        // MyClass operator*(const MyClass& other) const; // multiplication
+        try assertPathCollision("/CxxOperators/MyClass/operator*", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1", disambiguation: "->MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator*#", disambiguation: "->MyClass&"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator*-6oso3", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator*-8vjwm", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator*->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator*->MyClass&", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator*-(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator*-(MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator*-()", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#")
+        
+        // MyClass operator/(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator/", in: tree, asSymbolID: "c:@S@MyClass@F@operator/#&1$@S@MyClass#1")
+
+        // MyClass operator%(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator%", in: tree, asSymbolID: "c:@S@MyClass@F@operator%#&1$@S@MyClass#1")
+
+        // MyClass operator~() const;
+        try assertFindsPath("/CxxOperators/MyClass/operator~", in: tree, asSymbolID: "c:@S@MyClass@F@operator~#1")
+
+        // MyClass* operator&();                          // address-of
+        // MyClass operator&(const MyClass& other) const; // bitwise and
+        try assertPathCollision("/CxxOperators/MyClass/operator&", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1", disambiguation: "->MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator&#", disambiguation: "->MyClass*"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator&-3ob2f", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator&-8vnp2", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator&->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator&->MyClass*", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#")
+        
+        // MyClass operator|(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator|", in: tree, asSymbolID: "c:@S@MyClass@F@operator|#&1$@S@MyClass#1")
+
+        // MyClass operator^(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator^", in: tree, asSymbolID: "c:@S@MyClass@F@operator^#&1$@S@MyClass#1")
+
+        // MyClass operator<<(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator<<", in: tree, asSymbolID: "c:@S@MyClass@F@operator<<#&1$@S@MyClass#1")
+
+        // MyClass operator>>(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator>>", in: tree, asSymbolID: "c:@S@MyClass@F@operator>>#&1$@S@MyClass#1")
+
+        // MyClass operator++(int); // post-increment
+        // MyClass& operator++();   // pre-increment
+        try assertPathCollision("/CxxOperators/MyClass/operator++", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator++#I#", disambiguation: "->MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator++#", disambiguation: "->MyClass&"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator++-68oe0", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator++-15swg", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator++->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator++->MyClass&", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#")
+
+        try assertFindsPath("/CxxOperators/MyClass/operator++-(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator++-(int)", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator++-()", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#")
+        
+        // MyClass operator--(int); // post-decrement
+        // MyClass& operator--();   // pre-decrement
+        try assertPathCollision("/CxxOperators/MyClass/operator--", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator-#I#", disambiguation: "->MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator-#", disambiguation: "->MyClass&"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator---9wv7m", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator---8vk0i", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator--->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator--->MyClass&", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#")
+
+        try assertFindsPath("/CxxOperators/MyClass/operator---(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator---(int)", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator---()", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#")
+
+        // bool operator!() const;
+        try assertFindsPath("/CxxOperators/MyClass/operator!", in: tree, asSymbolID: "c:@S@MyClass@F@operator!#1")
+
+        // bool operator&&(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator&&", in: tree, asSymbolID: "c:@S@MyClass@F@operator&&#&1$@S@MyClass#1")
+
+        // bool operator||(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator||", in: tree, asSymbolID: "c:@S@MyClass@F@operator||#&1$@S@MyClass#1")
+
+        // bool operator==(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator==", in: tree, asSymbolID: "c:@S@MyClass@F@operator==#&1$@S@MyClass#1")
+
+        // bool operator!=(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator!=", in: tree, asSymbolID: "c:@S@MyClass@F@operator!=#&1$@S@MyClass#1")
+
+        // bool operator<(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator<", in: tree, asSymbolID: "c:@S@MyClass@F@operator<#&1$@S@MyClass#1")
+
+        // bool operator>(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator>", in: tree, asSymbolID: "c:@S@MyClass@F@operator>#&1$@S@MyClass#1")
+
+        // bool operator<=(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator<=", in: tree, asSymbolID: "c:@S@MyClass@F@operator<=#&1$@S@MyClass#1")
+
+        // bool operator>=(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator>=", in: tree, asSymbolID: "c:@S@MyClass@F@operator>=#&1$@S@MyClass#1")
+
+        // std::weak_ordering operator<=>(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator<=>", in: tree, asSymbolID: "c:@S@MyClass@F@operator<=>#&1$@S@MyClass#1")
+
+        // MyClass operator=(const MyClass other);    // pass-by-value copy assignment
+        // MyClass& operator=(const MyClass& other);  // copy assignment
+        // MyClass& operator=(const MyClass&& other); // move assignment
+        try assertPathCollision("/CxxOperators/MyClass/operator=", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#", disambiguation: "-(MyClass&&)"),
+            (symbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#", disambiguation: "-(MyClass&)"),
+            (symbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#", disambiguation: "->MyClass"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator=-5360m", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#")
+        try assertFindsPath("/CxxOperators/MyClass/operator=-36ink", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#")
+        try assertFindsPath("/CxxOperators/MyClass/operator=-6e1gm", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator=->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator=-(MyClass)", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#")
+        try assertFindsPath("/CxxOperators/MyClass/operator=-(MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#")
+        try assertFindsPath("/CxxOperators/MyClass/operator=-(MyClass&&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#")
+
+        // MyClass& operator+=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator+=", in: tree, asSymbolID: "c:@S@MyClass@F@operator+=#&1$@S@MyClass#")
+
+        // MyClass& operator-=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator-=", in: tree, asSymbolID: "c:@S@MyClass@F@operator-=#&1$@S@MyClass#")
+
+        // MyClass& operator*=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator*=", in: tree, asSymbolID: "c:@S@MyClass@F@operator*=#&1$@S@MyClass#")
+
+        // MyClass& operator/=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator/=", in: tree, asSymbolID: "c:@S@MyClass@F@operator/=#&1$@S@MyClass#")
+
+        // MyClass& operator%=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator%=", in: tree, asSymbolID: "c:@S@MyClass@F@operator%=#&1$@S@MyClass#")
+
+        // MyClass operator&=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator&=", in: tree, asSymbolID: "c:@S@MyClass@F@operator&=#&1$@S@MyClass#")
+
+        // MyClass operator|=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator|=", in: tree, asSymbolID: "c:@S@MyClass@F@operator|=#&1$@S@MyClass#")
+
+        // MyClass operator^=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator^=", in: tree, asSymbolID: "c:@S@MyClass@F@operator^=#&1$@S@MyClass#")
+
+        // MyClass operator<<=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator<<=", in: tree, asSymbolID: "c:@S@MyClass@F@operator<<=#&1$@S@MyClass#")
+
+        // MyClass operator>>=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator>>=", in: tree, asSymbolID: "c:@S@MyClass@F@operator>>=#&1$@S@MyClass#")
+
+        // MyClass& operator[](std::string& key);              // subscript
+        // static void operator[](MyClass& lhs, MyClass& rhs); // subscript
+        try assertPathCollision("/CxxOperators/MyClass/operator[]", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S", disambiguation: "->()"),
+            (symbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#", disambiguation: "->_"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-9758f", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-8qcye", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator[]->_", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]->MyClass&", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]->()", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(_,_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(std::string&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(MyClass&,_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(_,MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(MyClass&,MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        
+        // MyClass& operator->();
+        try assertFindsPath("/CxxOperators/MyClass/operator->", in: tree, asSymbolID: "c:@S@MyClass@F@operator->#")
+
+        // MyClass& operator->*(const std::string& key);
+        try assertFindsPath("/CxxOperators/MyClass/operator->*", in: tree, asSymbolID: "c:@S@MyClass@F@operator->*#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+
+        // MyClass& operator()(MyClass& arg1, MyClass& arg2, MyClass& arg3); // function-call
+        // static void operator()(MyClass& lhs, MyClass& rhs);               // function-call
+        try assertPathCollision("/CxxOperators/MyClass/operator()", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S", disambiguation: "->()"),
+            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#", disambiguation: "->_"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator()-65g9a", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#")
+        try assertFindsPath("/CxxOperators/MyClass/operator()-212ks", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S")
+
+        try assertFindsPath("/CxxOperators/MyClass/operator()->_", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#")
+        try assertFindsPath("/CxxOperators/MyClass/operator()->()", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S")
+        
+        
+        // MyClass& operator,(MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator,", in: tree, asSymbolID: "c:@S@MyClass@F@operator,#&$@S@MyClass#")
+    }
+    
     func testParsingPaths() {
         // Check path components without disambiguation
         assertParsedPathComponents("", [])
@@ -2218,7 +3030,7 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("first/", [("first", nil)])
         assertParsedPathComponents("first/second/third", [("first", nil), ("second", nil), ("third", nil)])
         assertParsedPathComponents("/first/second/third", [("first", nil), ("second", nil), ("third", nil)])
-        assertParsedPathComponents("first/", [("first",  nil)])
+        assertParsedPathComponents("first/", [("first", nil)])
         assertParsedPathComponents("first//second", [("first", nil), ("/second", nil)])
         assertParsedPathComponents("first/second#third", [("first", nil), ("second", nil), ("third", nil)])
         assertParsedPathComponents("#first", [("first", nil)])
@@ -2249,38 +3061,136 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("+/-(_:_:)-func.op-hash", [("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: "hash"))])
         assertParsedPathComponents("+/-(_:_:)/+/-(_:_:)/+/-(_:_:)/+/-(_:_:)", [("+/-(_:_:)", nil), ("+/-(_:_:)", nil), ("+/-(_:_:)", nil), ("+/-(_:_:)", nil)])
         assertParsedPathComponents("+/-(_:_:)-hash/+/-(_:_:)-func.op/+/-(_:_:)-func.op-hash/+/-(_:_:)", [("+/-(_:_:)", .kindAndHash(kind: nil, hash: "hash")), ("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: nil)), ("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: "hash")), ("+/-(_:_:)", nil)])
-        
+
         assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil), ("/=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil), ("///=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil), ("+/-(_:_:)", nil)])
+
+        // Check parsing return values and parameter types
+        assertParsedPathComponents("..<(_:_:)->Bool", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"]))])
+        assertParsedPathComponents("..<(_:_:)-(_,Int)", [("..<(_:_:)", .typeSignature(parameterTypes: ["_", "Int"], returnTypes: nil))])
+        
+        assertParsedPathComponents("something(first:second:third:)->(_,_,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "_", "_"]))])
+        
+        assertParsedPathComponents("something(first:second:third:)->(String,_,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "_", "_"]))])
+        assertParsedPathComponents("something(first:second:third:)->(_,Int,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "Int", "_"]))])
+        assertParsedPathComponents("something(first:second:third:)->(_,_,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "_", "Bool"]))])
+        
+        assertParsedPathComponents("something(first:second:third:)->(String,Int,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "Int", "_"]))])
+        assertParsedPathComponents("something(first:second:third:)->(String,_,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "_", "Bool"]))])
+        assertParsedPathComponents("something(first:second:third:)->(_,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "Int", "Bool"]))])
+        
+        assertParsedPathComponents("something(first:second:third:)->(String,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "Int", "Bool"]))])
+        
+        // Check closure parameters
+        assertParsedPathComponents("map(_:)-((Element)->T)", [("map(_:)", .typeSignature(parameterTypes: ["(Element)->T"], returnTypes: nil))])
+        assertParsedPathComponents("map(_:)->[T]", [("map(_:)", .typeSignature(parameterTypes: nil, returnTypes: ["[T]"]))])
+        
+        assertParsedPathComponents("filter(_:)-((Element)->Bool)", [("filter(_:)", .typeSignature(parameterTypes: ["(Element)->Bool"], returnTypes: nil))])
+        assertParsedPathComponents("filter(_:)->[Element]", [("filter(_:)", .typeSignature(parameterTypes: nil, returnTypes: ["[Element]"]))])
+        
+        assertParsedPathComponents("reduce(_:_:)-(Result,_)", [("reduce(_:_:)", .typeSignature(parameterTypes: ["Result", "_"], returnTypes: nil))])
+        assertParsedPathComponents("reduce(_:_:)-(_,(Result,Element)->Result)", [("reduce(_:_:)", .typeSignature(parameterTypes: ["_", "(Result,Element)->Result"], returnTypes: nil))])
+        
+        assertParsedPathComponents("partition(by:)-((Element)->Bool)", [("partition(by:)", .typeSignature(parameterTypes: ["(Element)->Bool"], returnTypes: nil))])
+        assertParsedPathComponents("partition(by:)->Index", [("partition(by:)", .typeSignature(parameterTypes: nil, returnTypes: ["Index"]))])
+        
+        assertParsedPathComponents("max(by:)-((Element,Element)->Bool)", [("max(by:)", .typeSignature(parameterTypes: ["(Element,Element)->Bool"], returnTypes: nil))])
+        assertParsedPathComponents("max(by:)->Element?", [("max(by:)", .typeSignature(parameterTypes: nil, returnTypes: ["Element?"]))])
+        
+        // Nested tuples
+        assertParsedPathComponents("functionName->((A,(B,C),D),(E,F),G)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(A,(B,C),D)", "(E,F)", "G"]))])
+        assertParsedPathComponents("functionName-((A,(B,C),D),(E,F),G)", [("functionName", .typeSignature(parameterTypes: ["(A,(B,C),D)", "(E,F)", "G"], returnTypes: nil))])
+        
+        // Nested closures
+        assertParsedPathComponents("functionName->((A)->B,(C,(D)->E),(F,(G)->H)->I)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(A)->B", "(C,(D)->E)", "(F,(G)->H)->I"]))])
+        
+        // Unicode characters and accents
+        assertParsedPathComponents("functionName->((Å,(𝔹,©),Δ),(∃,⨍),𝄞)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(Å,(𝔹,©),Δ)", "(∃,⨍)", "𝄞"]))])
+        assertParsedPathComponents("functionName-((Å,(𝔹,©),Δ),(∃,⨍),𝄞)", [("functionName", .typeSignature(parameterTypes: ["(Å,(𝔹,©),Δ)", "(∃,⨍)", "𝄞"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->((Å)->𝔹,(©,(Δ)->∃),(⨍,(𝄞)->ℌ)->𝓲)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(Å)->𝔹", "(©,(Δ)->∃)", "(⨍,(𝄞)->ℌ)->𝓲"]))])
+        
+        let knownCxxOperators = [
+            // Arithmetic
+            "+", "-", "*", "/", "%",
+            // Bitwise arithmetic
+            "~", "&", "|", "^", "<<", ">>",
+            // Increment/Decrement
+            "++", "--",
+            // Logic
+            "!", "&&", "||",
+            // Comparison
+            "==", "!=", "<", ">", "<=", ">=", "<=>",
+            // Assignment
+            "=",
+            "+=", "-=", "*=", "/=", "%=",
+            "&=", "|=", "^=", "<<=", ">>=",
+            // Member access
+            "[]", "->", "->*", // "*" (indirection) and "&" (address of) are already covered as arithmetic operators above.
+            // Function call
+            "()",
+            // Other
+            ","
+        ]
+        
+        for operatorSymbol in knownCxxOperators {
+            let operatorName = "operator\(operatorSymbol)"
+            assertParsedPathComponents(operatorName, [(operatorName, nil)])
+            assertParsedPathComponents("MyClass/\(operatorName)", [("MyClass", nil), (operatorName, nil)])
+            
+            // With disambiguation
+            assertParsedPathComponents("\(operatorName)-hash", [(operatorName, .kindAndHash(kind: nil, hash: "hash"))])
+            assertParsedPathComponents("\(operatorName)-func.op", [(operatorName, .kindAndHash(kind: "func.op", hash: nil))])
+            assertParsedPathComponents("\(operatorName)-c++.func.op", [(operatorName, .kindAndHash(kind: "func.op", hash: nil))])
+            assertParsedPathComponents("\(operatorName)-func.op-hash", [(operatorName, .kindAndHash(kind: "func.op", hash: "hash"))])
+            
+            // With type disambiguation
+            assertParsedPathComponents("\(operatorName)->()", [(operatorName, .typeSignature(parameterTypes: nil, returnTypes: []))])
+            assertParsedPathComponents("\(operatorName)->_", [(operatorName, .typeSignature(parameterTypes: nil, returnTypes: ["_"]))])
+            assertParsedPathComponents("\(operatorName)->ReturnType", [(operatorName, .typeSignature(parameterTypes: nil, returnTypes: ["ReturnType"]))])
+            
+            assertParsedPathComponents("\(operatorName)-()", [(operatorName, .typeSignature(parameterTypes: [], returnTypes: nil))])
+            assertParsedPathComponents("\(operatorName)-(_,_)", [(operatorName, .typeSignature(parameterTypes: ["_","_"], returnTypes: nil))])
+            assertParsedPathComponents("\(operatorName)-(ParameterType,_)", [(operatorName, .typeSignature(parameterTypes: ["ParameterType","_"], returnTypes: nil))])
+            assertParsedPathComponents("\(operatorName)-(_,ParameterType)", [(operatorName, .typeSignature(parameterTypes: ["_","ParameterType"], returnTypes: nil))])
+            
+            // With a trailing anchor component
+            assertParsedPathComponents("\(operatorName)#SomeAnchor", [(operatorName, nil), ("SomeAnchor", nil)])
+            assertParsedPathComponents("\(operatorName)-hash#SomeAnchor", [(operatorName, .kindAndHash(kind: nil, hash: "hash")), ("SomeAnchor", nil)])
+            assertParsedPathComponents("\(operatorName)-func.op#SomeAnchor", [(operatorName, .kindAndHash(kind: "func.op", hash: nil)), ("SomeAnchor", nil)])
+        }
+        
+        assertParsedPathComponents("operator[]-(std::string&)->std::string&", [("operator[]", .typeSignature(parameterTypes: ["std::string&"], returnTypes: ["std::string&"]))])
+    }
+    
+    func testResolveExternalLinkFromTechnologyRoot() throws {
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Some root page
+            
+            A single-file article-only catalog
+            """),
+        ])
+        
+        let (_, _, context) = try loadBundle(from: createTempFolder(content: [catalog]))
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let rootIdentifier = try XCTUnwrap(tree.modules.first?.identifier)
+        do {
+            _ = try tree.find(path: "/SomeModule", parent: rootIdentifier, onlyFindSymbols: true)
+            XCTFail("Unexpectedly found external symbol")
+        } catch PathHierarchy.Error.moduleNotFound(_, let remaining, _) {
+            // `LinkResolver` uses this error to know when to resolve a link from an external source.
+            XCTAssertEqual(remaining.map(\.full), ["SomeModule"])
+        } catch {
+            XCTFail("Unexpected error \(error)")
+        }
     }
     
     // MARK: Test helpers
-    
-    private func makeSymbolGraph(
-        moduleName: String,
-        platformName: String? = nil,
-        symbols: [(identifier: String, language: SourceLanguage, pathComponents: [String], kindID: SymbolGraph.Symbol.KindIdentifier)],
-        relationships: [SymbolGraph.Relationship] = []
-    ) -> SymbolGraph {
-        return SymbolGraph(
-            metadata: SymbolGraph.Metadata(formatVersion: .init(major: 0, minor: 5, patch: 3), generator: "unit-test"),
-            module: SymbolGraph.Module(name: moduleName, platform: .init(operatingSystem: platformName.map { .init(name: $0) })),
-            symbols: symbols.map { identifier, language, pathComponents, kindID in
-                SymbolGraph.Symbol(
-                    identifier: .init(precise: identifier, interfaceLanguage: language.id),
-                    names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
-                    pathComponents: pathComponents,
-                    docComment: nil,
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: kindID, displayName: "Kind Display Name"), // kind display names doesn't matter for path disambiguation
-                    mixins: [:]
-                )
-            },
-            relationships: relationships
-        )
-    }
-    
+
     private func assertFindsPath(_ path: String, in tree: PathHierarchy, asSymbolID symbolID: String, file: StaticString = #file, line: UInt = #line) throws {
         do {
             let symbol = try tree.findSymbol(path: path)
@@ -2344,17 +3254,20 @@ class PathHierarchyTests: XCTestCase {
     
     private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], file: StaticString = #file, line: UInt = #line) {
         let (actual, _) = PathHierarchy.PathParser.parse(path: path)
-        XCTAssertEqual(actual.count, expected.count, file: file, line: line)
+        XCTAssertEqual(actual.count, expected.count, "Incorrect number of path components for \(path.singleQuoted)", file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
-            XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component", file: file, line: line)
+            XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component for \(path.singleQuoted)", file: file, line: line)
             switch (actualComponents.disambiguation, expectedComponents.1) {
             case (.kindAndHash(let actualKind, let actualHash), .kindAndHash(let expectedKind, let expectedHash)):
-                XCTAssertEqual(actualKind, expectedKind, "Incorrect kind disambiguation", file: file, line: line)
-                XCTAssertEqual(actualHash, expectedHash, "Incorrect hash disambiguation", file: file, line: line)
+                XCTAssertEqual(actualKind, expectedKind, "Incorrect kind disambiguation for \(path.singleQuoted)", file: file, line: line)
+                XCTAssertEqual(actualHash, expectedHash, "Incorrect hash disambiguation for \(path.singleQuoted)", file: file, line: line)
+            case (.typeSignature(let actualParameters, let actualReturns), .typeSignature(let expectedParameters, let expectedReturns)):
+                XCTAssertEqual(actualParameters, expectedParameters, "Incorrect parameter type disambiguation", file: file, line: line)
+                XCTAssertEqual(actualReturns, expectedReturns, "Incorrect return type disambiguation", file: file, line: line)
             case (nil, nil):
                 continue
             default:
-                XCTFail("Incorrect type of disambiguation", file: file, line: line)
+                XCTFail("Incorrect type of disambiguation for \(path.singleQuoted)", file: file, line: line)
             }
         }
     }
@@ -2385,12 +3298,23 @@ private extension TopicReferenceResolutionErrorInfo {
     }
 }
 
-private struct SimplifiedSolution: Equatable {
+private struct SimplifiedSolution: Equatable, CustomStringConvertible {
     let summary: String
     let replacements: [(String, start: Int, end: Int)]
     
     static func == (lhs: SimplifiedSolution, rhs: SimplifiedSolution) -> Bool {
         return lhs.summary == rhs.summary
             && lhs.replacements.elementsEqual(rhs.replacements, by: ==)
+    }
+    
+    var description: String {
+        """
+        {
+          summary: \(summary.components(separatedBy: .newlines).joined(separator: "\n           "))
+          replacements: [
+          \(replacements.map { "    \"\($0.0)\" at \($0.start)-\($0.end)" }.joined(separator: "\n"))
+          ]
+        }
+        """
     }
 }

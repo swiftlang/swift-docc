@@ -10,15 +10,30 @@
 
 import Foundation
 import SwiftDocC
+import Markdown
 
 /// An action that merges a list of documentation archives into a combined archive.
-struct MergeAction: Action {
+struct MergeAction: AsyncAction {
     var archives: [URL]
-    var landingPageCatalog: URL?
+    var landingPageInfo: LandingPageInfo
     var outputURL: URL
     var fileManager: FileManagerProtocol
     
-    mutating func perform(logHandle: LogHandle) throws -> ActionResult {
+    /// Information about how the merge action should create landing page content for the combined archive
+    enum LandingPageInfo {
+        // This enum will have a case for a landing page catalog when we add support for that.
+        
+        /// The merge action should synthesize a minimal landing page with a given configuration.
+        case synthesize(SynthesizeConfiguration)
+        
+        struct SynthesizeConfiguration {
+            var name: String
+            var kind: String
+            var style: TopicsVisualStyle.Style
+        }
+    }
+    
+    mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         guard let firstArchive = archives.first else {
             // A validation warning should have already been raised in `Docc/Merge/InputAndOutputOptions/validate()`.
             return ActionResult(didEncounterError: true, outputs: [])
@@ -66,15 +81,56 @@ struct MergeAction: Action {
             try combinedJSONIndex.merge(renderIndex)
         }
         
+        switch landingPageInfo {
+        case .synthesize(let configuration):
+            try synthesizeLandingPage(configuration, combinedIndex: &combinedJSONIndex, targetURL: targetURL)
+        }
+        
         try fileManager.createFile(at: jsonIndexURL, contents: RenderJSONEncoder.makeEncoder(emitVariantOverrides: false).encode(combinedJSONIndex))
-        
-        // TODO: Build landing page from input or synthesize default landing page
-        
-        // TODO: Inactivate external links outside the merged archives
         
         try Self.moveOutput(from: targetURL, to: outputURL, fileManager: fileManager)
         
         return ActionResult(didEncounterError: false, outputs: [outputURL])
+    }
+    
+    private func synthesizeLandingPage(
+        _ configuration: LandingPageInfo.SynthesizeConfiguration,
+        combinedIndex: inout RenderIndex,
+        targetURL: URL
+    ) throws {
+        let landingPageName = configuration.name
+        
+        let languages = combinedIndex.interfaceLanguages.keys.map { SourceLanguage(id: $0) }
+        let language = languages.sorted().first ?? .swift
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: landingPageName.replacingWhitespaceAndPunctuation(with: "-"), path: "/documentation", sourceLanguage: language)
+        
+        let rootRenderReferences = try readRootNodeRenderReferencesIn(dataDirectory: targetURL.appendingPathComponent("data", isDirectory: true))
+        
+        guard !rootRenderReferences.isEmpty else {
+            // No need to synthesize a landing page if the combined archive is empty.
+            return
+        }
+        
+        let renderNode = makeSynthesizedLandingPage(
+            name: landingPageName,
+            reference: reference,
+            roleHeading: configuration.kind,
+            topicsStyle: configuration.style,
+            rootRenderReferences: rootRenderReferences
+        )
+        
+        try fileManager.createFile(
+            at: targetURL.appendingPathComponent("data/documentation.json"),
+            contents: RenderJSONEncoder.makeEncoder().encode(renderNode)
+        )
+        // It's expected that this will fail if combined archive doesn't support static hosting.
+        try? fileManager.copyItem(
+            at: targetURL.appendingPathComponent("index.html"),
+            to: targetURL.appendingPathComponent("/documentation/index.html")
+        )
+        
+        combinedIndex.insertRoot(named: landingPageName)
     }
     
     /// Validate that the different archives don't have overlapping data.

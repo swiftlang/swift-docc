@@ -13,10 +13,6 @@ import SymbolKit
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
-    /// A list of URLs to documentation archives that the local documentation depends on.
-    @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it.
-    public var dependencyArchives: [URL] = []
-    
     var fileManager: FileManagerProtocol = FileManager.default
     /// The link resolver to use to resolve links in the local bundle
     var localResolver: PathHierarchyBasedLinkResolver!
@@ -28,7 +24,8 @@ public class LinkResolver {
     var externalResolvers: [String: ExternalPathHierarchyResolver] = [:]
     
     /// Create link resolvers for all documentation archive dependencies.
-    func loadExternalResolvers() throws {
+    /// - Parameter dependencyArchives: A list of URLs to documentation archives that the local documentation depends on.
+    func loadExternalResolvers(dependencyArchives: [URL]) throws {
         let resolvers = try dependencyArchives.compactMap {
             try ExternalPathHierarchyResolver(dependencyArchive: $0, fileManager: fileManager)
         }
@@ -150,7 +147,7 @@ private extension LinkResolver {
             // because their markup or symbol information wasn't passed as catalog or symbol graph input to DocC. 
             context.externallyResolvedLinks[linkText] = result
             if case .success(let reference) = result {
-                context.externalCache[reference] = context.convertServiceFallbackResolver?.entityIfPreviouslyResolved(with: reference)
+                context.externalCache[reference] = context.configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
             }
         }
     }
@@ -169,7 +166,7 @@ private final class FallbackResolverBasedLinkResolver {
     private func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult? {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
-        guard let fallbackResolver = context.convertServiceFallbackResolver,
+        guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
               let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
               fallbackResolver.bundleIdentifier == knownBundleIdentifier
         else {
@@ -196,9 +193,9 @@ private final class FallbackResolverBasedLinkResolver {
                 // First look up articles path
                 currentBundle.articlesDocumentationRootReference.url.appendingPathComponent(unresolvedReference.path),
                 // Then technology tutorials root path (for individual tutorial pages)
-                currentBundle.technologyTutorialsRootReference.url.appendingPathComponent(unresolvedReference.path),
+                currentBundle.tutorialsContainerReference.url.appendingPathComponent(unresolvedReference.path),
                 // Then tutorials root path (for tutorial table of contents pages)
-                currentBundle.tutorialsRootReference.url.appendingPathComponent(unresolvedReference.path),
+                currentBundle.tutorialTableOfContentsContainer.url.appendingPathComponent(unresolvedReference.path),
             ])
         }
         // Try resolving in the local context (as child)

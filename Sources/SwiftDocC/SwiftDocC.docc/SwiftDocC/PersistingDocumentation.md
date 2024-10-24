@@ -34,7 +34,6 @@ The precise path inside the output folder where resulting JSON file is saved is 
 ### Render Node Rewriter
 
 - ``RenderNodeTransforming``
-- ``RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation``
 - ``RemoveUnusedReferencesTransformation``
 - ``RenderNodeTransformationComposition``
 - ``RenderNodeTransformationContext``

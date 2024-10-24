@@ -30,6 +30,10 @@ import Foundation
 ///         </dict>
 ///         <dict>
 ///             <key>name</key>
+///             <string>Platform Name</string>
+///         </dict>
+///         <dict>
+///             <key>name</key>
 ///             <string>Other Platform Name</string>
 ///             <key>unavailable</key>
 ///             <true/>
@@ -48,10 +52,10 @@ public struct DefaultAvailability: Codable, Equatable {
         }
         
         /// The different availability states that can be declared.
-        /// Unavailable or Available with an introduced version.
+        /// Unavailable or Available with a potential introduced version.
         enum VersionInformation: Hashable {
             case unavailable
-            case available(version: String)
+            case available(version: String?)
         }
 
         /// The name of the platform, e.g. "macOS".
@@ -60,18 +64,12 @@ public struct DefaultAvailability: Codable, Equatable {
         /// The availability version state information, e.g unavailable
         internal var versionInformation: VersionInformation
 
-        /// A string representation of the version for this platform.
-        @available(*, deprecated, message: "Use `introducedVersion` instead.  This deprecated API will be removed after 6.0 is released", renamed: "introducedVersion")
-        public var platformVersion: String {
-            return introducedVersion ?? "0.0"
-        }
-        
         /// A string representation of the version for this platform
         /// or nil if it's unavailable.
         public var introducedVersion: String? {
             switch versionInformation {
             case .available(let introduced):
-                return introduced.description
+                return introduced?.description
             case .unavailable:
                 return nil
             }
@@ -82,7 +80,7 @@ public struct DefaultAvailability: Codable, Equatable {
         /// - Parameters:
         ///   - platformName: A platform name, such as "iOS" or "macOS"; see ``PlatformName``.
         ///   - platformVersion: A 2- or 3-component version string, such as `"13.0"` or `"13.1.2"`.
-        public init(platformName: PlatformName, platformVersion: String) {
+        public init(platformName: PlatformName, platformVersion: String?) {
             self.platformName = platformName
             self.versionInformation = .available(version: platformVersion)
         }
@@ -103,10 +101,14 @@ public struct DefaultAvailability: Codable, Equatable {
                 versionInformation = .unavailable
                 return
             }
-            let introducedVersion = try values.decode(String.self, forKey: .platformVersion)
+            let introducedVersion = try values.decodeIfPresent(String.self, forKey: .platformVersion)
             versionInformation = .available(version: introducedVersion)
-            guard let version = Version(versionString: introducedVersion), (2...3).contains(version.count) else {
-                throw DocumentationBundle.PropertyListError.invalidVersionString(introducedVersion)
+            // If the default availability contains a version, validate it's a
+            // semantic version.
+            if let introducedVersion {
+                guard let version = Version(versionString: introducedVersion), (2...3).contains(version.count) else {
+                    throw DocumentationBundle.PropertyListError.invalidVersionString(introducedVersion)
+                }
             }
         }
         
@@ -129,9 +131,9 @@ public struct DefaultAvailability: Codable, Equatable {
     
     /// Fallback availability information for platforms we either don't emit SGFs for
     /// or have the same availability information as another platform.
-    static let fallbackPlatforms: [PlatformName : PlatformName] = [
-        .catalyst:.iOS,
-        .iPadOS:.iOS
+    package static let fallbackPlatforms: [PlatformName: PlatformName] = [
+        .catalyst: .iOS,
+        .iPadOS: .iOS,
     ]
 
     /// Creates a default availability module.

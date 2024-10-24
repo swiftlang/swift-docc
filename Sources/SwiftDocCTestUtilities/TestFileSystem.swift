@@ -45,10 +45,9 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     
     package var identifier: String = UUID().uuidString
     
-    private var _bundles = [DocumentationBundle]()
     package func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        // Ignore the bundle discovery options, these test bundles are already built.
-        return _bundles
+        [try DocumentationContext.InputsProvider(fileManager: self)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options).inputs]
     }
     
     /// Thread safe access to the file system.
@@ -71,48 +70,8 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         files["/"] = Self.folderFixtureData
         files["/tmp"] = Self.folderFixtureData
  
-        // Import given folders
-        try updateDocumentationBundles(withFolders: folders)
-    }
-    
-    func updateDocumentationBundles(withFolders folders: [Folder]) throws {
-        _bundles.removeAll()
-        
         for folder in folders {
-            let files = try addFolder(folder)
-            
-            func asCatalog(_ file: File) -> Folder? {
-                if let folder = file as? Folder, URL(fileURLWithPath: folder.name).pathExtension == "docc" {
-                    return folder
-                }
-                return nil
-            }
-            
-            if let catalog = asCatalog(folder) ?? folder.recursiveContent.mapFirst(where: asCatalog(_:)) {
-                let files = files.filter({ $0.hasPrefix(catalog.absoluteURL.path) }).compactMap({ URL(fileURLWithPath: $0) })
-
-                let markupFiles = files.filter({ DocumentationBundleFileTypes.isMarkupFile($0) })
-                let miscFiles = files.filter({ !DocumentationBundleFileTypes.isMarkupFile($0) })
-                let graphs = files.filter({ DocumentationBundleFileTypes.isSymbolGraphFile($0) })
-                let customHeader = files.first(where: { DocumentationBundleFileTypes.isCustomHeader($0) })
-                let customFooter = files.first(where: { DocumentationBundleFileTypes.isCustomFooter($0) })
-                
-                let info = try DocumentationBundle.Info(
-                    from: try catalog.recursiveContent.mapFirst(where: { $0 as? InfoPlist })?.data(),
-                    bundleDiscoveryOptions: nil,
-                    derivedDisplayName: URL(fileURLWithPath: catalog.name).deletingPathExtension().lastPathComponent
-                )
-                
-                let bundle = DocumentationBundle(
-                    info: info,
-                    symbolGraphURLs: graphs,
-                    markupURLs: markupFiles,
-                    miscResourceURLs: miscFiles,
-                    customHeader: customHeader,
-                    customFooter: customFooter
-                )
-                _bundles.append(bundle)
-            }
+            try addFolder(folder)
         }
     }
 
@@ -140,11 +99,32 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
                 case let folder as Folder:
                     result[at.appendingPathComponent(folder.name).path] = Self.folderFixtureData
                     result.merge(try filesIn(folder: folder, at: at.appendingPathComponent(folder.name)), uniquingKeysWith: +)
+                
                 case let file as File & DataRepresentable:
                     result[at.appendingPathComponent(file.name).path] = try file.data()
                     if let copy = file as? CopyOfFile {
                         result[copy.original.path] = try file.data()
                     }
+                
+                case let folder as CopyOfFolder:
+                    // These are copies of real file and folders so we use `FileManager` here to read their content
+                    let enumerator = FileManager.default.enumerator(at: folder.original, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles)!
+                    
+                    let contentBase = at.appendingPathComponent(folder.name)
+                    result[contentBase.path] = Self.folderFixtureData
+                    
+                    let basePathString = folder.original.standardizedFileURL.deletingLastPathComponent().path
+                    for case let url as URL in enumerator where folder.shouldCopyFile(url) {
+                        let data = try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
+                            ? Self.folderFixtureData
+                            : try Data(contentsOf: url)
+                    
+                        assert(url.standardizedFileURL.path.hasPrefix(basePathString))
+                        let relativePath = String(url.standardizedFileURL.path.dropFirst(basePathString.count))
+                           
+                        result[at.appendingPathComponent(relativePath).path] = data
+                    }
+                
                 default: break
             }
         }
@@ -185,20 +165,20 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         return files.keys.contains(path)
     }
     
-    package func copyItem(at srcURL: URL, to dstURL: URL) throws {
+    package func copyItem(at source: URL, to destination: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
         defer { filesLock.unlock() }
         
-        try ensureParentDirectoryExists(for: dstURL)
+        try ensureParentDirectoryExists(for: destination)
         
-        let srcPath = srcURL.path
-        let dstPath = dstURL.path
+        let sourcePath      = source.path
+        let destinationPath = destination.path
         
-        files[dstPath] = files[srcPath]
-        for (path, data) in files where path.hasPrefix(srcPath) {
-            files[path.replacingOccurrences(of: srcPath, with: dstPath)] = data
+        files[destinationPath] = files[sourcePath]
+        for (path, data) in files where path.hasPrefix(sourcePath) {
+            files[path.replacingOccurrences(of: sourcePath, with: destinationPath)] = data
         }
     }
     
@@ -309,7 +289,6 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     }
 
     package func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
-
         if let keys {
             XCTAssertTrue(keys.isEmpty, "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem")
         }
@@ -318,13 +297,25 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
             XCTFail("The given directory enumeration option(s) \(mask.rawValue) have not been implemented in the test file system: \(mask)")
         }
 
-        let skipHiddenFiles = mask == .skipsHiddenFiles
-        let contents = try contentsOfDirectory(atPath: url.path)
-        let output: [URL] = contents.filter({ skipHiddenFiles ? !$0.hasPrefix(".") : true}).map {
-            url.appendingPathComponent($0)
+        let skipHiddenFiles = mask.contains(.skipsHiddenFiles)
+        var contents = try contentsOfDirectory(atPath: url.path)
+        if skipHiddenFiles {
+            contents.removeAll(where: { $0.hasPrefix(".") })
         }
+        
+        return contents.map { url.appendingPathComponent($0)}
+    }
 
-        return output
+    package func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL]) {
+        var allContents = try contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: mask)
+
+        let partitionIndex = allContents.partition {
+            self.files[$0.path] == Self.folderFixtureData
+        }
+        return (
+            files:       Array( allContents[..<partitionIndex] ),
+            directories: Array( allContents[partitionIndex...] )
+        )
     }
 
     package func uniqueTemporaryDirectory() -> URL {
@@ -389,7 +380,3 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     }
 }
 
-private extension File {
-    /// A URL of the file node if it was located in the root of the file system.
-    var absoluteURL: URL { return URL(string: "/\(name)")! }
-}

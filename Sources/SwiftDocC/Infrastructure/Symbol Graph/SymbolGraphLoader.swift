@@ -19,24 +19,43 @@ struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
-    private var dataProvider: DocumentationContextDataProvider
+    // FIXME: After 6.2, when we no longer have `DocumentationContextDataProvider` we can simply this code to not use a closure to read data.
+    private var dataLoader: (URL, DocumentationBundle) throws -> Data
     private var bundle: DocumentationBundle
-    private var configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    private var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     
+    /// Creates a new symbol graph loader
+    /// - Parameters:
+    ///   - bundle: The documentation bundle from which to load symbol graphs.
+    ///   - dataLoader: A closure that the loader uses to read symbol graph data.
+    ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
+    init(
+        bundle: DocumentationBundle,
+        dataLoader: @escaping (URL, DocumentationBundle) throws -> Data,
+        symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
+    ) {
+        self.bundle = bundle
+        self.dataLoader = dataLoader
+        self.symbolGraphTransformer = symbolGraphTransformer
+    }
+
     /// Creates a new loader, initialized with the given bundle.
     /// - Parameters:
     ///   - bundle: The documentation bundle from which to load symbol graphs.
     ///   - dataProvider: A data provider in the bundle's context.
+    ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
         bundle: DocumentationBundle,
         dataProvider: DocumentationContextDataProvider,
-        configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+        symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
-        self.dataProvider = dataProvider
-        self.configureSymbolGraph = configureSymbolGraph
+        self.dataLoader = { url, bundle in
+            try dataProvider.contentsOfURL(url, in: bundle)
+        }
+        self.symbolGraphTransformer = symbolGraphTransformer
     }
-    
+
     /// A strategy to decode symbol graphs.
     enum DecodingConcurrencyStrategy {
         /// Decode all symbol graph files on separate threads concurrently.
@@ -56,17 +75,15 @@ struct SymbolGraphLoader {
 
         var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
         var loadError: Error?
-        let bundle = self.bundle
-        let dataProvider = self.dataProvider
-        
-        let loadGraphAtURL: (URL) -> Void = { symbolGraphURL in
+
+        let loadGraphAtURL: (URL) -> Void = { [dataLoader, bundle] symbolGraphURL in
             // Bail out in case a symbol graph has already errored
             guard loadError == nil else { return }
             
             do {
                 // Load and decode a single symbol graph file
-                let data = try dataProvider.contentsOfURL(symbolGraphURL, in: bundle)
-                
+                let data = try dataLoader(symbolGraphURL, bundle)
+
                 var symbolGraph: SymbolGraph
                 
                 switch decodingStrategy {
@@ -76,7 +93,7 @@ struct SymbolGraphLoader {
                     symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
                 }
                 
-                configureSymbolGraph?(&symbolGraph)
+                symbolGraphTransformer?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
                 // If the bundle provides availability defaults add symbol availability data.
@@ -280,7 +297,6 @@ struct SymbolGraphLoader {
     /// If the bundle defines default availability for the symbols in the given symbol graph
     /// this method adds them to each of the symbols in the graph.
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
-        let selector = UnifiedSymbolGraph.Selector(forSymbolGraph: symbolGraph)
         // Check if there are defined default availabilities for the current module
         if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
             let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
@@ -300,27 +316,21 @@ struct SymbolGraphLoader {
                 // The availability item for each symbol of the given module.
                 let modulePlatformAvailabilityItem = AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue), introducedVersion: defaultModuleVersion, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
                 // Check if the symbol has existing availabilities from source
-                if var availability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
-
-                    // Fill introduced versions when missing.
-                    availability.availability = availability.availability.map {
-                        $0.fillingMissingIntroducedVersion(
-                            from: defaultAvailabilityVersionByPlatform,
-                            fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
-                        )
-                    }
-                    // Add the module availability information to each of the symbols availability mixin.
-                    if !availability.contains(platformName) {
-                        availability.availability.append(modulePlatformAvailabilityItem)
-                    }
-                    symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = availability
-                } else {
-                    // ObjC doesn't propagate symbol availability to their children properties,
-                    // so only add the default availability to the Swift variant of the symbols.
-                    if !(selector?.interfaceLanguage == InterfaceLanguage.objc.name.lowercased()) {
-                        symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = SymbolGraph.Symbol.Availability(availability: [modulePlatformAvailabilityItem])
-                    }
+                var availability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability ?? SymbolGraph.Symbol.Availability(availability: [])
+            
+                // Fill introduced versions when missing.
+                availability.availability = availability.availability.map {
+                    $0.fillingMissingIntroducedVersion(
+                        from: defaultAvailabilityVersionByPlatform,
+                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
+                    )
                 }
+                // Add the module availability information to each of the symbols availability mixin.
+                if !availability.contains(platformName) {
+                    availability.availability.append(modulePlatformAvailabilityItem)
+                }
+                symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = availability
+                
                 return symbol
             }
             symbolGraph.symbols = symbolsWithFilledIntroducedVersions
@@ -401,10 +411,12 @@ extension SymbolGraph.SemanticVersion {
 extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// Create an availability item with a `domain` and an `introduced` version.
     /// - parameter defaultAvailability: Default availability information for symbols that lack availability authored in code.
-    /// - Note: If the `defaultAvailability` argument doesn't have a valid
-    /// platform version that can be parsed as a `SemanticVersion`, returns `nil`.
+    /// - Note: If the `defaultAvailability` argument has a introduced version that can't
+    /// be parsed as a `SemanticVersion`, returns `nil`.
     init?(_ defaultAvailability: DefaultAvailability.ModuleAvailability) {
-        guard let introducedVersion = defaultAvailability.introducedVersion, let platformVersion = SymbolGraph.SemanticVersion(string: introducedVersion) else {
+        let introducedVersion = defaultAvailability.introducedVersion
+        let platformVersion = introducedVersion.flatMap { SymbolGraph.SemanticVersion(string: $0) }
+        if platformVersion == nil && introducedVersion != nil {
             return nil
         }
         let domain = SymbolGraph.Symbol.Availability.Domain(rawValue: defaultAvailability.platformName.rawValue)

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,6 +11,8 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
+import SymbolKit
 
 fileprivate extension [RenderBlockContent] {
     var firstParagraphText: String? {
@@ -70,27 +72,27 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(parameters.items.count, 1)
+        XCTAssertEqual(parameters.parameters.count, 1)
         
-        guard parameters.items.count == 1 else { return }
+        guard parameters.parameters.count == 1 else { return }
         
-        XCTAssertEqual(parameters.items[0].required, true)
-        XCTAssertEqual(parameters.items[0].name, "id")
-        XCTAssertEqual(parameters.items[0].type.first?.text, "string")
+        XCTAssertEqual(parameters.parameters[0].required, true)
+        XCTAssertEqual(parameters.parameters[0].name, "id")
+        XCTAssertEqual(parameters.parameters[0].type.first?.text, "string")
         
-        XCTAssertEqual(parameters.items[0].typeDetails?.count, 2)
-        guard parameters.items[0].typeDetails?.count == 2 else { return }
+        XCTAssertEqual(parameters.parameters[0].typeDetails?.count, 2)
+        guard parameters.parameters[0].typeDetails?.count == 2 else { return }
         
-        XCTAssertNil(parameters.items[0].typeDetails?[0].arrayMode)
-        XCTAssertNil(parameters.items[0].typeDetails?[0].baseType)
-        XCTAssertEqual(parameters.items[0].typeDetails?[1].arrayMode, true)
-        XCTAssertEqual(parameters.items[0].typeDetails?[1].baseType, "string")
+        XCTAssertNil(parameters.parameters[0].typeDetails?[0].arrayMode)
+        XCTAssertNil(parameters.parameters[0].typeDetails?[0].baseType)
+        XCTAssertEqual(parameters.parameters[0].typeDetails?[1].arrayMode, true)
+        XCTAssertEqual(parameters.parameters[0].typeDetails?[1].baseType, "string")
 
-        XCTAssertEqual(parameters.items[0].type.first?.text, "string")
-        XCTAssertEqual(parameters.items[0].content?.firstParagraphText, "The unique identifier for the artist.")
+        XCTAssertEqual(parameters.parameters[0].type.first?.text, "string")
+        XCTAssertEqual(parameters.parameters[0].content?.firstParagraphText, "The unique identifier for the artist.")
         
-        XCTAssertEqual(parameters.headings.joined(), parameters.items[0].name)
-        XCTAssertEqual(parameters.rawIndexableTextContent(references: [:]), parameters.items[0].content?.firstParagraphText)
+        XCTAssertEqual(parameters.headings.joined(), parameters.parameters[0].name)
+        XCTAssertEqual(parameters.rawIndexableTextContent(references: [:]), parameters.parameters[0].content?.firstParagraphText)
         
         //
         // REST Query Parameters
@@ -103,15 +105,15 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(query.items.count, 2)
+        XCTAssertEqual(query.parameters.count, 2)
         
-        guard query.items.count == 2 else { return }
+        guard query.parameters.count == 2 else { return }
         
-        XCTAssertNil(query.items[0].required)
-        XCTAssertEqual(query.items[0].name, "l")
-        XCTAssertEqual(query.items[0].type.first?.text, "string")
+        XCTAssertNil(query.parameters[0].required)
+        XCTAssertEqual(query.parameters[0].name, "l")
+        XCTAssertEqual(query.parameters[0].type.first?.text, "string")
         
-        XCTAssertEqual(query.headings.first, query.items[0].name)
+        XCTAssertEqual(query.headings.first, query.parameters[0].name)
 
         //
         // REST Headers
@@ -123,15 +125,15 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(headers.items.count, 1)
+        XCTAssertEqual(headers.parameters.count, 1)
         
-        guard headers.items.count == 1 else { return }
+        guard headers.parameters.count == 1 else { return }
         
-        XCTAssertEqual(headers.items[0].name, "X-TotalCount")
-        XCTAssertEqual(headers.items[0].content?.firstParagraphText, "Total amount of results")
+        XCTAssertEqual(headers.parameters[0].name, "X-TotalCount")
+        XCTAssertEqual(headers.parameters[0].content?.firstParagraphText, "Total amount of results")
         
-        XCTAssertEqual(headers.headings.joined(), headers.items[0].name)
-        XCTAssertEqual(headers.rawIndexableTextContent(references: [:]), headers.items[0].content?.firstParagraphText)
+        XCTAssertEqual(headers.headings.joined(), headers.parameters[0].name)
+        XCTAssertEqual(headers.rawIndexableTextContent(references: [:]), headers.parameters[0].content?.firstParagraphText)
 
         //
         // REST Responses
@@ -144,18 +146,18 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(responses.items.count, 1)
-        
-        guard responses.items.count == 1 else { return }
-        
-        XCTAssertEqual(responses.items[0].status, 200)
-        XCTAssertEqual(responses.items[0].reason, "OK")
-        XCTAssertEqual(responses.items[0].mimeType, "application/json")
-        XCTAssertEqual(responses.items[0].type.first?.identifier, "doc://org.swift.docc/applemusicapi/libraryartistresponse")
-        XCTAssertEqual(responses.items[0].content?.firstParagraphText, "The request was successful.")
-        
-        XCTAssertEqual(responses.headings.joined(), responses.items[0].reason)
-        XCTAssertEqual(responses.rawIndexableTextContent(references: [:]), responses.items[0].content?.firstParagraphText)
+        XCTAssertEqual(responses.responses.count, 1)
+
+        guard responses.responses.count == 1 else { return }
+
+        XCTAssertEqual(responses.responses[0].status, 200)
+        XCTAssertEqual(responses.responses[0].reason, "OK")
+        XCTAssertEqual(responses.responses[0].mimeType, "application/json")
+        XCTAssertEqual(responses.responses[0].type.first?.identifier, "doc://org.swift.docc/applemusicapi/libraryartistresponse")
+        XCTAssertEqual(responses.responses[0].content?.firstParagraphText, "The request was successful.")
+
+        XCTAssertEqual(responses.headings.joined(), responses.responses[0].reason)
+        XCTAssertEqual(responses.rawIndexableTextContent(references: [:]), responses.responses[0].content?.firstParagraphText)
         
         // REST mulitpart Body
         
@@ -290,7 +292,7 @@ class RESTSymbolsTests: XCTestCase {
         } else {
             XCTFail("Unexpected attribute")
         }
-                
+        
         if case RenderAttribute.allowedValues(let values) = attributes[5] {
             XCTAssertEqual(values, ["one", "two", "three"])
         } else {
@@ -309,4 +311,119 @@ class RESTSymbolsTests: XCTestCase {
         
         AssertRoundtrip(for: object)
     }
+    
+    func testReferenceOfEntitlementWithKeyName() throws {
+        
+        func createDocumentationTopicRenderReferenceForSymbol(keyCustomName: String?, extraFiles: [TextFile] = []) throws -> TopicRenderReference {
+            let someSymbol = makeSymbol(
+                id: "plist-key-symbolname",
+                kind: .init(rawValue: "enum"),
+                pathComponents: ["plist-key-symbolname"],
+                otherMixins: [SymbolGraph.Symbol.PlistDetails(rawKey: "plist-key-symbolname", customTitle: keyCustomName)]
+            )
+            let symbols: [SymbolGraph.Symbol] = [someSymbol]
+            let exampleDocumentation = Folder(
+                name: "unit-test.docc",
+                content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: symbols
+                    )),
+                ] + extraFiles
+            )
+            let (_, bundle, context) = try loadBundle(from: (try createTempFolder(content: [exampleDocumentation])))
+            let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+            let moduleSymbol = try XCTUnwrap((try context.entity(with: moduleReference)).semantic as? Symbol)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
+            let renderNode = translator.visit(moduleSymbol) as! RenderNode
+            return try XCTUnwrap((renderNode.references["doc://unit-test/documentation/ModuleName/plist-key-symbolname"] as? TopicRenderReference))
+        }
+        
+        // The symbol has a custom title.
+        var propertyListKeyNames = try XCTUnwrap(createDocumentationTopicRenderReferenceForSymbol(keyCustomName: "Symbol Custom Title").propertyListKeyNames)
+        // Check that the reference contains the key symbol name.
+        XCTAssertEqual(propertyListKeyNames.titleStyle, .useRawKey)
+        XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
+        XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
+        
+        // The symbol does not have a custom title.
+        propertyListKeyNames = try XCTUnwrap(createDocumentationTopicRenderReferenceForSymbol(keyCustomName: nil).propertyListKeyNames)
+        // Check that the reference does not contain the key symbol name.
+        XCTAssertEqual(propertyListKeyNames.titleStyle, .useRawKey)
+        XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
+        XCTAssertNil(propertyListKeyNames.displayName)
+        
+        // The symbol has a custom title and is extended via markdown.
+        var referenceNode = try XCTUnwrap(createDocumentationTopicRenderReferenceForSymbol(
+            keyCustomName: "Symbol Custom Title",
+            extraFiles: [
+                TextFile(name: "plist-key-symbolname.md", utf8Content:
+                    """
+                    # ``ModuleName/plist-key-symbolname``
+                    
+                    A documentation extension for my plist-key-symbolname.
+                    """
+                )
+            ]
+        ))
+        propertyListKeyNames = try XCTUnwrap(referenceNode.propertyListKeyNames)
+        // Check that the reference contains the raw key and title matches the
+        // key name.
+        XCTAssertEqual(referenceNode.title, "plist-key-symbolname")
+        XCTAssertEqual(propertyListKeyNames.titleStyle, .useRawKey)
+        XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
+        XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
+        
+        // The symbol has a custom title and is the markdown defines a `Display Name` directive.
+        referenceNode = try XCTUnwrap(createDocumentationTopicRenderReferenceForSymbol(
+            keyCustomName: "Symbol Custom Title",
+            extraFiles: [
+                TextFile(name: "plist-key-symbolname.md", utf8Content:
+                    """
+                    # ``ModuleName/plist-key-symbolname``
+                    
+                    @Metadata {
+                        @DisplayName("Custom Title")
+                    }
+                    
+                    A documentation extension for my plist-key-symbolname.
+                    """
+                )
+            ]
+        ))
+        propertyListKeyNames = try XCTUnwrap(referenceNode.propertyListKeyNames)
+        // Check that the reference contains the raw key and the title matches the
+        // markdown display name.
+        XCTAssertEqual(referenceNode.title, "Custom Title")
+        XCTAssertEqual(propertyListKeyNames.titleStyle, .useDisplayName)
+        XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
+        XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
+        
+        // The symbol does not have a custom title and is extended via markdown using a `Display Name` directive.
+        referenceNode = try createDocumentationTopicRenderReferenceForSymbol(
+            keyCustomName: nil,
+            extraFiles: [
+                TextFile(name: "plist-key-symbolname.md", utf8Content:
+                    """
+                    # ``ModuleName/plist-key-symbolname``
+                    
+                    @Metadata {
+                        @DisplayName("Custom Name")
+                    }
+                    
+                    A documentation extension for my plist-key-symbolname.
+                    """
+                )
+            ]
+        )
+        propertyListKeyNames = try XCTUnwrap(referenceNode.propertyListKeyNames)
+        // Check that the custom display name is the same as the markdown even that the
+        // property list didn't define a custom title.
+        XCTAssertEqual(referenceNode.title, "Custom Name")
+        XCTAssertEqual(propertyListKeyNames.titleStyle, .useDisplayName)
+        XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
+        XCTAssertEqual(propertyListKeyNames.displayName, nil)
+    }
+    
+    
 }

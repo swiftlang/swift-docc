@@ -10,6 +10,7 @@
 
 import Foundation
 import XCTest
+import SwiftDocC
 
 /*
     This file contains API for working with folder hierarchies, and is extensible to allow for testing
@@ -93,29 +94,25 @@ public struct InfoPlist: File, DataRepresentable {
     /// The information that the Into.plist file contains.
     public let content: Content
 
-    public init(displayName: String? = nil, identifier: String? = nil, versionString: String = "1.0") {
+    public init(displayName: String? = nil, identifier: String? = nil) {
         self.content = Content(
             displayName: displayName,
-            identifier: identifier,
-            versionString: versionString
+            identifier: identifier
         )
     }
 
     public struct Content: Codable, Equatable {
         public let displayName: String?
         public let identifier: String?
-        public let versionString: String?
 
-        fileprivate init(displayName: String?, identifier: String?, versionString: String) {
+        fileprivate init(displayName: String?, identifier: String?) {
             self.displayName = displayName
             self.identifier = identifier
-            self.versionString = versionString
         }
 
         enum CodingKeys: String, CodingKey {
             case displayName = "CFBundleDisplayName"
             case identifier = "CFBundleIdentifier"
-            case versionString = "CFBundleVersion"
         }
     }
 
@@ -126,7 +123,6 @@ public struct InfoPlist: File, DataRepresentable {
         return try encoder.encode([
             Content.CodingKeys.displayName.rawValue: content.displayName,
             Content.CodingKeys.identifier.rawValue: content.identifier,
-            Content.CodingKeys.versionString.rawValue: content.versionString,
         ])
     }
 }
@@ -269,6 +265,7 @@ extension Folder {
     /// - Note: If there are more than one first path component in the provided paths, the return value will contain more than one element.
     public static func makeStructure(
         filePaths: [String],
+        renderNodeReferencePrefix: String? = nil,
         isEmptyDirectoryCheck: (String) -> Bool = { _ in false }
     ) -> [File] {
         guard !filePaths.isEmpty else {
@@ -286,7 +283,7 @@ extension Folder {
             return grouped.map { pathComponent, remaining in
                 let absolutePath = "\(accumulatedBasePath)/\(pathComponent)"
                 if remaining == [[]] && !isEmptyDirectoryCheck(absolutePath) {
-                    return TextFile(name: pathComponent, utf8Content: "")
+                    return JSONFile(name: pathComponent, content: makeMinimalTestRenderNode(path: (renderNodeReferencePrefix ?? "") + absolutePath))
                 } else {
                     return Folder(name: pathComponent, content: _makeStructure(paths: remaining.filter { !$0.isEmpty }, accumulatedBasePath: absolutePath))
                 }
@@ -300,6 +297,25 @@ extension Folder {
         
         return _makeStructure(paths: filePaths.map { $0.components(separatedBy: CharacterSet(charactersIn: "/")) }, accumulatedBasePath: "")
     }
+}
+
+private func makeMinimalTestRenderNode(path: String) -> RenderNode {
+    let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.test", path: path, sourceLanguage: .swift)
+    let rawReference = reference.url.absoluteString
+    let title = path.components(separatedBy: "/").last ?? path
+    
+    var renderNode = RenderNode(identifier: reference, kind: .article)
+    renderNode.metadata.title = title
+    renderNode.references = [
+        rawReference: TopicRenderReference(
+            identifier: RenderReferenceIdentifier(rawReference),
+            title: title,
+            abstract: [],
+            url: reference.path,
+            kind: .article
+        )
+    ]
+    return renderNode
 }
 
 /// A node in a tree structure that can be printed into a visual representation for debugging.

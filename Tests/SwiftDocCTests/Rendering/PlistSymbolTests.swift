@@ -28,7 +28,7 @@ class PlistSymbolTests: XCTestCase {
         
         guard let section = symbol.primaryContentSections.first(where: { section -> Bool in
             return section.kind == .plistDetails
-        }) as? PlistDetailsRenderSection else {
+        }) as? PropertyListDetailsRenderSection else {
             XCTFail("Plist details section not decoded")
             return
         }
@@ -138,7 +138,7 @@ class PlistSymbolTests: XCTestCase {
         
         guard let section = symbol.primaryContentSections.first(where: { section -> Bool in
             return section.kind == .plistDetails
-        }) as? PlistDetailsRenderSection else {
+        }) as? PropertyListDetailsRenderSection else {
             XCTFail("Plist details section not decoded")
             return
         }

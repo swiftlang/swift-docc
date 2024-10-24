@@ -12,7 +12,7 @@ import Foundation
 import SwiftDocC
 
 /// An action that emits documentation extension files that reflect the auto-generated curation.
-struct EmitGeneratedCurationAction: Action {
+struct EmitGeneratedCurationAction: AsyncAction {
     let catalogURL: URL?
     let additionalSymbolGraphDirectory: URL?
     let outputURL: URL
@@ -41,23 +41,16 @@ struct EmitGeneratedCurationAction: Action {
         self.fileManager = fileManager
     }
     
-    mutating func perform(logHandle: LogHandle) throws -> ActionResult {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-
-        let dataProvider: DocumentationWorkspaceDataProvider
-        if let catalogURL {
-            dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
-        } else {
-            dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { [fileManager] url in
-                fileManager.contents(atPath: url.path)
-            })
-        }
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
-            infoPlistFallbacks: [:],
-            additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectory)
+    mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
+        let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
+            startingPoint: catalogURL,
+            options: BundleDiscoveryOptions(
+                infoPlistFallbacks: [:],
+                additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectory)
+            )
         )
-        try workspace.registerProvider(dataProvider, options: bundleDiscoveryOptions)
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)
 
         let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: outputURL)
         let curation = try writer.generateDefaultCurationContents(fromSymbol: startingPointSymbolLink, depthLimit: depthLimit)

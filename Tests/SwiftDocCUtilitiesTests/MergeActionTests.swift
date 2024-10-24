@@ -15,7 +15,15 @@ import SwiftDocCTestUtilities
 
 class MergeActionTests: XCTestCase {
     
-    func testCopiesArchivesIntoOutputLocation() throws {
+    private let testLandingPageInfo = MergeAction.LandingPageInfo.synthesize(
+        .init(
+            name: "Test Landing Page Name",
+            kind: "Test Landing Page Kind",
+            style: .detailedGrid
+        )
+    )
+    
+    func testCopiesArchivesIntoOutputLocation() async throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -60,11 +68,12 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
         
-        _ = try action.perform(logHandle: .memory(logStorage))
+        _ = try await action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         // The combined archive as the data and assets from the input archives but only one set of archive template files
@@ -73,6 +82,7 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
+        │  ├─ documentation.json
         │  ├─ documentation/
         │  │  ├─ first.json
         │  │  ├─ first/
@@ -143,9 +153,29 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.second/
               ╰─ something.mov
         """)
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title ?? ""] + $0.identifiers }, [
+            "Modules",
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+
+            "Tutorials",
+            "doc://org.swift.test/tutorials/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+            "doc://org.swift.test/tutorials/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
     }
     
-    func testCreatesDataDirectoryWhenMergingSingleEmptyArchive() throws {
+    func testCreatesDataDirectoryWhenMergingSingleEmptyArchive() async throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -166,11 +196,12 @@ class MergeActionTests: XCTestCase {
             archives: [
                 URL(fileURLWithPath: "/Empty.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
         
-        _ = try action.perform(logHandle: .memory(logStorage))
+        _ = try await action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         
@@ -219,7 +250,7 @@ class MergeActionTests: XCTestCase {
         """)
     }
     
-    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchive() throws {
+    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchive() async throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -256,11 +287,12 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
         
-        _ = try action.perform(logHandle: .memory(logStorage))
+        _ = try await action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         // The combined archive as the data, documentation, tutorials, and assets from the both input archives.
@@ -269,6 +301,7 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
+        │  ├─ documentation.json
         │  ├─ documentation/
         │  │  ├─ first.json
         │  │  ╰─ first/
@@ -318,9 +351,25 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.second/
               ╰─ something.mov
         """)
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title ?? ""] + $0.identifiers }, [
+            "Modules",
+            "doc://org.swift.test/documentation/first.json",
+
+            "Tutorials",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
     }
     
-    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchiveWithoutStaticHosting() throws {
+    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchiveWithoutStaticHosting() async throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -359,11 +408,12 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
         
-        _ = try action.perform(logHandle: .memory(logStorage))
+        _ = try await action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         // The combined archive doesn't have "documentation" or "tutorial" directories because the inputs didn't support static hosting.
@@ -372,6 +422,7 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
+        │  ├─ documentation.json
         │  ├─ documentation/
         │  │  ├─ first.json
         │  │  ╰─ first/
@@ -407,9 +458,25 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.second/
               ╰─ something.mov
         """)
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title ?? ""] + $0.identifiers }, [
+            "Modules",
+            "doc://org.swift.test/documentation/first.json",
+
+            "Tutorials",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
     }
     
-    func testSupportsArchivesWithoutStaticHosting() throws {
+    func testSupportsArchivesWithoutStaticHosting() async throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -456,11 +523,12 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
         
-        _ = try action.perform(logHandle: .memory(logStorage))
+        _ = try await action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         // The combined archive doesn't have "documentation" or "tutorial" directories because the inputs didn't support static hosting.
@@ -469,6 +537,7 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
+        │  ├─ documentation.json
         │  ├─ documentation/
         │  │  ├─ first.json
         │  │  ├─ first/
@@ -513,9 +582,85 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.second/
               ╰─ something.mov
         """)
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title ?? ""] + $0.identifiers }, [
+            "Modules",
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+
+            "Tutorials",
+            "doc://org.swift.test/tutorials/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+            "doc://org.swift.test/tutorials/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
     }
     
-    func testErrorWhenArchivesContainOverlappingData() throws {
+    func testReferenceOnlyArchivesDoNotSynthesizeTutorialsTopicSection() async throws {
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "First",
+                    documentationPages: [
+                        "First",
+                        "First/SomeClass",
+                        "First/SomeClass/someProperty",
+                        "First/SomeClass/someFunction(:_)",
+                    ],
+                    tutorialPages: []
+                ),
+                Self.makeArchive(
+                    name: "Second",
+                    documentationPages: [
+                        "Second",
+                        "Second/SomeStruct",
+                        "Second/SomeStruct/someProperty",
+                        "Second/SomeStruct/someFunction(:_)",
+                    ],
+                    tutorialPages: []
+                ),
+            ]
+        )
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/Second.doccarchive"),
+            ],
+            landingPageInfo: testLandingPageInfo,
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        _ = try await action.perform(logHandle: .memory(logStorage))
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title].compactMap({ $0 }) + $0.identifiers }, [
+            // No title
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+        ])
+    }
+    
+    func testErrorWhenArchivesContainOverlappingData() async throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -574,11 +719,15 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/Second.doccarchive"),
                 URL(fileURLWithPath: "/Third.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
         
-        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
+        do {
+            _ = try await action.perform(logHandle: LogHandle.memory(logStorage))
+            XCTFail("The action didn't raise an error")
+        } catch {
             XCTAssertEqual(error.localizedDescription, """
             Input archives contain overlapping data
 
@@ -592,7 +741,7 @@ class MergeActionTests: XCTestCase {
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), "Output.doccarchive/", "Nothing was written to the output directory")
     }
     
-    func testErrorWhenOutputDirectoryIsNotEmpty() throws {
+    func testErrorWhenOutputDirectoryIsNotEmpty() async throws {
         let fileSystem = try TestFileSystem(folders: [
             Self.makeArchive(name: "Output", documentationPages: [
                 "Something",
@@ -611,11 +760,15 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
         
-        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
+        do {
+            _ = try await action.perform(logHandle: LogHandle.memory(logStorage))
+            XCTFail("The action didn't raise an error")
+        } catch {
             XCTAssertEqual(error.localizedDescription, """
             Output directory is not empty. It contains:
              - css/
@@ -629,7 +782,7 @@ class MergeActionTests: XCTestCase {
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
     }
     
-    func testErrorWhenSomeArchivesDoNotSupportStaticHosting() throws {
+    func testErrorWhenSomeArchivesDoNotSupportStaticHosting() async throws {
         let fileSystem = try TestFileSystem(folders: [
             Self.makeArchive(
                 name: "First",
@@ -672,11 +825,15 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
         
-        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
+        do {
+            _ = try await action.perform(logHandle: LogHandle.memory(logStorage))
+            XCTFail("The action didn't raise an error")
+        } catch {
             XCTAssertEqual(error.localizedDescription, """
             Different static hosting support in different archives.
 
@@ -861,7 +1018,7 @@ class MergeActionTests: XCTestCase {
                 ]
             }
             dataContent += [
-                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased()).json" })),
+                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased()).json" }, renderNodeReferencePrefix: "/documentation")),
             ]
         }
         if !tutorialPages.isEmpty {
@@ -871,7 +1028,7 @@ class MergeActionTests: XCTestCase {
                 ]
             }
             dataContent += [
-                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased()).json" })),
+                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased()).json" }, renderNodeReferencePrefix: "/tutorials")),
             ]
         }
         if !dataContent.isEmpty {
@@ -906,5 +1063,13 @@ class MergeActionTests: XCTestCase {
         ]
         
         return Folder(name: "\(name).doccarchive", content: content)
+    }
+}
+
+private extension TestFileSystem {
+    func renderNode(atPath path: String) throws -> RenderNode {
+        let data = try contents(of: URL(fileURLWithPath: path))
+        
+        return try JSONDecoder().decode(RenderNode.self, from: data)
     }
 }

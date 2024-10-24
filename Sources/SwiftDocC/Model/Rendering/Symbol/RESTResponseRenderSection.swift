@@ -11,20 +11,26 @@
 import Foundation
 
 /// A section that displays a list of REST responses.
-struct RESTResponseRenderSection: RenderSection, Equatable {
+public struct RESTResponseRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restResponses
     /// The title for the section.
     public let title: String
     /// The list of possible REST responses.
-    public let items: [RESTResponse]
-    
+    public let responses: [RESTResponse]
+
+    enum CodingKeys: String, CodingKey {
+        case kind
+        case title
+        case responses = "items"
+    }
+
     /// Creates a new REST response section.
     /// - Parameters:
     ///   - title: The title for the section.
-    ///   - items: The list of possible REST responses.
-    public init(title: String, items: [RESTResponse]) {
+    ///   - responses: The list of possible REST responses.
+    public init(title: String, responses: [RESTResponse]) {
         self.title = title
-        self.items = items
+        self.responses = responses
     }
 }
 
@@ -37,14 +43,14 @@ extension RESTResponseRenderSection: RenderJSONDiffable {
 
         diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
         diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
-        diffBuilder.addDifferences(atKeyPath: \.items, forKey: CodingKeys.items)
+        diffBuilder.addDifferences(atKeyPath: \.responses, forKey: CodingKeys.responses)
 
         return diffBuilder.differences
     }
     
     /// Returns if this RESTResponseRenderSection is similar enough to the given one.
     func isSimilar(to other: RESTResponseRenderSection) -> Bool {
-        return self.title == other.title || self.items == other.items
+        return self.title == other.title || self.responses == other.responses
     }
 }
 
@@ -54,7 +60,7 @@ extension RESTResponseRenderSection: RenderJSONDiffable {
 /// If the response is a decodable object, a declaration-style `type` property
 /// describes the expected type and can provide an optional link to the expected
 /// documentation symbol.
-struct RESTResponse: Codable, TextIndexing, Equatable {
+public struct RESTResponse: Codable, TextIndexing, Equatable {
     /// The HTTP status code for the response.
     public let status: UInt
     /// An optional plain-text reason for the response.

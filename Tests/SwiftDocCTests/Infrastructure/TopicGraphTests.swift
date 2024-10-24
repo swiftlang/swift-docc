@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ class TopicGraphTests: XCTestCase {
         static func testNodeWithTitle(_ title: String) -> TopicGraph.Node {
             let urlSafeTitle = title.replacingOccurrences(of: " ", with: "_")
             let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(urlSafeTitle)", sourceLanguage: .swift)
-            return TopicGraph.Node(reference: reference, kind: .technology, source: .file(url: URL(fileURLWithPath: "/path/to/\(urlSafeTitle)")), title: title)
+            return TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(urlSafeTitle)")), title: title)
         }
         
         /// Return a graph with one node A

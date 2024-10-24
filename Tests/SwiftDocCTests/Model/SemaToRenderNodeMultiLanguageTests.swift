@@ -11,6 +11,7 @@
 import Foundation
 @testable import SwiftDocC
 import SymbolKit
+import SwiftDocCTestUtilities
 import XCTest
 
 class SemaToRenderNodeMixedLanguageTests: XCTestCase {
@@ -969,7 +970,48 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssertTrue(objCTopicIDs.contains("doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber"))
         XCTAssertFalse(objCTopicIDs.contains("doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct"))
     }
-    
+
+    func testAutomaticSeeAlsoSectionElementLimit() throws {
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: (1...50).map {
+                    makeSymbol(id: "symbol-id-\($0)", kind: .class, pathComponents: ["SymbolName\($0)"])
+                })),
+
+                TextFile(name: "ModuleName.md", utf8Content: """
+                # ``ModuleName``
+                
+                A topic section with many elements
+                
+                ## Topics
+                
+                ### Many symbols
+                
+                \((1...50).map { "- ``SymbolName\($0)``" }.joined(separator: "\n"))
+                """),
+            ])
+        ])
+
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        try workspace.registerProvider(fileSystem)
+
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let bundle = try XCTUnwrap(context.registeredBundles.first)
+
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let moduleNode = try converter.convert(context.entity(with: moduleReference))
+        XCTAssertEqual(moduleNode.topicSections.first?.identifiers.count, 50, "The module curates 50 symbols")
+
+        for number in 1...50 {
+            let symbolReference = moduleReference.appendingPath("SymbolName\(number)")
+            let symbolNode = try converter.convert(context.entity(with: symbolReference))
+            XCTAssertEqual(symbolNode.seeAlsoSections.first?.identifiers.count, 15, "The limit is applies to the large See Also section")
+        }
+    }
+
     func renderNodeApplyingObjectiveCVariantOverrides(to renderNode: RenderNode) throws -> RenderNode {
         return try renderNodeApplying(variant: "occ", to: renderNode)
     }

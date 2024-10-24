@@ -136,12 +136,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
         
-        if let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) {
-            let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
+        if let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) {
+            let tutorialTableOfContents = try! context.entity(with: hierarchy.tutorialTableOfContents).semantic as! TutorialTableOfContents
             node.hierarchy = hierarchy.hierarchy
-            node.metadata.category = technology.name
-            node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
-        } else if !context.allowsRegisteringArticlesWithoutTechnologyRoot {
+            node.metadata.category = tutorialTableOfContents.name
+            node.metadata.categoryPathComponent = hierarchy.tutorialTableOfContents.url.lastPathComponent
+        } else if !context.configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot {
             // This tutorial is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
             return nil
@@ -193,12 +193,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
 
         // We guarantee there will be at least 1 path with at least 4 nodes in that path if the tutorial is curated.
-        // The way to curate tutorials is to link them from a Technology page and that generates the following hierarchy:
-        // technology -> volume -> chapter -> tutorial.
-        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
-        
-        if technologyPath.count >= 2 {
-            let volume = technologyPath[technologyPath.count - 2]
+        // The way to curate tutorials is to link them from a tutorial table-of-contents page and that generates the following hierarchy:
+        // table-of-contents -> volume -> chapter -> tutorial.
+        let tutorialPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
+
+        if tutorialPath.count >= 2 {
+            let volume = tutorialPath[tutorialPath.count - 2]
             
             if let cta = callToAction(with: tutorial.callToActionImage, volume: volume) {
                 node.sections.append(cta)
@@ -372,33 +372,38 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return totalDurationMinutes.flatMap(contentRenderer.formatEstimatedDuration(minutes:))
     }
 
-    public mutating func visitTechnology(_ technology: Technology) -> RenderTree? {
+    @available(*, deprecated) // This is a deprecated protocol requirement
+    public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> RenderTree? {
+        visitTutorialTableOfContents(technology)
+    }
+
+    public mutating func visitTutorialTableOfContents(_ tableOfContents: TutorialTableOfContents) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .overview)
         
-        node.metadata.title = technology.intro.title
-        node.metadata.category = technology.name
+        node.metadata.title = tableOfContents.intro.title
+        node.metadata.category = tableOfContents.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
         node.metadata.estimatedTime = totalEstimatedDuration()
-        node.metadata.role = DocumentationContentRenderer.role(for: .technology).rawValue
+        node.metadata.role = DocumentationContentRenderer.role(for: .tutorialTableOfContents).rawValue
         
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
 
-        var intro = visitIntro(technology.intro) as! IntroRenderSection
+        var intro = visitIntro(tableOfContents.intro) as! IntroRenderSection
         if let firstTutorial = self.firstTutorial(ofTechnology: identifier) {
             intro.action = visitLink(firstTutorial.reference.url, defaultTitle: "Get started")
         }
         node.sections.append(intro)
                 
-        node.sections.append(contentsOf: technology.volumes.map { visitVolume($0) as! VolumeRenderSection })
+        node.sections.append(contentsOf: tableOfContents.volumes.map { visitVolume($0) as! VolumeRenderSection })
         
-        if let resources = technology.resources {
+        if let resources = tableOfContents.resources {
             node.sections.append(visitResources(resources) as! ResourcesRenderSection)
         }
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
         node.hierarchy = hierarchyTranslator
-            .visitTechnologyNode(identifier, omittingChapters: true)!
+            .visitTutorialTableOfContentsNode(identifier, omittingChapters: true)!
             .hierarchy
 
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
@@ -729,11 +734,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
+        let role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind)
+        node.metadata.role = role.rawValue
+
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
-            
-            let role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind)
-            node.metadata.role = role.rawValue
-            
             switch role {
             case .article:
                 // If there are no links to other nodes from the article,
@@ -839,7 +843,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let availability = article.metadata?.availability, !availability.isEmpty {
             let renderAvailability = availability.compactMap({
                 let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.externalMetadata.currentPlatforms?[name.displayName]
+                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
                 }
                 return .init($0, current: currentPlatform)
             }).sorted(by: AvailabilityRenderOrder.compare)
@@ -876,18 +880,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var node = RenderNode(identifier: identifier, kind: .article)
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        guard let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) else {
+        guard let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) else {
             // This tutorial article is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
             return nil
         }
         
-        let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
-        
+        let tutorialTableOfContents = try! context.entity(with: hierarchy.tutorialTableOfContents).semantic as! TutorialTableOfContents
+
         node.metadata.title = article.title
         
-        node.metadata.category = technology.name
-        node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
+        node.metadata.category = tutorialTableOfContents.name
+        node.metadata.categoryPathComponent = hierarchy.tutorialTableOfContents.url.lastPathComponent
         node.metadata.role = DocumentationContentRenderer.role(for: .tutorialArticle).rawValue
         
         // Unlike for other pages, in here we use `RenderHierarchyTranslator` to crawl the technology
@@ -912,7 +916,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Guaranteed to have at least one path
-        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
+        let tutorialPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
                 
         node.sections.append(intro)
         
@@ -926,8 +930,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.sections.append(visitAssessments(assessments) as! TutorialAssessmentsRenderSection)
         }
         
-        if technologyPath.count >= 2 {
-            let volume = technologyPath[technologyPath.count - 2]
+        if tutorialPath.count >= 2 {
+            let volume = tutorialPath[tutorialPath.count - 2]
             
             if let cta = callToAction(with: article.callToActionImage, volume: volume) {
                 node.sections.append(cta)
@@ -1238,33 +1242,40 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
+        let defaultAvailability = defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
+            .filter { $0.unconditionallyUnavailable != true }
+            .sorted(by: AvailabilityRenderOrder.compare)
+        
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
-            availability.availability
+            guard !availability.availability.isEmpty else {
+                return defaultAvailability
+            }
+            
+            return availability.availability
                 .compactMap { availability -> AvailabilityRenderItem? in
-                    // Filter items with insufficient availability data
-                    guard availability.introducedVersion != nil else {
+                    // Filter items with insufficient availability data.
+                    // Allow availability without version information, but only if
+                    // both, introduced and deprecated, are nil.
+                    if availability.introducedVersion == nil && availability.deprecatedVersion != nil {
                         return nil
                     }
                     guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
-                          let currentPlatform = context.externalMetadata.currentPlatforms?[name.displayName] else {
-                              // No current platform provided by the context
-                              return AvailabilityRenderItem(availability, current: nil)
-                          }
+                          let currentPlatform = context.configuration.externalMetadata.currentPlatforms?[name.displayName]
+                    else {
+                        // No current platform provided by the context
+                        return AvailabilityRenderItem(availability, current: nil)
+                    }
                     
                     return AvailabilityRenderItem(availability, current: currentPlatform)
                 }
-                .filter({ !($0.unconditionallyUnavailable == true) })
+                .filter { $0.unconditionallyUnavailable != true }
                 .sorted(by: AvailabilityRenderOrder.compare)
-        } ?? .init(defaultValue:
-            defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.externalMetadata.currentPlatforms)?
-                .filter({ !($0.unconditionallyUnavailable == true) })
-                .sorted(by: AvailabilityRenderOrder.compare)
-        )
+        } ?? .init(defaultValue: defaultAvailability)
 
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
             let renderAvailability = availability.compactMap({
                 let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.externalMetadata.currentPlatforms?[name.displayName]
+                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
                 }
                 return .init($0, current: currentPlatform)
             }).sorted(by: AvailabilityRenderOrder.compare)
@@ -1330,7 +1341,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // In case `inheritDocs` is disabled and there is actually origin data for the symbol, then include origin information as abstract.
         // Generate the placeholder abstract only in case there isn't an authored abstract coming from a doc extension.
-        if !context.externalMetadata.inheritDocs, let origin = (documentationNode.semantic as! Symbol).origin, symbol.abstractSection == nil {
+        if !context.configuration.externalMetadata.inheritDocs,
+            let origin = (documentationNode.semantic as! Symbol).origin,
+            symbol.abstractSection == nil
+        {
             // Create automatic abstract for inherited symbols.
             node.abstract = [.text("Inherited from "), .codeVoice(code: origin.displayName), .text(".")]
         } else {
@@ -1364,6 +1378,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     HTTPBodySectionTranslator(),
                     HTTPResponsesSectionTranslator(),
                     PlistDetailsSectionTranslator(),
+                    PossibleValuesSectionTranslator(),
                     DictionaryKeysSectionTranslator(),
                     AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),
@@ -1647,12 +1662,39 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return seeAlsoSections
         } ?? .init(defaultValue: [])
         
-        node.deprecationSummaryVariants = VariantCollection<[RenderBlockContent]?>(
-            from: symbol.deprecatedSummaryVariants
-        ) { _, deprecatedSummary in
-            // If there is a deprecation summary in a documentation extension file add it to the render node
-            visitMarkupContainer(MarkupContainer(deprecatedSummary.content)) as? [RenderBlockContent]
-        } ?? .init(defaultValue: nil)
+        /// The set of traits in which the symbol is deprecated in at least one platform.
+        let traitsInWhichSymbolsIsDeprecated = documentationNode.availableVariantTraits.filter { trait in
+            guard let platforms = symbol.availabilityVariants[trait]?.availability else {
+                return false
+            }
+            
+            return platforms.contains(where: { platform in
+                platform.deprecatedVersion != nil || platform.isUnconditionallyDeprecated
+            })
+        }
+        
+        node.deprecationSummaryVariants = VariantCollection(
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: nil,
+            transform: { trait in
+                if traitsInWhichSymbolsIsDeprecated.contains(trait) || traitsInWhichSymbolsIsDeprecated.isEmpty {
+                    // It's possible for a symbol to only be deprecated in _some_ of its language representations
+                    // In this case, only display the deprecation information for those language representations.
+                    //
+                    // Also, previous versions of DocC treated a page as deprecated if it had a custom `@DeprecationSummmary` description,
+                    // even if the symbol wasn't deprecated. We preserve that behavior for backwards compatibility.
+                    // TODO: Warn about using `@DeprecationSummmary` for non-deprecated pages,
+                    // suggesting to use `@Available` to add deprecation information.
+                    guard let deprecatedSummary = symbol.deprecatedSummaryVariants[trait] else {
+                        return nil
+                    }
+                    
+                    return visitMarkupContainer(MarkupContainer(deprecatedSummary.content)) as? [RenderBlockContent]
+                }
+                
+                return []
+            }
+        ) ?? .init(defaultValue: nil)
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
@@ -1715,7 +1757,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let downloadReference: DownloadReference
             do {
                 let downloadURL = resolvedAssets.variants.first!.value
-                let downloadData = try context.dataProvider.contentsOfURL(downloadURL, in: bundle)
+                let downloadData = try context.contentsOfURL(downloadURL, in: bundle)
                 downloadReference = DownloadReference(identifier: mediaReference,
                     renderURL: downloadURL,
                     checksum: Checksum.sha512(of: downloadData))
@@ -1785,10 +1827,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let renderedAvailability = moduleAvailability
             .filter({ $0.versionInformation != .unavailable })
             .compactMap({ availability -> AvailabilityRenderItem? in
-                guard let availabilityIntroducedVersion = availability.introducedVersion else { return nil }
                 return AvailabilityRenderItem(
                     name: availability.platformName.displayName,
-                    introduced: availabilityIntroducedVersion,
+                    introduced: availability.introducedVersion,
                     isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
                 )
             })
@@ -1886,9 +1927,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
             if let constraint = symbol.maximumExclusive {
                 attributes.append(RenderAttribute.maximumExclusive(String(constraint)))
             }
-            if let constraint = symbol.allowedValues {
-                attributes.append(RenderAttribute.allowedValues(constraint.map{String($0)}))
-            }
             if let constraint = symbol.isReadOnly {
                 isReadOnly = constraint
             }
@@ -1897,6 +1935,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             if let constraint = symbol.maximumLength {
                 attributes.append(RenderAttribute.maximumLength(String(constraint)))
+            }
+            if let constraint = symbol.allowedValues {
+                attributes.append(RenderAttribute.allowedValues(constraint.map { String($0) } ))
             }
             if let constraint = symbol.typeDetails, constraint.count > 0 {
                 // Pull out the base-type details.

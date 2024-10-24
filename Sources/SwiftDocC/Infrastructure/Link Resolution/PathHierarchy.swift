@@ -36,7 +36,6 @@ struct ResolvedIdentifier: Equatable, Hashable {
 ///
 /// After a path hierarchy has been fully created---with both symbols and non-symbols---it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
 struct PathHierarchy {
-    
     /// The list of module nodes.
     private(set) var modules: [Node]
     /// The container of top-level articles in the documentation hierarchy.
@@ -124,7 +123,7 @@ struct PathHierarchy {
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
                     // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
                     if symbol.identifier.precise.contains("::SYNTHESIZED::") {
-                        node.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
+                        node.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
                     }
                     nodes[id] = node
                     
@@ -258,6 +257,8 @@ struct PathHierarchy {
                     switch component.disambiguation {
                     case .kindAndHash(kind: let kind, hash: let hash):
                         parent.add(child: nodeWithoutSymbol, kind: kind.map(String.init), hash: hash.map(String.init))
+                    case .typeSignature(let parameterTypes, let returnTypes):
+                        parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil, parameterTypes: parameterTypes?.map(String.init), returnTypes: returnTypes?.map(String.init))
                     case nil:
                         parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
                     }
@@ -285,6 +286,10 @@ struct PathHierarchy {
                 guard let groupNode = overloadGroupNodes[relationship.target], let overloadedSymbolNodes = allNodes[relationship.source] else {
                     continue
                 }
+                
+                // The overload group symbol is cloned from a real symbol and has the same type signature as the clone. This prevents either symbol from using
+                // parameter type or return type disambiguation. Exclude the overload group from this, so that the real symbol can use it.
+                groupNode.specialBehaviors.insert(.excludeFromAdvancedLinkDisambiguation)
 
                 for overloadedSymbolNode in overloadedSymbolNodes {
                     // We want to disfavor the individual overload symbols in favor of resolving links to their overload group symbol.
@@ -414,7 +419,7 @@ struct PathHierarchy {
     /// - Parameter name: The path component name of the tutorial overview (the file name without the file extension).
     /// - Returns: The new unique identifier that represent this tutorial overview.
     mutating func addTutorialOverview(name: String) -> ResolvedIdentifier {
-        return addNonSymbolChild(parent: tutorialOverviewContainer.identifier, name: name, kind: "technology")
+        return addNonSymbolChild(parent: tutorialOverviewContainer.identifier, name: name, kind: "tutorial-toc")
     }
     
     /// Adds a non-symbol child element to an existing element in the path hierarchy.
@@ -489,10 +494,26 @@ extension PathHierarchy {
             ///
             /// If a favored node collides with a disfavored node the link will resolve to the favored node without requiring any disambiguation.
             /// Referencing the disfavored node requires disambiguation unless it's the only match for that link.
-            static let disfavorInLinkCollision = SpecialBehaviors(rawValue: 1 << 0)
+            static let disfavorInLinkCollision = Self(rawValue: 1 << 0)
             
             /// This node is excluded from automatic curation.
-            static let excludeFromAutomaticCuration = SpecialBehaviors(rawValue: 1 << 1)
+            static let excludeFromAutomaticCuration = Self(rawValue: 1 << 1)
+            
+            /// This node is excluded from advanced link disambiguation, for example type-signature disambiguation.
+            static let excludeFromAdvancedLinkDisambiguation = Self(rawValue: 1 << 2)
+        }
+        
+        /// A Boolean value indicating whether this node is disfavored in link collisions.
+        var isDisfavoredInLinkCollisions: Bool {
+            specialBehaviors.contains(.disfavorInLinkCollision)
+        }
+        /// A Boolean value indicating whether this node is excluded from automatic curation.
+        var isExcludedFromAutomaticCuration: Bool {
+            specialBehaviors.contains(.excludeFromAutomaticCuration)
+        }
+        /// A Boolean value indicating whether this node is excluded from advanced link disambiguation, for example type-signature disambiguation.
+        var isExcludedFromAdvancedLinkDisambiguation: Bool {
+            specialBehaviors.contains(.excludeFromAdvancedLinkDisambiguation)
         }
         
         /// Initializes a symbol node.
@@ -515,17 +536,23 @@ extension PathHierarchy {
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
         fileprivate func add(symbolChild: Node) {
             precondition(symbolChild.symbol != nil)
+            let symbol = symbolChild.symbol!
+            
+            let functionSignatureTypeNames = PathHierarchy.functionSignatureTypeNames(for: symbol)
             add(
                 child: symbolChild,
-                kind: symbolChild.symbol!.kind.identifier.identifier,
-                hash: symbolChild.symbol!.identifier.precise.stableHashString
+                kind: symbol.kind.identifier.identifier,
+                hash: symbol.identifier.precise.stableHashString,
+                parameterTypes: functionSignatureTypeNames?.parameterTypeNames,
+                returnTypes: functionSignatureTypeNames?.returnTypeNames
             )
         }
         
         /// Adds a descendant of this node.
-        fileprivate func add(child: Node, kind: String?, hash: String?) {
+        fileprivate func add(child: Node, kind: String?, hash: String?, parameterTypes: [String]? = nil, returnTypes: [String]? = nil) {
             guard child.parent !== self else { 
                 assert(
+                    children.keys.contains(child.name) &&
                     (try? children[child.name]?.find(.kindAndHash(kind: kind?[...], hash: hash?[...]))) === child,
                     "If the new child node already has this node as its parent it should already exist among this node's children."
                 )
@@ -533,13 +560,13 @@ extension PathHierarchy {
             }
             // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
-            children[child.name, default: .init()].add(child, kind: kind, hash: hash)
+            children[child.name, default: .init()].add(child, kind: kind, hash: hash, parameterTypes: parameterTypes, returnTypes: returnTypes)
             
             assert(child.parent === self, "Potentially merging nodes shouldn't break the child node's reference to its parent.")
         }
         
         /// Combines this node with another node.
-        fileprivate func merge(with other: Node) {
+        func merge(with other: Node) {
             assert(self.parent?.symbol?.identifier.precise == other.parent?.symbol?.identifier.precise)
             self.children = self.children.merging(other.children, uniquingKeysWith: { $0.merge(with: $1) })
             
@@ -614,6 +641,8 @@ extension PathHierarchy.DisambiguationContainer {
         let node: PathHierarchy.Node
         let kind: String?
         let hash: String?
+        let parameterTypes: [String]?
+        let returnTypes: [String]?
         
         func matches(kind: String?, hash: String?) -> Bool {
             // The 'hash' is more unique than the 'kind', so compare the 'hash' first.
@@ -632,14 +661,15 @@ extension PathHierarchy.DisambiguationContainer {
             kind == nil && hash == nil
         }
     }
-    
-    /// Add a new value to the tree for a given pair of kind and hash disambiguations.
+
+    /// Add a new value and its disambiguation information to the container.
     /// - Parameters:
-    ///   - value: The new value
-    ///   - kind: The kind disambiguation for this value.
-    ///   - hash: The hash disambiguation for this value.
-    /// - Returns: If a value already exist with the same pair of kind and hash disambiguations.
-    mutating func add(_ value: PathHierarchy.Node, kind: String?, hash: String?) {
+    ///   - value: The new value.
+    ///   - kind: The kind disambiguation for this value, if any.
+    ///   - hash: The hash disambiguation for this value, if any.
+    ///   - parameterTypes: The type names of the parameter disambiguation for this value, if any.
+    ///   - returnTypes: The type names of the return value disambiguation for this value, if any.
+    mutating func add(_ value: PathHierarchy.Node, kind: String?, hash: String?, parameterTypes: [String]?, returnTypes: [String]?) {
         // When adding new elements to the container, it's sufficient to check if the hash and kind match.
         if let existing = storage.first(where: { $0.matches(kind: kind, hash: hash) }) {
             // If the container already has a version of this node, merge the new value with the existing value.
@@ -649,9 +679,9 @@ extension PathHierarchy.DisambiguationContainer {
             // When this happens, remove the placeholder node and move its children to the real (non-symbol) node.
             let existing = storage.removeFirst()
             value.merge(with: existing.node)
-            storage = [Element(node: value, kind: kind, hash: hash)]
+            storage = [Element(node: value, kind: kind, hash: hash, parameterTypes: parameterTypes, returnTypes: returnTypes)]
         } else {
-            storage.append(Element(node: value, kind: kind, hash: hash))
+            storage.append(Element(node: value, kind: kind, hash: hash, parameterTypes: parameterTypes, returnTypes: returnTypes))
         }
     }
     
@@ -733,7 +763,13 @@ extension PathHierarchy {
             for child in fileNode.children {
                 let childNode = lookup[identifiers[child.nodeID]]!
                 // Even if this is a symbol node, explicitly pass the kind and hash disambiguation.
-                node.add(child: childNode, kind: child.kind, hash: child.hash)
+                node.add(
+                    child: childNode,
+                    kind: child.kind,
+                    hash: child.hash,
+                    parameterTypes: child.parameterTypes,
+                    returnTypes: child.returnTypes
+                )
                 if let kind = child.kind {
                     // Since the symbol was created with an empty symbol kind, fill in its kind identifier here.
                     childNode.symbol?.kind.identifier = .init(identifier: kind)

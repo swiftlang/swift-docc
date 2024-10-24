@@ -46,8 +46,14 @@ extension PathHierarchy.FileRepresentation {
                         children: node.children.values.flatMap({ tree in
                             var disambiguations = [Node.Disambiguation]()
                             for element in tree.storage where element.node.identifier != nil { // nodes without identifiers can't be found in the tree
-                                disambiguations.append(.init(kind: element.kind, hash: element.hash, nodeID: identifierMap[element.node.identifier]!))
-                                }
+                                disambiguations.append(.init(
+                                    kind: element.kind,
+                                    hash: element.hash,
+                                    parameterTypes: element.parameterTypes,
+                                    returnTypes: element.returnTypes,
+                                    nodeID: identifierMap[element.node.identifier]!
+                                ))
+                            }
                             return disambiguations
                         }),
                         symbolID: node.symbol?.identifier
@@ -96,6 +102,8 @@ extension PathHierarchy {
             struct Disambiguation: Codable {
                 var kind: String?
                 var hash: String?
+                var parameterTypes: [String]?
+                var returnTypes: [String]?
                 var nodeID: Int
             }
         }

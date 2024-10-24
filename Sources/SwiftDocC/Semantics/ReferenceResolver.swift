@@ -245,12 +245,17 @@ struct ReferenceResolver: SemanticVisitor {
         // Wrap in a markup container and the first child of the result.
         return (visitMarkupContainer(MarkupContainer(markup)) as! MarkupContainer).elements.first!
     }
-    
-    mutating func visitTechnology(_ technology: Technology) -> Semantic {
-        let newIntro = visit(technology.intro) as! Intro
-        let newVolumes = technology.volumes.map { visit($0) } as! [Volume]
-        let newResources = technology.resources.map { visit($0) as! Resources }
-        return Technology(originalMarkup: technology.originalMarkup, name: technology.name, intro: newIntro, volumes: newVolumes, resources: newResources, redirects: technology.redirects)
+
+    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released.
+    mutating func visitTechnology(_ technology: TutorialTableOfContents) -> Semantic {
+        visitTutorialTableOfContents(technology)
+    }
+
+    mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Semantic {
+        let newIntro = visit(tutorialTableOfContents.intro) as! Intro
+        let newVolumes = tutorialTableOfContents.volumes.map { visit($0) } as! [Volume]
+        let newResources = tutorialTableOfContents.resources.map { visit($0) as! Resources }
+        return TutorialTableOfContents(originalMarkup: tutorialTableOfContents.originalMarkup, name: tutorialTableOfContents.name, intro: newIntro, volumes: newVolumes, resources: newResources, redirects: tutorialTableOfContents.redirects)
     }
     
     mutating func visitImageMedia(_ imageMedia: ImageMedia) -> Semantic {
@@ -309,7 +314,7 @@ struct ReferenceResolver: SemanticVisitor {
         // i.e. doc:/${SOME_TECHNOLOGY}/${PROJECT} or doc://${BUNDLE_ID}/${SOME_TECHNOLOGY}/${PROJECT}
         switch tutorialReference.topic {
         case .unresolved:
-            let maybeResolved = resolve(tutorialReference.topic, in: bundle.technologyTutorialsRootReference,
+            let maybeResolved = resolve(tutorialReference.topic, in: bundle.tutorialsContainerReference,
                                         range: tutorialReference.originalMarkup.range,
                                         severity: .warning)
             return TutorialReference(originalMarkup: tutorialReference.originalMarkup, tutorial: .resolved(maybeResolved))
@@ -472,6 +477,13 @@ struct ReferenceResolver: SemanticVisitor {
             return HTTPResponsesSection(responses: responses)
         }
         
+        let possibleValuesVariants = symbol.possibleValuesSectionVariants.map { possibleValuesSection -> PropertyListPossibleValuesSection in
+            let possibleValues = possibleValuesSection.possibleValues.map {
+                PropertyListPossibleValuesSection.PossibleValue(value: $0.value, contents: $0.contents.map { visitMarkup($0) }, nameRange: $0.nameRange, range: $0.range)
+            }
+            return PropertyListPossibleValuesSection(possibleValues: possibleValues)
+        }
+        
         // It's important to carry over aggregate data like the merged declarations
         // or the merged default implementations to the new `Symbol` instance.
         
@@ -491,6 +503,7 @@ struct ReferenceResolver: SemanticVisitor {
             mixinsVariants: symbol.mixinsVariants,
             declarationVariants: symbol.declarationVariants,
             alternateDeclarationVariants: symbol.alternateDeclarationVariants,
+            alternateSignatureVariants: symbol.alternateSignatureVariants,
             defaultImplementationsVariants: symbol.defaultImplementationsVariants,
             relationshipsVariants: symbol.relationshipsVariants,
             abstractSectionVariants: newAbstractVariants,
@@ -500,6 +513,7 @@ struct ReferenceResolver: SemanticVisitor {
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
             dictionaryKeysSectionVariants: newDictionaryKeysVariants,
+            possibleValuesSectionVariants: possibleValuesVariants,
             httpEndpointSectionVariants: newHTTPEndpointVariants,
             httpBodySectionVariants: newHTTPBodyVariants,
             httpParametersSectionVariants: newHTTPParametersVariants,

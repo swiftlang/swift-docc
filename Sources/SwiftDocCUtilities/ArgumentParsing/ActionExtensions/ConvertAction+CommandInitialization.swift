@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -44,18 +44,7 @@ extension ConvertAction {
         // into a dictionary. This will throw with a descriptive error upon failure.
         let parsedPlatforms = try PlatformArgumentParser.parse(convert.platforms)
 
-        let additionalSymbolGraphFiles = (convert as _DeprecatedSymbolGraphFilesAccess).additionalSymbolGraphFiles + symbolGraphFiles(
-            in: convert.additionalSymbolGraphDirectory
-        )
-        
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
-            fallbackDisplayName: convert.fallbackBundleDisplayName,
-            fallbackIdentifier: convert.fallbackBundleIdentifier,
-            fallbackVersion: nil,
-            fallbackDefaultCodeListingLanguage: convert.defaultCodeListingLanguage,
-            fallbackDefaultModuleKind: convert.fallbackDefaultModuleKind,
-            additionalSymbolGraphFiles: additionalSymbolGraphFiles
-        )
+        let bundleDiscoveryOptions = convert.bundleDiscoveryOptions
         
         // The `preview` and `convert` action defaulting to the current working directory is only supported
         // when running `docc preview` and `docc convert` without any of the fallback options.
@@ -97,6 +86,20 @@ extension ConvertAction {
     }
 }
 
+package extension Docc.Convert {
+    var bundleDiscoveryOptions: BundleDiscoveryOptions {
+        let additionalSymbolGraphFiles = symbolGraphFiles(in: additionalSymbolGraphDirectory)
+        
+        return BundleDiscoveryOptions(
+            fallbackDisplayName: fallbackBundleDisplayName,
+            fallbackIdentifier: fallbackBundleIdentifier,
+            fallbackDefaultCodeListingLanguage: defaultCodeListingLanguage,
+            fallbackDefaultModuleKind: fallbackDefaultModuleKind,
+            additionalSymbolGraphFiles: additionalSymbolGraphFiles
+        )
+    }
+}
+
 private func symbolGraphFiles(in directory: URL?) -> [URL] {
     guard let directory else { return [] }
     
@@ -104,8 +107,3 @@ private func symbolGraphFiles(in directory: URL?) -> [URL] {
     return subpaths.map { directory.appendingPathComponent($0) }
         .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
 }
-
-private protocol _DeprecatedSymbolGraphFilesAccess {
-    var additionalSymbolGraphFiles: [URL] { get }
-}
-extension Docc.Convert: _DeprecatedSymbolGraphFilesAccess {}

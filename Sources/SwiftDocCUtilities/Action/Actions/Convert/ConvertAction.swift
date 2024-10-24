@@ -14,71 +14,27 @@ import Foundation
 import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
-public struct ConvertAction: Action, RecreatingContext {
-    enum Error: DescribedError {
-        case doesNotContainBundle(url: URL)
-        case cancelPending
-        var errorDescription: String {
-            switch self {
-            case .doesNotContainBundle(let url):
-                return """
-                    The directory at '\(url)' and its subdirectories do not contain at least one valid documentation \
-                    bundle. A documentation bundle is a directory ending in `.docc`. Pass \
-                    `--allow-arbitrary-catalog-directories` flag to convert a directory without a `.docc` extension.
-                    """
-            case .cancelPending:
-                return "The action is already in the process of being cancelled."
-            }
-        }
-    }
-
+public struct ConvertAction: AsyncAction {
     let rootURL: URL?
-    let outOfProcessResolver: OutOfProcessReferenceResolver?
-    let analyze: Bool
     let targetDirectory: URL
     let htmlTemplateDirectory: URL?
-    let emitDigest: Bool
-    let inheritDocs: Bool
+    
+    private let emitDigest: Bool
     let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
-    let experimentalModifyCatalogWithGeneratedCuration: Bool
+    private let experimentalModifyCatalogWithGeneratedCuration: Bool
     let buildLMDBIndex: Bool
-    let documentationCoverageOptions: DocumentationCoverageOptions
-    let diagnosticLevel: DiagnosticSeverity
+    private let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticEngine: DiagnosticEngine
 
-    let transformForStaticHosting: Bool
-    let hostingBasePath: String?
+    private let transformForStaticHosting: Bool
+    private let hostingBasePath: String?
     
     let sourceRepository: SourceRepository?
     
-    private(set) var context: DocumentationContext {
-        didSet {
-            // current platforms?
-
-            switch documentationCoverageOptions.level {
-            case .detailed, .brief:
-                self.context.shouldStoreManuallyCuratedReferences = true
-            case .none:
-                break
-            }
-        }
-    }
-    private let workspace: DocumentationWorkspace
-    private var currentDataProvider: DocumentationWorkspaceDataProvider?
-    private var injectedDataProvider: DocumentationWorkspaceDataProvider?
     private var fileManager: FileManagerProtocol
     private let temporaryDirectory: URL
     
-    public var setupContext: ((inout DocumentationContext) -> Void)? {
-        didSet {
-            converter.setupContext = setupContext
-        }
-    }
-    
-    var converter: DocumentationConverter
-    
-    private var durationMetric: Benchmark.Duration?
     private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
@@ -114,7 +70,7 @@ public struct ConvertAction: Action, RecreatingContext {
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - temporaryDirectory: The location where the convert action should write temporary files while converting the documentation.
     ///   - dependencies: A list of URLs to already built documentation archives that this documentation depends on.
-    init(
+    package init(
         documentationBundleURL: URL?,
         outOfProcessResolver: OutOfProcessReferenceResolver?,
         analyze: Bool,
@@ -123,9 +79,9 @@ public struct ConvertAction: Action, RecreatingContext {
         emitDigest: Bool,
         currentPlatforms: [String : PlatformVersion]?,
         buildIndex: Bool = false,
-        workspace: DocumentationWorkspace = DocumentationWorkspace(),
-        context: DocumentationContext? = nil,
-        dataProvider: DocumentationWorkspaceDataProvider? = nil,
+        workspace _: DocumentationWorkspace = DocumentationWorkspace(),
+        context _: DocumentationContext? = nil,
+        dataProvider _: DocumentationWorkspaceDataProvider? = nil,
         fileManager: FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
@@ -143,17 +99,12 @@ public struct ConvertAction: Action, RecreatingContext {
         hostingBasePath: String? = nil,
         sourceRepository: SourceRepository? = nil,
         dependencies: [URL] = []
-    ) throws
-    {
+    ) throws {
         self.rootURL = documentationBundleURL
-        self.outOfProcessResolver = outOfProcessResolver
-        self.analyze = analyze
         self.targetDirectory = targetDirectory
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.emitDigest = emitDigest
         self.buildLMDBIndex = buildIndex
-        self.workspace = workspace
-        self.injectedDataProvider = dataProvider
         self.fileManager = fileManager
         self.temporaryDirectory = temporaryDirectory
         self.documentationCoverageOptions = documentationCoverageOptions
@@ -179,7 +130,6 @@ public struct ConvertAction: Action, RecreatingContext {
             documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
         )
         
-        self.inheritDocs = inheritDocs
         self.treatWarningsAsErrors = treatWarningsAsErrors
 
         self.experimentalEnableCustomTemplates = experimentalEnableCustomTemplates
@@ -192,191 +142,76 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         self.diagnosticEngine = engine
-        self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine)
-        self.diagnosticLevel = filterLevel
-        self.context.externalMetadata.diagnosticLevel = self.diagnosticLevel
-        self.context.linkResolver.dependencyArchives = dependencies
         
+        var configuration = DocumentationContext.Configuration()
+        
+        configuration.externalMetadata.diagnosticLevel = filterLevel
         // Inject current platform versions if provided
-        if let currentPlatforms {
-            self.context.externalMetadata.currentPlatforms = currentPlatforms
+        if var currentPlatforms {
+            // Add missing platforms if their fallback platform is present.
+            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
+                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            }
+            configuration.externalMetadata.currentPlatforms = currentPlatforms
         }
 
         // Inject user-set flags.
-        self.context.externalMetadata.inheritDocs = inheritDocs
+        configuration.externalMetadata.inheritDocs = inheritDocs
         
         switch documentationCoverageOptions.level {
         case .detailed, .brief:
-            self.context.shouldStoreManuallyCuratedReferences = true
+            configuration.experimentalCoverageConfiguration.shouldStoreManuallyCuratedReferences = true
         case .none:
             break
         }
         
-        let dataProvider: DocumentationWorkspaceDataProvider
-        if let injectedDataProvider {
-            dataProvider = injectedDataProvider
-        } else if let rootURL {
-            dataProvider = try LocalFileSystemDataProvider(
-                rootURL: rootURL,
-                allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
-            )
-        } else {
-            self.context.externalMetadata.isGeneratedBundle = true
-            dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { url in
-                fileManager.contents(atPath: url.path)
-            })
+        if let outOfProcessResolver {
+            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
         }
+        configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
-        self.converter = DocumentationConverter(
-            documentationBundleURL: documentationBundleURL,
-            emitDigest: emitDigest,
-            documentationCoverageOptions: documentationCoverageOptions,
-            currentPlatforms: currentPlatforms,
-            workspace: workspace,
-            context: self.context,
-            dataProvider: dataProvider,
-            bundleDiscoveryOptions: bundleDiscoveryOptions,
-            sourceRepository: sourceRepository,
-            isCancelled: isCancelled,
-            diagnosticEngine: self.diagnosticEngine,
-            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
-        )
-    }
-    
-    /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
-    ///
-    /// - Parameters:
-    ///   - documentationBundleURL: The root of the documentation catalog to convert.
-    ///   - outOfProcessResolver: An out-of-process resolver that
-    ///   - analyze: `true` if the convert action should override the provided `diagnosticLevel` with `.information`, otherwise `false`.
-    ///   - targetDirectory: The location where the convert action will write the built documentation output.
-    ///   - htmlTemplateDirectory: The location of the HTML template to use as a base for the built documentation output.
-    ///   - emitDigest: Whether the conversion should create metadata files, such as linkable entities information.
-    ///   - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
-    ///   - buildIndex: Whether or not the convert action should emit an LMDB representation of the navigator index.
-    ///
-    ///     A JSON representation is built and emitted regardless of this value.
-    ///   - workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
-    ///   - context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
-    ///   - dataProvider: A data provider to use when registering bundles
-    ///   - documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
-    ///   - bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
-    ///   - diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
-    ///   - diagnosticEngine: The engine that will collect and emit diagnostics during this action.
-    ///   - formatConsoleOutputForTools: `true` if the convert action should write diagnostics to the console in a format suitable for parsing by an IDE or other tool, otherwise `false`.
-    ///   - inheritDocs: `true` if the convert action should retain the original documentation content for inherited symbols, otherwise `false`.
-    ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
-    ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
-    ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
-    ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation bundle if it doesn't discover another bundle, otherwise `false`.
-    ///   - hostingBasePath: The base path where the built documentation archive will be hosted at.
-    ///   - sourceRepository: The source repository where the documentation's sources are hosted.
-    ///   - temporaryDirectory: The location where the convert action should write temporary files while converting the documentation.
-    ///   - dependencies: A list of URLs to already built documentation archives that this documentation depends on.
-    public init(
-        documentationBundleURL: URL,
-        outOfProcessResolver: OutOfProcessReferenceResolver?,
-        analyze: Bool,
-        targetDirectory: URL,
-        htmlTemplateDirectory: URL?,
-        emitDigest: Bool,
-        currentPlatforms: [String : PlatformVersion]?,
-        buildIndex: Bool = false,
-        workspace: DocumentationWorkspace = DocumentationWorkspace(),
-        context: DocumentationContext? = nil,
-        dataProvider: DocumentationWorkspaceDataProvider? = nil,
-        documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
-        bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
-        diagnosticLevel: String? = nil,
-        diagnosticEngine: DiagnosticEngine? = nil,
-        formatConsoleOutputForTools: Bool = false,
-        inheritDocs: Bool = false,
-        experimentalEnableCustomTemplates: Bool = false,
-        experimentalModifyCatalogWithGeneratedCuration: Bool = false,
-        transformForStaticHosting: Bool,
-        allowArbitraryCatalogDirectories: Bool = false,
-        hostingBasePath: String?,
-        sourceRepository: SourceRepository? = nil,
-        temporaryDirectory: URL,
-        dependencies: [URL] = []
-    ) throws {
-        // Note: This public initializer exists separately from the above internal one
-        // because the FileManagerProtocol type we use to enable mocking in tests
-        // is internal to this framework.
-        //
-        // This public initializer just recalls the internal initializer
-        // but defaults to `FileManager.default`.
-        
-        try self.init(
-            documentationBundleURL: documentationBundleURL,
-            outOfProcessResolver: outOfProcessResolver,
-            analyze: analyze,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: htmlTemplateDirectory,
-            emitDigest: emitDigest,
-            currentPlatforms: currentPlatforms,
-            buildIndex: buildIndex,
-            workspace: workspace,
-            context: context,
-            dataProvider: dataProvider,
-            fileManager: FileManager.default,
-            temporaryDirectory: temporaryDirectory,
-            documentationCoverageOptions: documentationCoverageOptions,
-            bundleDiscoveryOptions: bundleDiscoveryOptions,
-            diagnosticLevel: diagnosticLevel,
-            diagnosticEngine: diagnosticEngine,
-            formatConsoleOutputForTools: formatConsoleOutputForTools,
-            inheritDocs: inheritDocs,
-            experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
-            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration,
-            transformForStaticHosting: transformForStaticHosting,
+        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
+        let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
+            startingPoint: documentationBundleURL,
             allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
-            hostingBasePath: hostingBasePath,
-            sourceRepository: sourceRepository,
-            dependencies: dependencies
+            options: bundleDiscoveryOptions
         )
-    }
-
-    /// `true` if the convert action is cancelled.
-    private let isCancelled = Synchronized<Bool>(false)
-    
-    /// `true` if the convert action is currently running.
-    let isPerforming = Synchronized<Bool>(false)
-    
-    /// A block to execute when conversion has finished.
-    /// It's used as a "future" for when the action is cancelled.
-    var didPerformFuture: (()->Void)?
-    
-    /// A block to execute when conversion has started.
-    var willPerformFuture: (()->Void)?
-
-    /// Cancels the action.
-    ///
-    /// The method blocks until the action has completed cancelling.
-    mutating func cancel() throws {
-        /// If the action is not running, there is nothing to cancel
-        guard isPerforming.sync({ $0 }) == true else { return }
+        self.configuration = configuration
         
-        /// If the action is already cancelled throw `cancelPending`.
-        if isCancelled.sync({ $0 }) == true {
-            throw Error.cancelPending
-        }
-
-        /// Set the cancelled flag.
-        isCancelled.sync({ $0 = true })
-        
-        /// Wait for the `perform(logHandle:)` method to call `didPerformFuture()`
-        let waitGroup = DispatchGroup()
-        waitGroup.enter()
-        didPerformFuture = {
-            waitGroup.leave()
-        }
-        waitGroup.wait()
+        self.bundle = bundle
+        self.dataProvider = dataProvider
     }
+    
+    let configuration: DocumentationContext.Configuration
+    private let bundle: DocumentationBundle
+    private let dataProvider: DocumentationBundleDataProvider
+    
+    /// A block of extra work that tests perform to affect the time it takes to convert documentation
+    var _extraTestWork: (() async -> Void)?
 
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
-    mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+    public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+        try await perform(logHandle: &logHandle).0
+    }
+    
+    func perform(logHandle: inout LogHandle) async throws -> (ActionResult, DocumentationContext) {
+        // FIXME: Use `defer` again when the asynchronous defer-statement miscompilation (rdar://137774949) is fixed.
+        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        do {
+            let result = try await _perform(logHandle: &logHandle, temporaryFolder: temporaryFolder)
+            diagnosticEngine.flush()
+            try? fileManager.removeItem(at: temporaryFolder)
+            return result
+        } catch {
+            diagnosticEngine.flush()
+            try? fileManager.removeItem(at: temporaryFolder)
+            throw error
+        }
+    }
+    
+    private func _perform(logHandle: inout LogHandle, temporaryFolder: URL) async throws -> (ActionResult, DocumentationContext) {
         // Add the default diagnostic console writer now that we know what log handle it should write to.
         if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
             diagnosticEngine.add(
@@ -394,27 +229,19 @@ public struct ConvertAction: Action, RecreatingContext {
         var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
-        // While running this method keep the `isPerforming` flag up.
-        isPerforming.sync({ $0 = true })
-        willPerformFuture?()
-        defer {
-            didPerformFuture?()
-            isPerforming.sync({ $0 = false })
-            diagnosticEngine.flush()
-        }
+        // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
+//        defer {
+//            diagnosticEngine.flush()
+//        }
         
-        if let outOfProcessResolver {
-            context.externalDocumentationSources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
-            context.globalExternalSymbolResolver = outOfProcessResolver
-        }
+        // Run any extra work that the test may have injected
+        await _extraTestWork?()
         
-        let temporaryFolder = try createTempFolder(
-            with: htmlTemplateDirectory)
-        
-        
-        defer {
-            try? fileManager.removeItem(at: temporaryFolder)
-        }
+        // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
+//        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+//        defer {
+//            try? fileManager.removeItem(at: temporaryFolder)
+//        }
 
         let indexHTML: URL?
         if let htmlTemplateDirectory {
@@ -455,15 +282,10 @@ public struct ConvertAction: Action, RecreatingContext {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        // An optional indexer, if indexing while converting is enabled.
-        var indexer: Indexer? = nil
-        
-        let bundleIdentifier = converter.firstAvailableBundle()?.identifier
-        if let bundleIdentifier {
-            // Create an index builder and prepare it to receive nodes.
-            indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
-        }
+        let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.identifier)
 
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
             bundleRootFolder: rootURL,
@@ -472,13 +294,31 @@ public struct ConvertAction: Action, RecreatingContext {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleIdentifier: bundleIdentifier
+            bundleIdentifier: bundle.identifier
         )
 
+        if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
+            let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: catalogURL)
+            let curation = try writer.generateDefaultCurationContents()
+            for (url, updatedContent) in curation {
+                guard let data = updatedContent.data(using: .utf8) else { continue }
+                try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+                try? data.write(to: url, options: .atomic)
+            }
+        }
+        
         let analysisProblems: [Problem]
         let conversionProblems: [Problem]
         do {
-            (analysisProblems, conversionProblems) = try converter.convert(outputConsumer: outputConsumer)
+            conversionProblems = try ConvertActionConverter.convert(
+                bundle: bundle,
+                context: context,
+                outputConsumer: outputConsumer,
+                sourceRepository: sourceRepository,
+                emitDigest: emitDigest,
+                documentationCoverageOptions: documentationCoverageOptions
+            )
+            analysisProblems = context.problems
         } catch {
             if emitDigest {
                 let problem = Problem(description: (error as? DescribedError)?.errorDescription ?? error.localizedDescription, source: nil)
@@ -495,14 +335,11 @@ public struct ConvertAction: Action, RecreatingContext {
         })
         // Warn the user if the catalog is a tutorial but does not contains a table of contents
         // and provide template content to fix this problem.
-        if (
-            context.rootTechnologies.isEmpty &&
-            hasTutorial
-        ) {
+        if context.tutorialTableOfContentsReferences.isEmpty, hasTutorial {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
             var replacements = [Replacement]()
-            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Tutorial Name")[tableOfContentsFilename] {
+            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(bundle.displayName)[tableOfContentsFilename] {
                 replacements.append(
                     Replacement(
                         range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
@@ -530,16 +367,15 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
-        if let indexer {
+        do {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
-            defer {
-                benchmark(end: finalizeNavigationIndexMetric)
-            }
             
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
             let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
             postConversionProblems.append(contentsOf: indexerProblems)
+            
+            benchmark(end: finalizeNavigationIndexMetric)
         }
         
         // Output to the user the problems encountered during the convert process
@@ -550,7 +386,7 @@ public struct ConvertAction: Action, RecreatingContext {
         benchmark(end: totalTimeMetric)
         
         if !didEncounterError {
-            let coverageResults = try coverageAction.perform(logHandle: logHandle)
+            let coverageResults = try await coverageAction.perform(logHandle: &logHandle)
             postConversionProblems.append(contentsOf: coverageResults.problems)
         }
         
@@ -592,13 +428,13 @@ public struct ConvertAction: Action, RecreatingContext {
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleIdentifier: bundleIdentifier
+                bundleIdentifier: bundle.identifier
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)
         }
 
-        return ActionResult(didEncounterError: didEncounterError, outputs: [targetDirectory])
+        return (ActionResult(didEncounterError: didEncounterError, outputs: [targetDirectory]), context)
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {

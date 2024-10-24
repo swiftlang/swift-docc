@@ -69,15 +69,10 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         } else {
             let text = self.diagnosticFormatter.formattedDescription(for: problems)
             outputStream.write(text)
+            outputStream.write("\n")
         }
         problems = [] // `flush()` is called more than once. Don't emit the same problems again.
         self.diagnosticFormatter.finalize()
-    }
-    
-    // This is deprecated but still necessary to implement.
-    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 6.0 is released")
-    public func finalize() throws {
-        try flush()
     }
     
     private static func makeDiagnosticFormatter(

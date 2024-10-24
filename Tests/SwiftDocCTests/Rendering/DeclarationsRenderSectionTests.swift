@@ -140,6 +140,17 @@ class DeclarationsRenderSectionTests: XCTestCase {
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        // Verify that the symbol has the expected data
+        XCTAssertEqual(symbol.alternateDeclarationVariants.allValues.count, 2)
+        XCTAssert(symbol.alternateDeclarationVariants.allValues.allSatisfy({
+            $0.trait == .fallback || Set($0.variant.keys) == [[.iOS, .macOS]]
+        }))
+        XCTAssertEqual(symbol.alternateSignatureVariants.allValues.count, 2)
+        XCTAssert(symbol.alternateSignatureVariants.allValues.allSatisfy({
+            $0.trait == .fallback || Set($0.variant.keys) == [[.iOS, .macOS]]
+        }))
+        
+        // Verify that the rendered symbol displays both signatures
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
@@ -176,7 +187,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload1(param: [Int: Int]) {}
             let reference = ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/FancyOverloads/overload1(param:)-8nk5z",
+                path: "/documentation/FancyOverloads/overload1(param:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
@@ -227,7 +238,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload2(p1: ((Int) -> Int)?, p2: Int) {} // <- overload group
             let reference = ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/FancyOverloads/overload2(p1:p2:)-4p1sq",
+                path: "/documentation/FancyOverloads/overload2(p1:p2:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
@@ -282,7 +293,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload3<K: Hashable, V>(_ p: [K: V]) {}
             let reference = ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/FancyOverloads/overload3(_:)-xql2",
+                path: "/documentation/FancyOverloads/overload3(_:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)

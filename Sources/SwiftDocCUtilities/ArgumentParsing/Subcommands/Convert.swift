@@ -14,7 +14,7 @@ import Foundation
 
 extension Docc {
     /// Converts documentation markup, assets, and symbol information into a documentation archive.
-    public struct Convert: ParsableCommand {
+    public struct Convert: AsyncParsableCommand {
         public init() {}
 
         /// The name of the directory docc will write its build artifacts to.
@@ -63,15 +63,6 @@ extension Docc {
             var additionalSymbolGraphDirectory: URL?
             
             @Option(
-                name: [.customLong("additional-symbol-graph-files")],
-                parsing: ArrayParsingStrategy.upToNextOption,
-                help: .hidden,
-                transform: URL.init(fileURLWithPath:)
-            )
-            @available(*, deprecated, renamed: "additionalSymbolGraphDirectory", message: "Use 'additionalSymbolGraphDirectory' instead. This deprecated API will be removed after 6.0 is released")
-            var additionalSymbolGraphFiles: [URL] = [] // Remove when other tools no longer use it. (rdar://72449411)
-            
-            @Option(
                 name: [.customLong("output-path"), .customLong("output-dir"), .customShort("o")], // Remove "output-dir" when other tools no longer pass that option. (rdar://72449411)
                 help: "The location where the documentation compiler writes the built documentation.",
                 transform: URL.init(fileURLWithPath:)
@@ -96,22 +87,11 @@ extension Docc {
             get { inputsAndOutputs.documentationCatalog }
             set { inputsAndOutputs.documentationCatalog = newValue }
         }
-        @available(*, deprecated, renamed: "documentationCatalog", message: "Use 'documentationCatalog' instead. This deprecated API will be removed after 6.0 is released")
-        public var documentationBundle: DocumentationBundleOption {
-            get { inputsAndOutputs.documentationCatalog }
-            set { inputsAndOutputs.documentationCatalog = newValue }
-        }
         
         /// A user-provided path to a directory of additional symbol graph files that the convert action will process.
         public var additionalSymbolGraphDirectory: URL? {
             get { inputsAndOutputs.additionalSymbolGraphDirectory }
             set { inputsAndOutputs.additionalSymbolGraphDirectory = newValue }
-        }
-        
-        @available(*, deprecated, renamed: "additionalSymbolGraphDirectory", message: "Use 'additionalSymbolGraphDirectory' instead. This deprecated API will be removed after 6.0 is released")
-        public var additionalSymbolGraphFiles: [URL] { // Remove when other tools no longer use it. (rdar://72449411)
-            get { inputsAndOutputs.additionalSymbolGraphFiles }
-            set { inputsAndOutputs.additionalSymbolGraphFiles = newValue }
         }
         
         /// A user-provided location where the convert action writes the built documentation.
@@ -352,13 +332,6 @@ extension Docc {
                 """)
             )
             var fallbackBundleIdentifier: String?
-        
-            @Option(
-                name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
-                help: .hidden
-            )
-            @available(*, deprecated, message: "The bundle version isn't used for anything. This deprecated API will be removed after 6.0 is released")
-            var fallbackBundleVersion: String?
             
             @Option(
                 help: ArgumentHelp("A fallback default module kind if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
@@ -367,6 +340,13 @@ extension Docc {
                 """)
             )
             var fallbackDefaultModuleKind: String?
+
+            @Option(
+                name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")],
+                help: .hidden
+            )
+            @available(*, deprecated, message: "The bundle version isn't used for anything.")
+            var _unusedVersionForBackwardsCompatibility: String?
             
             func validate() throws {
                 for deprecatedOptionName in ["display-name", "bundle-identifier", "bundle-version"] {
@@ -389,15 +369,6 @@ extension Docc {
         public var fallbackBundleIdentifier: String? {
             get { infoPlistFallbacks.fallbackBundleIdentifier }
             set { infoPlistFallbacks.fallbackBundleIdentifier = newValue }
-        }
-        
-        /// A user-provided fallback version for the documentation bundle.
-        ///
-        /// If the documentation catalogs's Info.plist file contains a bundle version, the documentation catalog ignores this fallback version.
-        @available(*, deprecated, message: "The bundle version isn't used for anything. This deprecated API will be removed after 6.0 is released")
-        public var fallbackBundleVersion: String? {
-            get { infoPlistFallbacks.fallbackBundleVersion }
-            set { infoPlistFallbacks.fallbackBundleVersion = newValue }
         }
         
         /// A user-provided default language for code listings.
@@ -548,11 +519,6 @@ extension Docc {
             )
             var enableParametersAndReturnsValidation = true
             
-            // This flag only exist to allow developers to pass the previous '--enable-experimental-...' flag without errors.
-            @Flag(name: .customLong("enable-experimental-parameters-and-returns-validation"), help: .hidden)
-            @available(*, deprecated, message: "This deprecated API will be removed after 6.0 is released")
-            var enableExperimentalParametersAndReturnsValidation = false
-            
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
         
@@ -563,10 +529,6 @@ extension Docc {
                 )
             )
             var emitLMDBIndex = false
-
-            @Flag(help: .hidden)
-            @available(*, deprecated, renamed: "emitLMDBIndex", message: "Use 'emitLMDBIndex' instead. This deprecated API will be removed after 6.0 is released")
-            var index = false
         
             @available(*, deprecated) // This deprecation silences the access of the deprecated `index` flag.
             mutating func validate() throws {
@@ -575,7 +537,7 @@ extension Docc {
                 Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "This flag has no effect. Doxygen support is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-parameters-and-returns-validation", message: "This flag has no effect. Parameter and return value validation is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "Use '--emit-lmdb-index' indead.")
-                emitLMDBIndex = emitLMDBIndex || index
+                emitLMDBIndex = emitLMDBIndex
             }
         }
 
@@ -647,12 +609,6 @@ extension Docc {
             set { featureFlags.enableParametersAndReturnsValidation = newValue }
         }
         
-        @available(*, deprecated, renamed: "enableParametersAndReturnsValidation", message: "Use 'enableParametersAndReturnsValidation' instead. This deprecated API will be removed after 6.0 is released")
-        public var enableExperimentalParametersAndReturnsValidation: Bool {
-            get { enableParametersAndReturnsValidation }
-            set { enableParametersAndReturnsValidation = newValue }
-        }
-        
         /// A user-provided value that is true if additional metadata files should be produced.
         ///
         /// Defaults to false.
@@ -669,14 +625,6 @@ extension Docc {
             set { featureFlags.emitLMDBIndex = newValue }
             
         }
-        /// This value is provided for backwards compatibility with existing clients but will be removed soon. Renamed to '--emit-lmdb-index'.
-        @available(*, deprecated, renamed: "emitLMDBIndex", message: "Use 'emitLMDBIndex' instead. This deprecated API will be removed after 6.0 is released")
-        public var index: Bool {
-            get { featureFlags.emitLMDBIndex }
-            set { featureFlags.emitLMDBIndex = newValue }
-        }
-        
-        // MARK: - ParsableCommand conformance
 
         public mutating func validate() throws {
             if transformForStaticHosting {
@@ -725,12 +673,9 @@ extension Docc {
             }
         }
 
-        public mutating func run() throws {
-            // Initialize a `ConvertAction` from the current options in the `Convert` command.
+        public func run() async throws {
             var convertAction = try ConvertAction(fromConvertCommand: self)
-
-            // Perform the conversion and print any warnings or errors found
-            try convertAction.performAndHandleResult()
+            try await convertAction.performAndHandleResult()
         }
         
         // MARK: Warnings

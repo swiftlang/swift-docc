@@ -118,7 +118,6 @@ final class PreviewServer {
     ///   to its destination but before it has started serving content.
     func start(onReady: (() -> Void)? = nil) throws {
         // Create a server bootstrap
-        let fileIO = NonBlockingFileIO(threadPool: threadPool)
         bootstrap = ServerBootstrap(group: group)
             // Learn more about the `listen` command pending clients backlog from its reference;
             // do that by typing `man 2 listen` on your command line.
@@ -127,10 +126,10 @@ final class PreviewServer {
             .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
 
             // Configure the channel handler - it handles plain HTTP requests
-            .childChannelInitializer { channel in
+            .childChannelInitializer { [contentURL] channel in
                 // HTTP pipeline
                 return channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                    channel.pipeline.addHandler(PreviewHTTPHandler(fileIO: fileIO, rootURL: self.contentURL))
+                    channel.pipeline.addHandler(PreviewHTTPHandler(rootURL: contentURL))
                 }
             }
             
@@ -184,6 +183,12 @@ final class PreviewServer {
         try group.syncShutdownGracefully()
         try threadPool.syncShutdownGracefully()
         print("Stopped preview server at \(bindTo)", to: &logHandle)
+    }
+    
+    deinit {
+        if channel?.isWritable == true {
+            try? stop()
+        }
     }
 }
 #endif
