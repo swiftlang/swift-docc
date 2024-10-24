@@ -101,7 +101,7 @@ extension String: LMDBData {
 // This is required for macOS, for Linux the default implementation works as expected.
 extension Array: LMDBData where Element: FixedWidthInteger {
     
-#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+#if os(macOS) || os(iOS) || os(visionOS) || os(tvOS) || os(watchOS)
     public init?(data: UnsafeRawBufferPointer) {
         var array = [Element](repeating: 0, count: data.count / MemoryLayout<Element>.stride)
         _ = array.withUnsafeMutableBytes { data.copyBytes(to: $0) }

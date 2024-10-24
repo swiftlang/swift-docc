@@ -76,7 +76,7 @@ class CollectionConcurrentPerformTests: XCTestCase {
                 return next.start < result.end
             })
 
-        #if os(macOS) || os(iOS)
+        #if os(macOS) || os(iOS) || os(visionOS)
         // Expect all blocks ran concurrently on supported platforms.
         XCTAssertTrue(didBlocksExecuteConcurrently, "Blocks didn't run concurrently")
         #else
@@ -122,7 +122,7 @@ class CollectionConcurrentPerformTests: XCTestCase {
                 return next.start < result.end
             })
         
-        #if os(macOS) || os(iOS)
+        #if os(macOS) || os(iOS) || os(visionOS)
         // Expect all blocks ran concurrently on supported platforms.
         XCTAssertTrue(didBlocksExecuteConcurrently, "Blocks didn't run concurrently")
         #else

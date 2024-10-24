@@ -28,7 +28,7 @@ public class Synchronized<Value> {
     /// A value that requires synchronized access.
     private var value: Value
     
-    #if os(macOS) || os(iOS)
+    #if os(macOS) || os(iOS) || os(visionOS)
     /// A lock type appropriate for the current platform.
     /// > Note: To avoid access race reports we manage the memory manually.
     var lock: UnsafeMutablePointer<os_unfair_lock>
@@ -46,7 +46,7 @@ public class Synchronized<Value> {
     public init(_ value: Value) {
         self.value = value
 
-        #if os(macOS) || os(iOS)
+        #if os(macOS) || os(iOS) || os(visionOS)
         lock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
         lock.initialize(to: os_unfair_lock())
         #elseif os(Linux) || os(Android)
@@ -71,7 +71,7 @@ public class Synchronized<Value> {
     /// - Returns: Returns the returned value of `block`, if any.
     @discardableResult
     public func sync<Result>(_ block: (inout Value) throws -> Result) rethrows -> Result {
-        #if os(macOS) || os(iOS)
+        #if os(macOS) || os(iOS) || os(visionOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
         #elseif os(Linux) || os(Android)
@@ -107,7 +107,7 @@ public extension Lock {
     
     @discardableResult
     func sync<Result>(_ block: () throws -> Result) rethrows -> Result {
-        #if os(macOS) || os(iOS)
+        #if os(macOS) || os(iOS) || os(visionOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
         #elseif os(Linux) || os(Android)

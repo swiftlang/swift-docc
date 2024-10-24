@@ -15,7 +15,7 @@ import func WinSDK.TryAcquireSRWLockExclusive
 #endif
 
 private func XCTAssertLockIsUnlocked<T>(_ synced: Synchronized<T>) {
-    #if os(macOS) || os(iOS)
+    #if os(macOS) || os(iOS) || os(visionOS)
     XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
     #elseif os(Windows)
     XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
@@ -25,7 +25,7 @@ private func XCTAssertLockIsUnlocked<T>(_ synced: Synchronized<T>) {
 }
 
 private func XCTAssertLockIsLocked<T>(_ synced: Synchronized<T>) {
-    #if os(macOS) || os(iOS)
+    #if os(macOS) || os(iOS) || os(visionOS)
     XCTAssertFalse(os_unfair_lock_trylock(synced.lock))
     #elseif os(Windows)
     XCTAssertEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
