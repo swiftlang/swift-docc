@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,36 +17,19 @@ class ConvertActionIndexerTests: XCTestCase {
     
     // Tests the standalone indexer
     func testConvertActionIndexer() throws {
-        let originalURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
+            .inputsAndDataProvider(startingPoint: testCatalogURL(named: "TestBundle"), options: .init())
         
-        // Create temo folder.
-        let url = try createTemporaryDirectory()
-        
-        // Copy TestBundle into a temp folder
-        let testBundleURL = url.appendingPathComponent("TestBundle.docc")
-        try FileManager.default.copyItem(at: originalURL, to: testBundleURL)
-        
-        // Load the test bundle
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: testBundleURL)
-        try workspace.registerProvider(dataProvider)
-
-        guard !context.registeredBundles.isEmpty else {
-            XCTFail("Didn't load test bundle in test.")
-            return
-        }
-
-        let converter = DocumentationNodeConverter(bundle: context.registeredBundles.first!, context: context)
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         // Add /documentation/MyKit to the index, verify the tree dump
         do {
             let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
             let renderNode = try converter.convert(context.entity(with: reference))
 
-            try FileManager.default.createDirectory(at: testBundleURL.appendingPathComponent("index1"), withIntermediateDirectories: false, attributes: nil)
-            let indexer = try ConvertAction.Indexer(outputURL: testBundleURL.appendingPathComponent("index1"), bundleIdentifier: context.registeredBundles.first!.identifier)
+            let tempIndexURL = try createTemporaryDirectory(named: "index")
+            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleIdentifier: bundle.identifier)
             indexer.index(renderNode)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)
             let treeDump = try XCTUnwrap(indexer.dumpTree())
@@ -70,8 +53,8 @@ class ConvertActionIndexerTests: XCTestCase {
             let reference2 = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", sourceLanguage: .swift)
             let renderNode2 = try converter.convert(context.entity(with: reference2))
 
-            try FileManager.default.createDirectory(at: testBundleURL.appendingPathComponent("index2"), withIntermediateDirectories: false, attributes: nil)
-            let indexer = try ConvertAction.Indexer(outputURL: testBundleURL.appendingPathComponent("index2"), bundleIdentifier: context.registeredBundles.first!.identifier)
+            let tempIndexURL = try createTemporaryDirectory(named: "index")
+            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleIdentifier: bundle.identifier)
             indexer.index(renderNode1)
             indexer.index(renderNode2)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)

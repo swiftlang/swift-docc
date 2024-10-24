@@ -16,7 +16,7 @@ import SwiftDocCTestUtilities
 class ExternalLinkableTests: XCTestCase {
     
     // Write example documentation bundle with a minimal Tutorials page
-    let bundleFolderHierarchy = Folder(name: "unit-test.docc", content: [
+    let catalogHierarchy = Folder(name: "unit-test.docc", content: [
         Folder(name: "Symbols", content: []),
         Folder(name: "Resources", content: [
             TextFile(name: "TechnologyX.tutorial", utf8Content: """
@@ -94,15 +94,8 @@ class ExternalLinkableTests: XCTestCase {
     ])
     
     func testSummaryOfTutorialPage() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try! DocumentationContext(dataProvider: workspace)
+        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
         
-        let bundleURL = try bundleFolderHierarchy.write(inside: createTemporaryDirectory())
-        
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
-        
-        let bundle = context.bundle(identifier: "com.test.example")!
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
@@ -726,19 +719,12 @@ class ExternalLinkableTests: XCTestCase {
             ]
         )
 
-        let bundleFolderHierarchy = Folder(name: "unit-test.docc", content: [
+        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "MyModule.symbols.json", content: symbolGraph),
             InfoPlist(displayName: "MyModule", identifier: "com.example.mymodule")
         ])
-        let workspace = DocumentationWorkspace()
-        let context = try! DocumentationContext(dataProvider: workspace)
-
-        let bundleURL = try bundleFolderHierarchy.write(inside: createTemporaryDirectory())
-
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
-
-        let bundle = context.bundle(identifier: "com.example.mymodule")!
+        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
+        
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))

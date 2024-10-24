@@ -972,7 +972,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func testAutomaticSeeAlsoSectionElementLimit() throws {
-        let fileSystem = try TestFileSystem(folders: [
+        let (bundle, context) = try loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: (1...50).map {
                     makeSymbol(id: "symbol-id-\($0)", kind: .class, pathComponents: ["SymbolName\($0)"])
@@ -990,14 +990,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 \((1...50).map { "- ``SymbolName\($0)``" }.joined(separator: "\n"))
                 """),
             ])
-        ])
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        try workspace.registerProvider(fileSystem)
+        )
 
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
-        let bundle = try XCTUnwrap(context.registeredBundles.first)
 
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 

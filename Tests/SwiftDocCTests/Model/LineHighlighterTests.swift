@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -36,34 +36,20 @@ class LineHighlighterTests: XCTestCase {
         }
         """)
 
-    static func bundleFolder(overview: TextFile = defaultOverview,
-                             tutorial: TextFile,
-                             codeFiles: [TextFile]) -> Folder {
-        return Folder(name: "TestNoSteps.docc", content: [
+    private static func makeCatalog(
+        overview: TextFile = defaultOverview,
+        tutorial: TextFile,
+        codeFiles: [TextFile]
+    ) -> Folder {
+        Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "Line Highlighter Tests", identifier: bundleIdentifier),
-            Folder(name: "Symbols", content: []),
-            Folder(name: "Resources", content: [
-                overview,
-                tutorial,
-                ] + codeFiles),
-            ])
-    }
-    
-    func testBundleAndContext(bundleRoot: Folder, bundleIdentifier: BundleIdentifier) throws -> (DocumentationBundle, DocumentationContext) {
-        let workspace = DocumentationWorkspace()
-        let context = try! DocumentationContext(dataProvider: workspace)
-        
-        let bundleURL = try bundleRoot.write(inside: createTemporaryDirectory())
-        
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
-        let bundle = context.bundle(identifier: bundleIdentifier)!
-        return (bundle, context)
+            Folder(name: "Resources", content: [overview, tutorial] + codeFiles),
+        ])
     }
     
     func highlights(tutorialFile: TextFile, codeFiles: [TextFile]) throws -> [LineHighlighter.Result] {
-        let bundleFolder = LineHighlighterTests.bundleFolder(tutorial: tutorialFile, codeFiles: codeFiles)
-        let (bundle, context) = try testBundleAndContext(bundleRoot: bundleFolder, bundleIdentifier: LineHighlighterTests.bundleIdentifier)
+        let catalog = Self.makeCatalog(tutorial: tutorialFile, codeFiles: codeFiles)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         let tutorialReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Line-Highlighter-Tests/Tutorial", fragment: nil, sourceLanguage: .swift)
         let tutorial = try context.entity(with: tutorialReference).semantic as! Tutorial

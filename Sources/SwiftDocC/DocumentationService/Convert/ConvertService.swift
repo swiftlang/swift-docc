@@ -138,7 +138,7 @@ public struct ConvertService: DocumentationService {
             }
             
             let bundle: DocumentationBundle
-            let dataProvider: DocumentationBundleDataProvider
+            let dataProvider: DataProvider
             
             let inputProvider = DocumentationContext.InputsProvider()
             if let bundleLocation = request.bundleLocation,
@@ -267,7 +267,7 @@ public struct ConvertService: DocumentationService {
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
                 
-                guard let bundle = context.bundle(identifier: topicReference.bundleIdentifier) else { return nil }
+                guard let bundle = context.bundle, bundle.identifier == topicReference.bundleIdentifier else { return nil }
                 let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
