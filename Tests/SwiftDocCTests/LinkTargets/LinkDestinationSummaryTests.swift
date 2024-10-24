@@ -287,7 +287,7 @@ class ExternalLinkableTests: XCTestCase {
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "globalFunction(_:considering:)")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/globalfunction(_:considering:)")
+            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/globalfunction(__considering_)")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)")
             XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .function)
@@ -508,7 +508,7 @@ class ExternalLinkableTests: XCTestCase {
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "myStringFunction(_:)")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mixedlanguageframework/bar/mystringfunction(_:)")
+            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mixedlanguageframework/bar/mystringfunction(__)")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)")
             XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .typeMethod)
