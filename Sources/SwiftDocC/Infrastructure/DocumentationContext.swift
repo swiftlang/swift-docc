@@ -137,9 +137,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     func contentsOfURL(_ url: URL, in bundle: DocumentationBundle) throws -> Data {
         switch dataProvider {
         case .legacy(let legacyDataProvider):
-            try legacyDataProvider.contentsOfURL(url, in: bundle)
+            return try legacyDataProvider.contentsOfURL(url, in: bundle)
         case .new(let dataProvider):
-            try dataProvider.contents(of: url)
+            assert(self.bundle?.identifier == bundle.identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+            return try dataProvider.contents(of: url)
         }
     }
 
@@ -366,9 +367,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public func bundle(identifier: String) -> DocumentationBundle? {
         switch dataProvider {
         case .legacy(let legacyDataProvider):
-            legacyDataProvider.bundles[identifier]
+            return legacyDataProvider.bundles[identifier]
         case .new:
-            bundle?.identifier == identifier ? bundle : nil
+            assert(bundle?.identifier == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+            return bundle?.identifier == identifier ? bundle : nil
         }
     }
         
