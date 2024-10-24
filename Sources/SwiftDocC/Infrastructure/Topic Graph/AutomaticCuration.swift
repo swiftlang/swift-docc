@@ -90,7 +90,7 @@ public struct AutomaticCuration {
             .reduce(into: AutomaticCuration.groups) { groupsIndex, reference in
                 guard let topicNode = context.topicGraph.nodeWithReference(reference),
                       !topicNode.isEmptyExtension,
-                      !topicNode.isManuallyCurated
+                      topicNode.shouldAutoCurateInCanonicalLocation
                 else {
                     return
                 }

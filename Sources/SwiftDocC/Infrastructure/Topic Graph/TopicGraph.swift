@@ -87,13 +87,13 @@ struct TopicGraph {
         /// If true, the topic has been removed from the hierarchy due to being an extension whose children have been curated elsewhere.
         let isEmptyExtension: Bool
         
-        /// If true, the topic has been manually organized into a topic section on some other page.
-        var isManuallyCurated: Bool = false
+        /// If true, the topic should automatically organize into a topic section in its canonical container page's hierarchy for each language representation.
+        var shouldAutoCurateInCanonicalLocation: Bool = true
 
         /// If true, this topic is a generated "overload group" symbol page.
         var isOverloadGroup: Bool = false
 
-        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false, isManuallyCurated: Bool = false) {
+        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false, shouldAutoCurateInCanonicalLocation: Bool = true) {
             self.reference = reference
             self.kind = kind
             self.source = source
@@ -101,7 +101,7 @@ struct TopicGraph {
             self.isResolvable = isResolvable
             self.isVirtual = isVirtual
             self.isEmptyExtension = isEmptyExtension
-            self.isManuallyCurated = isManuallyCurated
+            self.shouldAutoCurateInCanonicalLocation = shouldAutoCurateInCanonicalLocation
         }
         
         func withReference(_ reference: ResolvedTopicReference) -> Node {
@@ -307,7 +307,7 @@ struct TopicGraph {
             return nil
         }
         return edges[groupReference, default: []].filter({ childReference in
-            nodes[childReference]?.isManuallyCurated == false
+            nodes[childReference]?.shouldAutoCurateInCanonicalLocation == false
         })
     }
 
