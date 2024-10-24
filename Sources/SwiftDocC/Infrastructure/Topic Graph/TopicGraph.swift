@@ -87,8 +87,8 @@ struct TopicGraph {
         /// If true, the topic has been removed from the hierarchy due to being an extension whose children have been curated elsewhere.
         let isEmptyExtension: Bool
         
-        /// If true, the topic has been manually organized into a topic section on some other page.
-        var isManuallyCurated: Bool = false
+        /// If true, the topic has been manually organized into a topic section in its canonical container page's hierarchy.
+        var isManuallyCuratedInContainer: Bool = false
 
         /// If true, this topic is a generated "overload group" symbol page.
         var isOverloadGroup: Bool = false
@@ -101,7 +101,7 @@ struct TopicGraph {
             self.isResolvable = isResolvable
             self.isVirtual = isVirtual
             self.isEmptyExtension = isEmptyExtension
-            self.isManuallyCurated = isManuallyCurated
+            self.isManuallyCuratedInContainer = isManuallyCurated
         }
         
         func withReference(_ reference: ResolvedTopicReference) -> Node {
@@ -307,7 +307,7 @@ struct TopicGraph {
             return nil
         }
         return edges[groupReference, default: []].filter({ childReference in
-            nodes[childReference]?.isManuallyCurated == false
+            nodes[childReference]?.isManuallyCuratedInContainer == false
         })
     }
 
