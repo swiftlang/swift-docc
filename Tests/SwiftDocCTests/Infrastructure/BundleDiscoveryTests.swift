@@ -14,12 +14,21 @@ import SwiftDocCTestUtilities
 
 class BundleDiscoveryTests: XCTestCase {
     
-    private let testBundleLocation = Bundle.module.url(
-        forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-    private lazy var allFiles: [URL] = ((try? FileManager.default.subpathsOfDirectory(atPath: testBundleLocation.path)) ?? [])
-        .map { testBundleLocation.appendingPathComponent($0) }
-        .filter { !$0.pathComponents.dropFirst(testBundleLocation.pathComponents.count).contains(where: { $0.hasPrefix(".") }) }
+    private let testBundleLocation = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+    private func flatListOfFiles() throws -> [URL] {
+        let testBundleLocation = try testCatalogURL(named: "TestBundle")
+        let enumerator = try XCTUnwrap(FileManager.default.enumerator(at: testBundleLocation, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles))
+        
+        var files: [URL] = []
+        for case let fileURL as URL in enumerator where try fileURL.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == false {
+            files.append(fileURL)
+        }
+        return files
+    }
     
+    // This tests registration of multiple catalogs which is deprecated
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testFirstBundle() throws {
         let url = try createTemporaryDirectory()
         // Create 3 minimal doc bundles
@@ -54,10 +63,13 @@ class BundleDiscoveryTests: XCTestCase {
         XCTAssertEqual(converter.firstAvailableBundle()?.identifier, "com.example.bundle1")
     }
     
+    // This test registration more than once data provider which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testLoadComplexWorkspace() throws {
-        
+        let allFiles = try flatListOfFiles()
         let workspace = Folder(name: "TestWorkspace", content: [
-            CopyOfFile(original: testBundleLocation),
+            CopyOfFolder(original: testBundleLocation),
             Folder(name: "nested", content: [
                 Folder(name: "irrelevant", content: [
                     TextFile(name: "irrelevant.txt", utf8Content: "distraction"),
@@ -106,27 +118,26 @@ class BundleDiscoveryTests: XCTestCase {
     }
     
     func testBundleFormat() throws {
-        func parsedBundle(from folder: File) throws -> DocumentationBundle? {
-            let tempURL = try createTemporaryDirectory()
+        let allFiles = try flatListOfFiles()
+        
+        func parsedBundle(from folder: File) throws -> DocumentationBundle {
+            let fileSystem = try TestFileSystem(folders: [
+                Folder(name: "path", content: [
+                    Folder(name: "to", content: [
+                        folder
+                    ])
+                ])
+            ])
             
-            let workspaceURL = try folder.write(inside: tempURL)
-            let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
-            let bundles = try dataProvider.bundles()
-            
-            XCTAssertEqual(bundles.count, 1)
-            return bundles.first
+            let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
+            let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
+            return bundle
         }
         
-        guard let expectedBundle = try parsedBundle(from: CopyOfFolder(original: testBundleLocation)) else {
-            XCTFail("Failed to parse the Test Bundle")
-            return
-        }
+        let expectedBundle = try parsedBundle(from: CopyOfFolder(original: testBundleLocation))
         
         func checkExpectedFilesFoundIn(_ folder: File, file: StaticString = #file, line: UInt = #line) throws {
-            guard let bundle = try parsedBundle(from: folder) else {
-                 XCTFail("Failed to parse bundle for folder structure")
-                return
-            }
+            let bundle = try parsedBundle(from: folder)
             
             XCTAssertEqual(bundle.identifier, expectedBundle.identifier)
             XCTAssertEqual(bundle.displayName, expectedBundle.displayName)
@@ -195,33 +206,31 @@ class BundleDiscoveryTests: XCTestCase {
     }
     
     func testBundleDiscoveryOptions() throws {
-        let workspace = Folder(name: "TestWorkspace", content: [
-            // The test bundle without all the symbol graph files
-            CopyOfFolder(original: testBundleLocation, filter: { !DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
-            
-            // Just the symbol graph files in a non-bundle folder
-            CopyOfFolder(original: testBundleLocation, newName: "Not a doc bundle", filter: { DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    // The test bundle without all the symbol graph files
+                    CopyOfFolder(original: testBundleLocation, filter: { !DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+                    
+                    // Just the symbol graph files in a non-bundle folder
+                    CopyOfFolder(original: testBundleLocation, newName: "Not a catalog", filter: { DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+                ])
+            ])
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        
-        let workspaceURL = try workspace.write(inside: tempURL)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
-
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
             ],
             additionalSymbolGraphFiles: [
-                tempURL.appendingPathComponent("TestWorkspace/Not a doc bundle/mykit-iOS.symbols.json"),
-                tempURL.appendingPathComponent("TestWorkspace/Not a doc bundle/sidekit.symbols.json"),
-                tempURL.appendingPathComponent("TestWorkspace/Not a doc bundle/MyKit@SideKit.symbols.json"),
+                URL(fileURLWithPath: "path/to/Not a catalog/mykit-iOS.symbols.json"),
+                URL(fileURLWithPath: "path/to/Not a catalog/sidekit.symbols.json"),
+                URL(fileURLWithPath: "path/to/Not a catalog/MyKit@SideKit.symbols.json"),
             ]
         )
-        let bundles = try dataProvider.bundles(options: bundleDiscoveryOptions)
-
-        XCTAssertEqual(bundles.count, 1)
-        guard let bundle = bundles.first else { return }
+        
+        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: bundleDiscoveryOptions)
         
         // The bundle information was overridden from the options
         XCTAssertEqual(bundle.identifier, "org.swift.docc.example")
@@ -240,19 +249,8 @@ class BundleDiscoveryTests: XCTestCase {
     }
     
     func testNoInfoPlist() throws {
-        let workspace = Folder(name: "TestWorkspace", content: [
-            // The test bundle without the Info.plist file
-            CopyOfFolder(original: testBundleLocation, filter: { !DocumentationBundleFileTypes.isInfoPlistFile($0) }),
-        ])
-        
-        XCTAssertFalse(workspace.recursiveContent.contains(where: { $0.name == "Info.plist" }), "This bundle shouldn't contain an Info.plist file")
-        
-        let tempURL = try createTemporaryDirectory()
-        
-        let workspaceURL = try workspace.write(inside: tempURL)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
+        let catalog = Folder(name: "Something.docc", content: [])
 
-        // All the required information is passed via overrides
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
@@ -260,10 +258,11 @@ class BundleDiscoveryTests: XCTestCase {
             ],
             additionalSymbolGraphFiles: []
         )
-        let bundles = try dataProvider.bundles(options: bundleDiscoveryOptions)
         
-        XCTAssertEqual(bundles.count, 1)
-        guard let bundle = bundles.first else { return }
+        let fileSystem = try TestFileSystem(folders: [catalog])
+        
+        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: bundleDiscoveryOptions)
         
         // The bundle information was specified via the options
         XCTAssertEqual(bundle.identifier, "com.fallback.bundle.identifier")
@@ -271,19 +270,12 @@ class BundleDiscoveryTests: XCTestCase {
     }
 
     func testNoCustomTemplates() throws {
-        let workspace = Folder(name: "TestWorkspace", content: [
-            CopyOfFolder(original: testBundleLocation),
-        ])
+        let catalog = Folder(name: "Something.docc", content: [])
 
-        let tempURL = try createTemporaryDirectory()
-
-        let workspaceURL = try workspace.write(inside: tempURL)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
-
-        let bundles = try dataProvider.bundles(options: BundleDiscoveryOptions())
-
-        XCTAssertEqual(bundles.count, 1)
-        guard let bundle = bundles.first else { return }
+        let fileSystem = try TestFileSystem(folders: [catalog])
+        
+        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
         // Ensure that `customHeader` is `nil` if no top level `header.html`
         // file was found in the bundle
@@ -297,26 +289,19 @@ class BundleDiscoveryTests: XCTestCase {
     }
 
     func testCustomTemplatesFound() throws {
-        let workspace = Folder(name: "TestBundle.docc", content:
-            allFiles.map { CopyOfFile(original: $0) } + [
-                TextFile(name: "header.html", utf8Content: """
-                <header><marquee>hello world</marquee></header>
-                """),
-                TextFile(name: "footer.html", utf8Content: """
-                <footer><marquee>goodbye world</marquee></footer>
-                """),
-            ]
-        )
+        let catalog = Folder(name: "Something.docc", content: [
+            TextFile(name: "header.html", utf8Content: """
+            <header><marquee>hello world</marquee></header>
+            """),
+            TextFile(name: "footer.html", utf8Content: """
+            <footer><marquee>goodbye world</marquee></footer>
+            """),
+        ])
 
-        let tempURL = try createTemporaryDirectory()
-
-        let workspaceURL = try workspace.write(inside: tempURL)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
-
-        let bundles = try dataProvider.bundles(options: BundleDiscoveryOptions())
-
-        XCTAssertEqual(bundles.count, 1)
-        guard let bundle = bundles.first else { return }
+        let fileSystem = try TestFileSystem(folders: [catalog])
+        
+        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
         // Ensure that `customHeader` points to the location of a top level
         // `header.html` file if one is found in the bundle
@@ -327,31 +312,24 @@ class BundleDiscoveryTests: XCTestCase {
     }
 
     func testThemeSettingsFound() throws {
-        let workspace = Folder(name: "TestBundle.docc", content:
-            allFiles.map { CopyOfFile(original: $0) } + [
-                TextFile(name: "theme-settings.json", utf8Content: """
-                {
-                  "meta": {},
-                  "theme": {
-                    "colors": {
-                      "text": "#ff0000"
-                    }
-                  },
-                  "features": {}
+        let catalog = Folder(name: "Something.docc", content: [
+            TextFile(name: "theme-settings.json", utf8Content: """
+            {
+              "meta": {},
+              "theme": {
+                "colors": {
+                  "text": "#ff0000"
                 }
-                """),
-            ]
-        )
+              },
+              "features": {}
+            }
+            """),
+        ])
 
-        let tempURL = try createTemporaryDirectory()
-
-        let workspaceURL = try workspace.write(inside: tempURL)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
-
-        let bundles = try dataProvider.bundles(options: BundleDiscoveryOptions())
-
-        XCTAssertEqual(bundles.count, 1)
-        guard let bundle = bundles.first else { return }
+        let fileSystem = try TestFileSystem(folders: [catalog])
+        
+        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
         // Ensure that `themeSettings` points to the location of a
         // `theme-settings.json` file if one is found in the bundle

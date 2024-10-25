@@ -13,6 +13,7 @@ import Markdown
 import SymbolKit
 
 /// A type that provides information about documentation bundles and their content.
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationContextDataProvider {
     /// An object to notify when bundles are added or removed.
     var delegate: DocumentationContextDataProviderDelegate? { get set }
@@ -31,6 +32,7 @@ public protocol DocumentationContextDataProvider {
 }
 
 /// An object that responds to changes in available documentation bundles for a specific provider.
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationContextDataProviderDelegate: AnyObject {
     
     /// Called when the `dataProvider` has added a new documentation bundle to its list of `bundles`.
@@ -79,7 +81,7 @@ public typealias BundleIdentifier = String
 /// - ``children(of:kind:)``
 /// - ``parents(of:)``
 ///
-public class DocumentationContext: DocumentationContextDataProviderDelegate {
+public class DocumentationContext {
 
     /// An error that's encountered while interacting with a ``SwiftDocC/DocumentationContext``.
     public enum ContextError: DescribedError {
@@ -111,16 +113,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
-    public var linkResolver = LinkResolver()
+    public var linkResolver: LinkResolver
     
     private enum _Provider {
+        @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
         case legacy(DocumentationContextDataProvider)
-        case new(DocumentationBundleDataProvider)
+        case new(DataProvider)
     }
     private var dataProvider: _Provider
 
     /// The provider of documentation bundles for this context.
-    var _legacyDataProvider: DocumentationContextDataProvider! {
+    @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
+    private var _legacyDataProvider: DocumentationContextDataProvider! {
         get {
             switch dataProvider {
             case .legacy(let legacyDataProvider):
@@ -144,6 +148,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
 
+    /// The documentation bundle that is registered with the context.
     var bundle: DocumentationBundle?
 
     /// A collection of configuration for this context.
@@ -285,6 +290,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
     /// - Throws: If an error is encountered while registering a documentation bundle.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public init(
         dataProvider: DocumentationContextDataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
@@ -293,6 +299,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         self.dataProvider = .legacy(dataProvider)
         self.diagnosticEngine = diagnosticEngine
         self._configuration = configuration
+        self.linkResolver = LinkResolver(dataProvider: FileManager.default)
         
         _legacyDataProvider.delegate = self
         
@@ -311,7 +318,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Throws: If an error is encountered while registering a documentation bundle.
     package init(
         bundle: DocumentationBundle,
-        dataProvider: DocumentationBundleDataProvider,
+        dataProvider: DataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
     ) throws {
@@ -319,6 +326,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         self.dataProvider = .new(dataProvider)
         self.diagnosticEngine = diagnosticEngine
         self._configuration = configuration
+        self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
         ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
         try register(bundle)
@@ -329,6 +337,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - dataProvider: The provider that added this bundle.
     ///   - bundle: The bundle that was added.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
             // Enable reference caching for this documentation bundle.
@@ -343,6 +352,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - dataProvider: The provider that removed this bundle.
     ///   - bundle: The bundle that was removed.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         linkResolver.localResolver?.unregisterBundle(identifier: bundle.identifier)
         
@@ -354,7 +364,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// The documentation bundles that are currently registered with the context.
+    @available(*, deprecated, message: "Use 'bundle' instead. This deprecated API will be removed after 6.2 is released")
     public var registeredBundles: some Collection<DocumentationBundle> {
+        _registeredBundles
+    }
+    
+    /// Returns the `DocumentationBundle` with the given `identifier` if it's registered with the context, otherwise `nil`.
+    @available(*, deprecated, message: "Use 'bundle' instead. This deprecated API will be removed after 6.2 is released")
+    public func bundle(identifier: String) -> DocumentationBundle? {
+        _bundle(identifier: identifier)
+    }
+    
+    // Remove these  when removing `registeredBundles` and `bundle(identifier:)`.
+    // These exist so that internal code that need to be compatible with legacy data providers can access the bundles without deprecation warnings.
+    var _registeredBundles: [DocumentationBundle] {
         switch dataProvider {
         case .legacy(let legacyDataProvider):
             Array(legacyDataProvider.bundles.values)
@@ -363,8 +386,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    /// Returns the `DocumentationBundle` with the given `identifier` if it's registered with the context, otherwise `nil`.
-    public func bundle(identifier: String) -> DocumentationBundle? {
+    func _bundle(identifier: String) -> DocumentationBundle? {
         switch dataProvider {
         case .legacy(let legacyDataProvider):
             return legacyDataProvider.bundles[identifier]
@@ -2551,14 +2573,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
-
-    private var checks: [ReferenceCheck] = []
     
     /// Adds new checks to be run during the global topic analysis; after a bundle has been fully registered and its topic graph has been fully built.
     ///
     /// - Parameter newChecks: The new checks to add.
+    @available(*, deprecated, message: "Use 'TopicAnalysisConfiguration.additionalChecks' instead. This deprecated API will be removed after 6.2 is released")
     public func addGlobalChecks(_ newChecks: [ReferenceCheck]) {
-        checks.append(contentsOf: newChecks)
+        configuration.topicAnalysisConfiguration.additionalChecks.append(contentsOf: newChecks)
     }
     
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
@@ -2624,7 +2645,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     func topicGraphGlobalAnalysis() {
         // Run any checks added to the context.
         let problems = knownIdentifiers.flatMap { reference in
-            return checks.flatMap { check in
+            return configuration.topicAnalysisConfiguration.additionalChecks.flatMap { check in
                 return check(self, reference)
             }
         }
@@ -2672,7 +2693,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      - Throws: ``ContextError/notFound(_:)` if a resource with the given was not found.
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
-        guard let bundle = bundle(identifier: identifier.bundleIdentifier),
+        guard let bundle,
               let assetManager = assetManagers[identifier.bundleIdentifier],
               let asset = assetManager.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
@@ -3055,3 +3076,6 @@ extension DataAsset {
         }
     }
 }
+
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension DocumentationContext: DocumentationContextDataProviderDelegate {}

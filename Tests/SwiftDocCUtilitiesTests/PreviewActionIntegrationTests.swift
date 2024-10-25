@@ -83,9 +83,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         let fileHandle = try FileHandle(forUpdating: pipeURL)
         defer { fileHandle.closeFile() }
 
-        let workspace = DocumentationWorkspace()
-        _ = try! DocumentationContext(dataProvider: workspace)
-
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
