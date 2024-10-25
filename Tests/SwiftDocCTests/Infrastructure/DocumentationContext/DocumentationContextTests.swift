@@ -2972,6 +2972,143 @@ let expected = """
         XCTAssertEqual(linkResolutionProblems.first?.diagnostic.identifier, "org.swift.docc.unresolvedTopicReference")
     }
     
+    func testLinkDiagnosticsInSynthesizedTechnologyRoots() throws {
+        // Verify that when synthesizing a technology root, links are resolved in the roots content.
+        // Also, if an article is promoted to a root, verify that any existing metadata is preserved.
+        
+        func makeMetadata(root: Bool, color: Bool) -> String {
+            guard root || color else {
+                return ""
+            }
+            return """
+            @Metadata {
+              \(root  ? "@TechnologyRoot"    : "")
+              \(color ? "@PageColor(orange)" : "")
+            }
+            """
+        }
+        
+        // Only a single article
+        for withExplicitTechnologyRoot in [true, false] {
+            for withPageColor in [true, false] {
+                let catalogURL = try createTempFolder(content: [
+                    Folder(name: "unit-test.docc", content: [
+                        TextFile(name: "Root.md", utf8Content: """
+                    # My root page
+                    
+                    \(makeMetadata(root: withExplicitTechnologyRoot, color: withPageColor))
+                    
+                    This implicit technology root links to pages and on-page elements that don't exist.
+                    
+                    - ``NotFoundSymbol``
+                    - <doc:NotFoundArticle>
+                    - <doc:#NotFoundHeading>
+                    """),
+                    ])
+                ])
+                let (_, _, context) = try loadBundle(from: catalogURL)
+                
+                XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
+                    "'NotFoundSymbol' doesn't exist at '/Root'",
+                    "'NotFoundArticle' doesn't exist at '/Root'",
+                    "'NotFoundHeading' doesn't exist at '/Root'",
+                ], withExplicitTechnologyRoot ? "with @TechnologyRoot" : "with synthesized root")
+                
+                let rootReference = try XCTUnwrap(context.soleRootModuleReference)
+                let rootPage = try context.entity(with: rootReference)
+                XCTAssertNotNil(rootPage.metadata?.technologyRoot)
+                if withPageColor {
+                    XCTAssertEqual(rootPage.metadata?.pageColor?.rawValue, "orange")
+                } else {
+                    XCTAssertNil(rootPage.metadata?.pageColor)
+                }
+            }
+        }
+        
+        // Article that match the bundle's name
+        for withExplicitTechnologyRoot in [true, false] {
+            for withPageColor in [true, false] {
+                let catalogURL = try createTempFolder(content: [
+                    Folder(name: "CatalogName.docc", content: [
+                        TextFile(name: "CatalogName.md", utf8Content: """
+                        # My root page
+                        
+                        \(makeMetadata(root: withExplicitTechnologyRoot, color: withPageColor))
+                        
+                        This implicit technology root links to pages and on-page elements that don't exist.
+                        
+                        - ``NotFoundSymbol``
+                        - <doc:NotFoundArticle>
+                        - <doc:#NotFoundHeading>
+                        """),
+                            
+                        TextFile(name: "OtherArticle.md", utf8Content: """
+                        # Another article
+                        
+                        This article links to the technology root.
+                        
+                        - <doc:CatalogName>
+                        """),
+                    ])
+                ])
+                let (_, _, context) = try loadBundle(from: catalogURL)
+                
+                XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
+                    "'NotFoundSymbol' doesn't exist at '/CatalogName'",
+                    "'NotFoundArticle' doesn't exist at '/CatalogName'",
+                    "'NotFoundHeading' doesn't exist at '/CatalogName'",
+                ], withExplicitTechnologyRoot ? "with @TechnologyRoot" : "with synthesized root")
+                
+                let rootReference = try XCTUnwrap(context.soleRootModuleReference)
+                let rootPage = try context.entity(with: rootReference)
+                XCTAssertNotNil(rootPage.metadata?.technologyRoot)
+                if withPageColor {
+                    XCTAssertEqual(rootPage.metadata?.pageColor?.rawValue, "orange")
+                } else {
+                    XCTAssertNil(rootPage.metadata?.pageColor)
+                }
+            }
+        }
+        
+        // Completely synthesized root
+        let catalogURL = try createTempFolder(content: [
+            Folder(name: "CatalogName.docc", content: [
+                TextFile(name: "First.md", utf8Content: """
+                    # One article
+                    
+                    This article links to pages and on-page elements that don't exist.
+                    
+                    - ``NotFoundSymbol``
+                    - <doc:#NotFoundHeading>
+                    
+                    It also links to the technology root.
+                    
+                    - <doc:CatalogName>
+                    """),
+                
+                TextFile(name: "Second.md", utf8Content: """
+                    # Another article
+                    
+                    This article links to a page that doesn't exist to the synthesized technology root.
+                    
+                    - <doc:NotFoundArticle>
+                    - <doc:CatalogName>
+                    """),
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: catalogURL)
+        
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
+            "'NotFoundArticle' doesn't exist at '/CatalogName/Second'",
+            "'NotFoundHeading' doesn't exist at '/CatalogName/First'",
+            "'NotFoundSymbol' doesn't exist at '/CatalogName/First'",
+        ])
+        
+        let rootReference = try XCTUnwrap(context.soleRootModuleReference)
+        let rootPage = try context.entity(with: rootReference)
+        XCTAssertNotNil(rootPage.metadata?.technologyRoot)
+    }
+    
     func testResolvingLinksToHeaders() throws {
         let tempURL = try createTemporaryDirectory()
 
@@ -5090,6 +5227,75 @@ let expected = """
                     platform: .init(operatingSystem: .init(name: "macosx")),
                     symbols: [
                         makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                        makeSymbol(identifier: "symbol-2", kind: symbolKind),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
+    func testContextGeneratesOverloadGroupsForDisjointOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-macos.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                    ])),
+                JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
                         makeSymbol(identifier: "symbol-2", kind: symbolKind),
                     ])),
             ])

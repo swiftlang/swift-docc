@@ -53,6 +53,7 @@ class PlatformAvailabilityTests: XCTestCase {
         let iosAvailability = try XCTUnwrap(availability.first)
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
+        XCTAssert(iosAvailability.isBeta != true)
     }
 
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
@@ -76,6 +77,7 @@ class PlatformAvailabilityTests: XCTestCase {
         let iosAvailability = try XCTUnwrap(availability.first)
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
+        XCTAssert(iosAvailability.isBeta != true)
     }
 
     func testMultiplePlatformAvailabilityFromArticle() throws {
@@ -105,6 +107,10 @@ class PlatformAvailabilityTests: XCTestCase {
         XCTAssert(availability.contains(where: { item in
             item.name == "watchOS" && item.introduced == "7.0"
         }))
+        
+        XCTAssert(availability.allSatisfy { item in
+            item.isBeta != true
+        })
     }
 
     func testArbitraryPlatformAvailability() throws {
@@ -131,6 +137,9 @@ class PlatformAvailabilityTests: XCTestCase {
         XCTAssert(availability.contains(where: { item in
             item.name == "My Package" && item.introduced == "2.0"
         }))
+        XCTAssert(availability.allSatisfy { item in
+            item.isBeta != true
+        })
     }
     
     // Test that the Info.plist default availability does not affect the deprecated/unavailable availabilities provided by the symbol graph.
@@ -170,5 +179,110 @@ class PlatformAvailabilityTests: XCTestCase {
         XCTAssertFalse(availability.contains(where: { platform in
             platform.name == "tvOS"
         }))
+        XCTAssert(availability.allSatisfy { item in
+            item.isBeta != true
+        })
     }
+    
+    /// Ensure that adding `@Available` directives for platform versions marked as beta in an article causes the final RenderNode to contain the appropriate availability data.
+    func testBetaPlatformAvailabilityFromArticle() throws {
+        let platformMetadata = [
+            "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
+        ]
+        let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/AvailableArticle",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        XCTAssertEqual(availability.count, 1)
+        let iosAvailability = try XCTUnwrap(availability.first)
+        XCTAssertEqual(iosAvailability.name, "iOS")
+        XCTAssertEqual(iosAvailability.introduced, "16.0")
+        XCTAssert(iosAvailability.isBeta == true)
+    }
+
+    func testMultipleBetaPlatformAvailabilityFromArticle() throws {
+        let platformMetadata = [
+            "iOS": PlatformVersion(VersionTriplet(15, 0, 0), beta: true),
+            "macOS": PlatformVersion(VersionTriplet(12, 0, 0), beta: true),
+            "watchOS": PlatformVersion(VersionTriplet(7, 0, 0), beta: true),
+        ]
+        let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/AvailabilityBundle/ComplexAvailable",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        XCTAssertEqual(availability.count, 3)
+
+        XCTAssert(availability.contains(where: { item in
+            item.name == "iOS" && item.introduced == "15.0"
+        }))
+        XCTAssert(availability.contains(where: { item in
+            item.name == "macOS" && item.introduced == "12.0"
+        }))
+        XCTAssert(availability.contains(where: { item in
+            item.name == "watchOS" && item.introduced == "7.0"
+        }))
+        
+        XCTAssert(availability.allSatisfy { item in
+            item.isBeta == true
+        })
+    }
+    
+    /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
+    func testBetaPlatformAvailabilityFromExtension() throws {
+        let platformMetadata = [
+            "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
+        ]
+        let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/MyKit/MyClass",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        XCTAssertEqual(availability.count, 1)
+        let iosAvailability = try XCTUnwrap(availability.first)
+        XCTAssertEqual(iosAvailability.name, "iOS")
+        XCTAssertEqual(iosAvailability.introduced, "16.0")
+        XCTAssert(iosAvailability.isBeta == true)
+    }
+
+    
+    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) throws -> (DocumentationBundle, DocumentationContext) {
+        let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
+        let (_, bundle, context) = try loadBundle(from: bundleURL) { context in
+            context.externalMetadata.currentPlatforms = platformMetadata
+        }
+        return (bundle, context)
+    }
+
 }
