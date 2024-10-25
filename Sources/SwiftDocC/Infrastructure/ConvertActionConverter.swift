@@ -69,8 +69,12 @@ package enum ConvertActionConverter {
         
         // An inner function to gather problems for errors encountered during the conversion.
         //
-        // These problems only represent unexpected thrown errors and aren't particularly user-facing but because
-        // `DocumentationConverter.convert(outputConsumer:)` emits them as diagnostics we do the same here.
+        // These problems only represent unexpected thrown errors and aren't particularly user-facing.
+        // For now we emit them as diagnostics because `DocumentationConverter.convert(outputConsumer:)` (which this replaced) used to do that.
+        //
+        // FIXME: In the future we could simplify this control flow by not catching these errors and turning them into diagnostics.
+        // Since both error-level diagnostics and thrown errors fail the documentation build,
+        // the only practical different this would have is that we stop on the first unexpected error instead of processing all pages and gathering all unexpected errors.
         func recordProblem(from error: Swift.Error, in problems: inout [Problem], withIdentifier identifier: String) {
             let problem = Problem(diagnostic: Diagnostic(
                 severity: .error,

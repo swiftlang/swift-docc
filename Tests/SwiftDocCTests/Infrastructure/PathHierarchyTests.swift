@@ -287,11 +287,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testAmbiguousPaths() throws {
-        let originalFeatureFlagsState = FeatureFlags.current
-        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = true
-        defer {
-            FeatureFlags.current = originalFeatureFlagsState
-        }
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
         
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy

@@ -62,19 +62,16 @@ public final class PreviewAction: AsyncAction {
     /// - Parameters:
     ///   - port: The port number used by the preview server.
     ///   - createConvertAction: A closure that returns the action used to convert the documentation before preview.
-    ///   On macOS, this action will be reused to convert documentation each time the source is modified.
-    ///   - workspace: The documentation workspace used by the action's documentation context.
-    ///   - context: The documentation context for the action.
+    ///
+    ///     On macOS, this action will be recreated each time the source is modified to rebuild the documentation.
     ///   - printTemplatePath: Whether or not the HTML template used by the convert action should be printed when the action
     ///     is performed.
     /// - Throws: If an error is encountered while initializing the documentation context.
     public init(
         port: Int,
         createConvertAction: @escaping () throws -> ConvertAction,
-        workspace _: DocumentationWorkspace = DocumentationWorkspace(),
-        context _: DocumentationContext? = nil,
-        printTemplatePath: Bool = true) throws
-    {
+        printTemplatePath: Bool = true
+    ) throws {
         if !Self.allowConcurrentPreviews && !servers.isEmpty {
             assertionFailure("Running multiple preview actions is not allowed.")
         }
