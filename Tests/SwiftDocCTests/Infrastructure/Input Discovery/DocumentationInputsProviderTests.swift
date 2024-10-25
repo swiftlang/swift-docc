@@ -15,6 +15,7 @@ import SwiftDocCTestUtilities
 class DocumentationInputsProviderTests: XCTestCase {
     
     // After 6.2 we can update this test to verify that the input provider discovers the same inputs regardless of FileManagerProtocol
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated, message: "This test uses `LocalFileSystemDataProvider` as a `DocumentationWorkspaceDataProvider` which is deprecated and will be removed after 6.2 is released")
     func testDiscoversSameFilesAsPreviousImplementation() throws {
         let folderHierarchy = Folder(name: "one", content: [

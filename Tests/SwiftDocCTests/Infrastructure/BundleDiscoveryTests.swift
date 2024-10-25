@@ -27,6 +27,7 @@ class BundleDiscoveryTests: XCTestCase {
     }
     
     // This tests registration of multiple catalogs which is deprecated
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testFirstBundle() throws {
         let url = try createTemporaryDirectory()
@@ -63,6 +64,7 @@ class BundleDiscoveryTests: XCTestCase {
     }
     
     // This test registration more than once data provider which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testLoadComplexWorkspace() throws {
         let allFiles = try flatListOfFiles()

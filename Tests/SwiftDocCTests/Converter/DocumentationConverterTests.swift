@@ -12,6 +12,8 @@
 import XCTest
 @testable import SwiftDocC
 
+// This test verifies the behavior of `DocumentationConverter` which is a deprecated type.
+// Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
 @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 class DocumentationConverterTests: XCTestCase {
     /// An empty implementation of `ConvertOutputConsumer` that purposefully does nothing.
