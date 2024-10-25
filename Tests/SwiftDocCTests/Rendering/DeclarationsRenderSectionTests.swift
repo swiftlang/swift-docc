@@ -380,7 +380,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         // - myFunc() where T: Hashable // <- overload group
         let reference = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,
-            path: "/documentation/ConformanceOverloads/MyClass/myFunc()-6gquc",
+            path: "/documentation/ConformanceOverloads/MyClass/myFunc()",
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
