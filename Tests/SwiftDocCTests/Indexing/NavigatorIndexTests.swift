@@ -709,6 +709,14 @@ Root
     }
     
     func testNavigatorIndexGenerationVariantsPayload() throws {
+        try testNavigatorIndexGenerationVariantsPayload(ignoringLanguage: false)
+    }
+
+    func testNavigatorIndexGenerationVariantsPayloadIgnoringLanguage() throws {
+        try testNavigatorIndexGenerationVariantsPayload(ignoringLanguage: true)
+    }
+
+    private func testNavigatorIndexGenerationVariantsPayload(ignoringLanguage: Bool) throws {
         let jsonFile = Bundle.module.url(forResource: "Variant-render-node", withExtension: "json", subdirectory: "Test Resources")!
         let jsonData = try Data(contentsOf: jsonFile)
         
@@ -717,88 +725,112 @@ Root
         builder.setup()
         
         let renderNode = try XCTUnwrap(RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: jsonData))
-        try builder.index(renderNode: renderNode)
+        try builder.index(renderNode: renderNode, ignoringLanguage: ignoringLanguage)
         
         builder.finalize()
         
         let navigatorIndex = builder.navigatorIndex!
         
         assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
-        assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), """
+        var expectedDump = """
         [Root]
+
+        """
+
+        if !ignoringLanguage {
+            expectedDump += """
         ┣╸Objective-C
         ┃ ┗╸My Article in Objective-C
         ┃   ┣╸Task Group 1
         ┃   ┣╸Task Group 2
         ┃   ┗╸Task Group 3
+
+        """
+        }
+
+        expectedDump += """
         ┗╸Swift
           ┗╸My Article
             ┣╸Task Group 1
             ┣╸Task Group 2
             ┗╸Task Group 3
-        """)
-        
-        try XCTAssertEqual(
-            RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
-            RenderIndex.fromString(#"""
-                {
-                  "interfaceLanguages": {
-                    "occ": [
+        """
+
+        assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), expectedDump)
+
+        var expectedRenderIndexString = """
+        {
+            "interfaceLanguages": {
+        """
+
+        if !ignoringLanguage {
+            expectedRenderIndexString += #"""
+                "occ": [
+                  {
+                    "children": [
                       {
-                        "children": [
-                          {
-                            "title": "Task Group 1",
-                            "type": "groupMarker"
-                          },
-                          {
-                            "title": "Task Group 2",
-                            "type": "groupMarker"
-                          },
-                          {
-                            "title": "Task Group 3",
-                            "type": "groupMarker"
-                          }
-                        ],
-                        "path": "\/documentation\/mykit\/my-article",
-                        "title": "My Article in Objective-C",
-                        "type": "article"
+                        "title": "Task Group 1",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "title": "Task Group 2",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "title": "Task Group 3",
+                        "type": "groupMarker"
                       }
                     ],
-                    "swift": [
-                      {
-                        "children": [
-                          {
-                            "title": "Task Group 1",
-                            "type": "groupMarker"
-                          },
-                          {
-                            "title": "Task Group 2",
-                            "type": "groupMarker"
-                          },
-                          {
-                            "title": "Task Group 3",
-                            "type": "groupMarker"
-                          }
-                        ],
-                        "path": "\/documentation\/mykit\/my-article",
-                        "title": "My Article",
-                        "type": "article"
-                      }
-                    ]
-                  },
-                  "includedArchiveIdentifiers": [
-                    "org.swift.docc.example"
-                  ],
-                  "schemaVersion": {
-                    "major": 0,
-                    "minor": 1,
-                    "patch": 2
+                    "path": "\/documentation\/mykit\/my-article",
+                    "title": "My Article in Objective-C",
+                    "type": "article"
                   }
-                }
+                ],
                 """#
-            )
+        }
+
+        expectedRenderIndexString += #"""
+                "swift": [
+                  {
+                    "children": [
+                      {
+                        "title": "Task Group 1",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "title": "Task Group 2",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "title": "Task Group 3",
+                        "type": "groupMarker"
+                      }
+                    ],
+                    "path": "\/documentation\/mykit\/my-article",
+                    "title": "My Article",
+                    "type": "article"
+                  }
+                ]
+                """#
+
+        expectedRenderIndexString += #"""
+            },
+            "includedArchiveIdentifiers": [
+                "org.swift.docc.example"
+            ],
+            "schemaVersion": {
+                "major": 0,
+                "minor": 1,
+                "patch": 2
+            }
+        }
+        """#
+
+        try XCTAssertEqual(
+            RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
+            RenderIndex.fromString(expectedRenderIndexString)
         )
-        
+
         try FileManager.default.removeItem(at: targetURL)
     }
 

@@ -477,8 +477,8 @@ extension NavigatorIndex {
      A `Builder` is a utility class to build a navigator index.
      
      The builder generates an index for content navigation, but also maps important information to filter content based on availability, symbol type, platform and some others.
-      
-      - Note: The builder is not thread safe and therefore, calling `index(renderNode:)` requires external synchronization in case the process is performed on different threads.
+     
+     - Note: The builder is not thread safe and therefore, calling `index(renderNode:)` requires external synchronization in case the process is performed on different threads.
      */
     open class Builder {
         
@@ -617,12 +617,13 @@ extension NavigatorIndex {
         
         /// Index a single render `RenderNode`.
         /// - Parameter renderNode: The render node to be indexed.
-        public func index(renderNode: RenderNode) throws {
+        /// - Parameter ignoringLanguage: Whether language variants should be ignored when indexing this render node.
+        public func index(renderNode: RenderNode, ignoringLanguage: Bool = false) throws {
             // Always index the main render node representation
             let language = try index(renderNode, traits: nil)
             
             // Additionally, for Swift want to also index the Objective-C variant, if there is any.
-            guard language == .swift else {
+            guard !ignoringLanguage && language == .swift else {
                 return
             }
             
