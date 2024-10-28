@@ -6,7 +6,7 @@ Get to know the steps involved in documentation compilation.
 
 This article describes the discrete and sequential steps of compiling documentation with DocC.
 
-DocC starts with input discovery by categorizing the documentation sources in your documentation catalog. Next, it loads and parses the those inputs to create in-memory models of the documentation pages. Once the in-memory model is finalized, DocC converts each topic into a persistable render-friendly representation it can store on disk.
+DocC starts with input discovery by categorizing the documentation sources in your documentation catalog. Next, it loads and parses the those inputs to create in-memory models of the documentation pages. Once the in-memory model is finalized, DocC converts each topic into a persistable, render-friendly representation it can store on disk.
 
 ### Discovery
 
@@ -49,7 +49,7 @@ SwiftDocC.docc
 This phase starts with creating a ``DocumentationContext`` using the discovered inputs from the previous phase. 
 This begins loading and registering the inputs with the context.
 
-The first input that the context register is the symbol information. The symbol information comes from "symbol graph files" which are machine generated and describe all available symbols in a framework (types, functions, variables, etc.) and their relationships (inheritance, conformance, etc.).
+The first input that the context registers is the symbol information. The symbol information comes from "symbol graph files" which are machine generated and describe all available symbols in a framework (types, functions, variables, etc.) and their relationships (inheritance, conformance, etc.).
 
 Each symbol becomes a documentation node in the topic graph and thus a documentation *topic* (an entity in the documentation model). The symbol's topic could optionally be extended with authored documentation from a markup file.
 
