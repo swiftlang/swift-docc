@@ -1253,6 +1253,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             return availability.availability
                 .compactMap { availability -> AvailabilityRenderItem? in
+                    // Allow availability items without introduced and/or deprecated version,
+                    // but filter out items that are obsoleted.
+                    if availability.obsoletedVersion != nil {
+                        return nil
+                    }
                     guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
                           let currentPlatform = context.configuration.externalMetadata.currentPlatforms?[name.displayName]
                     else {

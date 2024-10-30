@@ -19,8 +19,9 @@ class SymbolAvailabilityTests: XCTestCase {
     private func symbolAvailability(
             defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
             symbolGraphOperatingSystemPlatformName: String,
-            symbols: [SymbolGraph.Symbol]
-        ) throws -> [SymbolGraph.Symbol.Availability.AvailabilityItem] {
+            symbols: [SymbolGraph.Symbol],
+            symbolName: String
+    ) throws -> [SymbolGraph.Symbol.Availability.AvailabilityItem] {
             let catalog = Folder(
                 name: "unit-test.docc",
                 content: [
@@ -36,15 +37,41 @@ class SymbolAvailabilityTests: XCTestCase {
                 ]
             )
             let (_, context) = try loadBundle(catalog: catalog)
-            let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SymbolName")
+            let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            let availability = try XCTUnwrap(symbol.availability?.availability)
-            return availability
+            return try XCTUnwrap(symbol.availability?.availability)
+    }
+    
+    private func renderNodeAvailability(
+        defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
+        symbolGraphOperatingSystemPlatformName: String,
+        symbols: [SymbolGraph.Symbol],
+        symbolName: String
+    ) throws -> [AvailabilityRenderItem] {
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(defaultAvailability: [
+                    "ModuleName": defaultAvailability
+                ]),
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: symbolGraphOperatingSystemPlatformName), environment: nil),
+                    symbols: symbols,
+                    relationships: []
+                )),
+            ]
+        )
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: reference.path, sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        return try XCTUnwrap((translator.visit(node.semantic as! Symbol) as! RenderNode).metadata.platformsVariants.defaultValue)
     }
     
     func testSymbolGraphSymbolWithoutDeprecatedVersionAndIntroducedVersion() throws {
 
-        let availability = try symbolAvailability(
+        let availability = try renderNodeAvailability(
             defaultAvailability: [],
             symbolGraphOperatingSystemPlatformName: "ios",
             symbols: [
@@ -54,14 +81,34 @@ class SymbolAvailabilityTests: XCTestCase {
                     pathComponents: ["SymbolName"],
                     availability: [makeAvailabilityItem(domainName: "iOS", deprecated: SymbolGraph.SemanticVersion(string: "1.2.3"))]
                 )
-            ]
+            ],
+            symbolName: "SymbolName"
         )
         
-        XCTAssertEqual(availability.map { "\($0.domain?.rawValue ?? "<nil>") \($0.introducedVersion?.description ?? "<nil>") - \($0.deprecatedVersion?.description ?? "<nil>")" }.sorted(), [
+        XCTAssertEqual(availability.map { "\($0.name ?? "<nil>") \($0.introduced ?? "<nil>") - \($0.deprecated ?? "<nil>")" }, [
             // The availability items wihout an introduced version should still emit the deprecated version if available.
             "iOS <nil> - 1.2.3",
             "iPadOS <nil> - 1.2.3",
-            "macCatalyst <nil> - 1.2.3",
+            "Mac Catalyst <nil> - 1.2.3",
+        ])
+    }
+    
+    func testSymbolGraphSymbolWithObsoleteVersion() throws {
+
+        let availability = try renderNodeAvailability(
+            defaultAvailability: [],
+            symbolGraphOperatingSystemPlatformName: "ios",
+            symbols: [
+                makeSymbol(
+                    id: "platform-1-symbol",
+                    kind: .class,
+                    pathComponents: ["SymbolName"],
+                    availability: [makeAvailabilityItem(domainName: "iOS", obsoleted: SymbolGraph.SemanticVersion(string: "1.2.3"))]
+                )
+            ], symbolName: "SymbolName"
+        )
+        XCTAssertEqual(availability.map { "\($0.name ?? "<nil>") \($0.introduced ?? "<nil>") - \($0.deprecated ?? "<nil>")" }.sorted(), [
+            // The availability items that are obsolete are not rendered in the final documentation.
         ])
     }
     
