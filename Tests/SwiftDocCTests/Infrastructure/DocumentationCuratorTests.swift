@@ -28,11 +28,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCrawl() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
@@ -79,46 +75,34 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCrawlDiagnostics() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        
-        let tempURL = try createTemporaryDirectory().appendingPathComponent("unit-test.docc")
-        let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let (tempCatalogURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            let extensionFile = url.appendingPathComponent("documentation/myfunction.md")
             
-        XCTAssert(FileManager.default.fileExists(atPath: testBundleURL.path))
-        try FileManager.default.copyItem(at: testBundleURL, to: tempURL)
-        
-        let sidecarFile = tempURL.appendingPathComponent("documentation/myfunction.md")
-        
-        let source = """
-        # ``MyKit/MyClass/myFunction()``
-
-        myFunction abstract.
-
-        ## Topics
-
-        ### Invalid curation
-
-        A few different curations that should each result in warnings.
-        The first is a reference to the parent, the second is a reference to self, and the last is an unresolved reference.
-
-         - ``MyKit``
-         - ``myFunction()``
-         - ``UnknownSymbol``
-        """
+            try """
+            # ``MyKit/MyClass/myFunction()``
             
-        try source.write(to: sidecarFile, atomically: true, encoding: .utf8)
+            myFunction abstract.
+            
+            ## Topics
+            
+            ### Invalid curation
+            
+            A few different curations that should each result in warnings.
+            The first is a reference to the parent, the second is a reference to self, and the last is an unresolved reference.
+            
+             - ``MyKit``
+             - ``myFunction()``
+             - ``UnknownSymbol``
+            """.write(to: extensionFile, atomically: true, encoding: .utf8)
+        }
+        let extensionFile = tempCatalogURL.appendingPathComponent("documentation/myfunction.md")
         
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempURL)
-        try workspace.registerProvider(dataProvider)
-        
-        var crawler = DocumentationCurator(in: context, bundle: workspace.bundles.values.first!)
+        var crawler = DocumentationCurator(in: context, bundle: bundle)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
         
         XCTAssertNoThrow(try crawler.crawlChildren(of: mykit.reference, prepareForCuration: { _ in }, relateNodes: { _, _ in }))
         
-        let myClassProblems = crawler.problems.filter({ $0.diagnostic.source?.standardizedFileURL == sidecarFile.standardizedFileURL })
+        let myClassProblems = crawler.problems.filter({ $0.diagnostic.source?.standardizedFileURL == extensionFile.standardizedFileURL })
         XCTAssertEqual(myClassProblems.count, 2)
         
         let moduleCurationProblem = myClassProblems.first(where: { $0.diagnostic.identifier == "org.swift.docc.ModuleCuration" })
@@ -153,7 +137,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCyclicCurationDiagnostic() throws {
-        let tempURL = try createTempFolder(content: [
+        let (_, context) = try loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 // A number of articles with this cyclic curation:
                 //
@@ -199,9 +183,8 @@ class DocumentationCuratorTests: XCTestCase {
                 - <doc:First>
                 """),
             ])
-        ])
+        )
         
-        let (_, _, context) = try loadBundle(from: tempURL)
         XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["org.swift.docc.CyclicReference"])
         let curationProblem = try XCTUnwrap(context.problems.first)
         
@@ -294,13 +277,8 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual(root.path, "/documentation/Root")
     }
 
-
     func testSymbolLinkResolving() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         let crawler = DocumentationCurator.init(in: context, bundle: bundle)
         
@@ -353,13 +331,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testLinkResolving() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let sourceRoot = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+        let (sourceRoot, bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
         

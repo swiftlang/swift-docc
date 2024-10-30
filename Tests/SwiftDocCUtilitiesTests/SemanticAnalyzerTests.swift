@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ import Markdown
 import SwiftDocCTestUtilities
 
 class SemanticAnalyzerTests: XCTestCase {
-    let bundleFolderHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
+    private let catalogHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
         Folder(name: "Symbols", content: []),
         Folder(name: "Resources", content: [
             TextFile(name: "Oops.md", utf8Content: """
@@ -54,23 +54,15 @@ class SemanticAnalyzerTests: XCTestCase {
         InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
     ])
     
-    func testDontCrashOnInvalidContent() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try! DocumentationContext(dataProvider: workspace)
-        let bundleURL = try bundleFolderHierarchy.write(inside: createTemporaryDirectory())
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
-        let bundle = context.bundle(identifier: "com.test.example")!
+    func testDoNotCrashOnInvalidContent() throws {
+        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
         
         XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/Oops", sourceLanguage: .swift)))
     }
     
     func testWarningsAboutDirectiveSupport() throws {
         func problemsConvertingTestContent(withFileExtension fileExtension: String) throws -> (unsupportedTopLevelChildProblems: [Problem], missingTopLevelChildProblems: [Problem]) {
-            let workspace = DocumentationWorkspace()
-            let context = try! DocumentationContext(dataProvider: workspace)
-            
-            let folderHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
+            let catalogHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
                 TextFile(name: "FileWithDirective.\(fileExtension)", utf8Content: """
                 @Article
                 """),
@@ -81,9 +73,7 @@ class SemanticAnalyzerTests: XCTestCase {
                 """),
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
-            let bundleURL = try folderHierarchy.write(inside: createTemporaryDirectory())
-            let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-            try workspace.registerProvider(dataProvider)
+            let (_, context) = try loadBundle(catalog: catalogHierarchy)
             
             return (
                 context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unsupportedTopLevelChild" }),
@@ -120,12 +110,7 @@ class SemanticAnalyzerTests: XCTestCase {
     }
     
     func testDoesNotWarnOnEmptyTutorials() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try! DocumentationContext(dataProvider: workspace)
-        let bundleURL = try bundleFolderHierarchy.write(inside: createTemporaryDirectory())
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
-        let bundle = context.bundle(identifier: "com.test.example")!
+        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
         
         let document = Document(parsing: "", options: .parseBlockDirectives)
         var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), context: context, bundle: bundle)

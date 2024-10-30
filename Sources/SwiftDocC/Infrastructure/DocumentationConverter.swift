@@ -17,6 +17,7 @@ import Foundation
 /// ## See Also
 ///
 /// - ``DocumentationConverter``
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationConverterProtocol {
     /// Converts documentation, outputting products using the given output consumer.
     /// - Parameter outputConsumer: The output consumer for content produced during conversion.
@@ -37,6 +38,7 @@ public protocol DocumentationConverterProtocol {
 ///
 /// You can also configure the documentation converter to emit extra metadata such as linkable entities and indexing records
 /// information.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 public struct DocumentationConverter: DocumentationConverterProtocol {
     let rootURL: URL?
     let emitDigest: Bool
@@ -288,7 +290,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                         return
                     }
 
-                    guard let renderNode = try converter.renderNode(for: entity) else {
+                    guard let renderNode = converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
                         return
                     }

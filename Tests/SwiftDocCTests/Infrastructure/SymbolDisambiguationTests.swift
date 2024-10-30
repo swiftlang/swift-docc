@@ -191,7 +191,7 @@ class SymbolDisambiguationTests: XCTestCase {
     func testMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
+        var loader = SymbolGraphLoader(bundle: bundle, dataLoader: { try context.contentsOfURL($0, in: $1) })
         try loader.loadAll()
         
         let references = context.linkResolver.localResolver.referencesForSymbols(in: loader.unifiedGraphs, bundle: bundle, context: context).mapValues(\.path)
@@ -330,27 +330,12 @@ class SymbolDisambiguationTests: XCTestCase {
             miscResourceURLs: []
         )
         
-        class TestProvider: DocumentationContextDataProvider {
-            var delegate: DocumentationContextDataProviderDelegate? = nil
-            var bundles: [SwiftDocC.BundleIdentifier : SwiftDocC.DocumentationBundle] = [:]
-            var symbolGraphData: [URL: Data] = [:]
-            
-            func contentsOfURL(_ url: URL, in bundle: SwiftDocC.DocumentationBundle) throws -> Data {
-                guard let data = symbolGraphData[url] else {
-                    fatalError("Only symbol graph content will be loaded from the bundle in this test")
-                }
-                return data
-            }
-        }
-        
-        let provider = TestProvider()
-        provider.symbolGraphData = [
+        let provider = InMemoryDataProvider(files: [
             swiftSymbolGraphURL: try JSONEncoder().encode(graph),
             objcSymbolGraphURL: try JSONEncoder().encode(graph2),
-        ]
-        provider.bundles[bundle.identifier] = bundle
+        ], fallback: nil)
         
-        let context = try DocumentationContext(dataProvider: provider)
+        let context = try DocumentationContext(bundle: bundle, dataProvider: provider)
         
         return context.linkResolver.localResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], bundle: bundle, context: context)
     }

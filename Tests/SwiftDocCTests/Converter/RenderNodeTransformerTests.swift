@@ -14,7 +14,7 @@ import XCTest
 class RenderNodeTransformerTests: XCTestCase {
     // This test uses ``RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     func testRemovesAutomaticallyCuratedSeeAlsoSections() throws {
         let symbolJSON = try String(contentsOf: Bundle.module.url(
             forResource: "symbol-with-automatic-see-also-section", withExtension: "json",
@@ -33,7 +33,7 @@ class RenderNodeTransformerTests: XCTestCase {
     
     // This test uses ``RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     func testRemovesAutomaticallyCuratedSeeAlsoSectionsPreservingReferences() throws {
         let symbolJSON = try String(contentsOf: Bundle.module.url(
             forResource: "symbol-auto-see-also-fragments-and-relationships", withExtension: "json",

@@ -15,15 +15,6 @@ import XCTest
 import SwiftDocCTestUtilities
 
 class PreviewActionIntegrationTests: XCTestCase {
-    func json(contentsOf url: URL) throws -> [String: Any] {
-        let data = try Data(contentsOf: url)
-        guard let result = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-            XCTFail("Failed to load JSON from \(url.path)")
-            return [:]
-        }
-        return result
-    }
-    
     private func createMinimalDocsBundle() -> Folder {
         let overviewURL = Bundle.module.url(
             forResource: "Overview", withExtension: "tutorial", subdirectory: "Test Resources")!
@@ -72,156 +63,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         return (sourceURL: sourceURL, outputURL: outputURL, templateURL: templateURL)
     }
     
-    /// Test the fix for <rdar://problem/48615392>.
-    func testWatchRecoversAfterConversionErrors() throws {
-        #if os(macOS)
-        throw XCTSkip("This test is flaky rdar://90866510")
-        
-//        // Source files.
-//        let source = createMinimalDocsBundle()
-//        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
-//
-//        let logStorage = LogHandle.LogStorage()
-//        var logHandle = LogHandle.memory(logStorage)
-//
-//        let convertActionTempDirectory = try createTemporaryDirectory()
-//        let createConvertAction = {
-//            try ConvertAction(
-//                documentationBundleURL: sourceURL,
-//                outOfProcessResolver: nil,
-//                analyze: false,
-//                targetDirectory: outputURL,
-//                htmlTemplateDirectory: templateURL,
-//                emitDigest: false,
-//                currentPlatforms: nil,
-//                fileManager: FileManager.default,
-//                temporaryDirectory: convertActionTempDirectory)
-//        }
-//
-//        guard let preview = try? PreviewAction(
-//                tlsCertificateKey: nil,
-//                tlsCertificateChain: nil,
-//                serverUsername: nil,
-//                serverPassword: nil,
-//                port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
-//                createConvertAction: createConvertAction) else {
-//            XCTFail("Could not create preview action from parameters")
-//            return
-//        }
-//
-//        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
-//        preview.bindServerToSocketPath = socketURL.path
-//
-//        // The technology output file URL
-//        let convertedOverviewURL = outputURL
-//            .appendingPathComponent("data")
-//            .appendingPathComponent("tutorials")
-//            .appendingPathComponent("Overview.json")
-//
-//        // Start watching the source and get the initial (successful) state.
-//        do {
-//            let logOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce log output") { $0.contains("=======")  }
-//
-//            // Start the preview and keep it running for the asserts that follow inside this test.
-//            DispatchQueue.global().async {
-//                var action = preview as Action
-//                do {
-//                    let result = try action.perform(logHandle: logHandle)
-//
-//                    guard !result.problems.containsErrors else {
-//                        throw ErrorsEncountered()
-//                    }
-//
-//                    if !result.problems.isEmpty {
-//                        print(result.problems.localizedDescription, to: &logHandle)
-//                    }
-//                } catch {
-//                    XCTFail(error.localizedDescription)
-//                }
-//            }
-//
-//            wait(for: [logOutputExpectation], timeout: 20.0)
-//
-//            // Check the log output to confirm that expected informational
-//            // text is printed
-//            let logOutput = logStorage.text
-//
-//            // rdar://71318888
-//            let expectedLogIntroductoryOutput = """
-//                Input: \(sourceURL.path)
-//                Template: \(templateURL.path)
-//                """
-//            XCTAssertTrue(logOutput.hasPrefix(expectedLogIntroductoryOutput), """
-//                Missing expected input and template information in log/print output
-//                """)
-//
-//            if let previewInfoStart = logOutput.range(of: "=====\n")?.upperBound,
-//                let previewInfoEnd = logOutput[previewInfoStart...].range(of: "\n=====")?.lowerBound {
-//                XCTAssertEqual(logOutput[previewInfoStart..<previewInfoEnd], """
-//                Starting Local Preview Server
-//                \t Address: http://localhost:8080/documentation/mykit
-//                \t          http://localhost:8080/tutorials/overview
-//                """)
-//            } else {
-//                XCTFail("Missing preview information in log/print output")
-//            }
-//
-//            XCTAssertTrue(FileManager.default.fileExists(atPath: convertedOverviewURL.path, isDirectory: nil))
-//        }
-//
-//        // Verify conversion result.
-//        let json1 = try json(contentsOf: convertedOverviewURL)
-//        guard let sections = json1["sections"] as? [[String: Any]],
-//            let intro = sections.first( where: { $0["kind"] as? String == "hero" }),
-//            let initialIntroTitle = intro["title"] as? String else {
-//            XCTFail("Couldn't parse converted markdown")
-//            return
-//        }
-//
-//        XCTAssertEqual(initialIntroTitle, "Technology X")
-//
-//        let invalidJSONSymbolGraphURL = sourceURL.appendingPathComponent("invalid-incomplete-data.symbols.json")
-//
-//        // Start watching the source and detect failed conversion.
-//        do {
-//            let outputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce output") { $0.contains("Compilation failed") }
-//
-//            // this is invalid JSON and will result in an error
-//            try "{".write(to: invalidJSONSymbolGraphURL, atomically: true, encoding: .utf8)
-//
-//            // Wait for watch to produce output.
-//            wait(for: [outputExpectation], timeout: 20.0)
-//        }
-//
-//        // Start watching the source and detect recovery and successful conversion after a failure.
-//        do {
-//            let outputExpectation = asyncLogExpectation(log: logStorage, description: "Did finish conversion") { $0.contains("Done") }
-//
-//            try FileManager.default.removeItem(at: invalidJSONSymbolGraphURL)
-//
-//            // Wait for watch to produce output.
-//            wait(for: [outputExpectation], timeout: 20.0)
-//
-//            // Check conversion result.
-//            let finalJSON = try json(contentsOf: convertedOverviewURL)
-//            guard let sections = finalJSON["sections"] as? [[String: Any]],
-//                let intro = sections.first( where: { $0["kind"] as? String == "hero" }),
-//                let finalIntroTitle = intro["title"] as? String else {
-//                XCTFail("Couldn't parse converted markdown")
-//                return
-//            }
-//            XCTAssertEqual(finalIntroTitle, "Technology X")
-//        }
-//
-//        // Make sure to stop the preview process so it doesn't stay alive on the machine running the tests.
-//        try preview.stop()
-//
-//        try FileManager.default.removeItem(at: sourceURL)
-//        try FileManager.default.removeItem(at: outputURL)
-//        try FileManager.default.removeItem(at: templateURL)
-        #endif
-    }
-    
     func testThrowsHumanFriendlyErrorWhenCannotStartServerOnAGivenPort() async throws {
         // Binding an invalid address
         try await assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on port -1")
@@ -241,9 +82,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         try Data().write(to: pipeURL)
         let fileHandle = try FileHandle(forUpdating: pipeURL)
         defer { fileHandle.closeFile() }
-
-        let workspace = DocumentationWorkspace()
-        _ = try! DocumentationContext(dataProvider: workspace)
 
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {

@@ -1917,7 +1917,7 @@ Document
             var configuration = DocumentationContext.Configuration()
             configuration.externalMetadata.currentPlatforms = currentPlatforms
             
-            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration)
+            let (_, bundle, context) = try testBundleAndContext(named: "TestBundle", configuration: configuration)
             
             let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             return (bundle, context, reference)
@@ -3392,9 +3392,7 @@ Document
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
         
-        let (_, bundle, context) = try loadBundle(from: bundleURL) { context in
-            context.diagnosticEngine.consumers.sync({ $0.removeAll() })
-        }
+        let (_, bundle, context) = try loadBundle(from: bundleURL, diagnosticEngine: .init() /* no diagnostic consumers */)
         
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         
