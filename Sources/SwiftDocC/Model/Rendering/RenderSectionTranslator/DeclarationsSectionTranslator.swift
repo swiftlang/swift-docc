@@ -13,7 +13,8 @@ import SymbolKit
 
 typealias OverloadDeclaration = (
     declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment],
-    reference: ResolvedTopicReference
+    reference: ResolvedTopicReference,
+    conformance: ConformanceSection?
 )
 
 /// Translates a symbol's declaration into a render node's Declarations section.
@@ -141,7 +142,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         commonFragments: commonFragments)
                     otherDeclarations.append(.init(
                         tokens: translatedDeclaration,
-                        identifier: overloadDeclaration.reference.absoluteString))
+                        identifier: overloadDeclaration.reference.absoluteString,
+                        conformance: overloadDeclaration.conformance
+                    ))
 
                     // Add a topic reference to the overload
                     renderNodeTranslator.collectedTopicReferences.append(
@@ -160,6 +163,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         return nil
                     }
 
+                    let conformance = renderNodeTranslator.contentRenderer.conformanceSectionFor(overloadReference, collectedConstraints: [:])
+
                     let declarationFragments = overload.declarationVariants[trait]?.values
                         .first?
                         .declarationFragments
@@ -168,7 +173,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         "Overloaded symbols must have declaration fragments."
                     )
                     return declarationFragments.map({
-                        (declaration: $0, reference: overloadReference)
+                        (declaration: $0, reference: overloadReference, conformance: conformance)
                     })
                 }
 
@@ -204,13 +209,13 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     // Pre-process the declarations by splitting text fragments apart to increase legibility
                     let mainDeclaration = declaration.declarationFragments.flatMap(preProcessFragment(_:))
                     let processedOverloadDeclarations = overloadDeclarations.map({
-                        OverloadDeclaration($0.declaration.flatMap(preProcessFragment(_:)), $0.reference)
+                        OverloadDeclaration($0.declaration.flatMap(preProcessFragment(_:)), $0.reference, $0.conformance)
                     })
 
                     // Collect the "common fragments" so we can highlight the ones that are different
                     // in each declaration
                     let commonFragments = commonFragments(
-                        for: (mainDeclaration, renderNode.identifier),
+                        for: (mainDeclaration, renderNode.identifier, nil),
                         overloadDeclarations: processedOverloadDeclarations)
 
                     renderedTokens = translateDeclaration(

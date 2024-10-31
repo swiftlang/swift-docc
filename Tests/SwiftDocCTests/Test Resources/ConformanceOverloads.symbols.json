@@ -1,0 +1,292 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 6,
+      "patch": 0
+    },
+    "generator": "Apple Swift version 6.0 (swiftlang-6.0.0.5.15 clang-1600.0.22.6)"
+  },
+  "module": {
+    "name": "ConformanceOverloads",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 12,
+          "minor": 4
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.class",
+        "displayName": "Class"
+      },
+      "identifier": {
+        "precise": "s:9ConformanceOverloads7MyClassC",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClass"
+      ],
+      "names": {
+        "title": "MyClass",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "class"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "swiftGenerics": {
+        "parameters": [
+          {
+            "name": "T",
+            "index": 0,
+            "depth": 0
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "class"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": "<"
+        },
+        {
+          "kind": "genericParameter",
+          "spelling": "T"
+        },
+        {
+          "kind": "text",
+          "spelling": ">"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:9ConformanceOverloads7MyClassCAASHRzlE6myFuncyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClass",
+        "myFunc()"
+      ],
+      "names": {
+        "title": "myFunc()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "myFunc"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftGenerics": {
+        "parameters": [
+          {
+            "name": "T",
+            "index": 0,
+            "depth": 0
+          }
+        ],
+        "constraints": [
+          {
+            "kind": "conformance",
+            "lhs": "T",
+            "rhs": "Hashable",
+            "rhsPrecise": "s:SH"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "ConformanceOverloads",
+        "typeKind": "swift.class",
+        "constraints": [
+          {
+            "kind": "conformance",
+            "lhs": "T",
+            "rhs": "Hashable",
+            "rhsPrecise": "s:SH"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "myFunc"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:9ConformanceOverloads7MyClassCAASQRzlE6myFuncyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClass",
+        "myFunc()"
+      ],
+      "names": {
+        "title": "myFunc()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "myFunc"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftGenerics": {
+        "parameters": [
+          {
+            "name": "T",
+            "index": 0,
+            "depth": 0
+          }
+        ],
+        "constraints": [
+          {
+            "kind": "conformance",
+            "lhs": "T",
+            "rhs": "Equatable",
+            "rhsPrecise": "s:SQ"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "ConformanceOverloads",
+        "typeKind": "swift.class",
+        "constraints": [
+          {
+            "kind": "conformance",
+            "lhs": "T",
+            "rhs": "Equatable",
+            "rhsPrecise": "s:SQ"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "myFunc"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public"
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "s:9ConformanceOverloads7MyClassCAASHRzlE6myFuncyyF",
+      "target": "s:9ConformanceOverloads7MyClassC"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:9ConformanceOverloads7MyClassCAASQRzlE6myFuncyyF",
+      "target": "s:9ConformanceOverloads7MyClassC"
+    }
+  ]
+}
