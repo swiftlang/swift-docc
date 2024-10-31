@@ -303,12 +303,16 @@ struct TopicGraph {
 
     /// Returns the children of this node that reference it as their overload group.
     func overloads(of groupReference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
-        guard nodes[groupReference]?.isOverloadGroup == true else {
+        guard let groupNode = nodes[groupReference], groupNode.isOverloadGroup else {
             return nil
         }
-        return edges[groupReference, default: []].filter({ childReference in
-            nodes[childReference]?.shouldAutoCurateInCanonicalLocation == false
-        })
+        
+        return edges[groupReference, default: []].filter { childReference in
+            // This is fragile and relies on overload groups not having any disambiguation.
+            guard childReference.path.hasPrefix(groupReference.path) else { return false }
+            guard let childNode = nodes[childReference] else { return false }
+            return childNode.shouldAutoCurateInCanonicalLocation
+        }
     }
 
     /// Returns true if a node exists with the given reference and it's set as linkable.
