@@ -206,6 +206,11 @@ documentation hierarchy.
 
 After you arrange nested symbols in an extension file, use DocC to compile your changes and review them in your browser.
 
+> Note: 
+> If you organize a member symbol into a topic group outside of its canonical container symbol, 
+> DocC will still include the member symbol in the default topic group.
+> This ensures that the reader can always find the member symbol somewhere in the sub-hierarchy of its canonical container symbol. 
+
 ### Incorporate Hierarchy in Your Navigation
 
 Much like you organize symbols on a landing page or in an extension file, you 
@@ -241,4 +246,4 @@ they can also confuse a reader if you create too many levels of hierarchy.
 Avoid using a collection when a topic group at a higher level can achieve the 
 same result.
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
