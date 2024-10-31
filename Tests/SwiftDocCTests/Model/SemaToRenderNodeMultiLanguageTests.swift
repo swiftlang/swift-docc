@@ -243,7 +243,10 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "APICollection",
                 "Article",
                 "Bar",
-                "Foo",
+                "Foo", // Foo.swift.struct
+                // This assertion is misleading because the RenderNode "references" are shared across all variants.
+                // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
+                "Foo", // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
                 "MixedLanguageClassConformingToProtocol",
                 "MixedLanguageFramework",
                 "MixedLanguageFramework Tutorials",
@@ -262,6 +265,13 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "protocol MixedLanguageProtocol",
                 "struct Foo",
                 "struct SwiftOnlyStruct",
+                // This assertion is misleading because the RenderNode "references" are shared across all variants.
+                // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
+                """
+                typedef enum Foo : NSString {
+                    ...
+                } Foo;
+                """, // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
             ],
             failureMessage: { fieldName in
                 "Swift variant of 'MixedLanguageFramework' module has unexpected content for '\(fieldName)'."
@@ -293,13 +303,18 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageProtocol",
+                // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-c.typealias",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
                 "APICollection",
                 "Article",
                 "Bar",
-                "Foo",
+                "Foo", // Foo.swift.struct
+                // This assertion is misleading because the RenderNode "references" are shared across all variants.
+                // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
+                "Foo", // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
                 "MixedLanguageClassConformingToProtocol",
                 "MixedLanguageFramework",
                 "MixedLanguageFramework Tutorials",
@@ -318,6 +333,13 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "class SwiftOnlyClass",
                 "struct Foo",
                 "struct SwiftOnlyStruct",
+                // This assertion is misleading because the RenderNode "references" are shared across all variants.
+                // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
+                """
+                typedef enum Foo : NSString {
+                    ...
+                } Foo;
+                """, // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
             ],
             failureMessage: { fieldName in
                 "Objective-C variant of 'MixedLanguageFramework' module has unexpected content for '\(fieldName)'."

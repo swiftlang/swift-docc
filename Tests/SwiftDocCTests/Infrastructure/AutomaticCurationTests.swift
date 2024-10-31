@@ -118,16 +118,22 @@ class AutomaticCurationTests: XCTestCase {
     
     func testAutomaticTopicsSkippingCustomCuratedSymbols() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { url in
-            // Curate some of `SideClass`'s children under SideKit.
-            let sideKit = """
-            # ``SideKit``
-            SideKit framework
+            // Curate some of members of SideClass in an API collection
+            try """
+            # Some API collection
+            
             ## Topics
-            ### SideKit Basics
-            - ``SideClass/path``
-            - ``SideClass/url``
-            """
-            try sideKit.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
+            - ``/SideKit/SideClass/path``
+            - ``/SideKit/SideClass/url``
+            """.write(to: url.appendingPathComponent("API Collection.md"), atomically: true, encoding: .utf8)
+            
+            // Curate the API collection under SideClass
+            try """
+            # ``/SideKit/SideClass``
+            
+            ## Topics
+            - <doc:API-Collection>
+            """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
@@ -556,7 +562,11 @@ class AutomaticCurationTests: XCTestCase {
                 // "Variables",
                 // '_MixedLanguageFrameworkVersionNumber is manually curated in a task group titled "Objective-C–only APIs" in MixedLanguageFramework.md.
                 // '_MixedLanguageFrameworkVersionString' is manually curated in a task group titled "Some Swift-only APIs, some Objective-C–only APIs, some mixed" in MixedLanguageFramework.md.
+                
                 // 'MixedLanguageFramework/Foo-c.typealias' is manually curated in a task group titled "Custom" under 'MixedLanguageFramework/Bar/myStringFunction:error:'
+                // Because this is top-level type is curated under the _member_ of another type, it's not removed from automatic curation.
+                "Type Aliases",
+                "/documentation/MixedLanguageFramework/Foo-c.typealias",
                 
                 "Enumerations",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct",
@@ -818,7 +828,7 @@ class AutomaticCurationTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: protocolDocumentationNode.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
 
-        XCTAssertEqual(renderNode.topicSections.count, 1)
+        XCTAssertEqual(renderNode.topicSections.count, 2)
 
         // The page should not contain a reference to the overload group node, which would otherwise
         // be automatically curated into an "Instance Methods" topic group with a hash suffix of 9b6be
@@ -829,6 +839,12 @@ class AutomaticCurationTests: XCTestCase {
             "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-8iuz7",
             "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-91hxs",
             "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx",
+        ])
+        
+        let defaultTopic = try XCTUnwrap(renderNode.topicSections.last)
+        XCTAssertEqual(defaultTopic.title, "Instance Methods")
+        XCTAssertEqual(defaultTopic.identifiers, [
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
         ])
     }
     

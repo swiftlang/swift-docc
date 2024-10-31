@@ -2149,6 +2149,8 @@ class ConvertActionTests: XCTestCase {
             "Variables",
             "_MixedLanguageFrameworkVersionNumber",
             "_MixedLanguageFrameworkVersionString",
+            "Type Aliases",
+            "Foo",
             "Enumerations",
             "Foo",
             "Enumeration Cases",

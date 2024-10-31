@@ -744,6 +744,17 @@
         "type" : "groupMarker"
       },
       {
+        "children" : [
+          {
+            "title" : "Variables",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/sidekit\/uncuratedclass\/angle",
+            "title" : "angle",
+            "type" : "var"
+          }
+        ],
         "path" : "\/documentation\/sidekit\/uncuratedclass",
         "title" : "UncuratedClass",
         "type" : "class"
