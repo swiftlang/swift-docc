@@ -90,9 +90,6 @@ struct TopicGraph {
         /// If true, the topic should automatically organize into a topic section in its canonical container page's hierarchy for each language representation.
         var shouldAutoCurateInCanonicalLocation: Bool = true
 
-        /// If true, this topic is a generated "overload group" symbol page.
-        var isOverloadGroup: Bool = false
-
         init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false, shouldAutoCurateInCanonicalLocation: Bool = true) {
             self.reference = reference
             self.kind = kind
@@ -299,20 +296,6 @@ struct TopicGraph {
     /// A directed graph of the reverse edges in the topic graph.
     var reverseEdgesGraph: DirectedGraph<ResolvedTopicReference> {
         DirectedGraph(edges: reverseEdges)
-    }
-
-    /// Returns the children of this node that reference it as their overload group.
-    func overloads(of groupReference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
-        guard let groupNode = nodes[groupReference], groupNode.isOverloadGroup else {
-            return nil
-        }
-        
-        return edges[groupReference, default: []].filter { childReference in
-            // This is fragile and relies on overload groups not having any disambiguation.
-            guard childReference.path.hasPrefix(groupReference.path) else { return false }
-            guard let childNode = nodes[childReference] else { return false }
-            return childNode.shouldAutoCurateInCanonicalLocation
-        }
     }
 
     /// Returns true if a node exists with the given reference and it's set as linkable.
