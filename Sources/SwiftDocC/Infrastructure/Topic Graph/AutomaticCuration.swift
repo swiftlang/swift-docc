@@ -171,17 +171,30 @@ public struct AutomaticCuration {
             return nil
         }
         
+        let variantLanguageIDs = Set(variantsTraits.compactMap(\.interfaceLanguage))
+        
+        func isRelevant(_ filteredGroup: DocumentationContentRenderer.ReferenceGroup) -> Bool {
+            // Check if the task group is filtered to a subset of languages
+            if let languageFilter = filteredGroup.languageFilter,
+               !languageFilter.contains(where: { variantLanguageIDs.contains($0.id) })
+            {
+                // This group is only applicable to other languages than the given variant traits.
+                return false
+            }
+            
+            // Otherwise, check that the group contains the this reference.
+            return filteredGroup.references.contains(node.reference)
+        }
+        
         func filterReferences(_ references: [ResolvedTopicReference]) -> [ResolvedTopicReference] {
             Array(
                 references
-                // Don't include the current node.
-                .filter { $0 != node.reference }
-            
-                // Filter out nodes that aren't available in any of the given traits.
                 .filter { reference in
-                    context.sourceLanguages(for: reference).contains(where: { language in
-                        variantsTraits.contains(where: { $0.interfaceLanguage == language.id})
-                    })
+                    // Don't include the current node.
+                    reference != node.reference
+                    &&
+                    // Filter out nodes that aren't available in any of the given traits.
+                    context.sourceLanguages(for: reference).contains(where: { variantLanguageIDs.contains($0.id) })
                 }
                 // Don't create too long See Also sections
                 .prefix(automaticSeeAlsoLimit)
@@ -190,7 +203,7 @@ public struct AutomaticCuration {
         
         // Look up the render context first
         if let taskGroups = renderContext?.store.content(for: parentReference)?.taskGroups,
-           let linkingGroup = taskGroups.first(where: { $0.references.contains(node.reference) })
+           let linkingGroup = taskGroups.first(where: isRelevant)
         {
             // Group match in render context, verify if there are any other references besides the current one.
             guard linkingGroup.references.count > 1 else { return nil }
@@ -203,9 +216,7 @@ public struct AutomaticCuration {
         }
         
         // Find the group where the current symbol is curated
-        let linkingGroup = taskGroups.first { group -> Bool in
-            group.references.contains(node.reference)
-        }
+        let linkingGroup = taskGroups.first(where: isRelevant)
         
         // Verify there is a matching linking group and more references than just the current one.
         guard let group = linkingGroup, group.references.count > 1 else {
