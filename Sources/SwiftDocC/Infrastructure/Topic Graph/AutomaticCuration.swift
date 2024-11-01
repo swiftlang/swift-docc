@@ -163,6 +163,7 @@ public struct AutomaticCuration {
             return nil
         }
         
+        // FIXME: The shortest path to the reference may not be applicable to the given variants traits.
         // First try getting the canonical path from a render context, default to the documentation context
         guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.shortestFinitePath(to: node.reference),
               let parentReference = canonicalPath.last
