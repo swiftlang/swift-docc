@@ -193,7 +193,9 @@ struct RenderHierarchyTranslator {
     /// multiple times under other API symbols, articles, or API collections. This method
     /// returns all the paths (breadcrumbs) between the framework landing page and the given symbol.
     mutating func visitSymbol(_ symbolReference: ResolvedTopicReference) -> RenderHierarchy {
-        let pathReferences = context.finitePaths(to: symbolReference)
+        let pathReferences = symbolReference.sourceLanguages.compactMap {
+            context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: $0)
+        }.sorted(by: \.count)
         pathReferences.forEach({
             collectedTopicReferences.formUnion($0)
         })
@@ -205,6 +207,11 @@ struct RenderHierarchyTranslator {
     /// - Parameter symbolReference: The reference to the article.
     /// - Returns: The framework hierarchy that describes all paths where the article is curated.
     mutating func visitArticle(_ symbolReference: ResolvedTopicReference) -> RenderHierarchy {
-        return visitSymbol(symbolReference)
+        let pathReferences = context.finitePaths(to: symbolReference)
+        pathReferences.forEach({
+            collectedTopicReferences.formUnion($0)
+        })
+        let paths = pathReferences.map { $0.map { $0.absoluteString } }
+        return .reference(RenderReferenceHierarchy(paths: paths))
     }
 }
