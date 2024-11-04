@@ -233,7 +233,7 @@ extension PathHierarchy.DisambiguationContainer {
             collisions += _disambiguateByTypeSignature(
                 elementsThatSupportAdvancedDisambiguation,
                 types: \.returnTypes,
-                makeDisambiguation: Disambiguation.returnTypes,
+                makeDisambiguation: { .returnTypes($1) },
                 remainingIDs: &remainingIDs
             )
             if remainingIDs.isEmpty {
@@ -243,7 +243,20 @@ extension PathHierarchy.DisambiguationContainer {
             collisions += _disambiguateByTypeSignature(
                 elementsThatSupportAdvancedDisambiguation,
                 types: \.parameterTypes,
-                makeDisambiguation: Disambiguation.parameterTypes,
+                makeDisambiguation: { .parameterTypes($1) },
+                remainingIDs: &remainingIDs
+            )
+            if remainingIDs.isEmpty {
+                return collisions
+            }
+            
+            collisions += _disambiguateByTypeSignature(
+                elementsThatSupportAdvancedDisambiguation,
+                types: { ($0.parameterTypes ?? []) + ($0.returnTypes ?? []) },
+                makeDisambiguation: {
+                    let numberOfReturnTypes = $0.returnTypes?.count ?? 0
+                    return .mixedTypes(parameterTypes: $1.dropLast(numberOfReturnTypes), returnTypes: $1.suffix(numberOfReturnTypes))
+                },
                 remainingIDs: &remainingIDs
             )
             if remainingIDs.isEmpty {
@@ -341,6 +354,8 @@ extension PathHierarchy.DisambiguationContainer {
         case parameterTypes([String])
         /// This node is disambiguated by its return types.
         case returnTypes([String])
+        /// This node is disambiguated by a mix of parameter types and return types.
+        case mixedTypes(parameterTypes: [String], returnTypes: [String])
         
         /// Makes a new disambiguation suffix string.
         func makeSuffix() -> String {
@@ -361,6 +376,9 @@ extension PathHierarchy.DisambiguationContainer {
             case .parameterTypes(let types):
                 // For example: "-(String,_)" or "-(_,Int)"` (a certain parameter has a certain type), or "-()" (has no parameters).
                 return "-(\(types.joined(separator: ",")))"
+                
+            case .mixedTypes(parameterTypes: let parameterTypes, returnTypes: let returnTypes):
+                return "\(Self.parameterTypes(parameterTypes).makeSuffix())\(Self.returnTypes(returnTypes).makeSuffix())"
             }
         }
         
@@ -373,7 +391,7 @@ extension PathHierarchy.DisambiguationContainer {
                 return kind.map { .kind($0) } ?? self
             case .hash:
                 return hash.map { .hash($0) } ?? self
-            case .parameterTypes, .returnTypes:
+            case .parameterTypes, .returnTypes, .mixedTypes:
                 return self
             }
         }
@@ -382,7 +400,7 @@ extension PathHierarchy.DisambiguationContainer {
     private static func _disambiguateByTypeSignature(
         _ elements: [Element],
         types: (Element) -> [String]?,
-        makeDisambiguation: ([String]) -> Disambiguation,
+        makeDisambiguation: (Element, [String]) -> Disambiguation,
         remainingIDs: inout Set<ResolvedIdentifier?>
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
@@ -400,7 +418,7 @@ extension PathHierarchy.DisambiguationContainer {
                 // Only one element has this number of types. Disambiguate with only underscores.
                 let (element, _) = elementAndTypeNamePairs.first!
                 guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                collisions.append((value: element.node, disambiguation: makeDisambiguation(.init(repeating: "_", count: numberOfTypeNames))))
+                collisions.append((value: element.node, disambiguation: makeDisambiguation(element, .init(repeating: "_", count: numberOfTypeNames))))
                 remainingIDs.remove(element.node.identifier)
                 continue
             }
@@ -416,7 +434,7 @@ extension PathHierarchy.DisambiguationContainer {
                     continue // This element can't be uniquely disambiguated using these types
                 }
                 guard remainingIDs.contains(pair.element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                collisions.append((value: pair.element.node, disambiguation: makeDisambiguation(disambiguation)))
+                collisions.append((value: pair.element.node, disambiguation: makeDisambiguation(pair.element, disambiguation)))
                 remainingIDs.remove(pair.element.node.identifier)
             }
         }

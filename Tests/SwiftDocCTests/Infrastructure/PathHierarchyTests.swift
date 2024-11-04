@@ -880,7 +880,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(
             // static func < (lhs: MyNumber, rhs: MyNumber) -> Bool
             paths["s:9Operators8MyNumberV1loiySbAC_ACtFZ"],
-            "/Operators/MyNumber/_(_:_:)-736gk")
+            "/Operators/MyNumber/_(_:_:)-(MyNumber,_)->Bool")
         XCTAssertEqual(
             // static func <= (lhs: Self, rhs: Self) -> Bool
             paths["s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"],
@@ -3252,6 +3252,70 @@ class PathHierarchyTests: XCTestCase {
                 (symbolID: "function-overload-6", disambiguation: "-(_,_,[Bool],_,Bool,_)"),           //  _        _  [Bool]  _  Bool       _
             ])
         }
+        
+        // Each overload requires a combination parameters and return values to disambiguate
+        do {
+            //  String  Int     ->   Int
+            //  String  Int     ->   Bool
+            //  String  Float   ->   Int
+            //  String  Float   ->   Bool
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  String  Int     ->   Int
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:second:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [stringType]), // String
+                                makeParameter("second", decl: [intType]),    // Int
+                            ], returns: makeFragments([                      // ->
+                                intType                                      // Int
+                            ])
+                        )),
+                        
+                        //  String  Int     ->   Bool
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:second:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [stringType]), // String
+                                makeParameter("second", decl: [intType]),    // Int
+                            ], returns: makeFragments([                      // ->
+                                boolType                                     // Bool
+                            ])
+                        )),
+                        
+                        //  String  Float   ->   Int
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:second:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [stringType]), // String
+                                makeParameter("second", decl: [floatType]),  // Float
+                            ], returns: makeFragments([                      // ->
+                                intType                                      // Int
+                            ])
+                        )),
+                        
+                        //  String  Float   ->   Bool
+                        makeSymbol(id: "function-overload-4", kind: .func, pathComponents: ["doSomething(first:second:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [stringType]), // String
+                                makeParameter("second", decl: [floatType]),  // Float
+                            ], returns: makeFragments([                      // ->
+                                boolType                                     // Bool
+                                                      ])
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:second:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(_,Int)->Int"),    //  ( _  Int   )   ->   Int
+                (symbolID: "function-overload-2", disambiguation: "-(_,Int)->Bool"),   //  ( _  Int   )   ->   Bool
+                (symbolID: "function-overload-3", disambiguation: "-(_,Float)->Int"),  //  ( _  Float )   ->   Int
+                (symbolID: "function-overload-4", disambiguation: "-(_,Float)->Bool"), //  ( _  Float )   ->   Bool
+            ])
+        }
     }
     
     func testParsingPaths() {
@@ -3471,7 +3535,12 @@ class PathHierarchyTests: XCTestCase {
                 XCTFail("Unexpected non-symbol in collision for symbol link.", file: file, line: line)
                 return
             }
-            let sortedCollisions = collisions.sorted(by: \.node.symbol!.identifier.precise)
+            let sortedCollisions = collisions.sorted(by: { lhs, rhs in
+                if lhs.node.symbol!.identifier.precise == rhs.node.symbol!.identifier.precise {
+                    return lhs.disambiguation < rhs.disambiguation
+                }
+                return lhs.node.symbol!.identifier.precise < rhs.node.symbol!.identifier.precise
+            })
             XCTAssertEqual(sortedCollisions.count, sortedCollisions.count, file: file, line: line)
             for (actual, expected) in zip(sortedCollisions, expectedCollisions.sorted(by: \.symbolID)) {
                 XCTAssertEqual(actual.node.symbol?.identifier.precise, expected.symbolID, file: file, line: line)
