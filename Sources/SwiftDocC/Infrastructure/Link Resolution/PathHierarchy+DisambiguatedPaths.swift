@@ -387,31 +387,37 @@ extension PathHierarchy.DisambiguationContainer {
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         
-        let groupedByTypeCount = [Int?: [Element]](grouping: elements, by: { types($0)?.count })
-        for (typesCount, elements) in groupedByTypeCount  {
-            guard let typesCount else { continue }
-            guard elements.count > 1 else {
+        typealias ElementAndTypeNames = (element: Element, typeNames: [String])
+        var groupedByTypeCount: [Int: [ElementAndTypeNames]] = [:]
+        for element in elements {
+            guard let typeNames = types(element) else { continue }
+ 
+            groupedByTypeCount[typeNames.count, default: []].append((element, typeNames))
+        }
+        
+        for (numberOfTypeNames, elementAndTypeNamePairs) in groupedByTypeCount {
+            guard elementAndTypeNamePairs.count > 1 else {
                 // Only one element has this number of types. Disambiguate with only underscores.
-                let element = elements.first!
+                let (element, _) = elementAndTypeNamePairs.first!
                 guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                collisions.append((value: element.node, disambiguation: makeDisambiguation(.init(repeating: "_", count: typesCount))))
+                collisions.append((value: element.node, disambiguation: makeDisambiguation(.init(repeating: "_", count: numberOfTypeNames))))
                 remainingIDs.remove(element.node.identifier)
                 continue
             }
-            guard typesCount > 0 else { continue } // Need at least one return value to disambiguate
             
-            for typeIndex in 0..<typesCount {
-                let grouped = [String: [Element]](grouping: elements, by: { types($0)![typeIndex] })
-                for (returnType, elements) in grouped where elements.count == 1 {
-                    // Only one element has this return type
-                    let element = elements.first!
-                    guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                    var disambiguation = [String](repeating: "_", count: typesCount)
-                    disambiguation[typeIndex] = returnType
-                    collisions.append((value: element.node, disambiguation: makeDisambiguation(disambiguation)))
-                    remainingIDs.remove(element.node.identifier)
-                    continue
+            guard numberOfTypeNames > 0 else {
+                continue // Need at least one type name to disambiguate (when there are multiple elements without parameters or return values)
+            }
+            
+            let disambiguation = minimalSuggestedDisambiguation(listOfOverloadTypeNames: elementAndTypeNamePairs.map(\.typeNames))
+            
+            for (pair, disambiguation) in zip(elementAndTypeNamePairs, disambiguation) {
+                guard let disambiguation else {
+                    continue // This element can't be uniquely disambiguated using these types
                 }
+                guard remainingIDs.contains(pair.element.node.identifier) else { continue } // Don't disambiguate the same element more than once
+                collisions.append((value: pair.element.node, disambiguation: makeDisambiguation(disambiguation)))
+                remainingIDs.remove(pair.element.node.identifier)
             }
         }
         return collisions

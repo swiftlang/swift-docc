@@ -3017,6 +3017,243 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/CxxOperators/MyClass/operator,", in: tree, asSymbolID: "c:@S@MyClass@F@operator,#&$@S@MyClass#")
     }
     
+    func testMinimalTypeDisambiguation() throws {
+        enum DeclToken: ExpressibleByStringLiteral {
+            case text(String)
+            case internalParameter(String)
+            case typeIdentifier(String, precise: String)
+            
+            init(stringLiteral value: String) {
+                self = .text(value)
+            }
+        }
+        
+        func makeFragments(_ tokens: [DeclToken]) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+            tokens.map {
+                switch $0 {
+                case .text(let spelling):                        return .init(kind: .text,              spelling: spelling, preciseIdentifier: nil)
+                case .typeIdentifier(let spelling, let precise): return .init(kind: .typeIdentifier,    spelling: spelling, preciseIdentifier: precise)
+                case .internalParameter(let spelling):           return .init(kind: .internalParameter, spelling: spelling, preciseIdentifier: nil)
+                }
+            }
+        }
+        
+        let optionalType   = DeclToken.typeIdentifier("Optional",   precise: "s:Sq")
+        let setType        = DeclToken.typeIdentifier("Set",        precise: "s:Sh")
+        let arrayType      = DeclToken.typeIdentifier("Array",      precise: "s:Sa")
+        let dictionaryType = DeclToken.typeIdentifier("Dictionary", precise: "s:SD")
+        
+        let stringType     = DeclToken.typeIdentifier("String", precise: "s:SS")
+        let intType        = DeclToken.typeIdentifier("Int",    precise: "s:Si")
+        let doubleType     = DeclToken.typeIdentifier("Double", precise: "s:Sd")
+        let floatType      = DeclToken.typeIdentifier("Float",  precise: "s:Sf")
+        let boolType       = DeclToken.typeIdentifier("Bool",   precise: "s:Sb")
+        let voidType       = DeclToken.typeIdentifier("Void",   precise: "s:s4Voida")
+        
+        func makeParameter(_ name: String, decl: [DeclToken]) -> SymbolGraph.Symbol.FunctionSignature.FunctionParameter {
+            .init(name: name,  externalName: nil, declarationFragments: makeFragments([.internalParameter(name),  .text("")] + decl),  children: [])
+        }
+        
+        func makeSignature(first: DeclToken..., second: DeclToken..., third: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
+            .init(
+                parameters: [
+                    makeParameter("first",  decl: first),
+                    makeParameter("second", decl: second),
+                    makeParameter("third",  decl: third),
+                ],
+                returns: makeFragments([voidType])
+            )
+        }
+        
+        // Each overload has one unique parameter
+        do {
+            //  String   [Int]   (Double)->Void
+            //  String?  [Bool]  (Double)->Void
+            //  String?  [Int]   (Float)->Void
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  String   [Int]   (Double)->Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: stringType,                        // String
+                            second: arrayType, "<", intType, ">",     // [Int]
+                            third: "(", doubleType, ") -> ", voidType // (Double)->Void
+                        )),
+                        
+                        //  String?  [Bool]  (Double)->Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: arrayType, "<", boolType, ">",     // [Bool]
+                            third: "(", doubleType, ") -> ", voidType  // (Double)->Void
+                        )),
+                        
+                        //  String?  [Int]   (Float)->Void
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: arrayType, "<", intType, ">",      // [Int]
+                            third: "(", floatType, ") -> ", voidType   // (Float)->Void
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:second:third:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(String,_,_)"),        //   String  _       _
+                (symbolID: "function-overload-2", disambiguation: "-(_,[Bool],_)"),        //   _       [Bool]  _
+                (symbolID: "function-overload-3", disambiguation: "-(_,_,(Float)->Void)"), //   _       _       (Float)->Void
+            ])
+        }
+        
+        // Second overload requires combination of two non-unique types to disambiguate
+        do {
+            //  String   Set<Int>  (Double)->Void
+            //  String?  Set<Int>  (Double)->Void
+            //  String?  Set<Int>  (Float)->Void
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  String   Set<Int>  (Double)->Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: stringType,                        // String
+                            second: setType, "<", intType, ">",       // Set<Int>
+                            third: "(", doubleType, ") -> ", voidType // (Double)->Void
+                        )),
+                        
+                        //  String?  Set<Int>  (Double)->Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: setType, "<", intType, ">",        // Set<Int>
+                            third: "(", doubleType, ") -> ", voidType  // (Double)->Void
+                        )),
+                        
+                        //  String?  Set<Int>  (Float)->Void
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: setType, "<", intType, ">",        // Set<Int>
+                            third: "(", floatType, ") -> ", voidType   // (Float)->Void
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:second:third:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(String,_,_)"),               //  String   _  _
+                (symbolID: "function-overload-2", disambiguation: "-(String?,_,(Double)->Void)"), //  String?  _  (Double)->Void
+                (symbolID: "function-overload-3", disambiguation: "-(_,_,(Float)->Void)"),        //  _        _  (Float)->Void
+            ])
+        }
+        
+        // All overloads require combinations of non-unique types to disambiguate
+        do {
+            func makeSignature(first: DeclToken..., second: DeclToken..., third: DeclToken..., fourth: DeclToken..., fifth: DeclToken..., sixth: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
+                .init(
+                    parameters: [
+                        makeParameter("first",  decl: first),
+                        makeParameter("second", decl: second),
+                        makeParameter("third",  decl: third),
+                        makeParameter("fourth", decl: fourth),
+                        makeParameter("fifth",  decl: fifth),
+                        makeParameter("sixth",  decl: sixth),
+                    ],
+                    returns: makeFragments([voidType])
+                )
+            }
+            
+            //  String   Set<Int>  [Int]   (Double)->Void  (Int,Int)  [String:Int]
+            //  String?  Set<Int>  [Int]   (Double)->Void  (Int,Int)  [String:Int]
+            //  String?  Set<Int>  [Bool]  (Float)->Void   (Int,Int)  [String:Int]
+            //  String   Set<Int>  [Int]   (Double)->Void  Bool       [Int:String]
+            //  String?  Set<Int>  [Int]   (Double)->Void  Bool       [Int:String]
+            //  String?  Set<Int>  [Bool]  (Float)->Void   Bool       [Int:String]
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  String   Set<Int>  [Int]   (Double)->Void  (Int,Int)  [String:Int]
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:second:third:fourth:fifth:sixth:)"], signature: makeSignature(
+                            first: stringType,                                         // String
+                            second: setType, "<", intType, ">",                        // Set<Int>
+                            third: arrayType, "<", intType, ">",                       // [Int]
+                            fourth: "(", doubleType, ") -> ", voidType,                // (Double)->Void
+                            fifth: "(", intType, ",", intType, ")",                    // (Int,Int)
+                            sixth: dictionaryType, "<", stringType, ",", intType, ">"  // [String:Int]
+                        )),
+                        
+                        //  String?  Set<Int>  [Int]   (Double)->Void  (Int,Int)  [String:Int]
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:second:third:fourth:fifth:sixth:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">",                 // String?
+                            second: setType, "<", intType, ">",                        // Set<Int>
+                            third: arrayType, "<", intType, ">",                       // [Int]
+                            fourth: "(", doubleType, ") -> ", voidType,                // (Double)->Void
+                            fifth: "(", intType, ",", intType, ")",                    // (Int,Int)
+                            sixth: dictionaryType, "<", stringType, ",", intType, ">"  // [String:Int]
+                        )),
+                        
+                        //  String?  Set<Int>  [Bool]  (Float)->Void   (Int,Int)  [String:Int]
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:second:third:fourth:fifth:sixth:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">",                 // String?
+                            second: setType, "<", intType, ">",                        // Set<Int>
+                            third: arrayType, "<", boolType, ">",                      // [Bool]
+                            fourth: "(", floatType, ") -> ", voidType,                 // (Float)->Void
+                            fifth: "(", intType, ",", intType, ")",                    // (Int,Int)
+                            sixth: dictionaryType, "<", stringType, ",", intType, ">"  // [String:Int]
+                        )),
+                        
+                        //  String   Set<Int>  [Int]   (Double)->Void  Bool       [Int:String]
+                        makeSymbol(id: "function-overload-4", kind: .func, pathComponents: ["doSomething(first:second:third:fourth:fifth:sixth:)"], signature: makeSignature(
+                            first: stringType,                                         // String
+                            second: setType, "<", intType, ">",                        // Set<Int>
+                            third: arrayType, "<", intType, ">",                       // [Int]
+                            fourth: "(", doubleType, ") -> ", voidType,                // (Double)->Void
+                            fifth: boolType,                                           // Bool
+                            sixth: dictionaryType, "<", intType, ",", stringType, ">"  // [Int:String]
+                        )),
+                        
+                        //  String?  Set<Int>  [Int]   (Double)->Void  Bool       [Int:String]
+                        makeSymbol(id: "function-overload-5", kind: .func, pathComponents: ["doSomething(first:second:third:fourth:fifth:sixth:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">",                 // String?
+                            second: setType, "<", intType, ">",                        // Set<Int>
+                            third: arrayType, "<", intType, ">",                       // [Int]
+                            fourth: "(", doubleType, ") -> ", voidType,                // (Double)->Void
+                            fifth: boolType,                                           // Bool
+                            sixth: dictionaryType, "<", intType, ",", stringType, ">"  // [Int:String]
+                        )),
+                        
+                        //  String?  Set<Int>  [Bool]  (Float)->Void   Bool       [Int:String]
+                        makeSymbol(id: "function-overload-6", kind: .func, pathComponents: ["doSomething(first:second:third:fourth:fifth:sixth:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">",                 // String?
+                            second: setType, "<", intType, ">",                        // Set<Int>
+                            third: arrayType, "<", boolType, ">",                      // [Bool]
+                            fourth: "(", floatType, ") -> ", voidType,                 // (Float)->Void
+                            fifth: boolType,                                           // Bool
+                            sixth: dictionaryType, "<", intType, ",", stringType, ">"  // [Int:String]
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:second:third:fourth:fifth:sixth:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(String,_,_,_,(Int,Int),_)"),      //  String   _  _       _  (Int,Int)  _
+                (symbolID: "function-overload-2", disambiguation: "-(String?,_,[Int],_,(Int,Int),_)"), //  String?  _  [Int]   _  (Int,Int)  _
+                (symbolID: "function-overload-3", disambiguation: "-(_,_,[Bool],_,(Int,Int),_)"),      //  _        _  [Bool]  _  (Int,Int)  _
+                (symbolID: "function-overload-4", disambiguation: "-(String,_,_,_,Bool,_)"),           //  String   _  _       _  Bool       _
+                (symbolID: "function-overload-5", disambiguation: "-(String?,_,[Int],_,Bool,_)"),      //  String?  _  [Int]   _  Bool       _
+                (symbolID: "function-overload-6", disambiguation: "-(_,_,[Bool],_,Bool,_)"),           //  _        _  [Bool]  _  Bool       _
+            ])
+        }
+    }
+    
     func testParsingPaths() {
         // Check path components without disambiguation
         assertParsedPathComponents("", [])
@@ -3230,9 +3467,13 @@ class PathHierarchyTests: XCTestCase {
         } catch PathHierarchy.Error.unknownDisambiguation {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Unknown disambiguation.", file: file, line: line)
         } catch PathHierarchy.Error.lookupCollision(_, _, let collisions) {
-            let sortedCollisions = collisions.sorted(by: \.disambiguation)
-            XCTAssertEqual(sortedCollisions.count, expectedCollisions.count, file: file, line: line)
-            for (actual, expected) in zip(sortedCollisions, expectedCollisions) {
+            guard collisions.allSatisfy({ $0.node.symbol != nil }) else {
+                XCTFail("Unexpected non-symbol in collision for symbol link.", file: file, line: line)
+                return
+            }
+            let sortedCollisions = collisions.sorted(by: \.node.symbol!.identifier.precise)
+            XCTAssertEqual(sortedCollisions.count, sortedCollisions.count, file: file, line: line)
+            for (actual, expected) in zip(sortedCollisions, expectedCollisions.sorted(by: \.symbolID)) {
                 XCTAssertEqual(actual.node.symbol?.identifier.precise, expected.symbolID, file: file, line: line)
                 XCTAssertEqual(actual.disambiguation, expected.disambiguation, file: file, line: line)
             }
