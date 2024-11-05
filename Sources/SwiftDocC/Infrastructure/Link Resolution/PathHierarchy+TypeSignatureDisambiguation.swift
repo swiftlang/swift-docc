@@ -133,24 +133,33 @@ extension PathHierarchy.DisambiguationContainer {
 
 // MARK: Int Set
 
+/// A combination of type names to attempt to use for disambiguation.
+///
+/// This isn't a `Collection` alias to avoid adding new unnecessary API to `_TinySmallValueIntSet`.
+private protocol _Combination: Sequence<Int> {
+    // In addition to the general SetAlgebra, the code in this file checks the number of elements in the set.
+    var count: Int { get }
+}
+extension [Int]: _Combination {}
+    
 /// A private protocol that abstracts sets of integers.
 private protocol _IntSet: SetAlgebra<Int>, Sequence<Int> {
     // In addition to the general SetAlgebra, the code in this file checks the number of elements in the set.
     var count: Int { get }
     
     // Let each type specialize the creation of possible combinations to check.
-    associatedtype CombinationSequence: Sequence<Self>
+    associatedtype Combination: _Combination
+    associatedtype CombinationSequence: Sequence<Combination>
     func combinationsToCheck() -> CombinationSequence
 }
 
-
 extension Set<Int>: _IntSet {
-    func combinationsToCheck() -> some Sequence<Self> {
+    func combinationsToCheck() -> some Sequence<[Int]> {
         // For `Set<Int>`, use the Swift Algorithms implementation to generate the possible combinations.
-        self.combinations(ofCount: 1...).lazy.map { Set($0) }
+        self.combinations(ofCount: 1...)
     }
 }
-extension _TinySmallValueIntSet: _IntSet {
+extension _TinySmallValueIntSet: _IntSet, _Combination {
     func combinationsToCheck() -> [Self] {
         // For `_TinySmallValueIntSet`, leverage the fact that bits of an Int represent the possible combinations.
         let smallest = storage.trailingZeroBitCount
