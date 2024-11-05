@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import Algorithms
 
 extension PathHierarchy.DisambiguationContainer {
     
@@ -56,12 +57,12 @@ extension PathHierarchy.DisambiguationContainer {
         
         // Check if any columns are common for all overloads so that type name combinations with those columns can be skipped.
         let allOverloads = Set(0 ..< listOfOverloadTypeNames.count)
-        let typeNameColumnsCommonForAll = Set((0 ..< numberOfTypes).filter {
+        let typeNameIndicesToCheck = (0 ..< numberOfTypes).filter {
             // It's sufficient to check the first row because this column has to be the same for all rows
-            table[0][$0] == allOverloads
-        })
+            table[0][$0] != allOverloads
+        }
         
-        guard typeNameColumnsCommonForAll != allOverloads else {
+        guard !typeNameIndicesToCheck.isEmpty else {
             // Every type name is common across the overloads. This information can't be used to disambiguate the overloads.
             return .init(repeating: nil, count: numberOfTypes)
         }
@@ -71,13 +72,7 @@ extension PathHierarchy.DisambiguationContainer {
             var shortestDisambiguationSoFar: (indicesToInclude: Set<Int>, length: Int)?
             
             // For each overload we iterate over the possible parameter combinations with increasing number of elements in each combination.
-            for typeNamesToInclude in uniqueSortedCombinations(ofNumbersUpTo: numberOfTypes) {
-                guard typeNameColumnsCommonForAll.isDisjoint(with: typeNamesToInclude) else {
-                    // This combination of type names contains a value that is common for all overloads.
-                    // Skip it. There is always a shorter disambiguation that doesn't include this value.
-                    continue
-                }
-                
+            for typeNamesToInclude in typeNameIndicesToCheck.combinations(ofCount: 1...) {
                 // Stop if we've already found a match with fewer parameters than this
                 guard typeNamesToInclude.count <= (shortestDisambiguationSoFar?.indicesToInclude.count ?? .max) else {
                     break
@@ -117,77 +112,4 @@ extension PathHierarchy.DisambiguationContainer {
             return disambiguation
         }
     }
-}
-
-/// Returns a sequence of unique combinations up a given upper bounds, with increasing number of elements in each combination.
-///
-/// For example, when `upperBounds` is `4`, the sequence will first contain all the 1-element combinations:
-/// ```
-/// [1], [2], [3], [4],
-/// ```
-/// Next, it will contains all the 2-element combinations (in _some_ inner order):
-/// ```
-/// [1, 2], [1, 3], [2, 3], [1, 4], [2, 4], [3, 4],
-/// ```
-/// Next, it will contains all the 3-element combinations (in _some_ inner order):
-/// ```
-/// [1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4],
-/// ```
-/// Finally, it will contains all the only 4-element combinations:
-/// ```
-/// [1, 2, 3, 4],
-/// ```
-private func uniqueSortedCombinations(ofNumbersUpTo upperBounds: Int) -> some Sequence<[Int]> {
-    
-    /// An iterator that generates sequences of unique number combinations, as described above.
-    ///
-    /// The iterator works by generating all combinations of a given size and then returning each element from the list.
-    /// Once the iterator reaches the end of one size, it generates the next size and returns each element from that list.
-    struct SortedCombinationsIterator: IteratorProtocol {
-        typealias Element = [Int]
-        
-        private var upperBounds: Int
-        private var currentSize = 0
-        private var current: [Element]
-        private var currentSlice: ArraySlice<Element>
-        
-        init(upperBounds: Int) {
-            self.upperBounds = upperBounds
-            self.current = (0..<upperBounds).map { [$0] }
-            self.currentSlice = current[...]
-        }
-        
-        mutating func next() -> Element? {
-            if !currentSlice.isEmpty {
-                return currentSlice.removeFirst()
-            }
-            guard currentSize < upperBounds else {
-                return nil
-            }
-            currentSize += 1
-            current = combinations(upTo: upperBounds, previous: current)
-            guard !current.isEmpty else {
-                return nil
-            }
-            currentSlice = current[...]
-            return currentSlice.removeFirst()
-        }
-        
-        func combinations(upTo upperBounds: Int, previous: [Element]) -> [Element] {
-            precondition(upperBounds > 0)
-            
-            var result: [Element] = []
-            result.reserveCapacity(upperBounds * upperBounds-1)
-            for number in 0 ..< upperBounds {
-                for var existing in previous where !existing.contains(number) && (existing.last ?? .max) < number {
-                    existing.append(number)
-                    
-                    result.append(existing)
-                }
-            }
-            return result
-        }
-    }
-    
-    return IteratorSequence(SortedCombinationsIterator(upperBounds: upperBounds))
 }
