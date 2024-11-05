@@ -286,28 +286,25 @@ extension _TinySmallValueIntSet: Sequence {
     struct Iterator: IteratorProtocol {
         typealias Element = Int
         
-        private let set: _TinySmallValueIntSet
-        private var current: Int
-        private let end: Int
+        private var storage: UInt64
+        private var current: Int = -1
         
         @inlinable
         init(set: _TinySmallValueIntSet) {
-            self.set = set
-            self.current = set.storage.trailingZeroBitCount
-            self.end = 64 - set.storage.leadingZeroBitCount
+            self.storage = set.storage
         }
         
         @inlinable
         mutating func next() -> Int? {
-            defer { current += 1 }
-            
-            while !set.contains(current) {
-                current += 1
-                if end <= current {
-                    return nil
-                }
+            guard storage != 0 else {
+                return nil
             }
+            // If the set is somewhat sparse, we can find the next element faster by shifting to the next value.
+            // This saves needing to do `contains()` checks for all the numbers since the previous element.
+            let amountToShift = storage.trailingZeroBitCount + 1
+            storage >>= amountToShift
             
+            current += amountToShift
             return current
         }
     }
