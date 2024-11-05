@@ -9,6 +9,7 @@
 */
 
 import XCTest
+import Algorithms
 @testable import SwiftDocC
 
 class TinySmallValueIntSetTests: XCTestCase {
@@ -66,5 +67,50 @@ class TinySmallValueIntSetTests: XCTestCase {
         XCTAssertEqual(tiny.contains(8), real.contains(8))
         XCTAssertEqual(tiny.contains(9), real.contains(9))
         XCTAssertEqual(tiny.count, real.count)
+    }
+    
+    func testCombinations() {
+        do {
+            let tiny: _TinySmallValueIntSet = [0,1,2]
+            XCTAssertEqual(tiny.combinationsToCheck().map { $0.sorted() }, [
+                [0], [1], [2],
+                [0,1], [0,2], [1,2],
+                [0,1,2]
+            ])
+        }
+        
+        do {
+            let tiny: _TinySmallValueIntSet = [2,5,9]
+            XCTAssertEqual(tiny.combinationsToCheck().map { $0.sorted() }, [
+                [2], [5], [9],
+                [2,5], [2,9], [5,9],
+                [2,5,9]
+            ])
+        }
+        
+        do {
+            let tiny: _TinySmallValueIntSet = [3,4,7,11,15,16]
+            
+            let expected = Array(tiny).combinations(ofCount: 1...)
+            let actual   = tiny.combinationsToCheck().map { Array($0) }
+            
+            XCTAssertEqual(expected.count, actual.count)
+            
+            // The two implementations doesn't need to provide combinations in the same order within a size
+            let expectedBySize: [[[Int]]] = expected.grouped(by: \.count).sorted(by: \.key).map(\.value)
+            let actualBySize:   [[[Int]]] = actual  .grouped(by: \.count).sorted(by: \.key).map(\.value)
+            
+            for (expectedForSize, actualForSize) in zip(expectedBySize, actualBySize) {
+                XCTAssertEqual(expectedForSize.count, actualForSize.count)
+                
+                // Comparing [Int] descriptions to allow each same-size combination list to have different orders.
+                // For example, these two lists of combinations (with the last 2 elements swapped) are considered equivalent:
+                // [1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]
+                // [1, 2, 3], [1, 2, 4], [2, 3, 4], [1, 3, 4]
+                XCTAssertEqual(expectedForSize.map(\.description).sorted(),
+                               actualForSize  .map(\.description).sorted())
+                
+            }
+        }
     }
 }

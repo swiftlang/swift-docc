@@ -73,10 +73,10 @@ extension PathHierarchy.DisambiguationContainer {
         
         // Check if any columns are common for all overloads so that type name combinations with those columns can be skipped.
         let allOverloads = IntSet(0 ..< listOfOverloadTypeNames.count)
-        let typeNameIndicesToCheck = (0 ..< numberOfTypes).filter {
+        let typeNameIndicesToCheck = IntSet((0 ..< numberOfTypes).filter {
             // It's sufficient to check the first row because this column has to be the same for all rows
             table[0][$0] != allOverloads
-        }
+        })
         
         guard !typeNameIndicesToCheck.isEmpty else {
             // Every type name is common across the overloads. This information can't be used to disambiguate the overloads.
@@ -88,15 +88,16 @@ extension PathHierarchy.DisambiguationContainer {
             var shortestDisambiguationSoFar: (indicesToInclude: IntSet, length: Int)?
             
             // For each overload we iterate over the possible parameter combinations with increasing number of elements in each combination.
-            for typeNamesToInclude in typeNameIndicesToCheck.combinations(ofCount: 1...) {
+            for typeNamesToInclude in typeNameIndicesToCheck.combinationsToCheck() {
                 // Stop if we've already found a match with fewer parameters than this
                 guard typeNamesToInclude.count <= (shortestDisambiguationSoFar?.indicesToInclude.count ?? .max) else {
                     break
                 }
                 
-                let firstTypeNameToInclude = typeNamesToInclude.first! // The generated `typeNamesToInclude` is never empty.
+                var iterator = typeNamesToInclude.makeIterator()
+                let firstTypeNameToInclude = iterator.next()! // The generated `typeNamesToInclude` is never empty.
                 // Compute which other overloads this combinations of type names also could refer to.
-                let overlap = typeNamesToInclude.dropFirst().reduce(into: table[row][firstTypeNameToInclude]) { partialResult, index in
+                let overlap = IteratorSequence(iterator).reduce(into: table[row][firstTypeNameToInclude]) { partialResult, index in
                     partialResult.formIntersection(table[row][index])
                 }
                 
@@ -133,12 +134,36 @@ extension PathHierarchy.DisambiguationContainer {
 // MARK: Int Set
 
 /// A private protocol that abstracts sets of integers.
-private protocol _IntSet: SetAlgebra<Int> {
+private protocol _IntSet: SetAlgebra<Int>, Sequence<Int> {
     // In addition to the general SetAlgebra, the code in this file checks the number of elements in the set.
     var count: Int { get }
+    
+    // Let each type specialize the creation of possible combinations to check.
+    associatedtype CombinationSequence: Sequence<Self>
+    func combinationsToCheck() -> CombinationSequence
 }
-extension Set<Int>: _IntSet {}
-extension _TinySmallValueIntSet: _IntSet {}
+
+
+extension Set<Int>: _IntSet {
+    func combinationsToCheck() -> some Sequence<Self> {
+        // For `Set<Int>`, use the Swift Algorithms implementation to generate the possible combinations.
+        self.combinations(ofCount: 1...).lazy.map { Set($0) }
+    }
+}
+extension _TinySmallValueIntSet: _IntSet {
+    func combinationsToCheck() -> [Self] {
+        // For `_TinySmallValueIntSet`, leverage the fact that bits of an Int represent the possible combinations.
+        let smallest = storage.trailingZeroBitCount
+        return (1 ... storage >> smallest)
+            .compactMap {
+                let combination = Self(storage: UInt64($0 << smallest))
+                // Filter out any combinations that include columns that are the same for all overloads
+                return self.isSuperset(of: combination) ? combination : nil
+            }
+            // The bits of larger and larger Int values won't be in order of number of bits set, so we sort them.
+            .sorted(by: { $0.count < $1.count })
+    }
+}
 
 /// A specialized set-algebra type that only stores the possible values `0 ..< 64`.
 ///
@@ -231,5 +256,40 @@ struct _TinySmallValueIntSet: SetAlgebra {
     @inlinable
     mutating func formSymmetricDifference(_ other: Self) {
         storage ^= other.storage
+    }
+}
+
+extension _TinySmallValueIntSet: Sequence {
+    func makeIterator() -> Iterator {
+        Iterator(set: self)
+    }
+    
+    struct Iterator: IteratorProtocol {
+        typealias Element = Int
+        
+        private let set: _TinySmallValueIntSet
+        private var current: Int
+        private let end: Int
+        
+        @inlinable
+        init(set: _TinySmallValueIntSet) {
+            self.set = set
+            self.current = set.storage.trailingZeroBitCount
+            self.end = 64 - set.storage.leadingZeroBitCount
+        }
+        
+        @inlinable
+        mutating func next() -> Int? {
+            defer { current += 1 }
+            
+            while !set.contains(current) {
+                current += 1
+                if end <= current {
+                    return nil
+                }
+            }
+            
+            return current
+        }
     }
 }
