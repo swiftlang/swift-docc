@@ -38,6 +38,22 @@ extension PathHierarchy.DisambiguationContainer {
             return []
         }
         
+        if numberOfTypes < 64, listOfOverloadTypeNames.count < 64 {
+            // If there are few enough types and few enough overloads, use a specialized SetAlgebra implementation to save some allocation and hashing overhead.
+            return _minimalSuggestedDisambiguation(listOfOverloadTypeNames: listOfOverloadTypeNames, numberOfTypes: numberOfTypes, using: _TinySmallValueIntSet.self)
+        } else {
+            // Otherwise, fall back to `Set<Int>`.
+            // This should happen very rarely as it's uncommon to have more than 64 overloads or to have overloads of functions with 64 parameters.
+            return _minimalSuggestedDisambiguation(listOfOverloadTypeNames: listOfOverloadTypeNames, numberOfTypes: numberOfTypes, using: Set<Int>.self)
+        }
+    }
+    
+    // A private implementation that allows for different type of `_IntSet` to be used for different sizes of input.
+    private static func _minimalSuggestedDisambiguation<IntSet: _IntSet>(
+        listOfOverloadTypeNames: [[String]],
+        numberOfTypes: Int,
+        using: IntSet.Type
+    ) -> [[String]?] {
         // We find the minimal suggested type-signature disambiguation in two steps.
         //
         // First, we compute which type names occur in which overloads.
@@ -47,16 +63,16 @@ extension PathHierarchy.DisambiguationContainer {
         //   String?  Int  Double                [ 12]   [012]   [01 ]
         //   String?  Int  Float                 [ 12]   [012]   [  2]
         
-        let table: [[Set<Int>]] = listOfOverloadTypeNames.map { typeNames in
+        let table: [[IntSet]] = listOfOverloadTypeNames.map { typeNames in
             typeNames.indexed().map { column, name in
-                Set(listOfOverloadTypeNames.indices.filter {
+                IntSet(listOfOverloadTypeNames.indices.filter {
                     listOfOverloadTypeNames[$0][column] == name
                 })
             }
         }
         
         // Check if any columns are common for all overloads so that type name combinations with those columns can be skipped.
-        let allOverloads = Set(0 ..< listOfOverloadTypeNames.count)
+        let allOverloads = IntSet(0 ..< listOfOverloadTypeNames.count)
         let typeNameIndicesToCheck = (0 ..< numberOfTypes).filter {
             // It's sufficient to check the first row because this column has to be the same for all rows
             table[0][$0] != allOverloads
@@ -69,7 +85,7 @@ extension PathHierarchy.DisambiguationContainer {
         
         // Second, we iterate over each overload's type names to find the shortest disambiguation.
         return listOfOverloadTypeNames.indexed().map { row, overload in
-            var shortestDisambiguationSoFar: (indicesToInclude: Set<Int>, length: Int)?
+            var shortestDisambiguationSoFar: (indicesToInclude: IntSet, length: Int)?
             
             // For each overload we iterate over the possible parameter combinations with increasing number of elements in each combination.
             for typeNamesToInclude in typeNameIndicesToCheck.combinations(ofCount: 1...) {
@@ -94,7 +110,7 @@ extension PathHierarchy.DisambiguationContainer {
                     partialResult + overload[index].count
                 }
                 if length < (shortestDisambiguationSoFar?.length ?? .max) {
-                    shortestDisambiguationSoFar = (Set(typeNamesToInclude), length)
+                    shortestDisambiguationSoFar = (IntSet(typeNamesToInclude), length)
                 }
             }
             
@@ -111,5 +127,109 @@ extension PathHierarchy.DisambiguationContainer {
             }
             return disambiguation
         }
+    }
+}
+
+// MARK: Int Set
+
+/// A private protocol that abstracts sets of integers.
+private protocol _IntSet: SetAlgebra<Int> {
+    // In addition to the general SetAlgebra, the code in this file checks the number of elements in the set.
+    var count: Int { get }
+}
+extension Set<Int>: _IntSet {}
+extension _TinySmallValueIntSet: _IntSet {}
+
+/// A specialized set-algebra type that only stores the possible values `0 ..< 64`.
+///
+/// This specialized implementation is _not_ suitable as a general purpose set-algebra type.
+/// However, because the code in this file only works with consecutive sequences of very small integers (most likely `0 ..< 16` and increasingly less likely the higher the number),
+/// and because the the sets of those integers is frequently accessed in loops, a specialized implementation addresses bottlenecks in `_minimalSuggestedDisambiguation(...)`.
+///
+/// > Important:
+/// > This type is thought of as file private but it made internal so that it can be tested.
+struct _TinySmallValueIntSet: SetAlgebra {
+    typealias Element = Int
+    
+    init() {}
+    
+    @usableFromInline
+    private(set) var storage: UInt64 = 0
+    
+    @inlinable
+    init(storage: UInt64) {
+        self.storage = storage
+    }
+    
+    private static func mask(_ number: Int) -> UInt64 {
+        precondition(number < 64, "Number \(number) is out of bounds (0..<64)")
+        return 1 << number
+    }
+    
+    @inlinable
+    @discardableResult
+    mutating func insert(_ member: Int) -> (inserted: Bool, memberAfterInsert: Int) {
+        let newStorage = storage | Self.mask(member)
+        defer {
+            storage = newStorage
+        }
+        return (newStorage != storage, member)
+    }
+    
+    @inlinable
+    @discardableResult
+    mutating func remove(_ member: Int) -> Int? {
+        let newStorage = storage & ~Self.mask(member)
+        defer {
+            storage = newStorage
+        }
+        return newStorage != storage ? member : nil
+    }
+    
+    @inlinable
+    @discardableResult
+    mutating func update(with member: Int) -> Int? {
+        let (inserted, _) = insert(member)
+        return inserted ? nil : member
+    }
+    
+    @inlinable
+    func contains(_ member: Int) -> Bool {
+        storage & Self.mask(member) != 0
+    }
+    
+    @inlinable
+    var count: Int {
+        storage.nonzeroBitCount
+    }
+    
+    @inlinable
+    func union(_ other: Self) -> Self {
+        .init(storage: storage | other.storage)
+    }
+    
+    @inlinable
+    func intersection(_ other: Self) -> Self {
+        .init(storage: storage & other.storage)
+    }
+    
+    @inlinable
+    func symmetricDifference(_ other: Self) -> Self {
+        .init(storage: storage ^ other.storage)
+    }
+    
+    @inlinable
+    mutating func formUnion(_ other: Self) {
+        storage |= other.storage
+    }
+    
+    @inlinable
+    mutating func formIntersection(_ other: Self) {
+        storage &= other.storage
+    }
+    
+    @inlinable
+    mutating func formSymmetricDifference(_ other: Self) {
+        storage ^= other.storage
     }
 }
