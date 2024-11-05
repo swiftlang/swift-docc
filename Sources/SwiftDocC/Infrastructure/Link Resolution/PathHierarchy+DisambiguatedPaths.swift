@@ -189,7 +189,7 @@ extension PathHierarchy {
 extension PathHierarchy.DisambiguationContainer {
     
     static func disambiguatedValues(
-        for elements: some Sequence<Element>,
+        for elements: some Collection<Element>,
         includeLanguage: Bool = false,
         allowAdvancedDisambiguation: Bool = true
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
@@ -203,11 +203,13 @@ extension PathHierarchy.DisambiguationContainer {
     }
     
     private static func _disambiguatedValues(
-        for elements: some Sequence<Element>,
+        for elements: some Collection<Element>,
         includeLanguage: Bool,
         allowAdvancedDisambiguation: Bool
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
+        // Assume that all elements will find a disambiguation (or close to it)
+        collisions.reserveCapacity(elements.count)
         
         var remainingIDs = Set<ResolvedIdentifier>()
         remainingIDs.reserveCapacity(elements.count)
@@ -409,6 +411,8 @@ extension PathHierarchy.DisambiguationContainer {
         remainingIDs: inout Set<ResolvedIdentifier>
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
+        // Assume that all elements will find a disambiguation (or close to it)
+        collisions.reserveCapacity(elements.count)
         
         typealias ElementAndTypeNames = (element: Element, typeNames: [String])
         var groupedByTypeCount: [Int: [ElementAndTypeNames]] = [:]
