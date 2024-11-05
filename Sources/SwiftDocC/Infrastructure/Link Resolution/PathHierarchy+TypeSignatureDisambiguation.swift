@@ -63,11 +63,15 @@ extension PathHierarchy.DisambiguationContainer {
         //   String?  Int  Double                [ 12]   [012]   [01 ]
         //   String?  Int  Float                 [ 12]   [012]   [  2]
         
-        let table: [[IntSet]] = listOfOverloadTypeNames.map { typeNames in
-            typeNames.indexed().map { column, name in
-                IntSet(listOfOverloadTypeNames.indices.filter {
-                    listOfOverloadTypeNames[$0][column] == name
-                })
+        let table = Table<IntSet>(width: numberOfTypes, height: listOfOverloadTypeNames.count) { buffer in
+            for (row, overload) in listOfOverloadTypeNames.indexed() {
+                for (column, typeName) in overload.indexed() {
+                    var set = IntSet()
+                    for index in listOfOverloadTypeNames.indices where listOfOverloadTypeNames[index][column] == typeName {
+                        set.insert(index)
+                    }
+                    buffer[row, column] = set
+                }
             }
         }
         
@@ -75,7 +79,7 @@ extension PathHierarchy.DisambiguationContainer {
         let allOverloads = IntSet(0 ..< listOfOverloadTypeNames.count)
         let typeNameIndicesToCheck = IntSet((0 ..< numberOfTypes).filter {
             // It's sufficient to check the first row because this column has to be the same for all rows
-            table[0][$0] != allOverloads
+            table[0, $0] != allOverloads
         })
         
         guard !typeNameIndicesToCheck.isEmpty else {
@@ -97,8 +101,8 @@ extension PathHierarchy.DisambiguationContainer {
                 var iterator = typeNamesToInclude.makeIterator()
                 let firstTypeNameToInclude = iterator.next()! // The generated `typeNamesToInclude` is never empty.
                 // Compute which other overloads this combinations of type names also could refer to.
-                let overlap = IteratorSequence(iterator).reduce(into: table[row][firstTypeNameToInclude]) { partialResult, index in
-                    partialResult.formIntersection(table[row][index])
+                let overlap = IteratorSequence(iterator).reduce(into: table[row, firstTypeNameToInclude]) { partialResult, index in
+                    partialResult.formIntersection(table[row, index])
                 }
                 
                 guard overlap.count == 1 else {
@@ -306,5 +310,59 @@ extension _TinySmallValueIntSet: Sequence {
             
             return current
         }
+    }
+}
+
+// MARK: Table
+
+/// A fixed-size grid of elements.
+private struct Table<Element> {
+    private typealias Size = (width: Int, height: Int)
+    private let size: Size
+    private let storage: ContiguousArray<Element>
+
+    @inlinable
+    init(width: Int, height: Int, initializingWith initializer: (_ buffer: inout UnsafeMutableTableBufferPointer) throws -> Void) rethrows {
+        size = (width, height)
+        let capacity = width * height
+        storage = try .init(unsafeUninitializedCapacity: capacity) { buffer, initializedCount in
+            var wrappedBuffer = UnsafeMutableTableBufferPointer(width: width, wrapping: buffer)
+            try initializer(&wrappedBuffer)
+            initializedCount = capacity
+        }
+    }
+
+    struct UnsafeMutableTableBufferPointer {
+        private let width: Int
+        private var wrapping: UnsafeMutableBufferPointer<Element>
+
+        init(width: Int, wrapping: UnsafeMutableBufferPointer<Element>) {
+            self.width = width
+            self.wrapping = wrapping
+        }
+
+        @inlinable
+        subscript(row: Int, column: Int) -> Element {
+            _read   { yield  wrapping[index(row: row, column: column)] }
+            _modify { yield &wrapping[index(row: row, column: column)] }
+        }
+
+        private func index(row: Int, column: Int) -> Int {
+            // Let the wrapped buffer validate the index
+            row * width + column
+        }
+    }
+
+    @inlinable
+    subscript(row: Int, column: Int) -> Element {
+        _read { yield storage[index(row: row, column: column)] }
+    }
+
+    private func index(row: Int, column: Int) -> Int {
+        // Give nice assertion messages in debug builds and let the wrapped array validate the index in release builds.
+        assert(0 <= row    && row    < size.height, "Row \(row) is out of range of 0..<\(size.height)")
+        assert(0 <= column && column < size.width,  "Column \(column) is out of range of 0..<\(size.width)")
+
+        return row * size.width + column
     }
 }
