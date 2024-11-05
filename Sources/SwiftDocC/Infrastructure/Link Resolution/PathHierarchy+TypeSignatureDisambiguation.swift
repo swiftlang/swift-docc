@@ -39,23 +39,32 @@ extension PathHierarchy.DisambiguationContainer {
         
         // We find the minimal suggested type-signature disambiguation in two steps.
         //
-        // First, we compute which type names occur in which _other_ overloads.
-        // For example, these type names (left) have these commonalities between each other (right).
+        // First, we compute which type names occur in which overloads.
+        // For example, these type names (left) occur in these overloads (right).
         //
-        //   String   Int  Double                [   ]   [ 12]   [ 1 ]
-        //   String?  Int  Double                [  2]   [0 2]   [0  ]
-        //   String?  Int  Float                 [ 1 ]   [01 ]   [   ]
-        //
-        // Note that each cell doesn't include its own index.
+        //   String   Int  Double                [0  ]   [012]   [01 ]
+        //   String?  Int  Double                [ 12]   [012]   [01 ]
+        //   String?  Int  Float                 [ 12]   [012]   [  2]
         
         let table: [[Set<Int>]] = listOfOverloadTypeNames.map { typeNames in
             typeNames.indexed().map { column, name in
                 Set(listOfOverloadTypeNames.indices.filter {
-                    $0 != row && listOfOverloadTypeNames[$0][column] == name
+                    listOfOverloadTypeNames[$0][column] == name
                 })
             }
         }
         
+        // Check if any columns are common for all overloads so that type name combinations with those columns can be skipped.
+        let allOverloads = Set(0 ..< listOfOverloadTypeNames.count)
+        let typeNameColumnsCommonForAll = Set((0 ..< numberOfTypes).filter {
+            // It's sufficient to check the first row because this column has to be the same for all rows
+            table[0][$0] == allOverloads
+        })
+        
+        guard typeNameColumnsCommonForAll != allOverloads else {
+            // Every type name is common across the overloads. This information can't be used to disambiguate the overloads.
+            return .init(repeating: nil, count: numberOfTypes)
+        }
         
         // Second, we iterate over each overload's type names to find the shortest disambiguation.
         return listOfOverloadTypeNames.indexed().map { row, overload in
@@ -63,6 +72,12 @@ extension PathHierarchy.DisambiguationContainer {
             
             // For each overload we iterate over the possible parameter combinations with increasing number of elements in each combination.
             for typeNamesToInclude in uniqueSortedCombinations(ofNumbersUpTo: numberOfTypes) {
+                guard typeNameColumnsCommonForAll.isDisjoint(with: typeNamesToInclude) else {
+                    // This combination of type names contains a value that is common for all overloads.
+                    // Skip it. There is always a shorter disambiguation that doesn't include this value.
+                    continue
+                }
+                
                 // Stop if we've already found a match with fewer parameters than this
                 guard typeNamesToInclude.count <= (shortestDisambiguationSoFar?.indicesToInclude.count ?? .max) else {
                     break
@@ -74,7 +89,7 @@ extension PathHierarchy.DisambiguationContainer {
                     partialResult.formIntersection(table[row][index])
                 }
                 
-                guard overlap.isEmpty else {
+                guard overlap.count == 1 else {
                     // This combination of parameters doesn't disambiguate the result
                     continue
                 }
