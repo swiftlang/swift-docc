@@ -163,14 +163,20 @@ extension _TinySmallValueIntSet: _IntSet, _Combination {
     func combinationsToCheck() -> [Self] {
         // For `_TinySmallValueIntSet`, leverage the fact that bits of an Int represent the possible combinations.
         let smallest = storage.trailingZeroBitCount
-        return (1 ... storage >> smallest)
-            .compactMap {
-                let combination = Self(storage: UInt64($0 << smallest))
-                // Filter out any combinations that include columns that are the same for all overloads
-                return self.isSuperset(of: combination) ? combination : nil
-            }
-            // The bits of larger and larger Int values won't be in order of number of bits set, so we sort them.
-            .sorted(by: { $0.count < $1.count })
+        
+        var combinations: [Self] = []
+        combinations.reserveCapacity((1 << count /*known to be <64 */) - 1)
+        
+        for raw in 1 ... storage >> smallest {
+            let combination = Self(storage: UInt64(raw << smallest))
+            
+            // Filter out any combinations that include columns that are the same for all overloads
+            guard self.isSuperset(of: combination) else { continue }
+
+            combinations.append(combination)
+        }
+        // The bits of larger and larger Int values won't be in order of number of bits set, so we sort them.
+        return combinations.sorted(by: { $0.count < $1.count })
     }
 }
 
