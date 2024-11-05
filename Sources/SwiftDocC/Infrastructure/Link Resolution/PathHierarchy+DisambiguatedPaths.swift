@@ -437,7 +437,7 @@ extension PathHierarchy.DisambiguationContainer {
                 continue // Need at least one type name to disambiguate (when there are multiple elements without parameters or return values)
             }
             
-            let disambiguation = minimalSuggestedDisambiguation(listOfOverloadTypeNames: elementAndTypeNamePairs.map(\.typeNames))
+            let disambiguation = minimalSuggestedDisambiguation(listOfOverloadTypeNames: elementAndTypeNamePairs)
             
             for (pair, disambiguation) in zip(elementAndTypeNamePairs, disambiguation) {
                 guard let disambiguation else {

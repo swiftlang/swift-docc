@@ -27,33 +27,44 @@ extension PathHierarchy.DisambiguationContainer {
     ///  - `_,_,Float` because only the last overload has `Float` as its last type.
     ///
     /// - Parameter listOfTypeNames: The lists of type-name lists to shrink to the minimal unique combinations of type names
-    static func minimalSuggestedDisambiguation(listOfOverloadTypeNames: [[String]]) -> [[String]?] {
+    static func minimalSuggestedDisambiguation(listOfOverloadTypeNames: [(element: Element, typeNames: [String])]) -> [[String]?] {
         // The number of types in each list
-        guard let numberOfTypes = listOfOverloadTypeNames.first?.count, 0 < numberOfTypes else {
+        guard let numberOfTypes = listOfOverloadTypeNames.first?.typeNames.count, 0 < numberOfTypes else {
             return []
         }
         
-        guard listOfOverloadTypeNames.dropFirst().allSatisfy({ $0.count == numberOfTypes }) else {
+        guard listOfOverloadTypeNames.dropFirst().allSatisfy({ $0.typeNames.count == numberOfTypes }) else {
             assertionFailure("Overloads should always have the same number of parameters")
             return []
         }
         
+        // Construct a table of the type names for quick access
+        let typeNames = Table<String>(width: numberOfTypes, height: listOfOverloadTypeNames.count) { buffer in
+            for (row, pair) in listOfOverloadTypeNames.indexed() {
+                for (column, typeName) in pair.typeNames.indexed() {
+                    buffer[row, column] = typeName
+                }
+            }
+        }
+        
         if numberOfTypes < 64, listOfOverloadTypeNames.count < 64 {
             // If there are few enough types and few enough overloads, use a specialized SetAlgebra implementation to save some allocation and hashing overhead.
-            return _minimalSuggestedDisambiguation(listOfOverloadTypeNames: listOfOverloadTypeNames, numberOfTypes: numberOfTypes, using: _TinySmallValueIntSet.self)
+            return _minimalSuggestedDisambiguation(typeNames: typeNames, using: _TinySmallValueIntSet.self)
         } else {
             // Otherwise, fall back to `Set<Int>`.
             // This should happen very rarely as it's uncommon to have more than 64 overloads or to have overloads of functions with 64 parameters.
-            return _minimalSuggestedDisambiguation(listOfOverloadTypeNames: listOfOverloadTypeNames, numberOfTypes: numberOfTypes, using: Set<Int>.self)
+            return _minimalSuggestedDisambiguation(typeNames: typeNames, using: Set<Int>.self)
         }
     }
     
     // A private implementation that allows for different type of `_IntSet` to be used for different sizes of input.
     private static func _minimalSuggestedDisambiguation<IntSet: _IntSet>(
-        listOfOverloadTypeNames: [[String]],
-        numberOfTypes: Int,
+        typeNames: consuming Table<String>,
         using: IntSet.Type
     ) -> [[String]?] {
+        
+        let numberOfTypes = typeNames.size.width
+        
         // We find the minimal suggested type-signature disambiguation in two steps.
         //
         // First, we compute which type names occur in which overloads.
@@ -63,21 +74,17 @@ extension PathHierarchy.DisambiguationContainer {
         //   String?  Int  Double                [ 12]   [012]   [01 ]
         //   String?  Int  Float                 [ 12]   [012]   [  2]
         
-        let table = Table<IntSet>(width: numberOfTypes, height: listOfOverloadTypeNames.count) { buffer in
-            for (row, overload) in listOfOverloadTypeNames.indexed() {
-                for (column, typeName) in overload.indexed() {
-                    var set = IntSet()
-                    for index in listOfOverloadTypeNames.indices where listOfOverloadTypeNames[index][column] == typeName {
-                        set.insert(index)
-                    }
-                    buffer[row, column] = set
-                }
+        let table = typeNames.map { row, column, typeName in
+            var set = IntSet()
+            for index in typeNames.rowIndices where index == row || typeNames[index, column] == typeName {
+                set.insert(index)
             }
+            return set
         }
         
         // Check if any columns are common for all overloads so that type name combinations with those columns can be skipped.
-        let allOverloads = IntSet(0 ..< listOfOverloadTypeNames.count)
-        let typeNameIndicesToCheck = IntSet((0 ..< numberOfTypes).filter {
+        let allOverloads = IntSet(typeNames.rowIndices)
+        let typeNameIndicesToCheck = IntSet(typeNames.columnIndices.filter {
             // It's sufficient to check the first row because this column has to be the same for all rows
             table[0, $0] != allOverloads
         })
@@ -88,7 +95,7 @@ extension PathHierarchy.DisambiguationContainer {
         }
         
         // Second, we iterate over each overload's type names to find the shortest disambiguation.
-        return listOfOverloadTypeNames.indexed().map { row, overload in
+        return typeNames.rowIndices.map { row in
             var shortestDisambiguationSoFar: (indicesToInclude: IntSet, length: Int)?
             
             // For each overload we iterate over the possible parameter combinations with increasing number of elements in each combination.
@@ -112,7 +119,7 @@ extension PathHierarchy.DisambiguationContainer {
                 
                 // Track the combined length of these type names in case another overload with the same number of type names is shorter.
                 let length = typeNamesToInclude.reduce(0) { partialResult, index in
-                    partialResult + overload[index].count
+                    partialResult + typeNames[row, index].count
                 }
                 if length < (shortestDisambiguationSoFar?.length ?? .max) {
                     shortestDisambiguationSoFar = (IntSet(typeNamesToInclude), length)
@@ -125,12 +132,10 @@ extension PathHierarchy.DisambiguationContainer {
             }
             
             // Found the fewest (and shortest) type names that uniquely disambiguate this overload.
-            // To compute the overload, start with all the type names and replace the unused ones with "_"
-            var disambiguation = overload
-            for col in overload.indices where !indicesToInclude.contains(col) {
-                disambiguation[col] = "_"
+            // Return the list of disambiguating type names or "_" for an unused type name.
+            return typeNames.columnIndices.map {
+                indicesToInclude.contains($0) ? typeNames[row, $0] : "_"
             }
-            return disambiguation
         }
     }
 }
@@ -320,8 +325,9 @@ extension _TinySmallValueIntSet: Sequence {
 
 /// A fixed-size grid of elements.
 private struct Table<Element> {
-    private typealias Size = (width: Int, height: Int)
-    private let size: Size
+    typealias Size = (width: Int, height: Int)
+    @usableFromInline
+    let size: Size
     private let storage: ContiguousArray<Element>
 
     @inlinable
@@ -367,5 +373,32 @@ private struct Table<Element> {
         assert(0 <= column && column < size.width,  "Column \(column) is out of range of 0..<\(size.width)")
 
         return row * size.width + column
+    }
+    
+    @inlinable
+    var rowIndices: Range<Int> {
+        0 ..< size.height
+    }
+    
+    @inlinable
+    var columnIndices: Range<Int> {
+        0 ..< size.width
+    }
+}
+
+extension Table {
+    /// Returns a same-size table containing the results of mapping the given closure over the table's elements.
+    ///
+    /// - Parameter transform: A mapping closure that transforms an element of this table (and its location) a new value for the mapped table.
+    /// - Returns: An new table with the same width and height containing the transformed elements of this table.
+    @inlinable
+    func map<Result>(_ transform: (_ row: Int, _ column: Int, Element) -> Result) -> Table<Result> {
+        Table<Result>(width: size.width, height: size.height) { buffer in
+            for row in rowIndices {
+                for column in columnIndices {
+                    buffer[row, column] = transform(row, column, self[row, column])
+                }
+            }
+        }
     }
 }
