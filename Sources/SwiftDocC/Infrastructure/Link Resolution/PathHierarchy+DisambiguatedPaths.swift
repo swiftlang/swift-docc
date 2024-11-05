@@ -417,9 +417,10 @@ extension PathHierarchy.DisambiguationContainer {
             guard elementAndTypeNamePairs.count > 1 else {
                 // Only one element has this number of types. Disambiguate with only underscores.
                 let (element, _) = elementAndTypeNamePairs.first!
-                guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
+                guard remainingIDs.remove(element.node.identifier) != nil else {
+                    continue // Don't disambiguate the same element more than once
+                }
                 collisions.append((value: element.node, disambiguation: makeDisambiguation(element, .init(repeating: "_", count: numberOfTypeNames))))
-                remainingIDs.remove(element.node.identifier)
                 continue
             }
             
@@ -433,9 +434,10 @@ extension PathHierarchy.DisambiguationContainer {
                 guard let disambiguation else {
                     continue // This element can't be uniquely disambiguated using these types
                 }
-                guard remainingIDs.contains(pair.element.node.identifier) else { continue } // Don't disambiguate the same element more than once
+                guard remainingIDs.remove(pair.element.node.identifier) != nil else {
+                    continue // Don't disambiguate the same element more than once
+                }
                 collisions.append((value: pair.element.node, disambiguation: makeDisambiguation(pair.element, disambiguation)))
-                remainingIDs.remove(pair.element.node.identifier)
             }
         }
         return collisions
