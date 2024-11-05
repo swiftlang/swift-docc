@@ -209,7 +209,12 @@ extension PathHierarchy.DisambiguationContainer {
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         
-        var remainingIDs = Set(elements.map(\.node.identifier))
+        var remainingIDs = Set<ResolvedIdentifier>()
+        remainingIDs.reserveCapacity(elements.count)
+        for element in elements {
+            guard let id = element.node.identifier else { continue }
+            remainingIDs.insert(id)
+        }
         
         // Kind disambiguation is the most readable, so we start by checking if any element has a unique kind.
         let groupedByKind = [String?: [Element]](grouping: elements, by: \.kind)
@@ -401,7 +406,7 @@ extension PathHierarchy.DisambiguationContainer {
         _ elements: [Element],
         types: (Element) -> [String]?,
         makeDisambiguation: (Element, [String]) -> Disambiguation,
-        remainingIDs: inout Set<ResolvedIdentifier?>
+        remainingIDs: inout Set<ResolvedIdentifier>
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         
