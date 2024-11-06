@@ -95,12 +95,14 @@ extension PathHierarchy.DisambiguationContainer {
         }
         
         // Second, we iterate over each overload's type names to find the shortest disambiguation.
+        let typeNameCombinationsToCheck = typeNameIndicesToCheck.combinationsToCheck()
+        
         return typeNames.rowIndices.map { row in
             var shortestDisambiguationSoFar: (indicesToInclude: IntSet, length: Int)?
             
             // For each overload we iterate over the possible parameter combinations with increasing number of elements in each combination.
-            for typeNamesToInclude in typeNameIndicesToCheck.combinationsToCheck() {
                 // Stop if we've already found a match with fewer parameters than this
+            for typeNamesToInclude in typeNameCombinationsToCheck {
                 guard typeNamesToInclude.count <= (shortestDisambiguationSoFar?.indicesToInclude.count ?? .max) else {
                     break
                 }
