@@ -219,8 +219,14 @@ public class DocumentationContentRenderer {
         // Verify that if current platforms are in beta, they match the introduced version of the symbol
         for availability in symbolAvailability {
             // If not available on this platform, skip to next platform.
-            guard !availability.isUnconditionallyUnavailable, let introduced = availability.introducedVersion else {
+            guard !availability.isUnconditionallyUnavailable else {
                 continue
+            }
+
+            // If the availability item does not have an introduced version,
+            // the symbol can't be marked as beta.
+            guard let introduced = availability.introducedVersion else {
+                return false
             }
             
             // If we don't have introduced and current versions for the current platform

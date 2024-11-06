@@ -1901,19 +1901,24 @@ Document
     }
     
     func testRendersBetaViolators() throws {
-        func makeTestBundle(currentPlatforms: [String : PlatformVersion]?, file: StaticString = #file, line: UInt = #line) throws -> (DocumentationBundle, DocumentationContext, ResolvedTopicReference) {
+        func makeTestBundle(currentPlatforms: [String : PlatformVersion]?, file: StaticString = #file, line: UInt = #line, referencePath: String) throws -> (DocumentationBundle, DocumentationContext, ResolvedTopicReference) {
             var configuration = DocumentationContext.Configuration()
+            // Add missing platforms if their fallback platform is present.
+            var currentPlatforms = currentPlatforms ?? [:]
+            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
+                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            }
             configuration.externalMetadata.currentPlatforms = currentPlatforms
             
             let (_, bundle, context) = try testBundleAndContext(named: "TestBundle", configuration: configuration)
             
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: referencePath, sourceLanguage: .swift)
             return (bundle, context, reference)
         }
         
         // Not a beta platform
         do {
-            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: nil)
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: nil, referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
@@ -1928,7 +1933,7 @@ Document
             
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
                 "Custom Name": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
-            ])
+            ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [])
             let documentationContentRendered = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
@@ -1941,7 +1946,7 @@ Document
         do {
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
                 "tvOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
-            ])
+            ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
@@ -1955,7 +1960,7 @@ Document
         do {
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
-            ])
+            ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
@@ -1969,13 +1974,13 @@ Document
         do {
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true)
-            ])
+            ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
 
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
+            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS"})?.isBeta, true)
         }
 
         // Beta platform earlier than the introduced version
@@ -1983,45 +1988,45 @@ Document
         do {
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 14, 0), beta: true)
-            ])
+            ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
+            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS"})?.isBeta, true)
         }
 
-        // Set only some platforms to beta & the exact version MyClass is being introduced at
+        // Set only some platforms to beta & the exact version globalFunction is being introduced at
         
         do {
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
                 "watchOS": PlatformVersion(VersionTriplet(9, 0, 0), beta: true),
                 "tvOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
-            ])
+            ], referencePath: "/documentation/MyKit")
             
             let node = try context.entity(with: reference)
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify task group link is beta
-            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, false)
+            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, false)
         }
 
-        // Set all platforms to beta & the exact version MyClass is being introduced at to test beta SDK documentation
+        // Set all platforms to beta & the exact version globalFunction is being introduced at to test beta SDK documentation
         do {
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
                 "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
                 "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
-                "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
-            ])
+                "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true)
+            ], referencePath: "/documentation/MyKit")
             
             let node = try context.entity(with: reference)
             let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
             
             // Verify task group link is beta
-            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, true)
+            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, true)
         }
 
         // Set all platforms to beta where the symbol is available,
@@ -2033,13 +2038,13 @@ Document
             "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
             "FictionalOS": PlatformVersion(VersionTriplet(42, 0, 0), beta: false),
             "ImaginaryOS": PlatformVersion(VersionTriplet(3, 3, 3), beta: false),
-        ])
+        ], referencePath: "/documentation/MyKit")
         
         let node = try context.entity(with: reference)
         let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
         
         // Verify task group link is beta
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, true)
+        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, true)
         
         // Add ImaginaryOS platform - but make it unconditionally unavailable and
         // verify that it doesn't affect the beta status
@@ -2052,7 +2057,24 @@ Document
             let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
             
             // Verify task group link is beta
-            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, true)
+            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, true)
+        }
+        
+        // Set all platforms to beta & the exact version MyClass is being introduced.
+        // Expect the symbol to no be in beta sinceit does not have an introduced version for iOS
+        do {
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
+                "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
+                "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
+                "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
+                "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true)
+            ], referencePath: "/documentation/MyKit")
+            
+            let node = try context.entity(with: reference)
+            let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
+            
+            // Verify task group link is beta
+            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, false)
         }
     }
     
