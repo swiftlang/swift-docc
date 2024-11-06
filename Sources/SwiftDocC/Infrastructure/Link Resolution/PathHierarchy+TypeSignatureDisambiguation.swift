@@ -73,13 +73,49 @@ extension PathHierarchy.DisambiguationContainer {
         //   String   Int  Double                [0  ]   [012]   [01 ]
         //   String?  Int  Double                [ 12]   [012]   [01 ]
         //   String?  Int  Float                 [ 12]   [012]   [  2]
-        
-        let table = typeNames.map { row, column, typeName in
-            var set = IntSet()
-            for index in typeNames.rowIndices where index == row || typeNames[index, column] == typeName {
-                set.insert(index)
+        let table = Table<IntSet>(width: typeNames.size.width, height: typeNames.size.height) { buffer in
+            for column in typeNames.columnIndices {
+                // When a type name is common across multiple overloads we don't need to recompute that information.
+                // For example, consider a column of these 5 type names: ["Int", "Double", "Int", "Bool", "Double"].
+                //
+                // For the first type name ("Int"), we don't know anything about the other rows yet, so we check all 5.
+                // This finds that "Int" occurs in both rows 0 and row 2. This information tells us that:
+                //  - we can assign `[0 2  ]` to both those rows
+                //  - we we don't need to check either of those rows again for the other type names.
+                //
+                // Thus, for the next type name ("Double"), we know that it's not in row 0 or 2, so we only need to check rows 1, 3, and 4.
+                // This finds that "Double" occurs in both rows 1 and row 4, so we can assign `[ 1  4]` to both rows and don't check them again.
+                //
+                // Finally, for the third type name ("Bool") we know that it's not in rows 0, 1, 2, or 4, so we only need to check row 3.
+                // Since this is the only row to check we can assign `[   3 ]` to it without iterating over any other rows.
+                //
+                // With no more rows to check we have found which type names occur in which overloads for every type name in this column.
+                
+                // At the start we need to consider every row
+                var rowsToCheck = IntSet(typeNames.rowIndices)
+                while !rowsToCheck.isEmpty {
+                    // Find all the rows with this type name
+                    var iterator = rowsToCheck.makeIterator()
+                    let currentRow = iterator.next()! // Verified to not be empty above.
+                    let typeName = typeNames[currentRow, column]
+                    
+                    var rowsWithThisTypeName = IntSet()
+                    rowsWithThisTypeName.insert(currentRow) // We know that the type name exist on the current row
+                    // Check all the other (unchecked rows)
+                    while let row = iterator.next() {
+                        guard typeNames[row, column] == typeName else { continue }
+                        rowsWithThisTypeName.insert(row)
+                    }
+                    
+                    // Once we've found which rows have this type name we can assign all of them...
+                    for row in rowsWithThisTypeName {
+                        // Assign all the rows ...
+                        buffer[row, column] = rowsWithThisTypeName
+                    }
+                    // ... and we can remove them from `rowsToCheck` so we don't check them again for the next type name.
+                    rowsToCheck.subtract(rowsWithThisTypeName)
+                }
             }
-            return set
         }
         
         // Second, iterate over each overload and try different combinations of type names to find the shortest disambiguation.
@@ -390,22 +426,5 @@ private struct Table<Element> {
     @inlinable
     var columnIndices: Range<Int> {
         0 ..< size.width
-    }
-}
-
-extension Table {
-    /// Returns a same-size table containing the results of mapping the given closure over the table's elements.
-    ///
-    /// - Parameter transform: A mapping closure that transforms an element of this table (and its location) a new value for the mapped table.
-    /// - Returns: An new table with the same width and height containing the transformed elements of this table.
-    @inlinable
-    func map<Result>(_ transform: (_ row: Int, _ column: Int, Element) -> Result) -> Table<Result> {
-        Table<Result>(width: size.width, height: size.height) { buffer in
-            for row in rowIndices {
-                for column in columnIndices {
-                    buffer[row, column] = transform(row, column, self[row, column])
-                }
-            }
-        }
     }
 }
