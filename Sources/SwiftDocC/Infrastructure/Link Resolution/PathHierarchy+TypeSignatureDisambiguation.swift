@@ -248,6 +248,12 @@ struct _TinySmallValueIntSet: SetAlgebra {
     }
     
     @inlinable
+    func isSuperset(of other: Self) -> Bool {
+        // Provide a custom implementation since this is called frequently in `combinationsToCheck()`
+        (storage & other.storage) == other.storage
+    }
+    
+    @inlinable
     func union(_ other: Self) -> Self {
         .init(storage: storage | other.storage)
     }

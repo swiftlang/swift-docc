@@ -67,6 +67,17 @@ class TinySmallValueIntSetTests: XCTestCase {
         XCTAssertEqual(tiny.contains(8), real.contains(8))
         XCTAssertEqual(tiny.contains(9), real.contains(9))
         XCTAssertEqual(tiny.count, real.count)
+        
+        tiny.formUnion([11,29])
+        real.formUnion([11,29])
+        XCTAssertEqual(tiny.contains(11), real.contains(11))
+        XCTAssertEqual(tiny.contains(29), real.contains(29))
+        XCTAssertEqual(tiny.count, real.count)
+        
+        XCTAssertEqual(tiny.isSuperset(of: tiny), real.isSuperset(of: real))
+        XCTAssertEqual(tiny.isSuperset(of: []),   real.isSuperset(of: []))
+        XCTAssertEqual(tiny.isSuperset(of: .init(tiny.dropFirst())), real.isSuperset(of: .init(real.dropFirst())))
+        XCTAssertEqual(tiny.isSuperset(of: .init(tiny.dropLast())),  real.isSuperset(of: .init(real.dropLast())))
     }
     
     func testCombinations() {
