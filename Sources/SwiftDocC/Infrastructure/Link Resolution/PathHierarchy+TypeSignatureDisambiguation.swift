@@ -119,9 +119,11 @@ extension PathHierarchy.DisambiguationContainer {
                     continue
                 }
                 
-                // Track the combined length of these type names in case another overload with the same number of type names is shorter.
-                let length = typeNamesToInclude.reduce(0) { partialResult, index in
-                    partialResult + typeNames[row, index].count
+                // Track the combined length of this combination of type names in case another combination (with the same number of type names) is shorter.
+                let length = typeNamesToInclude.reduce(0) { accumulatedLength, index in
+                    // It's faster to check the number of UTF8 code units.
+                    // This disfavors non-UTF8 type names, but those could be harder to read/write so neither length is right or wrong here.
+                    accumulatedLength + typeNames[row, index].utf8.count
                 }
                 if length < (shortestDisambiguationSoFar?.length ?? .max) {
                     shortestDisambiguationSoFar = (IntSet(typeNamesToInclude), length)
