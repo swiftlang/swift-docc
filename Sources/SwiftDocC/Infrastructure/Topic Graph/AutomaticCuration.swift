@@ -172,12 +172,14 @@ public struct AutomaticCuration {
             return nil
         }
         
-        let variantLanguageIDs = Set(variantsTraits.compactMap(\.interfaceLanguage))
+        let variantLanguages = Set(variantsTraits.compactMap { traits in
+            traits.interfaceLanguage.map { SourceLanguage(id: $0) }
+        })
         
         func isRelevant(_ filteredGroup: DocumentationContentRenderer.ReferenceGroup) -> Bool {
             // Check if the task group is filtered to a subset of languages
             if let languageFilter = filteredGroup.languageFilter,
-               !languageFilter.contains(where: { variantLanguageIDs.contains($0.id) })
+               languageFilter.isDisjoint(with: variantLanguages)
             {
                 // This group is only applicable to other languages than the given variant traits.
                 return false
@@ -194,8 +196,8 @@ public struct AutomaticCuration {
                     // Don't include the current node.
                     reference != node.reference
                     &&
-                    // Filter out nodes that aren't available in any of the given traits.
-                    context.sourceLanguages(for: reference).contains(where: { variantLanguageIDs.contains($0.id) })
+                    // Don't include nodes that aren't available in any of the given traits.
+                    !context.sourceLanguages(for: reference).isDisjoint(with: variantLanguages)
                 }
                 // Don't create too long See Also sections
                 .prefix(automaticSeeAlsoLimit)
