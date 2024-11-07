@@ -12,9 +12,7 @@ import Foundation
 
 // On non-Darwin platforms, Foundation's XML support is vended as a separate module:
 // https://github.com/apple/swift-corelibs-foundation/blob/main/Docs/ReleaseNotes_Swift5.md#dependency-management
-#if canImport(FoundationXML)
-import FoundationXML
-#endif
+
 
 /// A basic XML parser that extracts the first `id` attribute found in the given SVG.
 ///
