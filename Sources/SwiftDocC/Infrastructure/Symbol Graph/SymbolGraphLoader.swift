@@ -82,7 +82,7 @@ struct SymbolGraphLoader {
                 
                 symbolGraphTransformer?(&symbolGraph)
 
-                let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
+                let (moduleName, isMainSymbolGraph) = GraphCollector.moduleNameFor(symbolGraph, at: symbolGraphURL)
                 // If the bundle provides availability defaults add symbol availability data.
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
 
@@ -205,7 +205,7 @@ struct SymbolGraphLoader {
     private func loadSymbolGraph(at url: URL) throws -> (SymbolGraph, isMainSymbolGraph: Bool) {
         // This is a private method, the `url` key is known to exist
         var symbolGraph = symbolGraphs[url]!
-        let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: url)
+        let (moduleName, isMainSymbolGraph) = GraphCollector.moduleNameFor(symbolGraph, at: url)
         
         if !isMainSymbolGraph && symbolGraph.module.bystanders == nil {
             // If this is an extending another module, change the module name to match the extended module.
@@ -352,31 +352,7 @@ struct SymbolGraphLoader {
         
         return fileName.split(separator: "@", maxSplits: 1).last.map({ String($0) })
     }
-    
-    /// Returns the module name of a symbol graph based on the JSON data and file name.
-    ///
-    /// Useful during decoding the symbol graphs to implement the correct name logic starting with the module name in the JSON.
-    private static func moduleNameFor(_ symbolGraph: SymbolGraph, at url: URL) -> (String, Bool) {
-        let isMainSymbolGraph = !url.lastPathComponent.contains("@")
         
-        let moduleName: String
-        if isMainSymbolGraph || symbolGraph.module.bystanders != nil {
-            // For main symbol graphs, get the module name from the symbol graph's data
-
-            // When bystander modules are present, the symbol graph is a cross-import overlay, and
-            // we need to preserve the original module name to properly render it. It is still
-            // kept with the extension symbols, due to the merging behavior of UnifiedSymbolGraph.
-            moduleName = symbolGraph.module.name
-        } else {
-            // For extension symbol graphs, derive the extended module's name from the file name.
-            //
-            // The per-symbol `extendedModule` value is the same as the main module for most symbols, so it's not a good way to find the name
-            // of the module that was extended (rdar://63200368).
-            moduleName = SymbolGraphLoader.moduleNameFor(url)!
-        }
-        return (moduleName, isMainSymbolGraph)
-    }
-    
     private static func applyWorkaroundFor139305015(to symbolGraph: inout SymbolGraph) {
         guard symbolGraph.symbols.values.mapFirst(where: { SourceLanguage(id: $0.identifier.interfaceLanguage) }) == .objectiveC else {
             return
