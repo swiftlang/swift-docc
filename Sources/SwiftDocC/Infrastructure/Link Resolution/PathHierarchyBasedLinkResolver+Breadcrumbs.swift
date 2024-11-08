@@ -13,8 +13,8 @@ import SymbolKit
 
 extension PathHierarchyBasedLinkResolver {
     
-    /// Finds the canonical path, also called "breadcrumb", to the given symbol in the path hierarchy.
     /// 
+    /// Finds the canonical path, also called "breadcrumbs", to the given symbol in the path hierarchy.
     /// The path is a list of references that describe a walk through the path hierarchy descending from the module down to, but not including, the given `reference`.
     ///
     /// - Parameters:
