@@ -16,11 +16,11 @@ import SwiftDocC
 /// An action represents a discrete documentation task; it takes options and inputs, performs its work, reports any problems it encounters, and outputs it generates.
 package protocol AsyncAction {
     /// Performs the action and returns an ``ActionResult``.
-    mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult
+    func perform(logHandle: inout LogHandle) async throws -> ActionResult
 }
 
 package extension AsyncAction {
-    mutating func perform(logHandle: LogHandle) async throws -> ActionResult {
+    func perform(logHandle: LogHandle) async throws -> ActionResult {
         var logHandle = logHandle
         return try await perform(logHandle: &logHandle)
     }

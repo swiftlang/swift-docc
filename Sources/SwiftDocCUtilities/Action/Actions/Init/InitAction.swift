@@ -72,7 +72,7 @@ public struct InitAction: AsyncAction {
     /// Generates a documentation catalog from a catalog template.
     ///
     /// - Parameter logHandle: The file handle that the convert and preview actions will print debug messages to.
-    public mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
         diagnosticEngine.filterLevel = .warning
         diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
