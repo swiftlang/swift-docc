@@ -32,7 +32,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
         defer { try? fileManager.removeItem(at: targetBundleURL) }
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -131,7 +131,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
 
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,

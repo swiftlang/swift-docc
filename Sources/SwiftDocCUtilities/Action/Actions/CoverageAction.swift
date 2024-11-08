@@ -27,7 +27,7 @@ public struct CoverageAction: AsyncAction {
     let workingDirectory: URL
     private let fileManager: FileManagerProtocol
 
-    public mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         switch documentationCoverageOptions.level {
         case .brief, .detailed:
             print("   --- Experimental coverage output enabled. ---", to: &logHandle)
