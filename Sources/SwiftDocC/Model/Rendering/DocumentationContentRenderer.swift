@@ -206,6 +206,8 @@ public class DocumentationContentRenderer {
     }
     
     /// Given a node, returns if it's a beta documentation symbol or not.
+    ///
+    /// Symbols are only considered "in beta" if they are in beta for all platforms that they are available for.
     func isBeta(_ node: DocumentationNode) -> Bool {
         // We verify that this is a symbol with defined availability
         // and that we're feeding in a current set of platforms to the context.
@@ -219,8 +221,13 @@ public class DocumentationContentRenderer {
         // Verify that if current platforms are in beta, they match the introduced version of the symbol
         for availability in symbolAvailability {
             // If not available on this platform, skip to next platform.
-            guard !availability.isUnconditionallyUnavailable, let introduced = availability.introducedVersion else {
+            guard !availability.isUnconditionallyUnavailable else {
                 continue
+            }
+
+            // If the symbol doesn't have an introduced version for one of those platforms, we don't consider it "in beta".
+            guard let introduced = availability.introducedVersion else {
+                return false
             }
             
             // If we don't have introduced and current versions for the current platform

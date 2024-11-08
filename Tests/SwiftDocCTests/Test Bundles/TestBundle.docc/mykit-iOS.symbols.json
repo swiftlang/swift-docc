@@ -409,6 +409,36 @@
         ],
         "title" : "globalFunction(_:considering:)"
       },
+      "availability" : [
+        {
+          "domain": "macOS",
+          "introduced": {
+            "major": 10,
+            "minor": 15
+          }
+        },
+        {
+          "domain": "watchOS",
+          "introduced": {
+            "major": 6,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "tvOS",
+          "introduced": {
+            "major": 13,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "iOS",
+          "introduced": {
+            "major": 13,
+            "minor": 0
+          }
+        }
+      ],
       "pathComponents" : [
         "globalFunction(_:considering:)"
       ]
