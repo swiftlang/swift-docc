@@ -1504,16 +1504,28 @@ class SemaToRenderNodeTests: XCTestCase {
 
         // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid
         // and therefore Catalyst and iPadOS are also invalid.
-        XCTAssertEqual(platforms.count, 3)
+        XCTAssertEqual(platforms.count, 6)
         
-        XCTAssertEqual(platforms[0].name, "macOS")
-        XCTAssertEqual(platforms[0].introduced, "10.15")
+        XCTAssertEqual(platforms[0].name, "Mac Catalyst")
+        XCTAssertEqual(platforms[0].introduced, nil)
+        XCTAssertEqual(platforms[0].deprecated, "13.0")
         
-        XCTAssertEqual(platforms[1].name, "tvOS")
-        XCTAssertEqual(platforms[1].introduced, "13.0")
+        XCTAssertEqual(platforms[1].name, "iOS")
+        XCTAssertEqual(platforms[1].introduced, nil)
+        XCTAssertEqual(platforms[1].deprecated, "13.0")
         
-        XCTAssertEqual(platforms[2].name, "watchOS")
-        XCTAssertEqual(platforms[2].introduced, "6.0")
+        XCTAssertEqual(platforms[2].name, "iPadOS")
+        XCTAssertEqual(platforms[2].introduced, nil)
+        XCTAssertEqual(platforms[2].deprecated, "13.0")
+        
+        XCTAssertEqual(platforms[3].name, "macOS")
+        XCTAssertEqual(platforms[3].introduced, "10.15")
+        
+        XCTAssertEqual(platforms[4].name, "tvOS")
+        XCTAssertEqual(platforms[4].introduced, "13.0")
+        
+        XCTAssertEqual(platforms[5].name, "watchOS")
+        XCTAssertEqual(platforms[5].introduced, "6.0")
     }
     
     func testAvailabilityFromCurrentPlatformOverridesExistingValue() throws {
@@ -1975,7 +1987,7 @@ Document
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
 
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
+            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS" })?.isBeta, true)
         }
 
         // Beta platform earlier than the introduced version
@@ -1989,7 +2001,7 @@ Document
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
+            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS" })?.isBeta, true)
         }
 
         // Set only some platforms to beta & the exact version MyClass is being introduced at
@@ -3347,6 +3359,81 @@ Document
         XCTAssertEqual(objcTopicSection.first?.identifiers, [
             "doc://org.swift.MixedFramework/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)"
         ])
+    }
+    
+    func testLanguageSpecificTopicSectionDoesNotAppearInAutomaticSeeAlso() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something-swift.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: (1...4).map {
+                makeSymbol(id: "symbol-id-\($0)", language: .swift, kind: .class, pathComponents: ["SomeClass\($0)"])
+            })),
+            
+            JSONFile(name: "Something-objc.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: (1...4).map {
+                makeSymbol(id: "symbol-id-\($0)", language: .objectiveC, kind: .class, pathComponents: ["SomeClass\($0)"])
+            })),
+            
+            TextFile(name: "ModuleExtension.md", utf8Content: """
+            # ``Something``
+            
+            ## Topics
+            
+            ### Something Swift only
+            
+            @SupportedLanguage(swift)
+            
+            - ``SomeClass1``
+            - ``SomeClass2``
+            - ``SomeClass3``
+            
+            ### Something Objective-C only
+            
+            @SupportedLanguage(objc)
+            
+            - ``SomeClass2``
+            - ``SomeClass3``
+            - ``SomeClass4``
+            """),
+        ])
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "\(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let reference = moduleReference.appendingPath("SomeClass3")
+        
+        let documentationNode = try context.entity(with: reference)
+        XCTAssertEqual(documentationNode.availableVariantTraits.count, 2, "This page has Swift and Objective-C variants")
+        
+        // There's a behavioral difference between DocumentationContextConverter and DocumentationNodeConverter so we check both.
+        // DocumentationContextConverter may use pre-rendered content but the DocumentationNodeConverter computes task groups as-needed.
+        
+        func assertExpectedTopicSections(_ renderNode: RenderNode, file: StaticString = #filePath, line: UInt = #line) {
+            let topicSectionsVariants = renderNode.seeAlsoSectionsVariants
+            
+            let swiftSeeAlsoSection = topicSectionsVariants.defaultValue
+            
+            XCTAssertEqual(swiftSeeAlsoSection.first?.title, "Something Swift only", file: file, line: line)
+            XCTAssertEqual(swiftSeeAlsoSection.first?.identifiers, [
+                "doc://Something/documentation/Something/SomeClass1",
+                "doc://Something/documentation/Something/SomeClass2",
+            ], file: file, line: line)
+            
+            let objcSeeAlsoSection = topicSectionsVariants.value(for: [.interfaceLanguage("occ")])
+            
+            XCTAssertEqual(objcSeeAlsoSection.first?.title, "Something Objective-C only", file: file, line: line)
+            XCTAssertEqual(objcSeeAlsoSection.first?.identifiers, [
+                "doc://Something/documentation/Something/SomeClass2",
+                "doc://Something/documentation/Something/SomeClass4",
+            ], file: file, line: line)
+        }
+        
+        let nodeConverter = DocumentationNodeConverter(bundle: bundle, context: context)
+        try assertExpectedTopicSections(nodeConverter.convert(documentationNode))
+        
+        let contextConverter = DocumentationContextConverter(
+            bundle: bundle,
+            context: context,
+            renderContext: RenderContext(documentationContext: context, bundle: bundle)
+        )
+        try assertExpectedTopicSections(XCTUnwrap(contextConverter.renderNode(for: documentationNode)))
     }
     
     func testTopicSectionWithUnsupportedDirectives() throws {

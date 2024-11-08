@@ -74,6 +74,15 @@ public enum JSONPatchOperation: Codable {
     ///   - variantPatchOperation: The patch to apply.
     ///   - pointer: The pointer to the value to update.
     public init<Value>(variantPatchOperation: VariantPatchOperation<Value>, pointer: JSONPointer) {
+        // FIXME: The latest Swift development snapshots (2024-10-30-a and later) is missing the "references" path component. (rdar://139446585)
+        // AFAICT it's the only path that's missing components, so we're working around that issue here.
+        // Since the only RenderNode coding paths that have include a topic reference (as its 2nd component) are
+        // modifications of topics in the "references" section, we can detect and workaround this issue by checking for a "doc://" prefix.
+        var pointer = pointer
+        if pointer.pathComponents.first?.hasPrefix("doc://") == true {
+            pointer = pointer.prependingPathComponents(["references"])
+        }
+        
         switch variantPatchOperation {
         case .replace(let value):
             self = .replace(pointer: pointer, encodableValue: value)
