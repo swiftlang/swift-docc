@@ -2004,12 +2004,12 @@ Document
                 "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
                 "watchOS": PlatformVersion(VersionTriplet(9, 0, 0), beta: true),
                 "tvOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
-            ], referencePath: "/documentation/MyKit")
+            ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
-            // Verify task group link is beta
+            // Verify task group link is not in beta betas "iOS" is not being marked as beta
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, false)
         }
 
@@ -2020,7 +2020,7 @@ Document
                 "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
                 "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
                 "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true)
-            ], referencePath: "/documentation/MyKit")
+            ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
             let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
@@ -2038,7 +2038,7 @@ Document
             "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
             "FictionalOS": PlatformVersion(VersionTriplet(42, 0, 0), beta: false),
             "ImaginaryOS": PlatformVersion(VersionTriplet(3, 3, 3), beta: false),
-        ], referencePath: "/documentation/MyKit")
+        ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
         
         let node = try context.entity(with: reference)
         let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
@@ -2073,7 +2073,7 @@ Document
             let node = try context.entity(with: reference)
             let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
             
-            // Verify task group link is beta
+            // Verify task group link is not in beta because `iOS` does not have an introduced version
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, false)
         }
     }
