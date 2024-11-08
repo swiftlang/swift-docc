@@ -79,7 +79,7 @@ class RenderNodeTransformerTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.title, "test title")
         XCTAssertEqual(renderNode.metadata.roleHeading, "test heading")
         
-        XCTAssertNil(renderNode.hierarchy)
+        XCTAssertNil(renderNode.hierarchyVariants.defaultValue)
         XCTAssertNil(renderNode.references["doc://org.swift.docc.example/documentation/MyKit"])
 
     }
