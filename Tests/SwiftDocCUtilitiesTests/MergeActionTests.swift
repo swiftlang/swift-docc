@@ -63,7 +63,7 @@ class MergeActionTests: XCTestCase {
         )
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
@@ -192,7 +192,7 @@ class MergeActionTests: XCTestCase {
         )
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/Empty.doccarchive"),
             ],
@@ -282,7 +282,7 @@ class MergeActionTests: XCTestCase {
         )
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
@@ -403,7 +403,7 @@ class MergeActionTests: XCTestCase {
         )
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
@@ -518,7 +518,7 @@ class MergeActionTests: XCTestCase {
         )
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
@@ -632,7 +632,7 @@ class MergeActionTests: XCTestCase {
         )
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
@@ -713,7 +713,7 @@ class MergeActionTests: XCTestCase {
         )
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
@@ -755,7 +755,7 @@ class MergeActionTests: XCTestCase {
         ])
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
@@ -820,7 +820,7 @@ class MergeActionTests: XCTestCase {
         ])
         
         let logStorage = LogHandle.LogStorage()
-        var action = MergeAction(
+        let action = MergeAction(
             archives: [
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),

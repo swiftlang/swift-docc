@@ -86,6 +86,7 @@ extension XCTestCase {
         accessLevel: SymbolGraph.Symbol.AccessControl = .init(rawValue: "public"), // Defined internally in SwiftDocC
         location: (position: SymbolGraph.LineList.SourceRange.Position, url: URL)? = (defaultSymbolPosition, defaultSymbolURL),
         signature: SymbolGraph.Symbol.FunctionSignature? = nil,
+        availability: [SymbolGraph.Symbol.Availability.AvailabilityItem]? = nil,
         otherMixins: [any Mixin] = []
     ) -> SymbolGraph.Symbol {
         precondition(!pathComponents.isEmpty, "Need at least one path component to name the symbol")
@@ -96,6 +97,9 @@ extension XCTestCase {
         }
         if let signature {
             mixins.append(signature)
+        }
+        if let availability {
+            mixins.append(SymbolGraph.Symbol.Availability(availability: availability))
         }
         
         return SymbolGraph.Symbol(
@@ -113,6 +117,16 @@ extension XCTestCase {
             kind: makeSymbolKind(kindID),
             mixins: makeMixins(mixins)
         )
+    }
+    
+    package func makeAvailabilityItem(
+        domainName: String,
+        introduced: SymbolGraph.SemanticVersion? = nil,
+        deprecated: SymbolGraph.SemanticVersion? = nil,
+        obsoleted: SymbolGraph.SemanticVersion? = nil,
+        unconditionallyUnavailable: Bool = false
+    ) -> SymbolGraph.Symbol.Availability.AvailabilityItem {
+        return SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: domainName), introducedVersion: introduced, deprecatedVersion: deprecated, obsoletedVersion: obsoleted, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: unconditionallyUnavailable, willEventuallyBeDeprecated: false)
     }
     
     package func makeSymbolNames(name: String) -> SymbolGraph.Symbol.Names {

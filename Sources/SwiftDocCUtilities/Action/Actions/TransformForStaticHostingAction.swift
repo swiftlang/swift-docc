@@ -44,12 +44,12 @@ struct TransformForStaticHostingAction: AsyncAction {
     
     /// Converts each eligible file from the source archive and
     /// saves the results in the given output folder.
-    mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         try emit()
         return ActionResult(didEncounterError: false, outputs: [outputURL])
     }
     
-    mutating private func emit() throws {
+    private func emit() throws {
         // If the emit is to create the static hostable content outside of the source archive
         // then the output folder needs to be set up and the archive data copied
         // to the new folder.
