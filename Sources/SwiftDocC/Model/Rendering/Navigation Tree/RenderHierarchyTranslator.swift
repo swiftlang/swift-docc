@@ -220,10 +220,10 @@ struct RenderHierarchyTranslator {
     }
     
     /// Returns the hierarchy under a given article.
-    /// - Parameter symbolReference: The reference to the article.
+    /// - Parameter articleReference: The reference to the article.
     /// - Returns: The framework hierarchy that describes all paths where the article is curated.
-    mutating func visitArticle(_ symbolReference: ResolvedTopicReference) -> VariantCollection<RenderHierarchy?> {
-        let pathReferences = context.finitePaths(to: symbolReference)
+    mutating func visitArticle(_ articleReference: ResolvedTopicReference) -> VariantCollection<RenderHierarchy?> {
+        let pathReferences = context.finitePaths(to: articleReference)
         pathReferences.forEach({
             collectedTopicReferences.formUnion($0)
         })
