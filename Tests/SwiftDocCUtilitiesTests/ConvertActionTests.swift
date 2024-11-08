@@ -50,7 +50,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -98,7 +98,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -158,7 +158,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -193,7 +193,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -225,7 +225,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: input.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -257,7 +257,7 @@ class ConvertActionTests: XCTestCase {
         infoPlistFallbacks["CFBundleIdentifier"] = "com.example.test"
         infoPlistFallbacks["CDDefaultCodeListingLanguage"] = "swift"
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: nil,
             outOfProcessResolver: nil,
             analyze: false,
@@ -381,7 +381,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -423,7 +423,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -492,7 +492,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -579,7 +579,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -637,7 +637,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -717,7 +717,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -796,7 +796,7 @@ class ConvertActionTests: XCTestCase {
             .appendingPathComponent("target", isDirectory: true)
         
         do {
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: goodBundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -1104,7 +1104,7 @@ class ConvertActionTests: XCTestCase {
             return try? JSONDecoder().decode(Result.self, from: data)
         }
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -1224,7 +1224,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -1476,7 +1476,7 @@ class ConvertActionTests: XCTestCase {
             let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
                 .appendingPathComponent("target", isDirectory: true)
 
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -1501,7 +1501,7 @@ class ConvertActionTests: XCTestCase {
             let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
                 .appendingPathComponent("target", isDirectory: true)
 
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -1539,7 +1539,7 @@ class ConvertActionTests: XCTestCase {
             let currentDirectory = URL(fileURLWithPath: fileSystem.currentDirectoryPath)
             let targetDirectory = currentDirectory.appendingPathComponent("target", isDirectory: true)
             
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -1685,7 +1685,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -1714,7 +1714,7 @@ class ConvertActionTests: XCTestCase {
                 .appendingPathComponent("target", isDirectory: true)
 
             let engine = DiagnosticEngine()
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: analyze, // Turn on/off the analyzer.
@@ -1767,7 +1767,7 @@ class ConvertActionTests: XCTestCase {
             var configuration = DocumentationContext.Configuration()
             configuration.externalDocumentationConfiguration.sources["com.example.test"] = TestReferenceResolver()
             
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -1847,7 +1847,7 @@ class ConvertActionTests: XCTestCase {
         let bundle = try Folder.createFromDisk(url: testBundleURL)
         
         func performConvertAction(outputURL: URL, testFileSystem: TestFileSystem) async throws {
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -1923,7 +1923,7 @@ class ConvertActionTests: XCTestCase {
         
         // Convert the documentation and create an index
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -1946,7 +1946,7 @@ class ConvertActionTests: XCTestCase {
         
         // Run just the index command over the built documentation
         
-        var indexAction = try IndexAction(
+        let indexAction = try IndexAction(
             documentationBundleURL: targetURL,
             outputURL: indexURL,
             bundleIdentifier: indexFromConvertAction.bundleIdentifier
@@ -1982,7 +1982,7 @@ class ConvertActionTests: XCTestCase {
             isDirectory: true
         )
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleDirectory,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2034,7 +2034,7 @@ class ConvertActionTests: XCTestCase {
             "Unexpectedly failed to find 'MixedLanguageFramework.docc' test bundle."
         )
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleDirectory,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2184,7 +2184,7 @@ class ConvertActionTests: XCTestCase {
             .appendingPathComponent("target", isDirectory: true)
 
         let engine = DiagnosticEngine()
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2220,7 +2220,7 @@ class ConvertActionTests: XCTestCase {
             .appendingPathComponent("target", isDirectory: true)
 
         let engine = DiagnosticEngine()
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: true,
@@ -2427,7 +2427,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2475,7 +2475,7 @@ class ConvertActionTests: XCTestCase {
             ]
         )
         
-        var action = try ConvertAction(fromConvertCommand: convertCommand)
+        let action = try ConvertAction(fromConvertCommand: convertCommand)
         _ = try await action.perform(logHandle: .none)
     }
     
@@ -2581,7 +2581,7 @@ class ConvertActionTests: XCTestCase {
         let bundleURL = try bundle.write(inside: tempURL)
         let templateURL = try template.write(inside: tempURL)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2659,7 +2659,7 @@ class ConvertActionTests: XCTestCase {
         let bundleURL = try bundle.write(inside: tempURL)
         let templateURL = try template.write(inside: tempURL)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2726,7 +2726,7 @@ class ConvertActionTests: XCTestCase {
         let bundleURL = try bundle.write(inside: tempURL)
         let templateURL = try template.write(inside: tempURL)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2766,7 +2766,7 @@ class ConvertActionTests: XCTestCase {
         // Test DiagnosticEngine with "treatWarningsAsErrors" set to false
         do {
             let engine = DiagnosticEngine(treatWarningsAsErrors: false)
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: true,
@@ -2787,7 +2787,7 @@ class ConvertActionTests: XCTestCase {
         // Test DiagnosticEngine with "treatWarningsAsErrors" set to true
         do {
             let engine = DiagnosticEngine(treatWarningsAsErrors: true)
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: true,
@@ -2805,7 +2805,7 @@ class ConvertActionTests: XCTestCase {
         }
         
         do {
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: true,
@@ -2878,7 +2878,7 @@ class ConvertActionTests: XCTestCase {
             folders: [Folder.emptyHTMLTemplateDirectory, symbolGraphFiles, outputLocation]
         )
         do {
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: nil,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -2951,7 +2951,7 @@ class ConvertActionTests: XCTestCase {
             let catalog = Folder(name: "unit-test.docc", content: catalogContent)
             let testDataProvider = try TestFileSystem(folders: [catalog, Folder.emptyHTMLTemplateDirectory])
             let engine = DiagnosticEngine()
-            var action = try ConvertAction(
+            let action = try ConvertAction(
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -3042,7 +3042,7 @@ class ConvertActionTests: XCTestCase {
         let consoleConsumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), formattingOptions: [], baseURL: nil, highlight: false)
         engine.add(consoleConsumer)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -3091,7 +3091,7 @@ class ConvertActionTests: XCTestCase {
         let fileSystem = try TestFileSystem(folders: [catalog])
         let targetURL = URL(fileURLWithPath: "/Output.doccarchive")
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,

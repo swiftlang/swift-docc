@@ -34,7 +34,10 @@ public enum LogHandle: TextOutputStream {
     
     /// A by-reference string storage.
     public class LogStorage {
-        var text = ""
+        var _text = Synchronized("")
+        var text: String {
+            _text.sync { $0 }
+        }
     }
     
     /// Writes the given string to the log handle.
@@ -51,7 +54,7 @@ public enum LogHandle: TextOutputStream {
         case .file(let fileHandle):
             fileHandle.write(Data(string.utf8))
         case .memory(let storage):
-            storage.text.append(string)
+            storage._text.sync { $0.append(string) }
         }
     }
 }

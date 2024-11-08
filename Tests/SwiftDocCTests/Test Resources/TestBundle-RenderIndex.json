@@ -172,7 +172,8 @@
             ],
             "path" : "\/documentation\/mykit\/myclass",
             "title" : "MyClass",
-            "type" : "class"
+            "type" : "class",
+            "deprecated" : true
           },
           {
             "children" : [
@@ -293,7 +294,8 @@
             ],
             "path" : "\/documentation\/mykit\/myclass",
             "title" : "MyClass",
-            "type" : "class"
+            "type" : "class",
+            "deprecated" : true
           },
           {
             "children" : [
@@ -414,7 +416,8 @@
             ],
             "path" : "\/documentation\/mykit\/myclass",
             "title" : "MyClass",
-            "type" : "class"
+            "type" : "class",
+            "deprecated" : true
           }
         ],
         "path" : "\/documentation\/mykit\/myprotocol",
@@ -540,7 +543,8 @@
         ],
         "path" : "\/documentation\/mykit\/myclass",
         "title" : "MyClass",
-        "type" : "class"
+        "type" : "class",
+        "deprecated" : true
       },
       {
         "title" : "MyKit in Practice",

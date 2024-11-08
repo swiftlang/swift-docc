@@ -14,6 +14,43 @@ import SymbolKit
 extension DocumentationContext {
 
     /// A type that provides inputs for a unit of documentation.
+    ///
+    /// The inputs provider discovers documentation catalogs on the file system and creates a ``DocumentationBundle`` from the discovered catalog content.
+    ///
+    /// The input provider categorizes the catalog content based on corresponding ``DocumentationBundleFileTypes`` conditions:
+    ///
+    ///  Category                                 | Condition
+    ///  ---------------------------------------- | -------------------------------------------------
+    ///  ``DocumentationBundle/markupURLs``       | ``DocumentationBundleFileTypes/isMarkupFile(_:)``
+    ///  ``DocumentationBundle/symbolGraphURLs``  | ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
+    ///  ``DocumentationBundle/info``             | ``DocumentationBundleFileTypes/isInfoPlistFile(_:)``
+    ///  ``DocumentationBundle/themeSettings``    | ``DocumentationBundleFileTypes/isThemeSettingsFile(_:)``
+    ///  ``DocumentationBundle/customHeader``     | ``DocumentationBundleFileTypes/isCustomHeader(_:)``
+    ///  ``DocumentationBundle/customFooter``     | ``DocumentationBundleFileTypes/isCustomFooter(_:)``
+    ///  ``DocumentationBundle/miscResourceURLs`` | Any file not already matched above.
+    ///
+    /// ## Topics
+    ///
+    /// ### Catalog discovery
+    ///
+    /// Discover documentation catalogs and create documentation build inputs from the discovered catalog's content.
+    ///
+    /// - ``findCatalog(startingPoint:allowArbitraryCatalogDirectories:)``
+    /// - ``makeInputs(contentOf:options:)``
+    ///
+    /// ### Input discovery
+    ///
+    /// Discover documentation build inputs from a mix of discovered documentation catalogs and other command line options.
+    ///
+    /// - ``inputsAndDataProvider(startingPoint:allowArbitraryCatalogDirectories:options:)``
+    ///
+    /// ### Errors
+    ///
+    /// Errors that the inputs provider can raise while validating the discovered inputs.
+    ///
+    /// - ``MultipleCatalogsError``
+    /// - ``NotEnoughInformationError``
+    /// - ``InputsFromSymbolGraphError``
     package struct InputsProvider {
         /// The file manager that the provider uses to read file and directory contents from the file system.
         private var fileManager: FileManagerProtocol

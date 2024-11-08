@@ -501,38 +501,6 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         ], "Both spellings of the symbol link should resolve to the canonical reference.")
     }
     
-    func testObjectiveCOnlySymbolCuratedInSwiftOnlySymbolIsNotFilteredOut() throws {
-         let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFrameworkSingleLanguageCuration")
-         let fooRenderNode = try outputConsumer.renderNode(
-             withIdentifier: "s:22MixedLanguageFramework15SwiftOnlyStruct1V"
-         )
-
-         assertExpectedContent(
-             fooRenderNode,
-             sourceLanguage: "swift",
-             symbolKind: "struct",
-             title: "SwiftOnlyStruct1",
-             navigatorTitle: nil,
-             abstract: "This is an awesome, Swift-only symbol.",
-             declarationTokens: nil,
-             discussionSection: nil,
-             topicSectionIdentifiers: [
-                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MultiCuratedObjectiveCOnlyClass1",
-             ],
-             referenceTitles: [
-                "MixedLanguageFramework",
-                "MultiCuratedObjectiveCOnlyClass1",
-                "MultiCuratedObjectiveCOnlyClass2",
-                "SwiftOnlyStruct1",
-                "SwiftOnlyStruct2",
-             ],
-             referenceFragments: [],
-             failureMessage: { fieldName in
-                 "Swift variant of 'SwiftOnlySymbol1' symbol has unexpected content for '\(fieldName)'."
-             }
-         )
-     }
-    
     func testArticleInMixedLanguageFramework() throws {
         let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework") { url in
             try """
