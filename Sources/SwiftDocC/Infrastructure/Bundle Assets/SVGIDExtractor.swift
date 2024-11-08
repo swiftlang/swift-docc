@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,12 +9,6 @@
 */
 
 import Foundation
-
-// On non-Darwin platforms, Foundation's XML support is vended as a separate module:
-// https://github.com/apple/swift-corelibs-foundation/blob/main/Docs/ReleaseNotes_Swift5.md#dependency-management
-#if canImport(FoundationXML)
-import FoundationXML
-#endif
 
 /// A basic XML parser that extracts the first `id` attribute found in the given SVG.
 ///
@@ -25,14 +19,19 @@ enum SVGIDExtractor {
     /// Exposed for testing. The sibling `extractID(from: URL)` method is intended to be
     /// used within SwiftDocC.
     static func _extractID(from data: Data) -> String? {
-        let delegate = SVGIDParserDelegate()
-        let svgParser = XMLParser(data: data)
-        svgParser.delegate = delegate
-        
-        // The delegate aborts the parsing when it finds the ID so the larger parsing operation is not "successful"
-        _ = svgParser.parse()
-        
-        return delegate.id
+        // FIXME: Revert this and resume using XMLParser when rdar://138726860 is integrated into a Swift toolchain.
+        for capitalization in ["id", "ID", "Id", "iD"] {
+            guard let idAttributeRange = data.firstRange(of: Data(" \(capitalization)=\"".utf8), in: data.indices) else {
+                continue
+            }
+            
+            guard let endQuote = data.firstRange(of: Data("\"".utf8), in: idAttributeRange.upperBound...) else {
+                continue
+            }
+            
+            return String(data: data[idAttributeRange.endIndex ..< endQuote.lowerBound], encoding: .utf8)
+        }
+        return nil
     }
     
     /// Returns the first `id` attribute found in the given SVG, if any.
@@ -45,24 +44,5 @@ enum SVGIDExtractor {
         }
         
         return _extractID(from: data)
-    }
-}
-
-private class SVGIDParserDelegate: NSObject, XMLParserDelegate {
-    var id: String?
-    
-    func parser(
-        _ parser: XMLParser,
-        didStartElement elementName: String,
-        namespaceURI: String?,
-        qualifiedName qName: String?,
-        attributes attributeDict: [String : String] = [:]
-    ) {
-        guard let id = attributeDict["id"] ?? attributeDict["ID"] ?? attributeDict["iD"] ?? attributeDict["Id"] else {
-            return
-        }
-        
-        self.id = id
-        parser.abortParsing()
     }
 }
