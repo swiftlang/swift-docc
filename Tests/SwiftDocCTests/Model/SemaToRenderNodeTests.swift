@@ -3349,6 +3349,81 @@ Document
         ])
     }
     
+    func testLanguageSpecificTopicSectionDoesNotAppearInAutomaticSeeAlso() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something-swift.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: (1...4).map {
+                makeSymbol(id: "symbol-id-\($0)", language: .swift, kind: .class, pathComponents: ["SomeClass\($0)"])
+            })),
+            
+            JSONFile(name: "Something-objc.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: (1...4).map {
+                makeSymbol(id: "symbol-id-\($0)", language: .objectiveC, kind: .class, pathComponents: ["SomeClass\($0)"])
+            })),
+            
+            TextFile(name: "ModuleExtension.md", utf8Content: """
+            # ``Something``
+            
+            ## Topics
+            
+            ### Something Swift only
+            
+            @SupportedLanguage(swift)
+            
+            - ``SomeClass1``
+            - ``SomeClass2``
+            - ``SomeClass3``
+            
+            ### Something Objective-C only
+            
+            @SupportedLanguage(objc)
+            
+            - ``SomeClass2``
+            - ``SomeClass3``
+            - ``SomeClass4``
+            """),
+        ])
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "\(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let reference = moduleReference.appendingPath("SomeClass3")
+        
+        let documentationNode = try context.entity(with: reference)
+        XCTAssertEqual(documentationNode.availableVariantTraits.count, 2, "This page has Swift and Objective-C variants")
+        
+        // There's a behavioral difference between DocumentationContextConverter and DocumentationNodeConverter so we check both.
+        // DocumentationContextConverter may use pre-rendered content but the DocumentationNodeConverter computes task groups as-needed.
+        
+        func assertExpectedTopicSections(_ renderNode: RenderNode, file: StaticString = #filePath, line: UInt = #line) {
+            let topicSectionsVariants = renderNode.seeAlsoSectionsVariants
+            
+            let swiftSeeAlsoSection = topicSectionsVariants.defaultValue
+            
+            XCTAssertEqual(swiftSeeAlsoSection.first?.title, "Something Swift only", file: file, line: line)
+            XCTAssertEqual(swiftSeeAlsoSection.first?.identifiers, [
+                "doc://Something/documentation/Something/SomeClass1",
+                "doc://Something/documentation/Something/SomeClass2",
+            ], file: file, line: line)
+            
+            let objcSeeAlsoSection = topicSectionsVariants.value(for: [.interfaceLanguage("occ")])
+            
+            XCTAssertEqual(objcSeeAlsoSection.first?.title, "Something Objective-C only", file: file, line: line)
+            XCTAssertEqual(objcSeeAlsoSection.first?.identifiers, [
+                "doc://Something/documentation/Something/SomeClass2",
+                "doc://Something/documentation/Something/SomeClass4",
+            ], file: file, line: line)
+        }
+        
+        let nodeConverter = DocumentationNodeConverter(bundle: bundle, context: context)
+        try assertExpectedTopicSections(nodeConverter.convert(documentationNode))
+        
+        let contextConverter = DocumentationContextConverter(
+            bundle: bundle,
+            context: context,
+            renderContext: RenderContext(documentationContext: context, bundle: bundle)
+        )
+        try assertExpectedTopicSections(XCTUnwrap(contextConverter.renderNode(for: documentationNode)))
+    }
+    
     func testTopicSectionWithUnsupportedDirectives() throws {
         let exampleDocumentation = Folder(name: "unit-test.docc", content: [
             TextFile(name: "root.md", utf8Content: """
