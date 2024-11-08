@@ -1504,16 +1504,28 @@ class SemaToRenderNodeTests: XCTestCase {
 
         // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid
         // and therefore Catalyst and iPadOS are also invalid.
-        XCTAssertEqual(platforms.count, 3)
+        XCTAssertEqual(platforms.count, 6)
         
-        XCTAssertEqual(platforms[0].name, "macOS")
-        XCTAssertEqual(platforms[0].introduced, "10.15")
+        XCTAssertEqual(platforms[0].name, "Mac Catalyst")
+        XCTAssertEqual(platforms[0].introduced, nil)
+        XCTAssertEqual(platforms[0].deprecated, "13.0")
         
-        XCTAssertEqual(platforms[1].name, "tvOS")
-        XCTAssertEqual(platforms[1].introduced, "13.0")
+        XCTAssertEqual(platforms[1].name, "iOS")
+        XCTAssertEqual(platforms[1].introduced, nil)
+        XCTAssertEqual(platforms[1].deprecated, "13.0")
         
-        XCTAssertEqual(platforms[2].name, "watchOS")
-        XCTAssertEqual(platforms[2].introduced, "6.0")
+        XCTAssertEqual(platforms[2].name, "iPadOS")
+        XCTAssertEqual(platforms[2].introduced, nil)
+        XCTAssertEqual(platforms[2].deprecated, "13.0")
+        
+        XCTAssertEqual(platforms[3].name, "macOS")
+        XCTAssertEqual(platforms[3].introduced, "10.15")
+        
+        XCTAssertEqual(platforms[4].name, "tvOS")
+        XCTAssertEqual(platforms[4].introduced, "13.0")
+        
+        XCTAssertEqual(platforms[5].name, "watchOS")
+        XCTAssertEqual(platforms[5].introduced, "6.0")
     }
     
     func testAvailabilityFromCurrentPlatformOverridesExistingValue() throws {
@@ -1975,7 +1987,7 @@ Document
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
 
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
+            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS" })?.isBeta, true)
         }
 
         // Beta platform earlier than the introduced version
@@ -1989,7 +2001,7 @@ Document
             let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
+            XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS" })?.isBeta, true)
         }
 
         // Set only some platforms to beta & the exact version MyClass is being introduced at
