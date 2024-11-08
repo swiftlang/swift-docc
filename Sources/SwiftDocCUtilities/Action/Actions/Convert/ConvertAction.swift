@@ -271,7 +271,7 @@ public struct ConvertAction: AsyncAction {
             indexHTML = nil
         }
         
-        var coverageAction = CoverageAction(
+        let coverageAction = CoverageAction(
             documentationCoverageOptions: documentationCoverageOptions,
             workingDirectory: temporaryFolder,
             fileManager: fileManager)

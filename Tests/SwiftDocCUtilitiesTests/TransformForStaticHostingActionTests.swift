@@ -28,7 +28,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -50,7 +50,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
 
-        var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: outputURL, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
+        let transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: outputURL, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
         
         _ = try await transformAction.perform(logHandle: .none)
@@ -112,7 +112,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -132,7 +132,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
         var expectedContent = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
 
-        var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: nil, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
+        let transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: nil, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
         _ = try await transformAction.perform(logHandle: .none)
         

@@ -61,7 +61,7 @@ struct SymbolGraphLoader {
 
         let loadGraphAtURL: (URL) -> Void = { [dataLoader, bundle] symbolGraphURL in
             // Bail out in case a symbol graph has already errored
-            guard loadError == nil else { return }
+            guard loadingLock.sync({ loadError == nil }) else { return }
             
             do {
                 // Load and decode a single symbol graph file
