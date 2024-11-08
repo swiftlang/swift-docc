@@ -25,7 +25,7 @@ extension RenderNode: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
         diffBuilder.addDifferences(atKeyPath: \.sections, forKey: CodingKeys.sections)
         diffBuilder.addDifferences(atKeyPath: \.references, forKey: CodingKeys.references)
-        diffBuilder.addDifferences(atKeyPath: \.hierarchy, forKey: CodingKeys.hierarchy)
+        diffBuilder.addDifferences(atKeyPath: \.hierarchyVariants, forKey: CodingKeys.hierarchy)
         diffBuilder.differences.append(contentsOf: metadata.difference(from: other.metadata, at: path + [CodingKeys.metadata])) // RenderMetadata isn't Equatable
         
         // MARK: Reference Documentation Data
