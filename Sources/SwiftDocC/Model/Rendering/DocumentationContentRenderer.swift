@@ -477,6 +477,7 @@ public class DocumentationContentRenderer {
     public struct ReferenceGroup: Codable {
         public let title: String?
         public let references: [ResolvedTopicReference]
+        var languageFilter: Set<SourceLanguage>?
     }
 
     /// Returns the task groups for a given node reference.
@@ -496,10 +497,7 @@ public class DocumentationContentRenderer {
         
         guard let taskGroups = groups, !taskGroups.isEmpty else { return nil }
 
-        // Find the linking group
-        var resolvedTaskGroups = [ReferenceGroup]()
-
-        for group in taskGroups {
+        return taskGroups.map { group in
             let resolvedReferences = group.links.compactMap { link -> ResolvedTopicReference? in
                 guard let destination = link.destination.flatMap(URL.init(string:)),
                     destination.scheme != nil,
@@ -522,12 +520,16 @@ public class DocumentationContentRenderer {
                 )
             }
             
-            resolvedTaskGroups.append(
-                ReferenceGroup(title: group.heading?.plainText, references: resolvedReferences)
+            let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
+                SupportedLanguage(from: $0, source: nil, for: bundle, in: documentationContext)?.language
+            }
+            
+            return ReferenceGroup(
+                title: group.heading?.plainText,
+                references: resolvedReferences,
+                languageFilter: supportedLanguages.map { Set($0) }
             )
         }
-        
-        return resolvedTaskGroups
     }
 }
 

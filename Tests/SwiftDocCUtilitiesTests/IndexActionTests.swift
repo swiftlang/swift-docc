@@ -27,7 +27,7 @@ class IndexActionTests: XCTestCase {
         
         let targetBundleURL = targetURL.appendingPathComponent("Result.builtdocs")
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -50,7 +50,7 @@ class IndexActionTests: XCTestCase {
             
             let engine = DiagnosticEngine(filterLevel: .warning)
             
-            var indexAction = try IndexAction(
+            let indexAction = try IndexAction(
                 documentationBundleURL: targetBundleURL,
                 outputURL: indexURL,
                 bundleIdentifier: bundleIdentifier,
@@ -77,7 +77,7 @@ class IndexActionTests: XCTestCase {
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
         let targetBundleURL = targetURL.appendingPathComponent("Result.builtdocs")
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -91,7 +91,7 @@ class IndexActionTests: XCTestCase {
         let bundleIdentifier = "org.swift.docc.example"
         let indexURL = targetURL.appendingPathComponent("index")
         let engine = DiagnosticEngine(filterLevel: .warning)
-        var indexAction = try IndexAction(
+        let indexAction = try IndexAction(
             documentationBundleURL: targetBundleURL,
             outputURL: indexURL,
             bundleIdentifier: bundleIdentifier,

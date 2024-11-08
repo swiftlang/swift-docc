@@ -37,7 +37,7 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
             let catalogURL = URL(fileURLWithPath: "/input/MixedLanguageFramework.docc")
             let outputDir  = URL(fileURLWithPath: "/output/Output.doccarchive")
             
-            var action = try EmitGeneratedCurationAction(
+            let action = try EmitGeneratedCurationAction(
                 documentationCatalog: catalogURL,
                 additionalSymbolGraphDirectory: nil,
                 outputURL: outputDir,
