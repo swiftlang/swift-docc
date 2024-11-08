@@ -50,6 +50,12 @@ extension PathHierarchyBasedLinkResolver {
             // To match the caller's expectations we remove the starting point and then flip the paths.
             .dropFirst().reversed()
             .compactMap {
+                // Ignore any "unfindable" or "sparse" nodes resulting from a "partial" symbol graph.
+                //
+                // When the `ConvertService` builds documentation for a single symbol with multiple path components,
+                // the path hierarchy fills in unfindable nodes for the other path components to construct a connected hierarchy.
+                //
+                // These unfindable nodes can be traversed up and down, but are themselves considered to be "not found".
                 $0.identifier.flatMap { resolvedReferenceMap[$0] }
             }
     }
