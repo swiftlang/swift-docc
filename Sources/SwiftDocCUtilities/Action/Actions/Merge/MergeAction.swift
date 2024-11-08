@@ -33,7 +33,7 @@ struct MergeAction: AsyncAction {
         }
     }
     
-    mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         guard let firstArchive = archives.first else {
             // A validation warning should have already been raised in `Docc/Merge/InputAndOutputOptions/validate()`.
             return ActionResult(didEncounterError: true, outputs: [])

@@ -18,8 +18,6 @@ public struct IndexAction: AsyncAction {
     let bundleIdentifier: String
 
     var diagnosticEngine: DiagnosticEngine
-    
-    private var dataProvider: LocalFileSystemDataProvider!
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
     public init(documentationBundleURL: URL, outputURL: URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) throws {
@@ -34,15 +32,15 @@ public struct IndexAction: AsyncAction {
     
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
-    mutating public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         let problems = try buildIndex()
         diagnosticEngine.emit(problems)
         
         return ActionResult(didEncounterError: !diagnosticEngine.problems.isEmpty, outputs: [outputURL])
     }
     
-    mutating private func buildIndex() throws -> [Problem] {
-        dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
+    private func buildIndex() throws -> [Problem] {
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
         let indexBuilder = NavigatorIndex.Builder(renderNodeProvider: FileSystemRenderNodeProvider(fileSystemProvider: dataProvider),
                                                   outputURL: outputURL,
                                                   bundleIdentifier: bundleIdentifier,
