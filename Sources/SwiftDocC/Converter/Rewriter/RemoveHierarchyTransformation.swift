@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,23 +18,30 @@ import Foundation
 public struct RemoveHierarchyTransformation: RenderNodeTransforming {
     public init() {}
 
-    public func transform(renderNode: RenderNode, context: RenderNodeTransformationContext)
-        -> RenderNodeTransformationResult {
+    public func transform(renderNode: RenderNode, context: RenderNodeTransformationContext) -> RenderNodeTransformationResult {
         var (renderNode, context) = (renderNode, context)
         
-        let identifiersInHierarchy: [String] = {
-            switch renderNode.hierarchy {
-            case .reference(let reference):
-                return reference.paths.flatMap { $0 }
-            case .tutorials(let tutorial):
-                return tutorial.paths.flatMap { $0 }
-            case .none:
-                return []
+        let identifiersInHierarchy: Set<String> = {
+            var collectedIdentifiers: Set<String> = []
+            
+            // Using `mapValues` here as iteration because manually iterating over the patch structure of variant collections is hard.
+            _ = renderNode.hierarchyVariants.mapValues { hierarchy in
+                switch hierarchy {
+                case .reference(let reference):
+                    collectedIdentifiers.formUnion(reference.paths.flatMap { $0 })
+                case .tutorials(let tutorial):
+                    collectedIdentifiers.formUnion(tutorial.paths.flatMap { $0 })
+                case .none:
+                    break
+                }
+                return hierarchy
             }
+            
+            return collectedIdentifiers
         }()
         
         // Remove hierarchy.
-        renderNode.hierarchy = nil
+        renderNode.hierarchyVariants = .init(defaultValue: nil)
 
         // Remove unused references.
         for identifier in identifiersInHierarchy {

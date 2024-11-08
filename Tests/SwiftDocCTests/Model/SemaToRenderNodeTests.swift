@@ -339,7 +339,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(helloworld4FileReference.syntax, "swift")
         XCTAssertEqual(helloworld4FileReference.highlights.map { $0.line }, [6])
         
-        XCTAssertNotNil(renderNode.hierarchy)
+        XCTAssertNotNil(renderNode.hierarchyVariants.defaultValue)
         
         guard let callToAction = renderNode.sections.last as? CallToActionSection else {
             XCTFail("Expected call to action")
