@@ -8,7 +8,7 @@ When you are working on a PR to add a feature or fix a bug you should evaluate t
 
 ## Running a benchmark
 
-To benchmark the `convert` command with a given documentation bundle `MyFramework.docc` run:
+To benchmark the `convert` command with a given documentation catalog `MyFramework.docc` run:
 
 ```
 swift run --package-path bin/benchmark benchmark --docc-arguments convert MyFramework.docc
@@ -80,4 +80,4 @@ benchmark(add: BundlesCount(context: context))
 - ``benchmark(end:benchmarkLog:)``
 - ``benchmark(wrap:benchmarkLog:body:)``
 
-<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
