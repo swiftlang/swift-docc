@@ -23,12 +23,14 @@ import Markdown
 /// - ``TechnologyRoot``
 /// - ``DisplayName``
 /// - ``PageImage``
-/// - ``PageColor``
+/// - ``CustomMetadata``
 /// - ``CallToAction``
 /// - ``Availability``
-/// - ``PageKind``
 /// - ``SupportedLanguage``
+/// - ``PageKind``
+/// - ``PageColor``
 /// - ``TitleHeading``
+/// - ``Redirect``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
