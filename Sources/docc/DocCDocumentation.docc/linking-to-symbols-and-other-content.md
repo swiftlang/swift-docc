@@ -73,6 +73,50 @@ If you prefer absolute symbol links you can prefix the symbol path with a leadin
 >
 > DocC resolves absolute symbol links from the module's scope instead of the context that the link appears in.  
 
+Symbol paths are case-sensitive, meaning that symbols with the same name in different text casing are unambiguous.
+For example, consider a `Sloth` structure with both a `color` property and a `Color` enumeration type:
+
+```swift
+public struct Sloth {
+    public var color: Color 
+
+    public enum Color {
+        /* ... */
+    }
+}
+```
+
+A `Sloth/color` symbol link unambiguously refers to the `color` property and a `Sloth/Color` symbol link unambiguously refers to the inner `Color` type.
+
+#### Symbols with Multiple Language Representations
+
+Symbol links to symbols that have representations in more than one programming language can use symbol paths in either source language. 
+For example, consider a `Sloth` class with `@objc` attributes:
+
+```swift
+@objc(TLASloth) public class Sloth: NSObject {
+    @objc public init(name: String, color: Color, power: Power) {
+        self.name = name
+        self.color = color
+        self.power = power
+    }
+}
+```
+
+You can write a symbol link to the Sloth initializer using the symbol path in either source language:
+
+**Swift name**
+
+```markdown
+``Sloth/init(name:color:power:)``
+```
+
+**Objective-C name**
+
+```markdown
+``TLASloth/initWithName:color:power:``
+```
+
 #### Ambiguous Symbol Links
 
 In some cases, a symbol's path isn't unique, such as with overloaded methods in 
@@ -172,37 +216,6 @@ DocC supports the following symbol types for use in symbol links:
 Symbol type suffixes can include a source language identifier prefix — for 
 example,  `-swift.enum` instead of `-enum`. However, the language 
 identifier doesn't disambiguate the link.
-
-Symbol paths are case-sensitive, meaning that symbols with the same name in
-different text casing don't need disambiguation. 
-
-Symbols that have representations in both Swift and Objective-C can use
-symbol paths in either source language. For example, consider a `Sloth` 
-class with `@objc` attributes:
-
-```swift
-@objc(TLASloth) public class Sloth: NSObject {
-    @objc public init(name: String, color: Color, power: Power) {
-        self.name = name
-        self.color = color
-        self.power = power
-    }
-}
-```
-
-You can write a symbol link to the Sloth initializer using the symbol path in either source language.
-
-**Swift name**
-
-```markdown
-``Sloth/init(name:color:power:)``
-```
-
-**Objective-C name**
-
-```markdown
-``TLASloth/initWithName:color:power:``
-```
 
 ### Navigate to an Article
 
