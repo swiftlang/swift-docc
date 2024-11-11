@@ -196,19 +196,19 @@ DocC supports the following symbol types for use in symbol links:
 | Enumeration       | `-enum`           |
 | Enumeration case  | `-enum.case`      |
 | Protocol          | `-protocol`       |
-| Operator          | `-func.op`        |
 | Typealias         | `-typealias`      |
-| Function          | `-func`           |
 | Structure         | `-struct`         |
 | Class             | `-class`          |
-| Type property     | `-type.property`  |
-| Type method       | `-type.method`    |
-| Type subscript    | `-type.subscript` |
+| Function          | `-func`           |
+| Operator          | `-func.op`        |
 | Property          | `-property`       |
+| Type property     | `-type.property`  |
+| Method            | `-method`         |
+| Type method       | `-type.method`    |
+| Subscript         | `-subscript`      |
+| Type subscript    | `-type.subscript` |
 | Initializer       | `-init`           |
 | Deinitializer     | `-deinit`         |
-| Method            | `-method`         |
-| Subscript         | `-subscript`      |
 | Instance variable | `-ivar`           |
 | Macro             | `-macro`          |
 | Module            | `-module`         |
