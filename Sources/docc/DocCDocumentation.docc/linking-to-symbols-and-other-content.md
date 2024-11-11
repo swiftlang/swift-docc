@@ -197,6 +197,7 @@ DocC supports the following symbol types for use in symbol links:
 | Enumeration case  | `-enum.case`      |
 | Protocol          | `-protocol`       |
 | Typealias         | `-typealias`      |
+| Associated Type   | `-associatedtype` |
 | Structure         | `-struct`         |
 | Class             | `-class`          |
 | Function          | `-func`           |
@@ -209,9 +210,17 @@ DocC supports the following symbol types for use in symbol links:
 | Type subscript    | `-type.subscript` |
 | Initializer       | `-init`           |
 | Deinitializer     | `-deinit`         |
+| Global variable   | `-var`            |
 | Instance variable | `-ivar`           |
 | Macro             | `-macro`          |
 | Module            | `-module`         |
+| Namespace         | `-namespace`      |
+| HTTP Request      | `-httpRequest`    |
+| HTTP Parameter    | `-httpParameter`  |
+| HTTP Response     | `-httpResponse`   |
+| HTTPBody          | `-httpBody`       |
+| Dictionary        | `-dictionary`     |
+| Dictionary Key    | `-dictionaryKey`  |
 
 Symbol type suffixes can include a source language identifier prefix — for 
 example,  `-swift.enum` instead of `-enum`. However, the language 
