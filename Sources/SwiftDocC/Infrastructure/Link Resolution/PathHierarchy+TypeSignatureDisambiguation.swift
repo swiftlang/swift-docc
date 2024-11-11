@@ -206,12 +206,20 @@ private protocol _IntSet: SetAlgebra<Int>, Sequence<Int> {
 }
 
 extension Set<Int>: _IntSet {
-    func combinationsToCheck() -> some Sequence<[Int]> {
+    // Explicitly specify the associated types for Swift 5.9 compatibility.
+    typealias Combination = [Int]
+    typealias CombinationSequence = Algorithms.CombinationsSequence<Self>
+    
+    func combinationsToCheck() -> CombinationSequence {
         // For `Set<Int>`, use the Swift Algorithms implementation to generate the possible combinations.
         self.combinations(ofCount: 1...)
     }
 }
 extension _TinySmallValueIntSet: _IntSet, _Combination {
+    // Explicitly specify the associated types for Swift 5.9 compatibility.
+    typealias Combination = Self
+    typealias CombinationSequence = [Combination]
+
     func combinationsToCheck() -> [Self] {
         // For `_TinySmallValueIntSet`, leverage the fact that bits of an Int represent the possible combinations.
         let smallest = storage.trailingZeroBitCount
