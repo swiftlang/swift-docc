@@ -6,12 +6,12 @@ Facilitate navigation between pages using links.
 
 DocC supports the following link types to enable navigation between pages:
 
-| Type | Usage |
-| --- | --- |
-| Symbol | Links to a symbol's reference page in your documentation. |
-| Article | Links to an article or API collection in your documentation catalog. |
-| Tutorial | Links to a tutorial in your documentation catalog. |
-| Web | Links to an external URL. |
+| Type     | Usage 
+| -------- | ----- 
+| Symbol   | Links to a symbol's reference page in your documentation.
+| Article  | Links to an article or API collection in your documentation catalog.
+| Tutorial | Links to a tutorial in your documentation catalog.
+| Web      | Links to an external URL.
 
 ### Navigate to a Symbol
 
