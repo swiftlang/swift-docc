@@ -15,23 +15,65 @@ DocC supports the following link types to enable navigation between pages:
 
 ### Navigate to a Symbol
 
-To add a link to a symbol, wrap the symbol's name in a set of double backticks 
-(\`\`).
+To add a link to a symbol, wrap the symbol's name in a set of double backticks (\`\`):
 
 ```markdown
-``SlothCreator``
+``Sloth``
 ```
 
-For nested symbols, include the path to the symbol in the link.
+For member symbols or nested types, include the path to the symbol in the link:
 
 ```markdown
-``SlothCreator/Sloth/eat(_:quantity:)``
+``Sloth/eat(_:quantity:)``
+``Sloth/Food``
 ```
 
-DocC resolves symbol links relative to the context they appear in. For example, 
-a symbol link that appears inline in the `Sloth` class, and targets a 
-symbol in that class, can omit the `SlothCreator/Sloth/` portion of the symbol 
-path.
+DocC resolves symbol links relative to the context that the link appears in.
+This allows links in a type's documentation comment to omit the type's name from the symbol path when referring to its members.
+For example, in the `Sloth` structure below, the `init(name:color:power:)` symbol link in the structure's documentation comment can omit the `Sloth/` portion of the symbol path:
+
+```swift
+/// ...
+/// You can create a sloth using ``init(name:color:power:)``.
+public struct Sloth { //           ╰──────────┬──────────╯
+    /// ...           //                      ╰─────refers-to────╮
+    public init(name: String, color: Color, power: Power) { // ◁─╯ 
+        /* ... */ 
+    }         
+}
+```
+
+If DocC can't resolve a link in the current context, it expands the search to the containing scope.
+This allows links from one member to another member of the same type to omit the containing type's name from the symbol path.
+For example, in the `Sloth` structure below, the `eat(_:quantity:)` symbol link in the `energyLevel` property's documentation comment 
+can omit the `Sloth/` portion of the symbol path:
+
+```swift
+/// ...
+public struct Sloth {
+    /// ... 
+    /// Restore the sloth's energy using ``eat(_:quantity:)``.
+    public var energyLevel = 10 //         ╰───────┬──────╯       
+                                //                 │ 
+    /// ...                     //                 ╰──────refers-to─────╮
+    public mutating func eat(_ food: Food, quantity: Int) -> Int { // ◁─╯ 
+        /* ... */
+    }
+}
+```
+
+> Note:
+If you prefer absolute symbol links you can prefix the symbol path with a leading slash followed by the name of the module that symbol belongs:
+>
+> ```markdown
+> ``/SlothCreator/Sloth``
+> ``/SlothCreator/Sloth/eat(_:quantity:)``
+> ``/SlothCreator/Sloth/Food``
+> ```
+>
+> DocC resolves absolute symbol links from the module's scope instead of the context that the link appears in.  
+
+#### Ambiguous Symbol Links
 
 In some cases, a symbol's path isn't unique, such as with overloaded methods in 
 Swift. For example, consider the `Sloth` structure, which has multiple 
