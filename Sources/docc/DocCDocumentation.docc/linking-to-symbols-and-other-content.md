@@ -119,47 +119,9 @@ You can write a symbol link to the Sloth initializer using the symbol path in ei
 
 #### Ambiguous Symbol Links
 
-In some cases, a symbol's path isn't unique, such as with overloaded methods in 
-Swift. For example, consider the `Sloth` structure, which has multiple 
-`update(_:)` methods:
-
-```swift
-/// Updates the sloth's power.
-///
-/// - Parameter power: The sloth's new power.
-mutating public func update(_ power: Power) {
-    self.power = power
-}
-
-/// Updates the sloth's energy level.
-///
-/// - Parameter energyLevel: The sloth's new energy level.
-mutating public func update(_ energyLevel: Int) {
-    self.energyLevel = energyLevel
-}
-```
-
-Both methods have an identical symbol path of `SlothCreator/Sloth/update(_:)`. 
-In this scenario, and to ensure uniqueness, DocC uses the symbol's unique 
-identifier instead of its name to disambiguate. DocC's warnings about ambiguous
-symbol links suggests one disambiguation for each of the symbols that match the
-ambiguous symbol path.
-
-```markdown
-### Updating Sloths
-- ``Sloth/update(_:)-4ko57``
-- ``Sloth/update(_:)-jixx``
-```
-
-In the example above, both symbols are functions, so you need the unique 
-identifiers to disambiguate the `Sloth/update(_:)` link. 
-
-Unique identifiers aren't the only way to disambiguate symbol links. If a symbol
-has a different type from the other symbols with the same symbol path, you can 
-use that symbol's type suffix to disambiguate the link and make the link refer 
-to that symbol. For example, consider a `Color` structure with `red`, `green`, 
-and `blue` properties for color components and static properties for a handful 
-of predefined color values:
+In some cases a symbol's path isn't unique.
+This makes it ambiguous what specific symbol a symbol link refers to. 
+For example, consider a `Color` structure with `red`, `green`, and `blue` properties for color components and static properties for a handful of predefined color values:
 
 ```swift
 public struct Color {
@@ -173,9 +135,8 @@ extension Color {
 }
 ```
 
-Both the `red` property and the `red` static property have a symbol path of 
-`Color/red`. Because these are different types of symbols you can disambiguate 
-`Color/red` with symbol type suffixes instead of the symbols' unique identifiers.
+Both the `red` property and the `red` static property have a symbol path of `Color/red`. 
+Because these are different types of symbols you can disambiguate `Color/red` with a suffix indicating the symbol's type.
 
 The following example shows a symbol link to the `red` property:
 
@@ -189,7 +150,7 @@ The following example shows a symbol link to the `red` static property:
 ``Color/red-type.property``
 ```
 
-DocC supports the following symbol types for use in symbol links:
+DocC supports the following symbol types as disambiguation in symbol links:
 
 | Symbol type       | Suffix            |
 |-------------------|-------------------|
@@ -222,9 +183,46 @@ DocC supports the following symbol types for use in symbol links:
 | Dictionary        | `-dictionary`     |
 | Dictionary Key    | `-dictionaryKey`  |
 
-Symbol type suffixes can include a source language identifier prefix — for 
-example,  `-swift.enum` instead of `-enum`. However, the language 
-identifier doesn't disambiguate the link.
+You can discover these symbol type suffixes from DocC's warnings about ambiguous symbol links.
+DocC suggests one disambiguation for each of the symbols that match the ambiguous symbol path.
+
+Symbol type suffixes can include a source language identifier prefix---for example, `-swift.enum` instead of `-enum`. 
+However, the language identifier doesn't disambiguate the link.
+
+
+In the example above, both symbols that match the ambiguous symbol path were the same type of symbol.
+If the symbols that match the ambiguous symbol path have are the same type of symbol, 
+such as with overloaded methods in Swift, a symbol type suffix won't disambiguate the link.
+
+For example, consider the `Sloth` structure---from the SlothCreator example---which has two different `update(_:)` methods:
+
+```swift
+/// Updates the sloth's power.
+///
+/// - Parameter power: The sloth's new power.
+mutating public func update(_ power: Power) {
+    self.power = power
+}
+
+/// Updates the sloth's energy level.
+///
+/// - Parameter energyLevel: The sloth's new energy level.
+mutating public func update(_ energyLevel: Int) {
+    self.energyLevel = energyLevel
+}
+```
+
+Both methods have an identical symbol path of `SlothCreator/Sloth/update(_:)`. 
+In this scenario, DocC uses a short hash of each symbol's unique identifier to disambiguate the symbol link. 
+You can discover these hashes from DocC's warnings about ambiguous symbol links.
+The following example shows a topic group with disambiguated symbol links to both `Sloth/update(_:)` methods:
+
+```markdown
+### Updating Sloths
+
+- ``Sloth/update(_:)-4ko57``
+- ``Sloth/update(_:)-jixx``
+```
 
 ### Navigate to an Article
 
