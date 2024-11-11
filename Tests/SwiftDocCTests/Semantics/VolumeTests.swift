@@ -106,7 +106,7 @@ class VolumeTests: XCTestCase {
                 path: "/tutorials/TestOverview",
                 sourceLanguage: .swift))
 
-        let tutorial = try XCTUnwrap(node.semantic as? Technology)
+        let tutorial = try XCTUnwrap(node.semantic as? TutorialTableOfContents)
 
         let volume = tutorial.volumes.first
         XCTAssertNotNil(volume)

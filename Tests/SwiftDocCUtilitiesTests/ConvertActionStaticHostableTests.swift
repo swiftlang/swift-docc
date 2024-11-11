@@ -16,7 +16,7 @@ import SwiftDocCTestUtilities
 
 class ConvertActionStaticHostableTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archives it with options  to produce static content which is then validated.
-    func testConvertActionStaticHostableTestOutput() throws {
+    func testConvertActionStaticHostableTestOutput() async throws {
         
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()
@@ -32,7 +32,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
         let basePath = "test/folder"
         let indexHTML = Folder.testHTMLTemplate(basePath: "test/folder")
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -44,7 +44,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             transformForStaticHosting: true,
             hostingBasePath: basePath
         )
-        _ = try action.perform(logHandle: .none)
+        _ = try await action.perform(logHandle: .none)
         
         // Test the content of the output folder.
         var expectedContent = ["data", "documentation", "tutorials", "downloads", "images", "metadata.json" ,"videos", "index.html", "index"]

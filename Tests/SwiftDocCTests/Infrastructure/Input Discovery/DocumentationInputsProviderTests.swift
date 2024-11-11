@@ -14,6 +14,9 @@ import SwiftDocCTestUtilities
 
 class DocumentationInputsProviderTests: XCTestCase {
     
+    // After 6.2 we can update this test to verify that the input provider discovers the same inputs regardless of FileManagerProtocol
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated, message: "This test uses `LocalFileSystemDataProvider` as a `DocumentationWorkspaceDataProvider` which is deprecated and will be removed after 6.2 is released")
     func testDiscoversSameFilesAsPreviousImplementation() throws {
         let folderHierarchy = Folder(name: "one", content: [
             Folder(name: "two", content: [
@@ -76,9 +79,9 @@ class DocumentationInputsProviderTests: XCTestCase {
         ])
         
         let foundPrevImplBundle = try XCTUnwrap(LocalFileSystemDataProvider(rootURL: tempDirectory.appendingPathComponent("/one/two")).bundles(options: options).first)
-        let foundRealBundle = try XCTUnwrap(realProvider.inputs(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
+        let (foundRealBundle, _) = try XCTUnwrap(realProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
 
-        let foundTestBundle = try XCTUnwrap(testProvider.inputs(startingPoint: URL(fileURLWithPath: "/one/two"), options: .init(
+        let (foundTestBundle, _) = try XCTUnwrap(testProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/one/two"), options: .init(
             infoPlistFallbacks: options.infoPlistFallbacks,
             // The test file system has a default base URL and needs different URLs for the symbol graph files
             additionalSymbolGraphFiles: [
@@ -141,22 +144,36 @@ class DocumentationInputsProviderTests: XCTestCase {
 
         // Allow arbitrary directories as a fallback
         do {
-            let foundBundle = try provider.inputs(
+            let (foundInputs, _) = try provider.inputsAndDataProvider(
                 startingPoint: startingPoint,
                 allowArbitraryCatalogDirectories: true,
                 options: .init()
             )
-            XCTAssertEqual(foundBundle?.displayName, "two")
-            XCTAssertEqual(foundBundle?.identifier, "two")
+            XCTAssertEqual(foundInputs.displayName, "two")
+            XCTAssertEqual(foundInputs.identifier, "two")
         }
         
         // Without arbitrary directories as a fallback
         do {
-            XCTAssertNil(try provider.inputs(
+            XCTAssertThrowsError(try provider.inputsAndDataProvider(
                 startingPoint: startingPoint,
                 allowArbitraryCatalogDirectories: false,
                 options: .init()
-            ))
+            )) { error in
+                XCTAssertEqual(error.localizedDescription, """
+                The information provided as command line arguments isn't enough to generate documentation.
+                
+                The `<catalog-path>` positional argument '/one/two' isn't a documentation catalog (`.docc` directory) \
+                and its directory sub-hierarchy doesn't contain a documentation catalog (`.docc` directory).
+                
+                To build documentation for the files in '/one/two', either give it a `.docc` file extension to make \
+                it a documentation catalog or pass the `--allow-arbitrary-catalog-directories` flag to treat it as \
+                a documentation catalog, regardless of file extension.
+                
+                To build documentation using only in-source documentation comments, pass a directory of symbol graph \
+                files (with a `.symbols.json` file extension) for the `--additional-symbol-graph-dir` argument.
+                """)
+            }
         }
     }
     
@@ -177,7 +194,7 @@ class DocumentationInputsProviderTests: XCTestCase {
         let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
         
         XCTAssertThrowsError(
-            try provider.inputs(
+            try provider.inputsAndDataProvider(
                 startingPoint: URL(fileURLWithPath: "/one/two"),
                 options: .init()
             )
@@ -216,14 +233,15 @@ class DocumentationInputsProviderTests: XCTestCase {
         let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
         let startingPoint = URL(fileURLWithPath: "/one/two")
 
-        let foundBundle = try provider.inputs(
+        let (foundInputs, _) = try provider.inputsAndDataProvider(
             startingPoint: startingPoint,
             options: .init(additionalSymbolGraphFiles: [
-                URL(fileURLWithPath: "/path/to/Something.symbols.json")])
+                URL(fileURLWithPath: "/path/to/Something.symbols.json")
+            ])
         )
-        XCTAssertEqual(foundBundle?.displayName, "Something")
-        XCTAssertEqual(foundBundle?.identifier, "Something")
-        XCTAssertEqual(foundBundle?.symbolGraphURLs.map(\.path), [
+        XCTAssertEqual(foundInputs.displayName, "Something")
+        XCTAssertEqual(foundInputs.identifier, "Something")
+        XCTAssertEqual(foundInputs.symbolGraphURLs.map(\.path), [
             "/path/to/Something.symbols.json",
         ])
     }

@@ -311,7 +311,7 @@ public extension DocumentationNode {
         renderNode: RenderNode,
         includeTaskGroups: Bool = true
     ) -> [LinkDestinationSummary] {
-        guard let bundle = context.bundle(identifier: reference.bundleIdentifier) else {
+        guard let bundle = context.bundle, bundle.identifier == reference.bundleIdentifier else {
             // Don't return anything for external references that don't have a bundle in the context.
             return []
         }
@@ -330,7 +330,8 @@ public extension DocumentationNode {
         let taskGroups: [LinkDestinationSummary.TaskGroup]?
         if includeTaskGroups {
             switch kind {
-            case .tutorial, .tutorialArticle, .technology, .technologyOverview, .chapter, .volume, .onPageLandmark:
+            case ._technologyOverview: fallthrough // This case is deprecated and will be removed after 6.2 is released.
+            case .tutorial, .tutorialArticle, .tutorialTableOfContents, .chapter, .volume, .onPageLandmark:
                 taskGroups = [.init(title: nil, identifiers: context.children(of: reference).map { $0.reference.absoluteString })]
             default:
                 var topicSectionGroups: [LinkDestinationSummary.TaskGroup] = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }

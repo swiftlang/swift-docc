@@ -12,6 +12,9 @@ import XCTest
 @testable import SwiftDocC
 import SymbolKit
 
+// This test verifies the behavior of `GeneratedDataProvider` which is a deprecated type.
+// Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+@available(*, deprecated, message: "Use 'DocumentationContext.InputProvider' instead. This deprecated API will be removed after 6.2 is released")
 class GeneratedDataProviderTests: XCTestCase {
 
     func testGeneratingBundles() throws {

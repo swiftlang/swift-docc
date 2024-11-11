@@ -114,7 +114,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     // This test calls ``SymbolGraph.relationships`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated) // `SymbolGraph.relationships` doesn't specify when it will be removed
     func testLoadingHighNumberOfModulesConcurrently() throws {
         let tempURL = try createTemporaryDirectory()
 
@@ -1731,23 +1731,23 @@ class SymbolGraphLoaderTests: XCTestCase {
             """
         )
         let infoPlist = """
-        <plist version="1.0">
-        <dict>
-            <key>CDAppleDefaultAvailability</key>
+            <plist version="1.0">
             <dict>
-                <key>MyModule</key>
-                <array>
-                    <dict>
-                        <key>name</key>
-                        <string>iOS</string>
-                        <key>version</key>
-                        <string>1.0</string>
-                    </dict>
-                </array>
-            </dict>
-        </dict>
-        </plist>
-        """
+                <key>CDAppleDefaultAvailability</key>
+                <dict>
+                    <key>MyModule</key>
+                    <array>
+                        <dict>
+                            <key>name</key>
+                            <string>iOS</string>
+                            <key>version</key>
+                            <string>1.0</string>
+                        </dict>
+                    </array>
+                </dict>
+                </dict>
+                </plist>
+            """
         // Create an empty bundle
         let targetURL = try createTemporaryDirectory(named: "test.docc")
         // Store files
@@ -1761,7 +1761,134 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
     }
     
-    
+    func testDefaultAvailabilityWhenSymbolIsNotAvailableForThatPlatform() throws {
+        // Symbol from SGF
+        let symbolTVOS = """
+        {
+            "kind": {
+                "displayName" : "Instance Property",
+                "identifier" : "swift.property"
+            },
+            "identifier": {
+                "precise": "c:@F@A",
+                "interfaceLanguage": "objective-c"
+            },
+            "pathComponents": [
+                "Foo"
+            ],
+            "names": {
+                "title": "Foo",
+            },
+            "accessLevel": "public"
+        }
+        """
+        let symbolIOS = """
+        {
+            "kind": {
+                "displayName" : "Instance Property",
+                "identifier" : "swift.property"
+            },
+            "identifier": {
+                "precise": "c:@F@A",
+                "interfaceLanguage": "objective-c"
+            },
+            "pathComponents": [
+                "Foo"
+            ],
+            "names": {
+                "title": "Foo",
+            },
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "displayName" : "Instance Property",
+                "identifier" : "swift.property"
+            },
+            "identifier": {
+                "precise": "c:@F@Bar",
+                 "interfaceLanguage" : "objective-c",
+            },
+            "pathComponents": [
+                "Bar"
+            ],
+            "names": {
+                "title": "Bar",
+            },
+            "accessLevel": "public"
+        }
+        """
+        let tvOSSymbolGraphString = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: symbolTVOS,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0,
+                 "patch" : 0
+               },
+               "name" : "tvos"
+             }
+            """
+        )
+        let iOSSymbolGraphString = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: symbolIOS,
+            platform: """
+                "operatingSystem" : {
+                   "minimumVersion" : {
+                     "major" : 12,
+                     "minor" : 0,
+                       "patch" : 0
+                     },
+                     "name" : "ios"
+                   }
+              """
+          )
+          let infoPlist = """
+          <plist version="1.0">
+          <dict>
+              <key>CDAppleDefaultAvailability</key>
+              <dict>
+                  <key>MyModule</key>
+                  <array>
+                      <dict>
+                          <key>name</key>
+                          <string>iOS</string>
+                        </dict>
+                        <dict>
+                            <key>name</key>
+                            <string>tvOS</string>
+                        </dict>
+                    </array>
+                </dict>
+            </dict>
+            </plist>
+        """
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Create symbol graph file
+        let tvOSymbolGraphURL = targetURL.appendingPathComponent("MyModule-tvos.symbols.json")
+        let iOSSymbolGraphURL = targetURL.appendingPathComponent("MyModule-ios.symbols.json")
+        try tvOSSymbolGraphString.write(to: tvOSymbolGraphURL, atomically: true, encoding: .utf8)
+        try iOSSymbolGraphString.write(to: iOSSymbolGraphURL, atomically: true, encoding: .utf8)
+        // Create Info.plist
+        let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        let (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@Bar"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@Bar'")
+            return
+        }
+        // Verify we dont add platforms to symbols that are not in that platform SGF. Even if the
+        // platform is part of the default availability.
+        XCTAssertEqual(availability.count, 3)
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+    }
     
     // MARK: - Helpers
     
@@ -1769,7 +1896,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         symbolGraphURLs: [URL],
         configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
     ) throws -> SymbolGraphLoader {
-        let workspace = DocumentationWorkspace()
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
@@ -1780,11 +1906,12 @@ class SymbolGraphLoaderTests: XCTestCase {
             markupURLs: [],
             miscResourceURLs: []
         )
-        try workspace.registerProvider(PrebuiltLocalFileSystemDataProvider(bundles: [bundle]))
         
         return SymbolGraphLoader(
             bundle: bundle,
-            dataProvider: workspace,
+            dataLoader: { url, _ in
+                try FileManager.default.contents(of: url)
+            },
             symbolGraphTransformer: configureSymbolGraph
         )
     }

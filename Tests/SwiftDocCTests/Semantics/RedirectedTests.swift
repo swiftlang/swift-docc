@@ -109,8 +109,8 @@ class RedirectedTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         var problems = [Problem]()
-        let technology = Technology(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-        XCTAssertNotNil(technology, "A Technology value can be created with a Redirected child.")
+        let tutorialTableOfContents = TutorialTableOfContents(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(tutorialTableOfContents, "A tutorial table-of-contents value can be created with a Redirected child.")
         XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)

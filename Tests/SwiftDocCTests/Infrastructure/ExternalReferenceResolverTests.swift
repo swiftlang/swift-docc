@@ -58,31 +58,16 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     func testResolveExternalReference() throws {
-        let sourceURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "TestBundle",
+            externalResolvers: ["com.external.testbundle" : TestExternalReferenceResolver()]
+        ) { url in
+            let myClassExtensionFile = url.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
+            try String(contentsOf: myClassExtensionFile)
+                .replacingOccurrences(of: "MyClass abstract.", with: "MyClass uses a <doc://com.external.testbundle/article>.")
+                .write(to: myClassExtensionFile, atomically: true, encoding: .utf8)
+        }
         
-        // Create a copy of the test bundle
-        let bundleURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
-        try FileManager.default.copyItem(at: sourceURL, to: bundleURL)
-        
-        // Add external link
-        let myClassMDURL = bundleURL.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
-        try String(contentsOf: myClassMDURL)
-            .replacingOccurrences(of: "MyClass abstract.", with: "MyClass uses a <doc://com.external.testbundle/article>.")
-            .write(to: myClassMDURL, atomically: true, encoding: .utf8)
-        
-        // Load bundle and context
-        let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        let bundle = try XCTUnwrap(automaticDataProvider.bundles().first)
-        
-        let workspace = DocumentationWorkspace()
-        var configuration = DocumentationContext.Configuration()
-        configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : TestExternalReferenceResolver()]
-        let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
-
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
-
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/article")!)
         let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyClass", sourceLanguage: .swift)
 
@@ -106,7 +91,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         externalResolver.bundleIdentifier = "com.test.external"
         externalResolver.expectedReferencePath = "/path/to/external/api"
         externalResolver.resolvedEntityTitle = "Name of API"
-        externalResolver.resolvedEntityKind = .technology
+        externalResolver.resolvedEntityKind = .tutorialTableOfContents
         
         // Set the language of the externally resolved entity to 'data'.
         externalResolver.resolvedEntityLanguage = .data
@@ -170,7 +155,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     
     // This test verifies the behavior of a deprecated functionality (changing external documentation sources after registering the documentation)
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {
         let workspace = DocumentationWorkspace()
         let bundle = try testBundle(named: "TestBundle")
@@ -1434,4 +1419,50 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         XCTAssertEqual(externalLinkCount, 2, "Did not resolve the 2 expected external links.")
     }
+
+    func testPossibleValuesWithExternalLink() throws {
+
+        // Create some example documentation using the symbol graph file located under
+        // Tests/SwiftDocCTests/Test Bundles/DictionaryData.docc, and the following
+        // documentation extension markup.
+        let documentationExtension = TextFile(
+            name: "Genre.md",
+            utf8Content: """
+                    # ``DictionaryData/Genre``
+                    
+                    Genre object.
+                    
+                    The artist's genre.
+                    
+                    - PossibleValues:
+                      - Classic Rock: Something about classic rock with a link: <doc://com.external.testbundle/something/related/to/this/allowed/value>.
+                      - Folk: Something about folk music with a link: <doc://com.external.testbundle/something/related/to/this/allowed/value>.
+                    """)
+        let symbol = try exampleDocumentation(
+            copying: "DictionaryData",
+            documentationExtension: documentationExtension,
+            path: "/documentation/DictionaryData/Genre"
+        )
+
+        let section = try XCTUnwrap(symbol.possibleValuesSectionVariants.firstValue)
+        XCTAssertEqual(section.possibleValues.count, 3)
+
+        // Check that the two keys with external links in the markup above were found
+        // and processed by the test external reference resolver.
+        var externalLinkCount = 0
+        for possibleValue in section.possibleValues {
+            let value = possibleValue.contents.first?.format().trimmingCharacters(in: .whitespaces)
+            if possibleValue.value == "Classic Rock" {
+                let stringValue = try XCTUnwrap(value)
+                XCTAssertEqual(stringValue, "Something about classic rock with a link: <doc://com.external.testbundle/externally/resolved/path>.")
+                externalLinkCount += 1
+            } else if possibleValue.value == "Folk" {
+                let stringValue = try XCTUnwrap(value)
+                XCTAssertEqual(stringValue, "Something about folk music with a link: <doc://com.external.testbundle/externally/resolved/path>.")
+                externalLinkCount += 1
+            }
+        }
+        XCTAssertEqual(externalLinkCount, 2, "Did not resolve the 2 expected external links.")
+    }
+
 }

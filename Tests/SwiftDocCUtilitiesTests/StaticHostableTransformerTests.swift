@@ -17,7 +17,7 @@ import SwiftDocCTestUtilities
 class StaticHostableTransformerTests: StaticHostingBaseTests {
 
     /// Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
-    func testStaticHostableTransformerOutput() throws {
+    func testStaticHostableTransformerOutput() async throws {
         
         // Convert a test bundle as input for the StaticHostableTransformer
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
@@ -32,7 +32,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
         defer { try? fileManager.removeItem(at: targetBundleURL) }
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -42,8 +42,8 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             currentPlatforms: nil,
             temporaryDirectory: createTemporaryDirectory()
         )
-        _ = try action.perform(logHandle: .none)
         
+        _ = try await action.perform(logHandle: .none)
         let outputURL = try createTemporaryDirectory().appendingPathComponent("output")
 
         let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
@@ -121,7 +121,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         }
     }
     
-    func testStaticHostableTransformerIndexHTMLOutput() throws {
+    func testStaticHostableTransformerIndexHTMLOutput() async throws {
         // Convert a test bundle as input for the StaticHostableTransformer
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
 
@@ -131,7 +131,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
 
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -141,7 +141,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             currentPlatforms: nil,
             temporaryDirectory: createTemporaryDirectory()
         )
-        _ = try action.perform(logHandle: .none)
+        _ = try await action.perform(logHandle: .none)
 
         let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)

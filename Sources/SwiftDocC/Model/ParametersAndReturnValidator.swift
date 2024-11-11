@@ -293,38 +293,26 @@ struct ParametersAndReturnValidator {
     private static func traitSpecificSignatures(_ symbol: UnifiedSymbolGraph.Symbol) -> Signatures? {
         var signatures: [DocumentationDataVariantsTrait: SymbolGraph.Symbol.FunctionSignature] = [:]
         for (selector, mixin) in symbol.mixins {
-            guard let signature = mixin.getValueIfPresent(for: SymbolGraph.Symbol.FunctionSignature.self) else {
+            guard var signature = mixin.getValueIfPresent(for: SymbolGraph.Symbol.FunctionSignature.self) else {
                 continue
+            }
+            
+            if let alternateSymbols = mixin.getValueIfPresent(for: SymbolGraph.Symbol.AlternateSymbols.self) {
+                for alternateSymbol in alternateSymbols.alternateSymbols {
+                    guard let alternateSignature = alternateSymbol.functionSignature else { continue }
+                    signature.merge(with: alternateSignature, selector: selector)
+                }
             }
             
             let trait = DocumentationDataVariantsTrait(for: selector)
             // Check if we've already encountered a different signature for another platform
-            guard var existing = signatures.removeValue(forKey: trait) else {
+            guard let existing = signatures.removeValue(forKey: trait) else {
                 signatures[trait] = signature
                 continue
             }
             
-            // An internal helper function that compares parameter names
-            func hasSameNames(_ lhs: SymbolGraph.Symbol.FunctionSignature.FunctionParameter, _ rhs: SymbolGraph.Symbol.FunctionSignature.FunctionParameter) -> Bool {
-                lhs.name == rhs.name && lhs.externalName == rhs.externalName
-            }
-            // If the two signatures have different parameters, add any missing parameters.
-            // This allows for documenting parameters that are only available on some platforms.
-            //
-            // Note: Doing this redundant `elementsEqual(_:by:)` check is significantly faster in the common case when all platforms have the same signature.
-            // In the rare case where platforms have different signatures, the overhead of checking `elementsEqual(_:by:)` first is too small to measure.
-            if !existing.parameters.elementsEqual(signature.parameters, by: hasSameNames) {
-                for case .insert(offset: let offset, element: let element, _) in signature.parameters.difference(from: existing.parameters, by: hasSameNames) {
-                    existing.parameters.insert(element, at: offset)
-                }
-            }
-            
-            // If the already encountered signature has a void return type, replace it with the non-void return type.
-            // This allows for documenting the return values that are only available on some platforms.
-            if existing.returns != signature.returns, existing.returns == knownVoidReturnValuesByLanguage[.init(id: selector.interfaceLanguage)] {
-                existing.returns = signature.returns
-            }
-            signatures[trait] = existing
+            signature.merge(with: existing, selector: selector)
+            signatures[trait] = signature
         }
         
         guard !signatures.isEmpty else { return nil }
@@ -671,5 +659,38 @@ struct ParametersAndReturnValidator {
     
     private static func newParameterDescription(name: String, standalone: Bool) -> String {
         "- \(standalone ? "Parameter " : "")\(name): <#parameter description#>"
+    }
+}
+
+// MARK: Helper extensions
+
+private extension SymbolGraph.Symbol.FunctionSignature {
+    mutating func merge(with signature: Self, selector: UnifiedSymbolGraph.Selector) {
+        // An internal helper function that compares parameter names
+        func hasSameNames(_ lhs: Self.FunctionParameter, _ rhs: Self.FunctionParameter) -> Bool {
+            lhs.name == rhs.name && lhs.externalName == rhs.externalName
+        }
+        // If the two signatures have different parameters, add any missing parameters.
+        // This allows for documenting parameters that are only available on some platforms.
+        //
+        // Note: Doing this redundant `elementsEqual(_:by:)` check is significantly faster in the common case when all platforms have the same signature.
+        // In the rare case where platforms have different signatures, the overhead of checking `elementsEqual(_:by:)` first is too small to measure.
+        if !self.parameters.elementsEqual(signature.parameters, by: hasSameNames) {
+            for case .insert(offset: let offset, element: let element, _) in signature.parameters.difference(from: self.parameters, by: hasSameNames) {
+                self.parameters.insert(element, at: offset)
+            }
+        }
+        
+        // If the already encountered signature has a void return type, replace it with the non-void return type.
+        // This allows for documenting the return values that are only available on some platforms.
+        if self.returns != signature.returns,
+           let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage[.init(id: selector.interfaceLanguage)]
+        {
+            for knownVoidReturnValue in knownVoidReturnValues where [knownVoidReturnValue] == self.returns {
+                // The current return value was a known void return value so we replace it with the new return value.
+                self.returns = signature.returns
+                return
+            }
+        }
     }
 }

@@ -111,6 +111,36 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
+    func testParametersWithAlternateSignatures() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "AlternateDeclarations") { url in
+            try """
+            # ``MyClass/present(completion:)``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Override the documentation with a parameter section that raise warnings.
+            
+            - Parameters:
+              - completion: Description of the parameter that's available in some alternatives.
+            - Returns: Description of the return value that's available for some other alternatives.
+            """.write(to: url.appendingPathComponent("extension.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("MyClass/present(completion:)")
+        let node = try context.entity(with: reference)
+        let symbolSemantic = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let swiftParameterNames = symbolSemantic.parametersSectionVariants.firstValue?.parameters
+        
+        XCTAssertEqual(swiftParameterNames?.map(\.name), ["completion"])
+        XCTAssertEqual(swiftParameterNames?.map { _format($0.contents) }, ["Description of the parameter that’s available in some alternatives."])
+        
+        let swiftReturnsContent = symbolSemantic.returnsSection.map { _format($0.content) }
+        XCTAssertEqual(swiftReturnsContent, "Description of the return value that’s available for some other alternatives.")
+    }
+    
     func testParameterDiagnosticsInDocumentationExtension() throws {
         let (url, _, context) = try testBundleAndContext(copying: "ErrorParameters") { url in
             try """
@@ -199,11 +229,6 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     func testFunctionsThatCorrespondToPropertiesInAnotherLanguage() throws {
         let (_, _, context) = try testBundleAndContext(named: "GeometricalShapes")
         XCTAssertEqual(context.problems.map(\.diagnostic.summary), [])
-        
-        // A small test helper to format markup for test assertions in this test.
-        func _format(_ markup: [any Markup]) -> String {
-            markup.map { $0.format() }.joined()
-        }
         
         let reference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "isEmpty" }))
         let node = try context.entity(with: reference)
@@ -658,7 +683,14 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws -> String {
-        let url = try createTempFolder(content: [
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    // The generated symbol graph uses a fake source file where the documentation comment starts at line 7, column 6
+                    TextFile(name: "SomeFile.swift", utf8Content: String(repeating: "\n", count: 7) + docComment.splitByNewlines.map { "  /// \($0)" }.joined(separator: "\n"))
+                ])
+            ]),
+      
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     docComment: docComment,
@@ -668,23 +700,18 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 ))
             ])
         ])
-        let logStorage = LogHandle.LogStorage()
-        let (_, _, context) = try loadBundle(from: url, configureContext: { context in
-            for consumerID in context.diagnosticEngine.consumers.sync({ $0.values }) {
-                context.diagnosticEngine.remove(consumerID)
-            }
-            let fileSystem = try TestFileSystem(folders: [
-                Folder(name: "path", content: [
-                    Folder(name: "to", content: [
-                        // The generated symbol graph uses a fake source file where the documentation comment starts at line 7, column 6
-                        TextFile(name: "SomeFile.swift", utf8Content: String(repeating: "\n", count: 7) + docComment.splitByNewlines.map { "  /// \($0)" }.joined(separator: "\n"))
-                    ])
-                ])
-            ])
-            context.diagnosticEngine.add(DiagnosticConsoleWriter(LogHandle.memory(logStorage), highlight: false, fileManager: fileSystem))
-        })
         
-        context.diagnosticEngine.flush()
+        let logStorage = LogHandle.LogStorage()
+        
+        let diagnosticEngine = DiagnosticEngine()
+        diagnosticEngine.add(DiagnosticConsoleWriter(LogHandle.memory(logStorage), highlight: false, dataProvider: fileSystem))
+        
+        let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/unit-test.docc"), options: .init())
+
+        _ = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine)
+        
+        diagnosticEngine.flush()
         return logStorage.text.trimmingCharacters(in: .newlines)
     }
     
@@ -733,4 +760,9 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             ]
         )
     }
+}
+
+// A small test helper to format markup for test assertions in this file.
+private func _format(_ markup: [any Markup]) -> String {
+    markup.map { $0.format() }.joined()
 }

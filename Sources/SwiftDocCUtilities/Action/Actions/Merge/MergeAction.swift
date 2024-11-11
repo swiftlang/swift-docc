@@ -13,7 +13,7 @@ import SwiftDocC
 import Markdown
 
 /// An action that merges a list of documentation archives into a combined archive.
-struct MergeAction: Action {
+struct MergeAction: AsyncAction {
     var archives: [URL]
     var landingPageInfo: LandingPageInfo
     var outputURL: URL
@@ -33,7 +33,7 @@ struct MergeAction: Action {
         }
     }
     
-    mutating func perform(logHandle: LogHandle) throws -> ActionResult {
+    func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         guard let firstArchive = archives.first else {
             // A validation warning should have already been raised in `Docc/Merge/InputAndOutputOptions/validate()`.
             return ActionResult(didEncounterError: true, outputs: [])

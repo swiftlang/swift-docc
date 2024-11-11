@@ -12,8 +12,8 @@ import Foundation
 import SwiftDocC
 
 /// An action that generates a documentation catalog from a template seed.
-public struct InitAction: Action {
-    
+public struct InitAction: AsyncAction {
+
     enum Error: DescribedError {
         case catalogAlreadyExists
         var errorDescription: String {
@@ -72,8 +72,7 @@ public struct InitAction: Action {
     /// Generates a documentation catalog from a catalog template.
     ///
     /// - Parameter logHandle: The file handle that the convert and preview actions will print debug messages to.
-    public mutating func perform(logHandle: SwiftDocC.LogHandle) throws -> ActionResult {
-        
+    public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
         diagnosticEngine.filterLevel = .warning
         diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))

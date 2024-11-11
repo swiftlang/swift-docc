@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,56 +30,53 @@ struct RenderHierarchyTranslator {
     static let assessmentsAnchor = urlReadableFragment(TutorialAssessmentsRenderSection.title)
     let urlGenerator = NodeURLGenerator()
     
-    /// Returns a complete hierarchy, starting at the given tutorials landing page and describing all
-    /// contained volumes, chapters, and tutorials.
+    /// Returns a complete hierarchy, starting at the given tutorials table-of-contents page and describing all contained volumes, chapters, and tutorials.
     /// - Parameters:
     ///   - reference: A reference to a tutorials-related topic.
     ///   - omittingChapters: If `true`, don't include chapters in the returned hierarchy.
     /// - Returns: A tuple of 1) a tutorials hierarchy and 2) the root reference of the tutorials hierarchy.
-    mutating func visitTechnologyNode(_ reference: ResolvedTopicReference, omittingChapters: Bool = false) -> (hierarchy: RenderHierarchy, technology: ResolvedTopicReference)? {
-        let paths = context.finitePaths(to: reference, options: [.preferTechnologyRoot])
+    mutating func visitTutorialTableOfContentsNode(_ reference: ResolvedTopicReference, omittingChapters: Bool = false) -> (hierarchyVariants: VariantCollection<RenderHierarchy?>, tutorialTableOfContents: ResolvedTopicReference)? {
+        let paths = context.finitePaths(to: reference, options: [.preferTutorialTableOfContentsRoot])
         
-        // If the node is a technology return immediately without generating breadcrumbs
-        if let _ = (try? context.entity(with: reference))?.semantic as? Technology {
-            let hierarchy = visitTechnology(reference, omittingChapters: omittingChapters)
-            return (hierarchy: .tutorials(hierarchy), technology: reference)
+        // If the node is a tutorial table-of-contents page, return immediately without generating breadcrumbs
+        if let _ = (try? context.entity(with: reference))?.semantic as? TutorialTableOfContents {
+            let hierarchy = visitTutorialTableOfContents(reference, omittingChapters: omittingChapters)
+            return (hierarchyVariants: .init(defaultValue: .tutorials(hierarchy)), tutorialTableOfContents: reference)
         }
         
-        guard let technologyPath = paths.mapFirst(where: { path -> [ResolvedTopicReference]? in
+        guard let tutorialsPath = paths.mapFirst(where: { path -> [ResolvedTopicReference]? in
             guard let rootReference = path.first,
-                let _ = try! context.entity(with: rootReference).semantic as? Technology else { return nil }
+                let _ = try! context.entity(with: rootReference).semantic as? TutorialTableOfContents else { return nil }
             return path
         }) else {
             // If there are no tutorials, return `nil`. We've already warned about uncurated tutorials.
             return nil
         }
         
-        let technologyReference = technologyPath[0]
-        var hierarchy = visitTechnology(technologyReference, omittingChapters: omittingChapters)
-        
+        let tutorialTableOfContentsReference = tutorialsPath[0]
+        var hierarchy = visitTutorialTableOfContents(tutorialTableOfContentsReference, omittingChapters: omittingChapters)
+
         hierarchy.paths = paths
             // Position the technology path as the canonical path for the node
             // in case it's curated multiple times under documentation symbols too.
-            .sorted(by: { (lhs, rhs) -> Bool in
-                return lhs == technologyPath
-            })
+            .sorted { lhs, _ in lhs == tutorialsPath }
             .map { $0.map { $0.absoluteString } }
         
-        return (hierarchy: .tutorials(hierarchy), technology: technologyReference)
+        return (hierarchyVariants: .init(defaultValue: .tutorials(hierarchy)), tutorialTableOfContents: tutorialTableOfContentsReference)
     }
     
-    /// Returns the hierarchy under a given tutorials landing page.
-    /// - Parameter technologyReference: The reference to the tutorials landing page.
+    /// Returns the hierarchy under a given tutorials table-of-contents page.
+    /// - Parameter tutorialTableOfContentsReference: The reference to the tutorials table-of-contents page.
     /// - Parameter omittingChapters: If `true`, don't include chapters in the returned hierarchy.
-    /// - Returns: The hierarchy under the given landing page.
-    mutating func visitTechnology(_ technologyReference: ResolvedTopicReference, omittingChapters: Bool = false) -> RenderTutorialsHierarchy {
-        let technologyPath = urlGenerator.urlForReference(technologyReference, lowercased: true).path
-        collectedTopicReferences.insert(technologyReference)
+    /// - Returns: The hierarchy under the given tutorial table-of-contents page.
+    mutating func visitTutorialTableOfContents(_ tutorialTableOfContentsReference: ResolvedTopicReference, omittingChapters: Bool = false) -> RenderTutorialsHierarchy {
+        let technologyPath = urlGenerator.urlForReference(tutorialTableOfContentsReference, lowercased: true).path
+        collectedTopicReferences.insert(tutorialTableOfContentsReference)
         // A technology is a root node in the bundle so passing empty breadcrumb paths
-        var renderHierarchy = RenderTutorialsHierarchy(reference: RenderReferenceIdentifier(technologyReference.absoluteString), paths: [])
+        var renderHierarchy = RenderTutorialsHierarchy(reference: RenderReferenceIdentifier(tutorialTableOfContentsReference.absoluteString), paths: [])
 
         if !omittingChapters {
-            let children = context.children(of: technologyReference, kind: .volume)
+            let children = context.children(of: tutorialTableOfContentsReference, kind: .volume)
 
             let renderChapters = children.compactMap { child in
                 return visitVolume(child.reference, pathBreadcrumb: technologyPath)
@@ -195,19 +192,42 @@ struct RenderHierarchyTranslator {
     /// The documentation model is a graph (and not a tree) so you can curate API symbols
     /// multiple times under other API symbols, articles, or API collections. This method
     /// returns all the paths (breadcrumbs) between the framework landing page and the given symbol.
-    mutating func visitSymbol(_ symbolReference: ResolvedTopicReference) -> RenderHierarchy {
-        let pathReferences = context.finitePaths(to: symbolReference)
+    mutating func visitSymbol(_ symbolReference: ResolvedTopicReference) -> VariantCollection<RenderHierarchy?> {
+        // An inner function used to create a RenderHierarchy from a list of references and collect the unique references
+        func makeHierarchy(_ references: [ResolvedTopicReference]) -> RenderHierarchy {
+            collectedTopicReferences.formUnion(references)
+            let paths = references.map(\.absoluteString)
+            return .reference(.init(paths: [paths]))
+        }
+        
+        let mainPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: symbolReference.sourceLanguage)
+        
+        var hierarchyVariants = VariantCollection<RenderHierarchy?>(
+            defaultValue: mainPathReferences.map(makeHierarchy) // It's possible that the symbol only has a language representation in a variant language
+        )
+        
+        for language in symbolReference.sourceLanguages where language != symbolReference.sourceLanguage {
+            guard let variantPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: language) else {
+                continue
+            }
+            hierarchyVariants.variants.append(.init(
+                traits: [.interfaceLanguage(language.id)],
+                patch: [.replace(value: makeHierarchy(variantPathReferences))]
+            ))
+        }
+        
+        return hierarchyVariants
+    }
+    
+    /// Returns the hierarchy under a given article.
+    /// - Parameter articleReference: The reference to the article.
+    /// - Returns: The framework hierarchy that describes all paths where the article is curated.
+    mutating func visitArticle(_ articleReference: ResolvedTopicReference) -> VariantCollection<RenderHierarchy?> {
+        let pathReferences = context.finitePaths(to: articleReference)
         pathReferences.forEach({
             collectedTopicReferences.formUnion($0)
         })
         let paths = pathReferences.map { $0.map { $0.absoluteString } }
-        return .reference(RenderReferenceHierarchy(paths: paths))
-    }
-    
-    /// Returns the hierarchy under a given article.
-    /// - Parameter symbolReference: The reference to the article.
-    /// - Returns: The framework hierarchy that describes all paths where the article is curated.
-    mutating func visitArticle(_ symbolReference: ResolvedTopicReference) -> RenderHierarchy {
-        return visitSymbol(symbolReference)
+        return .init(defaultValue: .reference(RenderReferenceHierarchy(paths: paths)))
     }
 }

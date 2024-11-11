@@ -10,20 +10,30 @@
 
 import Foundation
 
-/**
- A documentation bundle.
-
- A documentation bundle stores all of the authored content and metadata for a collection of topics and/or frameworks.
-
- No content data is immediately loaded when creating a `DocumentationBundle` except for its `Info.plist`. Its purpose is to provide paths on disk for documentation resources.
-
- ## Topics
- ### Bundle Metadata
-
- - ``displayName``
- - ``identifier``
- - ``version``
- */
+/// A collection of the build inputs for a unit of documentation.
+///
+/// A unit of documentation may for example cover a framework, library, or tool.
+/// Projects or packages may have multiple units of documentation to represent the different consumable products in that project or package.
+///
+/// ## Topics
+///
+/// ### Input files
+///
+/// - ``markupURLs``
+/// - ``symbolGraphURLs``
+/// - ``miscResourceURLs``
+///
+/// ### Render customization
+///
+/// - ``customHeader``
+/// - ``customFooter``
+/// - ``themeSettings``
+///
+/// ### Metadata
+///
+/// - ``info``
+/// - ``displayName``
+/// - ``identifier``
 public struct DocumentationBundle {
     public enum PropertyListError: DescribedError {
         case invalidVersionString(String)
@@ -39,21 +49,17 @@ public struct DocumentationBundle {
         }
     }
     
-    /// Information about this documentation bundle that's unrelated to its documentation content.
+    /// Non-content information or metadata about this unit of documentation.
     public let info: Info
     
-    /**
-     The bundle's human-readable display name.
-     */
+    /// A human-readable display name for this unit of documentation.
     public var displayName: String {
         info.displayName
     }
     
-    /**
-     The documentation bundle identifier.
-
-     An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
-     */
+    /// A identifier for this unit of documentation
+    ///
+    /// The string is typically in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
     public var identifier: String {
         info.identifier
     }
@@ -72,13 +78,25 @@ public struct DocumentationBundle {
     @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public var attributedCodeListings: [String: AttributedCodeListing] = [:]
     
-    /// Symbol Graph JSON files for the modules documented by this bundle.
+    /// Symbol graph JSON input files for the module that's represented by this unit of documentation.
+    ///
+    /// Tutorial or article-only documentation won't have any symbol graph JSON files.
+    ///
+    /// ## See Also
+    ///
+    /// - ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
     public let symbolGraphURLs: [URL]
     
-    /// DocC Markup files of the bundle.
+    /// Documentation markup input files for this unit of documentation.
+    ///
+    /// Documentation markup files include both articles, documentation extension files, and tutorial files.
+    ///
+    /// ## See Also
+    ///
+    /// - ``DocumentationBundleFileTypes/isMarkupFile(_:)``
     public let markupURLs: [URL]
     
-    /// Miscellaneous resources of the bundle.
+    /// Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.
     public let miscResourceURLs: [URL]
 
     /// A custom HTML file to use as the header for rendered output.
@@ -90,21 +108,19 @@ public struct DocumentationBundle {
     /// A custom JSON settings file used to theme renderer output.
     public let themeSettings: URL?
     
-    /**
-    A URL prefix to be appended to the relative presentation URL.
-    
-    This is used when a bundle's documentation is hosted in a known location.
-    */
+    /// A URL prefix to be appended to the relative presentation URL.
+    ///
+    /// This is used when a built documentation is hosted in a known location.
     public let baseURL: URL
     
-    /// Creates a documentation bundle.
+    /// Creates a new collection of build inputs for a unit of documentation.
     ///
     /// - Parameters:
-    ///   - info: Information about the bundle.
+    ///   - info: Non-content information or metadata about this unit of documentation.
     ///   - baseURL: A URL prefix to be appended to the relative presentation URL.
-    ///   - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the bundle.
-    ///   - markupURLs: DocC Markup files of the bundle.
-    ///   - miscResourceURLs: Miscellaneous resources of the bundle.
+    ///   - symbolGraphURLs: Symbol graph JSON input files for the module that's represented by this unit of documentation.
+    ///   - markupURLs: Documentation markup input files for this unit of documentation.
+    ///   - miscResourceURLs: Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.
     ///   - customHeader: A custom HTML file to use as the header for rendered output.
     ///   - customFooter: A custom HTML file to use as the footer for rendered output.
     ///   - themeSettings: A custom JSON settings file used to theme renderer output.
@@ -128,8 +144,8 @@ public struct DocumentationBundle {
         self.themeSettings = themeSettings
         self.rootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
         self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
-        self.tutorialsRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
-        self.technologyTutorialsRootReference = tutorialsRootReference.appendingPath(urlReadablePath(info.displayName))
+        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+        self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }
     
@@ -154,12 +170,22 @@ public struct DocumentationBundle {
     /// Default path to resolve symbol links.
     public private(set) var documentationRootReference: ResolvedTopicReference
 
-    /// Default path to resolve technology links.
-    public var tutorialsRootReference: ResolvedTopicReference
+    @available(*, deprecated, renamed: "tutorialTableOfContentsContainer", message: "Use 'tutorialTableOfContentsContainer' instead. This deprecated API will be removed after 6.2 is released")
+    public var tutorialsRootReference: ResolvedTopicReference {
+        tutorialTableOfContentsContainer
+    }
 
-    /// Default path to resolve tutorials.
-    public var technologyTutorialsRootReference: ResolvedTopicReference
-    
+    /// Default path to resolve tutorial table-of-contents links.
+    public var tutorialTableOfContentsContainer: ResolvedTopicReference
+
+    @available(*, deprecated, renamed: "tutorialsContainerReference", message: "Use 'tutorialsContainerReference' instead. This deprecated API will be removed after 6.2 is released")
+    public var technologyTutorialsRootReference: ResolvedTopicReference {
+        tutorialsContainerReference
+    }
+
+    /// Default path to resolve tutorial links.
+    public var tutorialsContainerReference: ResolvedTopicReference
+
     /// Default path to resolve articles.
     public var articlesDocumentationRootReference: ResolvedTopicReference
 }

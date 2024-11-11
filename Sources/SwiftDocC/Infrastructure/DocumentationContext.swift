@@ -13,6 +13,7 @@ import Markdown
 import SymbolKit
 
 /// A type that provides information about documentation bundles and their content.
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationContextDataProvider {
     /// An object to notify when bundles are added or removed.
     var delegate: DocumentationContextDataProviderDelegate? { get set }
@@ -31,6 +32,7 @@ public protocol DocumentationContextDataProvider {
 }
 
 /// An object that responds to changes in available documentation bundles for a specific provider.
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationContextDataProviderDelegate: AnyObject {
     
     /// Called when the `dataProvider` has added a new documentation bundle to its list of `bundles`.
@@ -79,7 +81,7 @@ public typealias BundleIdentifier = String
 /// - ``children(of:kind:)``
 /// - ``parents(of:)``
 ///
-public class DocumentationContext: DocumentationContextDataProviderDelegate {
+public class DocumentationContext {
 
     /// An error that's encountered while interacting with a ``SwiftDocC/DocumentationContext``.
     public enum ContextError: DescribedError {
@@ -111,11 +113,44 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
-    public var linkResolver = LinkResolver()
+    public var linkResolver: LinkResolver
     
+    private enum _Provider {
+        @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
+        case legacy(DocumentationContextDataProvider)
+        case new(DataProvider)
+    }
+    private var dataProvider: _Provider
+
     /// The provider of documentation bundles for this context.
-    var dataProvider: DocumentationContextDataProvider
+    @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
+    private var _legacyDataProvider: DocumentationContextDataProvider! {
+        get {
+            switch dataProvider {
+            case .legacy(let legacyDataProvider):
+                legacyDataProvider
+            case .new:
+                nil
+            }
+        }
+        set {
+            dataProvider = .legacy(newValue)
+        }
+    }
     
+    func contentsOfURL(_ url: URL, in bundle: DocumentationBundle) throws -> Data {
+        switch dataProvider {
+        case .legacy(let legacyDataProvider):
+            return try legacyDataProvider.contentsOfURL(url, in: bundle)
+        case .new(let dataProvider):
+            assert(self.bundle?.identifier == bundle.identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+            return try dataProvider.contents(of: url)
+        }
+    }
+
+    /// The documentation bundle that is registered with the context.
+    var bundle: DocumentationBundle?
+
     /// A collection of configuration for this context.
     public package(set) var configuration: Configuration {
         get { _configuration }
@@ -136,10 +171,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
 
-    /// The root technology nodes of the Topic Graph.
+    @available(*, deprecated, renamed: "tutorialTableOfContentsReferences", message: "Use 'tutorialTableOfContentsReferences' This deprecated API will be removed after 6.2 is released")
     public var rootTechnologies: [ResolvedTopicReference] {
+        tutorialTableOfContentsReferences
+    }
+
+    /// The tutorial table-of-contents nodes in the topic graph.
+    public var tutorialTableOfContentsReferences: [ResolvedTopicReference] {
         return topicGraph.nodes.values.compactMap { node in
-            guard node.kind == .technology && parents(of: node.reference).isEmpty else {
+            guard node.kind == .tutorialTableOfContents && parents(of: node.reference).isEmpty else {
                 return nil
             }
             return node.reference
@@ -250,27 +290,54 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
     /// - Throws: If an error is encountered while registering a documentation bundle.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public init(
         dataProvider: DocumentationContextDataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
     ) throws {
-        self.dataProvider = dataProvider
+        self.dataProvider = .legacy(dataProvider)
         self.diagnosticEngine = diagnosticEngine
         self._configuration = configuration
+        self.linkResolver = LinkResolver(dataProvider: FileManager.default)
         
-        self.dataProvider.delegate = self
+        _legacyDataProvider.delegate = self
         
         for bundle in dataProvider.bundles.values {
             try register(bundle)
         }
     }
-    
+
+    /// Initializes a documentation context with a given `bundle`.
+    ///
+    /// - Parameters:
+    ///   - bundle: The bundle to register with the context.
+    ///   - fileManager: The file manager that the context uses to read files from the bundle.
+    ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
+    ///   - configuration: A collection of configuration for the created context.
+    /// - Throws: If an error is encountered while registering a documentation bundle.
+    package init(
+        bundle: DocumentationBundle,
+        dataProvider: DataProvider,
+        diagnosticEngine: DiagnosticEngine = .init(),
+        configuration: Configuration = .init()
+    ) throws {
+        self.bundle = bundle
+        self.dataProvider = .new(dataProvider)
+        self.diagnosticEngine = diagnosticEngine
+        self._configuration = configuration
+        self.linkResolver = LinkResolver(dataProvider: dataProvider)
+
+        ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
+        try register(bundle)
+    }
+
     /// Respond to a new `bundle` being added to the `dataProvider` by registering it.
     ///
     /// - Parameters:
     ///   - dataProvider: The provider that added this bundle.
     ///   - bundle: The bundle that was added.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
             // Enable reference caching for this documentation bundle.
@@ -285,6 +352,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - dataProvider: The provider that removed this bundle.
     ///   - bundle: The bundle that was removed.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         linkResolver.localResolver?.unregisterBundle(identifier: bundle.identifier)
         
@@ -296,13 +364,36 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// The documentation bundles that are currently registered with the context.
+    @available(*, deprecated, message: "Use 'bundle' instead. This deprecated API will be removed after 6.2 is released")
     public var registeredBundles: some Collection<DocumentationBundle> {
-        return dataProvider.bundles.values
+        _registeredBundles
     }
     
     /// Returns the `DocumentationBundle` with the given `identifier` if it's registered with the context, otherwise `nil`.
+    @available(*, deprecated, message: "Use 'bundle' instead. This deprecated API will be removed after 6.2 is released")
     public func bundle(identifier: String) -> DocumentationBundle? {
-        return dataProvider.bundles[identifier]
+        _bundle(identifier: identifier)
+    }
+    
+    // Remove these  when removing `registeredBundles` and `bundle(identifier:)`.
+    // These exist so that internal code that need to be compatible with legacy data providers can access the bundles without deprecation warnings.
+    var _registeredBundles: [DocumentationBundle] {
+        switch dataProvider {
+        case .legacy(let legacyDataProvider):
+            Array(legacyDataProvider.bundles.values)
+        case .new:
+            bundle.map { [$0] } ?? []
+        }
+    }
+    
+    func _bundle(identifier: String) -> DocumentationBundle? {
+        switch dataProvider {
+        case .legacy(let legacyDataProvider):
+            return legacyDataProvider.bundles[identifier]
+        case .new:
+            assert(bundle?.identifier == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+            return bundle?.identifier == identifier ? bundle : nil
+        }
     }
         
     /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
@@ -606,65 +697,65 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// up in the context, not from the arrays that was passed as arguments.
     ///
     /// - Parameters:
-    ///   - technologies: The list of temporary 'technology' pages.
+    ///   - tutorialTableOfContentsResults: The list of temporary 'tutorial table-of-contents' pages.
     ///   - tutorials: The list of temporary 'tutorial' pages.
     ///   - tutorialArticles: The list of temporary 'tutorialArticle' pages.
     ///   - bundle: The bundle to resolve links against.
-    private func resolveLinks(technologies: [SemanticResult<Technology>],
-                              tutorials: [SemanticResult<Tutorial>],
-                              tutorialArticles: [SemanticResult<TutorialArticle>],
-                              bundle: DocumentationBundle) {
-        
+    private func resolveLinks(
+        tutorialTableOfContents tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
+        tutorials: [SemanticResult<Tutorial>],
+        tutorialArticles: [SemanticResult<TutorialArticle>],
+        bundle: DocumentationBundle
+    ) {
         let sourceLanguages = soleRootModuleReference.map { self.sourceLanguages(for: $0) } ?? [.swift]
 
-        // Technologies
-        
-        for technologyResult in technologies {
+        // Tutorial table-of-contents
+
+        for tableOfContentsResult in tutorialTableOfContentsResults {
             autoreleasepool {
-                let url = technologyResult.source
-                let unresolvedTechnology = technologyResult.value
+                let url = tableOfContentsResult.source
                 var resolver = ReferenceResolver(context: self, bundle: bundle)
-                let technology = resolver.visit(unresolvedTechnology) as! Technology
+                let tableOfContents = resolver.visit(tableOfContentsResult.value) as! TutorialTableOfContents
                 diagnosticEngine.emit(resolver.problems)
                 
                 // Add to document map
-                documentLocationMap[url] = technologyResult.topicGraphNode.reference
+                documentLocationMap[url] = tableOfContentsResult.topicGraphNode.reference
                 
-                let technologyReference = technologyResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
-                
-                let technologyNode = DocumentationNode(
-                    reference: technologyReference,
-                    kind: .technology,
+                let tableOfContentsReference = tableOfContentsResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
+
+                let tutorialTableOfContentsNode = DocumentationNode(
+                    reference: tableOfContentsReference,
+                    kind: .tutorialTableOfContents,
                     sourceLanguage: Self.defaultLanguage(in: sourceLanguages),
                     availableSourceLanguages: sourceLanguages,
-                    name: .conceptual(title: technology.intro.title),
-                    markup: technology.originalMarkup,
-                    semantic: technology
+                    name: .conceptual(title: tableOfContents.intro.title),
+                    markup: tableOfContents.originalMarkup,
+                    semantic: tableOfContents
                 )
-                documentationCache[technologyReference] = technologyNode
+                documentationCache[tableOfContentsReference] = tutorialTableOfContentsNode
                 
-                // Update the reference in the topic graph with the technology's available languages.
+                // Update the reference in the topic graph with the table-of-contents page's available languages.
                 topicGraph.updateReference(
-                    technologyResult.topicGraphNode.reference,
-                    newReference: technologyReference
+                    tableOfContentsResult.topicGraphNode.reference,
+                    newReference: tableOfContentsReference
                 )
 
                 let anonymousVolumeName = "$volume"
                 
-                for volume in technology.volumes {
+                for volume in tableOfContents.volumes {
                     // Graph node: Volume
-                    let volumeReference = technologyNode.reference.appendingPath(volume.name ?? anonymousVolumeName)
+                    let volumeReference = tutorialTableOfContentsNode.reference.appendingPath(volume.name ?? anonymousVolumeName)
                     let volumeNode = TopicGraph.Node(reference: volumeReference, kind: .volume, source: .file(url: url), title: volume.name ?? anonymousVolumeName)
                     topicGraph.addNode(volumeNode)
                     
-                    // Graph edge: Technology -> Volume
-                    topicGraph.addEdge(from: technologyResult.topicGraphNode, to: volumeNode)
+                    // Graph edge: Tutorial table-of-contents -> Volume
+                    topicGraph.addEdge(from: tableOfContentsResult.topicGraphNode, to: volumeNode)
                     
                     for chapter in volume.chapters {
                         // Graph node: Module
                         let baseNodeReference: ResolvedTopicReference
                         if volume.name == nil {
-                            baseNodeReference = technologyNode.reference
+                            baseNodeReference = tutorialTableOfContentsNode.reference
                         } else {
                             baseNodeReference = volumeNode.reference
                         }
@@ -761,7 +852,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     private func registerDocuments(from bundle: DocumentationBundle) throws -> (
-        technologies: [SemanticResult<Technology>],
+        tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
         tutorials: [SemanticResult<Tutorial>],
         tutorialArticles: [SemanticResult<TutorialArticle>],
         articles: [SemanticResult<Article>],
@@ -769,7 +860,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ) {
         // First, try to understand the basic structure of the document by
         // analyzing it and putting references in as "unresolved".
-        var technologies = [SemanticResult<Technology>]()
+        var tutorialTableOfContentsResults = [SemanticResult<TutorialTableOfContents>]()
         var tutorials = [SemanticResult<Tutorial>]()
         var tutorialArticles = [SemanticResult<TutorialArticle>]()
         var articles = [SemanticResult<Article>]()
@@ -784,7 +875,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             guard decodeError.sync({ $0 == nil }) else { return }
             
             do {
-                let data = try dataProvider.contentsOfURL(url, in: bundle)
+                let data = try contentsOfURL(url, in: bundle)
                 let source = String(decoding: data, as: UTF8.self)
                 let document = Document(parsing: source, source: url, options: [.parseBlockDirectives, .parseSymbolLinks])
                 
@@ -857,11 +948,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
              Add all topic graph nodes up front before resolution starts, because
              there may be circular linking.
              */
-            if let technology = analyzed as? Technology {
-                let topicGraphNode = TopicGraph.Node(reference: reference, kind: .technology, source: .file(url: url), title: technology.intro.title)
+            if let tableOfContents = analyzed as? TutorialTableOfContents {
+                let topicGraphNode = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: url), title: tableOfContents.intro.title)
                 topicGraph.addNode(topicGraphNode)
-                let result = SemanticResult(value: technology, source: url, topicGraphNode: topicGraphNode)
-                technologies.append(result)
+                let result = SemanticResult(value: tableOfContents, source: url, topicGraphNode: topicGraphNode)
+                tutorialTableOfContentsResults.append(result)
             } else if let tutorial = analyzed as? Tutorial {
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .tutorial, source: .file(url: url), title: tutorial.title ?? "")
                 topicGraph.addNode(topicGraphNode)
@@ -920,7 +1011,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
         
-        return (technologies, tutorials, tutorialArticles, articles, documentationExtensions)
+        return (tutorialTableOfContentsResults, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
     private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
@@ -1331,6 +1422,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
 
     private func shouldContinueRegistration() throws {
+        try Task.checkCancellation()
         guard isRegistrationEnabled.sync({ $0 }) else {
             throw ContextError.registrationDisabled
         }
@@ -1684,8 +1776,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     private func registerMiscResources(from bundle: DocumentationBundle) throws {
         let miscResources = Set(bundle.miscResourceURLs)
-        try assetManagers[bundle.identifier, default: DataAssetManager()]
-            .register(data: miscResources, dataProvider: dataProvider, bundle: bundle)
+        try assetManagers[bundle.identifier, default: DataAssetManager()].register(data: miscResources)
     }
     
     private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
@@ -1773,6 +1864,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// When given `false` the context will try to cancel as quick as possible
     /// any ongoing bundle registrations.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     public func setRegistrationEnabled(_ value: Bool) {
         isRegistrationEnabled.sync({ $0 = value })
     }
@@ -2064,7 +2156,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             symbolGraphLoader = SymbolGraphLoader(
                 bundle: bundle,
-                dataProvider: self.dataProvider,
+                dataLoader: { try self.contentsOfURL($0, in: $1) },
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
             )
             
@@ -2098,7 +2190,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         //       symbols or attempt to resolve links/references since the topic graph may not contain all documents
         //       or all symbols yet.
         var result: (
-            technologies: [SemanticResult<Technology>],
+            tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
             tutorials: [SemanticResult<Tutorial>],
             tutorialArticles: [SemanticResult<TutorialArticle>],
             articles: [SemanticResult<Article>],
@@ -2137,7 +2229,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         // All discovery went well, process the inputs.
-        let (technologies, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
+        let (tutorialTableOfContentsResults, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
         let globalOptions = (allArticles + documentationExtensions).compactMap { article in
@@ -2185,8 +2277,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for article in tutorialArticles {
             hierarchyBasedResolver.addTutorialArticle(article)
         }
-        for technology in technologies {
-            hierarchyBasedResolver.addTechnology(technology)
+        for tutorialTableOfContents in tutorialTableOfContentsResults {
+            hierarchyBasedResolver.addTutorialTableOfContents(tutorialTableOfContents)
         }
         
         registerRootPages(from: rootPageArticles, in: bundle)
@@ -2221,13 +2313,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         preResolveExternalLinks(semanticObjects:
-            technologies.map(referencedSemanticObject) +
+            tutorialTableOfContentsResults.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
             localBundleID: bundle.identifier)
         
         resolveLinks(
-            technologies: technologies,
+            tutorialTableOfContents: tutorialTableOfContentsResults,
             tutorials: tutorials,
             tutorialArticles: tutorialArticles,
             bundle: bundle
@@ -2481,14 +2573,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
-
-    private var checks: [ReferenceCheck] = []
     
     /// Adds new checks to be run during the global topic analysis; after a bundle has been fully registered and its topic graph has been fully built.
     ///
     /// - Parameter newChecks: The new checks to add.
+    @available(*, deprecated, message: "Use 'TopicAnalysisConfiguration.additionalChecks' instead. This deprecated API will be removed after 6.2 is released")
     public func addGlobalChecks(_ newChecks: [ReferenceCheck]) {
-        checks.append(contentsOf: newChecks)
+        configuration.topicAnalysisConfiguration.additionalChecks.append(contentsOf: newChecks)
     }
     
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
@@ -2554,7 +2645,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     func topicGraphGlobalAnalysis() {
         // Run any checks added to the context.
         let problems = knownIdentifiers.flatMap { reference in
-            return checks.flatMap { check in
+            return configuration.topicAnalysisConfiguration.additionalChecks.flatMap { check in
                 return check(self, reference)
             }
         }
@@ -2602,7 +2693,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      - Throws: ``ContextError/notFound(_:)` if a resource with the given was not found.
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
-        guard let bundle = bundle(identifier: identifier.bundleIdentifier),
+        guard let bundle,
               let assetManager = assetManagers[identifier.bundleIdentifier],
               let asset = assetManager.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
@@ -2610,7 +2701,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         let resource = asset.data(bestMatching: trait)
         
-        return try dataProvider.contentsOfURL(resource.url, in: bundle)
+        return try contentsOfURL(resource.url, in: bundle)
     }
     
     /// Returns true if a resource with the given identifier exists in the registered bundle.
@@ -2873,7 +2964,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - parent: The topic the code listing reference appears in.
     @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public func resolveCodeListing(_ unresolvedCodeListingReference: UnresolvedCodeListingReference, in parent: ResolvedTopicReference) -> AttributedCodeListing? {
-        return dataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
+        switch dataProvider {
+        case .legacy(let legacyDataProvider):
+            legacyDataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
+        case .new:
+            nil
+        }
     }
     
     /// The references of all nodes in the topic graph.
@@ -2913,8 +3009,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 extension DocumentationContext {
 
     /// The nodes that are allowed to be roots in the topic graph.
-    static var allowedRootNodeKinds: [DocumentationNode.Kind] = [.technology, .module]
-    
+    static var allowedRootNodeKinds: [DocumentationNode.Kind] = [.tutorialTableOfContents, .module]
+
     func analyzeTopicGraph() {
         // Find all nodes that are loose in the graph and have no parent but aren't supposed to
         let unexpectedRoots = topicGraph.nodes.values.filter { node in
@@ -2980,3 +3076,6 @@ extension DataAsset {
         }
     }
 }
+
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension DocumentationContext: DocumentationContextDataProviderDelegate {}
