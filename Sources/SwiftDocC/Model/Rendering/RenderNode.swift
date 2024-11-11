@@ -126,8 +126,14 @@ public struct RenderNode: VariantContainer {
     /// The key for each reference is the ``RenderReferenceIdentifier/identifier`` of the reference's ``RenderReference/identifier``.
     public var references: [String: RenderReference] = [:]
         
+    @available(*, deprecated, message: "Use 'hierarchyVariants' instead. This deprecated API will be removed after 6.2 is released")
+    public var hierarchy: RenderHierarchy? {
+        get { hierarchyVariants.defaultValue }
+        set { hierarchyVariants.defaultValue = newValue }
+    }
+    
     /// Hierarchy information about the context in which this documentation node is placed.
-    public var hierarchy: RenderHierarchy?
+    public var hierarchyVariants: VariantCollection<RenderHierarchy?> = .init(defaultValue: nil)
     
     /// Arbitrary metadata information about the render node.
     public var metadata = RenderMetadata()

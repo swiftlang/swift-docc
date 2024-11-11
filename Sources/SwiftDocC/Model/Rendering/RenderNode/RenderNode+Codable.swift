@@ -25,7 +25,10 @@ extension RenderNode: Codable {
         references = try (container.decodeIfPresent([String: CodableRenderReference].self, forKey: .references) ?? [:]).mapValues({$0.reference})
         metadata = try container.decode(RenderMetadata.self, forKey: .metadata)
         kind = try container.decode(Kind.self, forKey: .kind)
-        hierarchy = try container.decodeIfPresent(RenderHierarchy.self, forKey: .hierarchy)
+        hierarchyVariants = try container.decodeVariantCollectionIfPresent(
+            ofValueType: RenderHierarchy?.self,
+            forKey: .hierarchy
+        ) ?? .init(defaultValue: nil)
         topicSectionsStyle = try container.decodeIfPresent(TopicsSectionStyle.self, forKey: .topicSectionsStyle) ?? .list
         
         primaryContentSectionsVariants = try container.decodeVariantCollectionArrayIfPresent(
@@ -79,7 +82,7 @@ extension RenderNode: Codable {
         
         try container.encode(metadata, forKey: .metadata)
         try container.encode(kind, forKey: .kind)
-        try container.encode(hierarchy, forKey: .hierarchy)
+        try container.encodeVariantCollection(hierarchyVariants, forKey: .hierarchy, encoder: encoder)
         if topicSectionsStyle != .list {
             try container.encode(topicSectionsStyle, forKey: .topicSectionsStyle)
         }
