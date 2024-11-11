@@ -94,25 +94,37 @@ public struct InfoPlist: File, DataRepresentable {
     /// The information that the Into.plist file contains.
     public let content: Content
 
-    public init(displayName: String? = nil, identifier: String? = nil) {
+    public init(displayName: String? = nil, identifier: String? = nil, defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]? = nil) {
         self.content = Content(
             displayName: displayName,
-            identifier: identifier
+            identifier: identifier,
+            defaultAvailability: defaultAvailability
         )
     }
 
     public struct Content: Codable, Equatable {
         public let displayName: String?
         public let identifier: String?
+        public let defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?
 
-        fileprivate init(displayName: String?, identifier: String?) {
+        fileprivate init(displayName: String?, identifier: String?, defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?) {
             self.displayName = displayName
             self.identifier = identifier
+            self.defaultAvailability = defaultAvailability
         }
 
-        enum CodingKeys: String, CodingKey {
-            case displayName = "CFBundleDisplayName"
-            case identifier = "CFBundleIdentifier"
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
+            displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
+            identifier = try container.decodeIfPresent(String.self, forKey: .id)
+            defaultAvailability = try container.decodeIfPresent([String : [DefaultAvailability.ModuleAvailability]].self, forKey: .defaultAvailability)
+        }
+        
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
+            try container.encodeIfPresent(displayName, forKey: .displayName)
+            try container.encodeIfPresent(identifier, forKey: .id)
+            try container.encodeIfPresent(defaultAvailability, forKey: .defaultAvailability)
         }
     }
 
@@ -120,10 +132,7 @@ public struct InfoPlist: File, DataRepresentable {
         let encoder = PropertyListEncoder()
         encoder.outputFormat = .xml
         
-        return try encoder.encode([
-            Content.CodingKeys.displayName.rawValue: content.displayName,
-            Content.CodingKeys.identifier.rawValue: content.identifier,
-        ])
+        return try encoder.encode(content)
     }
 }
 

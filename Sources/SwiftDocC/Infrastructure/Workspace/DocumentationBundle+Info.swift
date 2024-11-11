@@ -45,7 +45,7 @@ extension DocumentationBundle {
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .id]
         
-        enum CodingKeys: String, CodingKey, CaseIterable {
+        package enum CodingKeys: String, CodingKey, CaseIterable {
             case displayName = "CFBundleDisplayName"
             case id = "CFBundleIdentifier"
             case defaultCodeListingLanguage = "CDDefaultCodeListingLanguage"

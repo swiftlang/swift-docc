@@ -206,6 +206,8 @@ public class DocumentationContentRenderer {
     }
     
     /// Given a node, returns if it's a beta documentation symbol or not.
+    ///
+    /// Symbols are only considered "in beta" if they are in beta for all platforms that they are available for.
     func isBeta(_ node: DocumentationNode) -> Bool {
         // We verify that this is a symbol with defined availability
         // and that we're feeding in a current set of platforms to the context.
@@ -219,8 +221,13 @@ public class DocumentationContentRenderer {
         // Verify that if current platforms are in beta, they match the introduced version of the symbol
         for availability in symbolAvailability {
             // If not available on this platform, skip to next platform.
-            guard !availability.isUnconditionallyUnavailable, let introduced = availability.introducedVersion else {
+            guard !availability.isUnconditionallyUnavailable else {
                 continue
+            }
+
+            // If the symbol doesn't have an introduced version for one of those platforms, we don't consider it "in beta".
+            guard let introduced = availability.introducedVersion else {
+                return false
             }
             
             // If we don't have introduced and current versions for the current platform
@@ -470,6 +477,7 @@ public class DocumentationContentRenderer {
     public struct ReferenceGroup: Codable {
         public let title: String?
         public let references: [ResolvedTopicReference]
+        var languageFilter: Set<SourceLanguage>?
     }
 
     /// Returns the task groups for a given node reference.
@@ -489,10 +497,7 @@ public class DocumentationContentRenderer {
         
         guard let taskGroups = groups, !taskGroups.isEmpty else { return nil }
 
-        // Find the linking group
-        var resolvedTaskGroups = [ReferenceGroup]()
-
-        for group in taskGroups {
+        return taskGroups.map { group in
             let resolvedReferences = group.links.compactMap { link -> ResolvedTopicReference? in
                 guard let destination = link.destination.flatMap(URL.init(string:)),
                     destination.scheme != nil,
@@ -515,12 +520,16 @@ public class DocumentationContentRenderer {
                 )
             }
             
-            resolvedTaskGroups.append(
-                ReferenceGroup(title: group.heading?.plainText, references: resolvedReferences)
+            let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
+                SupportedLanguage(from: $0, source: nil, for: bundle, in: documentationContext)?.language
+            }
+            
+            return ReferenceGroup(
+                title: group.heading?.plainText,
+                references: resolvedReferences,
+                languageFilter: supportedLanguages.map { Set($0) }
             )
         }
-        
-        return resolvedTaskGroups
     }
 }
 

@@ -393,7 +393,7 @@ public class DocumentationContext {
             return legacyDataProvider.bundles[identifier]
         case .new:
             assert(bundle?.identifier == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
-            bundle?.id.rawValue == identifier ? bundle : nil
+            return bundle?.id.rawValue == identifier ? bundle : nil
         }
     }
         

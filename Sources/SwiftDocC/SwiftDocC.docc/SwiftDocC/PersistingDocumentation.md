@@ -10,8 +10,7 @@ The ``DocumentationNodeConverter`` type converts documentation nodes to renderin
 
 ```swift
 let converter = DocumentationNodeConverter(bundle: myBundle, context: myContext)
-let renderNode = converter.convert(documentationNode, 
-    at: sourceURL, from: bundle)
+let renderNode = converter.convert(documentationNode)
 ```
 
 The render nodes can be persisted on disk as JSON files via `JSONEncodingRenderNodeWriter`:

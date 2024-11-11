@@ -19,7 +19,7 @@ final class InitActionTests: XCTestCase {
     func testInitActionCreatesArticleOnlyCatalog() async throws {
         let outputLocation = Folder(name: "output", content: [])
         let fileManager = try TestFileSystem(folders: [outputLocation])
-        var action = try InitAction(
+        let action = try InitAction(
             catalogOutputDirectory: outputLocation.absoluteURL.appendingPathComponent("\(documentationTitle).docc"),
             documentationTitle: documentationTitle,
             catalogTemplate: .articleOnly,
@@ -37,7 +37,7 @@ final class InitActionTests: XCTestCase {
     func testInitActionCreatesTutorialCatalog() async throws {
         let outputLocation = Folder(name: "output", content: [])
         let fileManager = try TestFileSystem(folders: [outputLocation])
-        var action = try InitAction(
+        let action = try InitAction(
             catalogOutputDirectory: outputLocation.absoluteURL.appendingPathComponent(
                 "\(documentationTitle).docc"
             ),
@@ -60,7 +60,7 @@ final class InitActionTests: XCTestCase {
     func testArticleOnlyCatalogContent() async throws {
         let outputLocation = Folder(name: "output", content: [])
         let fileManager = try TestFileSystem(folders: [outputLocation])
-        var action = try InitAction(
+        let action = try InitAction(
             catalogOutputDirectory: outputLocation.absoluteURL.appendingPathComponent("\(documentationTitle).docc"),
             documentationTitle: documentationTitle,
             catalogTemplate: .articleOnly,
@@ -89,7 +89,7 @@ final class InitActionTests: XCTestCase {
     func testTutorialCatalogContent() async throws {
         let outputLocation = Folder(name: "output", content: [])
         let fileManager = try TestFileSystem(folders: [outputLocation])
-        var action = try InitAction(
+        let action = try InitAction(
             catalogOutputDirectory: outputLocation.absoluteURL.appendingPathComponent("\(documentationTitle).docc"),
             documentationTitle: documentationTitle,
             catalogTemplate: .tutorial,

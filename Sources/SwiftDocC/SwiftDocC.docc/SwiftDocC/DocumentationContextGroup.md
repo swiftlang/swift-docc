@@ -4,8 +4,9 @@ Build and query the in-memory documentation model.
 
 ## Discussion
 
-The documentation context generally manages the in-memory documentation including:
- 
+A documentation context is the the in-memory representation of a "unit" of documentation (for example a module, package, or technology). 
+The context is generally responsible for:
+
  - Analyzing bundle file contents and converting to semantic models.
  - Managing a graph of documentation nodes (a single node representing one documentation topic).
  - Processing assets like media files or download archives.
@@ -14,12 +15,17 @@ The documentation context generally manages the in-memory documentation includin
 
 ### Creating a Context
 
-```swift
-let workspace = DocumentationWorkspace()
-let context = try DocumentationContext(dataProvider: workspace)
-```
+Use ``DocumentationContext/init(bundle:dataProvider:diagnosticEngine:configuration:)`` to create a context for a given bundle:
 
-During initialization the context will inspect the available bundles in the workspace and load any symbol graph files and markup files.
+```swift
+let inputsProvider = DocumentationContext.InputsProvider()
+let (bundle, dataProvider) = try inputsProvider.inputsAndDataProvider(
+    startingPoint: catalogURL, 
+    options: bundleDiscoveryOptions
+)
+
+let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)
+```
 
 ### Accessing Documentation
 
@@ -40,19 +46,11 @@ To find out the location of the source file for a given documentation node use:
 let sourceFileURL = try context.documentURL(for: reference)
 ```
 
-And finally to print all known paths in the context:
-
-```swift
-context.knownIdentifiers.forEach({ print($0) })
-```
-
 ## Topics
 
 ### Documentation Context
 
 - ``DocumentationContext``
-- ``DocumentationContextDataProvider``
-- ``DocumentationContextDataProviderDelegate``
 - ``AutomaticCuration``
 
 ### Documentation Nodes

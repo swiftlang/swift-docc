@@ -17,8 +17,10 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         let technologyReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
         var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        let renderHierarchy = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchy
-
+        let renderHierarchyVariants = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchyVariants
+        XCTAssertEqual(renderHierarchyVariants?.variants, [], "Unexpected variant hierarchies for tutorial table of content page")
+        let renderHierarchy = renderHierarchyVariants?.defaultValue
+        
         // Verify that the hierarchy translator has collected all topic references from the hierarchy
         XCTAssertEqual(translator.collectedTopicReferences.sorted(by: { $0.absoluteString <= $1.absoluteString }).map{ $0.absoluteString }, [
             "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial",
@@ -105,7 +107,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
-        guard let renderHierarchy = renderNode.hierarchy, case RenderHierarchy.tutorials(let hierarchy) = renderHierarchy else {
+        guard case .tutorials(let hierarchy) = renderNode.hierarchyVariants.defaultValue else {
             XCTFail("Did not find the node hierarchy")
             return
         }
@@ -124,5 +126,105 @@ class RenderHierarchyTranslatorTests: XCTestCase {
                 "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1",
             ],
         ])
+    }
+    
+    func testLanguageSpecificHierarchies() throws {
+        let (bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        
+        // An inner function to assert the rendered hierarchy values for a given reference
+        func assertExpectedHierarchies(
+            for reference: ResolvedTopicReference,
+            expectedSwiftPaths: [String]?,
+            expectedObjectiveCPaths: [String]?,
+            file: StaticString = #filePath,
+            line: UInt = #line
+        ) throws {
+            let documentationNode = try context.entity(with: reference)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            let renderNode = try XCTUnwrap(translator.visit(documentationNode.semantic) as? RenderNode, file: file, line: line)
+            
+            if let expectedSwiftPaths {
+                guard case .reference(let defaultHierarchy) = renderNode.hierarchyVariants.defaultValue else {
+                    XCTFail("Unexpectedly found `.tutorials` main hierarchy for symbol", file: file, line: line)
+                    return
+                }
+                XCTAssertEqual(defaultHierarchy.paths.count, 1, "Unexpectedly found \(defaultHierarchy.paths.count) symbol paths", file: file, line: line)
+                XCTAssertEqual(defaultHierarchy.paths.first, expectedSwiftPaths, file: file, line: line)
+            } else {
+                XCTAssertNil(renderNode.hierarchyVariants.defaultValue, "Unexpectedly found main hierarchy", file: file, line: line)
+            }
+                
+            if let expectedObjectiveCPaths {
+                let variants = try XCTUnwrap(renderNode.hierarchyVariants.variants.first, file: file, line: line)
+                let patch = try XCTUnwrap(variants.patch.first, file: file, line: line)
+                guard case .replace(value: .reference(let variantHierarchy)) = patch else {
+                    XCTFail("Unexpectedly found `.tutorials` variant hierarchy for symbol", file: file, line: line)
+                    return
+                }
+                XCTAssertEqual(variantHierarchy.paths.count, 1, "Unexpectedly found \(variantHierarchy.paths.count) symbol paths", file: file, line: line)
+                XCTAssertEqual(variantHierarchy.paths.first, expectedObjectiveCPaths, file: file, line: line)
+            } else {
+                XCTAssertNil(renderNode.hierarchyVariants.variants.first, "Unexpectedly found variant hierarchy", file: file, line: line)
+            }
+        }
+        
+        // typedef struct {
+        //     CGPoint center;
+        //     CGFloat radius;
+        // } TLACircle NS_SWIFT_NAME(Circle);
+        try assertExpectedHierarchies(
+            for: moduleReference.appendingPath("Circle/center"),
+            expectedSwiftPaths: [
+                "doc://GeometricalShapes/documentation/GeometricalShapes",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
+            ],
+            expectedObjectiveCPaths: [
+                "doc://GeometricalShapes/documentation/GeometricalShapes",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle", // named TLACircle in Objective-C
+            ]
+        )
+
+        // extern const TLACircle TLACircleZero NS_SWIFT_NAME(Circle.zero);
+        try assertExpectedHierarchies(
+            for: moduleReference.appendingPath("Circle/zero"),
+            expectedSwiftPaths: [
+                "doc://GeometricalShapes/documentation/GeometricalShapes",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle", // The Swift representation is a member
+            ],
+            expectedObjectiveCPaths: [
+                "doc://GeometricalShapes/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
+            ]
+        )
+        
+        // BOOL TLACircleIntersects(TLACircle circle, TLACircle otherCircle) NS_SWIFT_NAME(Circle.intersects(self:_:));
+        try assertExpectedHierarchies(
+            for: moduleReference.appendingPath("Circle/intersects(_:)"),
+            expectedSwiftPaths: [
+                "doc://GeometricalShapes/documentation/GeometricalShapes",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle", // The Swift representation is a member
+            ],
+            expectedObjectiveCPaths: [
+                "doc://GeometricalShapes/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
+            ]
+        )
+        
+        // TLACircle TLACircleMake(CGPoint center, CGFloat radius) NS_SWIFT_UNAVAILABLE("Use 'Circle.init(center:radius:)' instead.");
+        try assertExpectedHierarchies(
+            for: moduleReference.appendingPath("TLACircleMake"),
+            expectedSwiftPaths: nil, // There is no Swift representation
+            expectedObjectiveCPaths: [
+                "doc://GeometricalShapes/documentation/GeometricalShapes", // The Objective-C representation is a top-level function
+            ]
+        )
+          
+        try assertExpectedHierarchies(
+            for: moduleReference.appendingPath("Circle/init(center:radius:)"),
+            expectedSwiftPaths: [
+                "doc://GeometricalShapes/documentation/GeometricalShapes",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle", // The Swift representation is a member
+            ],
+            expectedObjectiveCPaths: nil // There is no Objective-C representation
+        )
     }
 }

@@ -32,7 +32,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
         let basePath = "test/folder"
         let indexHTML = Folder.testHTMLTemplate(basePath: "test/folder")
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
