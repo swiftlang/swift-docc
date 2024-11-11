@@ -45,7 +45,7 @@ extension PathHierarchy.DisambiguationContainer {
         let typeNames = Table<String>(width: numberOfTypes, height: overloadsAndTypeNames.count) { buffer in
             for (row, pair) in overloadsAndTypeNames.indexed() {
                 for (column, typeName) in pair.typeNames.indexed() {
-                    buffer[row, column] = typeName
+                    buffer.initializeElementAt(row: row, column: column, to: typeName)
                 }
             }
         }
@@ -62,7 +62,7 @@ extension PathHierarchy.DisambiguationContainer {
     
     // A private implementation that allows for different type of `_IntSet` to be used for different sizes of input.
     private static func _minimalSuggestedDisambiguation<IntSet: _IntSet>(
-        typeNames: consuming Table<String>,
+        typeNames: Table<String>,
         using: IntSet.Type
     ) -> [[String]?] {
         // We find the minimal suggested type-signature disambiguation in two steps.
@@ -110,7 +110,7 @@ extension PathHierarchy.DisambiguationContainer {
                     // Once we've found which rows have this type name we can assign all of them...
                     for row in rowsWithThisTypeName {
                         // Assign all the rows ...
-                        buffer[row, column] = rowsWithThisTypeName
+                        buffer.initializeElementAt(row: row, column: column, to: rowsWithThisTypeName)
                     }
                     // ... and we can remove them from `rowsToCheck` so we don't check them again for the next type name.
                     rowsToCheck.subtract(rowsWithThisTypeName)
@@ -402,9 +402,8 @@ private struct Table<Element> {
         }
 
         @inlinable
-        subscript(row: Int, column: Int) -> Element {
-            _read   { yield  wrapping[index(row: row, column: column)] }
-            _modify { yield &wrapping[index(row: row, column: column)] }
+        func initializeElementAt(row: Int, column: Int, to element: Element) {
+            wrapping.initializeElement(at: index(row: row, column: column), to: element)
         }
 
         private func index(row: Int, column: Int) -> Int {
