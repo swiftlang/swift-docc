@@ -211,9 +211,9 @@ documentation hierarchy.
 After you arrange nested symbols in an extension file, use DocC to compile your changes and review them in your browser.
 
 > Note: 
-> If you organize a member symbol into a topic group outside of its canonical container symbol, 
+> If you organize a member symbol into a topic group outside of the type that defines the member, 
 > DocC will still include the member symbol in the default topic group.
-> This ensures that the reader can always find the member symbol somewhere in the sub-hierarchy of its canonical container symbol. 
+> This ensures that the reader can always find the member symbol somewhere in the sub-hierarchy of the containing type.  
 
 ### Incorporate Hierarchy in Your Navigation
 
