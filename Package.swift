@@ -137,7 +137,6 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/apple/swift-docc-symbolkit", branch: "main"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0"),
-        .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.0"),
     ]
 } else {
     // Building in the Swift.org CI system, so rely on local versions of dependencies.
@@ -148,6 +147,9 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(path: "../swift-argument-parser"),
         .package(path: "../swift-docc-symbolkit"),
         .package(path: "../swift-crypto"),
-        .package(path: "../swift-algorithms"),
     ]
 }
+// Swift Algorithms isn't a local dependency in the Swift.org CI
+package.dependencies += [
+    .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.0"),
+]
