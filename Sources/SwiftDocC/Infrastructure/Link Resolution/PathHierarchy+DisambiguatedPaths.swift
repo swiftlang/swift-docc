@@ -240,7 +240,9 @@ extension PathHierarchy.DisambiguationContainer {
             collisions += _disambiguateByTypeSignature(
                 elementsThatSupportAdvancedDisambiguation,
                 types: \.returnTypes,
-                makeDisambiguation: { .returnTypes($1) },
+                makeDisambiguation: { _, disambiguatingTypeNames in
+                    .returnTypes(disambiguatingTypeNames)
+                },
                 remainingIDs: &remainingIDs
             )
             if remainingIDs.isEmpty {
@@ -250,7 +252,9 @@ extension PathHierarchy.DisambiguationContainer {
             collisions += _disambiguateByTypeSignature(
                 elementsThatSupportAdvancedDisambiguation,
                 types: \.parameterTypes,
-                makeDisambiguation: { .parameterTypes($1) },
+                makeDisambiguation: { _, disambiguatingTypeNames in
+                    .parameterTypes(disambiguatingTypeNames)
+                },
                 remainingIDs: &remainingIDs
             )
             if remainingIDs.isEmpty {
@@ -260,9 +264,9 @@ extension PathHierarchy.DisambiguationContainer {
             collisions += _disambiguateByTypeSignature(
                 elementsThatSupportAdvancedDisambiguation,
                 types: { ($0.parameterTypes ?? []) + ($0.returnTypes ?? []) },
-                makeDisambiguation: {
-                    let numberOfReturnTypes = $0.returnTypes?.count ?? 0
-                    return .mixedTypes(parameterTypes: $1.dropLast(numberOfReturnTypes), returnTypes: $1.suffix(numberOfReturnTypes))
+                makeDisambiguation: { element, disambiguatingTypeNames in
+                    let numberOfReturnTypes = element.returnTypes?.count ?? 0
+                    return .mixedTypes(parameterTypes: disambiguatingTypeNames.dropLast(numberOfReturnTypes), returnTypes: disambiguatingTypeNames.suffix(numberOfReturnTypes))
                 },
                 remainingIDs: &remainingIDs
             )
@@ -385,7 +389,7 @@ extension PathHierarchy.DisambiguationContainer {
                 return "-(\(types.joined(separator: ",")))"
                 
             case .mixedTypes(parameterTypes: let parameterTypes, returnTypes: let returnTypes):
-                return "\(Self.parameterTypes(parameterTypes).makeSuffix())\(Self.returnTypes(returnTypes).makeSuffix())"
+                return Self.parameterTypes(parameterTypes).makeSuffix() + Self.returnTypes(returnTypes).makeSuffix()
             }
         }
         
@@ -437,9 +441,9 @@ extension PathHierarchy.DisambiguationContainer {
                 continue // Need at least one type name to disambiguate (when there are multiple elements without parameters or return values)
             }
             
-            let disambiguation = minimalSuggestedDisambiguation(forOverloadsAndTypeNames: elementAndTypeNamePairs)
+            let suggestedDisambiguations = minimalSuggestedDisambiguation(forOverloadsAndTypeNames: elementAndTypeNamePairs)
             
-            for (pair, disambiguation) in zip(elementAndTypeNamePairs, disambiguation) {
+            for (pair, disambiguation) in zip(elementAndTypeNamePairs, suggestedDisambiguations) {
                 guard let disambiguation else {
                     continue // This element can't be uniquely disambiguated using these types
                 }

@@ -30,14 +30,17 @@ extension PathHierarchy.DisambiguationContainer {
     ///
     /// - Parameter overloadsAndTypeNames: The lists of overloads and their type-name lists to shrink to the minimal unique combinations of disambiguating type names.
     /// - Returns: A list of the minimal unique combinations of disambiguating type names for each overload, or `nil` for a specific index if that overload can't be uniquely disambiguated using the provided type names.
+    ///
+    /// - Precondition: All overloads have the same number of type names, greater than 0.
     static func minimalSuggestedDisambiguation(forOverloadsAndTypeNames overloadsAndTypeNames: [(element: Element, typeNames: [String])]) -> [[String]?] {
         // The number of types in each list
         guard let numberOfTypes = overloadsAndTypeNames.first?.typeNames.count, 0 < numberOfTypes else {
+            assertionFailure("Need at least one type name to disambiguate. It's the callers responsibility to check before calling this function.")
             return []
         }
         
         guard overloadsAndTypeNames.dropFirst().allSatisfy({ $0.typeNames.count == numberOfTypes }) else {
-            assertionFailure("Overloads should always have the same number of parameter types / return types")
+            assertionFailure("Overloads should always have the same number of type names (representing either parameter types or return types).")
             return []
         }
         
@@ -130,7 +133,8 @@ extension PathHierarchy.DisambiguationContainer {
         })
         
         guard !typeNameIndicesToCheck.isEmpty else {
-            // Every type name is common across all overloads. These type names can't be used to disambiguate the overloads.
+            // Every type name is common across all overloads.
+            // Return `nil` for each overload to indicate that none of them can be disambiguated using these type names.
             return .init(repeating: nil, count: typeNames.size.width)
         }
         
@@ -138,7 +142,7 @@ extension PathHierarchy.DisambiguationContainer {
         let typeNameCombinationsToCheck = typeNameIndicesToCheck.combinationsToCheck()
         
         return typeNames.rowIndices.map { row in
-            var shortestDisambiguationSoFar: (indicesToInclude: IntSet, length: Int)?
+            var shortestDisambiguationSoFar: (indicesToInclude: IntSet, length: Int)? = nil
             
             for typeNamesToInclude in typeNameCombinationsToCheck {
                 // Stop if we've already found a disambiguating combination using fewer type names than this.
@@ -215,6 +219,7 @@ extension Set<Int>: _IntSet {
         self.combinations(ofCount: 1...)
     }
 }
+// _TinySmallValueIntSet is defined just below.
 extension _TinySmallValueIntSet: _IntSet, _Combination {
     // Explicitly specify the associated types for Swift 5.9 compatibility.
     typealias Combination = Self
