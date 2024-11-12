@@ -144,6 +144,39 @@ extension PathHierarchy.DisambiguationContainer {
         return typeNames.rowIndices.map { row in
             var shortestDisambiguationSoFar: (indicesToInclude: IntSet, length: Int)? = nil
             
+            // To determine the fewest and shortest disambiguation for each overload, we check combinations with increasing number of type names.
+            // This explanation uses letters for type names occurrences to help distinguish them from the combinations of type names to check.
+            //
+            // For example, consider these type names from before (left) which occur in these overloads (right):
+            //
+            //   String   Int  Double                [A  ]   [ABC]   [AB ]
+            //   String?  Int  Double                [ BC]   [ABC]   [AB ]
+            //   String?  Int  Float                 [ BC]   [ABC]   [  C]
+            //
+            // With three different type names, the full list of combinations to check would be:
+            //
+            //   [0  ] [ 1 ] [  2] [01 ] [0 2] [ 12] [012]
+            //
+            // However, because the second type name [ 1 ] is known to be the same in all overloads, we can ignore any combination that includes it.
+            // This reduces the possible combinations to check down to:
+            //
+            //   [0  ]  ___  [  2]  ___  [0 2]  ___  ___
+            //
+            // For the first overload, we start by checking if the type names at [0  ], which is [A  ] can disambiguate the overload.
+            // Because [A  ] only contains one element, it can disambiguate the first overload. We calculate its length and keep track of this disambiguation.
+            // Next, we check the type names at [  0], which is [AB ] for the first overload. This doesn't disambiguate the overload.
+            // Next, we look at the type names at [0 2]. Because these are two type names and we already have a disambiguation with one type name,
+            // we break out of the loop and return the type names at [0  ] as the disambiguation for this overload ("String", "_", "_").
+            //
+            // For the second overload, we start over and check type names at [0  ], which is [ BC], can disambiguate the overload.
+            // It doesn't, so we check if the type names at [  2], which is [AB ], can disambiguate the second overload.
+            // It also doesn't, so we check the if the type names at [0 2], which are [ BC] and [AB ], disambiguates the second overload.
+            // The intersection of [ BC] and [AB ] is [ B ] which only has one value, so it does disambiguate the overload.
+            // So, we break out of the loop and return the type names at [0 2] as the disambiguation for the second overload ("String?", "_", "Double").
+            //
+            // The third overload works much like the first overload. The type names at [  2], which is [  C], disambiguates the overload.
+            // So, we break before checking [0 2]--which would include more type names--and return the type names at [  2] as the disambiguation ("_", "_", "Float").
+            
             for typeNamesToInclude in typeNameCombinationsToCheck {
                 // Stop if we've already found a disambiguating combination using fewer type names than this.
                 guard typeNamesToInclude.count <= (shortestDisambiguationSoFar?.indicesToInclude.count ?? .max) else {
