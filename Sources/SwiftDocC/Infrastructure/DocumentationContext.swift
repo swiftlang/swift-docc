@@ -2645,7 +2645,7 @@ public class DocumentationContext {
                     // treating the `DiagnosticEngine` as the top-level topic for all diagnostic related types.
                     
                     
-                    // To determine if `container` exist in the curated symbol's canonical container's sub-hierarchy,
+                    // To determine if `container` exists in the curated symbol's canonical container's sub-hierarchy,
                     // first find its nearest container symbol (in case `container` is a series of API collections).
                     //
                     // If the `container` is a symbol, this returns the container.
