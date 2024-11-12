@@ -1917,8 +1917,10 @@ Document
             var configuration = DocumentationContext.Configuration()
             // Add missing platforms if their fallback platform is present.
             var currentPlatforms = currentPlatforms ?? [:]
-            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
-                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            for (fallbackPlatform, platforms) in DefaultAvailability.fallbackPlatforms {
+                for platform in platforms where currentPlatforms[platform.displayName] == nil {
+                    currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+                }
             }
             configuration.externalMetadata.currentPlatforms = currentPlatforms
             

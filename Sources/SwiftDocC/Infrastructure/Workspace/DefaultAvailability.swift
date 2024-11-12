@@ -134,10 +134,7 @@ public struct DefaultAvailability: Codable, Equatable {
     ///
     /// The key corresponds to the fallback platform and the value to the platform it's
     /// fallbacking from.
-    package static let fallbackPlatforms: [PlatformName: PlatformName] = [
-        .catalyst: .iOS,
-        .iPadOS: .iOS,
-    ]
+    package static let fallbackPlatforms: [PlatformName: [PlatformName]] = [.iOS: [.catalyst, .iPadOS]]
 
     /// Creates a default availability module.
     /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
@@ -145,17 +142,19 @@ public struct DefaultAvailability: Codable, Equatable {
             self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
             // If a module doesn't contain default availability information for any of the fallback platforms,
             // infer it from the corresponding mapped value.
-            platformAvailabilities + DefaultAvailability.fallbackPlatforms.compactMap { (platform, fallbackPlatform) in
-                if !platformAvailabilities.contains(where: { $0.platformName == platform }),
-                   let fallbackAvailability = platformAvailabilities.first(where: { $0.platformName == fallbackPlatform }),
-                   let fallbackIntroducedVersion = fallbackAvailability.introducedVersion
-                {
-                    return DefaultAvailability.ModuleAvailability(
-                        platformName: platform,
-                        platformVersion: fallbackIntroducedVersion
-                    )
+            platformAvailabilities + DefaultAvailability.fallbackPlatforms.flatMap { (fallbackPlatform, platform) in
+                platform.compactMap { pla in
+                    if !platformAvailabilities.contains(where: { $0.platformName == pla }),
+                       let fallbackAvailability = platformAvailabilities.first(where: { $0.platformName == fallbackPlatform }),
+                       let fallbackIntroducedVersion = fallbackAvailability.introducedVersion
+                    {
+                        return DefaultAvailability.ModuleAvailability(
+                            platformName: pla,
+                            platformVersion: fallbackIntroducedVersion
+                        )
+                    }
+                    return nil
                 }
-                return nil
             }
         }
     }
