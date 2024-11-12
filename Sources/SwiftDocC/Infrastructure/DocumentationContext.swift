@@ -2409,7 +2409,7 @@ public class DocumentationContext {
     ///
     /// - Parameter automaticallyCurated: A list of automatic curation records.
     func removeUnneededAutomaticCuration(_ automaticallyCurated: [AutoCuratedSymbolRecord]) {
-        // It might look like it would be correct to check `topicGraph.nodes[symbol]?.isManuallyCuratedInContainer` here,
+        // It might look like it would be correct to check `topicGraph.nodes[symbol]?.shouldAutoCurateInCanonicalLocation` here,
         // but that would incorrectly remove the only parent if the manual curation and the automatic curation was the same.
         //
         // Similarly, it might look like it would be correct to only check `parents(of: symbol).count > 1` here,
