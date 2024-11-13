@@ -155,10 +155,11 @@
 ┃ ┃     ┗╸func1()
 ┃ ┣╸Classes
 ┃ ┗╸UncuratedClass
+┃   ┣╸Variables
+┃   ┗╸angle
 ┗╸Technology X
   ┣╸Chapter 1
   ┣╸Basic Augmented Reality App
   ┣╸Making an Augmented Reality App
   ┣╸Advanced Augmented Reality App
   ┗╸Basic Augmented Reality App
-
