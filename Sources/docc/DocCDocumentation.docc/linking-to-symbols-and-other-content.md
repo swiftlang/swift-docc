@@ -213,9 +213,27 @@ mutating public func update(_ energyLevel: Int) {
 ```
 
 Both methods have an identical symbol path of `SlothCreator/Sloth/update(_:)`. 
-In this scenario, DocC uses a short hash of each symbol's unique identifier to disambiguate the symbol link. 
-You can discover these hashes from DocC's warnings about ambiguous symbol links.
+In this scenario, DocC uses information from the symbols' type signatures to disambiguate.
+In this example there's only one parameter and its type is `Power` for the first overload and `Int` for the second overload. 
+DocC uses this parameter type information to suggest adding `(Power)` and `(Int)` to disambiguate each respective overload.
+
 The following example shows a topic group with disambiguated symbol links to both `Sloth/update(_:)` methods:
+
+```markdown
+### Updating Sloths
+
+- ``Sloth/update(_:)-(Power)``
+- ``Sloth/update(_:)-(Int)``
+```
+
+> Earlier Versions:
+> Before Swift-DocC 6.1, disambiguation using parameter types or return types isn't supported.
+
+If DocC can't disambiguate the symbol link using either a symbol type suffix or a combination parameter type names and return type names, 
+it will fall back to using a short hash of each symbol's unique identifier to disambiguate the symbol link. 
+You can discover these hashes from DocC's warnings about ambiguous symbol links.
+The following example shows the same topic group with symbol links to both `Sloth/update(_:)` methods as before, 
+but using each symbols unique identifier hash for disambiguation:
 
 ```markdown
 ### Updating Sloths
