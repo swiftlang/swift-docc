@@ -9,7 +9,6 @@
 */
 
 import Foundation
-import Algorithms
 
 extension PathHierarchy.DisambiguationContainer {
     
@@ -54,20 +53,18 @@ extension PathHierarchy.DisambiguationContainer {
         }
         
         if numberOfTypes < 64, overloadsAndTypeNames.count < 64 {
-            // If there are few enough types and few enough overloads, use a specialized SetAlgebra implementation to save some allocation and hashing overhead.
-            return _minimalSuggestedDisambiguation(typeNames: typeNames, using: _TinySmallValueIntSet.self)
+            // If there are few enough types and few enough overloads, use an optimized implementation for finding the fewest and shortest combination
+            // of type names that uniquely disambiguates each overload.
+            return _minimalSuggestedDisambiguationForFewParameters(typeNames: typeNames)
         } else {
-            // Otherwise, fall back to `Set<Int>`.
-            // This should happen very rarely as it's uncommon to have more than 64 overloads or to have overloads of functions with 64 parameters.
-            return _minimalSuggestedDisambiguation(typeNames: typeNames, using: Set<Int>.self)
+            // Otherwise, use a simpler implementation that only attempts to disambiguate each overload using a single type name.
+            // In practice, this should almost never happen since it's very rare to have overloads with more than 64 parameters or more than 64 overloads of the same symbol.
+            return _minimalSuggestedDisambiguationForManyParameters(typeNames: typeNames)
         }
     }
     
-    // A private implementation that allows for different type of `_IntSet` to be used for different sizes of input.
-    private static func _minimalSuggestedDisambiguation<IntSet: _IntSet>(
-        typeNames: Table<String>,
-        using: IntSet.Type
-    ) -> [[String]?] {
+    private static func _minimalSuggestedDisambiguationForFewParameters(typeNames: Table<String>) -> [[String]?] {
+        typealias IntSet = _TinySmallValueIntSet
         // We find the minimal suggested type-signature disambiguation in two steps.
         //
         // First, we compute which type names occur in which overloads.
@@ -218,65 +215,51 @@ extension PathHierarchy.DisambiguationContainer {
             }
         }
     }
+    
+    private static func _minimalSuggestedDisambiguationForManyParameters(typeNames: Table<String>) -> [[String]?] {
+        // If there are more than 64 parameters or more than 64 overloads we only try to disambiguate by a single type name.
+        //
+        // In practice, the number of parameters goes down rather quickly.
+        // After 16 parameters is's very rare to have symbols, let alone overloads.
+        // Overloads with more than 64 parameters or more than 64 overloads is exceptional.
+        // It could happen, but for the vast majority of projects, this code will never run.
+        // To keep the rest of the code simpler, we separate the code paths for few parameters and many parameters.
+        
+        return typeNames.rowIndices.map { row in
+            // With this many parameters, simply check if any single type name disambiguates each overload.
+            var shortestDisambiguationSoFar: (indexToInclude: Int, length: Int)? = nil
+            
+            for column in typeNames.columnIndices {
+                let typeName = typeNames[row, column]
+                
+                // Check if any other overload also has this type name at this location.
+                guard typeNames.rowIndices.allSatisfy({ $0 == row || typeNames[$0, column] != typeName }) else {
+                    // This type name doesn't uniquely identify this overload.
+                    continue
+                }
+                
+                // Track which disambiguating type name is the shortest.
+                let length = typeName.utf8.count
+                if length < (shortestDisambiguationSoFar?.length ?? .max) {
+                    shortestDisambiguationSoFar = (column, length)
+                }
+            }
+            
+            guard let (indexToInclude, _) = shortestDisambiguationSoFar else {
+                // This overload can't be uniquely disambiguated by a single type name
+                return nil
+            }
+            
+            // Found the fewest (and shortest) type names that uniquely disambiguate this overload.
+            // Return the list of disambiguating type names or "_" for an unused type name.
+            return typeNames.columnIndices.map {
+                $0 == indexToInclude ? typeNames[row, $0] : "_"
+            }
+        }
+    }
 }
 
 // MARK: Int Set
-
-/// A combination of type names to attempt to use for disambiguation.
-///
-/// This isn't a `Collection` alias to avoid adding new unnecessary API to `_TinySmallValueIntSet`.
-private protocol _Combination: Sequence<Int> {
-    // In addition to the general SetAlgebra, the code in this file checks the number of elements in the set.
-    var count: Int { get }
-}
-extension [Int]: _Combination {}
-    
-/// A private protocol that abstracts sets of integers.
-private protocol _IntSet: SetAlgebra<Int>, Sequence<Int> {
-    // In addition to the general SetAlgebra, the code in this file checks the number of elements in the set.
-    var count: Int { get }
-    
-    // Let each type specialize the creation of possible combinations to check.
-    associatedtype Combination: _Combination
-    associatedtype CombinationSequence: Sequence<Combination>
-    func combinationsToCheck() -> CombinationSequence
-}
-
-extension Set<Int>: _IntSet {
-    // Explicitly specify the associated types for Swift 5.9 compatibility.
-    typealias Combination = [Int]
-    typealias CombinationSequence = Algorithms.CombinationsSequence<Self>
-    
-    func combinationsToCheck() -> CombinationSequence {
-        // For `Set<Int>`, use the Swift Algorithms implementation to generate the possible combinations.
-        self.combinations(ofCount: 1...)
-    }
-}
-// _TinySmallValueIntSet is defined just below.
-extension _TinySmallValueIntSet: _IntSet, _Combination {
-    // Explicitly specify the associated types for Swift 5.9 compatibility.
-    typealias Combination = Self
-    typealias CombinationSequence = [Combination]
-
-    func combinationsToCheck() -> [Self] {
-        // For `_TinySmallValueIntSet`, leverage the fact that bits of an Int represent the possible combinations.
-        let smallest = storage.trailingZeroBitCount
-        
-        var combinations: [Self] = []
-        combinations.reserveCapacity((1 << count /*known to be <64 */) - 1)
-        
-        for raw in 1 ... storage >> smallest {
-            let combination = Self(storage: UInt64(raw << smallest))
-            
-            // Filter out any combinations that include columns that are the same for all overloads
-            guard self.isSuperset(of: combination) else { continue }
-
-            combinations.append(combination)
-        }
-        // The bits of larger and larger Int values won't be in order of number of bits set, so we sort them.
-        return combinations.sorted(by: { $0.count < $1.count })
-    }
-}
 
 /// A specialized set-algebra type that only stores the possible values `0 ..< 64`.
 ///
@@ -407,6 +390,28 @@ extension _TinySmallValueIntSet: Sequence {
             current += amountToShift
             return current
         }
+    }
+}
+
+extension _TinySmallValueIntSet {
+    /// All possible combinations of values to check in order of increasing number of values.
+    func combinationsToCheck() -> [Self] {
+        // For `_TinySmallValueIntSet`, leverage the fact that bits of an Int represent the possible combinations.
+        let smallest = storage.trailingZeroBitCount
+        
+        var combinations: [Self] = []
+        combinations.reserveCapacity((1 << count /*known to be <64 */) - 1)
+        
+        for raw in 1 ... storage >> smallest {
+            let combination = Self(storage: UInt64(raw << smallest))
+            
+            // Filter out any combinations that include columns that are the same for all overloads
+            guard self.isSuperset(of: combination) else { continue }
+
+            combinations.append(combination)
+        }
+        // The bits of larger and larger Int values won't be in order of number of bits set, so we sort them.
+        return combinations.sorted(by: { $0.count < $1.count })
     }
 }
 

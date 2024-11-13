@@ -9,7 +9,6 @@
 */
 
 import XCTest
-import Algorithms
 @testable import SwiftDocC
 
 class TinySmallValueIntSetTests: XCTestCase {
@@ -102,14 +101,38 @@ class TinySmallValueIntSetTests: XCTestCase {
         do {
             let tiny: _TinySmallValueIntSet = [3,4,7,11,15,16]
             
-            let expected = Array(tiny).combinations(ofCount: 1...)
-            let actual   = tiny.combinationsToCheck().map { Array($0) }
+            let expected: [[Int]] = [
+                // 1 elements
+                [3], [4], [7], [11], [15], [16],
+                // 2 elements
+                [3,4], [3,7], [3,11], [3,15], [3,16],
+                [4,7], [4,11], [4,15], [4,16],
+                [7,11], [7,15], [7,16],
+                [11,15], [11,16],
+                [15,16],
+                // 3 elements
+                [3,4,7], [3,4,11], [3,4,15], [3,4,16], [3,7,11], [3,7,15], [3,7,16], [3,11,15], [3,11,16], [3,15,16],
+                [4,7,11], [4,7,15], [4,7,16], [4,11,15], [4,11,16], [4,15,16],
+                [7,11,15], [7,11,16], [7,15,16],
+                [11,15,16],
+                // 4 elements
+                [3,4,7,11], [3,4,7,15], [3,4,7,16], [3,4,11,15], [3,4,11,16], [3,4,15,16], [3,7,11,15], [3,7,11,16], [3,7,15,16], [3,11,15,16],
+                [4,7,11,15], [4,7,11,16], [4,7,15,16], [4,11,15,16],
+                [7,11,15,16],
+                // 5 elements
+                [3,4,7,11,15], [3,4,7,11,16], [3,4,7,15,16], [3,4,11,15,16], [3,7,11,15,16],
+                [4,7,11,15,16],
+                // 6 elements
+                [3,4,7,11,15,16],
+            ]
+            let actual = tiny.combinationsToCheck().map { Array($0) }
             
             XCTAssertEqual(expected.count, actual.count)
             
-            // The two implementations doesn't need to provide combinations in the same order within a size
-            let expectedBySize: [[[Int]]] = expected.grouped(by: \.count).sorted(by: \.key).map(\.value)
-            let actualBySize:   [[[Int]]] = actual  .grouped(by: \.count).sorted(by: \.key).map(\.value)
+            // The order of combinations within a given size doesn't matter.
+            // It's only important that all combinations of a given size exist and that the sizes are in order.
+            let expectedBySize = [Int: [[Int]]](grouping: expected, by: \.count).sorted(by: \.key).map(\.value)
+            let actualBySize   = [Int: [[Int]]](grouping: actual,   by: \.count).sorted(by: \.key).map(\.value)
             
             for (expectedForSize, actualForSize) in zip(expectedBySize, actualBySize) {
                 XCTAssertEqual(expectedForSize.count, actualForSize.count)
@@ -120,7 +143,6 @@ class TinySmallValueIntSetTests: XCTestCase {
                 // [1, 2, 3], [1, 2, 4], [2, 3, 4], [1, 3, 4]
                 XCTAssertEqual(expectedForSize.map(\.description).sorted(),
                                actualForSize  .map(\.description).sorted())
-                
             }
         }
     }

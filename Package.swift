@@ -41,7 +41,6 @@ let package = Package(
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
                 .product(name: "Crypto", package: "swift-crypto"),
-                .product(name: "Algorithms", package: "swift-algorithms"),
             ],
             swiftSettings: swiftSettings
         ),
@@ -149,7 +148,3 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(path: "../swift-crypto"),
     ]
 }
-// Swift Algorithms isn't a local dependency in the Swift.org CI
-package.dependencies += [
-    .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.0"),
-]
