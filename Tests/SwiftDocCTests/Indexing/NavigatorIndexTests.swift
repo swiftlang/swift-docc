@@ -617,11 +617,15 @@ Root
             ┃ ┣╸first()
             ┃ ┃ ┣╸Manual curation
             ┃ ┃ ┗╸second()
-            ┃ ┗╸OtherSymbol
+            ┃ ┣╸OtherSymbol
+            ┃ ┃ ┣╸Manual curation
+            ┃ ┃ ┗╸second()
+            ┃ ┃   ┣╸Manual curation
+            ┃ ┃   ┗╸first()
+            ┃ ┣╸Instance Methods
+            ┃ ┗╸second()
             ┃   ┣╸Manual curation
-            ┃   ┗╸second()
-            ┃     ┣╸Manual curation
-            ┃     ┗╸first()
+            ┃   ┗╸first()
             ┗╸OtherSymbol
               ┣╸Manual curation
               ┗╸second()

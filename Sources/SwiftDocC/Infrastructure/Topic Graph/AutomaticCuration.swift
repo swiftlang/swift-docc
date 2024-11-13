@@ -90,7 +90,7 @@ public struct AutomaticCuration {
             .reduce(into: AutomaticCuration.groups) { groupsIndex, reference in
                 guard let topicNode = context.topicGraph.nodeWithReference(reference),
                       !topicNode.isEmptyExtension,
-                      !topicNode.isManuallyCurated
+                      topicNode.shouldAutoCurateInCanonicalLocation
                 else {
                     return
                 }
@@ -105,7 +105,7 @@ public struct AutomaticCuration {
                 // If this symbol is an overload group and all its overloaded children were manually
                 // curated elsewhere, skip it so it doesn't clutter the curation hierarchy with a
                 // duplicate symbol.
-                if let overloads = context.topicGraph.overloads(of: reference), overloads.isEmpty {
+                if let overloads = context.linkResolver.localResolver.overloads(ofGroup: reference), overloads.isEmpty {
                     return
                 }
 
