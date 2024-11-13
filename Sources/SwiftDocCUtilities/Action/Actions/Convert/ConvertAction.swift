@@ -143,8 +143,10 @@ public struct ConvertAction: AsyncAction {
         // Inject current platform versions if provided
         if var currentPlatforms {
             // Add missing platforms if their fallback platform is present.
-            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
-                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            for (fallbackPlatform, platforms) in DefaultAvailability.fallbackPlatforms {
+                for platform in platforms where currentPlatforms[platform.displayName] == nil {
+                    currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+                }
             }
             configuration.externalMetadata.currentPlatforms = currentPlatforms
         }
