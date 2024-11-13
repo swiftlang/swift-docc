@@ -3360,6 +3360,60 @@ class PathHierarchyTests: XCTestCase {
                 (symbolID: "function-overload-2", disambiguation: "-(_,_,_,_,_,_,_,_,_,Type-Two-Ten,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)"),
             ])
         }
+        
+        // Two overloads the same 5 String parameters falls back to hash disambiguation
+        do {
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: (1...2).map { symbolNumber in
+                        makeSymbol(id: "function-overload-\(symbolNumber)", kind: .func, pathComponents: ["doSomething(...)"], signature: .init(
+                            // Each overload the same 5 String parameters
+                            parameters: (1...5).map { parameterNumber in
+                                makeParameter("parameter\(parameterNumber)", decl: [stringType])
+                            }, returns: makeFragments([
+                                intType
+                            ])
+                        ))
+                    }
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(...)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-3k2fk"),
+                (symbolID: "function-overload-2", disambiguation: "-3k2fn"),
+            ])
+        }
+        
+        // Two overloads the same 70 String parameters falls back to hash disambiguation
+        do {
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: (1...2).map { symbolNumber in
+                        makeSymbol(id: "function-overload-\(symbolNumber)", kind: .func, pathComponents: ["doSomething(...)"], signature: .init(
+                            // Each overload has the same 70 String parameters.
+                            parameters: (1...70).map { parameterNumber in
+                                makeParameter("parameter\(parameterNumber)", decl: [stringType])
+                            }, returns: makeFragments([
+                                intType
+                            ])
+                        ))
+                    }
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(...)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-3k2fk"),
+                (symbolID: "function-overload-2", disambiguation: "-3k2fn"),
+            ])
+        }
     }
     
     func testParsingPaths() {
