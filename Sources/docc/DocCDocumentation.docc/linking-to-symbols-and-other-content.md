@@ -15,13 +15,13 @@ DocC supports the following link types to enable navigation between pages:
 
 ### Navigate to a Symbol
 
-To add a link to a symbol, wrap the symbol's name in a set of double backticks (\`\`):
+To add a link to a symbol in your module, wrap the symbol's name in a set of double backticks (\`\`):
 
 ```markdown
 ``Sloth``
 ```
 
-For member symbols or nested types, include the path to the symbol in the link:
+For links to member symbols or nested types, include the path to the symbol in the link:
 
 ```markdown
 ``Sloth/eat(_:quantity:)``
@@ -30,7 +30,7 @@ For member symbols or nested types, include the path to the symbol in the link:
 
 DocC resolves symbol links relative to the context that the link appears in.
 This allows links in a type's documentation comment to omit the type's name from the symbol path when referring to its members.
-For example, in the `Sloth` structure below, the `init(name:color:power:)` symbol link in the structure's documentation comment can omit the `Sloth/` portion of the symbol path:
+For example, in the `Sloth` structure below, the `init(name:color:power:)` symbol link omits the `Sloth/` portion of the symbol path:
 
 ```swift
 /// ...
@@ -43,10 +43,10 @@ public struct Sloth { //           ╰──────────┬───
 }
 ```
 
-If DocC can't resolve a link in the current context, it expands the search to the containing scope.
+If DocC can't resolve a link in the current context, it gradually expands the search to the containing scope.
 This allows links from one member to another member of the same type to omit the containing type's name from the symbol path.
-For example, in the `Sloth` structure below, the `eat(_:quantity:)` symbol link in the `energyLevel` property's documentation comment 
-can omit the `Sloth/` portion of the symbol path:
+For example, in the `Sloth` structure below, 
+the `eat(_:quantity:)` symbol link in the `energyLevel` property's documentation comment omits the `Sloth/` portion of the symbol path:
 
 ```swift
 /// ...
@@ -86,7 +86,7 @@ public struct Sloth {
 }
 ```
 
-A `Sloth/color` symbol link unambiguously refers to the `color` property and a `Sloth/Color` symbol link unambiguously refers to the inner `Color` type.
+A ` ``Sloth/color`` ` symbol link unambiguously refers to the `color` property and a ` ``Sloth/Color`` ` symbol link unambiguously refers to the inner `Color` type.
 
 #### Symbols with Multiple Language Representations
 
@@ -136,7 +136,7 @@ extension Color {
 ```
 
 Both the `red` property and the `red` static property have a symbol path of `Color/red`. 
-Because these are different types of symbols you can disambiguate `Color/red` with a suffix indicating the symbol's type.
+Because these are different types of symbols you can disambiguate ` ``Color/red`` ` with a suffix indicating the symbol's type.
 
 The following example shows a symbol link to the `red` property:
 
@@ -190,10 +190,10 @@ Symbol type suffixes can include a source language identifier prefix---for examp
 However, the language identifier doesn't disambiguate the link.
 
 
-In the example above, both symbols that match the ambiguous symbol path were the same type of symbol.
+In the example above, both symbols that match the ambiguous symbol path were different types of symbol.
 If the symbols that match the ambiguous symbol path have are the same type of symbol, 
 such as with overloaded methods in Swift, a symbol type suffix won't disambiguate the link.
-
+In this scenario, DocC uses information from the symbols' type signatures to disambiguate.
 For example, consider the `Sloth` structure---from the SlothCreator example---which has two different `update(_:)` methods:
 
 ```swift
@@ -213,7 +213,6 @@ mutating public func update(_ energyLevel: Int) {
 ```
 
 Both methods have an identical symbol path of `SlothCreator/Sloth/update(_:)`. 
-In this scenario, DocC uses information from the symbols' type signatures to disambiguate.
 In this example there's only one parameter and its type is `Power` for the first overload and `Int` for the second overload. 
 DocC uses this parameter type information to suggest adding `(Power)` and `(Int)` to disambiguate each respective overload.
 
@@ -228,7 +227,7 @@ The following example shows a topic group with disambiguated symbol links to bot
 
 If there are more overloads with more parameters and return values, 
 DocC may suggest a combination of parameter types and return value types to uniquely disambiguate each overload. 
-For example consider a hypothetical weather service with these three overloads---with different parameter types and different return types---for a hypothetical `forecast(for:at:)` method:
+For example consider a hypothetical weather service with these three overloads---with different parameter types and different return types---for a `forecast(for:at:)` method:
 
 ```swift
 public func forecast(for days: DateInterval, at location: Location) -> HourByHourForecast     { /* ... */ }
