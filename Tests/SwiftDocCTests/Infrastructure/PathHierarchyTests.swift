@@ -3300,7 +3300,7 @@ class PathHierarchyTests: XCTestCase {
                                 makeParameter("second", decl: [floatType]),  // Float
                             ], returns: makeFragments([                      // ->
                                 boolType                                     // Bool
-                                                      ])
+                            ])
                         )),
                     ]
                 ))
@@ -3314,6 +3314,50 @@ class PathHierarchyTests: XCTestCase {
                 (symbolID: "function-overload-2", disambiguation: "-(_,Int)->Bool"),   //  ( _  Int   )   ->   Bool
                 (symbolID: "function-overload-3", disambiguation: "-(_,Float)->Int"),  //  ( _  Float )   ->   Int
                 (symbolID: "function-overload-4", disambiguation: "-(_,Float)->Bool"), //  ( _  Float )   ->   Bool
+            ])
+        }
+        
+        // Two overloads with more than 64 parameters, but some unique
+        do {
+            let spellOutFormatter = NumberFormatter()
+            spellOutFormatter.numberStyle = .spellOut
+            
+            func makeUniqueToken(_ firstNumber: Int, secondNumber: Int) throws -> DeclToken {
+                func spelledOut(_ number: Int) throws -> String {
+                    try XCTUnwrap(spellOutFormatter.string(from: .init(value: number))).capitalizingFirstWord()
+                }
+                return try .typeIdentifier("Type-\(spelledOut(firstNumber))-\(spelledOut(secondNumber))", precise: "type-\(firstNumber)-\(secondNumber)")
+            }
+            
+            // Each overload has mostly the same 70 parameters, but the even ten parameters are unique.
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: try (1...2).map { symbolNumber in
+                        makeSymbol(id: "function-overload-\(symbolNumber)", kind: .func, pathComponents: ["doSomething(...)"], signature: .init(
+                            parameters: try (1...70).map { parameterNumber in
+                                makeParameter(
+                                    "parameter\(parameterNumber)",
+                                    decl: parameterNumber.isMultiple(of: 10)
+                                        // A unique type name for each overload
+                                        ? try [makeUniqueToken(symbolNumber, secondNumber: parameterNumber)]
+                                        // The same type name for each overload
+                                        : [stringType]
+                                )
+                            }, returns: makeFragments([
+                                intType
+                            ])
+                        ))
+                    }
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(...)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(_,_,_,_,_,_,_,_,_,Type-One-Ten,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)"),
+                (symbolID: "function-overload-2", disambiguation: "-(_,_,_,_,_,_,_,_,_,Type-Two-Ten,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_)"),
             ])
         }
     }
