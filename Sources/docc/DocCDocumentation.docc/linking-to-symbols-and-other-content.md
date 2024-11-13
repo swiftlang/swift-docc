@@ -226,20 +226,57 @@ The following example shows a topic group with disambiguated symbol links to bot
 - ``Sloth/update(_:)-(Int)``
 ```
 
+If there are more overloads with more parameters and return values, 
+DocC may suggest a combination of parameter types and return value types to uniquely disambiguate each overload. 
+For example consider a hypothetical weather service with these three overloads---with different parameter types and different return types---for a hypothetical `forecast(for:at:)` method:
+
+```swift
+public func forecast(for days: DateInterval, at location: Location) -> HourByHourForecast     { /* ... */ }
+public func forecast(for day:  Date,         at location: Location) -> MinuteByMinuteForecast { /* ... */ }
+public func forecast(for day:  Date,         at location: Location) -> HourByHourForecast     { /* ... */ }
+```
+
+The first overload is the only one with where the first parameter has a `DateInterval` type. 
+The second parameter type isn't necessary to disambiguate the overload, and is the same in all three overloads, 
+so DocC suggests to add `(DateInterval,_)` to disambiguate the it.
+
+The second overload is the only one with where the return value has a `MinuteByMinuteForecast` type, 
+so DocC suggests to add `‑>MinuteByMinuteForecast` to disambiguate the it.
+
+The third overload has the same parameter types as the second overload and the same return value as the first overload, 
+so DocC neither parameter types or return types alone can uniquely disambiguate this overload.
+In this scenario, DocC considers a combination of parameter types and return types to disambiguate the overload.
+The first parameter type is different from the first overload and the return type is different from the second overload.
+Together this information uniquely disambiguates the third overload, 
+so DocC suggests to add `(Date,_)‑>HourByHourForecast` to disambiguate the it.
+
+You can discover the minimal combination of parameter types and return types for each overload from DocC's warnings about ambiguous symbol links.
+
+The following example shows a topic group with disambiguated symbol links to the three `forecast(for:at:)` methods from before:
+
+```markdown
+### Requesting weather forecasts
+
+- ``forecast(for:at:)-(DateInterval,_)``
+- ``forecast(for:at:)->MinuteByMinuteForecast``
+- ``forecast(for:at:)->(Date,_)->HourByHourForecast``
+```
+
 > Earlier Versions:
 > Before Swift-DocC 6.1, disambiguation using parameter types or return types isn't supported.
 
 If DocC can't disambiguate the symbol link using either a symbol type suffix or a combination parameter type names and return type names, 
 it will fall back to using a short hash of each symbol's unique identifier to disambiguate the symbol link. 
 You can discover these hashes from DocC's warnings about ambiguous symbol links.
-The following example shows the same topic group with symbol links to both `Sloth/update(_:)` methods as before, 
+The following example shows the same topic group with symbol links to the three `forecast(for:at:)` methods as before, 
 but using each symbols unique identifier hash for disambiguation:
 
 ```markdown
-### Updating Sloths
+### Requesting weather forecasts
 
-- ``Sloth/update(_:)-4ko57``
-- ``Sloth/update(_:)-jixx``
+- ``forecast(for:at:)-3brnk``
+- ``forecast(for:at:)-4gcpg``
+- ``forecast(for:at:)-7f3u``
 ```
 
 ### Navigate to an Article
