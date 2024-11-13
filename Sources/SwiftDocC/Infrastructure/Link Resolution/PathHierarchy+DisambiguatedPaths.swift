@@ -263,7 +263,16 @@ extension PathHierarchy.DisambiguationContainer {
             
             collisions += _disambiguateByTypeSignature(
                 elementsThatSupportAdvancedDisambiguation,
-                types: { ($0.parameterTypes ?? []) + ($0.returnTypes ?? []) },
+                types: { element in
+                    guard let parameterTypes = element.parameterTypes,
+                          !parameterTypes.isEmpty,
+                          let returnTypes = element.returnTypes,
+                          !returnTypes.isEmpty
+                    else {
+                        return nil
+                    }
+                    return parameterTypes + returnTypes
+                },
                 makeDisambiguation: { element, disambiguatingTypeNames in
                     let numberOfReturnTypes = element.returnTypes?.count ?? 0
                     return .mixedTypes(parameterTypes: disambiguatingTypeNames.dropLast(numberOfReturnTypes), returnTypes: disambiguatingTypeNames.suffix(numberOfReturnTypes))
