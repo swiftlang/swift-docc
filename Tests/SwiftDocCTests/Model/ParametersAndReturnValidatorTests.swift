@@ -111,6 +111,62 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
+    func testExtendsReturnValueDocumentation() throws {
+        for (returnValueDescription, expectsExtendedDocumentation) in [
+            ("Returns some value.", true),
+            ("Returns some value, except if the function fails.", false),
+            ("Returns some value. If an error occurs, this function doesn't return a value.", false),
+            ("Returns some value. On failure, this function doesn't return a value.", false),
+            ("Returns some value. If something happens, this function returns `nil` instead.", false),
+            ("Returns some value, or `nil` if something goes wrong.", false),
+        ] {
+            let catalog = Folder(name: "unit-test.docc", content: [
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: nil,
+                        sourceLanguage: .swift,
+                        parameters: [],
+                        returnValue: .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS")
+                    ))
+                ]),
+                Folder(name: "clang", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Returns: \(returnValueDescription)
+                        """,
+                        sourceLanguage: .objectiveC,
+                        parameters: [(name: "error", externalName: nil)],
+                        returnValue: .init(kind: .typeIdentifier, spelling: "NSString", preciseIdentifier: "c:objc(cs)NSString")
+                    ))
+                ])
+            ])
+            
+            let (bundle, context) = try loadBundle(catalog: catalog)
+            
+            XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+            
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            
+            let parameterSections = symbol.parametersSectionVariants
+            XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), [], "The Swift variant has no error parameter")
+            XCTAssertEqual(parameterSections[.objectiveC]?.parameters.map(\.name), ["error"])
+            XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "On output, a pointer to an error object that describes why the method failed, or `nil` if no error occurred. If you are not interested in the error information, pass `nil` for this parameter.")
+            
+            let returnsSections = symbol.returnsSectionVariants
+            let expectedReturnValueDescription = returnValueDescription.replacingOccurrences(of: "\'", with: "’")
+            XCTAssertEqual(returnsSections[.swift]?.content.map({ $0.format() }).joined(), expectedReturnValueDescription)
+            if expectsExtendedDocumentation {
+                XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "\(expectedReturnValueDescription) On failure, this method returns `nil`.")
+            } else {
+                XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), expectedReturnValueDescription)
+            }
+        }
+    }
+    
     func testParametersWithAlternateSignatures() throws {
         let (_, _, context) = try testBundleAndContext(copying: "AlternateDeclarations") { url in
             try """
