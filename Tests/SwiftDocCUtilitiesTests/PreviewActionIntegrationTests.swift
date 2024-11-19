@@ -63,6 +63,130 @@ class PreviewActionIntegrationTests: XCTestCase {
         return (sourceURL: sourceURL, outputURL: outputURL, templateURL: templateURL)
     }
     
+    func testWatchRecoversAfterConversionErrors() async throws {
+        #if os(macOS)
+        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
+        defer {
+            try? FileManager.default.removeItem(at: sourceURL)
+            try? FileManager.default.removeItem(at: outputURL)
+            try? FileManager.default.removeItem(at: templateURL)
+        }
+        
+        // A FileHandle to read action's output.
+        let pipeURL = try createTemporaryDirectory().appendingPathComponent("pipe")
+        try Data().write(to: pipeURL)
+        let fileHandle = try FileHandle(forUpdating: pipeURL)
+        defer { fileHandle.closeFile() }
+
+        let convertActionTempDirectory = try createTemporaryDirectory()
+        let createConvertAction = {
+            try ConvertAction(
+                documentationBundleURL: sourceURL,
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: outputURL,
+                htmlTemplateDirectory: templateURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory)
+        }
+        
+        let preview = try PreviewAction(
+            port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
+            createConvertAction: createConvertAction
+        )
+        defer {
+            try? preview.stop()
+        }
+        
+        preview.bindServerToSocketPath = try createTemporaryTestSocketPath()
+        
+        let logStorage = LogHandle.LogStorage()
+
+        // The technology output file URL
+        let convertedOverviewURL = outputURL
+            .appendingPathComponent("data")
+            .appendingPathComponent("tutorials")
+            .appendingPathComponent("Overview.json")
+        
+        // Start watching the source and get the initial (successful) state.
+        do {
+            let didStartServerExpectation = asyncLogExpectation(log: logStorage, description: "Did start the preview server", expectedText: "=======")
+            
+            // Start the preview and keep it running for the asserts that follow inside this test.
+            Task {
+                var logHandle = LogHandle.memory(logStorage)
+                let result = try await preview.perform(logHandle: &logHandle)
+                
+                guard !result.problems.containsErrors else {
+                    throw ErrorsEncountered()
+                }
+            }
+            
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [didStartServerExpectation], timeout: 20.0)
+            
+            // Check the log output to confirm that expected informational text is printed
+            let logOutput = logStorage.text
+            
+            let expectedLogIntroductoryOutput = """
+            Input: \(sourceURL.path)
+            Template: \(templateURL.path)
+            """
+            XCTAssertTrue(logOutput.hasPrefix(expectedLogIntroductoryOutput), """
+            Missing expected input and template information in log/print output
+            """)
+            
+            if let previewInfoStart = logOutput.range(of: "=====\n")?.upperBound,
+               let previewInfoEnd = logOutput[previewInfoStart...].range(of: "\n=====")?.lowerBound {
+                XCTAssertEqual(logOutput[previewInfoStart..<previewInfoEnd], """
+                Starting Local Preview Server
+                \t Address: http://localhost:8080/documentation/mykit
+                \t          http://localhost:8080/tutorials/overview
+                """)
+            } else {
+                XCTFail("Missing preview information in log/print output")
+            }
+            
+            XCTAssertTrue(FileManager.default.fileExists(atPath: convertedOverviewURL.path, isDirectory: nil))
+        }
+
+        // Verify conversion result.
+        let overview = try JSONDecoder().decode(RenderNode.self, from: Data(contentsOf: convertedOverviewURL))
+        let introSection = try XCTUnwrap(overview.sections.first(where: { $0.kind == .hero }) as? IntroRenderSection)
+        XCTAssertEqual(introSection.title, "Technology X")
+
+        let invalidJSONSymbolGraphURL = sourceURL.appendingPathComponent("invalid-incomplete-data.symbols.json")
+
+        // Start watching the source and detect failed conversion.
+        do {
+            let didFailRebuiltExpectation = asyncLogExpectation(log: logStorage, description: "Did notice changed input and failed rebuild", expectedText: "Compilation failed")
+
+            // this is invalid JSON and will result in an error
+            try "{".write(to: invalidJSONSymbolGraphURL, atomically: true, encoding: .utf8)
+
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [didFailRebuiltExpectation], timeout: 20.0)
+        }
+
+        // Start watching the source and detect recovery and successful conversion after a failure.
+        do {
+            let didSuccessfullyRebuiltExpectation = asyncLogExpectation(log: logStorage, description: "Did notice changed input (again) and finished rebuild", expectedText: "Done")
+
+            try FileManager.default.removeItem(at: invalidJSONSymbolGraphURL)
+
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [didSuccessfullyRebuiltExpectation], timeout: 20.0)
+
+            // Check conversion result.
+            let overview = try JSONDecoder().decode(RenderNode.self, from: Data(contentsOf: convertedOverviewURL))
+            let introSection = try XCTUnwrap(overview.sections.first(where: { $0.kind == .hero }) as? IntroRenderSection)
+            XCTAssertEqual(introSection.title, "Technology X")
+        }
+        #endif
+    }
+    
     func testThrowsHumanFriendlyErrorWhenCannotStartServerOnAGivenPort() async throws {
         // Binding an invalid address
         try await assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on port -1")
@@ -82,9 +206,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         try Data().write(to: pipeURL)
         let fileHandle = try FileHandle(forUpdating: pipeURL)
         defer { fileHandle.closeFile() }
-
-        let workspace = DocumentationWorkspace()
-        _ = try! DocumentationContext(dataProvider: workspace)
 
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
@@ -197,7 +318,6 @@ class PreviewActionIntegrationTests: XCTestCase {
     
     func testCancelsConversion() async throws {
         #if os(macOS)
-        throw XCTSkip("To be reenabled again by #1059")
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
         defer {
             try? FileManager.default.removeItem(at: sourceURL)
@@ -238,8 +358,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             try? preview.stop()
         }
         
-        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
-        preview.bindServerToSocketPath = socketURL.path
+        preview.bindServerToSocketPath = try createTemporaryTestSocketPath()
         
         let logStorage = LogHandle.LogStorage()
         // Start watching the source and get the initial (successful) state.
@@ -291,6 +410,16 @@ class PreviewActionIntegrationTests: XCTestCase {
             
             // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
             await fulfillment(of: [expectation], timeout: 20.0)
+            // This assertion is always true if the expectation was fulfilled. However, in the past this expectation has sometimes (but very rarely) failed.
+            // If that happens we want to print the full preview action log to help investigate what went wrong.
+            XCTAssert(logStorage.text.contains("Conversion cancelled..."),
+                      """
+                      PreviewAction log output doesn't contain 'Conversion cancelled...'.
+                      Full log output from the preview action that ran in this test (to investigate the issue):
+                      --------------------------------------------------
+                      \(logStorage.text)
+                      --------------------------------------------------
+                      """)
         }
         
         #endif
@@ -332,6 +461,42 @@ class PreviewActionIntegrationTests: XCTestCase {
     }
     
     // MARK: -
+    
+    private func createTemporaryTestSocketPath() throws -> String {
+        // The unix domain socket paths have a character limit that we need to stay under.
+        
+        func isShortEnoughUnixDomainSocket(_ url: URL) -> Bool {
+            url.path.utf8.count <= 103
+        }
+        
+        // Prefer a temporary socket URL that's relative to the unit test bundle location if possible
+        let bundleRelativeSocketURL = try createTemporaryDirectory().appendingPathComponent("s", isDirectory: false)
+        if isShortEnoughUnixDomainSocket(bundleRelativeSocketURL) {
+            return bundleRelativeSocketURL.path
+        }
+        
+        // If that URL was to long, try a temporary socket URL in the user's shared temporary directory.
+        // The added "doc" and UUID components should be sufficient to avoid collisions with other tests or other processes.
+        
+        let tempDir = URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
+            .appendingPathComponent("docc", isDirectory: true)
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        
+        let socketURL = tempDir.appendingPathComponent("s", isDirectory: false)
+        
+        // If we couldn't create short enough socket path, skip the tests rather than fail them to avoid flakiness in the CI.
+        // The current implementation _should_ result in a path that's around 92 characters long, so the 11 character headroom
+        // should cover some amount of hypothetical changes to the `NSTemporaryDirectory` length and the `UUID().uuidString` length.
+        try XCTSkipIf(!isShortEnoughUnixDomainSocket(socketURL),
+                      "Temporary socket path \(socketURL.path.singleQuoted) is too long (\(socketURL.path.utf8.count) character) to start a preview server.")
+        
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        addTeardownBlock {
+            try? FileManager.default.removeItem(at: tempDir)
+        }
+        
+        return socketURL.path
+    }
     
     override static func setUp() {
         super.setUp()

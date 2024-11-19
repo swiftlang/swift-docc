@@ -58,31 +58,16 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     func testResolveExternalReference() throws {
-        let sourceURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "TestBundle",
+            externalResolvers: ["com.external.testbundle" : TestExternalReferenceResolver()]
+        ) { url in
+            let myClassExtensionFile = url.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
+            try String(contentsOf: myClassExtensionFile)
+                .replacingOccurrences(of: "MyClass abstract.", with: "MyClass uses a <doc://com.external.testbundle/article>.")
+                .write(to: myClassExtensionFile, atomically: true, encoding: .utf8)
+        }
         
-        // Create a copy of the test bundle
-        let bundleURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
-        try FileManager.default.copyItem(at: sourceURL, to: bundleURL)
-        
-        // Add external link
-        let myClassMDURL = bundleURL.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
-        try String(contentsOf: myClassMDURL)
-            .replacingOccurrences(of: "MyClass abstract.", with: "MyClass uses a <doc://com.external.testbundle/article>.")
-            .write(to: myClassMDURL, atomically: true, encoding: .utf8)
-        
-        // Load bundle and context
-        let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        let bundle = try XCTUnwrap(automaticDataProvider.bundles().first)
-        
-        let workspace = DocumentationWorkspace()
-        var configuration = DocumentationContext.Configuration()
-        configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : TestExternalReferenceResolver()]
-        let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
-
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
-
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/article")!)
         let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyClass", sourceLanguage: .swift)
 
@@ -170,7 +155,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     
     // This test verifies the behavior of a deprecated functionality (changing external documentation sources after registering the documentation)
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {
         let workspace = DocumentationWorkspace()
         let bundle = try testBundle(named: "TestBundle")

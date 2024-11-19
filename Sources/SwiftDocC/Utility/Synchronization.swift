@@ -97,16 +97,16 @@ public class Synchronized<Value> {
 /// lock.sync { myVar = 1 }
 /// let result = lock.sync { return index["key"] }
 /// ```
-typealias Lock = Synchronized<Void>
+package typealias Lock = Synchronized<Void>
 
-public extension Lock {
+extension Lock {
     /// Creates a new lock.
-    convenience init() {
+    package convenience init() {
         self.init(())
     }
     
     @discardableResult
-    func sync<Result>(_ block: () throws -> Result) rethrows -> Result {
+    package func sync<Result>(_ block: () throws -> Result) rethrows -> Result {
         #if os(macOS) || os(iOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }

@@ -12,6 +12,7 @@ import Foundation
 import SymbolKit
 
 /// A type that provides documentation bundles that it discovers by traversing the local file system.
+@available(*, deprecated, message: "Use 'DocumentationContext.InputProvider' instead. This deprecated API will be removed after 6.2 is released")
 public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     public var identifier: String = UUID().uuidString
     

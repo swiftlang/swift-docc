@@ -15,56 +15,29 @@ import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: AsyncAction {
-    enum Error: DescribedError {
-        case doesNotContainBundle(url: URL)
-        case cancelPending
-        var errorDescription: String {
-            switch self {
-            case .doesNotContainBundle(let url):
-                return """
-                    The directory at '\(url)' and its subdirectories do not contain at least one valid documentation \
-                    bundle. A documentation bundle is a directory ending in `.docc`. Pass \
-                    `--allow-arbitrary-catalog-directories` flag to convert a directory without a `.docc` extension.
-                    """
-            case .cancelPending:
-                return "The action is already in the process of being cancelled."
-            }
-        }
-    }
-
     let rootURL: URL?
-    let outOfProcessResolver: OutOfProcessReferenceResolver?
-    let analyze: Bool
     let targetDirectory: URL
     let htmlTemplateDirectory: URL?
-    let emitDigest: Bool
-    let inheritDocs: Bool
+    
+    private let emitDigest: Bool
     let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
-    let experimentalModifyCatalogWithGeneratedCuration: Bool
+    private let experimentalModifyCatalogWithGeneratedCuration: Bool
     let buildLMDBIndex: Bool
-    let documentationCoverageOptions: DocumentationCoverageOptions
-    let diagnosticLevel: DiagnosticSeverity
+    private let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticEngine: DiagnosticEngine
 
-    let transformForStaticHosting: Bool
-    let hostingBasePath: String?
+    private let transformForStaticHosting: Bool
+    private let hostingBasePath: String?
     
     let sourceRepository: SourceRepository?
     
-    private(set) var context: DocumentationContext
-    private let workspace: DocumentationWorkspace
-    private var currentDataProvider: DocumentationWorkspaceDataProvider?
-    private var injectedDataProvider: DocumentationWorkspaceDataProvider?
     private var fileManager: FileManagerProtocol
     private let temporaryDirectory: URL
     
-    var converter: DocumentationConverter
-    
-    private var durationMetric: Benchmark.Duration?
     private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
 
-    /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
+    /// Initializes the action with the given validated options.
     /// 
     /// - Parameters:
     ///   - documentationBundleURL: The root of the documentation catalog to convert.
@@ -77,9 +50,6 @@ public struct ConvertAction: AsyncAction {
     ///   - buildIndex: Whether or not the convert action should emit an LMDB representation of the navigator index.
     /// 
     ///     A JSON representation is built and emitted regardless of this value.
-    ///   - workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
-    ///   - context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
-    ///   - dataProvider: A data provider to use when registering bundles
     ///   - fileManager: The file manager that the convert action uses to create directories and write data to files.
     ///   - documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
     ///   - bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
@@ -106,9 +76,6 @@ public struct ConvertAction: AsyncAction {
         emitDigest: Bool,
         currentPlatforms: [String : PlatformVersion]?,
         buildIndex: Bool = false,
-        workspace: DocumentationWorkspace = DocumentationWorkspace(),
-        context: DocumentationContext? = nil,
-        dataProvider: DocumentationWorkspaceDataProvider? = nil,
         fileManager: FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
@@ -128,14 +95,10 @@ public struct ConvertAction: AsyncAction {
         dependencies: [URL] = []
     ) throws {
         self.rootURL = documentationBundleURL
-        self.outOfProcessResolver = outOfProcessResolver
-        self.analyze = analyze
         self.targetDirectory = targetDirectory
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.emitDigest = emitDigest
         self.buildLMDBIndex = buildIndex
-        self.workspace = workspace
-        self.injectedDataProvider = dataProvider
         self.fileManager = fileManager
         self.temporaryDirectory = temporaryDirectory
         self.documentationCoverageOptions = documentationCoverageOptions
@@ -161,7 +124,6 @@ public struct ConvertAction: AsyncAction {
             documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
         )
         
-        self.inheritDocs = inheritDocs
         self.treatWarningsAsErrors = treatWarningsAsErrors
 
         self.experimentalEnableCustomTemplates = experimentalEnableCustomTemplates
@@ -174,9 +136,8 @@ public struct ConvertAction: AsyncAction {
         }
         
         self.diagnosticEngine = engine
-        self.diagnosticLevel = filterLevel
         
-        var configuration = context?.configuration ?? DocumentationContext.Configuration()
+        var configuration = DocumentationContext.Configuration()
         
         configuration.externalMetadata.diagnosticLevel = filterLevel
         // Inject current platform versions if provided
@@ -198,52 +159,38 @@ public struct ConvertAction: AsyncAction {
             break
         }
         
-        let dataProvider: DocumentationWorkspaceDataProvider
-        if let injectedDataProvider {
-            dataProvider = injectedDataProvider
-        } else if let rootURL {
-            dataProvider = try LocalFileSystemDataProvider(
-                rootURL: rootURL,
-                allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
-            )
-        } else {
-            configuration.externalMetadata.isGeneratedBundle = true
-            dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { url in
-                fileManager.contents(atPath: url.path)
-            })
-        }
-        
         if let outOfProcessResolver {
             configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
             configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
-        (context as _DeprecatedConfigurationSetAccess?)?.configuration = configuration
-        
-        self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine, configuration: configuration)
-        
-        self.converter = DocumentationConverter(
-            documentationBundleURL: documentationBundleURL,
-            emitDigest: emitDigest,
-            documentationCoverageOptions: documentationCoverageOptions,
-            currentPlatforms: currentPlatforms,
-            workspace: workspace,
-            context: self.context,
-            dataProvider: dataProvider,
-            bundleDiscoveryOptions: bundleDiscoveryOptions,
-            sourceRepository: sourceRepository,
-            diagnosticEngine: self.diagnosticEngine,
-            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
+        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
+        let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
+            startingPoint: documentationBundleURL,
+            allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
+            options: bundleDiscoveryOptions
         )
+        self.configuration = configuration
+        
+        self.bundle = bundle
+        self.dataProvider = dataProvider
     }
+    
+    let configuration: DocumentationContext.Configuration
+    private let bundle: DocumentationBundle
+    private let dataProvider: DataProvider
     
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
     var _extraTestWork: (() async -> Void)?
 
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
-    public mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+        try await perform(logHandle: &logHandle).0
+    }
+    
+    func perform(logHandle: inout LogHandle) async throws -> (ActionResult, DocumentationContext) {
         // FIXME: Use `defer` again when the asynchronous defer-statement miscompilation (rdar://137774949) is fixed.
         let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
         do {
@@ -258,7 +205,7 @@ public struct ConvertAction: AsyncAction {
         }
     }
     
-    private mutating func _perform(logHandle: inout LogHandle, temporaryFolder: URL) async throws -> ActionResult {
+    private func _perform(logHandle: inout LogHandle, temporaryFolder: URL) async throws -> (ActionResult, DocumentationContext) {
         // Add the default diagnostic console writer now that we know what log handle it should write to.
         if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
             diagnosticEngine.add(
@@ -266,7 +213,7 @@ public struct ConvertAction: AsyncAction {
                     logHandle,
                     formattingOptions: diagnosticWriterOptions.formatting,
                     baseURL: diagnosticWriterOptions.baseURL,
-                    fileManager: fileManager
+                    dataProvider: dataProvider
                 )
             )
         }
@@ -324,20 +271,15 @@ public struct ConvertAction: AsyncAction {
             indexHTML = nil
         }
         
-        var coverageAction = CoverageAction(
+        let coverageAction = CoverageAction(
             documentationCoverageOptions: documentationCoverageOptions,
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        // An optional indexer, if indexing while converting is enabled.
-        var indexer: Indexer? = nil
-        
-        let bundleIdentifier = converter.firstAvailableBundle()?.identifier
-        if let bundleIdentifier {
-            // Create an index builder and prepare it to receive nodes.
-            indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
-        }
+        let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.identifier)
 
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
             bundleRootFolder: rootURL,
@@ -346,13 +288,31 @@ public struct ConvertAction: AsyncAction {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleIdentifier: bundleIdentifier
+            bundleIdentifier: bundle.identifier
         )
 
+        if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
+            let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: catalogURL)
+            let curation = try writer.generateDefaultCurationContents()
+            for (url, updatedContent) in curation {
+                guard let data = updatedContent.data(using: .utf8) else { continue }
+                try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+                try? data.write(to: url, options: .atomic)
+            }
+        }
+        
         let analysisProblems: [Problem]
         let conversionProblems: [Problem]
         do {
-            (analysisProblems, conversionProblems) = try converter.convert(outputConsumer: outputConsumer)
+            conversionProblems = try ConvertActionConverter.convert(
+                bundle: bundle,
+                context: context,
+                outputConsumer: outputConsumer,
+                sourceRepository: sourceRepository,
+                emitDigest: emitDigest,
+                documentationCoverageOptions: documentationCoverageOptions
+            )
+            analysisProblems = context.problems
         } catch {
             if emitDigest {
                 let problem = Problem(description: (error as? DescribedError)?.errorDescription ?? error.localizedDescription, source: nil)
@@ -369,14 +329,11 @@ public struct ConvertAction: AsyncAction {
         })
         // Warn the user if the catalog is a tutorial but does not contains a table of contents
         // and provide template content to fix this problem.
-        if (
-            context.tutorialTableOfContentsReferences.isEmpty &&
-            hasTutorial
-        ) {
+        if context.tutorialTableOfContentsReferences.isEmpty, hasTutorial {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
             var replacements = [Replacement]()
-            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Tutorial Name")[tableOfContentsFilename] {
+            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(bundle.displayName)[tableOfContentsFilename] {
                 replacements.append(
                     Replacement(
                         range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
@@ -404,7 +361,7 @@ public struct ConvertAction: AsyncAction {
         }
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
-        if let indexer {
+        do {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
             
             // Always emit a JSON representation of the index but only emit the LMDB
@@ -465,13 +422,13 @@ public struct ConvertAction: AsyncAction {
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleIdentifier: bundleIdentifier
+                bundleIdentifier: bundle.identifier
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)
         }
 
-        return ActionResult(didEncounterError: didEncounterError, outputs: [targetDirectory])
+        return (ActionResult(didEncounterError: didEncounterError, outputs: [targetDirectory]), context)
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
@@ -482,8 +439,3 @@ public struct ConvertAction: AsyncAction {
         return try Self.moveOutput(from: from, to: to, fileManager: fileManager)
     }
 }
-
-private protocol _DeprecatedConfigurationSetAccess: AnyObject {
-    var configuration: DocumentationContext.Configuration { get set }
-}
-extension DocumentationContext: _DeprecatedConfigurationSetAccess {}

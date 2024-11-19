@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,9 @@
 import XCTest
 @testable import SwiftDocC
 
+// This test verifies the behavior of `DocumentationConverter` which is a deprecated type.
+// Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 class DocumentationConverterTests: XCTestCase {
     /// An empty implementation of `ConvertOutputConsumer` that purposefully does nothing.
     struct EmptyConvertOutputConsumer: ConvertOutputConsumer {

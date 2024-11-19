@@ -35,13 +35,13 @@ struct RenderHierarchyTranslator {
     ///   - reference: A reference to a tutorials-related topic.
     ///   - omittingChapters: If `true`, don't include chapters in the returned hierarchy.
     /// - Returns: A tuple of 1) a tutorials hierarchy and 2) the root reference of the tutorials hierarchy.
-    mutating func visitTutorialTableOfContentsNode(_ reference: ResolvedTopicReference, omittingChapters: Bool = false) -> (hierarchy: RenderHierarchy, tutorialTableOfContents: ResolvedTopicReference)? {
+    mutating func visitTutorialTableOfContentsNode(_ reference: ResolvedTopicReference, omittingChapters: Bool = false) -> (hierarchyVariants: VariantCollection<RenderHierarchy?>, tutorialTableOfContents: ResolvedTopicReference)? {
         let paths = context.finitePaths(to: reference, options: [.preferTutorialTableOfContentsRoot])
         
         // If the node is a tutorial table-of-contents page, return immediately without generating breadcrumbs
         if let _ = (try? context.entity(with: reference))?.semantic as? TutorialTableOfContents {
             let hierarchy = visitTutorialTableOfContents(reference, omittingChapters: omittingChapters)
-            return (hierarchy: .tutorials(hierarchy), tutorialTableOfContents: reference)
+            return (hierarchyVariants: .init(defaultValue: .tutorials(hierarchy)), tutorialTableOfContents: reference)
         }
         
         guard let tutorialsPath = paths.mapFirst(where: { path -> [ResolvedTopicReference]? in
@@ -62,7 +62,7 @@ struct RenderHierarchyTranslator {
             .sorted { lhs, _ in lhs == tutorialsPath }
             .map { $0.map { $0.absoluteString } }
         
-        return (hierarchy: .tutorials(hierarchy), tutorialTableOfContents: tutorialTableOfContentsReference)
+        return (hierarchyVariants: .init(defaultValue: .tutorials(hierarchy)), tutorialTableOfContents: tutorialTableOfContentsReference)
     }
     
     /// Returns the hierarchy under a given tutorials table-of-contents page.
@@ -192,19 +192,42 @@ struct RenderHierarchyTranslator {
     /// The documentation model is a graph (and not a tree) so you can curate API symbols
     /// multiple times under other API symbols, articles, or API collections. This method
     /// returns all the paths (breadcrumbs) between the framework landing page and the given symbol.
-    mutating func visitSymbol(_ symbolReference: ResolvedTopicReference) -> RenderHierarchy {
-        let pathReferences = context.finitePaths(to: symbolReference)
+    mutating func visitSymbol(_ symbolReference: ResolvedTopicReference) -> VariantCollection<RenderHierarchy?> {
+        // An inner function used to create a RenderHierarchy from a list of references and collect the unique references
+        func makeHierarchy(_ references: [ResolvedTopicReference]) -> RenderHierarchy {
+            collectedTopicReferences.formUnion(references)
+            let paths = references.map(\.absoluteString)
+            return .reference(.init(paths: [paths]))
+        }
+        
+        let mainPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: symbolReference.sourceLanguage)
+        
+        var hierarchyVariants = VariantCollection<RenderHierarchy?>(
+            defaultValue: mainPathReferences.map(makeHierarchy) // It's possible that the symbol only has a language representation in a variant language
+        )
+        
+        for language in symbolReference.sourceLanguages where language != symbolReference.sourceLanguage {
+            guard let variantPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: language) else {
+                continue
+            }
+            hierarchyVariants.variants.append(.init(
+                traits: [.interfaceLanguage(language.id)],
+                patch: [.replace(value: makeHierarchy(variantPathReferences))]
+            ))
+        }
+        
+        return hierarchyVariants
+    }
+    
+    /// Returns the hierarchy under a given article.
+    /// - Parameter articleReference: The reference to the article.
+    /// - Returns: The framework hierarchy that describes all paths where the article is curated.
+    mutating func visitArticle(_ articleReference: ResolvedTopicReference) -> VariantCollection<RenderHierarchy?> {
+        let pathReferences = context.finitePaths(to: articleReference)
         pathReferences.forEach({
             collectedTopicReferences.formUnion($0)
         })
         let paths = pathReferences.map { $0.map { $0.absoluteString } }
-        return .reference(RenderReferenceHierarchy(paths: paths))
-    }
-    
-    /// Returns the hierarchy under a given article.
-    /// - Parameter symbolReference: The reference to the article.
-    /// - Returns: The framework hierarchy that describes all paths where the article is curated.
-    mutating func visitArticle(_ symbolReference: ResolvedTopicReference) -> RenderHierarchy {
-        return visitSymbol(symbolReference)
+        return .init(defaultValue: .reference(RenderReferenceHierarchy(paths: paths)))
     }
 }

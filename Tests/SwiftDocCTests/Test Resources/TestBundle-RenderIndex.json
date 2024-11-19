@@ -172,7 +172,8 @@
             ],
             "path" : "\/documentation\/mykit\/myclass",
             "title" : "MyClass",
-            "type" : "class"
+            "type" : "class",
+            "deprecated" : true
           },
           {
             "children" : [
@@ -293,7 +294,8 @@
             ],
             "path" : "\/documentation\/mykit\/myclass",
             "title" : "MyClass",
-            "type" : "class"
+            "type" : "class",
+            "deprecated" : true
           },
           {
             "children" : [
@@ -414,7 +416,8 @@
             ],
             "path" : "\/documentation\/mykit\/myclass",
             "title" : "MyClass",
-            "type" : "class"
+            "type" : "class",
+            "deprecated" : true
           }
         ],
         "path" : "\/documentation\/mykit\/myprotocol",
@@ -540,7 +543,8 @@
         ],
         "path" : "\/documentation\/mykit\/myclass",
         "title" : "MyClass",
-        "type" : "class"
+        "type" : "class",
+        "deprecated" : true
       },
       {
         "title" : "MyKit in Practice",
@@ -744,6 +748,17 @@
         "type" : "groupMarker"
       },
       {
+        "children" : [
+          {
+            "title" : "Variables",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/sidekit\/uncuratedclass\/angle",
+            "title" : "angle",
+            "type" : "var"
+          }
+        ],
         "path" : "\/documentation\/sidekit\/uncuratedclass",
         "title" : "UncuratedClass",
         "type" : "class"

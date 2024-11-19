@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -86,29 +86,24 @@ extension TestRenderNodeOutputConsumer {
 extension XCTestCase {
     func renderNodeConsumer(
         for bundleName: String,
-        configureBundle: ((URL) throws -> Void)? = nil,
-        configureConverter: ((inout DocumentationConverter) throws -> Void)? = nil
+        sourceRepository: SourceRepository? = nil,
+        configureBundle: ((URL) throws -> Void)? = nil
     ) throws -> TestRenderNodeOutputConsumer {
-        let (bundleURL, _, context) = try testBundleAndContext(
+        let (_, bundle, context) = try testBundleAndContext(
             copying: bundleName,
             configureBundle: configureBundle
         )
         
-        var converter = DocumentationConverter(
-            documentationBundleURL: bundleURL,
-            emitDigest: false,
-            documentationCoverageOptions: .noCoverage,
-            currentPlatforms: nil,
-            workspace: context.dataProvider as! DocumentationWorkspace,
-            context: context,
-            dataProvider: try LocalFileSystemDataProvider(rootURL: bundleURL),
-            bundleDiscoveryOptions: BundleDiscoveryOptions()
-        )
-        
-        try configureConverter?(&converter)
-        
         let outputConsumer = TestRenderNodeOutputConsumer()
-        let (_, _) = try converter.convert(outputConsumer: outputConsumer)
+        
+        _ = try ConvertActionConverter.convert(
+            bundle: bundle,
+            context: context,
+            outputConsumer: outputConsumer,
+            sourceRepository: sourceRepository,
+            emitDigest: false,
+            documentationCoverageOptions: .noCoverage
+        )
         
         return outputConsumer
     }
