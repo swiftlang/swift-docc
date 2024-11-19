@@ -3605,4 +3605,40 @@ Document
         
         XCTAssertEqual(expectedContent, renderContent)
     }
+    
+    func testSymbolWithEmptyName() throws {
+        // Symbols _should_ have names, but due to bugs there's cases when anonymous C structs don't.
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbol(id: "some-container",      language: .objectiveC, kind: .class,  pathComponents: ["SomeContainer"]),
+                    makeSymbol(id: "some-unnamed-struct", language: .objectiveC, kind: .struct, pathComponents: ["SomeContainer", ""]),
+                    makeSymbol(id: "some-inner-member",   language: .objectiveC, kind: .var,    pathComponents: ["SomeContainer", "", "someMember"]),
+                ],
+                relationships: [
+                    .init(source: "some-unnamed-struct", target: "some-container",      kind: .memberOf, targetFallback: nil),
+                    .init(source: "some-inner-member",   target: "some-unnamed-struct", kind: .memberOf, targetFallback: nil),
+                ]
+            ))
+        ])
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        
+        XCTAssertEqual(context.knownPages.map(\.path).sorted(), [
+            "/documentation/ModuleName",
+            "/documentation/ModuleName/SomeContainer",
+            "/documentation/ModuleName/SomeContainer/struct_(unnamed)",
+            "/documentation/ModuleName/SomeContainer/struct_(unnamed)/someMember"
+        ], "The reference paths shouldn't have any empty components")
+        
+        let unnamedStructReference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SomeContainer/struct_(unnamed)")
+        let node = try context.entity(with: unnamedStructReference)
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = try converter.convert(node)
+        
+        XCTAssertEqual(renderNode.metadata.title, "struct (unnamed)")
+        XCTAssertEqual(renderNode.metadata.navigatorTitle?.map(\.text).joined(), "struct (unnamed)")
+    }
 }
