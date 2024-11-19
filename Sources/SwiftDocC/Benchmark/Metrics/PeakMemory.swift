@@ -52,8 +52,7 @@ extension Benchmark {
                 let peakMemoryString = statusString.components(separatedBy: .newlines)
                     .first(where: { $0.hasPrefix("VmPeak") })?
                     .components(separatedBy: CharacterSet.decimalDigits.inverted)
-                    .filter({ !$0.isEmpty })
-                    .first,
+                    .first(where: { !$0.isEmpty }),
                 let peakMemory = Double(peakMemoryString) else { return nil }
 
             return Int64(peakMemory * 1024) // convert from KBytes to bytes
