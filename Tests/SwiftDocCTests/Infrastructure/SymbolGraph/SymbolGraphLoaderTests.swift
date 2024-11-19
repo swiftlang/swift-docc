@@ -114,7 +114,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     // This test calls ``SymbolGraph.relationships`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated) // `SymbolGraph.relationships` doesn't specify when it will be removed
     func testLoadingHighNumberOfModulesConcurrently() throws {
         let tempURL = try createTemporaryDirectory()
 
@@ -1738,7 +1738,7 @@ class SymbolGraphLoaderTests: XCTestCase {
              }
             """
         )
-        var infoPlist = """
+        let infoPlist = """
         <plist version="1.0">
         <dict>
             <key>CDAppleDefaultAvailability</key>
@@ -1769,7 +1769,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        var (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@Bar"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@Bar'")
             return
@@ -1788,7 +1788,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         symbolGraphURLs: [URL],
         configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
     ) throws -> SymbolGraphLoader {
-        let workspace = DocumentationWorkspace()
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
@@ -1799,11 +1798,12 @@ class SymbolGraphLoaderTests: XCTestCase {
             markupURLs: [],
             miscResourceURLs: []
         )
-        try workspace.registerProvider(PrebuiltLocalFileSystemDataProvider(bundles: [bundle]))
         
         return SymbolGraphLoader(
             bundle: bundle,
-            dataProvider: workspace,
+            dataLoader: { url, _ in
+                try FileManager.default.contents(of: url)
+            },
             symbolGraphTransformer: configureSymbolGraph
         )
     }

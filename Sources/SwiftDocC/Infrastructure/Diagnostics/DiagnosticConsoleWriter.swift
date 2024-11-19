@@ -33,7 +33,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         baseURL: URL? = nil,
         highlight: Bool? = nil
     ) {
-        self.init(stream, formattingOptions: options, baseURL: baseURL, highlight: highlight, fileManager: FileManager.default)
+        self.init(stream, formattingOptions: options, baseURL: baseURL, highlight: highlight, dataProvider: FileManager.default)
     }
     
     package init(
@@ -41,7 +41,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         formattingOptions options: DiagnosticFormattingOptions = [],
         baseURL: URL? = nil,
         highlight: Bool? = nil,
-        fileManager: FileManagerProtocol = FileManager.default
+        dataProvider: DataProvider = FileManager.default
     ) {
         outputStream = stream
         formattingOptions = options
@@ -49,7 +49,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
             options,
             baseURL: baseURL,
             highlight: highlight ?? TerminalHelper.isConnectedToTerminal,
-            fileManager: fileManager
+            dataProvider: dataProvider
         )
     }
 
@@ -79,12 +79,12 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         _ options: DiagnosticFormattingOptions,
         baseURL: URL?,
         highlight: Bool,
-        fileManager: FileManagerProtocol
+        dataProvider: DataProvider
     ) -> DiagnosticConsoleFormatter {
         if options.contains(.formatConsoleOutputForTools) {
             return IDEDiagnosticConsoleFormatter(options: options)
         } else {
-            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: highlight, options: options, fileManager: fileManager)
+            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: highlight, options: options, dataProvider: dataProvider)
         }
     }
 }
@@ -103,7 +103,7 @@ extension DiagnosticConsoleWriter {
         formattedDescription(for: problem, options: options, fileManager: FileManager.default)
     }
     package static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
+        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, dataProvider: fileManager)
         return diagnosticFormatter.formattedDescription(for: problem)
     }
     
@@ -111,7 +111,7 @@ extension DiagnosticConsoleWriter {
         formattedDescription(for: diagnostic, options: options, fileManager: FileManager.default)
     }
     package static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
+        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, dataProvider: fileManager)
         return diagnosticFormatter.formattedDescription(for: diagnostic)
     }
 }
@@ -220,7 +220,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     private let baseUrl: URL?
     private let highlight: Bool
     private var sourceLines: [URL: [String]] = [:]
-    private var fileManager: FileManagerProtocol
+    private var dataProvider: DataProvider
 
     /// The number of additional lines from the source file that should be displayed both before and after the diagnostic source line.
     private static let contextSize = 2
@@ -229,12 +229,12 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         baseUrl: URL?,
         highlight: Bool,
         options: DiagnosticFormattingOptions,
-        fileManager: FileManagerProtocol
+        dataProvider: DataProvider
     ) {
         self.baseUrl = baseUrl
         self.highlight = highlight
         self.options = options
-        self.fileManager = fileManager
+        self.dataProvider = dataProvider
     }
     
     func formattedDescription(for problems: some Sequence<Problem>) -> String {
@@ -507,7 +507,7 @@ extension DefaultDiagnosticConsoleFormatter {
         }
 
         // TODO: Add support for also getting the source lines from the symbol graph files.
-        guard let data = fileManager.contents(atPath: url.path),
+        guard let data = try? dataProvider.contents(of: url),
               let content = String(data: data, encoding: .utf8)
         else { 
             return []

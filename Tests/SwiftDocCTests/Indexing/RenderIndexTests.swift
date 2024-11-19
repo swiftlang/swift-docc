@@ -242,6 +242,15 @@ final class RenderIndexTests: XCTestCase {
                         ]
                       },
                       {
+                        "title": "Type Aliases",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/foo-c.typealias",
+                        "title": "Foo",
+                        "type": "typealias"
+                      },
+                      {
                         "title": "Enumerations",
                         "type": "groupMarker"
                       },

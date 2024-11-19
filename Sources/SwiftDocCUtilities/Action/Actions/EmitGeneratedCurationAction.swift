@@ -41,7 +41,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
         self.fileManager = fileManager
     }
     
-    mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
         let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
             startingPoint: catalogURL,

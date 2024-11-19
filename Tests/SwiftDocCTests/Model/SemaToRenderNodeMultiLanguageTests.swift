@@ -243,7 +243,10 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "APICollection",
                 "Article",
                 "Bar",
-                "Foo",
+                "Foo", // Foo.swift.struct
+                // This assertion is misleading because the RenderNode "references" are shared across all variants.
+                // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
+                "Foo", // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
                 "MixedLanguageClassConformingToProtocol",
                 "MixedLanguageFramework",
                 "MixedLanguageFramework Tutorials",
@@ -262,6 +265,13 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "protocol MixedLanguageProtocol",
                 "struct Foo",
                 "struct SwiftOnlyStruct",
+                // This assertion is misleading because the RenderNode "references" are shared across all variants.
+                // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
+                """
+                typedef enum Foo : NSString {
+                    ...
+                } Foo;
+                """, // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
             ],
             failureMessage: { fieldName in
                 "Swift variant of 'MixedLanguageFramework' module has unexpected content for '\(fieldName)'."
@@ -293,13 +303,18 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageProtocol",
+                // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-c.typealias",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
                 "APICollection",
                 "Article",
                 "Bar",
-                "Foo",
+                "Foo", // Foo.swift.struct
+                // This assertion is misleading because the RenderNode "references" are shared across all variants.
+                // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
+                "Foo", // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
                 "MixedLanguageClassConformingToProtocol",
                 "MixedLanguageFramework",
                 "MixedLanguageFramework Tutorials",
@@ -318,6 +333,13 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "class SwiftOnlyClass",
                 "struct Foo",
                 "struct SwiftOnlyStruct",
+                // This assertion is misleading because the RenderNode "references" are shared across all variants.
+                // Just because a topic exist among the "references" doesn't mean that it will display anywhere for a given language representation.
+                """
+                typedef enum Foo : NSString {
+                    ...
+                } Foo;
+                """, // `Foo-c.typealias` is curated under `Bar/myStringFunction:error:` which doesn't stop automatic curation
             ],
             failureMessage: { fieldName in
                 "Objective-C variant of 'MixedLanguageFramework' module has unexpected content for '\(fieldName)'."
@@ -478,38 +500,6 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             canonicalReference,
         ], "Both spellings of the symbol link should resolve to the canonical reference.")
     }
-    
-    func testObjectiveCOnlySymbolCuratedInSwiftOnlySymbolIsNotFilteredOut() throws {
-         let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFrameworkSingleLanguageCuration")
-         let fooRenderNode = try outputConsumer.renderNode(
-             withIdentifier: "s:22MixedLanguageFramework15SwiftOnlyStruct1V"
-         )
-
-         assertExpectedContent(
-             fooRenderNode,
-             sourceLanguage: "swift",
-             symbolKind: "struct",
-             title: "SwiftOnlyStruct1",
-             navigatorTitle: nil,
-             abstract: "This is an awesome, Swift-only symbol.",
-             declarationTokens: nil,
-             discussionSection: nil,
-             topicSectionIdentifiers: [
-                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MultiCuratedObjectiveCOnlyClass1",
-             ],
-             referenceTitles: [
-                "MixedLanguageFramework",
-                "MultiCuratedObjectiveCOnlyClass1",
-                "MultiCuratedObjectiveCOnlyClass2",
-                "SwiftOnlyStruct1",
-                "SwiftOnlyStruct2",
-             ],
-             referenceFragments: [],
-             failureMessage: { fieldName in
-                 "Swift variant of 'SwiftOnlySymbol1' symbol has unexpected content for '\(fieldName)'."
-             }
-         )
-     }
     
     func testArticleInMixedLanguageFramework() throws {
         let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework") { url in
@@ -972,7 +962,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func testAutomaticSeeAlsoSectionElementLimit() throws {
-        let fileSystem = try TestFileSystem(folders: [
+        let (bundle, context) = try loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: (1...50).map {
                     makeSymbol(id: "symbol-id-\($0)", kind: .class, pathComponents: ["SymbolName\($0)"])
@@ -990,14 +980,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 \((1...50).map { "- ``SymbolName\($0)``" }.joined(separator: "\n"))
                 """),
             ])
-        ])
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        try workspace.registerProvider(fileSystem)
+        )
 
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
-        let bundle = try XCTUnwrap(context.registeredBundles.first)
 
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 

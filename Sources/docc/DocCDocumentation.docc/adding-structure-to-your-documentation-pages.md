@@ -118,8 +118,12 @@ backticks (\`\`) .
 - ``Activity``
 - ``CareSchedule``
 - ``FoodGenerator``
-- ``Sloth/Food``
 ```
+
+> Tip: 
+> If you feel that a top-level topic group contains too many links, 
+> it could be an indication that that you can further organize the links into subtopics.
+> For more information, see the <doc:#Incorporate-Hierarchy-in-Your-Navigation> section below.
 
 DocC uses the double backtick format to create symbol links, and to add the 
 symbol's type information and summary. For more information, see 
@@ -206,6 +210,11 @@ documentation hierarchy.
 
 After you arrange nested symbols in an extension file, use DocC to compile your changes and review them in your browser.
 
+> Note: 
+> If you organize a member symbol into a topic group outside of the type that defines the member, 
+> DocC will still include the member symbol in the default topic group.
+> This ensures that the reader can always find the member symbol somewhere in the sub-hierarchy of the containing type.  
+
 ### Incorporate Hierarchy in Your Navigation
 
 Much like you organize symbols on a landing page or in an extension file, you 
@@ -241,4 +250,4 @@ they can also confuse a reader if you create too many levels of hierarchy.
 Avoid using a collection when a topic group at a higher level can achieve the 
 same result.
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->

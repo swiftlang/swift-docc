@@ -138,7 +138,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) {
             let tutorialTableOfContents = try! context.entity(with: hierarchy.tutorialTableOfContents).semantic as! TutorialTableOfContents
-            node.hierarchy = hierarchy.hierarchy
+            node.hierarchyVariants = hierarchy.hierarchyVariants
             node.metadata.category = tutorialTableOfContents.name
             node.metadata.categoryPathComponent = hierarchy.tutorialTableOfContents.url.lastPathComponent
         } else if !context.configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot {
@@ -402,11 +402,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        node.hierarchy = hierarchyTranslator
-            .visitTutorialTableOfContentsNode(identifier, omittingChapters: true)!
-            .hierarchy
-
-        collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
+        if let (hierarchyVariants, _) = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier, omittingChapters: true) {
+            node.hierarchyVariants = hierarchyVariants
+            collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
+        }
         
         node.references = createTopicRenderReferences()
         
@@ -626,9 +625,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let documentationNode = try! context.entity(with: identifier)
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        let hierarchy = hierarchyTranslator.visitArticle(identifier)
+        let hierarchyVariants = hierarchyTranslator.visitArticle(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
-        node.hierarchy = hierarchy
+        node.hierarchyVariants = hierarchyVariants
         
         // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
         // advertising the page as "Swift", which is the language DocC assigns to pages in article only pages.
@@ -896,7 +895,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Unlike for other pages, in here we use `RenderHierarchyTranslator` to crawl the technology
         // and produce the list of modules for the render hierarchy to display in the tutorial local navigation.
-        node.hierarchy = hierarchy.hierarchy
+        node.hierarchyVariants = hierarchy.hierarchyVariants
         
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
@@ -1253,10 +1252,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             return availability.availability
                 .compactMap { availability -> AvailabilityRenderItem? in
-                    // Filter items with insufficient availability data.
-                    // Allow availability without version information, but only if
-                    // both, introduced and deprecated, are nil.
-                    if availability.introducedVersion == nil && availability.deprecatedVersion != nil {
+                    // Allow availability items without introduced and/or deprecated version,
+                    // but filter out items that are obsoleted.
+                    if availability.obsoletedVersion != nil {
                         return nil
                     }
                     guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
@@ -1335,9 +1333,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.tags = contentRenderer.tags(for: identifier)
 
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        let hierarchy = hierarchyTranslator.visitSymbol(identifier)
+        let hierarchyVariants = hierarchyTranslator.visitSymbol(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
-        node.hierarchy = hierarchy
+        node.hierarchyVariants = hierarchyVariants
         
         // In case `inheritDocs` is disabled and there is actually origin data for the symbol, then include origin information as abstract.
         // Generate the placeholder abstract only in case there isn't an authored abstract coming from a doc extension.

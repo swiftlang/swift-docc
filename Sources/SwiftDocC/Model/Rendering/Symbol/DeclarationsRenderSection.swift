@@ -184,11 +184,14 @@ public struct DeclarationRenderSection: Codable, Equatable {
             
             /// The symbol's identifier.
             public let identifier: String
-            
+
+            public let conformance: ConformanceSection?
+
             /// Creates a new other declaration for a symbol that is connected to this one, e.g. an overload.
-            public init(tokens: [Token], identifier: String) {
+            public init(tokens: [Token], identifier: String, conformance: ConformanceSection? = nil) {
                 self.tokens = tokens
                 self.identifier = identifier
+                self.conformance = conformance
             }
         }
         /// The displayable declarations for this symbol's overloads.

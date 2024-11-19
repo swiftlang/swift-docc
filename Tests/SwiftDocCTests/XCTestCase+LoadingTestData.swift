@@ -22,26 +22,19 @@ extension XCTestCase {
         externalResolvers: [String: ExternalDocumentationSource] = [:],
         externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
-        diagnosticFilterLevel: DiagnosticSeverity = .hint,
-        configuration: DocumentationContext.Configuration = .init(),
-        configureContext: ((DocumentationContext) throws -> Void)? = nil
+        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
+        configuration: DocumentationContext.Configuration = .init()
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
-        let workspace = DocumentationWorkspace()
-        
         var configuration = configuration
         configuration.externalDocumentationConfiguration.sources = externalResolvers
         configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
         configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
-        configuration.externalMetadata.diagnosticLevel = diagnosticFilterLevel
+        configuration.externalMetadata.diagnosticLevel = diagnosticEngine.filterLevel
         
-        let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel), configuration: configuration)
-        try configureContext?(context)
-        // Load the bundle using automatic discovery
-        let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
-        // Mutate the bundle to include the code listings, then apply to the workspace using a manual provider.
-        let bundle = try XCTUnwrap(automaticDataProvider.bundles().first)
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+        let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
+            .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
+
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         return (catalogURL, bundle, context)
     }
     
@@ -57,14 +50,12 @@ extension XCTestCase {
         otherFileSystemDirectories: [Folder] = [],
         configuration: DocumentationContext.Configuration = .init()
     ) throws -> (DocumentationBundle, DocumentationContext) {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
-        
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
-        context.linkResolver.fileManager = fileSystem
         
-        try workspace.registerProvider(fileSystem)
-        let bundle = try XCTUnwrap(context.registeredBundles.first)
+        let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
+
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
         return (bundle, context)
     }
     
@@ -81,6 +72,7 @@ extension XCTestCase {
         externalResolvers: [BundleIdentifier : ExternalDocumentationSource] = [:],
         externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
         configuration: DocumentationContext.Configuration = .init(),
         configureBundle: ((URL) throws -> Void)? = nil
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
@@ -107,6 +99,7 @@ extension XCTestCase {
             externalResolvers: externalResolvers,
             externalSymbolResolver: externalSymbolResolver,
             fallbackResolver: fallbackResolver,
+            diagnosticEngine: diagnosticEngine,
             configuration: configuration
         )
     }
@@ -114,10 +107,11 @@ extension XCTestCase {
     func testBundleAndContext(
         named name: String,
         externalResolvers: [String: ExternalDocumentationSource] = [:],
-        fallbackResolver: ConvertServiceFallbackResolver? = nil
+        fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        configuration: DocumentationContext.Configuration = .init()
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let catalogURL = try testCatalogURL(named: name)
-        return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver)
+        return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
     }
     
     func testBundleAndContext(named name: String, externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
@@ -156,7 +150,7 @@ extension XCTestCase {
             miscResourceURLs: []
         )
         
-        let context = try DocumentationContext(bundle: bundle, dataProvider: FileManager.default)
+        let context = try DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []))
         return (bundle, context)
     }
     

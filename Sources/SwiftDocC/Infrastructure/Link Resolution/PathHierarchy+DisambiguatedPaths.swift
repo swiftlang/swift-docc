@@ -189,7 +189,7 @@ extension PathHierarchy {
 extension PathHierarchy.DisambiguationContainer {
     
     static func disambiguatedValues(
-        for elements: some Sequence<Element>,
+        for elements: some Collection<Element>,
         includeLanguage: Bool = false,
         allowAdvancedDisambiguation: Bool = true
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
@@ -203,13 +203,20 @@ extension PathHierarchy.DisambiguationContainer {
     }
     
     private static func _disambiguatedValues(
-        for elements: some Sequence<Element>,
+        for elements: some Collection<Element>,
         includeLanguage: Bool,
         allowAdvancedDisambiguation: Bool
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
+        // Assume that all elements will find a disambiguation (or close to it)
+        collisions.reserveCapacity(elements.count)
         
-        var remainingIDs = Set(elements.map(\.node.identifier))
+        var remainingIDs = Set<ResolvedIdentifier>()
+        remainingIDs.reserveCapacity(elements.count)
+        for element in elements {
+            guard let id = element.node.identifier else { continue }
+            remainingIDs.insert(id)
+        }
         
         // Kind disambiguation is the most readable, so we start by checking if any element has a unique kind.
         let groupedByKind = [String?: [Element]](grouping: elements, by: \.kind)
@@ -233,7 +240,9 @@ extension PathHierarchy.DisambiguationContainer {
             collisions += _disambiguateByTypeSignature(
                 elementsThatSupportAdvancedDisambiguation,
                 types: \.returnTypes,
-                makeDisambiguation: Disambiguation.returnTypes,
+                makeDisambiguation: { _, disambiguatingTypeNames in
+                    .returnTypes(disambiguatingTypeNames)
+                },
                 remainingIDs: &remainingIDs
             )
             if remainingIDs.isEmpty {
@@ -243,7 +252,31 @@ extension PathHierarchy.DisambiguationContainer {
             collisions += _disambiguateByTypeSignature(
                 elementsThatSupportAdvancedDisambiguation,
                 types: \.parameterTypes,
-                makeDisambiguation: Disambiguation.parameterTypes,
+                makeDisambiguation: { _, disambiguatingTypeNames in
+                    .parameterTypes(disambiguatingTypeNames)
+                },
+                remainingIDs: &remainingIDs
+            )
+            if remainingIDs.isEmpty {
+                return collisions
+            }
+            
+            collisions += _disambiguateByTypeSignature(
+                elementsThatSupportAdvancedDisambiguation,
+                types: { element in
+                    guard let parameterTypes = element.parameterTypes,
+                          !parameterTypes.isEmpty,
+                          let returnTypes = element.returnTypes,
+                          !returnTypes.isEmpty
+                    else {
+                        return nil
+                    }
+                    return parameterTypes + returnTypes
+                },
+                makeDisambiguation: { element, disambiguatingTypeNames in
+                    let numberOfReturnTypes = element.returnTypes?.count ?? 0
+                    return .mixedTypes(parameterTypes: disambiguatingTypeNames.dropLast(numberOfReturnTypes), returnTypes: disambiguatingTypeNames.suffix(numberOfReturnTypes))
+                },
                 remainingIDs: &remainingIDs
             )
             if remainingIDs.isEmpty {
@@ -341,6 +374,8 @@ extension PathHierarchy.DisambiguationContainer {
         case parameterTypes([String])
         /// This node is disambiguated by its return types.
         case returnTypes([String])
+        /// This node is disambiguated by a mix of parameter types and return types.
+        case mixedTypes(parameterTypes: [String], returnTypes: [String])
         
         /// Makes a new disambiguation suffix string.
         func makeSuffix() -> String {
@@ -361,6 +396,9 @@ extension PathHierarchy.DisambiguationContainer {
             case .parameterTypes(let types):
                 // For example: "-(String,_)" or "-(_,Int)"` (a certain parameter has a certain type), or "-()" (has no parameters).
                 return "-(\(types.joined(separator: ",")))"
+                
+            case .mixedTypes(parameterTypes: let parameterTypes, returnTypes: let returnTypes):
+                return Self.parameterTypes(parameterTypes).makeSuffix() + Self.returnTypes(returnTypes).makeSuffix()
             }
         }
         
@@ -373,7 +411,7 @@ extension PathHierarchy.DisambiguationContainer {
                 return kind.map { .kind($0) } ?? self
             case .hash:
                 return hash.map { .hash($0) } ?? self
-            case .parameterTypes, .returnTypes:
+            case .parameterTypes, .returnTypes, .mixedTypes:
                 return self
             }
         }
@@ -382,36 +420,46 @@ extension PathHierarchy.DisambiguationContainer {
     private static func _disambiguateByTypeSignature(
         _ elements: [Element],
         types: (Element) -> [String]?,
-        makeDisambiguation: ([String]) -> Disambiguation,
-        remainingIDs: inout Set<ResolvedIdentifier?>
+        makeDisambiguation: (Element, [String]) -> Disambiguation,
+        remainingIDs: inout Set<ResolvedIdentifier>
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
+        // Assume that all elements will find a disambiguation (or close to it)
+        collisions.reserveCapacity(elements.count)
         
-        let groupedByTypeCount = [Int?: [Element]](grouping: elements, by: { types($0)?.count })
-        for (typesCount, elements) in groupedByTypeCount  {
-            guard let typesCount else { continue }
-            guard elements.count > 1 else {
+        typealias ElementAndTypeNames = (element: Element, typeNames: [String])
+        var groupedByTypeCount: [Int: [ElementAndTypeNames]] = [:]
+        for element in elements {
+            guard let typeNames = types(element) else { continue }
+ 
+            groupedByTypeCount[typeNames.count, default: []].append((element, typeNames))
+        }
+        
+        for (numberOfTypeNames, elementAndTypeNamePairs) in groupedByTypeCount {
+            guard elementAndTypeNamePairs.count > 1 else {
                 // Only one element has this number of types. Disambiguate with only underscores.
-                let element = elements.first!
-                guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                collisions.append((value: element.node, disambiguation: makeDisambiguation(.init(repeating: "_", count: typesCount))))
-                remainingIDs.remove(element.node.identifier)
+                let (element, _) = elementAndTypeNamePairs.first!
+                guard remainingIDs.remove(element.node.identifier) != nil else {
+                    continue // Don't disambiguate the same element more than once
+                }
+                collisions.append((value: element.node, disambiguation: makeDisambiguation(element, .init(repeating: "_", count: numberOfTypeNames))))
                 continue
             }
-            guard typesCount > 0 else { continue } // Need at least one return value to disambiguate
             
-            for typeIndex in 0..<typesCount {
-                let grouped = [String: [Element]](grouping: elements, by: { types($0)![typeIndex] })
-                for (returnType, elements) in grouped where elements.count == 1 {
-                    // Only one element has this return type
-                    let element = elements.first!
-                    guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                    var disambiguation = [String](repeating: "_", count: typesCount)
-                    disambiguation[typeIndex] = returnType
-                    collisions.append((value: element.node, disambiguation: makeDisambiguation(disambiguation)))
-                    remainingIDs.remove(element.node.identifier)
-                    continue
+            guard numberOfTypeNames > 0 else {
+                continue // Need at least one type name to disambiguate (when there are multiple elements without parameters or return values)
+            }
+            
+            let suggestedDisambiguations = minimalSuggestedDisambiguation(forOverloadsAndTypeNames: elementAndTypeNamePairs)
+            
+            for (pair, disambiguation) in zip(elementAndTypeNamePairs, suggestedDisambiguations) {
+                guard let disambiguation else {
+                    continue // This element can't be uniquely disambiguated using these types
                 }
+                guard remainingIDs.remove(pair.element.node.identifier) != nil else {
+                    continue // Don't disambiguate the same element more than once
+                }
+                collisions.append((value: pair.element.node, disambiguation: makeDisambiguation(pair.element, disambiguation)))
             }
         }
         return collisions
