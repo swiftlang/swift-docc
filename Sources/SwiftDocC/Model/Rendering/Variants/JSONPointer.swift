@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,7 +20,7 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable {
     public var pathComponents: [String]
     
     public var description: String {
-        "/\(pathComponents.map(Self.escape).joined(separator: "/"))"
+        Self.escaped(pathComponents)
     }
     
     /// Creates a JSON Pointer given its path components.
@@ -87,36 +87,78 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let stringValue = try container.decode(String.self)
-        self.pathComponents = stringValue.removingLeadingSlash.components(separatedBy: "/").map(Self.unescape)
+        self.pathComponents = Self.unescaped(stringValue)
     }
     
-    /// Escapes a path component of a JSON pointer.
-    static func escape(_ pointerPathComponents: String) -> String {
-        applyEscaping(pointerPathComponents, shouldUnescape: false)
-    }
-    
-    /// Unescaped a path component of a JSON pointer.
-    static func unescape(_ pointerPathComponents: String) -> String {
-        applyEscaping(pointerPathComponents, shouldUnescape: true)
-    }
-    
-    /// Applies an escaping operation to the path component of a JSON pointer.
-    /// - Parameters:
-    ///   - pointerPathComponent: The path component to escape.
-    ///   - shouldUnescape: Whether this function should unescape or escape the path component.
-    /// - Returns: The escaped value if `shouldUnescape` is false, otherwise the escaped value.
-    private static func applyEscaping(_ pointerPathComponent: String, shouldUnescape: Bool) -> String {
-        EscapedCharacters.allCases
-            .reduce(pointerPathComponent) { partialResult, characterThatNeedsEscaping in
-                partialResult
-                    .replacingOccurrences(
-                        of: characterThatNeedsEscaping[
-                            keyPath: shouldUnescape ? \EscapedCharacters.escaped : \EscapedCharacters.rawValue
-                        ],
-                        with: characterThatNeedsEscaping[
-                            keyPath: shouldUnescape ? \EscapedCharacters.rawValue : \EscapedCharacters.escaped
-                        ]
-                    )
+    private static func escaped(_ pathComponents: [String]) -> String {
+        // This code is called quite frequently for mixed language content.
+        // Optimizing it has a measurable impact on the total documentation build time.
+        
+        var string: [UTF8.CodeUnit] = []
+        string.reserveCapacity(
+            pathComponents.reduce(0) { acc, component in
+                acc + 1 /* the "/" separator */ + component.utf8.count
             }
+        )
+        
+        for component in pathComponents {
+            // The leading slash and component separator
+            string.append(forwardSlash)
+            
+            // The escaped component
+            for char in component.utf8 {
+                switch char {
+                case tilde:
+                    string.append(contentsOf: escapedTilde)
+                case forwardSlash:
+                    string.append(contentsOf: escapedForwardSlash)
+                default:
+                    string.append(char)
+                }
+            }
+        }
+        
+        return String(decoding: string, as: UTF8.self)
+    }
+    
+    private static func unescaped(_ escapedRawString: String) -> [String] {
+        escapedRawString.removingLeadingSlash.components(separatedBy: "/").map {
+            // This code is called quite frequently for mixed language content.
+            // Optimizing it has a measurable impact on the total documentation build time.
+            
+            var string: [UTF8.CodeUnit] = []
+            string.reserveCapacity($0.utf8.count)
+            
+            var remaining = $0.utf8[...]
+            while let char = remaining.popFirst() {
+                guard char == tilde, let escapedCharacterIndicator = remaining.popFirst() else {
+                    string.append(char)
+                    continue
+                }
+                
+                // Check the character
+                switch escapedCharacterIndicator {
+                case zero:
+                    string.append(tilde)
+                case one:
+                    string.append(forwardSlash)
+                default:
+                    // This string isn't an escaped JSON Pointer. Return it as-is.
+                    return $0
+                }
+            }
+            
+            return String(decoding: string, as: UTF8.self)
+        }
     }
 }
+
+// A few UInt8 raw values for various UTF-8 characters that this implementation frequently checks for
+
+private let tilde        = UTF8.CodeUnit(ascii: "~")
+private let forwardSlash = UTF8.CodeUnit(ascii: "/")
+private let zero         = UTF8.CodeUnit(ascii: "0")
+private let one          = UTF8.CodeUnit(ascii: "1")
+
+private let escapedTilde        = [tilde, zero]
+private let escapedForwardSlash = [tilde, one]
