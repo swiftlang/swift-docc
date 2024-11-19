@@ -118,16 +118,22 @@ class AutomaticCurationTests: XCTestCase {
     
     func testAutomaticTopicsSkippingCustomCuratedSymbols() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { url in
-            // Curate some of `SideClass`'s children under SideKit.
-            let sideKit = """
-            # ``SideKit``
-            SideKit framework
+            // Curate some of members of SideClass in an API collection
+            try """
+            # Some API collection
+            
             ## Topics
-            ### SideKit Basics
-            - ``SideClass/path``
-            - ``SideClass/url``
-            """
-            try sideKit.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
+            - ``/SideKit/SideClass/path``
+            - ``/SideKit/SideClass/url``
+            """.write(to: url.appendingPathComponent("API Collection.md"), atomically: true, encoding: .utf8)
+            
+            // Curate the API collection under SideClass
+            try """
+            # ``/SideKit/SideClass``
+            
+            ## Topics
+            - <doc:API-Collection>
+            """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
@@ -556,7 +562,11 @@ class AutomaticCurationTests: XCTestCase {
                 // "Variables",
                 // '_MixedLanguageFrameworkVersionNumber is manually curated in a task group titled "Objective-C–only APIs" in MixedLanguageFramework.md.
                 // '_MixedLanguageFrameworkVersionString' is manually curated in a task group titled "Some Swift-only APIs, some Objective-C–only APIs, some mixed" in MixedLanguageFramework.md.
+                
                 // 'MixedLanguageFramework/Foo-c.typealias' is manually curated in a task group titled "Custom" under 'MixedLanguageFramework/Bar/myStringFunction:error:'
+                // Because this is top-level type is curated under the _member_ of another type, it's not removed from automatic curation.
+                "Type Aliases",
+                "/documentation/MixedLanguageFramework/Foo-c.typealias",
                 
                 "Enumerations",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct",
@@ -818,7 +828,7 @@ class AutomaticCurationTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: protocolDocumentationNode.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
 
-        XCTAssertEqual(renderNode.topicSections.count, 1)
+        XCTAssertEqual(renderNode.topicSections.count, 2)
 
         // The page should not contain a reference to the overload group node, which would otherwise
         // be automatically curated into an "Instance Methods" topic group with a hash suffix of 9b6be
@@ -830,6 +840,374 @@ class AutomaticCurationTests: XCTestCase {
             "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-91hxs",
             "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx",
         ])
+        
+        let defaultTopic = try XCTUnwrap(renderNode.topicSections.last)
+        XCTAssertEqual(defaultTopic.title, "Instance Methods")
+        XCTAssertEqual(defaultTopic.identifiers, [
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
+        ])
+    }
+    
+    func testCuratingTopLevelSymbolUnderModuleStopsAutomaticCuration() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
+            ])),
+            
+            TextFile(name: "ModuleExtension.md", utf8Content: """
+            # ``Something``
+            
+            ## Topics
+            - ``SecondClass``
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let secondNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("SecondClass")])
+        XCTAssertFalse(secondNode.shouldAutoCurateInCanonicalLocation, "This symbol is manually curated under its module")
+    }
+    
+    func testCuratingTopLevelSymbolUnderAPICollectionInModuleStopsAutomaticCuration() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
+            ])),
+            
+            TextFile(name: "API Collection.md", utf8Content: """
+            # Some API collection
+            
+            ## Topics
+            - ``SecondClass``
+            """),
+            
+            TextFile(name: "ModuleExtension.md", utf8Content: """
+            # ``Something``
+            
+            ## Topics
+            - <doc:API-Collection>
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let secondNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("SecondClass")])
+        XCTAssertFalse(secondNode.shouldAutoCurateInCanonicalLocation, "This symbol is manually curated under an API collection under its module")
+        
+        let apiCollectionNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("API-Collection")])
+        XCTAssertFalse(apiCollectionNode.shouldAutoCurateInCanonicalLocation, "Any curation of non-symbols stops automatic curation")
+    }
+    
+    func testCuratingTopLevelSymbolUnderOtherTopLevelSymbolStopsAutomaticCuration() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
+            ])),
+            
+            TextFile(name: "SymbolExtension.md", utf8Content: """
+            # ``Something/FirstClass``
+            
+            ## Topics
+            - ``SecondClass``
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let secondNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("SecondClass")])
+        XCTAssertFalse(secondNode.shouldAutoCurateInCanonicalLocation, "Curating a top-level symbol under another top-level symbol stops automatic curation")
+    }
+    
+    func testCuratingTopLevelSymbolUnderOtherTopLevelSymbolAPICollectionStopsAutomaticCuration() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
+            ])),
+            
+            TextFile(name: "API Collection.md", utf8Content: """
+            # Some API collection
+            
+            ## Topics
+            - ``SecondClass``
+            """),
+            
+            TextFile(name: "SymbolExtension.md", utf8Content: """
+            # ``Something/FirstClass``
+            
+            ## Topics
+            - <doc:API-Collection>
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let secondNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("SecondClass")])
+        XCTAssertFalse(secondNode.shouldAutoCurateInCanonicalLocation, "Curating a top-level symbol under another top-level symbol's API collection stops automatic curation")
+    }
+    
+    func testCuratingTopLevelSymbolUnderDeeperThanTopLevelDoesNotStopAutomaticCuration() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "first-member-symbol-id", kind: .func, pathComponents: ["FirstClass", "firstMember"]),
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
+            ], relationships: [
+                .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil),
+            ])),
+            
+            TextFile(name: "SymbolExtension.md", utf8Content: """
+            # ``FirstClass/firstMember``
+            
+            ## Topics
+            - ``SecondClass``
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        let memberNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass/firstMember")])
+        XCTAssert(memberNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let secondNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("SecondClass")])
+        XCTAssert(secondNode.shouldAutoCurateInCanonicalLocation, "Curating a top-level symbol deeper than top-level doesn't stops automatic curation")
+    }
+    
+    func testCuratingMemberOutsideCanonicalContainerDoesNotStopAutomaticCuration() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "first-member-symbol-id", kind: .func, pathComponents: ["FirstClass", "firstMember"]),
+            ], relationships: [
+                .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil),
+            ])),
+            
+            TextFile(name: "SymbolExtension.md", utf8Content: """
+            # ``Something``
+            
+            ## Topics
+            - ``FirstClass/firstMember``
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let memberNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass/firstMember")])
+        XCTAssert(memberNode.shouldAutoCurateInCanonicalLocation, "Curation of member outside its canonical container's hierarchy doesn't stop automatic curation")
+    }
+    
+    func testCuratingMemberUnderAPICollectionOutsideCanonicalContainerDoesNotStopAutomaticCuration() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "first-member-symbol-id", kind: .func, pathComponents: ["FirstClass", "firstMember"]),
+            ], relationships: [
+                .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil),
+            ])),
+            
+            TextFile(name: "API Collection.md", utf8Content: """
+            # Some API collection
+            
+            ## Topics
+            - ``FirstClass/firstMember``
+            """),
+            
+            TextFile(name: "ModuleExtension.md", utf8Content: """
+            # ``Something``
+            
+            ## Topics
+            - <doc:API-Collection>
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let memberNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass/firstMember")])
+        XCTAssert(memberNode.shouldAutoCurateInCanonicalLocation, "Curation of member outside its canonical container's hierarchy doesn't stop automatic curation")
+    }
+    
+    func testCuratingMemberInCanonicalContainerStopsAutomaticCuration() throws {
+        let outerContainerID = "outer-container-symbol-id"
+        let innerContainerID = "inner-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+        
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: outerContainerID,  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: memberID,          kind: .func,  pathComponents: ["FirstClass", "firstMember"]),
+            ], relationships: [
+                .init(source: innerContainerID, target: outerContainerID, kind: .memberOf, targetFallback: nil),
+                .init(source: memberID,         target: outerContainerID, kind: .memberOf, targetFallback: nil),
+            ])),
+            
+            TextFile(name: "SymbolExtension.md", utf8Content: """
+            # ``FirstClass``
+            
+            ## Topics
+            - ``FirstClass/firstMember``
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let memberNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass/firstMember")])
+        XCTAssertFalse(memberNode.shouldAutoCurateInCanonicalLocation)
+    }
+    
+    func testCuratingMemberInLevelsOfAPICollectionsStopsAutomaticCuration() throws {
+        let outerContainerID = "outer-container-symbol-id"
+        let innerContainerID = "inner-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+        
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: outerContainerID,  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: memberID,          kind: .func,  pathComponents: ["FirstClass", "firstMember"]),
+            ], relationships: [
+                .init(source: innerContainerID, target: outerContainerID, kind: .memberOf, targetFallback: nil),
+                .init(source: memberID,         target: outerContainerID, kind: .memberOf, targetFallback: nil),
+            ])),
+            
+            TextFile(name: "API Collection 1.md", utf8Content: """
+            # First API collection
+            
+            ## Topics
+            - <doc:API-Collection-2>
+            """),
+            
+            TextFile(name: "API Collection 2.md", utf8Content: """
+            # Second API collection
+            
+            ## Topics
+            - ``FirstClass/firstMember``
+            """),
+            
+            TextFile(name: "SymbolExtension.md", utf8Content: """
+            # ``FirstClass``
+            
+            ## Topics
+            - <doc:API-Collection-1>
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let memberNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass/firstMember")])
+        XCTAssertFalse(memberNode.shouldAutoCurateInCanonicalLocation)
+    }
+    
+    func testCuratingMemberUnderOtherMemberDoesNotStopAutomaticCuration() throws {
+        let outerContainerID = "outer-container-symbol-id"
+        let innerContainerID = "inner-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+        
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: outerContainerID,  kind: .class, pathComponents: ["OuterClass"]),
+                makeSymbol(id: innerContainerID,  kind: .class, pathComponents: ["OuterClass", "InnerClass"]),
+                makeSymbol(id: memberID,          kind: .func,  pathComponents: ["OuterClass", "someMember"]),
+            ], relationships: [
+                .init(source: innerContainerID, target: outerContainerID, kind: .memberOf, targetFallback: nil),
+                .init(source: memberID,         target: outerContainerID, kind: .memberOf, targetFallback: nil),
+            ])),
+            
+            TextFile(name: "SymbolExtension.md", utf8Content: """
+            # ``OuterClass/InnerClass``
+            
+            ## Topics
+            - ``OuterClass/someMember``
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        
+        let outerNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("OuterClass")])
+        XCTAssert(outerNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        let innerNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("OuterClass/InnerClass")])
+        XCTAssert(innerNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let memberNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("OuterClass/someMember")])
+        XCTAssert(memberNode.shouldAutoCurateInCanonicalLocation, "Curating a member under another member doesn't stop automatic curation")
+    }
+    
+    func testCuratingArticleAnywhereStopAutomaticCuration() throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "Something.symbols.json", content: makeSymbolGraph(moduleName: "Something", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "first-member-symbol-id", kind: .func, pathComponents: ["FirstClass", "firstMember"]),
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
+            ], relationships: [
+                .init(source: "first-member-symbol-id", target: "first-symbol-id", kind: .memberOf, targetFallback: nil),
+            ])),
+            
+            TextFile(name: "MemberExtension.md", utf8Content: """
+            # ``FirstClass/firstMember``
+            
+            ## Topics
+            - <doc:SecondArticle>
+            """),
+            
+            TextFile(name: "FirstArticle.md", utf8Content: """
+            # First article
+            """),
+            
+            TextFile(name: "SecondArticle.md", utf8Content: """
+            # First article
+            """),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
+        XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        let memberNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass/firstMember")])
+        XCTAssert(memberNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        let firstArticleNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstArticle")])
+        XCTAssert(firstArticleNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
+        
+        let secondArticleNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("SecondArticle")])
+        XCTAssertFalse(secondArticleNode.shouldAutoCurateInCanonicalLocation)
     }
     
     func testAutomaticallyCuratedSymbolTopicsAreMergedWithManuallyCuratedTopics() throws {

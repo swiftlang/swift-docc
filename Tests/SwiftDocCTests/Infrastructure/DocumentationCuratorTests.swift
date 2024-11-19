@@ -499,6 +499,7 @@ class DocumentationCuratorTests: XCTestCase {
         // and the automatic curation under `TopClass` is not present.
         let nameReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
         XCTAssertEqual(context.finitePaths(to: nameReference).map({ $0.map(\.path) }), [
+            ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass-API-Collection"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
 
@@ -507,6 +508,7 @@ class DocumentationCuratorTests: XCTestCase {
         let ageReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
         XCTAssertEqual(context.finitePaths(to: ageReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass"],
+            ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass-API-Collection"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
     }

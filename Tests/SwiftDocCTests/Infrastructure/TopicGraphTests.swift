@@ -57,36 +57,6 @@ class TopicGraphTests: XCTestCase {
             graph.addEdge(from: testNodeWithTitle("C"), to: testNodeWithTitle("A"))
             return graph
         }
-
-        /// Return a graph with overload group information:
-        ///
-        /// ```
-        /// Parent
-        ///   -> A
-        ///   -> B
-        ///   -> Overload Group
-        ///     -> A
-        ///     -> B
-        /// ```
-        static var withOverloadGroup: TopicGraph {
-            var graph = TopicGraph()
-
-            let parent = testNodeWithTitle("Parent")
-            let group = testNodeWithTitle("Overload Group")
-            let a = testNodeWithTitle("A")
-            let b = testNodeWithTitle("B")
-
-            graph.addEdge(from: parent, to: a)
-            graph.addEdge(from: parent, to: b)
-            graph.addEdge(from: parent, to: group)
-
-            graph.addEdge(from: group, to: a)
-            graph.addEdge(from: group, to: b)
-
-            graph.nodes[group.reference]?.isOverloadGroup = true
-
-            return graph
-        }
     }
     func testNodes() {
         XCTAssertEqual(1, TestGraphs.withOneNode.nodes.count)
@@ -275,15 +245,5 @@ class TopicGraphTests: XCTestCase {
                 }
             }
         }
-    }
-
-    func testCollectOverloads() {
-        let graph = TestGraphs.withOverloadGroup
-        let overloadGroup = TestGraphs.testNodeWithTitle("Overload Group")
-
-        XCTAssertEqual(graph.overloads(of: overloadGroup.reference), [
-            TestGraphs.testNodeWithTitle("A").reference,
-            TestGraphs.testNodeWithTitle("B").reference,
-        ])
     }
 }

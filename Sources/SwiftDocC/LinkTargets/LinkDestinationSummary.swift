@@ -336,8 +336,8 @@ public extension DocumentationNode {
             default:
                 var topicSectionGroups: [LinkDestinationSummary.TaskGroup] = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
 
-                if let overloadChildren = context.topicGraph.overloads(of: self.reference), !overloadChildren.isEmpty {
-                    topicSectionGroups.append(.init(title: "Overloads", identifiers: overloadChildren.map(\.absoluteString)))
+                if let overloads = context.linkResolver.localResolver.overloads(ofGroup: reference) {
+                    topicSectionGroups.append(.init(title: "Overloads", identifiers: overloads.map(\.absoluteString)))
                 }
 
                 taskGroups = topicSectionGroups
