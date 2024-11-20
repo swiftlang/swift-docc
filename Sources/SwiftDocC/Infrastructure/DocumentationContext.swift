@@ -2779,6 +2779,9 @@ public class DocumentationContext {
             }
         }
         
+        // Run analysis to determine whether manually configured alternate representations are valid.
+        analyzeAlternateRepresentations()
+        
         // Run global ``TopicGraph`` global analysis.
         analyzeTopicGraph()
     }
@@ -3143,6 +3146,77 @@ extension DocumentationContext {
         }
         diagnosticEngine.emit(problems)
     }
+        
+    func analyzeAlternateRepresentations() {
+        var problems = [Problem]()
+        for node in topicGraph.nodes.values {
+            guard let entity = try? self.entity(with: node.reference) else { continue }
+            
+            var sourceLanguageToReference: [SourceLanguage: AlternateRepresentation] = [:]
+            for alternateRepresentation in entity.metadata?.alternateRepresentations ?? [] {
+                guard case .resolved(.success(let counterpartReference)) = alternateRepresentation.reference,
+                        let counterpartEntity = try? self.entity(with: counterpartReference) else {
+                    continue
+                }
+
+                // Case where the original symbol already was defined in the languages of the counterpart symbol.
+                let duplicateSourceLanguages = counterpartEntity.availableSourceLanguages.intersection(entity.availableSourceLanguages)
+                if !duplicateSourceLanguages.isEmpty {
+                    problems
+                        .append(
+                            Problem(
+                                diagnostic: Diagnostic(
+                                    source: alternateRepresentation.originalMarkup.range?.source,
+                                    severity: .warning,
+                                    range: alternateRepresentation.originalMarkup.range,
+                                    identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                                    summary: "This node already has a representation in \(duplicateSourceLanguages.diagnosticString)",
+                                    explanation: "This node is already available in \(entity.availableSourceLanguages.diagnosticString).",
+                                ),
+                                possibleSolutions: [Solution(summary: "Replace the counterpart link with a node which isn't available in \(entity.availableSourceLanguages.diagnosticString)", replacements: [])]
+                            )
+                        )
+
+                }
+                
+                let duplicateCounterpartLanguages = Set(sourceLanguageToReference.keys).intersection(counterpartEntity.availableSourceLanguages)
+                if !duplicateCounterpartLanguages.isEmpty {
+                    let replacements = alternateRepresentation.originalMarkup.range.flatMap { [Replacement(range: $0, replacement: "")] } ?? []
+                    let notes: [DiagnosticNote] = duplicateCounterpartLanguages.compactMap { duplicateCounterpartLanguage in
+                        guard let alreadyExistingCounterpart = sourceLanguageToReference[duplicateCounterpartLanguage],
+                              let range = alreadyExistingCounterpart.originalMarkup.range,
+                              let source = range.source else {
+                            return nil
+                        }
+                        
+                        return DiagnosticNote(source: source, range: range, message: """
+                        An alternate representation for \(duplicateCounterpartLanguage.name) has already been defined by an @\(AlternateRepresentation.self) directive.
+                        """)
+                    }
+                    problems
+                        .append(
+                            Problem(
+                                diagnostic: Diagnostic(
+                                    source: alternateRepresentation.originalMarkup.range?.source,
+                                    severity: .warning,
+                                    range: alternateRepresentation.originalMarkup.range,
+                                    identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                                    summary: "An alternate representation for \(duplicateCounterpartLanguages.diagnosticString) already exists",
+                                    explanation: "This node is already available in \(entity.availableSourceLanguages.union(sourceLanguageToReference.keys).diagnosticString).",
+                                    notes: notes
+                                ),
+                                possibleSolutions: [Solution(summary: "Remove this alternate representation", replacements: replacements)]
+                            )
+                        )
+                }
+                
+                // Update mapping from source language to alternate declaration, for diagnostic purposes
+                counterpartEntity.availableSourceLanguages.forEach { sourceLanguageToReference[$0] = alternateRepresentation }
+            }
+        }
+        
+        diagnosticEngine.emit(problems)
+    }
 }
 
 extension GraphCollector.GraphKind {
@@ -3189,6 +3263,28 @@ extension DataAsset {
         return variants.values.map(\.pathExtension).contains { pathExtension in
             return DocumentationContext.isFileExtension(pathExtension, supported: assetType)
         }
+    }
+}
+
+extension Set where Element == SourceLanguage {
+    fileprivate var diagnosticString: String {
+        var languageNames = self.sorted(by: { language1, language2 in
+            // Emit Swift first, then alphabetically.
+            switch (language1, language2) {
+            case (.swift, _): return true
+            case (_, .swift): return false
+            default: return language1.id < language2.id
+            }
+        }).map(\.name)
+        
+        guard languageNames.count > 1 else {
+            return languageNames.first ?? ""
+        }
+        
+        // Returns "Language1, Language2 and Language3"
+        let finalElement = languageNames.removeLast()
+        let commaSeparatedElements = languageNames.joined(separator: ", ")
+        return "\(commaSeparatedElements) and \(finalElement)"
     }
 }
 
