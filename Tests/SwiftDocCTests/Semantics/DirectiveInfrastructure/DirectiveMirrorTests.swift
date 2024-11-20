@@ -52,7 +52,7 @@ class DirectiveMirrorTests: XCTestCase {
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssert(reflectedDirective.arguments.isEmpty)
         
-        XCTAssertEqual(reflectedDirective.childDirectives.count, 12)
+        XCTAssertEqual(reflectedDirective.childDirectives.count, 13)
         
         XCTAssertEqual(
             reflectedDirective.childDirectives["DocumentationExtension"]?.propertyLabel,
