@@ -1497,4 +1497,84 @@ class RenderNodeTranslatorTests: XCTestCase {
             }
         }
     }
+    
+    func testAlternateRepresentationsRenderedAsVariants() throws {
+        let (bundle, context) = try loadBundle(catalog: Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(name: "Symbol.md", utf8Content: """
+                # ``Symbol``
+                @Metadata {
+                    @AlternateRepresentation(``CounterpartSymbol``)
+                }
+                A symbol extension file defining an alternate representation.
+                """),
+                TextFile(name: "OtherSymbol.md", utf8Content: """
+                # ``OtherSymbol``
+                @Metadata {
+                    @AlternateRepresentation(``MissingCounterpart``)
+                }
+                A symbol extension file defining an alternate representation which doesn't exist.
+                """),
+                TextFile(name: "MultipleSwiftVariantsSymbol.md", utf8Content: """
+                # ``MultipleSwiftVariantsSymbol``
+                @Metadata {
+                    @AlternateRepresentation(``Symbol``)
+                }
+                A symbol extension file defining an alternate representation which is also in Swift.
+                """),
+                JSONFile(
+                    name: "unit-test.swift.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                            makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["OtherSymbol"]),
+                            makeSymbol(id: "multiple-swift-variants-symbol-id", kind: .class, pathComponents: ["MultipleSwiftVariantsSymbol"]),
+                        ]
+                    )
+                ),
+                JSONFile(
+                    name: "unit-test.occ.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
+                        ]
+                    )
+                ),
+            ]
+        ))
+
+        func renderNodeArticleFromReferencePath(
+            referencePath: String
+        ) throws -> RenderNode {
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: referencePath, sourceLanguage: .swift)
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            return try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+        }
+        
+        // Assert that CounterpartSymbol's source languages have been added as source languages of Symbol
+        var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/Symbol")
+        XCTAssertEqual(renderNode.variants?.count, 2)
+        XCTAssertEqual(renderNode.variants, [
+            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/symbol"]),
+            .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unit-test/counterpartsymbol"])
+        ])
+        
+        // Assert that alternate representations which can't be resolved are ignored
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/OtherSymbol")
+        XCTAssertEqual(renderNode.variants?.count, 1)
+        XCTAssertEqual(renderNode.variants, [
+            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/othersymbol"]),
+        ])
+
+        // Assert that duplicate alternate representations are not added as variants
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/MultipleSwiftVariantsSymbol")
+        XCTAssertEqual(renderNode.variants?.count, 1)
+        XCTAssertEqual(renderNode.variants, [
+            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/multipleswiftvariantssymbol"]),
+        ])
+    }
 }
