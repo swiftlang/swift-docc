@@ -618,6 +618,19 @@ public class DocumentationContext {
                 resolver.visit(documentationNode.semantic)
             }
             
+            // Also resolve the node's alternate representations. This isn't part of the node's 'semantic' value (resolved above).
+            if let alternateRepresentations = documentationNode.metadata?.alternateRepresentations {
+                for alternateRepresentation in alternateRepresentations {
+                    let resolutionResult = resolver.resolve(
+                        alternateRepresentation.reference,
+                        in: bundle.rootReference,
+                        range: alternateRepresentation.originalMarkup.range,
+                        severity: .warning
+                    )
+                    alternateRepresentation.reference = .resolved(resolutionResult)
+                }
+            }
+
             let problems: [Problem]
             if documentationNode.semantic is Article {
                 // Diagnostics for articles have correct source ranges and don't need to be modified.

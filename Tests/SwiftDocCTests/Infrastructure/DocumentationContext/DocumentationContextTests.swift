@@ -5356,6 +5356,84 @@ let expected = """
         XCTAssertEqual(externalRenderReference.title, externalModuleName)
         XCTAssertEqual(externalRenderReference.abstract, [.text("Some description of this module.")])
     }
+
+    func testResolvesAlternateDeclarations() throws {
+        let (bundle, context) = try loadBundle(catalog: Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(name: "Symbol.md", utf8Content: """
+                # ``Symbol``
+                @Metadata {
+                    @AlternateRepresentation(``CounterpartSymbol``)
+                    @AlternateRepresentation(OtherCounterpartSymbol)
+                    @AlternateRepresentation(``MissingSymbol``)
+                }
+                A symbol extension file defining an alternate representation.
+                """),
+                JSONFile(
+                    name: "unit-test.swift.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                        ]
+                    )
+                ),
+                JSONFile(
+                    name: "unit-test.occ.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
+                        ]
+                    )
+                ),
+                JSONFile(
+                    name: "unit-test.js.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "other-counterpart-symbol-id", language: .javaScript, kind: .class, pathComponents: ["OtherCounterpartSymbol"]),
+                        ]
+                    )
+                ),
+            ]
+        ))
+        
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Symbol", sourceLanguage: .swift)
+        
+        let entity = try context.entity(with: reference)
+        XCTAssertEqual(entity.metadata?.alternateRepresentations.count, 3)
+        
+        // First alternate representation should have been resolved successfully
+        var alternateRepresentation = try XCTUnwrap(entity.metadata?.alternateRepresentations.first)
+        XCTAssertEqual(
+            alternateRepresentation.reference,
+            .resolved(.success(.init(bundleID: bundle.id, path: "/documentation/unit-test/CounterpartSymbol", sourceLanguage: .objectiveC)))
+        )
+        
+        // Second alternate representation without "``" should also have been resolved successfully
+        alternateRepresentation = try XCTUnwrap(entity.metadata?.alternateRepresentations.dropFirst().first)
+        XCTAssertEqual(
+            alternateRepresentation.reference,
+            .resolved(.success(.init(bundleID: bundle.id, path: "/documentation/unit-test/OtherCounterpartSymbol", sourceLanguage: .objectiveC)))
+        )
+        
+        // Third alternate representation shouldn't have been resolved at all
+        alternateRepresentation = try XCTUnwrap(entity.metadata?.alternateRepresentations.dropFirst().last)
+        guard case .resolved(.failure(let unresolvedPath, _)) = alternateRepresentation.reference else {
+            XCTFail("Expected alternate representation to be unresolved, but was resolved as \(alternateRepresentation.reference)")
+            return
+        }
+        XCTAssertEqual(unresolvedPath, .init(topicURL: .init(parsingAuthoredLink: "MissingSymbol")!))
+        
+        // And an error should have been reported
+        XCTAssertEqual(context.problems.count, 1)
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'MissingSymbol'")
+    }    
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
