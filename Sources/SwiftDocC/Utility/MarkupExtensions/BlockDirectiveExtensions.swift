@@ -41,6 +41,7 @@ extension BlockDirective {
         Metadata.directiveName,
         Metadata.Availability.directiveName,
         Metadata.PageKind.directiveName,
+        AlternateRepresentation.directiveName,
         MultipleChoice.directiveName,
         Options.directiveName,
         PageColor.directiveName,
