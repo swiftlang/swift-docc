@@ -104,7 +104,7 @@ extension XCTestCase {
         
         return SymbolGraph.Symbol(
             identifier: SymbolGraph.Symbol.Identifier(precise: id, interfaceLanguage: language.id),
-            names: makeSymbolNames(name: pathComponents.first!),
+            names: makeSymbolNames(name: pathComponents.last!),
             pathComponents: pathComponents,
             docComment: docComment.map {
                 makeLineList(
