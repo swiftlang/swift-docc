@@ -3615,10 +3615,14 @@ Document
                     makeSymbol(id: "some-container",      language: .objectiveC, kind: .class,  pathComponents: ["SomeContainer"]),
                     makeSymbol(id: "some-unnamed-struct", language: .objectiveC, kind: .struct, pathComponents: ["SomeContainer", ""]),
                     makeSymbol(id: "some-inner-member",   language: .objectiveC, kind: .var,    pathComponents: ["SomeContainer", "", "someMember"]),
+                    
+                    makeSymbol(id: "some-named-struct",   language: .objectiveC, kind: .struct, pathComponents: ["SomeContainer", "NamedInnerContainer"]),
                 ],
                 relationships: [
                     .init(source: "some-unnamed-struct", target: "some-container",      kind: .memberOf, targetFallback: nil),
                     .init(source: "some-inner-member",   target: "some-unnamed-struct", kind: .memberOf, targetFallback: nil),
+                    
+                    .init(source: "some-named-struct",   target: "some-container",      kind: .memberOf, targetFallback: nil),
                 ]
             ))
         ])
@@ -3628,6 +3632,7 @@ Document
         XCTAssertEqual(context.knownPages.map(\.path).sorted(), [
             "/documentation/ModuleName",
             "/documentation/ModuleName/SomeContainer",
+            "/documentation/ModuleName/SomeContainer/NamedInnerContainer",
             "/documentation/ModuleName/SomeContainer/struct_(unnamed)",
             "/documentation/ModuleName/SomeContainer/struct_(unnamed)/someMember"
         ], "The reference paths shouldn't have any empty components")
