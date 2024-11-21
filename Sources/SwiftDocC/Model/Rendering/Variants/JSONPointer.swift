@@ -99,6 +99,7 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable {
             pathComponents.reduce(0) { acc, component in
                 acc + 1 /* the "/" separator */ + component.utf8.count
             }
+            + 16 // some extra capacity since the escaped replacements grow the string beyond its original length.
         )
         
         for component in pathComponents {
