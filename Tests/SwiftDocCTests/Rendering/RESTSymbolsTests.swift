@@ -332,7 +332,7 @@ class RESTSymbolsTests: XCTestCase {
                 ] + extraFiles
             )
             let (_, bundle, context) = try loadBundle(from: (try createTempFolder(content: [exampleDocumentation])))
-            let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+            let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
             let moduleSymbol = try XCTUnwrap((try context.entity(with: moduleReference)).semantic as? Symbol)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
             let renderNode = translator.visit(moduleSymbol) as! RenderNode

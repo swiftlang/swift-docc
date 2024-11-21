@@ -17,7 +17,7 @@ import Markdown
 // instead to verify a mix of successes and failures in the same test.
 
 class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
-    var bundleIdentifier = "com.external.testbundle"
+    var bundleID: DocumentationBundle.Identifier = "com.external.testbundle"
     
     // The minimal information that the test resolver needs to create a resolved reference and documentation node
     struct EntityInfo {
@@ -52,13 +52,13 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             
             let entity = entityInfo(path: path)
             return .success(
-                ResolvedTopicReference(bundleIdentifier: bundleIdentifier,path: entity.referencePath,fragment: entity.fragment,sourceLanguage: entity.language)
+                ResolvedTopicReference(bundleID: bundleID, path: entity.referencePath,fragment: entity.fragment,sourceLanguage: entity.language)
             )
         }
     }
     
     func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-        guard reference.bundleIdentifier == bundleIdentifier else {
+        guard reference.bundleID == bundleID else {
             fatalError("It is a programming mistake to retrieve an entity for a reference that the external resolver didn't resolve.")
         }
         return makeNode(for: entityInfo(path: reference.path), reference: reference)
