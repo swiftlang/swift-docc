@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftDocC
+import SwiftDocC
 
 /// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
 ///
@@ -321,7 +321,7 @@ package class TestFileSystem: FileManagerProtocol {
         case invalidPath(String)
         var errorDescription: String {
             switch self { 
-                case .invalidPath(let path): return "Invalid path \(path.singleQuoted)"
+                case .invalidPath(let path): return "Invalid path '\(path)'"
             }
         }
     }
