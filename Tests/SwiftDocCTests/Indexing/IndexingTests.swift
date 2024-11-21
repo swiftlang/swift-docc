@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ class IndexingTests: XCTestCase {
     // MARK: - Tutorial
     func testTutorial() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let tutorialReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let tutorialReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: tutorialReference)
         let tutorial = node.semantic as! Tutorial
         var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: tutorialReference)
@@ -69,7 +69,7 @@ class IndexingTests: XCTestCase {
             .init(title: "Section 1", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(.init(inlineContent: [.text("This is a step.")]))], anchor: "section-1"),
             .init(title: "Section 2", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(.init(inlineContent: [.text("This is a step.")]))], anchor: "section-2"),
         ])
-        let tutorialReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/TestTutorial", sourceLanguage: .swift)
+        let tutorialReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/TestTutorial", sourceLanguage: .swift)
         let indexingRecords = try tutorialSectionsSection.indexingRecords(onPage: tutorialReference, references: [:])
         XCTAssertEqual(2, indexingRecords.count)
         
@@ -90,7 +90,7 @@ class IndexingTests: XCTestCase {
     
     func testArticle() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift)
+        let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! TutorialArticle
         var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)
@@ -188,7 +188,7 @@ class IndexingTests: XCTestCase {
     
     func testRootPageIndexingRecord() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+        let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
         var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)
@@ -221,7 +221,7 @@ class IndexingTests: XCTestCase {
             try updatedPlistData.write(to: plistURL)
         }
         
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
         var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)

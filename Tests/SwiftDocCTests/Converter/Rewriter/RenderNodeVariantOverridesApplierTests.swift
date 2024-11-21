@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -77,7 +77,7 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
                 renderNode.addVariantOverride(
                     pointerComponents: ["identifier"],
                     value: ResolvedTopicReference(
-                        bundleIdentifier: "new-bundle-identifier",
+                        bundleID: "new-bundle-identifier",
                         path: "/path",
                         fragment: nil,
                         sourceLanguage: .objectiveC
@@ -193,7 +193,7 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
     ) throws {
         var renderNode = RenderNode(
             identifier: ResolvedTopicReference(
-                bundleIdentifier: "bundle-identifier",
+                bundleID: "bundle-identifier",
                 path: "",
                 fragment: nil,
                 sourceLanguage: .swift

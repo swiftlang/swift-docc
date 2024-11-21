@@ -160,7 +160,7 @@ public struct ConvertAction: AsyncAction {
         }
         
         if let outOfProcessResolver {
-            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleID] = outOfProcessResolver
             configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
@@ -276,7 +276,7 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.identifier)
+        let indexer = try Indexer(outputURL: temporaryFolder, bundleID: bundle.id)
 
         let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         
@@ -288,7 +288,7 @@ public struct ConvertAction: AsyncAction {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleIdentifier: bundle.identifier
+            bundleID: bundle.id
         )
 
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
@@ -422,7 +422,7 @@ public struct ConvertAction: AsyncAction {
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleIdentifier: bundle.identifier
+                bundleID: bundle.id
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)

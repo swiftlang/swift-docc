@@ -26,7 +26,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Returns: `YES` if doing something was successful, or `NO` if an error occurred.
         // - (void)doSomethingWith:(NSInteger)someValue error:(NSError **)error;
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInObjectiveC/doSomething(with:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/doSomething(with:)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -47,7 +47,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Returns: Some string. If an error occurs, this method returns `nil` and assigns an appropriate error object to the `error` parameter.
         // - (nullable NSString *)returnSomethingAndReturnError:(NSError **)error;
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInObjectiveC/returnSomething()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/returnSomething()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -68,7 +68,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Throws: Some error if something does wrong
         // @objc public func doSomething(with someValue: Int) throws { }
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInSwift/doSomething(with:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInSwift/doSomething(with:)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -93,7 +93,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Throws: Some error if something does wrong
         // @objc public func returnSomething() throws -> String { "" }
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInSwift/returnSomething()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInSwift/returnSomething()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -435,7 +435,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -492,7 +492,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -534,7 +534,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
