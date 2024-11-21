@@ -169,10 +169,10 @@ private final class FallbackResolverBasedLinkResolver {
     
     private func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult? {
         // Check if a fallback reference resolver should resolve this
-        let referenceID = unresolvedReference.bundleID ?? parent.bundleID
+        let referenceBundleID = unresolvedReference.bundleID ?? parent.bundleID
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
               // This uses an underscored internal variant of `registeredBundles` to avoid deprecation warnings and remain compatible with legacy data providers.
-              let knownBundleID = context._registeredBundles.first(where: { $0.id == referenceID || urlReadablePath($0.displayName) == referenceID.rawValue })?.id,
+              let knownBundleID = context._registeredBundles.first(where: { $0.id == referenceBundleID || urlReadablePath($0.displayName) == referenceBundleID.rawValue })?.id,
               fallbackResolver.bundleID == knownBundleID
         else {
             return nil
@@ -184,7 +184,7 @@ private final class FallbackResolverBasedLinkResolver {
         var allCandidateURLs = [URL]()
         
         let alreadyResolved = ResolvedTopicReference(
-            bundleID: referenceID,
+            bundleID: referenceBundleID,
             path: unresolvedReference.path.prependingLeadingSlash,
             fragment: unresolvedReference.topicURL.components.fragment,
             sourceLanguages: parent.sourceLanguages
