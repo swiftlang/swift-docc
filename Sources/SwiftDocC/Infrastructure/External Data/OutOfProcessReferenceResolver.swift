@@ -98,11 +98,11 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     /// The documentation service is expected to be able to handle messages of kind "resolve-reference".
     ///
     /// - Parameters:
-    ///   - id: The bundle identifier the server can resolve references for.
+    ///   - bundleID: The bundle identifier the server can resolve references for.
     ///   - server: The server to send link resolution requests to.
     ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
-    public init(id: DocumentationBundle.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
-        self.bundleID = id
+    public init(bundleID: DocumentationBundle.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+        self.bundleID = bundleID
         self.externalLinkResolvingClient = LongRunningService(
             server: server, convertRequestIdentifier: convertRequestIdentifier)
     }

@@ -197,7 +197,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             })
 
             return try OutOfProcessReferenceResolver(
-                id: "com.test.bundle",
+                bundleID: "com.test.bundle",
                 server: server,
                 convertRequestIdentifier: "convert-id"
             )
@@ -393,7 +393,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             })
 
             return try OutOfProcessReferenceResolver(
-                id: "com.test.bundle",
+                bundleID: "com.test.bundle",
                 server: server,
                 convertRequestIdentifier: "convert-id"
             )
@@ -495,7 +495,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         })
         
         let resolver = try OutOfProcessReferenceResolver(
-            id: "com.test.bundle", server: server, convertRequestIdentifier: "convert-id")
+            bundleID: "com.test.bundle", server: server, convertRequestIdentifier: "convert-id")
         
         try assertForwardsResolverErrors(resolver: resolver)
     }
@@ -826,7 +826,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             })
 
             return try OutOfProcessReferenceResolver(
-                id: "com.test.bundle",
+                bundleID: "com.test.bundle",
                 server: server,
                 convertRequestIdentifier: "convert-id"
             )

@@ -1799,10 +1799,10 @@ public class DocumentationContext {
 
     /// Returns a list of all the image assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter id: The identifier of the bundle to return image assets for.
+    /// - Parameter bundleID: The identifier of the bundle to return image assets for.
     /// - Returns: A list of all the image assets for the given bundle.
-    public func registeredImageAssets(for id: DocumentationBundle.Identifier) -> [DataAsset] {
-        registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: id)
+    public func registeredImageAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: bundleID)
     }
     
     @available(*, deprecated, renamed: "registeredImageAssets(for:)", message: "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
@@ -1812,10 +1812,10 @@ public class DocumentationContext {
     
     /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter id: The identifier of the bundle to return video assets for.
+    /// - Parameter bundleID: The identifier of the bundle to return video assets for.
     /// - Returns: A list of all the video assets for the given bundle.
-    public func registeredVideoAssets(for id: DocumentationBundle.Identifier) -> [DataAsset] {
-        registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: id)
+    public func registeredVideoAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: bundleID)
     }
     
     @available(*, deprecated, renamed: "registeredVideoAssets(for:)", message: "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
@@ -1825,10 +1825,10 @@ public class DocumentationContext {
 
     /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter id: The identifier of the bundle to return download assets for.
+    /// - Parameter bundleID: The identifier of the bundle to return download assets for.
     /// - Returns: A list of all the download assets for the given bundle.
-    public func registeredDownloadsAssets(for id: DocumentationBundle.Identifier) -> [DataAsset] {
-        registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: id)
+    public func registeredDownloadsAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleID)
     }
     
     @available(*, deprecated, renamed: "registeredDownloadsAssets(for:)", message: "registeredDownloadsAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
