@@ -422,7 +422,9 @@ class DocumentationContextTests: XCTestCase {
     }
 
     func testThrowsErrorForQualifiedImagePaths() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            DataFile(name: "figure1.jpg", data: Data())
+        ]))
         let id = bundle.id
 
         let figure = ResourceReference(bundleID: id, path: "figure1.jpg")
@@ -433,7 +435,10 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testResourceExists() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            DataFile(name: "figure1.jpg", data: Data()),
+            DataFile(name: "introposter.jpg", data: Data()),
+        ]))
         
         let existingImageReference = ResourceReference(
             bundleID: bundle.id,
@@ -514,7 +519,20 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testRegisteredImages() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            DataFile(name: "figure1.jpg",          data: Data()),
+            DataFile(name: "figure1.png",          data: Data()),
+            DataFile(name: "figure1~dark.png",     data: Data()),
+            DataFile(name: "intro.png",            data: Data()),
+            DataFile(name: "introposter.png",      data: Data()),
+            DataFile(name: "introposter2.png",     data: Data()),
+            DataFile(name: "something@2x.png",     data: Data()),
+            DataFile(name: "step.png",             data: Data()),
+            DataFile(name: "titled2up.png",        data: Data()),
+            DataFile(name: "titled2upCapital.PNG", data: Data()),
+            DataFile(name: "with spaces.png",      data: Data()),
+            DataFile(name: "with spaces@2x.png",   data: Data()),
+        ]))
         
         let imagesRegistered = context
             .registeredImageAssets(for: bundle.id)
@@ -541,7 +559,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testExternalAssets() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext()
         
         let image = context.resolveAsset(named: "https://example.com/figure.png", in: bundle.rootReference)
         XCTAssertNotNil(image)
@@ -559,8 +577,39 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testDownloadAssets() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
-
+        let (bundle, context) = try loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            DataFile(name: "intro.png", data: Data()),
+            DataFile(name: "project.zip", data: Data()),
+            
+            TextFile(name: "TableOfContents.tutorial", utf8Content: """
+            @Tutorials(name: "Something") {
+                @Intro(title: "Test Intro") {
+                    Add one or more paragraphs that introduce your tutorial.
+                }
+                @Chapter(name: "Chapter Name") {
+                    @Image(source: "intro.png", alt: "Some accessible description of the image")
+            
+                    @TutorialReference(tutorial: "doc:Something")
+                }
+            }
+            """),
+            
+            TextFile(name: "Something.tutorial", utf8Content: """
+            @Tutorial(time: 20, projectFiles: project.zip) {
+                @Intro(title: "Test Intro")
+                @Section(title: "Test Section") {
+                    @ContentAndMedia {
+                        Some tutorial content
+                    }
+               }
+               @Assessments {
+               }
+            }
+            """),
+            
+            
+        ]))
+        
         let downloadsBefore = context.registeredDownloadsAssets(for: bundle.id)
         XCTAssertEqual(downloadsBefore.count, 1)
         XCTAssertEqual(downloadsBefore.first?.variants.values.first?.lastPathComponent, "project.zip")
@@ -726,7 +775,13 @@ class DocumentationContextTests: XCTestCase {
                 [Problem(diagnostic: Diagnostic(source: reference.url, severity: DiagnosticSeverity.error, range: nil, identifier: "com.tests.testGraphChecks", summary: "test error"), possibleSolutions: [])]
             }
         )
-        let (_, _, context) = try testBundleAndContext(named: "DoNotUseInNewTests", configuration: configuration)
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Some root page
+            """)
+        ])
+        let (_, context) = try loadBundle(catalog: catalog, configuration: configuration)
         
         /// Checks if the custom check added problems to the context.
         let testProblems = context.problems.filter({ (problem) -> Bool in
@@ -1154,39 +1209,36 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testDetectsDuplicateSymbolArticles() throws {
-        let documentationURL = Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-            .appendingPathComponent("documentation")
-    
-        let myKitURL = documentationURL.appendingPathComponent("mykit.md")
-        
-        let testCatalog = Folder(name: "TestDetectsDuplicateSymbolArticles.docc", content: [
-            InfoPlist(displayName: "TestDetectsDuplicateSymbolArticles", identifier: "com.example.documentation"),
-            Folder(name: "Resources", content: [
-                CopyOfFile(original: myKitURL, newName: "mykit.md"),
-                CopyOfFile(original: myKitURL, newName: "mykit-duplicate.md"),
-                CopyOfFile(original: myKitURL, newName: "myprotocol.md"),
-                CopyOfFile(original: myKitURL, newName: "myprotocol-duplicateddm"),
-            ]),
-            Folder(name: "Symbols", content: [
-                CopyOfFile(original: Bundle.module.url(
-                    forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-                    .appendingPathComponent("mykit-iOS.symbols.json")),
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
+            ])),
+            
+            TextFile(name: "first.md", utf8Content: """
+            # ``SomeClass``
+            
+            The first documentation extension for this class
+            """),
+            
+            TextFile(name: "second.md", utf8Content: """
+            # ``/ModuleName/SomeClass``
+            
+            The second documentation extension for this class
+            """),
         ])
         
-        let (_, context) = try loadBundle(catalog: testCatalog)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
-        XCTAssertNotNil(context.problems
-            .map { $0.diagnostic }
-            .filter { $0.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
-                && $0.summary.contains("'/mykit'") }
-        )
-        XCTAssertNotNil(context.problems
-            .map { $0.diagnostic }
-            .filter { $0.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
-                && $0.summary.contains("'/myprotocol'") }
-        )
+        let duplicateExtensionProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences" }
+        let diagnostic = try XCTUnwrap(duplicateExtensionProblems.first).diagnostic
+        let source = try XCTUnwrap(diagnostic.source)
+            
+        // Verify that both files are mentioned in the diagnostic and its note.
+        let mentionedMarkupURLs = Set(diagnostic.notes.map(\.source) + [source])
+        
+        let missingMarkupURLs = Set(bundle.markupURLs).subtracting(mentionedMarkupURLs)
+        
+        XCTAssert(missingMarkupURLs.isEmpty, "\(missingMarkupURLs.map(\.lastPathComponent).sorted()) isn't mentioned in the diagnostic.")
     }
     
     func testCanResolveArticleFromTutorial() throws {
