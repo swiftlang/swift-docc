@@ -695,7 +695,6 @@ class ReferenceResolverTests: XCTestCase {
             populateObjCVariantAndCreateAssertion(keyPath: \.isRequiredVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.externalIDVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.accessLevelVariants),
-            populateObjCVariantAndCreateAssertion(keyPath: \.redirectsVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.originVariants),
             
             // Otherwise, for variants properties that don't a value that is Equatable, populate the Objective-C variant
