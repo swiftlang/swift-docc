@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class ChoiceTests: XCTestCase {
     func testInvalidEmpty() throws {
@@ -221,7 +222,10 @@ Choice @1:1-9:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            InfoPlist(identifier: "org.swift.docc.example"),
+            DataFile(name: "blah.png", data: Data()),
+        ]))
         
         directive.map { directive in
             var problems = [Problem]()
