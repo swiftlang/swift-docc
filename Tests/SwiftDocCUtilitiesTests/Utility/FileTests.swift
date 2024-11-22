@@ -23,7 +23,7 @@ class FileTests: XCTestCase {
     
     func testCreateFromDisk() throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         // Generates a list of all paths recursively inside a folder
         func pathsIn(folder: Folder, url: URL) -> [String] {

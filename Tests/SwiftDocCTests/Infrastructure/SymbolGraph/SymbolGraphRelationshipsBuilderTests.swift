@@ -51,7 +51,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     private let swiftSelector = UnifiedSymbolGraph.Selector(interfaceLanguage: "swift", platform: nil)
     
     func testImplementsRelationship() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -65,7 +65,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testConformsRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "DoNotUseInNewTests")
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -94,7 +94,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testInheritanceRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "DoNotUseInNewTests")
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -123,7 +123,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testInheritanceRelationshipFromOtherFramework() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "DoNotUseInNewTests")
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -160,7 +160,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testRequirementRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "DoNotUseInNewTests")
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -174,7 +174,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testOptionalRequirementRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "DoNotUseInNewTests")
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         

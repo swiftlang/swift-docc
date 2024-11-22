@@ -14,7 +14,7 @@ import Markdown
 
 class MarkupReferenceResolverTests: XCTestCase {
     func testArbitraryReferenceInComment() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let source = """
         @Comment {
             ``hello`` and ``world`` are 2 arbitrary symbol links.

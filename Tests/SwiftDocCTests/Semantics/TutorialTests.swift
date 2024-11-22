@@ -19,7 +19,7 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -195,7 +195,7 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -354,7 +354,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -373,7 +373,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -392,7 +392,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -412,7 +412,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -434,7 +434,7 @@ Tutorial @1:1-150:2 projectFiles: nil
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
 
         let tutorialNode = node(withTitle: "tutorial-article", ofKind: .tutorial)
 

@@ -158,7 +158,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     /// Verifies that when JSON encoder should sort keys, the custom render reference cache
     /// respects that setting and prints the referencs in alphabetical order.
     func testSortedReferences() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
         // Create a JSON encoder
@@ -218,7 +218,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     // Verifies that there is no extra comma at the end of the references list.
     func testRemovesLastReferencesListDelimiter() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
         // Create a JSON encoder

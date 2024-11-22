@@ -19,7 +19,7 @@ class DisplayNameTests: XCTestCase {
         let source = "@DisplayName"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(displayName)
@@ -32,7 +32,7 @@ class DisplayNameTests: XCTestCase {
         let source = "@DisplayName(\"Custom Symbol Name\")"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(displayName)
@@ -44,7 +44,7 @@ class DisplayNameTests: XCTestCase {
         let source = "@DisplayName(\"Custom Symbol Name\", style: conceptual)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(displayName)
@@ -56,7 +56,7 @@ class DisplayNameTests: XCTestCase {
         let source = "@DisplayName(\"Custom Symbol Name\", style: symbol)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(displayName)
@@ -68,7 +68,7 @@ class DisplayNameTests: XCTestCase {
         let source = "@DisplayName(\"Custom Symbol Name\", style: somethingUnknown)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(displayName)
@@ -81,7 +81,7 @@ class DisplayNameTests: XCTestCase {
         let source = "@DisplayName(\"Custom Symbol Name\", argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a displayName value")
@@ -98,7 +98,7 @@ class DisplayNameTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a DisplayName value")
@@ -116,7 +116,7 @@ class DisplayNameTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let displayName = DisplayName(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a DisplayName value")

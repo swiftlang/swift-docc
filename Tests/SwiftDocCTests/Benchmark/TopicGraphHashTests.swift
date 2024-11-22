@@ -14,7 +14,7 @@ import XCTest
 class TopicGraphHashTests: XCTestCase {
     func testTopicGraphSameHash() throws {
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, context) = try testBundleAndContext(named: "TestBundle")
+            let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
             return testBenchmark.metrics[0].result
@@ -32,7 +32,7 @@ class TopicGraphHashTests: XCTestCase {
     func testTopicGraphChangedHash() throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         
         do {
             let testBenchmark = Benchmark()
@@ -88,7 +88,7 @@ class TopicGraphHashTests: XCTestCase {
             "/externally/resolved/path/to/article2": .success(.init(referencePath: "/externally/resolved/path/to/article2")),
         ]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [
+        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", externalResolvers: [
             "com.external.testbundle" : resolver
         ]) { url in
             // Add external links to the MyKit Topics.

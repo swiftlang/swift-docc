@@ -19,7 +19,7 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(volume)
@@ -50,7 +50,7 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(volume)
@@ -66,7 +66,7 @@ class VolumeTests: XCTestCase {
         let name = "Always Be Voluming"
 
 
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { root in
             let overviewURL = root.appendingPathComponent("TestOverview.tutorial")
             let text = """
             @Tutorials(name: "Technology X") {

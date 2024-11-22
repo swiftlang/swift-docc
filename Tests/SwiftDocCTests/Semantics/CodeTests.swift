@@ -19,7 +19,7 @@ class CodeTests: XCTestCase {
         let source = "@Code"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let code = Code(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(code)

@@ -397,7 +397,7 @@ Root
     }
     
     func testNavigatorIndexGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -896,7 +896,7 @@ Root
     }
     
     func testNavigatorIndexUsingPageTitleGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -945,7 +945,7 @@ Root
     }
     
     func testNavigatorIndexGenerationNoPaths() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         var results = Set<String>()
         
@@ -1002,7 +1002,7 @@ Root
     }
     
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
-        let navigatorIndex = try generatedNavigatorIndex(for: "TestBundle", bundleIdentifier: testBundleIdentifier)
+        let navigatorIndex = try generatedNavigatorIndex(for: "DoNotUseInNewTests", bundleIdentifier: testBundleIdentifier)
         
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
@@ -1022,7 +1022,7 @@ Root
 
     
     func testNavigatorIndexGenerationWithCuratedFragment() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -1085,7 +1085,7 @@ Root
     }
     
     func testNavigatorIndexAvailabilityGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1215,7 +1215,7 @@ Root
     }
     
     func testNavigatorIndexDifferentHasherGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1664,7 +1664,7 @@ Root
     }
     
     func testNavigatorIndexAsReadOnlyFile() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         let targetURL = try createTemporaryDirectory()

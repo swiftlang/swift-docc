@@ -14,7 +14,7 @@ import XCTest
 
 class LinkTitleResolverTests: XCTestCase {
     func testSymbolTitleResolving() throws {
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let resolver = LinkTitleResolver(context: context, source: nil)
         guard let reference = context.knownIdentifiers.filter({ ref -> Bool in
             return ref.path.hasSuffix("MyProtocol")

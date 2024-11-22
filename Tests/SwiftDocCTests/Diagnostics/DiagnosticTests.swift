@@ -79,7 +79,7 @@ class DiagnosticTests: XCTestCase {
     
     /// Test offsetting diagnostic ranges
     func testOffsetDiagnostics() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
 
         let content = "Test a ``Reference`` in a sentence."
         let markup = Document(parsing: content, source: URL(string: "/tmp/foo.symbols.json"), options: .parseSymbolLinks)

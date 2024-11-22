@@ -178,7 +178,7 @@ func aBlackListedFunc() {
 
     func testDisabledByDefault() throws {
         // Create a test bundle with some non-inclusive content.
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", diagnosticEngine: .init(filterLevel: .error)) { url in
+        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", diagnosticEngine: .init(filterLevel: .error)) { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         }
         
@@ -196,7 +196,7 @@ func aBlackListedFunc() {
         ]
 
         for (severity, enabled) in expectations {
-            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", diagnosticEngine: .init(filterLevel: severity)) { url in
+            let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", diagnosticEngine: .init(filterLevel: severity)) { url in
                 try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
             }
             

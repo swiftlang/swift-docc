@@ -14,7 +14,7 @@ import Foundation
 
 class PresentationURLGeneratorTests: XCTestCase {
     func testInternalURLs() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let generator = PresentationURLGenerator(context: context, baseURL: URL(string: "https://host:1024/webPrefix")!)
         
         // Test resolved tutorial reference

@@ -24,7 +24,7 @@ final class RenderIndexTests: XCTestCase {
         )
         
         try XCTAssertEqual(
-            generatedRenderIndex(for: "TestBundle", with: "org.swift.docc.example"),
+            generatedRenderIndex(for: "DoNotUseInNewTests", with: "org.swift.docc.example"),
             RenderIndex.fromURL(expectedIndexURL)
         )
     }

@@ -19,7 +19,7 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertEqual([
@@ -46,7 +46,7 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
@@ -104,7 +104,7 @@ Step @1:1-9:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         var problems = [Problem]()
         let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertEqual(2, problems.count)

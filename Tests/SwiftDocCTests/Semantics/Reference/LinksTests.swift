@@ -185,7 +185,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "TestBundle") {
+            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "DoNotUseInNewTests") {
                 """
                 @Links(visualStyle: compactGrid) {
                     - ``MyKit/MyClass``

@@ -31,7 +31,7 @@ class DeprecationSummaryTests: XCTestCase {
     /// This test verifies that a symbol's deprecation summary comes from its sidecar doc
     /// and it's preferred over the original deprecation note in the code docs.
     func testAuthoredDeprecatedSummary() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
         
         // Compile docs and verify contents
@@ -44,7 +44,7 @@ class DeprecationSummaryTests: XCTestCase {
 
     /// Test for a warning when symbol is not deprecated
     func testIncorrectlyAuthoredDeprecatedSummary() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
             // Add a sidecar file with wrong deprecated summary
             try """
             # ``SideKit/SideClass``

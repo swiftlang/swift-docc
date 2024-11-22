@@ -531,7 +531,7 @@ class SymbolTests: XCTestCase {
             withExtension: "symbols.json",
             subdirectory: "Test Resources"
         )!
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: deckKitSymbolGraph, to: url.appendingPathComponent("DeckKit.symbols.json"))
         }
         let symbol = try XCTUnwrap(context.documentationCache["c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:"]?.semantic as? Symbol)
@@ -549,7 +549,7 @@ class SymbolTests: XCTestCase {
     }
 
     func testUnresolvedReferenceWarningsInDocumentationExtension() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (url, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
             let myKitDocumentationExtensionComment = """
             # ``MyKit/MyClass``
 
@@ -959,7 +959,7 @@ class SymbolTests: XCTestCase {
         - <doc://com.test.external/ExternalPage>
         """
         
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
 
@@ -1203,7 +1203,7 @@ class SymbolTests: XCTestCase {
     
     func makeDocumentationNodeSymbol(docComment: String, articleContent: String?, file: StaticString = #file, line: UInt = #line) throws -> (Symbol, [Problem]) {
         let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             
             let newDocComment = SymbolGraph.LineList(docComment.components(separatedBy: .newlines).enumerated().map { arg -> SymbolGraph.LineList.Line in

@@ -15,7 +15,7 @@ import XCTest
 class PreviewSubcommandTests: XCTestCase {
     func testOptionsValidation() throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         // Create HTML template dir.
         let templateDir = try createTemporaryDirectory()

@@ -122,7 +122,7 @@ class DataAssetManagerTests: XCTestCase {
         var manager = DataAssetManager()
         
         // Register an image asset
-        let catalogURL = try testCatalogURL(named: "TestBundle")
+        let catalogURL = try testCatalogURL(named: "DoNotUseInNewTests")
         let imageFileURL = catalogURL.appendingPathComponent("figure1.png")
         try manager.register(data: [imageFileURL])
 

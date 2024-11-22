@@ -67,7 +67,7 @@ class FileServerTests: XCTestCase {
     
     func testAddingFilesInFolder() {
         let folder = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let memoryFileProvider = MemoryFileServerProvider()
         memoryFileProvider.addFiles(inFolder: folder.path)
@@ -81,7 +81,7 @@ class FileServerTests: XCTestCase {
     
     func testAddingRemovingFromPath() {
         let folder = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let memoryFileProvider = MemoryFileServerProvider()
         memoryFileProvider.addFiles(inFolder: folder.path)
@@ -98,7 +98,7 @@ class FileServerTests: XCTestCase {
     
     func testDiskServerProvider() {
         let folder = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.path
+            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!.path
         
         guard let fileSystemFileProvider = FileSystemServerProvider(directoryPath: folder) else {
             XCTFail("Provided folder is not valid, it cannot be served.")
@@ -114,7 +114,7 @@ class FileServerTests: XCTestCase {
     
     func testSubPathProvider() {
         let folder = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.path
+            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!.path
         
         guard let fileSystemFileProvider = FileSystemServerProvider(directoryPath: folder) else {
             XCTFail("Provided folder is not valid, it cannot be served.")
@@ -146,7 +146,7 @@ class FileServerTests: XCTestCase {
     
     func testResponse() {
         let folder = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let memoryFileProvider = MemoryFileServerProvider()
         memoryFileProvider.addFiles(inFolder: folder.path)
