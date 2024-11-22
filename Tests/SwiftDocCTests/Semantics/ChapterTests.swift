@@ -19,7 +19,7 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(chapter)
@@ -42,7 +42,7 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertEqual(1, problems.count)
@@ -71,7 +71,7 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
