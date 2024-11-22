@@ -1386,7 +1386,7 @@ let expected = """
     }
     
     func createNode(in context: DocumentationContext, bundle: DocumentationBundle, parent: ResolvedTopicReference, name: String) throws -> (DocumentationNode, TopicGraph.Node) {
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/\(name)", sourceLanguage: .swift)
+        let reference = parent.appendingPath(name)
         let node = DocumentationNode(reference: reference, kind: .article, sourceLanguage: .swift, name: .conceptual(title: name), markup: Document(parsing: "# \(name)"), semantic: nil)
         let tgNode = TopicGraph.Node(reference: reference, kind: .article, source: .external, title: name)
         
@@ -1399,76 +1399,80 @@ let expected = """
     }
     
     func testSortingBreadcrumbsOfEqualDistanceToRoot() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
-        
-        let mykit = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName"))
+        ])
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
         ///
         /// Create nodes in alphabetical order
         ///
 
         /// Create /documentation/MyKit/AAA & /documentation/MyKit/BBB
-        let (aaaNode, _) = try createNode(in: context, bundle: bundle, parent: mykit, name: "AAA")
-        let (_, bbbTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "BBB")
+        let (aaaNode, _) = try createNode(in: context, bundle: bundle, parent: moduleReference, name: "AAA")
+        let (_, bbbTgNode) = try createNode(in: context, bundle: bundle, parent: moduleReference, name: "BBB")
         /// Create /documentation/MyKit/AAA/CCC, curate also under BBB
         let (cccNode, cccTgNode) = try createNode(in: context, bundle: bundle, parent: aaaNode.reference, name: "CCC")
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
         let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePath(to: cccNode.reference))
-        XCTAssertEqual(["/documentation/MyKit", "/documentation/MyKit/AAA"], canonicalPathCCC.map({ $0.path }))
+        XCTAssertEqual(["/documentation/SomeModuleName", "/documentation/SomeModuleName/AAA"], canonicalPathCCC.map({ $0.path }))
         
         ///
         /// Create nodes in non-alphabetical order
         ///
 
         /// Create /documentation/MyKit/DDD & /documentation/MyKit/EEE
-        let (_, dddTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "DDD")
-        let (eeeNode, _) = try createNode(in: context, bundle: bundle, parent: mykit, name: "EEE")
+        let (_, dddTgNode) = try createNode(in: context, bundle: bundle, parent: moduleReference, name: "DDD")
+        let (eeeNode, _) = try createNode(in: context, bundle: bundle, parent: moduleReference, name: "EEE")
         /// Create /documentation/MyKit/DDD/FFF, curate also under EEE
         let (fffNode, fffTgNode) = try createNode(in: context, bundle: bundle, parent: eeeNode.reference, name: "FFF")
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         
         let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePath(to: fffNode.reference))
-        XCTAssertEqual(["/documentation/MyKit", "/documentation/MyKit/DDD"], canonicalPathFFF.map({ $0.path }))
+        XCTAssertEqual(["/documentation/SomeModuleName", "/documentation/SomeModuleName/DDD"], canonicalPathFFF.map({ $0.path }))
     }
     
     func testSortingBreadcrumbsOfDifferentDistancesToRoot() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
-        
-        let mykit = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
-        let tgMykitNode = try XCTUnwrap(context.topicGraph.nodeWithReference(mykit))
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName"))
+        ])
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let moduleTopicNode = try XCTUnwrap(context.topicGraph.nodeWithReference(moduleReference))
         
         ///
         /// Create nodes in order
         ///
 
         /// Create /documentation/MyKit/AAA & /documentation/MyKit/BBB
-        let (aaaNode, aaaTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "AAA")
-        let (_, bbbTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "BBB")
+        let (aaaNode, aaaTgNode) = try createNode(in: context, bundle: bundle, parent: moduleReference, name: "AAA")
+        let (_, bbbTgNode) = try createNode(in: context, bundle: bundle, parent: moduleReference, name: "BBB")
         /// Create /documentation/MyKit/AAA/CCC and also curate under /documentation/MyKit
         let (cccNode, cccTgNode) = try createNode(in: context, bundle: bundle, parent: aaaNode.reference, name: "CCC")
-        context.topicGraph.addEdge(from: tgMykitNode, to: cccTgNode)
+        context.topicGraph.addEdge(from: moduleTopicNode, to: cccTgNode)
         context.topicGraph.addEdge(from: aaaTgNode, to: cccTgNode)
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
         let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePath(to: cccNode.reference))
-        XCTAssertEqual(["/documentation/MyKit"], canonicalPathCCC.map({ $0.path }))
+        XCTAssertEqual(["/documentation/SomeModuleName"], canonicalPathCCC.map({ $0.path }))
         
         ///
         /// Create nodes not in order
         ///
 
         /// Create /documentation/MyKit/DDD & /documentation/MyKit/EEE
-        let (_, dddTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "DDD")
-        let (eeeNode, eeeTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "EEE")
+        let (_, dddTgNode) = try createNode(in: context, bundle: bundle, parent: moduleReference, name: "DDD")
+        let (eeeNode, eeeTgNode) = try createNode(in: context, bundle: bundle, parent: moduleReference, name: "EEE")
         /// Create /documentation/MyKit/DDD/FFF, curate also under /documentation/MyKit
         let (fffNode, fffTgNode) = try createNode(in: context, bundle: bundle, parent: eeeNode.reference, name: "FFF")
         context.topicGraph.addEdge(from: eeeTgNode, to: fffTgNode)
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
-        context.topicGraph.addEdge(from: tgMykitNode, to: fffTgNode)
+        context.topicGraph.addEdge(from: moduleTopicNode, to: fffTgNode)
         
         let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePath(to: fffNode.reference))
-        XCTAssertEqual(["/documentation/MyKit"], canonicalPathFFF.map({ $0.path }))
+        XCTAssertEqual(["/documentation/SomeModuleName"], canonicalPathFFF.map({ $0.path }))
     }
 
     // Verify that a symbol that has no parents in the symbol graph is automatically curated under the module node.
