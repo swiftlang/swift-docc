@@ -922,7 +922,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     func testDeprecationSummaryWithExternalLink() throws {
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
@@ -961,8 +961,9 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let resolver = TestExternalReferenceResolver()
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID: resolver])
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
+        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
         
@@ -986,7 +987,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     func testExternalLinkInGeneratedSeeAlso() throws {
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Root
             
@@ -1017,8 +1018,9 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let resolver = TestExternalReferenceResolver()
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID: resolver])
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
+        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -1066,7 +1068,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     func testExternalLinkInAuthoredSeeAlso() throws {
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Root
             
@@ -1084,8 +1086,9 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let resolver = TestExternalReferenceResolver()
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID: resolver])
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
+        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -1106,7 +1109,7 @@ class ExternalReferenceResolverTests: XCTestCase {
 
     func testParametersWithExternalLink() throws {
 
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.swift.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
@@ -1169,8 +1172,9 @@ class ExternalReferenceResolverTests: XCTestCase {
 
         let resolver = TestExternalReferenceResolver()
 
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID: resolver])
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
+        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
 
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
 

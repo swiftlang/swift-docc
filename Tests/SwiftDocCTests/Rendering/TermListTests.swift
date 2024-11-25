@@ -48,7 +48,7 @@ class TermListTests: XCTestCase {
     }
     
     func testLinksAndCodeVoiceAsTerms() throws {
-        let tempURL = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 TextFile(name: "Article.md", utf8Content: """
                 # Article
@@ -77,15 +77,16 @@ class TermListTests: XCTestCase {
                         )
                     ]
                 )),
-            ]),
-        ])
+            ])
             
         let resolver = TestMultiResultExternalReferenceResolver()
         resolver.entitiesToReturn["/path/to/something"] = .success(
             .init(referencePath: "/path/to/something")
         )
         
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: ["com.external.testbundle": resolver])
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle": resolver]
+        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
         
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)

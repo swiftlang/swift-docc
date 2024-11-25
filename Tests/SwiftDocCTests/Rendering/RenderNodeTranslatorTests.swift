@@ -1273,7 +1273,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testExpectedRoleHeadingIsAssigned() throws {
-        let exampleDocumentation = Folder(
+        let catalog = Folder(
             name: "unit-test.docc",
             content: [
                 TextFile(name: "APICollection.md", utf8Content: """
@@ -1334,8 +1334,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         func renderNodeArticleFromReferencePath(
             referencePath: String
@@ -1364,7 +1363,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testExpectedRoleHeadingWhenAutomaticRoleHeadingIsDisabled() throws {
-        let exampleDocumentation = Folder(
+        let catalog = Folder(
             name: "unit-test.docc",
             content: [
                 TextFile(name: "APICollection.md", utf8Content: """
@@ -1427,8 +1426,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         func renderNodeArticleFromReferencePath(
             referencePath: String

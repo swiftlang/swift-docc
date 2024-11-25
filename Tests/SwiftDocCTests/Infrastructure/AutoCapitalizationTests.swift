@@ -57,12 +57,10 @@ class AutoCapitalizationTests: XCTestCase {
             parameters: ["one", "two", "three", "four", "five"]
         )
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
@@ -104,12 +102,10 @@ class AutoCapitalizationTests: XCTestCase {
             parameters: ["one", "two", "three", "four", "five"]
         )
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
@@ -147,12 +143,10 @@ class AutoCapitalizationTests: XCTestCase {
             parameters: []
         )
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         

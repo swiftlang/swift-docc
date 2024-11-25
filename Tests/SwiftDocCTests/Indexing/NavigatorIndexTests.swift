@@ -471,7 +471,7 @@ Root
         //     ├────────────┐│
         //     ▼            ▼▼
         //  first() ◀──▶ second()
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             InfoPlist(identifier: testBundleIdentifier),
             
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -586,8 +586,7 @@ Root
             """),
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)

@@ -24,7 +24,7 @@ class AutomaticCurationTests: XCTestCase {
             let containerID = "some-container-id"
             let memberID = "some-member-id"
             
-            let tempURL = try createTempFolder(content: [
+            let catalog =
                 Folder(name: "unit-test.docc", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         moduleName: "ModuleName",
@@ -37,8 +37,8 @@ class AutomaticCurationTests: XCTestCase {
                         ]
                     ))
                 ])
-            ])
-            let (_, bundle, context) = try loadBundle(from: tempURL)
+            
+            let (bundle, context) = try loadBundle(catalog: catalog)
             
             try assertRenderedPage(atPath: "/documentation/ModuleName/SomeClass", containsAutomaticTopicSectionFor: kind, context: context, bundle: bundle)
         }
@@ -53,7 +53,7 @@ class AutomaticCurationTests: XCTestCase {
             
             let nonExtensionKind = SymbolGraph.Symbol.KindIdentifier(identifier: String(kind.identifier.dropLast(".extension".count)))
             
-            let tempURL = try createTempFolder(content: [
+            let catalog =
                 Folder(name: "unit-test.docc", content: [
                     // Add an empty main symbol graph file so that the extension symbol graph file is processed
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
@@ -82,8 +82,8 @@ class AutomaticCurationTests: XCTestCase {
                         ]
                     )),
                 ])
-            ])
-            let (_, bundle, context) = try loadBundle(from: tempURL)
+            
+            let (bundle, context) = try loadBundle(catalog: catalog)
             
             try assertRenderedPage(atPath: "/documentation/ModuleName", containsAutomaticTopicSectionFor: .extendedModule, context: context, bundle: bundle)
             try assertRenderedPage(atPath: "/documentation/ModuleName/ExtendedModule", containsAutomaticTopicSectionFor: kind, context: context, bundle: bundle)
