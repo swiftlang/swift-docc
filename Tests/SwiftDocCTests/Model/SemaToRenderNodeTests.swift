@@ -1819,7 +1819,6 @@ Document
         )
     }
     
-    
     private func renderNodeForArticleInTestBundle(content: String) throws -> RenderNode {
         // Overwrite the article so we can test the article eyebrow for articles without task groups
         let sourceURL = Bundle.module.url(
@@ -1902,13 +1901,27 @@ Document
 
     /// Verifies we emit the correct warning for external links in topic task groups.
     func testWarnForExternalLinksInTopicTaskGroups() throws {
-        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
-        // Verify we warn for the external link planted in mykit.md
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName", symbols: [
+            ])),
+            
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``SomeModuleName``
+            
+            Abstract.
+            
+            ## Topics
+            
+            - [Some description](https://example.com/link)
+            """),
+        ])
+        
+        let (_, context) = try loadBundle(catalog: catalog)
+        
         XCTAssertEqual(context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.InvalidDocumentationLink" }).count, 1)
         XCTAssertNotNil(context.problems.first(where: { problem -> Bool in
-
             return problem.diagnostic.identifier == "org.swift.docc.InvalidDocumentationLink"
-                && problem.diagnostic.summary.contains("https://external.com/link")
+                && problem.diagnostic.summary.contains("https://example.com/link")
         }))
     }
     
@@ -3283,26 +3296,30 @@ Document
     }
     
     func testTopicsSectionWithSingleAnonymousTopicGroup() throws {
-        let (_, bundle, context) = try testBundleAndContext(
-            copying: "DoNotUseInNewTests",
-            configureBundle: { url in
-                try """
-                # Article
-                
-                Abstract.
-                
-                ## Topics
-                
-                - ``MyKit/MyProtocol``
-                - ``MyKit/MyClass``
-                
-                """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
-            }
-        )
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName", symbols: [
+                makeSymbol(id: "some-class-id",    kind: .class,    pathComponents: ["SomeClass"]),
+                makeSymbol(id: "some-protocol-id", kind: .protocol, pathComponents: ["SomeProtocol"]),
+            ])),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            Abstract.
+            
+            ## Topics
+            
+            - ``/SomeModuleName/SomeProtocol``
+            - ``/SomeModuleName/SomeClass``
+            """),
+        ])
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        
          
         let articleReference = ResolvedTopicReference(
             bundleID: bundle.id,
-            path: "/documentation/Test-Bundle/article",
+            path: "/documentation/unit-test/Article",
             sourceLanguage: .swift
         )
         
@@ -3317,8 +3334,8 @@ Document
             },
             [
                 nil,
-                "doc://org.swift.docc.example/documentation/MyKit/MyProtocol",
-                "doc://org.swift.docc.example/documentation/MyKit/MyClass",
+                "doc://unit-test/documentation/SomeModuleName/SomeProtocol",
+                "doc://unit-test/documentation/SomeModuleName/SomeClass",
             ]
         )
     }
