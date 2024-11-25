@@ -190,6 +190,22 @@ extension XCTestCase {
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
+        catalog: Folder,
+        content: () -> String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> (
+        renderBlockContent: [RenderBlockContent],
+        problemIdentifiers: [String],
+        directive: Directive?,
+        collectedReferences: [String : RenderReference]
+    ) {
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
+    }
+    
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
         in bundleName: String? = nil,
         content: () -> String,
         file: StaticString = #file,
@@ -226,6 +242,22 @@ extension XCTestCase {
         } else {
             (bundle, context) = try testBundleAndContext()
         }
+        return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
+    }
+    
+    private func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        bundle: DocumentationBundle,
+        context: DocumentationContext,
+        content: () -> String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> (
+        renderBlockContent: [RenderBlockContent],
+        problemIdentifiers: [String],
+        directive: Directive?,
+        collectedReferences: [String : RenderReference]
+    ) {
         context.diagnosticEngine.clearDiagnostics()
         
         let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
