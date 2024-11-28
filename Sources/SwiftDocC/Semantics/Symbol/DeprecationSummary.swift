@@ -24,7 +24,9 @@ import Markdown
 /// }
 /// ```
 ///
-/// You can use the `@DeprecationSummary` directive top-level in both articles and documentation extension files.
+/// You can use the `@DeprecationSummary` directive top-level in articles, documentation extension files, or documentation comments.
+///
+/// > Earlier versions: Before Swift-DocC 6.1, `@DeprecationSummary` was not supported in documentation comments.
 ///
 /// > Tip:
 /// > If you are writing a custom deprecation summary message for an API or documentation page that isn't already deprecated,

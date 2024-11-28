@@ -1313,6 +1313,32 @@ class SymbolTests: XCTestCase {
         )
     }
     
+    func testParsesDeprecationSummaryDirectiveFromDocComment() throws {
+        let (node, problems) = try makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @DeprecationSummary {
+                  This is the deprecation summary.
+                }
+                """,
+            articleContent: nil
+        )
+        
+        XCTAssert(problems.isEmpty)
+        
+        XCTAssertEqual(
+            (node.semantic as? Symbol)?
+                .deprecatedSummary?
+                .content
+                .first?
+                .format()
+                .trimmingCharacters(in: .whitespaces)
+            ,
+            "This is the deprecation summary."
+        )
+    }
+
     // MARK: - Helpers
     
     func makeDocumentationNodeForSymbol(

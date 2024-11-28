@@ -849,6 +849,7 @@ public struct DocumentationNode {
 
 private let directivesSupportedInDocumentationComments = [
         Metadata.directiveName,
+        DeprecationSummary.directiveName,
     ]
     // Renderable directives are processed like any other piece of structured markdown (tables, lists, etc.)
     // and so are inherently supported in doc comments.
