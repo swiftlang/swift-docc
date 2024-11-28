@@ -192,5 +192,55 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         
         return true
     }
+    
+    /// Validates the use of this Metadata directive in a documentation comment.
+    ///
+    /// Some configuration options of Metadata are invalid in documentation comments. This function
+    /// emits warnings for illegal uses and sets their values to `nil`.
+    func validateForUseInDocumentationComment(
+        symbolSource: URL?,
+        for bundle: DocumentationBundle,
+        in context: DocumentationContext,
+        problems: inout [Problem]
+    ) {
+        let invalidDirectives: [(any AutomaticDirectiveConvertible)?] = [
+            documentationOptions,
+            technologyRoot,
+            displayName,
+            callToAction,
+            pageKind,
+            _pageColor,
+            titleHeading,
+        ] + (redirects ?? [])
+          + supportedLanguages
+          + pageImages
+        
+        let namesAndRanges = invalidDirectives
+            .compactMap { $0 }
+            .map { (type(of: $0).directiveName, $0.originalMarkup.range) }
+        
+        problems.append(
+            contentsOf: namesAndRanges.map { (name, range) in
+                Problem(
+                    diagnostic: Diagnostic(
+                        source: symbolSource,
+                        severity: .warning,
+                        range: range,
+                        identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
+                        summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
+                        explanation: """
+                        This Metadata directive is not supported in documentation comments. \
+                        Specify this configuration in a documentation extension file"
+                        """
+                    )
+                )
+            }
+        )
+        
+        documentationOptions = nil
+        technologyRoot = nil
+        displayName = nil
+        pageKind = nil
+        _pageColor = nil
+    }
 }
-
