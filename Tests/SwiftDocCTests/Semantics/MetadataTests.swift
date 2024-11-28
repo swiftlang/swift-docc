@@ -314,9 +314,13 @@ class MetadataTests: XCTestCase {
         XCTAssertNotNil(article?.metadata, "The Article has the parsed Metadata")
         XCTAssertNil(article?.metadata?.displayName, "The Article doesn't have the DisplayName")
         
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.HasAtMostOne<Article, Metadata>.DuplicateChildren", problems.first?.diagnostic.identifier)
-        
+        XCTAssertEqual(
+            problems.map(\.diagnostic.identifier),
+            [
+                "org.swift.docc.DocumentationExtension.NoConfiguration",
+                "org.swift.docc.HasAtMostOne<Article, Metadata>.DuplicateChildren",
+            ]
+        )
     }
     
     func testPageImageSupport() throws {
@@ -416,10 +420,7 @@ class MetadataTests: XCTestCase {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
-        _ = analyzer.visit(document)
-        var problems = analyzer.problems
-        
+        var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         
         let problemIDs = problems.map { problem -> String in
