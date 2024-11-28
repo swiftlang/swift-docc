@@ -848,6 +848,7 @@ public struct DocumentationNode {
 }
 
 private let directivesSupportedInDocumentationComments = [
+        Comment.directiveName,
         Metadata.directiveName,
         DeprecationSummary.directiveName,
     ]

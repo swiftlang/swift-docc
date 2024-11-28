@@ -1338,6 +1338,19 @@ class SymbolTests: XCTestCase {
             "This is the deprecation summary."
         )
     }
+    
+    func testAllowsCommentDirectiveInDocComment() throws {
+        let (_, problems) = try makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Comment(This is a comment)
+                """,
+            articleContent: nil
+        )
+        
+        XCTAssert(problems.isEmpty)
+    }
 
     // MARK: - Helpers
     
