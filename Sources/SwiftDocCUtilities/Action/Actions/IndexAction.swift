@@ -40,8 +40,7 @@ public struct IndexAction: AsyncAction {
     }
     
     private func buildIndex() throws -> [Problem] {
-        let renderNodeProvider = FileManagerRenderNodeProvider(fileManager: FileManager.default, startingPoint: rootURL)
-        let indexBuilder = NavigatorIndex.Builder(renderNodeProvider: renderNodeProvider,
+        let indexBuilder = NavigatorIndex.Builder(archiveURL: rootURL,
                                                   outputURL: outputURL,
                                                   bundleIdentifier: bundleIdentifier,
                                                   sortRootChildrenByName: true,
