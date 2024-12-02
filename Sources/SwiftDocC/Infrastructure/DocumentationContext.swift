@@ -144,7 +144,7 @@ public class DocumentationContext {
         case .legacy(let legacyDataProvider):
             return try legacyDataProvider.contentsOfURL(url, in: bundle)
         case .new(let dataProvider):
-            assert(self.bundle?.identifier == bundle.identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+            assert(self.bundle?.id == bundle.id, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
             return try dataProvider.contents(of: url)
         }
     }
@@ -392,7 +392,7 @@ public class DocumentationContext {
         case .legacy(let legacyDataProvider):
             return legacyDataProvider.bundles[identifier]
         case .new:
-            assert(bundle?.identifier == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+            assert(bundle?.id.rawValue == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
             return bundle?.id.rawValue == identifier ? bundle : nil
         }
     }
