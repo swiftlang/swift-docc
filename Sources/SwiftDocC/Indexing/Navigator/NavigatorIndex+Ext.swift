@@ -10,10 +10,56 @@
 
 import Foundation
 
+/// A class that provides render nodes by traversing the file system.
+package class FileManagerRenderNodeProvider: RenderNodeProvider {
+    /// The iterator of files to provide render nodes for.
+    private var iterator: any IteratorProtocol<URL>
+    
+    package init(fileManager: FileManagerProtocol, startingPoint: URL) {
+        iterator = fileManager.recursiveFiles(startingPoint: startingPoint).makeIterator()
+    }
+    
+    /// Returns a render node that can be processed by an index creator, for example.
+    package func getRenderNode() -> RenderNode? {
+        guard let nextFile = iterator.next() else {
+            return nil // Traversed the entire directory structure
+        }
+        guard nextFile.pathExtension.lowercased() == "json" else {
+            return getRenderNode() // Iterate again to find the next matching file
+        }
+        
+        do {
+            let data = try Data(contentsOf: nextFile)
+            return try RenderNode.decode(fromJSON: data)
+        } catch {
+            problems.append(
+                Problem(diagnostic: Diagnostic(
+                    source: nextFile,
+                    severity: .warning,
+                    range: nil,
+                    identifier: "org.swift.docc.RenderNodeDecodingError",
+                    summary: "Encountered an unexpected error decoding render node for indexing file found while indexing content: \(error.localizedDescription)"
+                ))
+            )
+            // Iterate again to find the next matching file
+            return getRenderNode()
+        }
+    }
+    
+    private var problems = [Problem]()
+    
+    /// Returns the list problems that the provider encountered during the process.
+    /// - Note: These problems represent unexpected errors and aren't user-actionable.
+    package func getProblems() -> [Problem] {
+        problems
+    }
+}
+
 /**
  This class provides a simple way to transform a `FileSystemProvider` into a `RenderNodeProvider` to feed an index builder.
  The data from the disk is fetched and processed in an efficient way to build a navigator index.
  */
+@available(*, deprecated, message: "Use 'FileManagerRenderNodeProvider' instead. This deprecated API will be removed after 6.2 is released.")
 public class FileSystemRenderNodeProvider: RenderNodeProvider {
     
     /// The internal `FileSystemProvider` reference.
