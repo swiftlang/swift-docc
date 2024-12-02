@@ -21,7 +21,7 @@ extension Docc {
 
         /// The user-provided path to a `.doccarchive` documentation archive.
         @OptionGroup()
-        public var documentationBundle: DocCArchiveOption
+        public var documentationArchive: DocCArchiveOption
 
         /// The user-provided bundle name to use for the produced index.
         @Option(help: "The bundle name for the index.")
@@ -33,11 +33,11 @@ extension Docc {
 
         /// The path to the directory that all build output should be placed in.
         public var outputURL: URL {
-            documentationBundle.urlOrFallback.appendingPathComponent("index", isDirectory: true)
+            documentationArchive.urlOrFallback.appendingPathComponent("index", isDirectory: true)
         }
 
         public func run() async throws {
-            var indexAction = try IndexAction(fromIndexCommand: self)
+            var indexAction = IndexAction(fromIndexCommand: self)
             try await indexAction.performAndHandleResult()
         }
     }

@@ -1946,8 +1946,8 @@ class ConvertActionTests: XCTestCase {
         
         // Run just the index command over the built documentation
         
-        let indexAction = try IndexAction(
-            documentationBundleURL: targetURL,
+        let indexAction = IndexAction(
+            archiveURL: targetURL,
             outputURL: indexURL,
             bundleIdentifier: indexFromConvertAction.bundleIdentifier
         )
