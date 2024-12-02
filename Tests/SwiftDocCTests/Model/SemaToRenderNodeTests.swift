@@ -1933,7 +1933,7 @@ Document
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: nil, referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
@@ -1961,7 +1961,7 @@ Document
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
@@ -1975,7 +1975,7 @@ Document
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
@@ -1989,7 +1989,7 @@ Document
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
 
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS"})?.isBeta, true)
@@ -2003,7 +2003,7 @@ Document
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS" })?.isBeta, true)
@@ -2019,7 +2019,7 @@ Document
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify task group link is not in beta betas "iOS" is not being marked as beta
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, false)
@@ -3362,7 +3362,7 @@ Document
         XCTAssertEqual(documentationNode.availableVariantTraits.count, 2, "This page has Swift and Objective-C variants")
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(documentationNode)
+        let renderNode = converter.convert(documentationNode)
         
         let topicSectionsVariants = renderNode.topicSectionsVariants
         
@@ -3448,7 +3448,7 @@ Document
         }
         
         let nodeConverter = DocumentationNodeConverter(bundle: bundle, context: context)
-        try assertExpectedTopicSections(nodeConverter.convert(documentationNode))
+        assertExpectedTopicSections(nodeConverter.convert(documentationNode))
         
         let contextConverter = DocumentationContextConverter(
             bundle: bundle,
@@ -3497,7 +3497,7 @@ Document
         XCTAssertEqual(documentationNode.availableVariantTraits.count, 1)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(documentationNode)
+        let renderNode = converter.convert(documentationNode)
         
         let topicSection = renderNode.topicSectionsVariants.defaultValue
         
@@ -3516,7 +3516,7 @@ Document
             let node = try context.entity(with: root)
             
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             
             let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
             XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
@@ -3549,7 +3549,7 @@ Document
             let node = try context.entity(with: reference)
             
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             
             let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
             XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
@@ -3641,7 +3641,7 @@ Document
         let node = try context.entity(with: unnamedStructReference)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         XCTAssertEqual(renderNode.metadata.title, "struct (unnamed)")
         XCTAssertEqual(renderNode.metadata.navigatorTitle?.map(\.text).joined(), "struct (unnamed)")
