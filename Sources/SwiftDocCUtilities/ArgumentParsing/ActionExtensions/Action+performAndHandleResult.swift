@@ -17,7 +17,7 @@ extension AsyncAction {
     /// - Parameter logHandle: The log handle to write encountered warnings and errors to.
     ///
     /// - Throws: `ErrorsEncountered` if any errors are produced while performing the action.
-    public mutating func performAndHandleResult(logHandle: LogHandle = .standardOutput) async throws {
+    public func performAndHandleResult(logHandle: LogHandle = .standardOutput) async throws {
         var logHandle = logHandle
         // Perform the Action and collect the result
         let result = try await perform(logHandle: &logHandle)
