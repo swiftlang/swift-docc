@@ -232,6 +232,8 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                         This Metadata directive is not supported in documentation comments. \
                         Specify this configuration in a documentation extension file"
                         """
+                        
+                        // TODO: It would be nice to offer a solution here that removes the directive for you (#1111, rdar://140846407)
                     )
                 )
             }
