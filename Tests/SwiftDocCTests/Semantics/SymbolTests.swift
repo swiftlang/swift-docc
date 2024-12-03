@@ -1366,30 +1366,16 @@ class SymbolTests: XCTestCase {
             
             let newDocComment = SymbolGraph.LineList(
                 docComment
-                    .components(
-                        separatedBy: .newlines
-                    )
+                    .components(separatedBy: .newlines)
                     .enumerated()
                     .map { arg -> SymbolGraph.LineList.Line in
-                        var (
-                            index,
-                            line
-                        ) = arg
+                        var (index, line) = arg
                         index += 12 // Add an arbitrary offset
                         let range = SymbolGraph.LineList.SourceRange(
-                            start: .init(
-                                line: index,
-                                character: 0
-                            ),
-                            end: .init(
-                                line: index,
-                                character: line.utf8.count
-                            )
+                            start: .init(line: index, character: 0),
+                            end: .init(line: index, character: line.utf8.count)
                         )
-                        return .init(
-                            text: line,
-                            range: range
-                        )
+                        return .init(text: line, range: range)
                     },
                 uri: "file:///tmp/File.swift"
             )
