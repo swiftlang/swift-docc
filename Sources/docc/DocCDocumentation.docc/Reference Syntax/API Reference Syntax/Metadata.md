@@ -58,7 +58,7 @@ previous versions, @Redirected must be used as a top level directive.
 
 ### Usage in documentation comments
 
-If you wish, you can specify `@Metadata` configuration in documentation comments for the following customizations:
+You can specify `@Metadata` configuration in documentation comments for the following customizations:
 
 - ``Available``
 - ``CustomMetadata``
