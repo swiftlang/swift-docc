@@ -957,7 +957,7 @@ Root
             
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
-                let renderNode = try converter.convert(entity)
+                let renderNode = converter.convert(entity)
                 try builder.index(renderNode: renderNode)
             }
             
@@ -1673,7 +1673,7 @@ Root
         
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
-            let renderNode = try converter.convert(entity)
+            let renderNode = converter.convert(entity)
             try builder.index(renderNode: renderNode)
         }
         
