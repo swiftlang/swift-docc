@@ -18,15 +18,15 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
     ///
     /// If there are multiple instances of the same directive type, this functions returns the first instance
     /// and diagnoses subsequent instances.
-    func parseSingleDirective<MarkupElements: Sequence<Markup>>(
+    func parseSingleDirective(
         _ directiveType: Directive.Type,
-        from markupElements: MarkupElements,
+        from markupElements: inout [any Markup],
         parentType: Semantic.Type,
         source: URL?,
         bundle: DocumentationBundle,
         context: DocumentationContext,
         problems: inout [Problem]
-    ) -> (Directive?, [Markup]) {
+    ) -> Directive? {
         let (directiveElements, remainder) = markupElements.categorize { markup -> Directive? in
             guard let childDirective = markup as? BlockDirective,
                   childDirective.name == Directive.directiveName
@@ -61,6 +61,8 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
             )
         }
         
-        return (directive, remainder)
+        markupElements = remainder
+        
+        return directive
     }
 }

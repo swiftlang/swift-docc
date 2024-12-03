@@ -547,21 +547,21 @@ public struct DocumentationNode {
             let docCommentMarkup = Document(parsing: docCommentString, source: docCommentLocation?.url, options: documentOptions)
             let offset = symbol.docComment?.lines.first?.range
 
-            var docCommentDirectives = docCommentMarkup.children.compactMap { $0 as? BlockDirective }
-            
+            var docCommentMarkupElements = Array(docCommentMarkup.children)
+
             var problems = [Problem]()
             
             if let bundle, let context {
-                (metadata, docCommentDirectives) = DirectiveParser()
+                metadata = DirectiveParser()
                     .parseSingleDirective(
                         Metadata.self,
-                        from: docCommentDirectives,
+                        from: &docCommentMarkupElements,
                         parentType: Symbol.self,
                         source: docCommentLocation?.url,
                         bundle: bundle,
                         context: context,
                         problems: &problems
-                    ) as! (Metadata?, [BlockDirective])
+                    )
                 
                 metadata?.validateForUseInDocumentationComment(
                     symbolSource: symbol.docComment?.url,
@@ -577,6 +577,8 @@ public struct DocumentationNode {
             
             engine.emit(problems)
             
+            let docCommentDirectives = docCommentMarkupElements.compactMap { $0 as? BlockDirective }
+
             if !docCommentDirectives.isEmpty {
                 let location = symbol.mixins.getValueIfPresent(
                     for: SymbolGraph.Symbol.Location.self

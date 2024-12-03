@@ -129,11 +129,10 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             return Redirect(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
         }
         
-        var optionalMetadata: Metadata?
-        (optionalMetadata, remainder) = DirectiveParser()
+        var optionalMetadata = DirectiveParser()
             .parseSingleDirective(
                 Metadata.self,
-                from: remainder,
+                from: &remainder,
                 parentType: Article.self,
                 source: source,
                 bundle: bundle,
