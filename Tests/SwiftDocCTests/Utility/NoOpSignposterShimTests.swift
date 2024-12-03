@@ -65,5 +65,7 @@ final class NoOpSignposterShimTests: XCTestCase {
         
         logger.log(level: .default, "Some aligned values \(12, align: .right(columns: 5)) \("some text", align: .left(columns: 10))")
         
+        struct SomeError: Swift.Error {}
+        logger.error("Some error \(SomeError())")
     }
 }

@@ -105,6 +105,10 @@ package struct NoOpLogMessage: ExpressibleByStringInterpolation, ExpressibleBySt
         package mutating func appendInterpolation(_ number: @autoclosure @escaping () -> Float, format: NoOpLogFloatFormatting = .fixed, align: NoOpLogStringAlignment = .none, privacy: NoOpLogPrivacy = .auto) {}
         package mutating func appendInterpolation(_ number: @autoclosure @escaping () -> Double, format: NoOpLogFloatFormatting = .fixed, align: NoOpLogStringAlignment = .none, privacy: NoOpLogPrivacy = .auto) {}
         
+        // Append errors
+        package mutating func appendInterpolation(_ error: @autoclosure @escaping () -> any Error, privacy: NoOpLogPrivacy = .auto, attributes: String = "") {}
+        package mutating func appendInterpolation(_ error: @autoclosure @escaping () -> (any Error)?, privacy: NoOpLogPrivacy = .auto, attributes: String = "") {}
+        
         // Add more interpolations here as needed
     }
     
