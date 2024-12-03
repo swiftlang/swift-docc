@@ -674,7 +674,7 @@ extension Docc {
         }
 
         public func run() async throws {
-            var convertAction = try ConvertAction(fromConvertCommand: self)
+            let convertAction = try ConvertAction(fromConvertCommand: self)
             try await convertAction.performAndHandleResult()
         }
         

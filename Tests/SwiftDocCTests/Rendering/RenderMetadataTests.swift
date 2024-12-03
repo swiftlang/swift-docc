@@ -109,7 +109,7 @@ class RenderMetadataTests: XCTestCase {
         
         // Verify the rendered metadata contains the bystanders
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "MyKit")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Foundation"])
     }
@@ -136,7 +136,7 @@ class RenderMetadataTests: XCTestCase {
 
         // Verify the rendered metadata contains the bystanders
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "OverlayTest")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["BaseKit"])
     }
