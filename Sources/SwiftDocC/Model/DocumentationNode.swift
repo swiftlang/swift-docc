@@ -565,8 +565,6 @@ public struct DocumentationNode {
                 
                 metadata?.validateForUseInDocumentationComment(
                     symbolSource: symbol.docComment?.url,
-                    for: bundle,
-                    in: context,
                     problems: &problems
                 )
             }

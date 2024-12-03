@@ -199,8 +199,6 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     /// emits warnings for illegal uses and sets their values to `nil`.
     func validateForUseInDocumentationComment(
         symbolSource: URL?,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
         problems: inout [Problem]
     ) {
         let invalidDirectives: [(any AutomaticDirectiveConvertible)?] = [
