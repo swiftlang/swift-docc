@@ -1326,14 +1326,13 @@ class SymbolTests: XCTestCase {
         XCTAssert(problems.isEmpty)
         
         XCTAssertEqual(
-            try XCTUnwrap(
-                (node.semantic as? Symbol)?
-                    .deprecatedSummary?
-                    .content
-                    .first?
-                    .format()
-                    .trimmingCharacters(in: .whitespaces)
-            ),
+            (node.semantic as? Symbol)?
+                .deprecatedSummary?
+                .content
+                .first?
+                .format()
+                .trimmingCharacters(in: .whitespaces)
+            ,
             "This is the deprecation summary."
         )
     }
