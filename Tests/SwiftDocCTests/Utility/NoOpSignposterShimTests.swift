@@ -38,6 +38,8 @@ final class NoOpSignposterShimTests: XCTestCase {
     }
     
     func testCanAcceptMessageInputs() {
+        // Note: this test has no assertions.
+        // It simply verifies that the message interpolations compile
         let signposter = NoOpSignposterShim()
         
         let handle = signposter.beginInterval("Some interval", "Some message")
@@ -51,5 +53,17 @@ final class NoOpSignposterShimTests: XCTestCase {
         signposter.emitEvent("Some event", "Some non-secret string \("my secret", privacy: .public)")
         
         signposter.emitEvent("Some event", "Some aligned values \(12, align: .right(columns: 5)) \("some text", align: .left(columns: 10))")
+        
+        let logger = NoOpLoggerShim()
+        
+        logger.log("Some static string")
+        logger.info("Some formatted bool \(true, format: .answer)")
+        logger.debug("Some formatted integer \(12, format: .decimal)")
+        logger.error("Some formatted float \(7.0, format: .exponential)")
+        logger.fault("Some sensitive string \("my secret", privacy: .sensitive(mask: .hash))")
+        logger.log(level: .fault, "Some non-secret string \("my secret", privacy: .public)")
+        
+        logger.log(level: .default, "Some aligned values \(12, align: .right(columns: 5)) \("some text", align: .left(columns: 10))")
+        
     }
 }

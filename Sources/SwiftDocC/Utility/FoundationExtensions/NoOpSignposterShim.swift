@@ -8,7 +8,31 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-/// A shim for `OSSignposter` that does nothing, except for running the passed interval task.
+/// A shim for `os.Logger` that does nothing.
+///
+/// This type allows calling code to avoid using `#if canImport(os)` throughout the implementation.
+package struct NoOpLoggerShim : @unchecked Sendable {
+    package init() {}
+    
+    package var isEnabled: Bool { false }
+    
+    package enum Level {
+        case `default`, info, debug, error, fault
+    }
+    
+    package func log(_ message: NoOpLogMessage) {}
+    package func log(level: Level, _ message: NoOpLogMessage) {}
+    
+    package func trace(_ message: NoOpLogMessage) {}
+    package func debug(_ message: NoOpLogMessage) {}
+    package func info(_ message: NoOpLogMessage) {}
+    package func warning(_ message: NoOpLogMessage) {}
+    package func error(_ message: NoOpLogMessage) {}
+    package func critical(_ message: NoOpLogMessage) {}
+    package func fault(_ message: NoOpLogMessage) {}
+}
+
+/// A shim for `os.OSSignposter` that does nothing, except for running the passed interval task.
 ///
 /// This type allows calling code to avoid using `#if canImport(os)` throughout the implementation.
 package struct NoOpSignposterShim : @unchecked Sendable {
