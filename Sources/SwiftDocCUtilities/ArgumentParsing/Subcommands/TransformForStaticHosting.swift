@@ -63,7 +63,7 @@ extension Docc.ProcessArchive {
         }
         
         func run() async throws {
-            var action = try TransformForStaticHostingAction(fromCommand: self)
+            let action = try TransformForStaticHostingAction(fromCommand: self)
             try await action.performAndHandleResult()
         }
     }
