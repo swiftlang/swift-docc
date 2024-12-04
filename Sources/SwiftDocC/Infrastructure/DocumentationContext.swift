@@ -668,7 +668,7 @@ public class DocumentationContext {
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
 
-            if FeatureFlags.current.isExperimentalMentionedInEnabled {
+            if FeatureFlags.current.isMentionedInEnabled {
                 // Record symbol links as symbol "mentions" for automatic cross references
                 // on rendered symbol documentation.
                 if let article = result.node.semantic as? Article,
