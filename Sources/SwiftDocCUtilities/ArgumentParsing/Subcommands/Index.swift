@@ -37,7 +37,7 @@ extension Docc {
         }
 
         public func run() async throws {
-            var indexAction = IndexAction(fromIndexCommand: self)
+            let indexAction = IndexAction(fromIndexCommand: self)
             try await indexAction.performAndHandleResult()
         }
     }

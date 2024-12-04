@@ -125,7 +125,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             sourceLanguage: .swift
         )
         let node = try context.entity(with: sideClassReference)
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         // First assert that the external reference is included in the render node's references
         // and is defined as expected.
@@ -267,7 +267,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                 "The test content should include a link for the external reference resolver to resolve"
             )
             
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             
             guard let symbolRenderReference = renderNode.references[expectedReference] as? TopicRenderReference else {
                 XCTFail("The external reference should be resolved and included among the Tutorial's references.")
@@ -310,7 +310,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         guard let symbolRenderReference = renderNode.references["doc://com.test.external/path/to/external/symbol"] as? TopicRenderReference else {
             XCTFail("The external reference should be resolved and included among the SideClass symbols's references.")
@@ -355,7 +355,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/article", sourceLanguage: .swift))
         
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         XCTAssertEqual(externalResolver.resolvedExternalPaths, ["/path/to/external/symbol"], "The authored link was resolved")
         
@@ -402,7 +402,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         guard let sampleRenderReference = renderNode.references["doc://com.test.external/path/to/external/sample"] as? TopicRenderReference else {
             XCTFail("The external reference should be resolved and included among the SideClass symbols's references.")
@@ -501,7 +501,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeSample", sourceLanguage: .swift))
         
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         XCTAssertEqual(context.assetManagers.keys.sorted(), ["org.swift.docc.sample"],
                        "The external bundle for the external asset shouldn't have it's own asset manager")
@@ -770,7 +770,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         // Get MyKit symbol
         let entity = try context.entity(with: .init(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift))
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         
         let taskGroupLinks = try XCTUnwrap(renderNode.seeAlsoSections.first?.identifiers)
         // Verify the unresolved links are not included in the task group.
@@ -896,7 +896,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             sourceLanguage: .swift
         )
         let node = try context.entity(with: mixedLanguageFrameworkReference)
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         // Topic identifiers in the Swift variant of the `MixedLanguageFramework` symbol
         let swiftTopicIDs = renderNode.topicSections.flatMap(\.identifiers)
         
@@ -1039,7 +1039,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         do {
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/First", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
-            let rendered = try converter.convert(node)
+            let rendered = converter.convert(node)
             
             XCTAssertEqual(rendered.seeAlsoSections.count, 1, "The page should only have the automatic See Also section created based on the curation on the Root page.")
             let seeAlso = try XCTUnwrap(rendered.seeAlsoSections.first)
@@ -1053,7 +1053,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         do {
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Second", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
-            let rendered = try converter.convert(node)
+            let rendered = converter.convert(node)
             
             XCTAssertEqual(rendered.seeAlsoSections.count, 1, "The page should only have the automatic See Also section created based on the curation on the Root page.")
             let seeAlso = try XCTUnwrap(rendered.seeAlsoSections.first)
@@ -1094,7 +1094,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let rendered = try converter.convert(node)
+        let rendered = converter.convert(node)
         
         XCTAssertEqual(rendered.seeAlsoSections.count, 1, "The page should only have the authored See Also section.")
         let seeAlso = try XCTUnwrap(rendered.seeAlsoSections.first)

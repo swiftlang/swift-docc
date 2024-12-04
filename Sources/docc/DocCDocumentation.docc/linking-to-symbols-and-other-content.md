@@ -175,7 +175,7 @@ a colon (`:`), the article's file name without file extension, and a greater-tha
 If the article's file name contains whitespace characters, replace each consecutive sequence of whitespace characters with a dash. 
 For example, the link to an article with a file name "Getting Started.md" is
 
-```
+```markdown
 <doc:Getting-Started>
 ```
 
@@ -205,13 +205,13 @@ If the heading text contains whitespace or punctuation characters, replace each 
 
 For example, consider this level 3 heading with a handful of punctuation characters:
 
-```
+```markdown
 ### (1) "Example": Sloth's diet.
 ```
 
 A link to this heading can either include all the punctuation characters from the heading text or remove some or all of the punctuation characters.
 
-```
+```markdown
 <doc:OtherPage#(1)-"Example":-Sloth's-diet.>
 <doc:OtherPage#1-Example-Sloths-diet>
 ```
@@ -221,7 +221,7 @@ A link to this heading can either include all the punctuation characters from th
 
 To add a link to heading or task group on the current page, use a `<doc:>` link that starts with the name of the heading. If you prefer you can include the hash (`#`) prefix before the heading name. For example, both these links resolve to a heading named "Some heading title" on the current page:
 
-```
+```markdown
 <doc:#Some-heading-title>
 <doc:Some-heading-title>
 ```

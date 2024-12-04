@@ -44,7 +44,7 @@ extension Docc {
         }
 
         public func run() async throws {
-            var previewAction = try PreviewAction(fromPreviewOptions: previewOptions)
+            let previewAction = try PreviewAction(fromPreviewOptions: previewOptions)
             try await previewAction.performAndHandleResult()
         }
     }
