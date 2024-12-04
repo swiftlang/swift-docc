@@ -36,7 +36,7 @@ extension ConvertAction {
         init(outputURL: URL, bundleID: DocumentationBundle.Identifier) throws {
             let indexURL = outputURL.appendingPathComponent("index", isDirectory: true)
             indexBuilder = Synchronized<NavigatorIndex.Builder>(
-                NavigatorIndex.Builder(
+                NavigatorIndex.Builder(renderNodeProvider: nil,
                     outputURL: indexURL,
                     bundleIdentifier: bundleID.rawValue,
                     sortRootChildrenByName: true,

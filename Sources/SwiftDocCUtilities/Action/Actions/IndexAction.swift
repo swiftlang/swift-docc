@@ -13,21 +13,21 @@ import SwiftDocC
 
 /// An action that creates an index of a documentation bundle.
 public struct IndexAction: AsyncAction {
-    let archiveURL: URL
+    let rootURL: URL
     let outputURL: URL
     let bundleIdentifier: String
 
     var diagnosticEngine: DiagnosticEngine
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
-    public init(archiveURL: URL, outputURL: URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) {
+    public init(documentationBundleURL: URL, outputURL: URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) throws {
         // Initialize the action context.
-        self.archiveURL = archiveURL
+        self.rootURL = documentationBundleURL
         self.outputURL = outputURL
         self.bundleIdentifier = bundleIdentifier
 
         self.diagnosticEngine = diagnosticEngine
-        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: archiveURL))
+        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: documentationBundleURL))
     }
     
     /// Converts each eligible file from the source documentation bundle,
@@ -40,7 +40,8 @@ public struct IndexAction: AsyncAction {
     }
     
     private func buildIndex() throws -> [Problem] {
-        let indexBuilder = NavigatorIndex.Builder(archiveURL: archiveURL,
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
+        let indexBuilder = NavigatorIndex.Builder(renderNodeProvider: FileSystemRenderNodeProvider(fileSystemProvider: dataProvider),
                                                   outputURL: outputURL,
                                                   bundleIdentifier: bundleIdentifier,
                                                   sortRootChildrenByName: true,

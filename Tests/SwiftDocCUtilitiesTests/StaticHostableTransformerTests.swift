@@ -55,7 +55,8 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         let indexHTMLData = try StaticHostableTransformer.indexHTMLData(in: testTemplateURL, with: basePath, fileManager: fileManager)
         
         let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
-        let transformer = StaticHostableTransformer(dataDirectory: dataURL, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
+        let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
         
         try transformer.transform()
         
@@ -143,6 +144,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         _ = try await action.perform(logHandle: .none)
 
         let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
 
         let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         try Folder.testHTMLTemplateDirectory.write(to: testTemplateURL)
@@ -158,10 +160,10 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
 
         let fileManager = FileManager.default
         for (basePath, testValue) in basePaths {
-            let outputURL = try createTemporaryDirectory().appendingPathComponent("output/")
+            let outputURL = try createTemporaryDirectory().appendingPathComponent("output")
             let indexHTMLData = try StaticHostableTransformer.indexHTMLData(in: testTemplateURL, with: basePath, fileManager: FileManager.default)
           
-            let transformer = StaticHostableTransformer(dataDirectory: dataURL, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
+            let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
 
             try transformer.transform()
 
