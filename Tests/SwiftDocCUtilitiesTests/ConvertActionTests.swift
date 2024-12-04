@@ -1559,7 +1559,6 @@ class ConvertActionTests: XCTestCase {
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("diagnostics.json").path))
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("indexing-records.json").path))
-            XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("linkable-entities.json").path))
         }
     }
 
@@ -3164,6 +3163,8 @@ class ConvertActionTests: XCTestCase {
         │     ├─ image-name@2x.png
         │     ├─ image-name~dark.png
         │     ╰─ image-name~dark@2x.png
+        ├─ link-hierarchy.json
+        ├─ linkable-entities.json
         ├─ metadata.json
         ╰─ videos/
            ╰─ unit-test/

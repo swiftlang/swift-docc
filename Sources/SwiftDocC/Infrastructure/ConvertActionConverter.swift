@@ -156,7 +156,7 @@ package enum ConvertActionConverter {
                             linkSummaries.append(contentsOf: nodeLinkSummaries)
                             indexingRecords.append(contentsOf: nodeIndexingRecords)
                         }
-                    } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                    } else if FeatureFlags.current.isLinkHierarchySerializationEnabled {
                         let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
                         
                         resultsGroup.async(queue: resultsSyncQueue) {
@@ -189,7 +189,7 @@ package enum ConvertActionConverter {
             }
         }
         
-        if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+        if FeatureFlags.current.isLinkHierarchySerializationEnabled {
             signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
                 do {
                     let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)

@@ -113,7 +113,7 @@ extension PathHierarchy {
             }
             let topLevelNames = Set(modules.map(\.name) + (onlyFindSymbols ? [] : [articlesContainer.name, tutorialContainer.name]))
             
-            if isAbsolute, FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+            if isAbsolute, FeatureFlags.current.isLinkHierarchySerializationEnabled {
                 throw Error.moduleNotFound(
                     pathPrefix: pathForError(of: rawPath, droppingLast: remaining.count),
                     remaining: Array(remaining),
