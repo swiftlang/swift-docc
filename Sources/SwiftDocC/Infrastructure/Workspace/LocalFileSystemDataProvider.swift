@@ -11,6 +11,7 @@
 import Foundation
 
 /// A type that provides documentation bundles that it discovers by traversing the local file system.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released.")
 public struct LocalFileSystemDataProvider: FileSystemProvider {
     public var identifier: String = UUID().uuidString
     

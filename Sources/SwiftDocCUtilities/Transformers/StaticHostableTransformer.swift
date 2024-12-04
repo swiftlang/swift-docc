@@ -32,122 +32,50 @@ enum StaticHostableTransformerError: DescribedError {
 
 /// Navigates the contents of a FileSystemProvider pointing at the data folder of a `.doccarchive` to emit a static hostable website.
 struct StaticHostableTransformer {
-    
-    /// The internal `FileSystemProvider` reference.
-    /// This should be the data folder of an archive.
-    private let dataProvider: FileSystemProvider
-    
-    /// Where the output will be written.
+    /// The data directory to create static hostable files for.
+    private let dataDirectory: URL
+    /// The directory to write the static hostable files in.
     private let outputURL: URL
-    
-    /// The index.html file to be used.
+    /// The index.html contents to write for each static hostable file.
     private let indexHTMLData: Data
-
+    /// The file manager used to create directories and files.
     private let fileManager: FileManagerProtocol
     
-    /// Initialise with a dataProvider to the source doccarchive.
+    /// Initialize with a dataProvider to the source doccarchive.
     /// - Parameters:
-    ///   - dataProvider: Should point to the data folder in a docc archive.
-    ///   - fileManager: The FileManager to use for file processes.
-    ///   - outputURL: The folder where the output will be placed
-    ///   - indexHTMLData: Data representing the index.html to be written in the transformed folder structure.
-    init(dataProvider: FileSystemProvider, fileManager: FileManagerProtocol, outputURL: URL, indexHTMLData: Data) {
-        self.dataProvider = dataProvider
+    ///   - dataDirectory: The data directory to create static hostable files for.
+    ///   - fileManager: The file manager used to create directories and files.
+    ///   - outputURL: The output directory where the transformer will write the static hostable files in.
+    ///   - indexHTMLData: Data representing the index.html content that the static
+    init(dataDirectory: URL, fileManager: FileManagerProtocol, outputURL: URL, indexHTMLData: Data) {
+        self.dataDirectory = dataDirectory.standardizedFileURL
         self.fileManager = fileManager
-        self.outputURL = outputURL
+        self.outputURL = outputURL.standardizedFileURL
         self.indexHTMLData = indexHTMLData
     }
     
     /// Creates a static hostable version of the documentation in the data folder of an archive pointed to by the `dataProvider`
     func transform() throws {
-
-        let node = dataProvider.fileSystem
-        
-        // We should be starting at the data folder of a .doccarchive.
-        switch node {
-        case .directory(let dir):
-            try transformDirectoryContents(directoryRoot: outputURL, relativeSubPath: "", directoryContents: dir.children)
-        case .file(let file):
-            throw StaticHostableTransformerError.dataProviderDoesNotReferenceValidInput(url: file.url)
-        }
-    }
-
-
-    /// Create a directory at the provided URL
-    ///
-    private func createDirectory(url: URL) throws {
-        if !fileManager.fileExists(atPath: url.path) {
-            try fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
-        }
-    }
-
-    /// Transforms the contents of a given directory
-    /// - Parameters:
-    ///   - root: The root output URL
-    ///   - directory: The relative path (to the root) of the directory for which then content will processed.
-    ///   - nodes: The directory contents
-    /// - Returns: An array of problems that may have occurred during processing
-    private func transformDirectoryContents(directoryRoot: URL, relativeSubPath: String, directoryContents: [FSNode]) throws {
-
-        for node in directoryContents {
-            switch node {
-            case .directory(let dir):
-                try transformDirectory(directoryRoot: directoryRoot, currentDirectoryNode: dir, directorySubPath: relativeSubPath)
-            case .file(let file):
-                let outputURL = directoryRoot.appendingPathComponent(relativeSubPath)
-                try transformFile(file: file, outputURL: outputURL)
+        for file in fileManager.recursiveFiles(startingPoint: dataDirectory) where file.pathExtension.lowercased() == "json" {
+            // For each "/relative/something.json" file, create a "/relative/something/index.html" file.
+            
+            guard let relativeFileURL = file.relative(to: dataDirectory) else {
+                // Our `URL.relative(to:)` extension only return `nil` if the URLComponents aren't valid.
+                continue
             }
+            
+            let outputDirectoryURL = outputURL.appendingPathComponent(
+                relativeFileURL.deletingPathExtension().path, // A directory with the same base name as the file
+                isDirectory: true
+            )
+
+            // Ensure that the intermediate directories exist
+            if !fileManager.fileExists(atPath: outputDirectoryURL.path) {
+                try fileManager.createDirectory(at: outputDirectoryURL, withIntermediateDirectories: true, attributes: [:])
+            }
+            
+            try fileManager.createFile(at: outputDirectoryURL.appendingPathComponent("index.html"), contents: indexHTMLData)
         }
-
-    }
-
-    /// Transform the  given directory
-    /// - Parameters:
-    ///   - root: The root output URL
-    ///   - dir: The FSNode that represents the directory
-    ///   - currentDirectory: The relative path (to the root) of the directory that will contain this directory
-    private func transformDirectory(directoryRoot: URL, currentDirectoryNode: FSNode.Directory, directorySubPath: String) throws {
-
-        // Create the path for the new directory
-        var newDirectory = directorySubPath
-        let newPathComponent = currentDirectoryNode.url.lastPathComponent
-        
-        // We need to ensure the new directory component, if not empty, ends with /
-        if !newDirectory.isEmpty && !newDirectory.hasSuffix("/") {
-            newDirectory += "/"
-        }
-        newDirectory += newPathComponent
-
-
-        // Create the HTML output directory
-
-        let htmlOutputURL = directoryRoot.appendingPathComponent(newDirectory)
-        try createDirectory(url: htmlOutputURL)
-
-        // Process the directory contents
-        try transformDirectoryContents(directoryRoot: directoryRoot, relativeSubPath: newDirectory, directoryContents: currentDirectoryNode.children)
-
-    }
-
-    /// Transform the given File
-    /// -   Parameters:
-    ///     - file: The FSNode that represents the file
-    ///     - outputURL: The directory the need to be placed in
-    private func transformFile(file: FSNode.File, outputURL: URL) throws {
-
-        // For JSON files we need to create an associated index.html in a sub-folder of the same name.
-        guard file.url.pathExtension.lowercased() == "json" else { return }
-
-        let dirURL = file.url.deletingPathExtension()
-        let newDir = dirURL.lastPathComponent
-        let newDirURL = outputURL.appendingPathComponent(newDir)
-
-        if !fileManager.fileExists(atPath: newDirURL.path) {
-            try fileManager.createDirectory(at: newDirURL, withIntermediateDirectories: true, attributes: [:])
-        }
-
-        let fileURL = newDirURL.appendingPathComponent("index.html")
-        try self.indexHTMLData.write(to: fileURL)
     }
 }
 
