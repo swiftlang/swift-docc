@@ -169,33 +169,39 @@ package enum ConvertActionConverter {
         
         // Write various metadata
         if emitDigest {
-            do {
-                try outputConsumer.consume(linkableElementSummaries: linkSummaries)
-                try outputConsumer.consume(indexingRecords: indexingRecords)
-                try outputConsumer.consume(assets: assets)
-            } catch {
-                recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
+            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
+                do {
+                    try outputConsumer.consume(linkableElementSummaries: linkSummaries)
+                    try outputConsumer.consume(indexingRecords: indexingRecords)
+                    try outputConsumer.consume(assets: assets)
+                } catch {
+                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
+                }
             }
         }
         
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-            do {
-                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
-                try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
-                
-                if !emitDigest {
-                    try outputConsumer.consume(linkableElementSummaries: linkSummaries)
+            signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
+                do {
+                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
+                    try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+                    
+                    if !emitDigest {
+                        try outputConsumer.consume(linkableElementSummaries: linkSummaries)
+                    }
+                } catch {
+                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
                 }
-            } catch {
-                recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
             }
         }
         
         if emitDigest {
-            do {
-                try outputConsumer.consume(problems: context.problems + conversionProblems)
-            } catch {
-                recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
+            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
+                do {
+                    try outputConsumer.consume(problems: context.problems + conversionProblems)
+                } catch {
+                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
+                }
             }
         }
 

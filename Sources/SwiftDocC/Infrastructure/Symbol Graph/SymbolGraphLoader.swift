@@ -158,6 +158,11 @@ struct SymbolGraphLoader {
         )
         signposter.endInterval("Build unified symbol graph", mergeSignpostHandle)
 
+        let availabilitySignpostHandle = signposter.beginInterval("Add missing availability", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Add missing availability", availabilitySignpostHandle)
+        }
+        
         for var unifiedGraph in unifiedGraphs.values {
             var defaultUnavailablePlatforms = [PlatformName]()
             var defaultAvailableInformation = [DefaultAvailability.ModuleAvailability]()
