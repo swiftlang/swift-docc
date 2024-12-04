@@ -14,6 +14,7 @@ import Foundation
  This class provides a simple way to transform a `FileSystemProvider` into a `RenderNodeProvider` to feed an index builder.
  The data from the disk is fetched and processed in an efficient way to build a navigator index.
  */
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released.")
 public class FileSystemRenderNodeProvider: RenderNodeProvider {
     
     /// The internal `FileSystemProvider` reference.
