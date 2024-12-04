@@ -5261,8 +5261,6 @@ let expected = """
     }
     
     func testResolveExternalLinkFromTechnologyRoot() throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-        
         let externalModuleName = "ExternalModuleName"
         
         func makeExternalDependencyFiles() throws -> (SerializableLinkResolutionInformation, [LinkDestinationSummary]) {
