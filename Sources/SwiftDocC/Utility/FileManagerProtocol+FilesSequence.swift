@@ -12,8 +12,12 @@ import Foundation
 
 extension FileManagerProtocol {
     /// Returns a sequence of all the files in the directory structure from the starting point.
-    package func recursiveFiles(startingPoint: URL) -> some Sequence<URL> {
-        IteratorSequence(FilesIterator(fileManager: self, startingPoint: startingPoint))
+    /// - Parameters:
+    ///   - startingPoint: The file or directory that's the top of the directory structure that the file manager traverses.
+    ///   - options: Options for how the file manager enumerates the contents of directories. Defaults to `.skipsHiddenFiles`.
+    /// - Returns: A sequence of the files in the directory structure.
+    package func recursiveFiles(startingPoint: URL, options: FileManager.DirectoryEnumerationOptions = .skipsHiddenFiles) -> some Sequence<URL> {
+        IteratorSequence(FilesIterator(fileManager: self, startingPoint: startingPoint, options: options))
     }
 }
 
@@ -21,12 +25,14 @@ extension FileManagerProtocol {
 private struct FilesIterator<FileManager: FileManagerProtocol>: IteratorProtocol {
     /// The file manager that the iterator uses to traverse the directory structure.
     var fileManager: FileManager
+    var options: Foundation.FileManager.DirectoryEnumerationOptions
     
     private var foundFiles: [URL]
     private var foundDirectories: [URL]
     
-    init(fileManager: FileManager, startingPoint: URL) {
+    init(fileManager: FileManager, startingPoint: URL, options: Foundation.FileManager.DirectoryEnumerationOptions) {
         self.fileManager = fileManager
+        self.options = options
         
         // Check if the starting point is a file or a directory.
         if fileManager.directoryExists(atPath: startingPoint.path) {
@@ -51,7 +57,7 @@ private struct FilesIterator<FileManager: FileManagerProtocol>: IteratorProtocol
         }
         
         let directory = foundDirectories.removeFirst()
-        guard let (newFiles, newDirectories) = try? fileManager.contentsOfDirectory(at: directory, options: .skipsHiddenFiles) else {
+        guard let (newFiles, newDirectories) = try? fileManager.contentsOfDirectory(at: directory, options: options) else {
             // The iterator protocol doesn't have a mechanism for raising errors. If an error occurs we
             return nil
         }
