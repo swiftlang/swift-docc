@@ -12,7 +12,7 @@ import XCTest
 @testable import SwiftDocC
 
 class RenderNodeDiffingBundleTests: XCTestCase {
-    let testBundleName = "TestBundle"
+    let testBundleName = "LegacyBundle_DoNotUseInNewTests"
     let testBundleID: DocumentationBundle.Identifier = "org.swift.docc.example"
     
     func testDiffSymbolFromBundleWithDiscussionSectionRemoved() throws {
