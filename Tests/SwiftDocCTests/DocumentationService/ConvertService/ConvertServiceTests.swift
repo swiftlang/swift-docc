@@ -1383,7 +1383,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testConvertAllPagesForOnDiskContent() throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
             bundleInfo: testBundleInfo,
@@ -1444,7 +1444,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testConvertSomeSymbolsAndSomeArticlesForOnDiskContent() throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
             bundleInfo: testBundleInfo,
@@ -1468,7 +1468,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testConvertNoSymbolsAndNoArticlesForOnDiskContent() throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
             bundleInfo: testBundleInfo,
@@ -1495,7 +1495,7 @@ class ConvertServiceTests: XCTestCase {
         """)
         #else
         let (testBundleURL, _, _) = try testBundleAndContext(
-            copying: "TestBundle",
+            copying: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "sidekit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -1624,7 +1624,7 @@ class ConvertServiceTests: XCTestCase {
         """)
         #else
         let (testBundleURL, _, _) = try testBundleAndContext(
-            copying: "TestBundle",
+            copying: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "mykit-iOS.symbols.json",
                 "MyKit@SideKit.symbols.json",
