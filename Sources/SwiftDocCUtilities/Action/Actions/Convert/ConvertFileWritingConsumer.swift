@@ -152,6 +152,33 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         }
     }
     
+    private var linkableElementsData = Synchronized(Data())
+    
+    /// Consumes one  linkable element summary produced during a conversion.
+    func consumeIncremental(linkableElementSummary: LinkDestinationSummary) throws {
+        let data = try encode(linkableElementSummary)
+        linkableElementsData.sync {
+            if !$0.isEmpty {
+                $0.append(Data(",".utf8))
+            }
+            $0.append(data)
+        }
+    }
+    
+    /// Finishes consuming the linkable element summaries produced during a conversion.
+    func finishedConsumingLinkElementSummaries() throws {
+        let linkableElementsURL = targetFolder.appendingPathComponent(Self.linkableEntitiesFileName, isDirectory: false)
+        let data = linkableElementsData.sync { accumulatedData in
+            var data = Data()
+            swap(&data, &accumulatedData)
+            data.insert(UTF8.CodeUnit(ascii: "["), at: 0)
+            data.append(UTF8.CodeUnit(ascii: "]"))
+            
+            return data
+        }
+        try fileManager.createFile(at: linkableElementsURL, contents: data)
+    }
+    
     func consume(linkableElementSummaries summaries: [LinkDestinationSummary]) throws {
         let linkableElementsURL = targetFolder.appendingPathComponent(Self.linkableEntitiesFileName, isDirectory: false)
         let data = try encode(summaries)

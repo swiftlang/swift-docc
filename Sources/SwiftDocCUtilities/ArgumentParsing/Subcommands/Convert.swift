@@ -496,7 +496,7 @@ extension Docc {
             
             // This flag only exist to allow developers to pass the previous '--enable-experimental-...' flag without errors.
             @Flag(name: .customLong("enable-experimental-external-link-support"), help: .hidden)
-            @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+            @available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
             var enableExperimentalLinkHierarchySerialization = false
             
             @Flag(help: .hidden)
@@ -595,7 +595,7 @@ extension Docc {
             set { featureFlags.enableLinkHierarchySerialization = newValue }
         }
         
-        @available(*, deprecated, renamed: "enableLinkHierarchySerialization", message: "Use 'enableLinkHierarchySerialization' instead. This deprecated API will be removed after 6.2 is released")
+        @available(*, deprecated, renamed: "enableLinkHierarchySerialization", message: "Use 'enableLinkHierarchySerialization' instead. This deprecated API will be removed after 6.3 is released")
         public var enableExperimentalLinkHierarchySerialization: Bool {
             get { enableLinkHierarchySerialization }
             set { enableLinkHierarchySerialization = newValue }

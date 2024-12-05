@@ -20,7 +20,7 @@ public struct FeatureFlags: Codable {
     /// Whether or not support for emitting a serialized version of the local link resolution information is enabled.
     public var isLinkHierarchySerializationEnabled = true
     
-    @available(*, deprecated, renamed: "isLinkHierarchySerializationEnabled", message: "Use 'isLinkHierarchySerializationEnabled' instead. This deprecated API will be removed after 6.2 is released")
+    @available(*, deprecated, renamed: "isLinkHierarchySerializationEnabled", message: "Use 'isLinkHierarchySerializationEnabled' instead. This deprecated API will be removed after 6.3 is released")
     public var isExperimentalLinkHierarchySerializationEnabled: Bool {
         get { isLinkHierarchySerializationEnabled }
         set { isLinkHierarchySerializationEnabled = newValue }
