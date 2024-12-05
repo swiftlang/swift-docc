@@ -237,17 +237,17 @@ public func forecast(for day:  Date,         at location: Location) -> HourByHou
 
 The first overload is the only one with where the first parameter has a `DateInterval` type. 
 The second parameter type isn't necessary to disambiguate the overload, and is the same in all three overloads, 
-so DocC suggests to add `(DateInterval,_)` to disambiguate the it.
+so DocC suggests to add `(DateInterval,_)` to disambiguate the first overload.
 
 The second overload is the only one with where the return value has a `MinuteByMinuteForecast` type, 
-so DocC suggests to add `‑>MinuteByMinuteForecast` to disambiguate the it.
+so DocC suggests to add `‑>MinuteByMinuteForecast` to disambiguate the second overload.
 
 The third overload has the same parameter types as the second overload and the same return value as the first overload, 
 so DocC neither parameter types or return types alone can uniquely disambiguate this overload.
 In this scenario, DocC considers a combination of parameter types and return types to disambiguate the overload.
 The first parameter type is different from the first overload and the return type is different from the second overload.
 Together this information uniquely disambiguates the third overload, 
-so DocC suggests to add `(Date,_)‑>HourByHourForecast` to disambiguate the it.
+so DocC suggests to add `(Date,_)‑>HourByHourForecast` to disambiguate the third overload.
 
 You can discover the minimal combination of parameter types and return types for each overload from DocC's warnings about ambiguous symbol links.
 
