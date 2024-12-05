@@ -24,7 +24,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             forResource: "image", withExtension: "png", subdirectory: "Test Resources")!
         
         let symbolURL = Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
          
         // Write source documentation bundle.

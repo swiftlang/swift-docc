@@ -15,7 +15,7 @@ class IndexingTests: XCTestCase {
     
     // MARK: - Tutorial
     func testTutorial() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let tutorialReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: tutorialReference)
         let tutorial = node.semantic as! Tutorial
@@ -89,7 +89,7 @@ class IndexingTests: XCTestCase {
     // MARK: - Article
     
     func testArticle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! TutorialArticle
@@ -187,7 +187,7 @@ class IndexingTests: XCTestCase {
     }
     
     func testRootPageIndexingRecord() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
@@ -207,7 +207,7 @@ class IndexingTests: XCTestCase {
     }
     
     func testSymbolIndexingRecord() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             // Modify the documentaion to have default availability for MyKit so that there is platform availability
             // information for MyProtocol (both in the render node and in the indexing record.
             let plistURL = url.appendingPathComponent("Info.plist")

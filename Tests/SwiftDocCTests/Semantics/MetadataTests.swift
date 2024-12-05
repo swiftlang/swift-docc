@@ -414,7 +414,7 @@ class MetadataTests: XCTestCase {
         line: UInt = #line
     ) throws -> (problems: [String], metadata: Metadata) {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)

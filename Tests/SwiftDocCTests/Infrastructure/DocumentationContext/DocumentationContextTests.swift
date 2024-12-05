@@ -42,7 +42,7 @@ class DocumentationContextTests: XCTestCase {
     func testResolve() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "DoNotUseInNewTests")
+        let bundle = try testBundle(named: "LegacyBundle_DoNotUseInNewTests")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         
@@ -83,7 +83,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testLoadEntity() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         let identifier = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         
@@ -656,7 +656,7 @@ class DocumentationContextTests: XCTestCase {
     @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testCreatesCorrectIdentifiers() throws {
         let testBundleLocation = Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let workspaceContent = Folder(name: "TestWorkspace", content: [
             CopyOfFolder(original: testBundleLocation),
             
@@ -824,13 +824,13 @@ class DocumentationContextTests: XCTestCase {
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                     .appendingPathComponent("documentation")
                     .appendingPathComponent("myprotocol.md")),
             ]),
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                     .appendingPathComponent("mykit-iOS.symbols.json")),
             ])
         ])
@@ -1059,7 +1059,7 @@ class DocumentationContextTests: XCTestCase {
     
     func testMergesMultipleSymbolDeclarations() throws {
         let graphContentiOS = try String(contentsOf: Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json"))
 
         let graphContentmacOS = graphContentiOS
@@ -1096,7 +1096,7 @@ class DocumentationContextTests: XCTestCase {
     
     func testMergedMultipleSymbolDeclarationsIncludesPlatformSpecificSymbols() throws {
         let iOSGraphURL = Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
         let graphContentiOS = try String(contentsOf: iOSGraphURL)
 
@@ -1155,10 +1155,10 @@ class DocumentationContextTests: XCTestCase {
             ]),
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                     .appendingPathComponent("mykit-iOS.symbols.json")),
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                     .appendingPathComponent("sidekit.symbols.json")),
             ])
         ])
@@ -1180,7 +1180,7 @@ class DocumentationContextTests: XCTestCase {
 
     func testLoadsDeclarationWithNoOS() throws {
         var graphContentiOS = try String(contentsOf: Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json"))
         
         // "remove" the operating system information
@@ -1246,7 +1246,7 @@ class DocumentationContextTests: XCTestCase {
             
             var symbolGraphFiles: [File] {
                 return symbolGraphNames.map { name in
-                    CopyOfFile(original: Bundle.module.url(forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+                    CopyOfFile(original: Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                         .appendingPathComponent(name + ".symbols.json"))
                 }
             }
@@ -1306,7 +1306,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testCuratesSymbolsAndArticlesCorrectly() throws {
-        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Sort the edges for each node to get consistent results, no matter the order that the symbols were processed.
         for (source, targets) in context.topicGraph.edges {
@@ -1493,7 +1493,7 @@ let expected = """
     /// Tests whether tutorial curated multiple times gets the correct breadcrumbs and hierarchy.
     func testCurateTutorialMultipleTimes() throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
             ## Topics
@@ -1520,7 +1520,7 @@ let expected = """
 
     func testNonOverloadPaths() throws {
         // Add some symbol collisions to graph
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             let text = try String(contentsOf: sideKitURL).replacingOccurrences(of: "\"symbols\" : [", with: """
             "symbols" : [
@@ -1586,7 +1586,7 @@ let expected = """
     
     func testOverloadPlusNonOverloadCollisionPaths() throws {
         // Add some symbol collisions to graph
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             let text = try String(contentsOf: sideKitURL).replacingOccurrences(of: "\"symbols\" : [", with: """
             "symbols" : [
@@ -1984,7 +1984,7 @@ let expected = """
     
     func testNonOverloadCollisionFromExtension() throws {
         // Add some symbol collisions to graph
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: ["mykit-iOS.symbols.json"]) { root in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: ["mykit-iOS.symbols.json"]) { root in
             let sideKitURL = root.appendingPathComponent("something@SideKit.symbols.json")
             let text = """
             {
@@ -2196,7 +2196,7 @@ let expected = """
     
     func testUpdatesReferencesForChildrenOfCollisions() throws {
         // Add some symbol collisions to graph
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             var text = try String(contentsOf: sideKitURL)
             
@@ -2344,7 +2344,7 @@ let expected = """
         var newArticle1URL: URL!
         
         // Add an article without curating it anywhere
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Curate MyKit -> new-article1
             let myKitURL = root.appendingPathComponent("documentation").appendingPathComponent("mykit.md")
             try """
@@ -2423,7 +2423,7 @@ let expected = """
     // Modules that are being extended should not have their own symbol in the current bundle's graph.
     func testNoSymbolForTertiarySymbolGraphModules() throws {
         // Add an article without curating it anywhere
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Create an extension only symbol graph.
             let tertiaryURL = root.appendingPathComponent("Tertiary@MyKit.symbols.json")
             try """
@@ -2457,7 +2457,7 @@ let expected = """
     }
     
     func testDeclarationTokenKinds() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         let myFunc = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
@@ -2498,7 +2498,7 @@ let expected = """
             
             // Copy test Info.plist
             try FileManager.default.copyItem(at: Bundle.module.url(
-                forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+                forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                                                 .appendingPathComponent("Info.plist"),
                                              to: targetURL.appendingPathComponent("Info.plist")
             )
@@ -2605,7 +2605,7 @@ let expected = """
     }
     
     func testNavigatorTitle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
             let node = try context.entity(with: reference)
@@ -2716,7 +2716,7 @@ let expected = """
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        let (_, _, _) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], configureBundle: { rootURL in
+        let (_, _, _) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
                 .replacingOccurrences(of: "org.swift.docc.example", with: bundleID.rawValue)
@@ -2744,7 +2744,7 @@ let expected = """
     }
     
     func testAbstractAfterMetadataDirective() throws {
-        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         // Get the SideKit/SideClass/init() node and verify it has an abstract and no discussion.
         // We're verifying that the metadata directive between the title and the abstract didn't cause
@@ -2795,7 +2795,7 @@ let expected = """
     }
     
     func testTaskGroupsPersistInitialRangesFromMarkup() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Verify task group ranges are persisted for symbol docs
         let symbolReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
@@ -2832,7 +2832,7 @@ let expected = """
     /// Tests that diagnostics raised during link resolution for symbols have the correct source URLs
     /// - Bug: rdar://63288817
     func testDiagnosticsForSymbolsHaveCorrectSource() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = """
             # ``SideKit/SideClass/myFunction()``
 
@@ -2880,7 +2880,7 @@ let expected = """
         let bundleURL = try Folder(name: "module-links.docc", content: [
             InfoPlist(displayName: "Test", identifier: "com.test.docc"),
             CopyOfFile(original: Bundle.module.url(
-                forResource: "DoNotUseInNewTests",
+                forResource: "LegacyBundle_DoNotUseInNewTests",
                 withExtension: "docc",
                 subdirectory: "Test Bundles"
             )!.appendingPathComponent("sidekit.symbols.json")),
@@ -3992,7 +3992,7 @@ let expected = """
     
     // Verifies if the context resolves linkable nodes.
     func testLinkableNodes() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try "# Article1".write(to: url.appendingPathComponent("resolvable-article.md"), atomically: true, encoding: .utf8)
             let myKitURL = url.appendingPathComponent("documentation").appendingPathComponent("mykit.md")
             try String(contentsOf: myKitURL)
@@ -4014,7 +4014,7 @@ let expected = """
     // Verifies if the context fails to resolve non-resolvable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
@@ -4464,7 +4464,7 @@ let expected = """
     }
     
     func testDocumentationExtensionURLForReferenceReturnsNilForTutorialReference() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "DoNotUseInNewTests")
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
         
         XCTAssertNil(
             context.documentationExtensionURL(

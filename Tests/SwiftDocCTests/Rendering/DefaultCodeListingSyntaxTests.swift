@@ -34,7 +34,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
             return renderNode.primaryContentSections.first! as! ContentRenderSection
         }
 
-        let (_, bundleWithLanguageDefault, context) = try testBundleAndContext(copying: "DoNotUseInNewTests")
+        let (_, bundleWithLanguageDefault, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         testBundleWithLanguageDefault = bundleWithLanguageDefault
 

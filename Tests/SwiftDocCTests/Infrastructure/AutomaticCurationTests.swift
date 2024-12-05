@@ -117,7 +117,7 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testAutomaticTopicsSkippingCustomCuratedSymbols() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
             // Curate some of members of SideClass in an API collection
             try """
             # Some API collection
@@ -172,7 +172,7 @@ class AutomaticCurationTests: XCTestCase {
         for curatedIndices in variationsOfChildrenToCurate {
             let manualCuration = curatedIndices.map { "- <\(allExpectedChildren[$0])>" }.joined(separator: "\n")
             
-            let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
                 try """
                 # ``SideKit/SideClass``
 
@@ -231,7 +231,7 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testSeeAlsoSectionForAutomaticallyCuratedTopics() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("sidekit.symbols.json")))
             
             // Copy `SideClass` a handful of times
@@ -421,7 +421,7 @@ class AutomaticCurationTests: XCTestCase {
             forResource: "TopLevelCuration.symbols", withExtension: "json", subdirectory: "Test Resources")!
         
         // Create a test bundle copy with the symbol graph from above
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: []) { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: topLevelCurationSGFURL, to: url.appendingPathComponent("TopLevelCuration.symbols.json"))
         }
         defer {
@@ -578,7 +578,7 @@ class AutomaticCurationTests: XCTestCase {
         let whatsitSymbols = Bundle.module.url(
             forResource: "Whatsit-Objective-C.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: whatsitSymbols, to: url.appendingPathComponent("Whatsit-Objective-C.symbols.json"))
         }
         defer {
@@ -639,7 +639,7 @@ class AutomaticCurationTests: XCTestCase {
         let symbolURL = Bundle.module.url(
             forResource: "TypeSubscript.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: symbolURL, to: url.appendingPathComponent("TypeSubscript.symbols.json"))
         }
         defer {

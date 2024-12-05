@@ -19,7 +19,7 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -53,7 +53,7 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         try directive.map { directive in
             var problems = [Problem]()
@@ -101,7 +101,7 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -158,7 +158,7 @@ MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -214,7 +214,7 @@ MultipleChoice @1:1-18:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -274,7 +274,7 @@ MultipleChoice @1:1-22:2 title: 'SwiftDocC.MarkupContainer'
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var problems = [Problem]()
         XCTAssertEqual(MultipleChoice.directiveName, directive.name)

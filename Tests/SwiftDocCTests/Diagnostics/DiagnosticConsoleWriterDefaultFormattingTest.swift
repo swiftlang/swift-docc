@@ -229,7 +229,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         let baseURL =  Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
         let range = SourceLocation(line: 44, column: 59, source: source)..<SourceLocation(line: 44, column: 138, source: source)
 
@@ -307,7 +307,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         let baseURL =  Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
         let diagnosticRange = SourceLocation(line: 44, column: 59, source: source)..<SourceLocation(line: 44, column: 138, source: source)
         let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: identifier, summary: summary, explanation: explanation)

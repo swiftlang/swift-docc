@@ -19,7 +19,7 @@ class TechnologyTests: XCTestCase {
         let source = "@Tutorials"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let technology = TutorialTableOfContents(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(technology)

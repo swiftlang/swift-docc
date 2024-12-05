@@ -15,7 +15,7 @@ import SwiftDocCTestUtilities
 
 class ConvertSubcommandTests: XCTestCase {
     private let testBundleURL = Bundle.module.url(
-        forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+        forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
     
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources")!

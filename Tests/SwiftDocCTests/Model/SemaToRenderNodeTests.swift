@@ -16,7 +16,7 @@ import SwiftDocCTestUtilities
 
 class SemaToRenderNodeTests: XCTestCase {
     func testCompileTutorial() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
@@ -401,7 +401,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testTutorialBackgroundComesFromImageOrVideoPoster() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         func assertTutorialWithPath(_ tutorialPath: String, hasBackground backgroundIdentifier: String) throws {
             let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: tutorialPath, sourceLanguage: .swift))
@@ -431,7 +431,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileTutorialArticle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         let article = node.semantic as! TutorialArticle
@@ -492,12 +492,12 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileOverviewWithNoVolumes() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         try assertCompileOverviewWithNoVolumes(bundle: bundle, context: context)
     }
     
     func testCompileOverviewWithEmptyChapter() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try """
             @Tutorials(name: "Technology X") {
                @Intro(title: "Technology X") {
@@ -718,7 +718,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileOverviewWithVolumes() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let overviewURL = root.appendingPathComponent("TestOverview.tutorial")
             let text = """
             @Tutorials(name: "Technology X") {
@@ -927,7 +927,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileSymbol() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             // Remove the SideClass sub heading to match the expectations of this test
             let graphURL = url.appendingPathComponent("sidekit.symbols.json")
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -1224,7 +1224,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         let testBundleURL = Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let (_, bundle, context) = try loadBundle(
             from: testBundleURL,
             externalResolvers: ["com.test.external": TestReferenceResolver()],
@@ -1325,7 +1325,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Check for constraints in render node
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
@@ -1378,7 +1378,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderConditionalConstraintsOnConformingType() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -1400,7 +1400,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderConditionalConstraintsOnProtocol() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -1422,7 +1422,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderReferenceResolving() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
@@ -1487,7 +1487,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testAvailabilityMetadata() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
@@ -1535,7 +1535,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Override with both a low and a high value
         for version in [SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1), SymbolGraph.SemanticVersion(major: 99, minor: 99, patch: 99)] {
-            let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
                 // Duplicate the symbol graph
                 let myKitURL = url.appendingPathComponent("mykit-iOS.symbols.json")
                 let myClassUSR = "s:5MyKit0A5ClassC"
@@ -1587,7 +1587,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testMediaReferencesWithSpaces() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TutorialMediaWithSpaces", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
@@ -1648,7 +1648,7 @@ Document @1:1-11:19
 """,
                        markup.debugDescription(options: .printSourceLocations))
         
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestTutorial", sourceLanguage: .swift))
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
@@ -1690,7 +1690,7 @@ Document
 """,
                        markup.debugDescription())
 
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestTutorial", sourceLanguage: .swift))
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
@@ -1715,14 +1715,14 @@ Document
         
         let document = Document(parsing: markupSource, options: [])
         let node = DocumentationNode(reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift), kind: .article, sourceLanguage: .swift, name: .conceptual(title: "Title"), markup: document, semantic: Semantic())
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         XCTAssertNotNil(translator.visit(MarkupContainer(document.children)))
         }
         
     func testCompileSymbolMetadata() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         
         // Compile docs and verify contents
@@ -1822,7 +1822,7 @@ Document
     private func renderNodeForArticleInTestBundle(content: String) throws -> RenderNode {
         // Overwrite the article so we can test the article eyebrow for articles without task groups
         let sourceURL = Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
         
         try FileManager.default.copyItem(at: sourceURL, to: targetURL)
@@ -1935,7 +1935,7 @@ Document
             }
             configuration.externalMetadata.currentPlatforms = currentPlatforms
             
-            let (_, bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests", configuration: configuration)
+            let (_, bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", configuration: configuration)
             
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: referencePath, sourceLanguage: .swift)
             return (bundle, context, reference)
@@ -2104,7 +2104,7 @@ Document
     }
     
     func testRendersDeprecatedViolator() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Make the referenced symbol deprecated
         do {
@@ -2127,7 +2127,7 @@ Document
     }
 
     func testDoesNotRenderDeprecatedViolator() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Make the referenced symbol deprecated
         do {
@@ -2151,7 +2151,7 @@ Document
     }
     
     func testRendersDeprecatedViolatorForUnconditionallyDeprecatedReference() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Make the referenced symbol deprecated
         do {
@@ -2177,7 +2177,7 @@ Document
     func testRenderMetadataFragments() throws {
         
         // Check for fragments in metadata in render node
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
@@ -2197,7 +2197,7 @@ Document
     }
     
     func testRenderMetadataExtendedModule() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -2208,7 +2208,7 @@ Document
     }
     
     func testDefaultImplementations() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         // Verify that the render reference to a required symbol includes the 'required' key and the number of default implementations provided.
         do {
@@ -2241,7 +2241,7 @@ Document
     }
 
     func testDefaultImplementationsNotListedInTopics() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         // Verify that a required symbol does not include default implementations in Topics groups
         do {
@@ -2259,7 +2259,7 @@ Document
     func testNoStringMetadata() throws {
         
         // Check for fragments in metadata in render node
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
@@ -2288,7 +2288,7 @@ Document
     func testRenderDeclarations() throws {
         
         // Check for fragments in metadata in render node
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
@@ -2307,7 +2307,7 @@ Document
 
     func testDocumentationRenderReferenceRoles() throws {
         // Check for fragments in metadata in render node
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
@@ -2327,7 +2327,7 @@ Document
 
     func testTutorialsRenderReferenceRoles() throws {
         // Check for fragments in metadata in render node
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         let symbol = node.semantic as! TutorialTableOfContents
@@ -2346,7 +2346,7 @@ Document
     
     func testRemovingTrailingNewLinesInDeclaration() throws {
         // Check for fragments in metadata in render node
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
@@ -2369,7 +2369,7 @@ Document
     
     func testRenderManualSeeAlsoInArticles() throws {
         // Check for fragments in metadata in render node
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift))
         
         let article = node.semantic as! Article
@@ -2392,7 +2392,7 @@ Document
     
     func testSafeSectionAnchorNames() throws {
         // Check that heading's anchor was safe-ified
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -2412,7 +2412,7 @@ Document
     }
     
     func testDuplicateNavigatorTitleIsRemoved() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         let myFuncReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2428,7 +2428,7 @@ Document
     }
 
     func testNonDuplicateNavigatorTitleIsRendered() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         let myFuncReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2471,7 +2471,7 @@ Document
     ]
     
     func testBareTechnology() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try """
             @Tutorials(name: "<#text#>") {
               @Intro(title: "<#text#>") {
@@ -2526,7 +2526,7 @@ Document
     }
 
     func testBareTutorial() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try """
             @Tutorial(time: <#number#>, projectFiles: <#.zip#>) {
               @Intro(title: "<#text#>") {
@@ -2604,7 +2604,7 @@ Document
     func testRenderAsides() throws {
         let asidesSGFURL = Bundle.module.url(
             forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: []) { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: asidesSGFURL, to: url.appendingPathComponent("Asides.symbols.json"))
         }
         defer {
@@ -2632,7 +2632,7 @@ Document
 
     /// Tests parsing origin data from symbol graph.
     func testOriginMetadata() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         let myFuncReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2647,9 +2647,9 @@ Document
     /// Tests that we inherit docs by default from within the same module.
     func testDocInheritanceInsideModule() throws {
         let sgURL = Bundle.module.url(
-            forResource: "DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5MyProtocol0Afunc()"#)
@@ -2673,9 +2673,9 @@ Document
     /// Tests that we don't inherit docs by default from within the same bundle but not module.
     func testDocInheritanceInsideBundleButNotModule() throws {
         let sgURL = Bundle.module.url(
-            forResource: "DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle but
             // from the MyKit module.
             try String(contentsOf: sgURL)
@@ -2698,7 +2698,7 @@ Document
     }
     /// Tests that we generated an automatic abstract and remove source docs.
     func testDisabledDocInheritance() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Verify that the inherited docs which should be ignored are not reference resolved.
         // Verify inherited docs are reference resolved and their problems are recorded.
@@ -2729,7 +2729,7 @@ Document
 
     /// Tests doc extensions are matched to inherited symbols
     func testInheritedSymbolDocExtension() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try? """
             # ``SideKit/SideClass/Element/inherited()``
             Doc extension abstract.
@@ -2870,9 +2870,9 @@ Document
         ]
             
         for testData in testData {
-            let sgURL = Bundle.module.url(forResource: "DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
+            let sgURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
          
-            let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
                 // Replace the out-of-bundle origin with a symbol from the same bundle but
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
@@ -2901,7 +2901,7 @@ Document
     /// Tests that we inherit docs when the feature is enabled.
     func testEnabledDocInheritance() throws {
         let bundleURL = Bundle.module.url(
-            forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.inheritDocs = true
@@ -2946,7 +2946,7 @@ Document
     
     // Verifies that undocumented symbol gets a nil abstract.
     func testNonDocumentedSymbolNilAbstract() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
@@ -3054,7 +3054,7 @@ Document
 
     /// Tests links to symbols that have deprecation summary in markdown appear deprecated.
     func testLinkToDeprecatedSymbolViaDirectiveIsDeprecated() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``MyKit/MyProtocol``
             @DeprecationSummary {
@@ -3074,7 +3074,7 @@ Document
     }
     
     func testCustomSymbolDisplayNames() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``MyKit``
             
@@ -3204,7 +3204,7 @@ Document
     }
     
     func testVisitTutorialMediaWithoutExtension() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try """
             @Tutorials(name: "Technology X") {
                @Intro(title: "Technology X") {
@@ -3251,7 +3251,7 @@ Document
     
     func testTopicsSectionWithAnonymousTopicGroup() throws {
         let (_, bundle, context) = try testBundleAndContext(
-            copying: "DoNotUseInNewTests",
+            copying: "LegacyBundle_DoNotUseInNewTests",
             configureBundle: { url in
                 try """
                 # Article

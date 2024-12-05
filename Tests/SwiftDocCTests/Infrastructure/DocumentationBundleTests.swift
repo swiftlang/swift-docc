@@ -14,6 +14,6 @@ import XCTest
 class DocumentationBundleTests: XCTestCase {
     // Test whether the bundle correctly loads a documentation source folder.
     func testBundleInitWithRootURL() throws {
-        XCTAssertNoThrow(try testBundleFromRootURL(named: "DoNotUseInNewTests"))
+        XCTAssertNoThrow(try testBundleFromRootURL(named: "LegacyBundle_DoNotUseInNewTests"))
     }
 }

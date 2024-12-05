@@ -239,7 +239,7 @@ class ImageMediaTests: XCTestCase {
     
     func testImageDirectiveDoesNotResolveVideoReference() throws {
         // First check that the Video exists
-        let (_, videoProblems, _) = try parseDirective(VideoMedia.self, in: "DoNotUseInNewTests") {
+        let (_, videoProblems, _) = try parseDirective(VideoMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
             """
             @Video(source: "introvideo")
             """
@@ -248,7 +248,7 @@ class ImageMediaTests: XCTestCase {
         XCTAssertEqual(videoProblems, [])
         
         // Then check that it doesn't resolve as an image
-        let (renderedContent, imageProblems, image) = try parseDirective(ImageMedia.self, in: "DoNotUseInNewTests") {
+        let (renderedContent, imageProblems, image) = try parseDirective(ImageMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
             """
             @Image(source: "introvideo")
             """

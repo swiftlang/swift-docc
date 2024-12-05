@@ -39,7 +39,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     
     override func setUpWithError() throws {
         try super.setUpWithError()
-        (testBundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        (testBundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
     }
     
     override func tearDown() {

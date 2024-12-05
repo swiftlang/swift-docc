@@ -1107,7 +1107,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testUnrealisticMixedTestCatalog() throws {
-        let (bundle, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let linkResolver = try XCTUnwrap(context.linkResolver.localResolver)
         let tree = try XCTUnwrap(linkResolver.pathHierarchy)
         

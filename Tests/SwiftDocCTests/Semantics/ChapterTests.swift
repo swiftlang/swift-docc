@@ -83,7 +83,7 @@ class ChapterTests: XCTestCase {
     }
     
     func testDuplicateTutorialReferences() throws {
-        let (_, context) = try testBundleAndContext(named: "DoNotUseInNewTests")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         /*
          The test bundle contains the duplicate tutorial references in TestOverview:

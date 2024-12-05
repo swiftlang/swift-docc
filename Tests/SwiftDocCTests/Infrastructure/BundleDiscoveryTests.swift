@@ -14,9 +14,9 @@ import SwiftDocCTestUtilities
 
 class BundleDiscoveryTests: XCTestCase {
     
-    private let testBundleLocation = Bundle.module.url(forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+    private let testBundleLocation = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
     private func flatListOfFiles() throws -> [URL] {
-        let testBundleLocation = try testCatalogURL(named: "DoNotUseInNewTests")
+        let testBundleLocation = try testCatalogURL(named: "LegacyBundle_DoNotUseInNewTests")
         let enumerator = try XCTUnwrap(FileManager.default.enumerator(at: testBundleLocation, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles))
         
         var files: [URL] = []

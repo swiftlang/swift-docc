@@ -20,7 +20,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
     func testTransformForStaticHostingTestExternalOutput() async throws {
         
         // Convert a test bundle as input for the TransformForStaticHostingAction
-        let bundleURL = Bundle.module.url(forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()
         
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
@@ -100,7 +100,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
     func testTransformForStaticHostingActionTestInPlaceOutput() async throws {
         
         // Convert a test bundle as input for the TransformForStaticHostingAction
-        let bundleURL = Bundle.module.url(forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()
             
         let fileManager = FileManager.default

@@ -18,7 +18,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archives it with options  to produce static content which is then validated.
     func testConvertActionStaticHostableTestOutput() async throws {
         
-        let bundleURL = Bundle.module.url(forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()
             
         let fileManager = FileManager.default

@@ -21,7 +21,7 @@ fileprivate let helloWorldHTML = "<html><header><title>Hello Title</title></head
 
 class DocumentationSchemeHandlerTests: XCTestCase {
     let templateURL = Bundle.module.url(
-        forResource: "DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
+        forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
     
     func testDocumentationSchemeHandler() {
         #if !os(Linux) && !os(Android) && !os(Windows)
