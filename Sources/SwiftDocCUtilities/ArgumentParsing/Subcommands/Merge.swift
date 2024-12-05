@@ -169,7 +169,7 @@ extension Docc {
         
         public func run() async throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
-            var convertAction = MergeAction(
+            let convertAction = MergeAction(
                 archives: archives,
                 landingPageInfo: .synthesize(.init(name: synthesizedLandingPageName, kind: synthesizedLandingPageKind, style: synthesizedLandingPageTopicsStyle)),
                 outputURL: outputURL,

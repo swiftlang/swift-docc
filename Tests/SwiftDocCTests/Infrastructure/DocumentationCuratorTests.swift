@@ -490,7 +490,7 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", symbol.topics?.taskGroups.first?.links.first?.destination)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         
         // Verify the article identifier is included in the task group for the render node.
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", renderNode.topicSections.first?.identifiers.first)

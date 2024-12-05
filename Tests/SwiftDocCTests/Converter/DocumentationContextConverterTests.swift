@@ -27,7 +27,7 @@ class DocumentationContextConverterTests: XCTestCase {
         for identifier in context.knownPages {
             let documentationNode = try XCTUnwrap(try context.entity(with: identifier))
             
-            let renderNode1 = try perNodeConverter.convert(documentationNode)
+            let renderNode1 = perNodeConverter.convert(documentationNode)
             let renderNode2 = bulkNodeConverter.renderNode(for: documentationNode)
             
             // Compare the two nodes are identical

@@ -92,7 +92,7 @@ class TermListTests: XCTestCase {
         let entity = try context.entity(with: reference)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         
         let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
         

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,13 +18,13 @@ extension StringProtocol {
     }
     
     /// A copy of the string appended with a slash ("/") if the string doesn't already end with a trailing slash.
-    var appendingTrailingSlash: String {
+    package var appendingTrailingSlash: String {
         guard !hasSuffix("/") else { return String(self) }
         return self.appending("/")
     }
     
     /// A copy of the string without a leading slash ("/") or the original string if it doesn't start with a leading slash.
-    var removingLeadingSlash: String {
+    package var removingLeadingSlash: String {
         guard hasPrefix("/") else { return String(self) }
         return String(dropFirst())
     }

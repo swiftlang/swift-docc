@@ -58,7 +58,7 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
             let (bundle, context) = try loadBundle(catalog: catalog)
             let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             return try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PropertyListDetailsRenderSection }))
         }
         
