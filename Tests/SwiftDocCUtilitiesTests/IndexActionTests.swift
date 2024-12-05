@@ -50,8 +50,8 @@ class IndexActionTests: XCTestCase {
             
             let engine = DiagnosticEngine(filterLevel: .warning)
             
-            let indexAction = IndexAction(
-                archiveURL: targetBundleURL,
+            let indexAction = try IndexAction(
+                documentationBundleURL: targetBundleURL,
                 outputURL: indexURL,
                 bundleIdentifier: bundleIdentifier,
                 diagnosticEngine: engine
@@ -61,7 +61,6 @@ class IndexActionTests: XCTestCase {
             let index = try NavigatorIndex.readNavigatorIndex(url: indexURL)
             
             resultIndexDumps.insert(index.navigatorTree.root.dumpTree())
-            XCTAssert(engine.problems.isEmpty, "Unexpected problems:\n\(engine.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
             XCTAssertTrue(engine.problems.isEmpty, "Indexing bundle at \(targetURL) resulted in unexpected issues")
         }
         
@@ -92,8 +91,8 @@ class IndexActionTests: XCTestCase {
         let bundleIdentifier = "org.swift.docc.example"
         let indexURL = targetURL.appendingPathComponent("index")
         let engine = DiagnosticEngine(filterLevel: .warning)
-        let indexAction = IndexAction(
-            archiveURL: targetBundleURL,
+        let indexAction = try IndexAction(
+            documentationBundleURL: targetBundleURL,
             outputURL: indexURL,
             bundleIdentifier: bundleIdentifier,
             diagnosticEngine: engine

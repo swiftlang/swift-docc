@@ -92,7 +92,8 @@ struct TransformForStaticHostingAction: AsyncAction {
         )
 
         // Create a StaticHostableTransformer targeted at the archive data folder
-        let transformer = StaticHostableTransformer(dataDirectory: rootURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName), fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName))
+        let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
         try transformer.transform()
         
     }

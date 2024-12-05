@@ -133,18 +133,6 @@ class TestFileSystemTests: XCTestCase {
         │     ╰─ myfile2.txt
         ╰─ tmp/
         """)
-        
-        let filesIterator = fs.recursiveFiles(startingPoint: URL(fileURLWithPath: "/"))
-        XCTAssertEqual(filesIterator.prefix(2).map(\.path).sorted(), [
-            // Shallow files first
-            "/copy/myfile1.txt",
-            "/copy/myfile2.txt",
-        ])
-        XCTAssertEqual(filesIterator.dropFirst(2).map(\.path).sorted(), [
-            // Deeper files after
-            "/main/nested/myfile1.txt",
-            "/main/nested/myfile2.txt",
-        ])
     }
 
     
@@ -187,10 +175,6 @@ class TestFileSystemTests: XCTestCase {
         │     ╰─ myfile2.txt
         ╰─ tmp/
         """)
-        
-        XCTAssertEqual(fs.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent), [
-            "myfile2.txt",
-        ])
     }
 
     func testRemoveFolders() throws {
@@ -255,10 +239,6 @@ class TestFileSystemTests: XCTestCase {
         │     ╰─ myfile2.txt
         ╰─ tmp/
         """)
-        
-        XCTAssertEqual(fs.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent).sorted(), [
-            "myfile1.txt", "myfile2.txt",
-        ])
     }
     
     func testCreateDeeplyNestedDirectory() throws {
@@ -277,8 +257,6 @@ class TestFileSystemTests: XCTestCase {
         │              ╰─ six/
         ╰─ tmp/
         """)
-        
-        XCTAssertEqual(fs.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent), [], "Only directories. No files.")
     }
     
     func testFileExists() throws {
