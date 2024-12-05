@@ -5356,6 +5356,127 @@ let expected = """
         XCTAssertEqual(externalRenderReference.title, externalModuleName)
         XCTAssertEqual(externalRenderReference.abstract, [.text("Some description of this module.")])
     }
+
+    func testResolvesAlternateDeclarations() throws {
+        let exampleDocumentation = Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(name: "Symbol.md", utf8Content: """
+                # ``Symbol``
+                @Metadata {
+                    @AlternateRepresentation(``CounterpartSymbol``)
+                    @AlternateRepresentation(``MissingSymbol``)
+                }
+                A symbol extension file defining an alternate representation.
+                """),
+                JSONFile(
+                    name: "unit-test.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                            makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
+                        ]
+                    )
+                ),
+            ]
+        )
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Symbol", sourceLanguage: .swift)
+        
+        let entity = try context.entity(with: reference)
+        XCTAssertEqual(entity.metadata?.alternateRepresentations.count, 2)
+        
+        // First counterpart should have been resolved successfully
+        var alternateRepresentation = try XCTUnwrap(entity.metadata?.alternateRepresentations.first)
+        XCTAssertEqual(
+            alternateRepresentation.reference,
+            .resolved(.success(.init(bundleID: bundle.id, path: "/documentation/unit-test/CounterpartSymbol", sourceLanguage: .objectiveC)))
+        )
+        
+        // Second counterpart shouldn't have been resolved at all
+        alternateRepresentation = try XCTUnwrap(entity.metadata?.alternateRepresentations[1])
+        guard case .resolved(.failure(let unresolvedPath, _)) = alternateRepresentation.reference else {
+            XCTFail("Expected alternate representation to be unresolved, but was resolved as \(alternateRepresentation.reference)")
+            return
+        }
+        XCTAssertEqual(unresolvedPath, .init(topicURL: .init(parsingAuthoredLink: "MissingSymbol")!))
+        
+        // And an error should have been reportes
+        XCTAssertEqual(context.problems.count, 1)
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'MissingSymbol'")
+    }
+        
+    func testDiagnosesAlternateDeclarations() throws {
+        let exampleDocumentation = Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(name: "Symbol.md", utf8Content: """
+                # ``Symbol``
+                @Metadata {
+                    @AlternateRepresentation(``CounterpartSymbol``)
+                    @AlternateRepresentation(``OtherCounterpartSymbol``)
+                }
+                A symbol extension file defining an alternate representation which overlaps source languages with another one.
+                """),
+                TextFile(name: "SwiftSymbol.md", utf8Content: """
+                # ``SwiftSymbol``
+                @Metadata {
+                    @AlternateRepresentation(``Symbol``)
+                }
+                A symbol extension file defining an alternate representation which overlaps source languages with the current node.
+                """),
+                JSONFile(
+                    name: "unit-test.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                            makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["SwiftSymbol"]),
+                            makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
+                            makeSymbol(id: "other-counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["OtherCounterpartSymbol"]),
+                        ]
+                    )
+                ),
+            ]
+        )
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        let alternateRepresentationProblems = context.problems.sorted(by: \.diagnostic.summary)
+        XCTAssertEqual(alternateRepresentationProblems.count, 2)
+        
+        // Verify a problem is reported for having alternate representations with duplicate source languages
+        var problem = try XCTUnwrap(alternateRepresentationProblems.first)
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(problem.diagnostic.summary, "An alternate representation for Objective-C already exists")
+        XCTAssertEqual(problem.diagnostic.explanation, "This node is already available in Swift and Objective-C.")
+        XCTAssertEqual(problem.possibleSolutions.count, 1)
+    
+        // Verify solutions provide context and suggest to remove the duplicate directive
+        var solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(solution.summary, "Remove this alternate representation")
+        XCTAssertEqual(solution.replacements.count, 1)
+        XCTAssertEqual(solution.replacements.first?.replacement, "")
+        
+        // Verify a problem is reported for trying to define an alternate representation for a language the symbol already supports
+        problem = try XCTUnwrap(alternateRepresentationProblems[1])
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(problem.diagnostic.summary, "This node already has a representation in Swift")
+        XCTAssertEqual(problem.diagnostic.explanation, "This node is already available in Swift.")
+        XCTAssertEqual(problem.possibleSolutions.count, 1)
+        
+        // Verify solutions provide context, but no replacements
+        solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(solution.summary, "Replace the counterpart link with a node which isn\'t available in Swift")
+        XCTAssertEqual(solution.replacements.count, 0)
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {

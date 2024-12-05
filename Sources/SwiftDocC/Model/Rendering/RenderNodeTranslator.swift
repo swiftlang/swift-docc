@@ -1852,23 +1852,41 @@ public struct RenderNodeTranslator: SemanticVisitor {
     private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
         let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
         
-        return documentationNode.availableSourceLanguages
-            .sorted(by: { language1, language2 in
+        var allVariants: [SourceLanguage: [ResolvedTopicReference]] = Dictionary(uniqueKeysWithValues: documentationNode.availableSourceLanguages.map { ($0, [identifier]) })
+        
+        // Apply alternate representations
+        documentationNode.metadata?.alternateRepresentations.forEach { alternateRepresentation in
+            // Only counterparts which were able to be resolved to a reference should be included as an alternate representation.
+            // Unresolved counterparts can be ignored, as they would have been reported during link resolution.
+            guard case .resolved(.success(let counterpartReference)) = alternateRepresentation.reference else {
+                return
+            }
+
+            // Add all of the variants of the counterpart as additional variants for the current symbol
+            // If the current symbol and its counterpart share source languages, the list of variants for that language will contain multiple symbol references.
+            // Only the first symbol reference will be respected by Swift-DocC Render.
+            counterpartReference.sourceLanguages.forEach {
+                allVariants[$0, default: []].append(counterpartReference)
+            }
+        }
+        
+        return allVariants
+            .sorted(by: { variant1, variant2 in
                 // Emit Swift first, then alphabetically.
-                switch (language1, language2) {
+                switch (variant1.key, variant2.key) {
                 case (.swift, _): return true
                 case (_, .swift): return false
-                default: return language1.id < language2.id
-                }
-            })
-            .map { sourceLanguage in
-                RenderNode.Variant(
-                    traits: [.interfaceLanguage(sourceLanguage.id)],
-                    paths: [
-                        generator.presentationURLForReference(identifier).path
-                    ]
-                )
+                default: return variant1.key.id < variant2.key.id
             }
+        })
+        .map { sourceLanguage, references in
+            RenderNode.Variant(
+                traits: [.interfaceLanguage(sourceLanguage.id)],
+                paths: references.map { reference in
+                    generator.presentationURLForReference(reference).path
+                }
+            )
+        }
     }
     
     private mutating func convertFragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
