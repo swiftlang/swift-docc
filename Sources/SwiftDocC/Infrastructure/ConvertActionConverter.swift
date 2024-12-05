@@ -112,6 +112,22 @@ package enum ConvertActionConverter {
             try outputConsumer.consume(externalRenderNode: externalRenderNode)
         }
         
+        let linkHierarchySerializationProblems = Synchronized<[Problem]>([])
+        if FeatureFlags.current.isLinkHierarchySerializationEnabled {
+            resultsGroup.async(queue: resultsSyncQueue) {
+                signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
+                    do {
+                        let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
+                        try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+                    } catch {
+                        linkHierarchySerializationProblems.sync {
+                            recordProblem(from: error, in: &$0, withIdentifier: "link-resolver")
+                        }
+                    }
+                }
+            }
+        }
+        
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
         var conversionProblems: [Problem] = context.knownPages.concurrentPerform { identifier, results in
@@ -173,44 +189,25 @@ package enum ConvertActionConverter {
         // Wait for any concurrent updates to complete.
         resultsGroup.wait()
         
+        conversionProblems += linkHierarchySerializationProblems.sync { $0 }
+        
         signposter.endInterval("Render", renderSignpostHandle)
         
         guard !Task.isCancelled else { return [] }
         
         // Write various metadata
-        if emitDigest {
+        if emitDigest || FeatureFlags.current.isLinkHierarchySerializationEnabled {
             signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
                 do {
                     try outputConsumer.finishedConsumingLinkElementSummaries()
-                    try outputConsumer.consume(indexingRecords: indexingRecords)
-                    try outputConsumer.consume(assets: assets)
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
-                }
-            }
-        }
-        
-        if FeatureFlags.current.isLinkHierarchySerializationEnabled {
-            signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
-                do {
-                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
-                    try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
-                    
-                    if !emitDigest {
-                        try outputConsumer.finishedConsumingLinkElementSummaries()
+                    if emitDigest {
+                        // Only emit the other digest files if `--emit-digest` is passed
+                        try outputConsumer.consume(indexingRecords: indexingRecords)
+                        try outputConsumer.consume(assets: assets)
+                        try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + conversionProblems)
                     }
                 } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
-                }
-            }
-        }
-        
-        if emitDigest {
-            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                do {
-                    try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + conversionProblems)
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
+                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
                 }
             }
         }
