@@ -229,14 +229,8 @@ public struct DocumentationNode {
                 ?? .init(availability: [])
         }
         
-        let endpointVariants = DocumentationDataVariants(
-            symbolData: unifiedSymbol.mixins,
-            platformName: platformName
-        ) { mixins -> HTTPEndpointSection? in
-            if let endpoint = mixins[SymbolGraph.Symbol.HTTP.Endpoint.mixinKey] as? SymbolGraph.Symbol.HTTP.Endpoint {
-                return HTTPEndpointSection(endpoint: endpoint)
-            }
-            return nil
+        let endpointSection = unifiedSymbol.defaultSymbol?[mixin: SymbolGraph.Symbol.HTTP.Endpoint.self].map { endpoint in
+            HTTPEndpointSection(endpoint: endpoint)
         }
 
         let overloadVariants = DocumentationDataVariants(
@@ -314,13 +308,13 @@ public struct DocumentationNode {
             seeAlsoVariants: .empty,
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
-            dictionaryKeysSectionVariants: .empty,
-            possibleValuesSectionVariants: .empty,
-            httpEndpointSectionVariants: endpointVariants,
-            httpBodySectionVariants: .empty,
-            httpParametersSectionVariants: .empty,
-            httpResponsesSectionVariants: .empty,
-            redirectsVariants: .empty,
+            dictionaryKeysSection: nil,
+            possibleValuesSection: nil,
+            httpEndpointSection: endpointSection,
+            httpBodySection: nil,
+            httpParametersSection: nil,
+            httpResponsesSection: nil,
+            redirects: nil,
             crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) }),
             overloadsVariants: overloadVariants
         )
@@ -392,9 +386,7 @@ public struct DocumentationNode {
         semantic.deprecatedSummaryVariants = DocumentationDataVariants(
             defaultVariantValue: deprecated
         )
-        semantic.redirectsVariants = DocumentationDataVariants(
-            defaultVariantValue: documentationExtension?.redirects
-        )
+        semantic.redirects = documentationExtension?.redirects
         
         let filter = ParametersAndReturnValidator(diagnosticEngine: engine, docChunkSources: docChunks.map(\.source))
         let (parametersSectionVariants, returnsSectionVariants) = filter.makeParametersAndReturnsSections(
@@ -408,22 +400,22 @@ public struct DocumentationNode {
         
         if let keys = markupModel.discussionTags?.dictionaryKeys, !keys.isEmpty {
             // Record the keys extracted from the markdown
-            semantic.dictionaryKeysSectionVariants[.fallback] = DictionaryKeysSection(dictionaryKeys:keys)
+            semantic.dictionaryKeysSection = DictionaryKeysSection(dictionaryKeys:keys)
         }
         
         if let parameters = markupModel.discussionTags?.httpParameters, !parameters.isEmpty {
             // Record the parameters extracted from the markdown
-            semantic.httpParametersSectionVariants[.fallback] = HTTPParametersSection(parameters: parameters)
+            semantic.httpParametersSection = HTTPParametersSection(parameters: parameters)
         }
         
         if let body = markupModel.discussionTags?.httpBody {
             // Record the body extracted from the markdown
-            semantic.httpBodySectionVariants[.fallback] = HTTPBodySection(body: body)
+            semantic.httpBodySection = HTTPBodySection(body: body)
         }
         
         if let responses = markupModel.discussionTags?.httpResponses, !responses.isEmpty {
             // Record the responses extracted from the markdown
-            semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
+            semantic.httpResponsesSection = HTTPResponsesSection(responses: responses)
         }
         
         // The property list symbol's allowed values.
@@ -460,10 +452,10 @@ public struct DocumentationNode {
             }
             
             // Record the possible values extracted from the markdown.
-            semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: knownPossibleValues)
+            semantic.possibleValuesSection = PropertyListPossibleValuesSection(possibleValues: knownPossibleValues)
         } else if let symbolAllowedValues {
             // Record the symbol possible values even if none are documented.
-            semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: symbolAllowedValues.value.map {
+            semantic.possibleValuesSection = PropertyListPossibleValuesSection(possibleValues: symbolAllowedValues.value.map {
                 PropertyListPossibleValuesSection.PossibleValue(value: String($0), contents: [])
             })
         }
@@ -716,13 +708,13 @@ public struct DocumentationNode {
             seeAlsoVariants: .init(swiftVariant: markupModel.seeAlsoSection),
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
-            dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
-            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possiblePropertyListValues.isEmpty ? nil : PropertyListPossibleValuesSection(possibleValues: $0.possiblePropertyListValues) })),
-            httpEndpointSectionVariants: .empty,
-            httpBodySectionVariants: .empty,
-            httpParametersSectionVariants: .empty,
-            httpResponsesSectionVariants: .empty,
-            redirectsVariants: .init(swiftVariant: article?.redirects)
+            dictionaryKeysSection: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) }),
+            possibleValuesSection: markupModel.discussionTags.flatMap({ $0.possiblePropertyListValues.isEmpty ? nil : PropertyListPossibleValuesSection(possibleValues: $0.possiblePropertyListValues) }),
+            httpEndpointSection: nil,
+            httpBodySection: nil,
+            httpParametersSection: nil,
+            httpResponsesSection: nil,
+            redirects: article?.redirects
         )
         
         self.isVirtual = symbol.isVirtual

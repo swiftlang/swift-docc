@@ -118,7 +118,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
 
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        let possibleValues = try XCTUnwrap(symbol.possibleValuesSectionVariants.firstValue?.possibleValues)
+        let possibleValues = try XCTUnwrap(symbol.possibleValuesSection?.possibleValues)
         
         // Check that possible value defined in the markdown but not part of the SymbolGraph is dropped.
         XCTAssertEqual(possibleValues.count, 3)
@@ -138,7 +138,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        let possibleValues = try XCTUnwrap(symbol.possibleValuesSectionVariants.firstValue?.possibleValues)
+        let possibleValues = try XCTUnwrap(symbol.possibleValuesSection?.possibleValues)
         
         // Check that possible value not defined in the markdown but part of the SymbolGraph are not dropped.
         XCTAssertEqual(possibleValues.map { $0.value }, ["January", "February", "March"])

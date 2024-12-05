@@ -447,16 +447,16 @@ struct ReferenceResolver: SemanticVisitor {
         let newDeprecatedSummaryVariants = symbol.deprecatedSummaryVariants.map {
             return DeprecatedSection(content: $0.content.map { visitMarkup($0) })
         }
-        let newDictionaryKeysVariants = symbol.dictionaryKeysSectionVariants.map { dictionaryKeysSection -> DictionaryKeysSection in
+        let newDictionaryKeys = symbol.dictionaryKeysSection.map { dictionaryKeysSection -> DictionaryKeysSection in
             let keys = dictionaryKeysSection.dictionaryKeys.map {
                 DictionaryKey(name: $0.name, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
             }
             return DictionaryKeysSection(dictionaryKeys: keys)
         }
-        let newHTTPEndpointVariants = symbol.httpEndpointSectionVariants.map { httpEndpointSection -> HTTPEndpointSection in
+        let newHTTPEndpoint = symbol.httpEndpointSection.map { httpEndpointSection -> HTTPEndpointSection in
             return HTTPEndpointSection(endpoint: httpEndpointSection.endpoint)
         }
-        let newHTTPBodyVariants = symbol.httpBodySectionVariants.map { httpBodySection -> HTTPBodySection in
+        let newHTTPBody = symbol.httpBodySection.map { httpBodySection -> HTTPBodySection in
             let oldBody = httpBodySection.body
             let newBodyParameters = oldBody.parameters.map {
                 HTTPParameter(name: $0.name, source: $0.source, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
@@ -464,20 +464,20 @@ struct ReferenceResolver: SemanticVisitor {
             let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, parameters: newBodyParameters, symbol: oldBody.symbol)
             return HTTPBodySection(body: newBody)
         }
-        let newHTTPParametersVariants = symbol.httpParametersSectionVariants.map { httpParametersSection -> HTTPParametersSection in
+        let newHTTPParameters = symbol.httpParametersSection.map { httpParametersSection -> HTTPParametersSection in
             let parameters = httpParametersSection.parameters.map {
                 HTTPParameter(name: $0.name, source: $0.source, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
             }
             return HTTPParametersSection(parameters: parameters)
         }
-        let newHTTPResponsesVariants = symbol.httpResponsesSectionVariants.map { httpResponsesSection -> HTTPResponsesSection in
+        let newHTTPResponses = symbol.httpResponsesSection.map { httpResponsesSection -> HTTPResponsesSection in
             let responses = httpResponsesSection.responses.map {
                 HTTPResponse(statusCode: $0.statusCode, reason: $0.reason, mediaType: $0.mediaType, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol)
             }
             return HTTPResponsesSection(responses: responses)
         }
         
-        let possibleValuesVariants = symbol.possibleValuesSectionVariants.map { possibleValuesSection -> PropertyListPossibleValuesSection in
+        let newPossibleValuesSection = symbol.possibleValuesSection.map { possibleValuesSection -> PropertyListPossibleValuesSection in
             let possibleValues = possibleValuesSection.possibleValues.map {
                 PropertyListPossibleValuesSection.PossibleValue(value: $0.value, contents: $0.contents.map { visitMarkup($0) }, nameRange: $0.nameRange, range: $0.range)
             }
@@ -512,13 +512,13 @@ struct ReferenceResolver: SemanticVisitor {
             seeAlsoVariants: newSeeAlsoVariants,
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
-            dictionaryKeysSectionVariants: newDictionaryKeysVariants,
-            possibleValuesSectionVariants: possibleValuesVariants,
-            httpEndpointSectionVariants: newHTTPEndpointVariants,
-            httpBodySectionVariants: newHTTPBodyVariants,
-            httpParametersSectionVariants: newHTTPParametersVariants,
-            httpResponsesSectionVariants: newHTTPResponsesVariants,
-            redirectsVariants: symbol.redirectsVariants,
+            dictionaryKeysSection: newDictionaryKeys,
+            possibleValuesSection: newPossibleValuesSection,
+            httpEndpointSection: newHTTPEndpoint,
+            httpBodySection: newHTTPBody,
+            httpParametersSection: newHTTPParameters,
+            httpResponsesSection: newHTTPResponses,
+            redirects: symbol.redirects,
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
             automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants,
