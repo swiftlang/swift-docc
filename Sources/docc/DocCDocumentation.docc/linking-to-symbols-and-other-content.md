@@ -278,6 +278,18 @@ but using each symbols unique identifier hash for disambiguation:
 - ``forecast(for:at:)-7f3u``
 ```
 
+The table below shows some examples of the types of link disambiguation suffixes that DocC supports:
+
+| Disambiguation type             | Example         | Meaning
+| ------------------------------- | --------------- | ------------
+| Type of symbol                  | `-enum`         | This symbol is an enumeration.
+| Parameter type names            | `-(Int,_,_)`    | This symbol has three parameters and the first parameter is an `Int` value.
+| ^                               | `-()`           | This symbol has no parameters.
+| Return type names               | `->String`      | This symbol returns a `String` value.
+| ^                               | `->(_,_)`       | This symbol returns a tuple with two elements.
+| Parameter and return type names | `-(Bool)->()`   | This symbol has one `Bool` parameter and no return value.
+| Symbol identifier hash          | `-4gcpg`        | The hash of this symbol's unique identifier is "`4gcpg`".
+
 ### Navigate to an Article
 
 To add a link to an article, use the less-than symbol (`<`), the `doc` keyword, 
