@@ -2257,7 +2257,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: true,
@@ -2291,7 +2291,7 @@ class ConvertActionTests: XCTestCase {
         // TODO: Support TestFileSystem in DiagnosticFileWriter
         let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: true,
@@ -2363,7 +2363,7 @@ class ConvertActionTests: XCTestCase {
         let digestFileURL = targetDirectory
             .appendingPathComponent("diagnostics.json")
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2394,7 +2394,7 @@ class ConvertActionTests: XCTestCase {
         
         let targetDirectory = temporaryDirectory.appendingPathComponent("target", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2530,7 +2530,7 @@ class ConvertActionTests: XCTestCase {
         
         let targetDirectory = temporaryDirectory.appendingPathComponent("target.doccarchive", isDirectory: true)
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
