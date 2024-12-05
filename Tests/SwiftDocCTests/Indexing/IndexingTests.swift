@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,8 +15,8 @@ class IndexingTests: XCTestCase {
     
     // MARK: - Tutorial
     func testTutorial() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let tutorialReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let tutorialReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: tutorialReference)
         let tutorial = node.semantic as! Tutorial
         var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: tutorialReference)
@@ -69,7 +69,7 @@ class IndexingTests: XCTestCase {
             .init(title: "Section 1", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(.init(inlineContent: [.text("This is a step.")]))], anchor: "section-1"),
             .init(title: "Section 2", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(.init(inlineContent: [.text("This is a step.")]))], anchor: "section-2"),
         ])
-        let tutorialReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/TestTutorial", sourceLanguage: .swift)
+        let tutorialReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/TestTutorial", sourceLanguage: .swift)
         let indexingRecords = try tutorialSectionsSection.indexingRecords(onPage: tutorialReference, references: [:])
         XCTAssertEqual(2, indexingRecords.count)
         
@@ -89,8 +89,8 @@ class IndexingTests: XCTestCase {
     // MARK: - Article
     
     func testArticle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift)
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! TutorialArticle
         var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)
@@ -187,8 +187,8 @@ class IndexingTests: XCTestCase {
     }
     
     func testRootPageIndexingRecord() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
         var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)
@@ -207,7 +207,7 @@ class IndexingTests: XCTestCase {
     }
     
     func testSymbolIndexingRecord() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             // Modify the documentaion to have default availability for MyKit so that there is platform availability
             // information for MyProtocol (both in the render node and in the indexing record.
             let plistURL = url.appendingPathComponent("Info.plist")
@@ -221,7 +221,7 @@ class IndexingTests: XCTestCase {
             try updatedPlistData.write(to: plistURL)
         }
         
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
         var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference)

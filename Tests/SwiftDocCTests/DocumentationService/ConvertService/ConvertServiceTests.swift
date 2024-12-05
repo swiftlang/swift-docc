@@ -17,7 +17,7 @@ import SwiftDocCTestUtilities
 class ConvertServiceTests: XCTestCase {
     private let testBundleInfo = DocumentationBundle.Info(
         displayName: "TestBundle",
-        identifier: "identifier"
+        id: "identifier"
     )
     
     func testConvertSinglePage() throws {
@@ -918,7 +918,7 @@ class ConvertServiceTests: XCTestCase {
                     )
                     
                 case .asset(let assetReference):
-                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    switch (assetReference.assetName, assetReference.bundleID) {
                     case (let assetName, "identifier") where ["before.swift", "after.swift"].contains(assetName):
                         var asset = DataAsset()
                         asset.register(
@@ -1089,7 +1089,7 @@ class ConvertServiceTests: XCTestCase {
                     return nil
                     
                 case .asset(let assetReference):
-                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    switch (assetReference.assetName, assetReference.bundleID) {
                     case (let assetName, "identifier") where expectedAssetNames.contains(assetName):
                         var asset = DataAsset()
                         asset.register(
@@ -1383,7 +1383,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testConvertAllPagesForOnDiskContent() throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
             bundleInfo: testBundleInfo,
@@ -1444,7 +1444,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testConvertSomeSymbolsAndSomeArticlesForOnDiskContent() throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
             bundleInfo: testBundleInfo,
@@ -1468,7 +1468,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testConvertNoSymbolsAndNoArticlesForOnDiskContent() throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
             bundleInfo: testBundleInfo,
@@ -1495,7 +1495,7 @@ class ConvertServiceTests: XCTestCase {
         """)
         #else
         let (testBundleURL, _, _) = try testBundleAndContext(
-            copying: "TestBundle",
+            copying: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "sidekit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -1624,7 +1624,7 @@ class ConvertServiceTests: XCTestCase {
         """)
         #else
         let (testBundleURL, _, _) = try testBundleAndContext(
-            copying: "TestBundle",
+            copying: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "mykit-iOS.symbols.json",
                 "MyKit@SideKit.symbols.json",
@@ -1730,7 +1730,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundle",
-                identifier: "com.test.bundle"
+                id: "com.test.bundle"
             ),
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
@@ -1881,7 +1881,7 @@ class ConvertServiceTests: XCTestCase {
                     }
                     
                 case .asset(let assetReference):
-                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    switch (assetReference.assetName, assetReference.bundleID) {
                     case ("image.png", "com.test.bundle"):
                         var asset = DataAsset()
                         asset.register(
@@ -2019,7 +2019,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundle",
-                identifier: "org.swift.example"
+                id: "org.swift.example"
             ),
             externalIDsToConvert: ["s:32MyKit3FooV"],
             documentPathsToConvert: [],
@@ -2128,7 +2128,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle"
+                id: "com.test.bundle"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework40EnumerationWithSingleUnresolvableDocLinkO"],
             documentPathsToConvert: [],
@@ -2166,7 +2166,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle"
+                id: "com.test.bundle"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV06deeplyfD31FunctionWithUnresolvableDocLinkyyF"],
             documentPathsToConvert: [],
@@ -2205,7 +2205,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle"
+                id: "com.test.bundle"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework43EnumerationWithSingleUnresolvableSymbolLinkO"],
             documentPathsToConvert: [],
@@ -2331,7 +2331,7 @@ class ConvertServiceTests: XCTestCase {
         let bundleURL = tempURL.appendingPathComponent("unit-test.docc")
         
         let requestWithDifferentBundleID = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", identifier: "com.example.something-else"),
+            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", id: "com.example.something-else"),
             externalIDsToConvert: [],
             bundleLocation: bundleURL,
             symbolGraphs: [],
@@ -2341,7 +2341,7 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(try linkResolutionRequestsForConvertRequest(requestWithDifferentBundleID), [], "Shouldn't make any link resolution requests because the bundle IDs are different.")
         
         let requestWithSameBundleID = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", identifier: "com.example.something"),
+            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", id: "com.example.something"),
             externalIDsToConvert: [],
             bundleLocation: bundleURL,
             symbolGraphs: [],

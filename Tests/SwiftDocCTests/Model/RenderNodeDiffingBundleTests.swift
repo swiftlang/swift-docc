@@ -12,8 +12,8 @@ import XCTest
 @testable import SwiftDocC
 
 class RenderNodeDiffingBundleTests: XCTestCase {
-    let testBundleName = "TestBundle"
-    let testBundleIdentifier = "org.swift.docc.example"
+    let testBundleName = "LegacyBundle_DoNotUseInNewTests"
+    let testBundleID: DocumentationBundle.Identifier = "org.swift.docc.example"
     
     func testDiffSymbolFromBundleWithDiscussionSectionRemoved() throws {
         let pathToSymbol = "/documentation/MyKit"
@@ -29,7 +29,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
         
         let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
-                                                           bundleIdentifier: testBundleIdentifier,
+                                                           bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
 
@@ -57,7 +57,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
         
         let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
-                                                           bundleIdentifier: testBundleIdentifier,
+                                                           bundleID: testBundleID,
                                                            topicReferencePath: pathToArticle,
                                                            modification: modification)
 
@@ -90,7 +90,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
         
         let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
-                                                           bundleIdentifier: testBundleIdentifier,
+                                                           bundleID: testBundleID,
                                                            topicReferencePath: pathToArticle,
                                                            modification: modification)
         
@@ -122,7 +122,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
         
         let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
-                                                           bundleIdentifier: testBundleIdentifier,
+                                                           bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
         
@@ -151,7 +151,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
         
         let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
-                                                           bundleIdentifier: testBundleIdentifier,
+                                                           bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
 
@@ -189,7 +189,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
         
         let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
-                                                           bundleIdentifier: testBundleIdentifier,
+                                                           bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
         
@@ -228,7 +228,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
         
         let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
-                                                           bundleIdentifier: testBundleIdentifier,
+                                                           bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
         
@@ -264,7 +264,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
         
         let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
-                                                           bundleIdentifier: testBundleIdentifier,
+                                                           bundleID: testBundleID,
                                                            topicReferencePath: pathToArticle,
                                                            modification: modification)
         
@@ -299,12 +299,12 @@ class RenderNodeDiffingBundleTests: XCTestCase {
     }
     
     func getDiffsFromModifiedDocument(bundleName: String,
-                                      bundleIdentifier: String,
+                                      bundleID: DocumentationBundle.Identifier,
                                       topicReferencePath: String,
                                       modification: @escaping (URL) throws -> ()
     ) throws -> JSONPatchDifferences {
         let (bundleOriginal, contextOriginal) = try testBundleAndContext(named: bundleName)
-        let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleIdentifier: bundleIdentifier,
+        let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
         var renderContext = RenderContext(documentationContext: contextOriginal, bundle: bundleOriginal)
@@ -316,7 +316,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let (_, bundleModified, contextModified) = try testBundleAndContext(copying: bundleName) { url in
             try modification(url)
         }
-        let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleIdentifier: bundleIdentifier,
+        let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
         renderContext = RenderContext(documentationContext: contextModified, bundle: bundleModified)

@@ -83,18 +83,18 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     
     func testAbsenceOfPossibleValues() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         // Check that the `Possible Values` section is not rendered if the symbol don't define any possible value.
-        XCTAssertNil(try converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
+        XCTAssertNil(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
     }
     
     func testUndocumentedPossibleValues() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let possibleValuesSection = try XCTUnwrap(try converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
+        let possibleValuesSection = try XCTUnwrap(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
         let possibleValues: [PossibleValuesRenderSection.NamedValue] = possibleValuesSection.values
         
         // Check that if no possible values were documented they still show under the Possible Values section.
@@ -116,7 +116,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         let possibleValues = try XCTUnwrap(symbol.possibleValuesSectionVariants.firstValue?.possibleValues)
         
@@ -136,7 +136,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         let possibleValues = try XCTUnwrap(symbol.possibleValuesSectionVariants.firstValue?.possibleValues)
         

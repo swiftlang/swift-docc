@@ -19,7 +19,7 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -195,7 +195,7 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -208,32 +208,32 @@ class TutorialTests: XCTestCase {
 Tutorial @1:1-150:2 projectFiles: nil
 ├─ Intro @3:4-6:5 title: 'Basic Augmented Reality App'
 │  ├─ MarkupContainer (empty)
-│  ├─ ImageMedia @5:7-5:46 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "myimage.png")' altText: 'image'
-│  └─ VideoMedia @4:7-4:51 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "test.mp4")' poster: 'Optional(SwiftDocC.ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "poster.png"))'
+│  ├─ ImageMedia @5:7-5:46 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "myimage.png")' altText: 'image'
+│  └─ VideoMedia @4:7-4:51 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "test.mp4")' poster: 'Optional(SwiftDocC.ResourceReference(bundleID: org.swift.docc.example, path: "poster.png"))'
 ├─ XcodeRequirement @2:4-2:97 title: 'Xcode X.Y Beta Z' destination: 'https://www.example.com/download'
 ├─ TutorialSection @8:4-48:5
 │  ├─ ContentAndMedia @9:7-19:8 mediaPosition: 'trailing'
 │  │  ├─ MarkupContainer (3 elements)
-│  │  └─ ImageMedia @14:10-14:51 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "figure1.png")' altText: 'figure1'
+│  │  └─ ImageMedia @14:10-14:51 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "figure1.png")' altText: 'figure1'
 │  └─ Steps @21:7-47:8
 │     ├─ MarkupContainer (1 element)
 │     ├─ Step @25:10-31:11
 │     │  ├─ MarkupContainer (1 element)
 │     │  ├─ MarkupContainer (empty)
-│     │  └─ Code @28:13-30:14 fileReference: ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "code1.swift") fileName: 'MyCode.swift' shouldResetDiff: false preview: Optional(SwiftDocC.ImageMedia)
+│     │  └─ Code @28:13-30:14 fileReference: ResourceReference(bundleID: org.swift.docc.example, path: "code1.swift") fileName: 'MyCode.swift' shouldResetDiff: false preview: Optional(SwiftDocC.ImageMedia)
 │     ├─ Step @32:10-38:11
 │     │  ├─ MarkupContainer (1 element)
 │     │  ├─ MarkupContainer (empty)
-│     │  └─ Code @35:13-37:14 fileReference: ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "code2.swift") fileName: 'MyCode.swift' shouldResetDiff: true preview: Optional(SwiftDocC.ImageMedia)
+│     │  └─ Code @35:13-37:14 fileReference: ResourceReference(bundleID: org.swift.docc.example, path: "code2.swift") fileName: 'MyCode.swift' shouldResetDiff: true preview: Optional(SwiftDocC.ImageMedia)
 │     ├─ MarkupContainer (1 element)
 │     └─ Step @42:10-46:11
 │        ├─ MarkupContainer (1 element)
 │        ├─ MarkupContainer (empty)
-│        └─ Code @45:13-45:65 fileReference: ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "othercode1.swift") fileName: 'OtherCode.swift' shouldResetDiff: false preview: nil
+│        └─ Code @45:13-45:65 fileReference: ResourceReference(bundleID: org.swift.docc.example, path: "othercode1.swift") fileName: 'OtherCode.swift' shouldResetDiff: false preview: nil
 ├─ TutorialSection @50:4-77:5
 │  ├─ ContentAndMedia @51:7-58:8 mediaPosition: 'trailing'
 │  │  ├─ MarkupContainer (2 elements)
-│  │  └─ ImageMedia @57:10-57:47 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "xcode.png")' altText: 'xcode'
+│  │  └─ ImageMedia @57:10-57:47 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "xcode.png")' altText: 'xcode'
 │  └─ Steps @60:7-76:8
 │     ├─ MarkupContainer (1 element)
 │     ├─ Step @64:10-67:11
@@ -354,7 +354,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -370,10 +370,10 @@ Tutorial @1:1-150:2 projectFiles: nil
 
     func testAnalyzeNode() throws {
         let title = "unreferenced-tutorial"
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -389,10 +389,10 @@ Tutorial @1:1-150:2 projectFiles: nil
 
     func testAnalyzeExternalNode() throws {
         let title = "unreferenced-tutorial"
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -408,11 +408,11 @@ Tutorial @1:1-150:2 projectFiles: nil
     func testAnalyzeFragmentNode() throws {
         let title = "unreferenced-tutorial"
         let url = URL(fileURLWithPath: "/path/to/\(title)")
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -429,12 +429,12 @@ Tutorial @1:1-150:2 projectFiles: nil
     func testAnalyzeForValidParent() throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
-            let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
             let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         let tutorialNode = node(withTitle: "tutorial-article", ofKind: .tutorial)
 

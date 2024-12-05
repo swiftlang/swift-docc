@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -65,7 +65,7 @@ class IdentifierTests: XCTestCase {
     }
     
     func testReusingReferences() {
-        let bundleID = #function
+        let bundleID: DocumentationBundle.Identifier = #function
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "Cache for this bundle shouldn't exist because caching is not enabled by default")
         
         // Add one reference
@@ -73,15 +73,15 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 0, "Should have an empty cache after enabling reference caching for this bundle")
         
         // Add the same reference repeatedly
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should have an cached one reference because a reference with this bundle identifier was created")
         
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should still only have one cached reference because the same reference was created repeatedly")
         
         // Add another reference
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/other-page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/other-page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 2, "Should have cached another reference because two different references with this bundle identifier has been created")
         
         // Purge and repeat
@@ -91,29 +91,29 @@ class IdentifierTests: XCTestCase {
         ResolvedTopicReference.enableReferenceCaching(for: bundleID)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 0, "Should have an empty cache after enabling reference caching for this bundle")
         
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should have an cached one reference because a reference with this bundle identifier was created")
     }
     
     func testReferencesAreNotCachedByDefault() {
-        let bundleID = #function
+        let bundleID: DocumentationBundle.Identifier = #function
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "References for this bundle shouldn't exist because caching is not enabled by default")
         
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleID: bundleID, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "After creating a reference in this bundle, references still shouldn't exist because caching is not enabled by default")
     }
     
     func testReferenceInitialPathComponents() {
-        let ref1 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/", sourceLanguage: .swift)
+        let ref1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
         XCTAssertEqual(ref1.pathComponents, ["/"])
-        let ref2 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/MyClass", sourceLanguage: .swift)
+        let ref2 = ResolvedTopicReference(bundleID: "bundle", path: "/MyClass", sourceLanguage: .swift)
         XCTAssertEqual(ref2.pathComponents, ["/", "MyClass"])
-        let ref3 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/MyClass/myFunction", sourceLanguage: .swift)
+        let ref3 = ResolvedTopicReference(bundleID: "bundle", path: "/MyClass/myFunction", sourceLanguage: .swift)
         XCTAssertEqual(ref3.pathComponents, ["/", "MyClass", "myFunction"])
     }
     
     func testReferenceUpdatedPathComponents() {
-        var ref1 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/", sourceLanguage: .swift)
+        var ref1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
         XCTAssertEqual(ref1.pathComponents, ["/"])
         ref1 = ref1.appendingPath("MyClass")
         XCTAssertEqual(ref1.pathComponents, ["/", "MyClass"])
@@ -124,16 +124,16 @@ class IdentifierTests: XCTestCase {
     }
 
     func testReferenceInitialAbsoluteString() {
-        let ref1 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/", sourceLanguage: .swift)
+        let ref1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
         XCTAssertEqual(ref1.absoluteString, "doc://bundle/")
-        let ref2 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/MyClass", sourceLanguage: .swift)
+        let ref2 = ResolvedTopicReference(bundleID: "bundle", path: "/MyClass", sourceLanguage: .swift)
         XCTAssertEqual(ref2.absoluteString, "doc://bundle/MyClass")
-        let ref3 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/MyClass/myFunction", sourceLanguage: .swift)
+        let ref3 = ResolvedTopicReference(bundleID: "bundle", path: "/MyClass/myFunction", sourceLanguage: .swift)
         XCTAssertEqual(ref3.absoluteString, "doc://bundle/MyClass/myFunction")
     }
     
     func testReferenceUpdatedAbsoluteString() {
-        var ref1 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/", sourceLanguage: .swift)
+        var ref1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
         XCTAssertEqual(ref1.absoluteString, "doc://bundle/")
         ref1 = ref1.appendingPath("MyClass")
         XCTAssertEqual(ref1.absoluteString, "doc://bundle/MyClass")
@@ -144,7 +144,7 @@ class IdentifierTests: XCTestCase {
     }
     
     func testResolvedTopicReferenceDoesNotCopyStorageIfNotModified() {
-         let reference1 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/", sourceLanguage: .swift)
+        let reference1 = ResolvedTopicReference(bundleID: "bundle", path: "/", sourceLanguage: .swift)
          let reference2 = reference1
 
          XCTAssertEqual(
@@ -155,7 +155,7 @@ class IdentifierTests: XCTestCase {
     
     func testWithSourceLanguages() {
         let swiftReference = ResolvedTopicReference(
-            bundleIdentifier: "bundle",
+            bundleID: "bundle",
             path: "/",
             sourceLanguage: .swift
         )

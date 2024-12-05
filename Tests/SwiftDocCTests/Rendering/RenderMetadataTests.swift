@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -72,7 +72,7 @@ class RenderMetadataTests: XCTestCase {
     func testAllPagesHaveTitleMetadata() throws {
         var typesOfPages = [Tutorial.self, TutorialTableOfContents.self, Article.self, TutorialArticle.self, Symbol.self]
         
-        for bundleName in ["TestBundle"] {
+        for bundleName in ["LegacyBundle_DoNotUseInNewTests"] {
             let (bundle, context) = try testBundleAndContext(named: bundleName)
             
             let renderContext = RenderContext(documentationContext: context, bundle: bundle)
@@ -93,14 +93,14 @@ class RenderMetadataTests: XCTestCase {
     /// Test that a bystanders symbol graph is loaded, symbols are merged into the main module
     /// and the bystanders are included in the render node metadata.
     func testRendersBystandersFromSymbolGraph() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
         }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
@@ -109,7 +109,7 @@ class RenderMetadataTests: XCTestCase {
         
         // Verify the rendered metadata contains the bystanders
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "MyKit")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Foundation"])
     }
@@ -117,7 +117,7 @@ class RenderMetadataTests: XCTestCase {
     /// Test that when a bystanders symbol graph is loaded that extends a different module, that
     /// those symbols correctly report the modules when rendered.
     func testRendersBystanderExtensionsFromSymbolGraph() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let baseSymbolGraphURL = Bundle.module.url(
                 forResource: "BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: baseSymbolGraphURL, to: url.appendingPathComponent("BaseKit.symbols.json"))
@@ -127,7 +127,7 @@ class RenderMetadataTests: XCTestCase {
         }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/BaseKit/OtherStruct/someFunc()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/BaseKit/OtherStruct/someFunc()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
 
@@ -136,7 +136,7 @@ class RenderMetadataTests: XCTestCase {
 
         // Verify the rendered metadata contains the bystanders
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "OverlayTest")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["BaseKit"])
     }
@@ -149,7 +149,7 @@ class RenderMetadataTests: XCTestCase {
         }
 
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "BundleWithRelativePathAmbiguity")

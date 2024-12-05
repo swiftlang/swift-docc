@@ -10,7 +10,16 @@
 
 import Foundation
 
+#if canImport(os)
+import os
+#endif
+
 package enum ConvertActionConverter {
+#if canImport(os)
+    static package let signposter = OSSignposter(subsystem: "org.swift.docc", category: "Convert")
+#else
+    static package let signposter = NoOpSignposterShim()
+#endif
     
     /// Converts the documentation bundle in the given context and passes its output to a given consumer.
     ///
@@ -30,8 +39,12 @@ package enum ConvertActionConverter {
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
     ) throws -> [Problem] {
+        let signposter = Self.signposter
+        
         defer {
-            context.diagnosticEngine.flush()
+            signposter.withIntervalSignpost("Display diagnostics", id: signposter.makeSignpostID()) {
+                context.diagnosticEngine.flush()
+            }
         }
         
         let processingDurationMetric = benchmark(begin: Benchmark.Duration(id: "documentation-processing"))
@@ -47,7 +60,9 @@ package enum ConvertActionConverter {
         }
         
         // Precompute the render context
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = signposter.withIntervalSignpost("Build RenderContext", id: signposter.makeSignpostID()) {
+            RenderContext(documentationContext: context, bundle: bundle)
+        }
         try outputConsumer.consume(renderReferenceStore: renderContext.store)
 
         // Copy images, sample files, and other static assets.
@@ -88,6 +103,8 @@ package enum ConvertActionConverter {
         
         let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
         let resultsGroup = DispatchGroup()
+        
+        let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
         var conversionProblems: [Problem] = context.knownPages.concurrentPerform { identifier, results in
             // If cancelled skip all concurrent conversion work in this block.
@@ -146,37 +163,45 @@ package enum ConvertActionConverter {
         // Wait for any concurrent updates to complete.
         resultsGroup.wait()
         
+        signposter.endInterval("Render", renderSignpostHandle)
+        
         guard !Task.isCancelled else { return [] }
         
         // Write various metadata
         if emitDigest {
-            do {
-                try outputConsumer.consume(linkableElementSummaries: linkSummaries)
-                try outputConsumer.consume(indexingRecords: indexingRecords)
-                try outputConsumer.consume(assets: assets)
-            } catch {
-                recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
+            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
+                do {
+                    try outputConsumer.consume(linkableElementSummaries: linkSummaries)
+                    try outputConsumer.consume(indexingRecords: indexingRecords)
+                    try outputConsumer.consume(assets: assets)
+                } catch {
+                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
+                }
             }
         }
         
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-            do {
-                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.identifier)
-                try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
-                
-                if !emitDigest {
-                    try outputConsumer.consume(linkableElementSummaries: linkSummaries)
+            signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
+                do {
+                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
+                    try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+                    
+                    if !emitDigest {
+                        try outputConsumer.consume(linkableElementSummaries: linkSummaries)
+                    }
+                } catch {
+                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
                 }
-            } catch {
-                recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
             }
         }
         
         if emitDigest {
-            do {
-                try outputConsumer.consume(problems: context.problems + conversionProblems)
-            } catch {
-                recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
+            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
+                do {
+                    try outputConsumer.consume(problems: context.problems + conversionProblems)
+                } catch {
+                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
+                }
             }
         }
 
@@ -191,7 +216,7 @@ package enum ConvertActionConverter {
             break
         }
         
-        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: bundle.displayName, bundleIdentifier: bundle.identifier))
+        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: bundle.displayName, bundleID: bundle.id))
         
         // Log the finalized topic graph checksum.
         benchmark(add: Benchmark.TopicGraphHash(context: context))

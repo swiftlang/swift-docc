@@ -17,9 +17,9 @@ import SymbolKit
 
 class RenderNodeTranslatorTests: XCTestCase {
     private func findDiscussion(forSymbolPath: String, configureBundle: ((URL) throws -> Void)? = nil) throws -> ContentRenderSection? {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configureBundle: configureBundle)
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: configureBundle)
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: forSymbolPath, sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: forSymbolPath, sourceLanguage: .swift))
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
@@ -223,7 +223,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
             
     func testArticleRoles() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         
         // Verify article's role
@@ -281,7 +281,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     // Verifies that links to sections include their container's abstract rdar://72110558
     func testSectionAbstracts() throws {
         // Create an article including a link to a tutorial section
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
             try """
             # Article
             Article abstract
@@ -291,7 +291,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
         })
 
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let article = try XCTUnwrap(node.semantic as? Article)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
@@ -303,7 +303,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
 
     func testEmptyTaskGroupsNotRendered() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         
         let source = """
@@ -341,7 +341,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         let article = try XCTUnwrap(
             Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
         )
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/taskgroups", fragment: nil, sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/taskgroups", fragment: nil, sourceLanguage: .swift)
         context.documentationCache[reference] = try DocumentationNode(reference: reference, article: article)
         let topicGraphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: URL(fileURLWithPath: "/path/to/article.md")), title: "My Article")
         context.topicGraph.addNode(topicGraphNode)
@@ -365,7 +365,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     /// Tests the ordering of automatic groups for symbols
     func testAutomaticTaskGroupsOrderingInSymbols() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             SideClass abstract
@@ -375,7 +375,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let node = try XCTUnwrap(try? context.entity(with: reference))
         
@@ -406,7 +406,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Articles",
                     references: [
                         ResolvedTopicReference(
-                            bundleIdentifier: bundle.identifier,
+                            bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -440,7 +440,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Articles",
                     references: [
                         ResolvedTopicReference(
-                            bundleIdentifier: bundle.identifier,
+                            bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -451,7 +451,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Default Implementations",
                     references: [
                         ResolvedTopicReference(
-                            bundleIdentifier: bundle.identifier,
+                            bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -462,7 +462,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Another Task Group",
                     references: [
                         ResolvedTopicReference(
-                            bundleIdentifier: bundle.identifier,
+                            bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -492,7 +492,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     /// Tests the ordering of automatic groups for articles
     func testAutomaticTaskGroupsOrderingInArticles() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # Article
             Article abstract
@@ -502,7 +502,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
         })
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let node = try XCTUnwrap(try? context.entity(with: reference))
         
@@ -525,7 +525,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Articles",
                     references: [
                         ResolvedTopicReference(
-                            bundleIdentifier: bundle.identifier,
+                            bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -553,7 +553,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Articles",
                     references: [
                         ResolvedTopicReference(
-                            bundleIdentifier: bundle.identifier,
+                            bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -564,7 +564,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Default Implementations",
                     references: [
                         ResolvedTopicReference(
-                            bundleIdentifier: bundle.identifier,
+                            bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -575,7 +575,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Another Task Group",
                     references: [
                         ResolvedTopicReference(
-                            bundleIdentifier: bundle.identifier,
+                            bundleID: bundle.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -599,13 +599,13 @@ class RenderNodeTranslatorTests: XCTestCase {
 
     /// Tests the ordering of automatic groups in defining protocol
     func testOrderingOfAutomaticGroupsInDefiningProtocol() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             //
         })
         
         // Verify "Default Implementations" group on the implementing type
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/Element", sourceLanguage: .swift)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
             let node = try XCTUnwrap(try? context.entity(with: reference))
             
@@ -624,7 +624,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         
         // Verify automatically generated api collection
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/Protocol-Implementations", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/Element/Protocol-Implementations", sourceLanguage: .swift)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
             let node = try XCTUnwrap(try? context.entity(with: reference))
             
@@ -649,11 +649,11 @@ class RenderNodeTranslatorTests: XCTestCase {
             forResource: "FancyProtocol.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
         // Create a test bundle copy with the symbol graph from above
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: fancyProtocolSGFURL, to: url.appendingPathComponent("FancyProtocol.symbols.json"))
         }
 
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/FancyProtocol/SomeClass", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/FancyProtocol/SomeClass", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -856,7 +856,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func loadRenderNode(at path: String, in bundleURL: URL) throws -> RenderNode {
         let (_, bundle, context) = try loadBundle(from: bundleURL)
 
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -865,7 +865,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     func testAutomaticTaskGroupTopicsAreSorted() throws {
         let (bundle, context) = try testBundleAndContext(named: "DefaultImplementations")
-        let structReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DefaultImplementations/Foo", sourceLanguage: .swift)
+        let structReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DefaultImplementations/Foo", sourceLanguage: .swift)
         let structNode = try context.entity(with: structReference)
         let symbol = try XCTUnwrap(structNode.semantic as? Symbol)
         
@@ -885,7 +885,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     // Verifies we don't render links to non linkable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
@@ -899,7 +899,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let node = try XCTUnwrap(try? context.entity(with: reference))
         
@@ -925,9 +925,9 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testLinkInAbstract() throws {
         do {
             // First verify that `SideKit` page does not contain render reference to `SideKit/SideClass/Element`.
-            let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+            let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
             
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
@@ -935,19 +935,19 @@ class RenderNodeTranslatorTests: XCTestCase {
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             
             // No render reference to `Element`
-            XCTAssertFalse(renderNode.references.keys.contains("doc://\(bundle.identifier)/documentation/SideKit/SideClass/Element"))
+            XCTAssertFalse(renderNode.references.keys.contains("doc://\(bundle.id)/documentation/SideKit/SideClass/Element"))
         }
         
         do {
             // Create a bundle with a link in abstract, then verify the render reference is present in `SideKit` render node references.
-            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
                 try """
                 # ``SideKit/SideClass``
                 This is a link to <doc:/documentation/SideKit/SideClass/Element>.
                 """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
             })
 
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
@@ -955,13 +955,13 @@ class RenderNodeTranslatorTests: XCTestCase {
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             
             // There is a render reference to `Element`
-            XCTAssertTrue(renderNode.references.keys.contains("doc://\(bundle.identifier)/documentation/SideKit/SideClass/Element"))
+            XCTAssertTrue(renderNode.references.keys.contains("doc://\(bundle.id)/documentation/SideKit/SideClass/Element"))
         }
     }
 
     func testSnippetToCodeListing() throws {
         let (bundle, context) = try testBundleAndContext(named: "Snippets")
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
@@ -991,7 +991,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     func testSnippetSliceToCodeListing() throws {
         let (bundle, context) = try testBundleAndContext(named: "Snippets")
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
@@ -1015,7 +1015,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
     func testNestedSnippetSliceToCodeListing() throws {
         let (bundle, context) = try testBundleAndContext(named: "Snippets")
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
@@ -1046,7 +1046,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     func testSnippetSliceTrimsIndentation() throws {
         let (bundle, context) = try testBundleAndContext(named: "Snippets")
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/SliceIndentation", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Snippets/SliceIndentation", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
@@ -1072,7 +1072,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testRowAndColumn() throws {
         let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/BestBook/MyArticle",
             sourceLanguage: .swift
         )
@@ -1101,7 +1101,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testSmall() throws {
         let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/BestBook/MyArticle",
             sourceLanguage: .swift
         )
@@ -1129,7 +1129,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testTabNavigator() throws {
         let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/BestBook/TabNavigatorArticle",
             sourceLanguage: .swift
         )
@@ -1166,7 +1166,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testRenderNodeMetadata() throws {
          let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
          let reference = ResolvedTopicReference(
-             bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
              path: "/documentation/BestBook/MyArticle",
              sourceLanguage: .swift
          )
@@ -1242,7 +1242,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testPageColorMetadataInSymbolExtension() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/TestBed",
             sourceLanguage: .swift
         )
@@ -1258,7 +1258,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testTitleHeadingMetadataInSymbolExtension() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/TestBed",
             sourceLanguage: .swift
         )
@@ -1273,7 +1273,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testExpectedRoleHeadingIsAssigned() throws {
-        let exampleDocumentation = Folder(
+        let catalog = Folder(
             name: "unit-test.docc",
             content: [
                 TextFile(name: "APICollection.md", utf8Content: """
@@ -1334,13 +1334,12 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         func renderNodeArticleFromReferencePath(
             referencePath: String
         ) throws -> RenderNode {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: referencePath, sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: referencePath, sourceLanguage: .swift)
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
             return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
@@ -1364,7 +1363,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testExpectedRoleHeadingWhenAutomaticRoleHeadingIsDisabled() throws {
-        let exampleDocumentation = Folder(
+        let catalog = Folder(
             name: "unit-test.docc",
             content: [
                 TextFile(name: "APICollection.md", utf8Content: """
@@ -1427,13 +1426,12 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         func renderNodeArticleFromReferencePath(
             referencePath: String
         ) throws -> RenderNode {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: referencePath, sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: referencePath, sourceLanguage: .swift)
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
             return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)

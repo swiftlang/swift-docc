@@ -13,8 +13,8 @@ import XCTest
 
 class RenderHierarchyTranslatorTests: XCTestCase {
     func test() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let technologyReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let technologyReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
         var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
         let renderHierarchyVariants = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchyVariants
@@ -89,7 +89,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
     
     func testMultiplePaths() throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
             ## Topics
@@ -102,7 +102,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         }
         
         // Get a translated render node
-        let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
         let renderNode = translator.visit(node.semantic) as! RenderNode

@@ -18,8 +18,19 @@ extension DocumentationContext {
     
     @available(*, deprecated, renamed: "configuration.externalDocumentationConfiguration.sources", message: "Use 'configuration.externalDocumentationConfiguration.sources' instead. This deprecated API will be removed after Swift 6.2 is released.")
     public var externalDocumentationSources: [BundleIdentifier: ExternalDocumentationSource] {
-        get { configuration.externalDocumentationConfiguration.sources }
-        set { configuration.externalDocumentationConfiguration.sources = newValue }
+        get {
+            var result = [BundleIdentifier: ExternalDocumentationSource]()
+            for (key, value) in configuration.externalDocumentationConfiguration.sources {
+                result[key.rawValue] = value
+            }
+            return result
+        }
+        set {
+            configuration.externalDocumentationConfiguration.sources.removeAll()
+            for (key, value) in newValue {
+                configuration.externalDocumentationConfiguration.sources[.init(rawValue: key)] = value
+            }
+        }
     }
     
     @available(*, deprecated, renamed: "configuration.externalDocumentationConfiguration.globalSymbolResolver", message: "Use 'configuration.externalDocumentationConfiguration.globalSymbolResolver' instead. This deprecated API will be removed after Swift 6.2 is released.")
