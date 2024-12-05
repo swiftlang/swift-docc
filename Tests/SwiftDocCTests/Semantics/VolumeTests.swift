@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class VolumeTests: XCTestCase {
     func testEmpty() throws {
@@ -19,7 +20,7 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(volume)
@@ -50,7 +51,7 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(volume)
@@ -62,13 +63,10 @@ class VolumeTests: XCTestCase {
     }
 
     func testChapterWithSameName() throws {
-
         let name = "Always Be Voluming"
 
-
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
-            let overviewURL = root.appendingPathComponent("TestOverview.tutorial")
-            let text = """
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "TestOverview.tutorial", utf8Content: """
             @Tutorials(name: "Technology X") {
                @Intro(title: "Technology X") {
 
@@ -96,15 +94,13 @@ class VolumeTests: XCTestCase {
 
                @Resources {}
             }
-            """
-            try text.write(to: overviewURL, atomically: true, encoding: .utf8)
-        }
-
+            """)
+        ])
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
         let node = try context.entity(
-            with: ResolvedTopicReference(
-                bundleID: bundle.id,
-                path: "/tutorials/TestOverview",
-                sourceLanguage: .swift))
+            with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+        )
 
         let tutorial = try XCTUnwrap(node.semantic as? TutorialTableOfContents)
 

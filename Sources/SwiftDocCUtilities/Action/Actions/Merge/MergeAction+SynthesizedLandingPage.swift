@@ -67,7 +67,6 @@ extension MergeAction {
         renderNode.metadata.title = name
         renderNode.metadata.roleHeading = roleHeading
         renderNode.metadata.role = "collection"
-        renderNode.hierarchy = nil
         renderNode.sections = []
         
         if rootRenderReferences.containsBothKinds {

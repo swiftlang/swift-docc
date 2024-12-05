@@ -1159,7 +1159,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     }
     
     private func assertMultiVariantSymbol(
-        bundleName: String = "TestBundle",
+        bundleName: String = "LegacyBundle_DoNotUseInNewTests",
         configureContext: (DocumentationContext, ResolvedTopicReference) throws -> () = { _, _ in },
         configureSymbol: (Symbol) throws -> () = { _ in },
         configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
@@ -1204,7 +1204,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertAfterApplyingVariant: (RenderNode) throws -> () = { _ in },
         assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
         
         let identifier = ResolvedTopicReference(
             bundleID: bundle.id,

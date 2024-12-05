@@ -83,6 +83,7 @@ public typealias BundleIdentifier = String
 /// - ``parents(of:)``
 ///
 public class DocumentationContext {
+    private let signposter = ConvertActionConverter.signposter
 
     /// An error that's encountered while interacting with a ``SwiftDocC/DocumentationContext``.
     public enum ContextError: DescribedError {
@@ -144,7 +145,7 @@ public class DocumentationContext {
         case .legacy(let legacyDataProvider):
             return try legacyDataProvider.contentsOfURL(url, in: bundle)
         case .new(let dataProvider):
-            assert(self.bundle?.identifier == bundle.identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+            assert(self.bundle?.id == bundle.id, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
             return try dataProvider.contents(of: url)
         }
     }
@@ -392,7 +393,7 @@ public class DocumentationContext {
         case .legacy(let legacyDataProvider):
             return legacyDataProvider.bundles[identifier]
         case .new:
-            assert(bundle?.identifier == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+            assert(bundle?.id.rawValue == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
             return bundle?.id.rawValue == identifier ? bundle : nil
         }
     }
@@ -563,6 +564,11 @@ public class DocumentationContext {
      Attempt to resolve links in curation-only documentation, converting any ``TopicReferences`` from `.unresolved` to `.resolved` where possible.
      */
     private func resolveLinks(curatedReferences: Set<ResolvedTopicReference>, bundle: DocumentationBundle) {
+        let signpostHandle = signposter.beginInterval("Resolve links", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Resolve links", signpostHandle)
+        }
+        
         let references = Array(curatedReferences)
         let results = Synchronized<[LinkResolveResult]>([])
         results.sync({ $0.reserveCapacity(references.count) })
@@ -708,6 +714,11 @@ public class DocumentationContext {
         tutorialArticles: [SemanticResult<TutorialArticle>],
         bundle: DocumentationBundle
     ) {
+        let signpostHandle = signposter.beginInterval("Resolve links", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Resolve links", signpostHandle)
+        }
+        
         let sourceLanguages = soleRootModuleReference.map { self.sourceLanguages(for: $0) } ?? [.swift]
 
         // Tutorial table-of-contents
@@ -1147,6 +1158,11 @@ public class DocumentationContext {
     ) throws {
         // Making sure that we correctly let decoding memory get released, do not remove the autorelease pool.
         try autoreleasepool {
+            let signpostHandle = signposter.beginInterval("Register symbols", id: signposter.makeSignpostID())
+            defer {
+                signposter.endInterval("Register symbols", signpostHandle)
+            }
+            
             /// We need only unique relationships so we'll collect them in a set.
             var combinedRelationshipsBySelector = [UnifiedSymbolGraph.Selector: Set<SymbolGraph.Relationship>]()
             /// Also track the unique relationships across all languages and platforms
@@ -1157,7 +1173,9 @@ public class DocumentationContext {
             var moduleReferences = [String: ResolvedTopicReference]()
             
             // Build references for all symbols in all of this module's symbol graphs.
-            let symbolReferences = linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+            let symbolReferences = signposter.withIntervalSignpost("Disambiguate references") {
+                linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+            }
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             documentationCache.reserveCapacity(symbolReferences.count)
@@ -1223,7 +1241,9 @@ public class DocumentationContext {
                     let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguages: moduleInterfaceLanguages, defaultSymbol: moduleSymbol)
                     moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: bundle)
                     
-                    addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference)
+                    signposter.withIntervalSignpost("Add symbols to topic graph", id: signposter.makeSignpostID()) {
+                        addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference)
+                    }
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
@@ -1375,15 +1395,17 @@ public class DocumentationContext {
             )
 
             // Parse and prepare the nodes' content concurrently.
-            let updatedNodes = Array(documentationCache.symbolReferences).concurrentMap { finalReference in
-                // Match the symbol's documentation extension and initialize the node content.
-                let match = uncuratedDocumentationExtensions[finalReference]
-                let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
-                
-                return ((
-                    node: updatedNode,
-                    matchedArticleURL: match?.source
-                ))
+            let updatedNodes = signposter.withIntervalSignpost("Parse symbol markup", id: signposter.makeSignpostID()) {
+                Array(documentationCache.symbolReferences).concurrentMap { finalReference in
+                    // Match the symbol's documentation extension and initialize the node content.
+                    let match = uncuratedDocumentationExtensions[finalReference]
+                    let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
+                    
+                    return ((
+                        node: updatedNode,
+                        matchedArticleURL: match?.source
+                    ))
+                }
             }
             
             // Update cache with up-to-date nodes
@@ -2177,9 +2199,16 @@ public class DocumentationContext {
             )
             
             do {
-                try symbolGraphLoader.loadAll()
-                let pathHierarchy = PathHierarchy(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents)
-                hierarchyBasedResolver = PathHierarchyBasedLinkResolver(pathHierarchy: pathHierarchy)
+                try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
+                    try symbolGraphLoader.loadAll()
+                }
+                hierarchyBasedResolver = signposter.withIntervalSignpost("Build PathHierarchy", id: signposter.makeSignpostID()) {
+                    PathHierarchyBasedLinkResolver(pathHierarchy: PathHierarchy(
+                        symbolGraphLoader: symbolGraphLoader,
+                        bundleName: urlReadablePath(bundle.displayName),
+                        knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
+                    ))
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2191,7 +2220,9 @@ public class DocumentationContext {
         // First, all the resources are added since they don't reference anything else.
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                try self.registerMiscResources(from: bundle)
+                try signposter.withIntervalSignpost("Load resources", id: signposter.makeSignpostID()) {
+                    try self.registerMiscResources(from: bundle)
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2215,7 +2246,9 @@ public class DocumentationContext {
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                result = try self.registerDocuments(from: bundle)
+                result = try signposter.withIntervalSignpost("Load documents", id: signposter.makeSignpostID()) {
+                    try self.registerDocuments(from: bundle)
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2226,7 +2259,9 @@ public class DocumentationContext {
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
+                try signposter.withIntervalSignpost("Load external resolvers", id: signposter.makeSignpostID()) {
+                    try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2361,7 +2396,9 @@ public class DocumentationContext {
         try shouldContinueRegistration()
 
         // Fourth, automatically curate all symbols that haven't been curated manually
-        let automaticallyCurated = autoCurateSymbolsInTopicGraph()
+        let automaticallyCurated = signposter.withIntervalSignpost("Auto-curate symbols ", id: signposter.makeSignpostID()) {
+            autoCurateSymbolsInTopicGraph()
+        }
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
         allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), bundle: bundle, initial: allCuratedReferences)
@@ -2407,7 +2444,9 @@ public class DocumentationContext {
         }
         
         // Seventh, the complete topic graph—with all nodes and all edges added—is analyzed.
-        topicGraphGlobalAnalysis()
+        signposter.withIntervalSignpost("Analyze topic graph", id: signposter.makeSignpostID()) {
+            topicGraphGlobalAnalysis()
+        }
         
         preResolveModuleNames()
     }
@@ -2606,6 +2645,11 @@ public class DocumentationContext {
     /// - Returns: The references of all the symbols that were curated.
     @discardableResult
     func crawlSymbolCuration(in references: [ResolvedTopicReference], bundle: DocumentationBundle, initial: Set<ResolvedTopicReference> = []) throws -> Set<ResolvedTopicReference> {
+        let signpostHandle = signposter.beginInterval("Curate symbols", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Curate symbols", signpostHandle)
+        }
+        
         var crawler = DocumentationCurator(in: self, bundle: bundle, initial: initial)
 
         for reference in references {

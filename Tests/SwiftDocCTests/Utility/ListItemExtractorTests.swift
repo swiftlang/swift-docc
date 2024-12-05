@@ -458,7 +458,7 @@ class ListItemExtractorTests: XCTestCase {
         }
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         let renderContent = try XCTUnwrap(findRenderContent(renderNode), "Didn't find any rendered content", file: file, line: line)
         let expectedRenderContent: [RenderBlockContent] = [

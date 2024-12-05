@@ -18,7 +18,7 @@ class ConvertActionIndexerTests: XCTestCase {
     // Tests the standalone indexer
     func testConvertActionIndexer() throws {
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
-            .inputsAndDataProvider(startingPoint: testCatalogURL(named: "TestBundle"), options: .init())
+            .inputsAndDataProvider(startingPoint: testCatalogURL(named: "LegacyBundle_DoNotUseInNewTests"), options: .init())
         
         let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)

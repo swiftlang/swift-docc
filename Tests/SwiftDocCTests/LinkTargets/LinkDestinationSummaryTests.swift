@@ -99,7 +99,7 @@ class ExternalLinkableTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let pageSummary = summaries[0]
@@ -151,12 +151,12 @@ class ExternalLinkableTests: XCTestCase {
     }
 
     func testSymbolSummaries() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "MyClass")
@@ -200,7 +200,7 @@ class ExternalLinkableTests: XCTestCase {
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "MyProtocol")
@@ -241,7 +241,7 @@ class ExternalLinkableTests: XCTestCase {
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "myFunction()")
@@ -276,7 +276,7 @@ class ExternalLinkableTests: XCTestCase {
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "globalFunction(_:considering:)")
@@ -313,7 +313,7 @@ class ExternalLinkableTests: XCTestCase {
     }
     
     func testTopicImageReferences() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (url, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = """
             # ``MyKit/MyClass/myFunction()``
 
@@ -333,7 +333,7 @@ class ExternalLinkableTests: XCTestCase {
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             var summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "myFunction()")
@@ -438,7 +438,7 @@ class ExternalLinkableTests: XCTestCase {
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "Bar")
@@ -497,7 +497,7 @@ class ExternalLinkableTests: XCTestCase {
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "myStringFunction(_:)")
@@ -728,7 +728,7 @@ class ExternalLinkableTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
 
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let pageSummary = summaries[0]

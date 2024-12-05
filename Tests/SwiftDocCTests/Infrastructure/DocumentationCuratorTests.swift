@@ -28,7 +28,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCrawl() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
@@ -75,7 +75,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCrawlDiagnostics() throws {
-        let (tempCatalogURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (tempCatalogURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = url.appendingPathComponent("documentation/myfunction.md")
             
             try """
@@ -278,7 +278,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
 
     func testSymbolLinkResolving() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         let crawler = DocumentationCurator.init(in: context, bundle: bundle)
         
@@ -331,7 +331,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testLinkResolving() throws {
-        let (sourceRoot, bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (sourceRoot, bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
         
@@ -386,7 +386,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testGroupLinkValidation() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
             // Create a sidecar with invalid group links
             try! """
             # ``SideKit``
@@ -490,7 +490,7 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", symbol.topics?.taskGroups.first?.links.first?.destination)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         
         // Verify the article identifier is included in the task group for the render node.
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", renderNode.topicSections.first?.identifiers.first)

@@ -397,7 +397,7 @@ Root
     }
     
     func testNavigatorIndexGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -471,7 +471,7 @@ Root
         //     ├────────────┐│
         //     ▼            ▼▼
         //  first() ◀──▶ second()
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             InfoPlist(identifier: testBundleIdentifier),
             
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -586,8 +586,7 @@ Root
             """),
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -896,7 +895,7 @@ Root
     }
     
     func testNavigatorIndexUsingPageTitleGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -945,7 +944,7 @@ Root
     }
     
     func testNavigatorIndexGenerationNoPaths() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         var results = Set<String>()
         
@@ -957,7 +956,7 @@ Root
             
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
-                let renderNode = try converter.convert(entity)
+                let renderNode = converter.convert(entity)
                 try builder.index(renderNode: renderNode)
             }
             
@@ -1002,7 +1001,7 @@ Root
     }
     
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
-        let navigatorIndex = try generatedNavigatorIndex(for: "TestBundle", bundleIdentifier: testBundleIdentifier)
+        let navigatorIndex = try generatedNavigatorIndex(for: "LegacyBundle_DoNotUseInNewTests", bundleIdentifier: testBundleIdentifier)
         
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
@@ -1022,7 +1021,7 @@ Root
 
     
     func testNavigatorIndexGenerationWithCuratedFragment() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -1085,7 +1084,7 @@ Root
     }
     
     func testNavigatorIndexAvailabilityGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1215,7 +1214,7 @@ Root
     }
     
     func testNavigatorIndexDifferentHasherGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1664,7 +1663,7 @@ Root
     }
     
     func testNavigatorIndexAsReadOnlyFile() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         let targetURL = try createTemporaryDirectory()
@@ -1673,7 +1672,7 @@ Root
         
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
-            let renderNode = try converter.convert(entity)
+            let renderNode = converter.convert(entity)
             try builder.index(renderNode: renderNode)
         }
         
