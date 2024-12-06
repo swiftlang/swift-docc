@@ -42,6 +42,13 @@ extension Problem {
             }
         }
     }
+    
+    /// Returns the diagnostic with its range offset by the given documentation comment range.
+    func withRangeOffset(by docRange: SymbolGraph.LineList.SourceRange) -> Self {
+        var problem = self
+        problem.offsetWithRange(docRange)
+        return problem
+    }
 }
 
 extension Sequence<Problem> {

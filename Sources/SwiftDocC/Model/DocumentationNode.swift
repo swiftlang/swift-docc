@@ -335,12 +335,19 @@ public struct DocumentationNode {
     /// - Parameters:
     ///   - article: An optional documentation extension article.
     ///   - engine: A diagnostics engine.
-    mutating func initializeSymbolContent(documentationExtension: Article?, engine: DiagnosticEngine) {
+    mutating func initializeSymbolContent(
+        documentationExtension: Article?,
+        engine: DiagnosticEngine,
+        bundle: DocumentationBundle,
+        context: DocumentationContext
+    ) {
         precondition(unifiedSymbol != nil && symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
         
-        let (markup, docChunks) = Self.contentFrom(
+        let (markup, docChunks, metadataFromDocumentationComment) = Self.contentFrom(
             documentedSymbol: unifiedSymbol?.documentedSymbol,
             documentationExtension: documentationExtension,
+            bundle: bundle,
+            context: context,
             engine: engine
         )
         
@@ -469,7 +476,27 @@ public struct DocumentationNode {
         }
         
         options = documentationExtension?.options[.local]
-        self.metadata = documentationExtension?.metadata
+        
+        if documentationExtension?.metadata != nil && metadataFromDocumentationComment != nil {
+            var problem = Problem(
+                diagnostic: Diagnostic(
+                    source: unifiedSymbol?.documentedSymbol?.docComment?.url,
+                    severity: .warning,
+                    range: metadataFromDocumentationComment?.originalMarkup.range,
+                    identifier: "org.swift.docc.DuplicateMetadata",
+                    summary: "Redeclaration of '@Metadata' for this symbol; this directive will be skipped",
+                    explanation: "A '@Metadata' directive is already declared in this symbol's documentation extension file"
+                )
+            )
+            
+            if let range = unifiedSymbol?.documentedSymbol?.docComment?.lines.first?.range {
+                problem.offsetWithRange(range)
+            }
+            
+            engine.emit(problem)
+        }
+        
+        self.metadata = documentationExtension?.metadata ?? metadataFromDocumentationComment
         
         updateAnchorSections()
     }
@@ -483,10 +510,18 @@ public struct DocumentationNode {
     static func contentFrom(
         documentedSymbol: SymbolGraph.Symbol?,
         documentationExtension: Article?,
+        bundle: DocumentationBundle? = nil,
+        context: DocumentationContext? = nil,
         engine: DiagnosticEngine
-    ) -> (markup: Markup, docChunks: [DocumentationChunk]) {
+    ) -> (
+        markup: Markup,
+        docChunks: [DocumentationChunk],
+        metadata: Metadata?
+    ) {
         let markup: Markup
         var documentationChunks: [DocumentationChunk]
+        
+        var metadata: Metadata?
         
         // We should ignore the symbol's documentation comment if it wasn't provided
         // or if the documentation extension was set to override.
@@ -512,7 +547,36 @@ public struct DocumentationNode {
             let docCommentMarkup = Document(parsing: docCommentString, source: docCommentLocation?.url, options: documentOptions)
             let offset = symbol.docComment?.lines.first?.range
 
-            let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
+            var docCommentMarkupElements = Array(docCommentMarkup.children)
+
+            var problems = [Problem]()
+            
+            if let bundle, let context {
+                metadata = DirectiveParser()
+                    .parseSingleDirective(
+                        Metadata.self,
+                        from: &docCommentMarkupElements,
+                        parentType: Symbol.self,
+                        source: docCommentLocation?.url,
+                        bundle: bundle,
+                        context: context,
+                        problems: &problems
+                    )
+                
+                metadata?.validateForUseInDocumentationComment(
+                    symbolSource: symbol.docComment?.url,
+                    problems: &problems
+                )
+            }
+            
+            if let offset {
+                problems = problems.map { $0.withRangeOffset(by: offset) }
+            }
+            
+            engine.emit(problems)
+            
+            let docCommentDirectives = docCommentMarkupElements.compactMap { $0 as? BlockDirective }
+
             if !docCommentDirectives.isEmpty {
                 let location = symbol.mixins.getValueIfPresent(
                     for: SymbolGraph.Symbol.Location.self
@@ -529,9 +593,7 @@ public struct DocumentationNode {
                         continue
                     }
 
-                    // Renderable directives are processed like any other piece of structured markdown (tables, lists, etc.)
-                    // and so are inherently supported in doc comments.
-                    guard DirectiveIndex.shared.renderableDirectives[directive.name] == nil else {
+                    guard !directive.isSupportedInDocumentationComment else {
                         continue
                     }
 
@@ -579,7 +641,7 @@ public struct DocumentationNode {
             documentationChunks = [DocumentationChunk(source: .sourceCode(location: nil, offset: nil), markup: markup)]
         }
         
-        return (markup: markup, docChunks: documentationChunks)
+        return (markup: markup, docChunks: documentationChunks, metadata: metadata)
     }
 
     /// Returns a documentation node kind for the given symbol kind.
@@ -667,7 +729,7 @@ public struct DocumentationNode {
         // Prefer content sections coming from an article (documentation extension file)
         var deprecated: DeprecatedSection?
         
-        let (markup, docChunks) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, engine: engine)
+        let (markup, docChunks, _) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, engine: engine)
         self.markup = markup
         self.docChunks = docChunks
         
@@ -783,4 +845,19 @@ public struct DocumentationNode {
     ///
     /// These tags contain information about the symbol's return values, potential errors, and parameters.
     public var tags: Tags = (returns: [], throws: [], parameters: [])
+}
+
+private let directivesSupportedInDocumentationComments = [
+        Comment.directiveName,
+        Metadata.directiveName,
+        DeprecationSummary.directiveName,
+    ]
+    // Renderable directives are processed like any other piece of structured markdown (tables, lists, etc.)
+    // and so are inherently supported in doc comments.
+    + DirectiveIndex.shared.renderableDirectives.keys
+
+private extension BlockDirective {
+    var isSupportedInDocumentationComment: Bool {
+        directivesSupportedInDocumentationComments.contains(name)
+    }
 }

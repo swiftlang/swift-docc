@@ -69,6 +69,12 @@ public extension Diagnostic {
     mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
         // If there is no location information in the source diagnostic, the diagnostic might be removed for safety reasons.
         range?.offsetWithRange(docRange)
-        
+    }
+    
+    /// Returns the diagnostic with its range offset by the given documentation comment range.
+    func withRangeOffset(by docRange: SymbolGraph.LineList.SourceRange) -> Self {
+        var diagnostic = self
+        diagnostic.range?.offsetWithRange(docRange)
+        return diagnostic
     }
 }
