@@ -63,7 +63,7 @@ public struct Sloth {
 ```
 
 > Note:
-If you prefer absolute symbol links you can prefix the symbol path with a leading slash followed by the name of the module that symbol belongs:
+If you prefer absolute symbol links you can prefix the symbol path with a leading slash followed by the name of the module to which that symbol belongs:
 >
 > ```markdown
 > ``/SlothCreator/Sloth``
@@ -243,7 +243,7 @@ The second overload is the only one with where the return value has a `MinuteByM
 so DocC suggests to add `‑>MinuteByMinuteForecast` to disambiguate the second overload.
 
 The third overload has the same parameter types as the second overload and the same return value as the first overload, 
-so DocC neither parameter types or return types alone can uniquely disambiguate this overload.
+so neither parameter types nor return types alone can uniquely disambiguate this overload.
 In this scenario, DocC considers a combination of parameter types and return types to disambiguate the overload.
 The first parameter type is different from the first overload and the return type is different from the second overload.
 Together this information uniquely disambiguates the third overload, 
@@ -268,7 +268,7 @@ If DocC can't disambiguate the symbol link using either a symbol type suffix or 
 it will fall back to using a short hash of each symbol's unique identifier to disambiguate the symbol link. 
 You can discover these hashes from DocC's warnings about ambiguous symbol links.
 The following example shows the same topic group with symbol links to the three `forecast(for:at:)` methods as before, 
-but using each symbols unique identifier hash for disambiguation:
+but using each symbol's unique identifier hash for disambiguation:
 
 ```markdown
 ### Requesting weather forecasts
