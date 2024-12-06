@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ import XCTest
 class ResolvedTopicReferenceTests: XCTestCase {
     func testReferenceURL() {
         let firstTopicReference = ResolvedTopicReference(
-            bundleIdentifier: "bundleID",
+            bundleID: "bundleID",
             path: "/path/sub-path",
             fragment: "fragment",
             sourceLanguage: .swift
@@ -24,7 +24,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
         XCTAssertEqual(firstTopicReference.absoluteString, "doc://bundleID/path/sub-path#fragment")
         
         let secondTopicReference = ResolvedTopicReference(
-            bundleIdentifier: "new-bundleID",
+            bundleID: "new-bundleID",
             path: "/new-path/sub-path",
             fragment: firstTopicReference.fragment,
             sourceLanguage: firstTopicReference.sourceLanguage
@@ -41,7 +41,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
     func testAppendingReferenceWithEmptyPath() {
         // An empty path
         do {
-            let resolvedOriginal = ResolvedTopicReference(bundleIdentifier: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
+            let resolvedOriginal = ResolvedTopicReference(bundleID: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
             
             let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://host-name")!)
             XCTAssert(unresolved.path.isEmpty)
@@ -52,7 +52,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
         
         // A path with no url path allowed characters
         do {
-            let resolvedOriginal = ResolvedTopicReference(bundleIdentifier: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
+            let resolvedOriginal = ResolvedTopicReference(bundleID: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
             
             var components = URLComponents()
             components.scheme = "doc"
@@ -69,7 +69,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
     
     func testStorageIsConcurrentlyAccessible() throws {
         let topicReference = ResolvedTopicReference(
-            bundleIdentifier: "com.apple.example",
+            bundleID: "com.apple.example",
             path: "/documentation/path/sub-path",
             fragment: nil,
             sourceLanguage: .swift

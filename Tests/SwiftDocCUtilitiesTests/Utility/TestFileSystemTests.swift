@@ -331,7 +331,7 @@ class TestFileSystemTests: XCTestCase {
             let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
                 .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
             XCTAssertEqual(bundle.displayName, "DisplayName", "Display name is read from Info.plist")
-            XCTAssertEqual(bundle.identifier, "com.example", "Identifier is read from Info.plist")
+            XCTAssertEqual(bundle.id, "com.example", "Identifier is read from Info.plist")
         }
          
         do {

@@ -1754,7 +1754,7 @@ class ConvertActionTests: XCTestCase {
 
         struct TestReferenceResolver: ExternalDocumentationSource {
             func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
-                return .success(ResolvedTopicReference(bundleIdentifier: "com.example.test", path: reference.url!.path, sourceLanguage: .swift))
+                return .success(ResolvedTopicReference(bundleID: "com.example.test", path: reference.url!.path, sourceLanguage: .swift))
             }
 
             func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
@@ -2443,7 +2443,7 @@ class ConvertActionTests: XCTestCase {
         let expectedOutput = Folder(name: ".docc-build", content: [
             JSONFile(
                 name: "metadata.json",
-                content: BuildMetadata(bundleDisplayName: "TestBundle", bundleIdentifier: "com.test.example")
+                content: BuildMetadata(bundleDisplayName: "TestBundle", bundleID: "com.test.example")
             ),
         ])
         
@@ -2855,7 +2855,7 @@ class ConvertActionTests: XCTestCase {
 
         let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "MyKit")
-        XCTAssertEqual(bundle.identifier, "MyKit")
+        XCTAssertEqual(bundle.id, "MyKit")
     }
     
     func testConvertWithoutBundleErrorsForMultipleModulesSymbolGraph() async throws {
@@ -2933,7 +2933,7 @@ class ConvertActionTests: XCTestCase {
 
         let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "Something")
-        XCTAssertEqual(bundle.identifier, "com.example.test")
+        XCTAssertEqual(bundle.id, "com.example.test")
     }
 
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {

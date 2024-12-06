@@ -92,10 +92,10 @@ public class LinkResolver {
         }
         
         // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
-        if let bundleID = unresolvedReference.bundleIdentifier,
-           !context._registeredBundles.contains(where: { $0.identifier == bundleID || urlReadablePath($0.displayName) == bundleID })
+        if let bundleID = unresolvedReference.bundleID,
+           !context._registeredBundles.contains(where: { $0.id == bundleID || urlReadablePath($0.displayName) == bundleID.rawValue })
         {
-            return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
+            return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for '\(bundleID)'."))
         }
         
         do {
@@ -169,11 +169,11 @@ private final class FallbackResolverBasedLinkResolver {
     
     private func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult? {
         // Check if a fallback reference resolver should resolve this
-        let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
+        let referenceBundleID = unresolvedReference.bundleID ?? parent.bundleID
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
               // This uses an underscored internal variant of `registeredBundles` to avoid deprecation warnings and remain compatible with legacy data providers.
-              let knownBundleIdentifier = context._registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
-              fallbackResolver.bundleIdentifier == knownBundleIdentifier
+              let knownBundleID = context._registeredBundles.first(where: { $0.id == referenceBundleID || urlReadablePath($0.displayName) == referenceBundleID.rawValue })?.id,
+              fallbackResolver.bundleID == knownBundleID
         else {
             return nil
         }
@@ -184,7 +184,7 @@ private final class FallbackResolverBasedLinkResolver {
         var allCandidateURLs = [URL]()
         
         let alreadyResolved = ResolvedTopicReference(
-            bundleIdentifier: referenceBundleIdentifier,
+            bundleID: referenceBundleID,
             path: unresolvedReference.path.prependingLeadingSlash,
             fragment: unresolvedReference.topicURL.components.fragment,
             sourceLanguages: parent.sourceLanguages
@@ -192,7 +192,7 @@ private final class FallbackResolverBasedLinkResolver {
         allCandidateURLs.append(alreadyResolved.url)
         
         // This uses an underscored internal variant of `bundle(identifier:)` to avoid deprecation warnings and remain compatible with legacy data providers.
-        let currentBundle = context._bundle(identifier: knownBundleIdentifier)!
+        let currentBundle = context._bundle(identifier: knownBundleID.rawValue)!
         if !isCurrentlyResolvingSymbolLink {
             // First look up articles path
             allCandidateURLs.append(contentsOf: [

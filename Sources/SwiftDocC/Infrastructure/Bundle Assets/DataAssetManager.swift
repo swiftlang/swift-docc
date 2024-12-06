@@ -346,12 +346,24 @@ fileprivate extension NSRegularExpression {
 public struct AssetReference: Hashable, Codable {
     /// The name of the asset.
     public var assetName: String
+    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
+    public var bundleIdentifier: String {
+        bundleID.rawValue
+    }
+    
     /// The identifier of the bundle the asset is apart of.
-    public var bundleIdentifier: String
+    public let bundleID: DocumentationBundle.Identifier
     
     /// Creates a reference from a given asset name and the bundle it is apart of.
-    public init(assetName: String, bundleIdentifier: String) {
+    public init(assetName: String, bundleID: DocumentationBundle.Identifier) {
         self.assetName = assetName
-        self.bundleIdentifier = bundleIdentifier
+        self.bundleID = bundleID
+    }
+    @available(*, deprecated, renamed: "init(assetName:bundleID:)", message: "Use 'init(assetName:bundleID:)' instead. This deprecated API will be removed after 6.2 is released")
+    public init(assetName: String, bundleIdentifier: String) {
+        self.init(
+            assetName: assetName,
+            bundleID: .init(rawValue: bundleIdentifier)
+        )
     }
 }

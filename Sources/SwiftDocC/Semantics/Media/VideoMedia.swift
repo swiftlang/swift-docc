@@ -21,7 +21,7 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
     
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+            ResourceReference(bundleID: bundle.id, path: argumentValue)
         }
     )
     public private(set) var source: ResourceReference
@@ -44,7 +44,7 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
     /// An image to be shown when the video isn't playing.
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+            ResourceReference(bundleID: bundle.id, path: argumentValue)
         }
     )
     public private(set) var poster: ResourceReference? = nil

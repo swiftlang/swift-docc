@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -135,7 +135,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
     func testAlternateDeclarations() throws {
         let (bundle, context) = try testBundleAndContext(named: "AlternateDeclarations")
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/AlternateDeclarations/MyClass/present(completion:)",
             sourceLanguage: .swift
         )
@@ -186,7 +186,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload1(param: Set<Int>) {}
             // func overload1(param: [Int: Int]) {}
             let reference = ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/FancyOverloads/overload1(param:)",
                 sourceLanguage: .swift
             )
@@ -237,7 +237,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload2(p1: (Int) -> Int?, p2: Int) {}
             // func overload2(p1: ((Int) -> Int)?, p2: Int) {} // <- overload group
             let reference = ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/FancyOverloads/overload2(p1:p2:)",
                 sourceLanguage: .swift
             )
@@ -292,7 +292,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload3<T: Hashable>(_ p: [T: T]) {}
             // func overload3<K: Hashable, V>(_ p: [K: V]) {}
             let reference = ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/FancyOverloads/overload3(_:)",
                 sourceLanguage: .swift
             )
@@ -342,7 +342,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
 
         for hash in ["7eht8", "8p1lo", "858ja"] {
             let reference = ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/FancyOverloads/overload3(_:)-\(hash)",
                 sourceLanguage: .swift
             )
@@ -379,7 +379,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         // - myFunc() where T: Equatable
         // - myFunc() where T: Hashable // <- overload group
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/ConformanceOverloads/MyClass/myFunc()",
             sourceLanguage: .swift
         )

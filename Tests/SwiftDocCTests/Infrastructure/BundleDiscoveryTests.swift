@@ -139,7 +139,7 @@ class BundleDiscoveryTests: XCTestCase {
         func checkExpectedFilesFoundIn(_ folder: File, file: StaticString = #file, line: UInt = #line) throws {
             let bundle = try parsedBundle(from: folder)
             
-            XCTAssertEqual(bundle.identifier, expectedBundle.identifier)
+            XCTAssertEqual(bundle.id, expectedBundle.id)
             XCTAssertEqual(bundle.displayName, expectedBundle.displayName)
             
             func assertEqualFiles(_ got: [URL], _ expected: [URL], file: StaticString = #file, line: UInt = #line) {
@@ -233,7 +233,7 @@ class BundleDiscoveryTests: XCTestCase {
         let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: bundleDiscoveryOptions)
         
         // The bundle information was overridden from the options
-        XCTAssertEqual(bundle.identifier, "org.swift.docc.example")
+        XCTAssertEqual(bundle.id, "org.swift.docc.example")
         XCTAssertEqual(bundle.displayName, "Test Bundle") // The fallback should not override this value
         
         // The additional symbol graph files are part of the bundle
@@ -265,7 +265,7 @@ class BundleDiscoveryTests: XCTestCase {
         let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: bundleDiscoveryOptions)
         
         // The bundle information was specified via the options
-        XCTAssertEqual(bundle.identifier, "com.fallback.bundle.identifier")
+        XCTAssertEqual(bundle.id, "com.fallback.bundle.identifier")
         XCTAssertEqual(bundle.displayName, "Fallback Display Name")
     }
 

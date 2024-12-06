@@ -116,14 +116,14 @@ public struct InfoPlist: File, DataRepresentable {
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
             displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
-            identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
+            identifier = try container.decodeIfPresent(String.self, forKey: .id)
             defaultAvailability = try container.decodeIfPresent([String : [DefaultAvailability.ModuleAvailability]].self, forKey: .defaultAvailability)
         }
         
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
             try container.encodeIfPresent(displayName, forKey: .displayName)
-            try container.encodeIfPresent(identifier, forKey: .identifier)
+            try container.encodeIfPresent(identifier, forKey: .id)
             try container.encodeIfPresent(defaultAvailability, forKey: .defaultAvailability)
         }
     }
@@ -309,7 +309,7 @@ extension Folder {
 }
 
 private func makeMinimalTestRenderNode(path: String) -> RenderNode {
-    let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.test", path: path, sourceLanguage: .swift)
+    let reference = ResolvedTopicReference(bundleID: "org.swift.test", path: path, sourceLanguage: .swift)
     let rawReference = reference.url.absoluteString
     let title = path.components(separatedBy: "/").last ?? path
     
