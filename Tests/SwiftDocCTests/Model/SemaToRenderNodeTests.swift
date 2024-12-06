@@ -2101,6 +2101,19 @@ Document
             // Verify task group link is not in beta because `iOS` does not have an introduced version
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, false)
         }
+        
+        // Set all platforms as unconditionally unavailable and test that the symbol is not marked as beta.
+        do {
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
+                "iOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
+            ], referencePath: "/documentation/MyKit/MyClass")
+            let node = try context.entity(with: reference)
+            (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [.init(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false)])
+            let documentationContentRendered = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+            let isBeta = documentationContentRendered.isBeta(node)
+            // Verify that the symbol is not beta since it's unavailable in all the platforms.
+            XCTAssertFalse(isBeta)
+        }
     }
     
     func testRendersDeprecatedViolator() throws {
