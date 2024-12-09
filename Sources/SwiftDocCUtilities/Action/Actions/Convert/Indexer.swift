@@ -32,13 +32,13 @@ extension ConvertAction {
         /// Creates an indexer that asynchronously indexes nodes and creates the index file on disk.
         /// - Parameters:
         ///   - outputURL: The target directory to create the index file.
-        ///   - bundleIdentifier: The identifier of the bundle being indexed.
-        init(outputURL: URL, bundleIdentifier: String) throws {
+        ///   - bundleID: The identifier of the bundle being indexed.
+        init(outputURL: URL, bundleID: DocumentationBundle.Identifier) throws {
             let indexURL = outputURL.appendingPathComponent("index", isDirectory: true)
             indexBuilder = Synchronized<NavigatorIndex.Builder>(
                 NavigatorIndex.Builder(renderNodeProvider: nil,
                     outputURL: indexURL,
-                    bundleIdentifier: bundleIdentifier,
+                    bundleIdentifier: bundleID.rawValue,
                     sortRootChildrenByName: true,
                     groupByLanguage: true
                 )

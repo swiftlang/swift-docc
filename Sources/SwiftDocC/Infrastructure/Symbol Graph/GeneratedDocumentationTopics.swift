@@ -107,7 +107,7 @@ enum GeneratedDocumentationTopics {
         
         // Create the collection topic reference
         let collectionReference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: NodeURLGenerator.Path.documentationCuration(
                 parentPath: parent.path,
                 articleName: title

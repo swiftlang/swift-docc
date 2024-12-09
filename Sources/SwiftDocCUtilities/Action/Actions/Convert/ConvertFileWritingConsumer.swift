@@ -34,7 +34,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
         transformForStaticHostingIndexHTML: URL?,
-        bundleIdentifier: BundleIdentifier?
+        bundleID: DocumentationBundle.Identifier?
     ) {
         self.targetFolder = targetFolder
         self.bundleRootFolder = bundleRootFolder
@@ -47,7 +47,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         )
         self.indexer = indexer
         self.enableCustomTemplates = enableCustomTemplates
-        self.assetPrefixComponent = bundleIdentifier?.split(separator: "/").joined(separator: "-")
+        self.assetPrefixComponent = bundleID?.rawValue.split(separator: "/").joined(separator: "-")
     }
     
     func consume(problems: [Problem]) throws {
@@ -79,45 +79,45 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         }
 
         // TODO: Supporting a single bundle for the moment.
-        let bundleIdentifier = bundle.identifier
-        assert(bundleIdentifier == self.assetPrefixComponent, "Unexpectedly encoding assets for a bundle other than the one this output consumer was created for.")
+        let bundleID = bundle.id
+        assert(bundleID.rawValue == self.assetPrefixComponent, "Unexpectedly encoding assets for a bundle other than the one this output consumer was created for.")
         
         // Create images directory if needed.
         let imagesDirectory = targetFolder
             .appendingPathComponent("images", isDirectory: true)
-            .appendingPathComponent(bundleIdentifier, isDirectory: true)
+            .appendingPathComponent(bundleID.rawValue, isDirectory: true)
         if !fileManager.directoryExists(atPath: imagesDirectory.path) {
             try fileManager.createDirectory(at: imagesDirectory, withIntermediateDirectories: true, attributes: nil)
         }
         
         // Copy all registered images to the output directory.
-        for imageAsset in context.registeredImageAssets(forBundleID: bundleIdentifier) {
+        for imageAsset in context.registeredImageAssets(for: bundleID) {
             try copyAsset(imageAsset, to: imagesDirectory)
         }
         
         // Create videos directory if needed.
         let videosDirectory = targetFolder
             .appendingPathComponent("videos", isDirectory: true)
-            .appendingPathComponent(bundleIdentifier, isDirectory: true)
+            .appendingPathComponent(bundleID.rawValue, isDirectory: true)
         if !fileManager.directoryExists(atPath: videosDirectory.path) {
             try fileManager.createDirectory(at: videosDirectory, withIntermediateDirectories: true, attributes: nil)
         }
         
         // Copy all registered videos to the output directory.
-        for videoAsset in context.registeredVideoAssets(forBundleID: bundleIdentifier) {
+        for videoAsset in context.registeredVideoAssets(for: bundleID) {
             try copyAsset(videoAsset, to: videosDirectory)
         }
         
         // Create downloads directory if needed.
         let downloadsDirectory = targetFolder
             .appendingPathComponent(DownloadReference.locationName, isDirectory: true)
-            .appendingPathComponent(bundleIdentifier, isDirectory: true)
+            .appendingPathComponent(bundleID.rawValue, isDirectory: true)
         if !fileManager.directoryExists(atPath: downloadsDirectory.path) {
             try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true, attributes: nil)
         }
 
         // Copy all downloads into the output directory.
-        for downloadAsset in context.registeredDownloadsAssets(forBundleID: bundleIdentifier) {
+        for downloadAsset in context.registeredDownloadsAssets(for: bundleID) {
             try copyAsset(downloadAsset, to: downloadsDirectory)
         }
 

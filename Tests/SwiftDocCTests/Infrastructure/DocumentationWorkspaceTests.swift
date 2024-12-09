@@ -151,7 +151,7 @@ class DocumentationWorkspaceTests: XCTestCase {
             return DocumentationBundle(
                 info: DocumentationBundle.Info(
                     displayName: "Test" + suffix,
-                    identifier: "com.example.test" + suffix
+                    id: DocumentationBundle.Identifier(rawValue: "com.example.test" + suffix)
                 ),
                 symbolGraphURLs: [testSymbolGraphFile],
                 markupURLs: [testMarkupFile],

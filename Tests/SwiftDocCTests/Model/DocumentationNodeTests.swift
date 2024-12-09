@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -31,7 +31,7 @@ class DocumentationNodeTests: XCTestCase {
         
         let article = Article(markup: Document(parsing: articleSource, options: []), metadata: nil, redirects: nil, options: [:])
         let node = try DocumentationNode(
-            reference: ResolvedTopicReference(bundleIdentifier: "org.swift.docc", path: "/blah", sourceLanguage: .swift),
+            reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift),
             article: article
         )
         XCTAssertEqual(node.anchorSections.count, 5)

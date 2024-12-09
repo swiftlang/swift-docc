@@ -81,10 +81,10 @@ public struct RenderContext {
         
         let assets = documentationContext.assetManagers
             .reduce(into: [AssetReference: DataAsset]()) { (storage, element) in
-                let (bundleIdentifier, assetManager) = element
+                let (bundleID, assetManager) = element
             
                 for (name, asset) in assetManager.storage {
-                    storage[AssetReference(assetName: name, bundleIdentifier: bundleIdentifier)] = asset
+                    storage[AssetReference(assetName: name, bundleID: bundleID)] = asset
                 }
             }
         

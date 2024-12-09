@@ -1791,7 +1791,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
-                identifier: "com.example.test"
+                id: "com.example.test"
             ),
             baseURL: URL(string: "https://example.com/example")!,
             symbolGraphURLs: symbolGraphURLs,

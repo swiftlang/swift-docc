@@ -150,7 +150,7 @@ class DocumentationInputsProviderTests: XCTestCase {
                 options: .init()
             )
             XCTAssertEqual(foundInputs.displayName, "two")
-            XCTAssertEqual(foundInputs.identifier, "two")
+            XCTAssertEqual(foundInputs.id, "two")
         }
         
         // Without arbitrary directories as a fallback
@@ -240,7 +240,7 @@ class DocumentationInputsProviderTests: XCTestCase {
             ])
         )
         XCTAssertEqual(foundInputs.displayName, "Something")
-        XCTAssertEqual(foundInputs.identifier, "Something")
+        XCTAssertEqual(foundInputs.id, "Something")
         XCTAssertEqual(foundInputs.symbolGraphURLs.map(\.path), [
             "/path/to/Something.symbols.json",
         ])

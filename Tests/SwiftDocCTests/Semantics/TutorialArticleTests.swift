@@ -168,7 +168,7 @@ TutorialArticle @1:1-23:2
 TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
 ├─ Intro @3:4-10:5 title: 'Basic Augmented Reality App'
 │  ├─ MarkupContainer (2 elements)
-│  └─ ImageMedia @9:7-9:46 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "myimage.png")' altText: 'image'
+│  └─ ImageMedia @9:7-9:46 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "myimage.png")' altText: 'image'
 └─ MarkupContainer (6 elements)
 """
                 XCTAssertEqual(expectedDump, article.dump())
@@ -282,29 +282,29 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
 TutorialArticle @1:1-81:2
 ├─ ContentAndMedia @3:4-12:5 mediaPosition: 'leading'
 │  ├─ MarkupContainer (2 elements)
-│  └─ ImageMedia @4:7-4:58 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "customize-text-view.png")' altText: 'alt'
+│  └─ ImageMedia @4:7-4:58 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "customize-text-view.png")' altText: 'alt'
 ├─ ContentAndMedia @14:4-23:5 mediaPosition: 'trailing'
 │  ├─ MarkupContainer (2 elements)
-│  └─ ImageMedia @22:7-22:58 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "customize-text-view.png")' altText: 'alt'
+│  └─ ImageMedia @22:7-22:58 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "customize-text-view.png")' altText: 'alt'
 ├─ MarkupContainer (1 element)
 ├─ Stack @27:4-51:5
 │  ├─ ContentAndMedia @28:7-37:8 mediaPosition: 'trailing'
 │  │  ├─ MarkupContainer (2 elements)
-│  │  └─ ImageMedia @32:10-32:64 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "this-is-still-trailing.png")' altText: 'alt'
+│  │  └─ ImageMedia @32:10-32:64 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "this-is-still-trailing.png")' altText: 'alt'
 │  └─ ContentAndMedia @41:7-50:8 mediaPosition: 'trailing'
 │     ├─ MarkupContainer (2 elements)
-│     └─ ImageMedia @49:10-49:58 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "this-is-trailing.png")' altText: 'alt'
+│     └─ ImageMedia @49:10-49:58 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "this-is-trailing.png")' altText: 'alt'
 ├─ MarkupContainer (3 elements)
 └─ Stack @61:4-80:5
    ├─ ContentAndMedia @62:7-71:8 mediaPosition: 'trailing'
    │  ├─ MarkupContainer (2 elements)
-   │  └─ ImageMedia @66:10-66:64 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "this-is-still-trailing.png")' altText: 'alt'
+   │  └─ ImageMedia @66:10-66:64 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "this-is-still-trailing.png")' altText: 'alt'
    ├─ ContentAndMedia @73:7-75:8 mediaPosition: 'leading'
    │  ├─ MarkupContainer (empty)
-   │  └─ ImageMedia @74:10-74:57 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "this-is-leading.png")' altText: 'alt'
+   │  └─ ImageMedia @74:10-74:57 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "this-is-leading.png")' altText: 'alt'
    └─ ContentAndMedia @77:7-79:8 mediaPosition: 'leading'
       ├─ MarkupContainer (empty)
-      └─ ImageMedia @78:10-78:57 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "this-is-leading.png")' altText: 'alt'
+      └─ ImageMedia @78:10-78:57 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "this-is-leading.png")' altText: 'alt'
 """
                 XCTAssertEqual(expectedDump, article.dump())
             }
@@ -374,7 +374,7 @@ TutorialArticle @1:1-81:2
 TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 ├─ Intro @2:4-7:5 title: 'Basic Augmented Reality App'
 │  ├─ MarkupContainer (1 element)
-│  └─ ImageMedia @6:7-6:46 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "myimage.png")' altText: 'image'
+│  └─ ImageMedia @6:7-6:46 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "myimage.png")' altText: 'image'
 ├─ MarkupContainer (6 elements)
 └─ Assessments @21:4-41:5
    └─ MultipleChoice @22:7-40:8 title: 'SwiftDocC.MarkupContainer'
@@ -395,7 +395,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
     func testAnalyzeNode() throws {
         let title = "unreferenced-tutorial"
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
         let (_, context) = try testBundleAndContext(named: "TestBundle")
@@ -414,7 +414,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
     func testAnalyzeExternalNode() throws {
         let title = "unreferenced-tutorial"
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
         let (_, context) = try testBundleAndContext(named: "TestBundle")
@@ -433,7 +433,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
     func testAnalyzeFragmentNode() throws {
         let title = "unreferenced-tutorial"
         let url = URL(fileURLWithPath: "/path/to/\(title)")
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
@@ -454,7 +454,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
     func testAnalyzeForValidParent() throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
-            let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
             let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
