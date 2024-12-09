@@ -14,13 +14,15 @@ configuration. For those situations, use an aside.
 
 DocC supports the following types of asides:
 
-| Type | Usage |
-| ----- | ------ |
-| Note | General information that applies to some users. |
-| Important | Important information, such as a requirement. |
-| Warning | Critical information, like potential data loss or an irrecoverable state. |
-| Tip | Helpful information, such as shortcuts, suggestions, or hints. |
-| Experiment | Instructional information to reinforce a learning objective, or to encourage developers to try out different parts of your framework. |
+> Note: General information that applies to some users.
+
+> Important: Important information, such as a requirement.
+
+> Warning: Critical information, like potential data loss or an irrecoverable state.
+
+> Tip: Helpful information, such as shortcuts, suggestions, or hints.
+
+> Experiment: Instructional information to reinforce a learning objective, or to encourage developers to try out different parts of your framework.
 
 To create an aside, begin a new line with a greater-than symbol (`>`), add a space, 
 the type of the aside, a colon (`:`), and the content of the aside.
