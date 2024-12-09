@@ -20,26 +20,35 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
         withExtension: "docc",
         subdirectory: "Test Bundles"
     )!
-    
+
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template",
         withExtension: nil,
         subdirectory: "Test Resources"
     )!
-    
+
     func testSourceRepositoryAllArgumentsSpecified() throws {
+        let tempDir = try createTemporaryDirectory(pathComponents: "addFileToCreateValidDirectory")
+        
+        // removing file:// prefix from checkout path because the directory is not
+        // recognized as a valid directory with it
+        let checkoutPath = tempDir.absoluteString
+        let startIndex = checkoutPath.index(checkoutPath.startIndex, offsetBy: 7)
+        let absoluteCheckoutPath = String(checkoutPath[startIndex...])
+
+
         for sourceService in ["github", "gitlab", "bitbucket"] {
             try assertSourceRepositoryArguments(
-                checkoutPath: "checkout path",
+                checkoutPath: absoluteCheckoutPath,
                 sourceService: sourceService,
                 sourceServiceBaseURL: "https://example.com/path/to/base"
             ) { action in
-                XCTAssertEqual(action.sourceRepository?.checkoutPath, "checkout path")
+                XCTAssertEqual(action.sourceRepository?.checkoutPath, "\(absoluteCheckoutPath)/")
                 XCTAssertEqual(action.sourceRepository?.sourceServiceBaseURL.absoluteString, "https://example.com/path/to/base")
             }
         }
     }
-    
+
     func testDoesNotSetSourceRepositoryIfBothCheckoutPathAndsourceServiceBaseURLArgumentsAreMissing() throws {
         try assertSourceRepositoryArguments(
             checkoutPath: nil,
@@ -47,6 +56,28 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             sourceServiceBaseURL: nil
         ) { action in
             XCTAssertNil(action.sourceRepository)
+        }
+    }
+    
+    func testThrowsValidationErrorWhenCheckoutPathIsInvalid() throws {
+        let tempDir = try createTemporaryDirectory(named: "tmp").appendingPathComponent("InvalidDirectory", isDirectory: false)
+        let absoluteCheckoutPath = tempDir.absoluteString
+        
+        for sourceService in ["github", "gitlab", "bitbucket"] {
+            XCTAssertThrowsError(
+                try assertSourceRepositoryArguments(
+                checkoutPath: absoluteCheckoutPath,
+                sourceService: sourceService,
+                sourceServiceBaseURL: "https://example.com/path/to/base"
+                )
+            ) { error in
+                XCTAssertEqual(
+                    (error as? ValidationError)?.message,
+                    """
+                    Checkout path directory '\(absoluteCheckoutPath)' doesn't exist for --checkout-path argument.
+                    """
+                )
+            }
         }
     }
     
@@ -67,7 +98,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testThrowsValidationErrorWhenSourceServiceBaseURLIsSpecifiedButNotSourceService() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -85,7 +116,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testThrowsValidationErrorWhenSourceServiceBaseURLIsInvalid() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -100,7 +131,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testThrowsValidationErrorWhenCheckoutPathIsNotSpecified() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -118,7 +149,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testThrowsValidationErrorWhenSourceServiceIsInvalid() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -133,7 +164,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     private func assertSourceRepositoryArguments(
         checkoutPath: String?,
         sourceService: String?,
@@ -141,7 +172,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
         assertion: ((ConvertAction) throws -> Void)? = nil
     ) throws {
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-        
+
         var arguments: [String] = [testBundleURL.path]
         if let checkoutPath {
             arguments.append(contentsOf: ["--checkout-path", checkoutPath])
@@ -152,9 +183,9 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
         if let sourceServiceBaseURL {
             arguments.append(contentsOf: ["--source-service-base-url", sourceServiceBaseURL])
         }
-        
+
         let convertOptions = try Docc.Convert.parse(arguments)
-        
+
         let result = try ConvertAction(fromConvertCommand: convertOptions)
         try assertion?(result)
     }
