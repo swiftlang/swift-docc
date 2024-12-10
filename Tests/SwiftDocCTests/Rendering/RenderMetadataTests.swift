@@ -72,7 +72,7 @@ class RenderMetadataTests: XCTestCase {
     func testAllPagesHaveTitleMetadata() throws {
         var typesOfPages = [Tutorial.self, TutorialTableOfContents.self, Article.self, TutorialArticle.self, Symbol.self]
         
-        for bundleName in ["TestBundle"] {
+        for bundleName in ["LegacyBundle_DoNotUseInNewTests"] {
             let (bundle, context) = try testBundleAndContext(named: bundleName)
             
             let renderContext = RenderContext(documentationContext: context, bundle: bundle)
@@ -93,7 +93,7 @@ class RenderMetadataTests: XCTestCase {
     /// Test that a bystanders symbol graph is loaded, symbols are merged into the main module
     /// and the bystanders are included in the render node metadata.
     func testRendersBystandersFromSymbolGraph() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
@@ -117,7 +117,7 @@ class RenderMetadataTests: XCTestCase {
     /// Test that when a bystanders symbol graph is loaded that extends a different module, that
     /// those symbols correctly report the modules when rendered.
     func testRendersBystanderExtensionsFromSymbolGraph() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let baseSymbolGraphURL = Bundle.module.url(
                 forResource: "BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: baseSymbolGraphURL, to: url.appendingPathComponent("BaseKit.symbols.json"))

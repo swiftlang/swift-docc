@@ -43,11 +43,13 @@ extension XCTestCase {
     /// - Parameters:
     ///   - catalog: The directory structure of the documentation catalog
     ///   - otherFileSystemDirectories: Any other directories in the test file system.
+    ///   - diagnosticEngine: The diagnostic engine for the created context.
     ///   - configuration: Configuration for the created context.
     /// - Returns: The loaded documentation bundle and context for the given catalog input.
     func loadBundle(
         catalog: Folder,
         otherFileSystemDirectories: [Folder] = [],
+        diagnosticEngine: DiagnosticEngine = .init(),
         configuration: DocumentationContext.Configuration = .init()
     ) throws -> (DocumentationBundle, DocumentationContext) {
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
@@ -55,7 +57,7 @@ extension XCTestCase {
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
-        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         return (bundle, context)
     }
     
@@ -188,6 +190,22 @@ extension XCTestCase {
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
+        catalog: Folder,
+        content: () -> String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> (
+        renderBlockContent: [RenderBlockContent],
+        problemIdentifiers: [String],
+        directive: Directive?,
+        collectedReferences: [String : RenderReference]
+    ) {
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
+    }
+    
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
         in bundleName: String? = nil,
         content: () -> String,
         file: StaticString = #file,
@@ -224,6 +242,22 @@ extension XCTestCase {
         } else {
             (bundle, context) = try testBundleAndContext()
         }
+        return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
+    }
+    
+    private func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        bundle: DocumentationBundle,
+        context: DocumentationContext,
+        content: () -> String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> (
+        renderBlockContent: [RenderBlockContent],
+        problemIdentifiers: [String],
+        directive: Directive?,
+        collectedReferences: [String : RenderReference]
+    ) {
         context.diagnosticEngine.clearDiagnostics()
         
         let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")

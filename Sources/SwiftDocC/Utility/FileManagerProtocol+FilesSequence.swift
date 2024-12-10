@@ -16,21 +16,24 @@ extension FileManagerProtocol {
     ///   - startingPoint: The file or directory that's the top of the directory structure that the file manager traverses.
     ///   - options: Options for how the file manager enumerates the contents of directories. Defaults to `.skipsHiddenFiles`.
     /// - Returns: A sequence of the files in the directory structure.
-    package func recursiveFiles(startingPoint: URL, options: FileManager.DirectoryEnumerationOptions = .skipsHiddenFiles) -> some Sequence<URL> {
-        IteratorSequence(FilesIterator(fileManager: self, startingPoint: startingPoint, options: options))
+    package func recursiveFiles(startingPoint: URL, options: FileManager.DirectoryEnumerationOptions = .skipsHiddenFiles) -> IteratorSequence<_FilesIterator> {
+        IteratorSequence(_FilesIterator(fileManager: self, startingPoint: startingPoint, options: options))
     }
 }
 
+// FIXME: This should be private and `FileManagerProtocol.recursiveFiles(startingPoint:options:)` should return `some Sequence<ULR>`
+// but because of https://github.com/swiftlang/swift/issues/77955 it needs to be exposed as an explicit type to avoid a SIL Validation error in the Swift compiler.
+
 /// An iterator that traverses the directory structure and returns the files in breadth-first order.
-private struct FilesIterator<FileManager: FileManagerProtocol>: IteratorProtocol {
+package struct _FilesIterator: IteratorProtocol {
     /// The file manager that the iterator uses to traverse the directory structure.
-    var fileManager: FileManager
-    var options: Foundation.FileManager.DirectoryEnumerationOptions
+    private var fileManager: any FileManagerProtocol // This can't be a generic because of https://github.com/swiftlang/swift/issues/77955
+    private var options: FileManager.DirectoryEnumerationOptions
     
     private var foundFiles: [URL]
     private var foundDirectories: [URL]
     
-    init(fileManager: FileManager, startingPoint: URL, options: Foundation.FileManager.DirectoryEnumerationOptions) {
+    fileprivate init(fileManager: any FileManagerProtocol, startingPoint: URL, options: FileManager.DirectoryEnumerationOptions) {
         self.fileManager = fileManager
         self.options = options
         
@@ -44,7 +47,7 @@ private struct FilesIterator<FileManager: FileManagerProtocol>: IteratorProtocol
         }
     }
     
-    mutating func next() -> URL? {
+    package mutating func next() -> URL? {
         // If the iterator has already found some files, return those first
         if !foundFiles.isEmpty {
             return foundFiles.removeFirst()
