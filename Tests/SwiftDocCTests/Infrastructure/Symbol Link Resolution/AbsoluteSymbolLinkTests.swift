@@ -223,7 +223,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     }
     
     func testCompileSymbolGraphAndValidateLinks() throws {
-        let (_, _, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, _, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let expectedDescriptions = [
             // doc://org.swift.docc.example/documentation/FillIntroduced:
             """

@@ -11,6 +11,7 @@
 import XCTest
 import Markdown
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class NonInclusiveLanguageCheckerTests: XCTestCase {
 
@@ -167,9 +168,9 @@ func aBlackListedFunc() {
     }
     
     private let nonInclusiveContent = """
-    # ``SideKit``
+    # Some root page
     
-    SideKit module root symbol. And here is a ~~whitelist~~:
+    Some custom root page. And here is a ~~whitelist~~:
     
      - item one
      - item two
@@ -178,11 +179,12 @@ func aBlackListedFunc() {
 
     func testDisabledByDefault() throws {
         // Create a test bundle with some non-inclusive content.
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", diagnosticEngine: .init(filterLevel: .error)) { url in
-            try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
-        }
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
         
-        XCTAssertEqual(context.problems.count, 0)
+        XCTAssertEqual(context.problems.count, 0) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
     }
 
     func testEnablingTheChecker() throws {
@@ -196,9 +198,12 @@ func aBlackListedFunc() {
         ]
 
         for (severity, enabled) in expectations {
-            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", diagnosticEngine: .init(filterLevel: severity)) { url in
-                try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
-            }
+            let catalog = Folder(name: "unit-test.docc", content: [
+                TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
+            ])
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalMetadata.diagnosticLevel = severity
+            let (_, context) = try loadBundle(catalog: catalog, diagnosticEngine: .init(filterLevel: severity), configuration: configuration)
             
             // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
             XCTAssertEqual(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }), enabled)

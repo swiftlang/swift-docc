@@ -19,7 +19,7 @@ class TutorialReferenceTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(tutorialReference)
@@ -37,7 +37,7 @@ class TutorialReferenceTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(tutorialReference)
@@ -57,7 +57,7 @@ class TutorialReferenceTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(tutorialReference)

@@ -19,7 +19,7 @@ class IndexActionTests: XCTestCase {
     #if !os(iOS)
     func testIndexActionOutputIsDeterministic() async throws {
         // Convert a test bundle as input for the IndexAction
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let targetURL = try createTemporaryDirectory()
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")

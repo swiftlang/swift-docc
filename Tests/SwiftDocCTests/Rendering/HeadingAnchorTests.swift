@@ -15,7 +15,7 @@ import SwiftDocCTestUtilities
 
 class HeadingAnchorTests: XCTestCase {
     func testEncodeHeadingAnchor() throws {
-        let catalogURL = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 TextFile(name: "Root.md", utf8Content: """
                 # My root page
@@ -33,8 +33,8 @@ class HeadingAnchorTests: XCTestCase {
                 - <doc:#Some-heading>
                 """),
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: catalogURL)
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)

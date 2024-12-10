@@ -296,12 +296,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         symbolGraph.symbols["symbol-id"]?.mixins[SymbolGraph.Symbol.FunctionSignature.mixinKey] = nil
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
     }
@@ -313,12 +311,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             No parameters section
             """)
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
     }
@@ -331,12 +327,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
               - secondParameter: One description
               - thirdParameter: Another description
             """)
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 2)
         let endOfParameterSectionLocation = SourceLocation(line: start.line + 5, column: start.character + 40, source: symbolURL)
@@ -372,12 +366,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             - Parameter secondParameter: One description
             - Parameter thirdParameter: Another description
             """)
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 2)
         let endOfParameterSectionLocation = SourceLocation(line: start.line + 4, column: start.character + 48, source: symbolURL)
@@ -407,7 +399,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithOnlyErrorParameter() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -430,8 +422,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     ))
                 ])
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -450,7 +441,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithDifferentSignaturesOnDifferentPlatforms() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 // One parameter, void return
                 JSONFile(name: "Platform1-ModuleName.symbols.json", content: makeSymbolGraph(
@@ -487,8 +478,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 - Returns: Some description of the return value that is only available on platform 3.
                 """)
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -506,7 +497,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithErrorParameterButVoidType() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -529,8 +520,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     ))
                 ])
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         

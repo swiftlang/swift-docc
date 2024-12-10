@@ -115,15 +115,13 @@ class DataAssetManagerTests: XCTestCase {
     
     // Under the default settings this test will use `NSImage` under macOS
     func testImageSize() throws {
-        let imageFile = Bundle.module.url(
+        let imageFileURL = Bundle.module.url(
             forResource: "image", withExtension: "png", subdirectory: "Test Resources")!
-        XCTAssertTrue(FileManager.default.fileExists(atPath: imageFile.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: imageFileURL.path))
 
         var manager = DataAssetManager()
         
         // Register an image asset
-        let catalogURL = try testCatalogURL(named: "TestBundle")
-        let imageFileURL = catalogURL.appendingPathComponent("figure1.png")
         try manager.register(data: [imageFileURL])
 
         // Check the asset is registered

@@ -19,11 +19,11 @@ import Markdown
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)
     let imageFile = Bundle.module.url(
-        forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         .appendingPathComponent("figure1.png")
     
     let symbolGraphFile = Bundle.module.url(
-        forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         .appendingPathComponent("FillIntroduced.symbols.json")
     
     let objectiveCSymbolGraphFile = Bundle.module.url(
@@ -33,7 +33,7 @@ class ConvertActionTests: XCTestCase {
     )!
 
     let projectZipFile = Bundle.module.url(
-        forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         .appendingPathComponent("project.zip")
     
     func testCopyingImageAssets() async throws {
@@ -82,7 +82,7 @@ class ConvertActionTests: XCTestCase {
     
     func testCopyingVideoAssets() async throws {
         let videoFile = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 .appendingPathComponent("introvideo.mp4")
         
         XCTAssert(FileManager.default.fileExists(atPath: videoFile.path))
@@ -131,15 +131,15 @@ class ConvertActionTests: XCTestCase {
     // Ensures we don't regress on copying download assets to the build folder (72599615)
     func testCopyingDownloadAssets() async throws {
         let downloadFile = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 .appendingPathComponent("project.zip")
         
         let tutorialFile = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 .appendingPathComponent("TestTutorial.tutorial")
         
         let tutorialOverviewFile = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 .appendingPathComponent("TestOverview.tutorial")
         
         XCTAssert(FileManager.default.fileExists(atPath: downloadFile.path))
@@ -240,7 +240,7 @@ class ConvertActionTests: XCTestCase {
     }
     
     func testConvertWithoutBundle() async throws {
-        let myKitSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let myKitSymbolGraph = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
         
         XCTAssert(FileManager.default.fileExists(atPath: myKitSymbolGraph.path))
@@ -1705,7 +1705,7 @@ class ConvertActionTests: XCTestCase {
         func runCompiler(analyze: Bool) async throws -> [Problem] {
             // This bundle has both non-analyze and analyze style warnings.
             let testBundleURL = Bundle.module.url(
-                forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             let bundle = try Folder.createFromDisk(url: testBundleURL)
 
             let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1748,7 +1748,7 @@ class ConvertActionTests: XCTestCase {
     /// and also with and without generating digest produces the same results
     func testConvertTestBundleWithHighConcurrency() async throws {
         let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let bundle = try Folder.createFromDisk(url: testBundleURL)
 
         struct TestReferenceResolver: ExternalDocumentationSource {
@@ -1838,7 +1838,7 @@ class ConvertActionTests: XCTestCase {
         
         let testBundleURL = try XCTUnwrap(
             Bundle.module.url(
-                forResource: "TestBundle",
+                forResource: "LegacyBundle_DoNotUseInNewTests",
                 withExtension: "docc",
                 subdirectory: "Test Bundles"
             )
@@ -1914,7 +1914,7 @@ class ConvertActionTests: XCTestCase {
     
     func testConvertActionNavigatorIndexGeneration() async throws {
         // The navigator index needs to test with the real file manager
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let targetURL = try createTemporaryDirectory()
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
@@ -2824,7 +2824,7 @@ class ConvertActionTests: XCTestCase {
     }
 
     func testConvertWithoutBundleDerivesDisplayNameAndIdentifierFromSingleModuleSymbolGraph() async throws {
-        let myKitSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let myKitSymbolGraph = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
         
         XCTAssert(FileManager.default.fileExists(atPath: myKitSymbolGraph.path))
@@ -2858,7 +2858,7 @@ class ConvertActionTests: XCTestCase {
     }
     
     func testConvertWithoutBundleErrorsForMultipleModulesSymbolGraph() async throws {
-        let testBundle = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let testBundle = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let myKitSymbolGraph = testBundle
             .appendingPathComponent("mykit-iOS.symbols.json")
         let sideKitSymbolGraph = testBundle

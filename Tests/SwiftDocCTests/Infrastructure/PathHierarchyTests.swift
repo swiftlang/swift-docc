@@ -1104,8 +1104,8 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("documentation", nil), ("MixedFramework", nil), ("MyEnum", nil)])
     }
     
-    func testTestBundle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+    func testUnrealisticMixedTestCatalog() throws {
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let linkResolver = try XCTUnwrap(context.linkResolver.localResolver)
         let tree = try XCTUnwrap(linkResolver.pathHierarchy)
         
@@ -2408,7 +2408,7 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             Folder(name: "clang", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
@@ -2438,8 +2438,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2451,7 +2450,7 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             Folder(name: "clang", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
@@ -2481,8 +2480,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2494,7 +2492,7 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             Folder(name: "clang", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
@@ -2522,8 +2520,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2535,7 +2532,7 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             Folder(name: "clang", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
@@ -2565,8 +2562,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2579,7 +2575,7 @@ class PathHierarchyTests: XCTestCase {
         let otherID = "some-other-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
@@ -2593,8 +2589,7 @@ class PathHierarchyTests: XCTestCase {
             ))
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
@@ -2604,7 +2599,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testLinkToTopicSection() throws {
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
@@ -2648,8 +2643,7 @@ class PathHierarchyTests: XCTestCase {
             """)
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let moduleID = try tree.find(path: "/ModuleName", onlyFindSymbols: true)
@@ -2703,7 +2697,7 @@ class PathHierarchyTests: XCTestCase {
     func testModuleAndCollidingTechnologyRootHasPathsForItsSymbols() throws {
         let symbolID = "some-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
@@ -2723,8 +2717,7 @@ class PathHierarchyTests: XCTestCase {
             """)
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
@@ -2752,12 +2745,12 @@ class PathHierarchyTests: XCTestCase {
             ))
         }
         
-        let multiPlatform = Folder(name: "unit-test.docc", content: [
+        let multiPlatformCatalog = Folder(name: "unit-test.docc", content: [
             makeSymbolGraphFile(platformName: "PlatformOne"),
             makeSymbolGraphFile(platformName: "PlatformTwo"),
         ])
         
-        let (_, _, context) = try loadBundle(from: createTempFolder(content: [multiPlatform]))
+        let (_, context) = try loadBundle(catalog: multiPlatformCatalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2765,10 +2758,10 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths[defaultImplementationID], "/ModuleName/SomeProtocolName/someProtocolRequirement()-3docm")
         
         // Verify that the multi platform paths are the same as the single platform paths
-        let singlePlatform = Folder(name: "unit-test.docc", content: [
+        let singlePlatformCatalog = Folder(name: "unit-test.docc", content: [
             makeSymbolGraphFile(platformName: "PlatformOne"),
         ])
-        let (_, _, singlePlatformContext) = try loadBundle(from: createTempFolder(content: [singlePlatform]))
+        let (_, singlePlatformContext) = try loadBundle(catalog: singlePlatformCatalog)
         let singlePlatformPaths = singlePlatformContext.linkResolver.localResolver.pathHierarchy.caseInsensitiveDisambiguatedPaths()
         XCTAssertEqual(paths[protocolRequirementID], singlePlatformPaths[protocolRequirementID])
         XCTAssertEqual(paths[defaultImplementationID], singlePlatformPaths[defaultImplementationID])
@@ -3565,7 +3558,7 @@ class PathHierarchyTests: XCTestCase {
             """),
         ])
         
-        let (_, _, context) = try loadBundle(from: createTempFolder(content: [catalog]))
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let rootIdentifier = try XCTUnwrap(tree.modules.first?.identifier)

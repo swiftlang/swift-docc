@@ -24,13 +24,13 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let sourceIdentifier = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
         let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         
-        let sourceRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/A", sourceLanguage: .swift)
-        let targetRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/B", sourceLanguage: .swift)
+        let sourceRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/A", sourceLanguage: .swift)
+        let targetRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/B", sourceLanguage: .swift)
         
-        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName", sourceLanguage: .swift)
         
-        let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: sourceType, mixins: [:])
-        let targetSymbol = SymbolGraph.Symbol(identifier: targetIdentifier, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: targetType, mixins: [:])
+        let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: sourceType, mixins: [:])
+        let targetSymbol = SymbolGraph.Symbol(identifier: targetIdentifier, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: targetType, mixins: [:])
         
         let engine = DiagnosticEngine()
         documentationCache.add(
@@ -51,7 +51,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     private let swiftSelector = UnifiedSymbolGraph.Selector(interfaceLanguage: "swift", platform: nil)
     
     func testImplementsRelationship() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -65,7 +65,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testConformsRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let (bundle, _) = try testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -81,7 +81,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
             XCTFail("Conforms to group not added")
             return
         }
-        XCTAssertEqual(conformsTo.destinations.first?.url?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/B")
+        XCTAssertEqual(conformsTo.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/B")
         
         // Test default conformance was added
         guard let conforming = (documentationCache["B"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
@@ -90,11 +90,11 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
             XCTFail("Conforming types not added")
             return
         }
-        XCTAssertEqual(conforming.destinations.first?.url?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/A")
+        XCTAssertEqual(conforming.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/A")
     }
 
     func testInheritanceRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let (bundle, _) = try testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -110,7 +110,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
             XCTFail("Inherits from not added")
             return
         }
-        XCTAssertEqual(inherits.destinations.first?.url?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/B")
+        XCTAssertEqual(inherits.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/B")
         
         // Test descendants were added
         guard let inherited = (documentationCache["B"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
@@ -119,21 +119,21 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
             XCTFail("Inherited by types not added")
             return
         }
-        XCTAssertEqual(inherited.destinations.first?.url?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/A")
+        XCTAssertEqual(inherited.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/A")
     }
     
     func testInheritanceRelationshipFromOtherFramework() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let (bundle, _) = try testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
         let sourceIdentifier = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
         let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         
-        let sourceRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/A", sourceLanguage: .swift)
-        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let sourceRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/A", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName", sourceLanguage: .swift)
         
-        let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
+        let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         
         documentationCache.add(
             DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
@@ -160,7 +160,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testRequirementRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let (bundle, _) = try testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -174,7 +174,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testOptionalRequirementRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let (bundle, _) = try testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         

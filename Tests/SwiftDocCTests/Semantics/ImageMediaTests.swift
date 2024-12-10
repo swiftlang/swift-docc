@@ -19,7 +19,7 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(image)
@@ -38,7 +38,7 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(image)
@@ -57,7 +57,7 @@ class ImageMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+            let (bundle, context) = try testBundleAndContext()
             var problems = [Problem]()
             let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
             XCTAssertNotNil(image)
@@ -75,7 +75,7 @@ class ImageMediaTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(image)
@@ -239,7 +239,7 @@ class ImageMediaTests: XCTestCase {
     
     func testImageDirectiveDoesNotResolveVideoReference() throws {
         // First check that the Video exists
-        let (_, videoProblems, _) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+        let (_, videoProblems, _) = try parseDirective(VideoMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
             """
             @Video(source: "introvideo")
             """
@@ -248,7 +248,7 @@ class ImageMediaTests: XCTestCase {
         XCTAssertEqual(videoProblems, [])
         
         // Then check that it doesn't resolve as an image
-        let (renderedContent, imageProblems, image) = try parseDirective(ImageMedia.self, in: "TestBundle") {
+        let (renderedContent, imageProblems, image) = try parseDirective(ImageMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
             """
             @Image(source: "introvideo")
             """

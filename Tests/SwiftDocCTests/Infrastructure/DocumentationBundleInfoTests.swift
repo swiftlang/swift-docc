@@ -15,7 +15,7 @@ class DocumentationBundleInfoTests: XCTestCase {
     // Test whether the bundle correctly loads the test bundle Info.plist file.
     func testLoadTestBundleInfoPlist() throws {
         let infoPlistURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("Info.plist")
 
         let infoPlistData = try Data(contentsOf: infoPlistURL)

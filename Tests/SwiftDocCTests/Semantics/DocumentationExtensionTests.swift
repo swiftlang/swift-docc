@@ -19,7 +19,7 @@ class DocumentationExtensionTests: XCTestCase {
         let source = "@DocumentationExtension"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(options)
@@ -32,7 +32,7 @@ class DocumentationExtensionTests: XCTestCase {
         let source = "@DocumentationExtension(mergeBehavior: append)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(options)
@@ -45,7 +45,7 @@ class DocumentationExtensionTests: XCTestCase {
         let source = "@DocumentationExtension(mergeBehavior: override)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(options)
@@ -57,7 +57,7 @@ class DocumentationExtensionTests: XCTestCase {
         let source = "@DocumentationExtension(mergeBehavior: somethingUnknown )"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(options)
@@ -70,7 +70,7 @@ class DocumentationExtensionTests: XCTestCase {
         let source = "@DocumentationExtension(mergeBehavior: override, argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(options, "Even if there are warnings we can create an options value")
@@ -87,7 +87,7 @@ class DocumentationExtensionTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(options, "Even if there are warnings we can create a DocumentationExtension value")
@@ -105,7 +105,7 @@ class DocumentationExtensionTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(options, "Even if there are warnings we can create a DocumentationExtension value")
@@ -121,7 +121,7 @@ class DocumentationExtensionTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(options)

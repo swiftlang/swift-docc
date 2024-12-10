@@ -322,7 +322,7 @@ class RESTSymbolsTests: XCTestCase {
                 otherMixins: [SymbolGraph.Symbol.PlistDetails(rawKey: "plist-key-symbolname", customTitle: keyCustomName)]
             )
             let symbols: [SymbolGraph.Symbol] = [someSymbol]
-            let exampleDocumentation = Folder(
+            let catalog = Folder(
                 name: "unit-test.docc",
                 content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -331,7 +331,7 @@ class RESTSymbolsTests: XCTestCase {
                     )),
                 ] + extraFiles
             )
-            let (_, bundle, context) = try loadBundle(from: (try createTempFolder(content: [exampleDocumentation])))
+            let (bundle, context) = try loadBundle(catalog: catalog)
             let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
             let moduleSymbol = try XCTUnwrap((try context.entity(with: moduleReference)).semantic as? Symbol)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)

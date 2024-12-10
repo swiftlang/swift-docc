@@ -27,7 +27,7 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
@@ -50,7 +50,7 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
@@ -65,7 +65,7 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
@@ -86,7 +86,7 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)

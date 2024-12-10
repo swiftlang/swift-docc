@@ -168,14 +168,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
 
-        let tempURL = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
-                CopyOfFile(original: symbolGraphFile),
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         // Make sure that type decorators like arrays, dictionaries, and optionals are correctly highlighted.
         do {
@@ -331,14 +329,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
 
-        let tempURL = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
-                CopyOfFile(original: symbolGraphFile),
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         for hash in ["7eht8", "8p1lo", "858ja"] {
             let reference = ResolvedTopicReference(
@@ -366,14 +362,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
 
-        let tempURL = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                InfoPlist(displayName: "ConformanceOverloads", identifier: "com.test.example"),
-                CopyOfFile(original: symbolGraphFile),
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "ConformanceOverloads", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         // MyClass<T>
         // - myFunc() where T: Equatable
