@@ -142,6 +142,7 @@ extension LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released.")
 fileprivate extension [FSNode] {
     /// Returns the first file that matches a given predicate.
     /// - Parameter predicate: A closure that takes a file as its argument and returns a Boolean value indicating whether the file should be returned from this function.
