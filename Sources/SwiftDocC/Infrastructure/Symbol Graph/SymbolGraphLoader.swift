@@ -54,6 +54,8 @@ struct SymbolGraphLoader {
     ///
     /// - Throws: If loading and decoding any of the symbol graph files throws, this method re-throws one of the encountered errors.
     mutating func loadAll() throws {
+        let signposter = ConvertActionConverter.signposter
+        
         let loadingLock = Lock()
 
         var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
@@ -118,6 +120,8 @@ struct SymbolGraphLoader {
         }
         #endif
         
+        let numberOfSymbolGraphs = bundle.symbolGraphURLs.count
+        let decodeSignpostHandle = signposter.beginInterval("Decode symbol graphs", id: signposter.makeSignpostID(), "Decode \(numberOfSymbolGraphs) symbol graphs")
         switch decodingStrategy {
         case .concurrentlyAllFiles:
             // Concurrently load and decode all symbol graphs
@@ -127,12 +131,14 @@ struct SymbolGraphLoader {
             // Serially load and decode all symbol graphs, each one in concurrent batches.
             bundle.symbolGraphURLs.forEach(loadGraphAtURL)
         }
+        signposter.endInterval("Decode symbol graphs", decodeSignpostHandle)
         
         // define an appropriate merging strategy based on the graph formats
         let foundGraphUsingExtensionSymbolFormat = loadedGraphs.values.map(\.usesExtensionSymbolFormat).contains(true)
         
         let usingExtensionSymbolFormat = foundGraphUsingExtensionSymbolFormat
-                
+        
+        let mergeSignpostHandle = signposter.beginInterval("Build unified symbol graph", id: signposter.makeSignpostID())
         let graphLoader = GraphCollector(extensionGraphAssociationStrategy: usingExtensionSymbolFormat ? .extendingGraph : .extendedGraph)
         
         // feed the loaded graphs into the `graphLoader`
@@ -150,7 +156,13 @@ struct SymbolGraphLoader {
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
             createOverloadGroups: FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
         )
+        signposter.endInterval("Build unified symbol graph", mergeSignpostHandle)
 
+        let availabilitySignpostHandle = signposter.beginInterval("Add missing availability", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Add missing availability", availabilitySignpostHandle)
+        }
+        
         for var unifiedGraph in unifiedGraphs.values {
             var defaultUnavailablePlatforms = [PlatformName]()
             var defaultAvailableInformation = [DefaultAvailability.ModuleAvailability]()
