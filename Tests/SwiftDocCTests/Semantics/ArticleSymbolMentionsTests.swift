@@ -18,11 +18,11 @@ class ArticleSymbolMentionsTests: XCTestCase {
     /// Test that the recording abstraction for ``ArticleSymbolMentions`` works as expected.
     func testArticlesMentioningSymbol() throws {
         let article = ResolvedTopicReference(
-            bundleIdentifier: "org.swift.anything",
+            bundleID: "org.swift.anything",
             path: "/article",
             sourceLanguage: .swift
         )
-        let symbol = ResolvedTopicReference(bundleIdentifier: "org.swift.anything", path: "/Thing", sourceLanguage: .swift)
+        let symbol = ResolvedTopicReference(bundleID: "org.swift.anything", path: "/Thing", sourceLanguage: .swift)
         var mentions = ArticleSymbolMentions()
 
         XCTAssertTrue(mentions.articlesMentioning(symbol).isEmpty)
@@ -47,11 +47,11 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertEqual(1, context.articleSymbolMentions.mentions.count)
 
         let mentioningArticle = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/MentionedIn/ArticleMentioningSymbol",
             sourceLanguage: .swift)
         let mentionedSymbol = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
         
@@ -68,7 +68,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 
         let mentionedSymbol = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
 

@@ -59,6 +59,7 @@ public protocol DocumentationContextDataProviderDelegate: AnyObject {
 /// This value is typically a reverse host name, for example: `com.<organization-name>.<product-name>`.
 ///
 /// Documentation links may include the bundle identifier---as a host component of the URL---to reference content in a specific documentation bundle.
+@available(*, deprecated, renamed: "DocumentationBundle.Identifier", message: "Use 'DocumentationBundle.Identifier' instead. This deprecated API will be removed after 6.2 is released")
 public typealias BundleIdentifier = String
 
 /// The documentation context manages the in-memory model for the built documentation.
@@ -218,7 +219,7 @@ public class DocumentationContext {
     /// references for lookup.
     var documentationCache = LocalCache()
     /// The asset managers for each documentation bundle, keyed by the bundle's identifier.
-    var assetManagers = [BundleIdentifier: DataAssetManager]()
+    var assetManagers = [DocumentationBundle.Identifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
     
@@ -328,7 +329,7 @@ public class DocumentationContext {
         self._configuration = configuration
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
-        ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
+        ResolvedTopicReference.enableReferenceCaching(for: bundle.id)
         try register(bundle)
     }
 
@@ -341,7 +342,7 @@ public class DocumentationContext {
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
             // Enable reference caching for this documentation bundle.
-            ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
+            ResolvedTopicReference.enableReferenceCaching(for: bundle.id)
             
             try self.register(bundle)
         }
@@ -354,11 +355,11 @@ public class DocumentationContext {
     ///   - bundle: The bundle that was removed.
     @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
-        linkResolver.localResolver?.unregisterBundle(identifier: bundle.identifier)
+        linkResolver.localResolver?.unregisterBundle(identifier: bundle.id)
         
         // Purge the reference cache for this bundle and disable reference caching for
         // this bundle moving forward.
-        ResolvedTopicReference.purgePool(for: bundle.identifier)
+        ResolvedTopicReference.purgePool(for: bundle.id)
         
         unregister(bundle)
     }
@@ -392,7 +393,7 @@ public class DocumentationContext {
             return legacyDataProvider.bundles[identifier]
         case .new:
             assert(bundle?.identifier == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
-            return bundle?.identifier == identifier ? bundle : nil
+            return bundle?.id.rawValue == identifier ? bundle : nil
         }
     }
         
@@ -482,7 +483,7 @@ public class DocumentationContext {
     /// - Parameters:
     ///   - references: A list of references to local nodes to visit to collect links.
     ///   - localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    private func preResolveExternalLinks(references: [ResolvedTopicReference], localBundleID: BundleIdentifier) {
+    private func preResolveExternalLinks(references: [ResolvedTopicReference], localBundleID: DocumentationBundle.Identifier) {
         preResolveExternalLinks(semanticObjects: references.compactMap({ reference -> ReferencedSemanticObject? in
             guard let node = try? entity(with: reference), let semantic = node.semantic else { return nil }
             return (reference: reference, semantic: semantic)
@@ -504,11 +505,11 @@ public class DocumentationContext {
     /// - Parameters:
     ///   - semanticObjects: A list of semantic objects to visit to collect links.
     ///   - localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject], localBundleID: BundleIdentifier) {
+    private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject], localBundleID: DocumentationBundle.Identifier) {
         // If there are no external resolvers added we will not resolve any links.
         guard !configuration.externalDocumentationConfiguration.sources.isEmpty else { return }
         
-        let collectedExternalLinks = Synchronized([String: Set<UnresolvedTopicReference>]())
+        let collectedExternalLinks = Synchronized([DocumentationBundle.Identifier: Set<UnresolvedTopicReference>]())
         semanticObjects.concurrentPerform { _, semantic in
             autoreleasepool {
                 // Walk the node and extract external link references.
@@ -914,7 +915,7 @@ public class DocumentationContext {
             let (url, analyzed) = analyzedDocument
 
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: bundle)
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
@@ -1335,7 +1336,7 @@ public class DocumentationContext {
                         
                         let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
                         let symbolReference = ResolvedTopicReference(
-                            bundleIdentifier: reference.bundleIdentifier,
+                            bundleID: reference.bundleID,
                             path: symbolPath,
                             fragment: nil,
                             sourceLanguages: reference.sourceLanguages
@@ -1407,7 +1408,7 @@ public class DocumentationContext {
             }
 
             // Resolve any external references first
-            preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }), localBundleID: bundle.identifier)
+            preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }), localBundleID: bundle.id)
             
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationshipsBySelector)
@@ -1776,11 +1777,11 @@ public class DocumentationContext {
     
     private func registerMiscResources(from bundle: DocumentationBundle) throws {
         let miscResources = Set(bundle.miscResourceURLs)
-        try assetManagers[bundle.identifier, default: DataAssetManager()].register(data: miscResources)
+        try assetManagers[bundle.id, default: DataAssetManager()].register(data: miscResources)
     }
     
-    private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        guard let resources = assetManagers[bundleIdentifier]?.storage.values else {
+    private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        guard let resources = assetManagers[bundleID]?.storage.values else {
             return []
         }
         return resources.filter { dataAsset in
@@ -1798,26 +1799,41 @@ public class DocumentationContext {
 
     /// Returns a list of all the image assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return image assets for.
+    /// - Parameter bundleID: The identifier of the bundle to return image assets for.
     /// - Returns: A list of all the image assets for the given bundle.
+    public func registeredImageAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: bundleID)
+    }
+    
+    @available(*, deprecated, renamed: "registeredImageAssets(for:)", message: "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
     public func registeredImageAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: bundleIdentifier)
+        registeredImageAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
     
     /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return video assets for.
+    /// - Parameter bundleID: The identifier of the bundle to return video assets for.
     /// - Returns: A list of all the video assets for the given bundle.
+    public func registeredVideoAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: bundleID)
+    }
+    
+    @available(*, deprecated, renamed: "registeredVideoAssets(for:)", message: "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
     public func registeredVideoAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: bundleIdentifier)
+        registeredVideoAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
 
     /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return download assets for.
+    /// - Parameter bundleID: The identifier of the bundle to return download assets for.
     /// - Returns: A list of all the download assets for the given bundle.
+    public func registeredDownloadsAssets(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleID)
+    }
+    
+    @available(*, deprecated, renamed: "registeredDownloadsAssets(for:)", message: "registeredDownloadsAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
     public func registeredDownloadsAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleIdentifier)
+        registeredDownloadsAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
 
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
@@ -1932,7 +1948,7 @@ public class DocumentationContext {
             let title = articleResult.source.deletingPathExtension().lastPathComponent
             // Create a new root-looking reference
             let reference = ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: NodeURLGenerator.Path.documentation(path: title).stringValue,
                 sourceLanguages: [DocumentationContext.defaultLanguage(in: nil /* article-only content has no source language information */)]
             )
@@ -1971,7 +1987,7 @@ public class DocumentationContext {
             let path = NodeURLGenerator.Path.documentation(path: title).stringValue
             let sourceLanguage = DocumentationContext.defaultLanguage(in: [])
             
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguages: [sourceLanguage])
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguages: [sourceLanguage])
             
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
             topicGraph.addNode(graphNode)
@@ -2036,7 +2052,7 @@ public class DocumentationContext {
         let defaultSourceLanguage = defaultLanguage(in: availableSourceLanguages)
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleID: bundle.id,
             path: path,
             sourceLanguages: availableSourceLanguages
                 // FIXME: Pages in article-only catalogs should not be inferred as "Swift" as a fallback
@@ -2316,7 +2332,7 @@ public class DocumentationContext {
             tutorialTableOfContentsResults.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
-            localBundleID: bundle.identifier)
+                                localBundleID: bundle.id)
         
         resolveLinks(
             tutorialTableOfContents: tutorialTableOfContentsResults,
@@ -2358,7 +2374,7 @@ public class DocumentationContext {
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, startingFrom: rootNode)
-            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.identifier)
+            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.id)
             resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
         }
 
@@ -2373,7 +2389,7 @@ public class DocumentationContext {
         linkResolver.localResolver.addAnchorForSymbols(localCache: documentationCache)
         
         // Fifth, resolve links in nodes that are added solely via curation
-        preResolveExternalLinks(references: Array(allCuratedReferences), localBundleID: bundle.identifier)
+        preResolveExternalLinks(references: Array(allCuratedReferences), localBundleID: bundle.id)
         resolveLinks(curatedReferences: allCuratedReferences, bundle: bundle)
 
         if configuration.convertServiceConfiguration.fallbackResolver != nil {
@@ -2760,13 +2776,13 @@ public class DocumentationContext {
      Unregister a documentation bundle with this context and clear any cached resources associated with it.
      */
     private func unregister(_ bundle: DocumentationBundle) {
-        let referencesToRemove = topicGraph.nodes.keys.filter { reference in
-            return reference.bundleIdentifier == bundle.identifier
+        let referencesToRemove = topicGraph.nodes.keys.filter {
+            $0.bundleID == bundle.id
         }
         
         for reference in referencesToRemove {
-            topicGraph.edges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.identifier })
-            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.identifier })
+            topicGraph.edges[reference]?.removeAll(where: { $0.bundleID == bundle.id })
+            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleID == bundle.id })
             topicGraph.nodes[reference] = nil
         }
     }
@@ -2784,7 +2800,7 @@ public class DocumentationContext {
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
         guard let bundle,
-              let assetManager = assetManagers[identifier.bundleIdentifier],
+              let assetManager = assetManagers[identifier.bundleID],
               let asset = assetManager.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
         }
@@ -2796,7 +2812,7 @@ public class DocumentationContext {
     
     /// Returns true if a resource with the given identifier exists in the registered bundle.
     public func resourceExists(with identifier: ResourceReference, ofType expectedAssetType: AssetType? = nil) -> Bool {
-        guard let assetManager = assetManagers[identifier.bundleIdentifier] else {
+        guard let assetManager = assetManagers[identifier.bundleID] else {
             return false
         }
         
@@ -2812,7 +2828,7 @@ public class DocumentationContext {
     }
     
     private func externalEntity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
-        return configuration.externalDocumentationConfiguration.sources[reference.bundleIdentifier].map({ $0.entity(with: reference) })
+        return configuration.externalDocumentationConfiguration.sources[reference.bundleID].map({ $0.entity(with: reference) })
             ?? configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
     }
     
@@ -2978,8 +2994,7 @@ public class DocumentationContext {
     ///   - asset: The new asset for this name.
     ///   - parent: The topic where the asset is referenced.
     public func updateAsset(named name: String, asset: DataAsset, in parent: ResolvedTopicReference) {
-        let bundleIdentifier = parent.bundleIdentifier
-        assetManagers[bundleIdentifier]?.update(name: name, asset: asset)
+        assetManagers[parent.bundleID]?.update(name: name, asset: asset)
     }
     
     /// Attempt to resolve an asset given its name and the topic it's referenced in.
@@ -2990,12 +3005,11 @@ public class DocumentationContext {
     ///   - type: A restriction for what type of asset to resolve.
     /// - Returns: The data that's associated with an image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
-        let bundleIdentifier = parent.bundleIdentifier
-        return resolveAsset(named: name, bundleIdentifier: bundleIdentifier, withType: type)
+        resolveAsset(named: name, bundleID: parent.bundleID, withType: type)
     }
     
-    func resolveAsset(named name: String, bundleIdentifier: String, withType expectedType: AssetType?) -> DataAsset? {
-        if let localAsset = assetManagers[bundleIdentifier]?.allData(named: name) {
+    func resolveAsset(named name: String, bundleID: DocumentationBundle.Identifier, withType expectedType: AssetType?) -> DataAsset? {
+        if let localAsset = assetManagers[bundleID]?.allData(named: name) {
             if let expectedType {
                 guard localAsset.hasVariant(withAssetType: expectedType) else {
                     return nil
@@ -3007,7 +3021,7 @@ public class DocumentationContext {
         
         if let fallbackAssetResolver = configuration.convertServiceConfiguration.fallbackResolver,
            let externallyResolvedAsset = fallbackAssetResolver.resolve(assetNamed: name) {
-            assetManagers[bundleIdentifier, default: DataAssetManager()]
+            assetManagers[bundleID, default: DataAssetManager()]
                 .register(dataAsset: externallyResolvedAsset, forName: name)
             return externallyResolvedAsset
         }
@@ -3035,7 +3049,7 @@ public class DocumentationContext {
     ///
     /// - Returns: The best matching storage key if it was found, otherwise `nil`.
     public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
-        if let assetManager = assetManagers[parent.bundleIdentifier] {
+        if let assetManager = assetManagers[parent.bundleID] {
             if let localName = assetManager.bestKey(forAssetName: name) {
                 return localName
             } else if let fallbackAssetManager = configuration.convertServiceConfiguration.fallbackResolver {

@@ -18,7 +18,7 @@ extension UnresolvedTopicReference {
     init?(symbolReference: SymbolReference, bundle: DocumentationBundle) {
         guard var components = URLComponents(string: symbolReference.path) else { return nil }
         components.scheme = ResolvedTopicReference.urlScheme
-        components.host = bundle.identifier
+        components.host = bundle.id.rawValue
         if !components.path.hasPrefix("/") {
             components.path.insert("/", at: components.path.startIndex)
         }

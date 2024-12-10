@@ -76,7 +76,7 @@ extension DocumentationContext {
         /// A collection of configuration related to external sources of documentation.
         public struct ExternalDocumentationConfiguration {
             /// The lookup of external documentation sources by their bundle identifiers.
-            public var sources: [BundleIdentifier: ExternalDocumentationSource] = [:]
+            public var sources: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:]
             /// A type that resolves all symbols that are referenced in symbol graph files but can't be found in any of the locally available symbol graph files.
             public var globalSymbolResolver: GlobalExternalSymbolResolver?
             /// A list of URLs to documentation archives that the local documentation depends on.

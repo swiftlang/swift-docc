@@ -56,7 +56,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return nil
         }
         
-        let fileReference = ResourceReference(bundleIdentifier: code.fileReference.bundleIdentifier, path: fileIdentifier)
+        let fileReference = ResourceReference(bundleID: code.fileReference.bundleID, path: fileIdentifier)
         guard let fileContents = fileContents(with: fileReference) else {
             return nil
         }
@@ -1714,8 +1714,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return nil
         }
         
-        let media = ResourceReference(bundleIdentifier: oldMedia.bundleIdentifier, path: mediaIdentifier)
-        guard let resolvedAssets = renderContext?.store.content(forAssetNamed: media.path, bundleIdentifier: identifier.bundleIdentifier)
+        let media = ResourceReference(bundleID: oldMedia.bundleID, path: mediaIdentifier)
+        guard let resolvedAssets = renderContext?.store.content(forAssetNamed: media.path, bundleID: identifier.bundleID)
                                 ?? context.resolveAsset(named: media.path, in: identifier)
         else {
             return nil
@@ -2003,7 +2003,7 @@ fileprivate typealias BundleModuleIdentifier = String
 
 extension BundleModuleIdentifier {
     fileprivate init(bundle: DocumentationBundle, moduleName: String) {
-        self = "\(bundle.identifier):\(moduleName)"
+        self = "\(bundle.id):\(moduleName)"
     }
 }
 
