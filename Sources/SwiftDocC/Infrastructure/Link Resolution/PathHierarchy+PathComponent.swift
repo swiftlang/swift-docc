@@ -248,7 +248,7 @@ private struct PathComponentScanner {
     
     mutating func _scanOperatorName() -> Substring? {
         // If the next component is a Swift operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
-        if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidSwiftOperatorHead) {
+        if remaining.unicodeScalars.prefix(3).isValidSwiftOperator() {
             return scanUntil(index: remaining.firstIndex(of: Self.swiftOperatorEnd)) + scan(length: 1)
         }
         
@@ -351,6 +351,20 @@ private extension StringProtocol {
             // "-" isn't allowed in module names themselves but it's allowed in link components to separate the disambiguation.
             $0 == "-" || $0.isValidC99ExtendedIdentifier
         }
+    }
+}
+
+private extension Collection<Unicode.Scalar> {
+    /// Determines if this sequence of unicode scalars represent a valid Swift operator name
+    /// - Complexity: O(_n_), where _n_ is the length of the collection.
+    func isValidSwiftOperator() -> Bool {
+        // See https://docs.swift.org/swift-book/documentation/the-swift-programming-language/lexicalstructure#Operators
+        
+        // The first character of an operator supports fewer characters than the rest of the operator name
+        guard let first, first.isValidSwiftOperatorHead else {
+            return false
+        }
+        return dropFirst().allSatisfy { $0.isValidSwiftOperatorCharacter }
     }
 }
 
@@ -547,10 +561,11 @@ private extension Unicode.Scalar {
         }
     }
     
+    /// A Boolean value that indicates if this scalar is a valid Swift operator head.
     var isValidSwiftOperatorHead: Bool {
         // See https://docs.swift.org/swift-book/documentation/the-swift-programming-language/lexicalstructure#Operators
         switch value {
-        case 
+        case
             // ! % & * + - . / < = > ? ^| ~
             0x21, 0x25, 0x26, 0x2A, 0x2B, 0x2D...0x2F, 0x3C, 0x3D...0x3F, 0x5E, 0x7C, 0x7E,
             // ¡ ¢ £ ¤ ¥ ¦ §
@@ -605,6 +620,33 @@ private extension Unicode.Scalar {
             0x3008 ... 0x3020,
             // 〰
             0x3030:
+            return true
+        default:
+            return false
+        }
+    }
+    
+    /// A Boolean value that indicates if this scalar is a valid Swift operator character (after the first character).
+    var isValidSwiftOperatorCharacter: Bool {
+        // See https://docs.swift.org/swift-book/documentation/the-swift-programming-language/lexicalstructure#Operators
+        if isValidSwiftOperatorHead {
+            return true
+        }
+        
+        switch value {
+        case
+            // Combining Diacritical Marks
+            0x0300 ... 0x036F,
+            // Combining Diacritical Marks Supplement
+            0x1DC0 ... 0x1DFF,
+            // Combining Diacritical Marks for Symbols
+            0x20D0 ... 0x20FF,
+            // Variation Selectors
+            0xFE00 ... 0xFE0F,
+            // Combining Half Marks
+            0xFE20 ... 0xFE2F,
+            // Variation Selectors Supplement
+            0xE0100 ... 0xE01EF:
             return true
         default:
             return false
