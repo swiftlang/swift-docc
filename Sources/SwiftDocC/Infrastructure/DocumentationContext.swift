@@ -1048,7 +1048,11 @@ public class DocumentationContext {
     /// A lookup of resolved references based on the reference's absolute string.
     private(set) var referenceIndex = [String: ResolvedTopicReference]()
     
-    private func nodeWithInitializedContent(reference: ResolvedTopicReference, match foundDocumentationExtension: DocumentationContext.SemanticResult<Article>?) -> DocumentationNode {
+    private func nodeWithInitializedContent(
+        reference: ResolvedTopicReference,
+        match foundDocumentationExtension: DocumentationContext.SemanticResult<Article>?,
+        bundle: DocumentationBundle
+    ) -> DocumentationNode {
         guard var updatedNode = documentationCache[reference] else {
             fatalError("A topic reference that has already been resolved should always exist in the cache.")
         }
@@ -1056,7 +1060,9 @@ public class DocumentationContext {
         // Pull a matched article out of the cache and attach content to the symbol
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
-            engine: diagnosticEngine
+            engine: diagnosticEngine,
+            bundle: bundle,
+            context: self
         )
 
         // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
@@ -1399,7 +1405,11 @@ public class DocumentationContext {
                 Array(documentationCache.symbolReferences).concurrentMap { finalReference in
                     // Match the symbol's documentation extension and initialize the node content.
                     let match = uncuratedDocumentationExtensions[finalReference]
-                    let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
+                    let updatedNode = nodeWithInitializedContent(
+                        reference: finalReference,
+                        match: match,
+                        bundle: bundle
+                    )
                     
                     return ((
                         node: updatedNode,
