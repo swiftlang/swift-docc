@@ -2033,7 +2033,13 @@
             "text" : ""
           },
           {
-            "text" : "You can use the `@DeprecationSummary` directive top-level in both articles and documentation extension files."
+            "text" : "You can use the `@DeprecationSummary` directive top-level in articles, documentation extension files, or documentation comments."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Earlier versions: Before Swift-DocC 6.1, `@DeprecationSummary` was not supported in documentation comments."
           },
           {
             "text" : ""
