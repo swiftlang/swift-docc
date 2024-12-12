@@ -3602,7 +3602,7 @@
             "text" : "- ``PageImage``"
           },
           {
-            "text" : "- ``CustomMetadata``"
+            "text" : "- ``PageColor``"
           },
           {
             "text" : "- ``CallToAction``"
@@ -3611,19 +3611,13 @@
             "text" : "- ``Availability``"
           },
           {
-            "text" : "- ``SupportedLanguage``"
-          },
-          {
             "text" : "- ``PageKind``"
           },
           {
-            "text" : "- ``PageColor``"
+            "text" : "- ``SupportedLanguage``"
           },
           {
             "text" : "- ``TitleHeading``"
-          },
-          {
-            "text" : "- ``Redirect``"
           }
         ]
       },
