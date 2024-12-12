@@ -3453,6 +3453,9 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil), ("/=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil), ("///=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil), ("+/-(_:_:)", nil)])
+        
+        // "☜⃩" is a symbol with a symbol diacritic mark.
+        assertParsedPathComponents("☜⃩/(_:_:)", [("☜⃩/(_:_:)", nil)])
 
         // Check parsing return values and parameter types
         assertParsedPathComponents("..<(_:_:)->Bool", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"]))])
