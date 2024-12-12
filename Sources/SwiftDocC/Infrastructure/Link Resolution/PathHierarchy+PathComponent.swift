@@ -588,6 +588,12 @@ private extension Unicode.Scalar {
             0x2041 ... 0x2053,
             // ⁕ ⁖ ⁗ ⁘ ⁙ ⁚ ⁛ ⁜ ⁝ ⁞
             0x2055 ... 0x205E,
+            // Arrows
+            0x2190 ... 0x21FF,
+            // Mathematical Operators
+            0x2200 ... 0x22FF,
+            // Miscellaneous Technical
+            0x2300 ... 0x23FF,
             // Box Drawing
             0x2500 ... 0x257F,
             // Block Elements
