@@ -5428,7 +5428,7 @@ let expected = """
         XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'MissingSymbol'")
     }
         
-    func testDiagnosesAlternateDeclarations() throws {
+    func testDiagnosesSymbolAlternateDeclarations() throws {
         let (_, context) = try loadBundle(catalog: Folder(
             name: "unit-test.docc",
             content: [
@@ -5498,6 +5498,67 @@ let expected = """
         XCTAssertEqual(solution.replacements.count, 1)
         XCTAssertEqual(solution.replacements.first?.replacement, "")
     }
+    
+    func testDiagnosesArticleAlternateDeclarations() throws {
+        let (_, context) = try loadBundle(catalog: Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(name: "Symbol.md", utf8Content: """
+                # ``Symbol``
+                @Metadata {
+                    @AlternateRepresentation("doc:Article")
+                }
+                A symbol extension file specifying an alternate representation which is an article.
+                """),
+                TextFile(name: "Article.md", utf8Content: """
+                # Article
+                @Metadata {
+                    @AlternateRepresentation(``Symbol``)
+                }
+                An article specifying a custom alternate representation.
+                """),
+                JSONFile(
+                    name: "unit-test.occ.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                        ]
+                    )
+                )
+            ]
+        ))
+
+        let alternateRepresentationProblems = context.problems.sorted(by: \.diagnostic.summary)
+        XCTAssertEqual(alternateRepresentationProblems.count, 2)
+        
+        // Verify a problem is reported for trying to define an alternate representation for a language the symbol already supports
+        var problem = try XCTUnwrap(alternateRepresentationProblems.first)
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(problem.diagnostic.summary, "Custom alternate representations are not supported for page kind 'Article'")
+        XCTAssertEqual(problem.diagnostic.explanation, "Alternate representations are only supported for symbols.")
+        XCTAssertEqual(problem.possibleSolutions.count, 1)
+    
+        // Verify solutions provide context and suggest to remove the invalid directive
+        var solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(solution.summary, "Remove this alternate representation")
+        XCTAssertEqual(solution.replacements.count, 1)
+        XCTAssertEqual(solution.replacements.first?.replacement, "")
+
+        // Verify a problem is reported for having alternate representations with duplicate source languages
+        problem = try XCTUnwrap(alternateRepresentationProblems[1])
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(problem.diagnostic.summary, "Page kind 'Article' is not allowed as a custom alternate language representation")
+        XCTAssertEqual(problem.diagnostic.explanation, "Symbols can only specify other symbols as custom language representations.")
+        XCTAssertEqual(problem.possibleSolutions.count, 1)
+                
+        // Verify solutions provide context and suggest to remove the invalid directive
+        solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(solution.summary, "Remove this alternate representation")
+        XCTAssertEqual(solution.replacements.count, 1)
+        XCTAssertEqual(solution.replacements.first?.replacement, "")
+    }
+
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
