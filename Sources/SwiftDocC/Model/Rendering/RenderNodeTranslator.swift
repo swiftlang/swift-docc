@@ -1852,23 +1852,45 @@ public struct RenderNodeTranslator: SemanticVisitor {
     private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
         let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
         
-        return documentationNode.availableSourceLanguages
-            .sorted(by: { language1, language2 in
+        var allVariants: [SourceLanguage: ResolvedTopicReference] = documentationNode.availableSourceLanguages.reduce(into: [:]) { partialResult, language in
+            partialResult[language] = identifier
+        }
+        
+        // Apply alternate representations
+        if let alternateRepresentations = documentationNode.metadata?.alternateRepresentations {
+            for alternateRepresentation in alternateRepresentations {
+                // Only alternate representations which were able to be resolved to a reference should be included as an alternate representation.
+                // Unresolved alternate representations can be ignored, as they would have been reported during link resolution.
+                guard case .resolved(.success(let alternateRepresentationReference)) = alternateRepresentation.reference else {
+                    continue
+                }
+
+                // Add the language representations of the alternate symbol as additional variants for the current symbol.
+                // Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.
+                // If the current symbol and its custom alternate representation share language representations, the custom language representation is ignored.
+                allVariants.merge(
+                    alternateRepresentationReference.sourceLanguages.map { ($0, alternateRepresentationReference) }
+                ) { existing, _ in existing }
+            }
+        }
+        
+        return allVariants
+            .sorted(by: { variant1, variant2 in
                 // Emit Swift first, then alphabetically.
-                switch (language1, language2) {
+                switch (variant1.key, variant2.key) {
                 case (.swift, _): return true
                 case (_, .swift): return false
-                default: return language1.id < language2.id
-                }
-            })
-            .map { sourceLanguage in
-                RenderNode.Variant(
-                    traits: [.interfaceLanguage(sourceLanguage.id)],
-                    paths: [
-                        generator.presentationURLForReference(identifier).path
-                    ]
-                )
+                default: return variant1.key.id < variant2.key.id
             }
+        })
+        .map { sourceLanguage, reference in
+            RenderNode.Variant(
+                traits: [.interfaceLanguage(sourceLanguage.id)],
+                paths: [
+                    generator.presentationURLForReference(reference).path
+                ]
+            )
+        }
     }
     
     private mutating func convertFragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {

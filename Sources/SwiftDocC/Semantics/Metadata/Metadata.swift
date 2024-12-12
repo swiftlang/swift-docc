@@ -19,6 +19,7 @@ import Markdown
 /// 
 /// ### Child Directives
 ///
+/// - ``AlternateRepresentation``
 /// - ``DocumentationExtension``
 /// - ``TechnologyRoot``
 /// - ``DisplayName``
@@ -77,6 +78,9 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
     @ChildDirective
     var redirects: [Redirect]? = nil
+    
+    @ChildDirective(requirements: .zeroOrMore)
+    var alternateRepresentations: [AlternateRepresentation]
 
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -91,6 +95,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "_pageColor"            : \Metadata.__pageColor,
         "titleHeading"          : \Metadata._titleHeading,
         "redirects"             : \Metadata._redirects,
+        "alternateRepresentations"  : \Metadata._alternateRepresentations,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
@@ -100,7 +105,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
