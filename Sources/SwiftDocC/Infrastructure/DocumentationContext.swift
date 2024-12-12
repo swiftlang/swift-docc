@@ -3226,9 +3226,41 @@ extension DocumentationContext {
             guard let entity = try? self.entity(with: reference), let alternateRepresentations = entity.metadata?.alternateRepresentations else { continue }
             
             var sourceLanguageToReference: [SourceLanguage: AlternateRepresentation] = [:]
-            for alternateRepresentation in entity.metadata?.alternateRepresentations ?? [] {
+            for alternateRepresentation in alternateRepresentations {
+                // Check if the entity is not a symbol, as only symbols are allowed to specify custom alternate representations
+                guard entity.symbol != nil else {
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Custom alternate representations are not supported for page kind \(entity.kind.name.singleQuoted)",
+                            explanation: "Alternate representations are only supported for symbols."
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    ))
+                    continue
+                }
+
                 guard case .resolved(.success(let alternateRepresentationReference)) = alternateRepresentation.reference,
                       let alternateRepresentationEntity = try? self.entity(with: alternateRepresentationReference) else {
+                    continue
+                }
+                
+                // Check if the resolved entity is not a symbol, as only symbols are allowed as custom alternate representations
+                guard alternateRepresentationEntity.symbol != nil else {
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Page kind \(alternateRepresentationEntity.kind.name.singleQuoted) is not allowed as a custom alternate language representation",
+                            explanation: "Symbols can only specify other symbols as custom language representations."
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    ))
                     continue
                 }
                 
@@ -3250,7 +3282,6 @@ extension DocumentationContext {
                 
                 let duplicateAlternateLanguages = Set(sourceLanguageToReference.keys).intersection(alternateRepresentationEntity.availableSourceLanguages)
                 if !duplicateAlternateLanguages.isEmpty {
-                    let replacements = alternateRepresentation.originalMarkup.range.flatMap { [Replacement(range: $0, replacement: "")] } ?? []
                     let notes: [DiagnosticNote] = duplicateAlternateLanguages.compactMap { duplicateAlternateLanguage in
                         guard let alreadyExistingRepresentation = sourceLanguageToReference[duplicateAlternateLanguage],
                               let range = alreadyExistingRepresentation.originalMarkup.range,
@@ -3270,7 +3301,7 @@ extension DocumentationContext {
                             explanation: "Only one custom alternate language representation can be specified per language.",
                             notes: notes
                         ),
-                        possibleSolutions: [Solution(summary: "Remove this alternate representation", replacements: replacements)]
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
                     ))
                 }
                 
