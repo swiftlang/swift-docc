@@ -287,8 +287,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testAmbiguousPaths() throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-        
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
@@ -3552,8 +3550,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testResolveExternalLinkFromTechnologyRoot() throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-        
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Some root page
