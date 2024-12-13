@@ -12,7 +12,7 @@ import Foundation
 import Markdown
 
 
-/// A directive that configures an alternate language representations of a symbol.
+/// A directive that configures an alternate language representation of a symbol.
 ///
 /// An API that can be called from more than one source language has more than one language representation.
 ///
