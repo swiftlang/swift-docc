@@ -75,7 +75,7 @@
       "docComment" : {
         "lines" : [
           {
-            "text" : "A directive that configures an alternate language representations of a symbol."
+            "text" : "A directive that configures an alternate language representation of a symbol."
           },
           {
             "text" : ""

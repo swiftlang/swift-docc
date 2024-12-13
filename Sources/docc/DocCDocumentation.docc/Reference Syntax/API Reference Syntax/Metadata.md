@@ -89,6 +89,7 @@ comment.
 ### Customizing the Languages of an Article
 
 - ``SupportedLanguage``
+- ``AlternateRepresentation``
 
 ### Customizing the Availability Information of a Page
 
