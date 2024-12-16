@@ -108,6 +108,10 @@ extension KeyedEncodingContainer {
         try encodeIfNotEmpty(variantCollectionValues.compactMap(\.defaultValue), forKey: key)
         
         for (index, variantCollection) in variantCollectionValues.enumerated() {
+            // Filter `nil` default values.
+            guard variantCollection.defaultValue != nil else {
+                continue
+            }
             variantCollection.addVariantsToEncoder(
                 encoder,
                 
