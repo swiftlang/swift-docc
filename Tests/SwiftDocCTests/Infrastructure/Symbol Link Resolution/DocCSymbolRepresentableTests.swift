@@ -15,6 +15,9 @@ import XCTest
 import SymbolKit
 @testable import SwiftDocC
 
+// This test uses ``DocCSymbolRepresentable`` and ``AbsoluteSymbolLink`` which are deprecated.
+// Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 class DocCSymbolRepresentableTests: XCTestCase {
     func testDisambiguatedByType() throws {
         try performOverloadSymbolDisambiguationTest(
