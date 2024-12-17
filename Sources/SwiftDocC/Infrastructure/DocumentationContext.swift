@@ -618,6 +618,19 @@ public class DocumentationContext {
                 resolver.visit(documentationNode.semantic)
             }
             
+            // Also resolve the node's alternate representations. This isn't part of the node's 'semantic' value (resolved above).
+            if let alternateRepresentations = documentationNode.metadata?.alternateRepresentations {
+                for alternateRepresentation in alternateRepresentations {
+                    let resolutionResult = resolver.resolve(
+                        alternateRepresentation.reference,
+                        in: bundle.rootReference,
+                        range: alternateRepresentation.originalMarkup.range,
+                        severity: .warning
+                    )
+                    alternateRepresentation.reference = .resolved(resolutionResult)
+                }
+            }
+
             let problems: [Problem]
             if documentationNode.semantic is Article {
                 // Diagnostics for articles have correct source ranges and don't need to be modified.
@@ -1048,7 +1061,11 @@ public class DocumentationContext {
     /// A lookup of resolved references based on the reference's absolute string.
     private(set) var referenceIndex = [String: ResolvedTopicReference]()
     
-    private func nodeWithInitializedContent(reference: ResolvedTopicReference, match foundDocumentationExtension: DocumentationContext.SemanticResult<Article>?) -> DocumentationNode {
+    private func nodeWithInitializedContent(
+        reference: ResolvedTopicReference,
+        match foundDocumentationExtension: DocumentationContext.SemanticResult<Article>?,
+        bundle: DocumentationBundle
+    ) -> DocumentationNode {
         guard var updatedNode = documentationCache[reference] else {
             fatalError("A topic reference that has already been resolved should always exist in the cache.")
         }
@@ -1056,7 +1073,9 @@ public class DocumentationContext {
         // Pull a matched article out of the cache and attach content to the symbol
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
-            engine: diagnosticEngine
+            engine: diagnosticEngine,
+            bundle: bundle,
+            context: self
         )
 
         // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
@@ -1399,7 +1418,11 @@ public class DocumentationContext {
                 Array(documentationCache.symbolReferences).concurrentMap { finalReference in
                     // Match the symbol's documentation extension and initialize the node content.
                     let match = uncuratedDocumentationExtensions[finalReference]
-                    let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
+                    let updatedNode = nodeWithInitializedContent(
+                        reference: finalReference,
+                        match: match,
+                        bundle: bundle
+                    )
                     
                     return ((
                         node: updatedNode,
@@ -2812,6 +2835,9 @@ public class DocumentationContext {
             }
         }
         
+        // Run analysis to determine whether manually configured alternate representations are valid.
+        analyzeAlternateRepresentations()
+        
         // Run global ``TopicGraph`` global analysis.
         analyzeTopicGraph()
     }
@@ -3174,6 +3200,118 @@ extension DocumentationContext {
             }
             return Problem(diagnostic: Diagnostic(source: source, severity: .information, range: nil, identifier: "org.swift.docc.SymbolNotCurated", summary: "You haven't curated \(node.reference.absoluteString.singleQuoted)"), possibleSolutions: [Solution(summary: "Add a link to \(node.reference.absoluteString.singleQuoted) from a Topics group of another documentation node.", replacements: [])])
         }
+        diagnosticEngine.emit(problems)
+    }
+        
+    func analyzeAlternateRepresentations() {
+        var problems = [Problem]()
+
+        func listSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> String {
+            sourceLanguages.sorted(by: { language1, language2 in
+                // Emit Swift first, then alphabetically.
+                switch (language1, language2) {
+                case (.swift, _): return true
+                case (_, .swift): return false
+                default: return language1.id < language2.id
+                }
+            }).map(\.name).list(finalConjunction: .and)
+        }
+        func removeAlternateRepresentationSolution(_ alternateRepresentation: AlternateRepresentation) -> [Solution] {
+            [Solution(
+                summary: "Remove this alternate representation",
+                replacements: alternateRepresentation.originalMarkup.range.map { [Replacement(range: $0, replacement: "")] } ?? [])]
+        }
+
+        for reference in knownPages {
+            guard let entity = try? self.entity(with: reference), let alternateRepresentations = entity.metadata?.alternateRepresentations else { continue }
+            
+            var sourceLanguageToReference: [SourceLanguage: AlternateRepresentation] = [:]
+            for alternateRepresentation in alternateRepresentations {
+                // Check if the entity is not a symbol, as only symbols are allowed to specify custom alternate representations
+                guard entity.symbol != nil else {
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Custom alternate representations are not supported for page kind \(entity.kind.name.singleQuoted)",
+                            explanation: "Alternate representations are only supported for symbols."
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    ))
+                    continue
+                }
+
+                guard case .resolved(.success(let alternateRepresentationReference)) = alternateRepresentation.reference,
+                      let alternateRepresentationEntity = try? self.entity(with: alternateRepresentationReference) else {
+                    continue
+                }
+                
+                // Check if the resolved entity is not a symbol, as only symbols are allowed as custom alternate representations
+                guard alternateRepresentationEntity.symbol != nil else {
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Page kind \(alternateRepresentationEntity.kind.name.singleQuoted) is not allowed as a custom alternate language representation",
+                            explanation: "Symbols can only specify other symbols as custom language representations."
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    ))
+                    continue
+                }
+                
+                // Check if the documented symbol already has alternate representations from in-source annotations.
+                let duplicateSourceLanguages = alternateRepresentationEntity.availableSourceLanguages.intersection(entity.availableSourceLanguages)
+                if !duplicateSourceLanguages.isEmpty {
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                            summary: "\(entity.name.plainText.singleQuoted) already has a representation in \(listSourceLanguages(duplicateSourceLanguages))",
+                            explanation: "Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for."
+                        ),
+                        possibleSolutions: [Solution(summary: "Replace this alternate language representation with a symbol which isn't available in \(listSourceLanguages(entity.availableSourceLanguages))", replacements: [])]
+                    ))
+                }
+                
+                let duplicateAlternateLanguages = Set(sourceLanguageToReference.keys).intersection(alternateRepresentationEntity.availableSourceLanguages)
+                if !duplicateAlternateLanguages.isEmpty {
+                    let notes: [DiagnosticNote] = duplicateAlternateLanguages.compactMap { duplicateAlternateLanguage in
+                        guard let alreadyExistingRepresentation = sourceLanguageToReference[duplicateAlternateLanguage],
+                              let range = alreadyExistingRepresentation.originalMarkup.range,
+                              let source = range.source else {
+                            return nil
+                        }
+                        
+                        return DiagnosticNote(source: source, range: range, message: "This directive already specifies an alternate \(duplicateAlternateLanguage.name) representation.")
+                    }
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                            summary: "A custom alternate language representation for \(listSourceLanguages(duplicateAlternateLanguages)) has already been specified",
+                            explanation: "Only one custom alternate language representation can be specified per language.",
+                            notes: notes
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    ))
+                }
+                
+                // Update mapping from source language to alternate declaration, for diagnostic purposes
+                for alreadySeenLanguage in alternateRepresentationEntity.availableSourceLanguages {
+                    sourceLanguageToReference[alreadySeenLanguage] = alternateRepresentation
+                }
+            }
+        }
+        
         diagnosticEngine.emit(problems)
     }
 }
