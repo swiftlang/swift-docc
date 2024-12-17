@@ -1617,8 +1617,6 @@ public class DocumentationContext {
             }
         }
         
-        let trait = DocumentationDataVariantsTrait(for: selector)
-        
         // Merge in all the dictionary keys for each target into their section variants.
         keysByTarget.forEach { targetIdentifier, keys in
             let target = documentationCache[targetIdentifier]
