@@ -1617,17 +1617,15 @@ public class DocumentationContext {
             }
         }
         
-        let trait = DocumentationDataVariantsTrait(for: selector)
-        
         // Merge in all the dictionary keys for each target into their section variants.
         keysByTarget.forEach { targetIdentifier, keys in
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
-                let keys = keys.sorted { $0.name < $1.name }
-                if semantic.dictionaryKeysSectionVariants[trait] == nil {
-                    semantic.dictionaryKeysSectionVariants[trait] = DictionaryKeysSection(dictionaryKeys: keys)
+                let keys = keys.sorted(by: \.name)
+                if semantic.dictionaryKeysSection == nil {
+                    semantic.dictionaryKeysSection = DictionaryKeysSection(dictionaryKeys: keys)
                 } else {
-                    semantic.dictionaryKeysSectionVariants[trait]?.mergeDictionaryKeys(keys)
+                    semantic.dictionaryKeysSection?.mergeDictionaryKeys(keys)
                 }
             }
         }
@@ -1636,11 +1634,11 @@ public class DocumentationContext {
         parametersByTarget.forEach { targetIdentifier, parameters in
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
-                let parameters = parameters.sorted { $0.name < $1.name }
-                if semantic.httpParametersSectionVariants[trait] == nil {
-                    semantic.httpParametersSectionVariants[trait] = HTTPParametersSection(parameters: parameters)
+                let parameters = parameters.sorted(by: \.name)
+                if semantic.httpParametersSection == nil {
+                    semantic.httpParametersSection = HTTPParametersSection(parameters: parameters)
                 } else {
-                    semantic.httpParametersSectionVariants[trait]?.mergeParameters(parameters)
+                    semantic.httpParametersSection?.mergeParameters(parameters)
                 }
             }
         }
@@ -1652,12 +1650,12 @@ public class DocumentationContext {
                 // Add any body parameters to existing body record
                 var localBody = body
                 if let identifier = body.symbol?.preciseIdentifier, let bodyParameters = bodyParametersByTarget[identifier] {
-                    localBody.parameters = bodyParameters.sorted { $0.name < $1.name }
+                    localBody.parameters = bodyParameters.sorted(by: \.name)
                 }
-                if semantic.httpBodySectionVariants[trait] == nil {
-                    semantic.httpBodySectionVariants[trait] = HTTPBodySection(body: localBody)
+                if semantic.httpBodySection == nil {
+                    semantic.httpBodySection = HTTPBodySection(body: localBody)
                 } else {
-                    semantic.httpBodySectionVariants[trait]?.mergeBody(localBody)
+                    semantic.httpBodySection?.mergeBody(localBody)
                 }
             }
         }
@@ -1666,11 +1664,11 @@ public class DocumentationContext {
         responsesByTarget.forEach { targetIdentifier, responses in
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
-                let responses = responses.sorted { $0.statusCode < $1.statusCode }
-                if semantic.httpResponsesSectionVariants[trait] == nil {
-                    semantic.httpResponsesSectionVariants[trait] = HTTPResponsesSection(responses: responses)
+                let responses = responses.sorted(by: \.statusCode)
+                if semantic.httpResponsesSection == nil {
+                    semantic.httpResponsesSection = HTTPResponsesSection(responses: responses)
                 } else {
-                    semantic.httpResponsesSectionVariants[trait]?.mergeResponses(responses)
+                    semantic.httpResponsesSection?.mergeResponses(responses)
                 }
             }
         }
