@@ -354,7 +354,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
             do {
-                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.identifier)
+                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
                 try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
                 
                 if !emitDigest {

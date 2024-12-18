@@ -531,7 +531,7 @@ class SymbolTests: XCTestCase {
             withExtension: "symbols.json",
             subdirectory: "Test Resources"
         )!
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: deckKitSymbolGraph, to: url.appendingPathComponent("DeckKit.symbols.json"))
         }
         let symbol = try XCTUnwrap(context.documentationCache["c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:"]?.semantic as? Symbol)
@@ -549,7 +549,7 @@ class SymbolTests: XCTestCase {
     }
 
     func testUnresolvedReferenceWarningsInDocumentationExtension() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (url, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let myKitDocumentationExtensionComment = """
             # ``MyKit/MyClass``
 
@@ -959,7 +959,7 @@ class SymbolTests: XCTestCase {
         - <doc://com.test.external/ExternalPage>
         """
         
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
 
@@ -1198,22 +1198,183 @@ class SymbolTests: XCTestCase {
         // Declaration fragments should remain unchanged
         XCTAssertEqual(1, withoutArticle.declarationVariants[trait]!.count)
     }
+    
+    func testParsesMetadataDirectiveFromDocComment() throws {
+        let (node, problems) = try makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Metadata {
+                  @Available(customOS, introduced: 1.2.3)
+                }
+                """,
+            articleContent: nil
+        )
+        
+        XCTAssert(problems.isEmpty)
+        
+        let availability = try XCTUnwrap(node.metadata?.availability.first)
+        XCTAssertEqual(availability.platform, .other("customOS"))
+        XCTAssertEqual(availability.introduced.description, "1.2.3")
+    }
+    
+    func testEmitsWarningsInMetadataDirectives() throws {
+        let (_, problems) = try makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Metadata
+                """,
+            docCommentLineOffset: 12,
+            articleContent: nil,
+            diagnosticEngineFilterLevel: .information
+        )
+        
+        XCTAssertEqual(problems.count, 1)
+        
+        let diagnostic = try XCTUnwrap(problems.first).diagnostic
+        XCTAssertEqual(diagnostic.identifier, "org.swift.docc.Metadata.NoConfiguration")
+        XCTAssertEqual(diagnostic.source?.absoluteString, "file:///tmp/File.swift")
+        XCTAssertEqual(diagnostic.range?.lowerBound.line, 15)
+        XCTAssertEqual(diagnostic.range?.lowerBound.column, 1)
+    }
+    
+    func testEmitsWarningForDuplicateMetadata() throws {
+        let (node, problems) = try makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Metadata {
+                  @Available("Platform from doc comment", introduced: 1.2.3)
+                }
+                """,
+            docCommentLineOffset: 12,
+            articleContent: """
+            # Title
+            
+            @Metadata {
+              @Available("Platform from documentation extension", introduced: 1.2.3)
+            }
+            """
+        )
+        
+        XCTAssertEqual(problems.count, 1)
+        
+        let diagnostic = try XCTUnwrap(problems.first).diagnostic
+        XCTAssertEqual(diagnostic.identifier, "org.swift.docc.DuplicateMetadata")
+        XCTAssertEqual(diagnostic.source?.absoluteString, "file:///tmp/File.swift")
+        XCTAssertEqual(diagnostic.range?.lowerBound.line, 15)
+        XCTAssertEqual(diagnostic.range?.lowerBound.column, 1)
+        
+        let availability = try XCTUnwrap(node.metadata?.availability.first)
+        XCTAssertEqual(availability.platform, .other("Platform from documentation extension"))
+    }
+    
+    func testEmitsWarningsForInvalidMetadataChildrenInDocumentationComments() throws {
+        let (_, problems) = try makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Metadata {
+                  @Available("Platform from doc comment", introduced: 1.2.3)
+                  @CustomMetadata(key: "key", value: "value")
+                  
+                  @Comment(The directives below this are invalid in documentation comments)
+                
+                  @DocumentationExtension(mergeBehavior: override)
+                  @TechnologyRoot
+                  @DisplayName(Title)
+                  @PageImage(source: test, purpose: icon)
+                  @CallToAction(url: "https://example.com/sample.zip", purpose: download)
+                  @PageKind(sampleCode)
+                  @SupportedLanguage(swift)
+                  @PageColor(orange)
+                  @TitleHeading("Release Notes")
+                  @Redirected(from: "old/path/to/this/page")
+                }
+                """,
+            articleContent: nil
+        )
+        
+        XCTAssertEqual(
+            Set(problems.map(\.diagnostic.identifier)),
+            [
+                "org.swift.docc.Metadata.InvalidDocumentationExtensionInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidTechnologyRootInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidDisplayNameInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidPageImageInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidCallToActionInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidPageKindInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidSupportedLanguageInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidPageColorInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidTitleHeadingInDocumentationComment",
+                "org.swift.docc.Metadata.InvalidRedirectedInDocumentationComment",
+            ]
+        )
+    }
+    
+    func testParsesDeprecationSummaryDirectiveFromDocComment() throws {
+        let (node, problems) = try makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @DeprecationSummary {
+                  This is the deprecation summary.
+                }
+                """,
+            articleContent: nil
+        )
+        
+        XCTAssert(problems.isEmpty)
+        
+        XCTAssertEqual(
+            (node.semantic as? Symbol)?
+                .deprecatedSummary?
+                .content
+                .first?
+                .format()
+                .trimmingCharacters(in: .whitespaces)
+            ,
+            "This is the deprecation summary."
+        )
+    }
+    
+    func testAllowsCommentDirectiveInDocComment() throws {
+        let (_, problems) = try makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Comment(This is a comment)
+                """,
+            articleContent: nil
+        )
+        
+        XCTAssert(problems.isEmpty)
+    }
 
     // MARK: - Helpers
     
-    func makeDocumentationNodeSymbol(docComment: String, articleContent: String?, file: StaticString = #file, line: UInt = #line) throws -> (Symbol, [Problem]) {
+    func makeDocumentationNodeForSymbol(
+        docComment: String,
+        docCommentLineOffset: Int = 0,
+        articleContent: String?,
+        diagnosticEngineFilterLevel: DiagnosticSeverity = .warning,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> (DocumentationNode, [Problem]) {
         let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             
-            let newDocComment = SymbolGraph.LineList(docComment.components(separatedBy: .newlines).enumerated().map { arg -> SymbolGraph.LineList.Line in
-                let (index, line) = arg
-                let range = SymbolGraph.LineList.SourceRange(
-                    start: .init(line: index, character: 0),
-                    end: .init(line: index, character: line.utf8.count)
-                )
-                return .init(text: line, range: range)
-            })
+            let newDocComment = self.makeLineList(
+                docComment: docComment,
+                startOffset: .init(
+                    line: docCommentLineOffset,
+                    character: 0
+                ),
+                url: URL(string: "file:///tmp/File.swift")!
+            )
+            
             // The `guard` statement` below will handle the `nil` case by failing the test and
             graph.symbols[myFunctionUSR]?.docComment = newDocComment
             
@@ -1221,7 +1382,10 @@ class SymbolTests: XCTestCase {
             try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
         }
         
-        guard let original = context.documentationCache[myFunctionUSR], let symbol = original.symbol, let symbolSemantic = original.semantic as? Symbol else {
+        guard let original = context.documentationCache[myFunctionUSR],
+              let unifiedSymbol = original.unifiedSymbol,
+              let symbolSemantic = original.semantic as? Symbol
+        else {
             XCTFail("Couldn't find the expected symbol", file: (file), line: line)
             enum TestHelperError: Error { case missingExpectedMyFuctionSymbol }
             throw TestHelperError.missingExpectedMyFuctionSymbol
@@ -1232,14 +1396,43 @@ class SymbolTests: XCTestCase {
             var problems = [Problem]()
             let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
             XCTAssertNotNil(article, "The sidecar Article couldn't be created.", file: (file), line: line)
-            XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))", file: (file), line: line)
             return article
         }
         
-        let engine = DiagnosticEngine()
-        let node = DocumentationNode(reference: original.reference, symbol: symbol, platformName: symbolSemantic.platformName.map { $0.rawValue }, moduleReference: symbolSemantic.moduleReference, article: article, engine: engine)
+        let engine = DiagnosticEngine(filterLevel: diagnosticEngineFilterLevel)
+        
+        var node = DocumentationNode(
+            reference: original.reference,
+            unifiedSymbol: unifiedSymbol,
+            moduleData: unifiedSymbol.modules.first!.value,
+            moduleReference: symbolSemantic.moduleReference
+        )
+        
+        node.initializeSymbolContent(
+            documentationExtension: article,
+            engine: engine,
+            bundle: bundle,
+            context: context
+        )
+        
+        return (node, engine.problems)
+    }
+    
+    func makeDocumentationNodeSymbol(
+        docComment: String,
+        articleContent: String?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> (Symbol, [Problem]) {
+        let (node, problems) = try makeDocumentationNodeForSymbol(
+            docComment: docComment,
+            articleContent: articleContent,
+            file: file,
+            line: line
+        )
+        
         let semantic = try XCTUnwrap(node.semantic as? Symbol)
-        return (semantic, engine.problems)
+        return (semantic, problems)
     }
 }
 

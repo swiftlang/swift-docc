@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ import Markdown
 class RenderNodeCodableTests: XCTestCase {
     
     var bareRenderNode = RenderNode(
-        identifier: .init(bundleIdentifier: "com.bundle", path: "/", sourceLanguage: .swift),
+        identifier: .init(bundleID: "com.bundle", path: "/", sourceLanguage: .swift),
         kind: .article
     )
     
@@ -146,10 +146,10 @@ class RenderNodeCodableTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
         
-        let bundleID = #function
+        let bundleID: DocumentationBundle.Identifier = #function
         
         let renderNodeWithUniqueBundleID = try String(contentsOf: exampleRenderNodeJSON)
-        .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
+            .replacingOccurrences(of: "org.swift.docc.example", with: bundleID.rawValue)
         
         _ = try JSONDecoder().decode(RenderNode.self, from: Data(renderNodeWithUniqueBundleID.utf8))
         
@@ -189,7 +189,7 @@ class RenderNodeCodableTests: XCTestCase {
         )
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: "org.swift.docc.example",
+            bundleID: "org.swift.docc.example",
             path: "/documentation/test/customTopicSectionStyle",
             fragment: nil,
             sourceLanguage: .swift

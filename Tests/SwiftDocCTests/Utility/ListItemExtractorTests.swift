@@ -159,7 +159,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentFor(
             tagName: "DictionaryKey someKey",
             findModelContent: { semantic in
-                semantic.dictionaryKeysSectionVariants.allValues.first?.variant.dictionaryKeys.first?.contents
+                semantic.dictionaryKeysSection?.dictionaryKeys.first?.contents
             },
             renderVerification: .skip
         )
@@ -167,7 +167,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentOutlineFor(
             tagName: "DictionaryKeys",
             findModelContent: { semantic in
-                semantic.dictionaryKeysSectionVariants.allValues.first?.variant.dictionaryKeys.first?.contents
+                semantic.dictionaryKeysSection?.dictionaryKeys.first?.contents
             },
             renderVerification: .skip
         )
@@ -175,7 +175,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentFor(
             tagName: "HTTPResponse 200",
             findModelContent: { semantic in
-                semantic.httpResponsesSectionVariants.allValues.first?.variant.responses.first?.contents
+                semantic.httpResponsesSection?.responses.first?.contents
             },
             renderVerification: .skip
         )
@@ -183,7 +183,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentOutlineFor(
             tagName: "HTTPResponses",
             findModelContent: { semantic in
-                semantic.httpResponsesSectionVariants.allValues.first?.variant.responses.first?.contents
+                semantic.httpResponsesSection?.responses.first?.contents
             },
             renderVerification: .skip
         )
@@ -191,7 +191,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentFor(
             tagName: "httpBody",
             findModelContent: { semantic in
-                semantic.httpBodySectionVariants.allValues.first?.variant.body.contents
+                semantic.httpBodySection?.body.contents
             },
             renderVerification: .skip
         )
@@ -199,7 +199,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentFor(
             tagName: "HTTPParameter someParameter",
             findModelContent: { semantic in
-                semantic.httpParametersSectionVariants.allValues.first?.variant.parameters.first?.contents
+                semantic.httpParametersSection?.parameters.first?.contents
             },
             renderVerification: .skip
         )
@@ -207,7 +207,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentOutlineFor(
             tagName: "HTTPParameters",
             findModelContent: { semantic in
-                semantic.httpParametersSectionVariants.allValues.first?.variant.parameters.first?.contents
+                semantic.httpParametersSection?.parameters.first?.contents
             },
             renderVerification: .skip
         )
@@ -215,7 +215,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentFor(
             tagName: "HTTPBodyParameter someParameter",
             findModelContent: { semantic in
-                semantic.httpBodySectionVariants.allValues.first?.variant.body.parameters.first?.contents
+                semantic.httpBodySection?.body.parameters.first?.contents
             },
             renderVerification: .skip
         )
@@ -223,7 +223,7 @@ class ListItemExtractorTests: XCTestCase {
         try assertExtractsRichContentOutlineFor(
             tagName: "HTTPBodyParameters",
             findModelContent: { semantic in
-                semantic.httpBodySectionVariants.allValues.first?.variant.body.parameters.first?.contents
+                semantic.httpBodySection?.body.parameters.first?.contents
             },
             renderVerification: .skip
         )
@@ -458,7 +458,7 @@ class ListItemExtractorTests: XCTestCase {
         }
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(node)
+        let renderNode = converter.convert(node)
         
         let renderContent = try XCTUnwrap(findRenderContent(renderNode), "Didn't find any rendered content", file: file, line: line)
         let expectedRenderContent: [RenderBlockContent] = [

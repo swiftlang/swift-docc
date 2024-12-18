@@ -17,14 +17,14 @@ class AvailabilityRenderOrderTests: XCTestCase {
         forResource: "Availability.symbols", withExtension: "json", subdirectory: "Test Resources")!
     
     func testSortingAtRenderTime() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: self.availabilitySGFURL, to: url.appendingPathComponent("Availability.symbols.json"))
         }
         defer {
             try? FileManager.default.removeItem(at: bundleURL)
         }
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode

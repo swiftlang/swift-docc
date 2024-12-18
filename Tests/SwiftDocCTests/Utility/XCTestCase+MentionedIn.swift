@@ -16,7 +16,7 @@ import SymbolKit
 extension XCTestCase {
     /// Creates a test bundle for testing "Mentioned In" features.
     func createMentionedInTestBundle() throws -> (DocumentationBundle, DocumentationContext) {
-        let exampleDocumentation = Folder(name: "MentionedIn.docc", content: [
+        let catalog = Folder(name: "MentionedIn.docc", content: [
             JSONFile(name: "MentionedIn.symbols.json", content: makeSymbolGraph(
                 moduleName: "MentionedIn",
                 symbols: [
@@ -72,8 +72,7 @@ extension XCTestCase {
                  """),
         ])
 
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         return (bundle, context)
     }
 }

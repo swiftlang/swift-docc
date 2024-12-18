@@ -19,7 +19,7 @@ class IndexActionTests: XCTestCase {
     #if !os(iOS)
     func testIndexActionOutputIsDeterministic() async throws {
         // Convert a test bundle as input for the IndexAction
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let targetURL = try createTemporaryDirectory()
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
@@ -50,8 +50,8 @@ class IndexActionTests: XCTestCase {
             
             let engine = DiagnosticEngine(filterLevel: .warning)
             
-            let indexAction = try IndexAction(
-                documentationBundleURL: targetBundleURL,
+            let indexAction = IndexAction(
+                archiveURL: targetBundleURL,
                 outputURL: indexURL,
                 bundleIdentifier: bundleIdentifier,
                 diagnosticEngine: engine
@@ -61,6 +61,7 @@ class IndexActionTests: XCTestCase {
             let index = try NavigatorIndex.readNavigatorIndex(url: indexURL)
             
             resultIndexDumps.insert(index.navigatorTree.root.dumpTree())
+            XCTAssert(engine.problems.isEmpty, "Unexpected problems:\n\(engine.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
             XCTAssertTrue(engine.problems.isEmpty, "Indexing bundle at \(targetURL) resulted in unexpected issues")
         }
         
@@ -91,8 +92,8 @@ class IndexActionTests: XCTestCase {
         let bundleIdentifier = "org.swift.docc.example"
         let indexURL = targetURL.appendingPathComponent("index")
         let engine = DiagnosticEngine(filterLevel: .warning)
-        let indexAction = try IndexAction(
-            documentationBundleURL: targetBundleURL,
+        let indexAction = IndexAction(
+            archiveURL: targetBundleURL,
             outputURL: indexURL,
             bundleIdentifier: bundleIdentifier,
             diagnosticEngine: engine

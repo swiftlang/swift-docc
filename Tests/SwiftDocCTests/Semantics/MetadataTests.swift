@@ -19,7 +19,7 @@ class MetadataTests: XCTestCase {
         let source = "@Metadata"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata, "Even if a Metadata directive is empty we can create it")
@@ -33,7 +33,7 @@ class MetadataTests: XCTestCase {
         let source = "@Metadata(argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a metadata value")
@@ -50,7 +50,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a Metadata value")
@@ -69,7 +69,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a Metadata value")
@@ -88,7 +88,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -105,7 +105,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -125,7 +125,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -142,7 +142,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -160,7 +160,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -176,7 +176,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -197,7 +197,7 @@ class MetadataTests: XCTestCase {
         The abstract of this article
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child.")
@@ -219,7 +219,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
@@ -243,7 +243,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
@@ -279,7 +279,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a TitleHeading child.")
@@ -307,16 +307,20 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
         XCTAssertNotNil(article?.metadata, "The Article has the parsed Metadata")
         XCTAssertNil(article?.metadata?.displayName, "The Article doesn't have the DisplayName")
         
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.HasAtMostOne<Article, Metadata>.DuplicateChildren", problems.first?.diagnostic.identifier)
-        
+        XCTAssertEqual(
+            problems.map(\.diagnostic.identifier),
+            [
+                "org.swift.docc.DocumentationExtension.NoConfiguration",
+                "org.swift.docc.HasAtMostOne<Article, Metadata>.DuplicateChildren",
+            ]
+        )
     }
     
     func testPageImageSupport() throws {
@@ -414,12 +418,9 @@ class MetadataTests: XCTestCase {
         line: UInt = #line
     ) throws -> (problems: [String], metadata: Metadata) {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
-        _ = analyzer.visit(document)
-        var problems = analyzer.problems
-        
+        var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         
         let problemIDs = problems.map { problem -> String in

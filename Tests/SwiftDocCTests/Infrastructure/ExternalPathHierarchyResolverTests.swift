@@ -715,7 +715,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.identifier)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -798,7 +798,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the relationships of 'SomeClass'
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: mainBundle.identifier, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -822,7 +822,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the declaration of 'someFunction'
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: mainBundle.identifier, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -989,13 +989,13 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-   private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) throws -> LinkResolvers {
+    private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.identifier)
+        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
@@ -1003,7 +1003,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             entitySummaries.append(contentsOf: node.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false))
         }
         

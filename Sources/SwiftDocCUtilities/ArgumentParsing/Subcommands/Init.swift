@@ -25,7 +25,7 @@ extension Docc {
         public var initOptions: InitOptions
         
         public func run() async throws {
-            var initAction = try InitAction(fromInitOptions: initOptions)
+            let initAction = try InitAction(fromInitOptions: initOptions)
             try await initAction.performAndHandleResult()
         }
     }

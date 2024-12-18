@@ -19,6 +19,7 @@ import Markdown
 /// 
 /// ### Child Directives
 ///
+/// - ``AlternateRepresentation``
 /// - ``DocumentationExtension``
 /// - ``TechnologyRoot``
 /// - ``DisplayName``
@@ -77,6 +78,9 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
     @ChildDirective
     var redirects: [Redirect]? = nil
+    
+    @ChildDirective(requirements: .zeroOrMore)
+    var alternateRepresentations: [AlternateRepresentation]
 
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -91,6 +95,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "_pageColor"            : \Metadata.__pageColor,
         "titleHeading"          : \Metadata._titleHeading,
         "redirects"             : \Metadata._redirects,
+        "alternateRepresentations"  : \Metadata._alternateRepresentations,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
@@ -100,7 +105,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
@@ -192,5 +197,52 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         
         return true
     }
+    
+    /// Validates the use of this Metadata directive in a documentation comment.
+    ///
+    /// Some configuration options of Metadata are invalid in documentation comments. This function
+    /// emits warnings for illegal uses and sets their values to `nil`.
+    func validateForUseInDocumentationComment(
+        symbolSource: URL?,
+        problems: inout [Problem]
+    ) {
+        let invalidDirectives: [(any AutomaticDirectiveConvertible)?] = [
+            documentationOptions,
+            technologyRoot,
+            displayName,
+            callToAction,
+            pageKind,
+            _pageColor,
+            titleHeading,
+        ] + (redirects ?? [])
+          + supportedLanguages
+          + pageImages
+        
+        let namesAndRanges = invalidDirectives
+            .compactMap { $0 }
+            .map { (type(of: $0).directiveName, $0.originalMarkup.range) }
+        
+        problems.append(
+            contentsOf: namesAndRanges.map { (name, range) in
+                Problem(
+                    diagnostic: Diagnostic(
+                        source: symbolSource,
+                        severity: .warning,
+                        range: range,
+                        identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
+                        summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
+                        explanation: "Specify this configuration in a documentation extension file"
+                        
+                        // TODO: It would be nice to offer a solution here that removes the directive for you (#1111, rdar://140846407)
+                    )
+                )
+            }
+        )
+        
+        documentationOptions = nil
+        technologyRoot = nil
+        displayName = nil
+        pageKind = nil
+        _pageColor = nil
+    }
 }
-

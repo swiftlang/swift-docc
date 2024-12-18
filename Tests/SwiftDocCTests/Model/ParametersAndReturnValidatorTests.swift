@@ -26,7 +26,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Returns: `YES` if doing something was successful, or `NO` if an error occurred.
         // - (void)doSomethingWith:(NSInteger)someValue error:(NSError **)error;
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInObjectiveC/doSomething(with:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/doSomething(with:)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -47,7 +47,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Returns: Some string. If an error occurs, this method returns `nil` and assigns an appropriate error object to the `error` parameter.
         // - (nullable NSString *)returnSomethingAndReturnError:(NSError **)error;
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInObjectiveC/returnSomething()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/returnSomething()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -68,7 +68,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Throws: Some error if something does wrong
         // @objc public func doSomething(with someValue: Int) throws { }
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInSwift/doSomething(with:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInSwift/doSomething(with:)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -93,7 +93,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Throws: Some error if something does wrong
         // @objc public func returnSomething() throws -> String { "" }
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInSwift/returnSomething()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInSwift/returnSomething()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -352,12 +352,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         symbolGraph.symbols["symbol-id"]?.mixins[SymbolGraph.Symbol.FunctionSignature.mixinKey] = nil
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
     }
@@ -369,12 +367,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             No parameters section
             """)
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
     }
@@ -387,12 +383,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
               - secondParameter: One description
               - thirdParameter: Another description
             """)
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 2)
         let endOfParameterSectionLocation = SourceLocation(line: start.line + 5, column: start.character + 40, source: symbolURL)
@@ -428,12 +422,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             - Parameter secondParameter: One description
             - Parameter thirdParameter: Another description
             """)
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 2)
         let endOfParameterSectionLocation = SourceLocation(line: start.line + 4, column: start.character + 48, source: symbolURL)
@@ -463,7 +455,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithOnlyErrorParameter() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -486,12 +478,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     ))
                 ])
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -506,7 +497,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithDifferentSignaturesOnDifferentPlatforms() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 // One parameter, void return
                 JSONFile(name: "Platform1-ModuleName.symbols.json", content: makeSymbolGraph(
@@ -543,12 +534,12 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 - Returns: Some description of the return value that is only available on platform 3.
                 """)
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -562,7 +553,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithErrorParameterButVoidType() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -585,12 +576,12 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     ))
                 ])
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         

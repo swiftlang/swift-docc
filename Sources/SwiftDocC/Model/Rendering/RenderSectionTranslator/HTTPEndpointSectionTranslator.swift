@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,30 +20,27 @@ struct HTTPEndpointSectionTranslator: RenderSectionTranslator {
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
         // Check if there is any endpoint available
-        guard !symbol.httpEndpointSectionVariants.isEmpty else { return nil }
+        guard let section = symbol.httpEndpointSection else { return nil }
         
-        return translateSectionToVariantCollection(
-            documentationDataVariants: symbol.httpEndpointSectionVariants
-        ) { _, section in
-            let endpointURL: URL
+        let endpointURL: URL
+        if endpointType == .production {
+            endpointURL = section.endpoint.baseURL
+        } else if let sandboxURL = section.endpoint.sandboxURL {
+            endpointURL = sandboxURL
+        } else {
+            return nil
+        }
             
-            if endpointType == .production {
-                endpointURL = section.endpoint.baseURL
-            } else if let sandboxURL = section.endpoint.sandboxURL {
-                endpointURL = sandboxURL
-            } else {
-                return nil
-            }
-            
-            return RESTEndpointRenderSection(
+        return VariantCollection(defaultValue: CodableContentSection(
+            RESTEndpointRenderSection(
                 title: (endpointType == .production ? "URL" : "Sandbox URL"),
                 tokens: Self.tokensFor(method: section.endpoint.method, baseURL: endpointURL, path: section.endpoint.path)
             )
-        }
+        ))
     }
     
     // Generate DeclarationFragments from endpoint data.
-    static func tokensFor(method: String, baseURL: URL?, path: String) -> [RESTEndpointRenderSection.Token] {
+    private static func tokensFor(method: String, baseURL: URL?, path: String) -> [RESTEndpointRenderSection.Token] {
         var fragments : [RESTEndpointRenderSection.Token] = [] 
         // Operation type
         

@@ -60,7 +60,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     /// The location of the associated link, as a reference to a file in this documentation bundle.
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+            ResourceReference(bundleID: bundle.id, path: argumentValue)
         }
     )
     public var file: ResourceReference? = nil
@@ -173,7 +173,7 @@ extension CallToAction {
                     ]
                 ))
             } else {
-                self.file = ResourceReference(bundleIdentifier: file.bundleIdentifier, path: file.url.lastPathComponent)
+                self.file = ResourceReference(bundleID: file.bundleID, path: file.url.lastPathComponent)
             }
         }
 

@@ -24,7 +24,7 @@ class AutomaticCurationTests: XCTestCase {
             let containerID = "some-container-id"
             let memberID = "some-member-id"
             
-            let tempURL = try createTempFolder(content: [
+            let catalog =
                 Folder(name: "unit-test.docc", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         moduleName: "ModuleName",
@@ -37,8 +37,8 @@ class AutomaticCurationTests: XCTestCase {
                         ]
                     ))
                 ])
-            ])
-            let (_, bundle, context) = try loadBundle(from: tempURL)
+            
+            let (bundle, context) = try loadBundle(catalog: catalog)
             
             try assertRenderedPage(atPath: "/documentation/ModuleName/SomeClass", containsAutomaticTopicSectionFor: kind, context: context, bundle: bundle)
         }
@@ -53,7 +53,7 @@ class AutomaticCurationTests: XCTestCase {
             
             let nonExtensionKind = SymbolGraph.Symbol.KindIdentifier(identifier: String(kind.identifier.dropLast(".extension".count)))
             
-            let tempURL = try createTempFolder(content: [
+            let catalog =
                 Folder(name: "unit-test.docc", content: [
                     // Add an empty main symbol graph file so that the extension symbol graph file is processed
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
@@ -82,8 +82,8 @@ class AutomaticCurationTests: XCTestCase {
                         ]
                     )),
                 ])
-            ])
-            let (_, bundle, context) = try loadBundle(from: tempURL)
+            
+            let (bundle, context) = try loadBundle(catalog: catalog)
             
             try assertRenderedPage(atPath: "/documentation/ModuleName", containsAutomaticTopicSectionFor: .extendedModule, context: context, bundle: bundle)
             try assertRenderedPage(atPath: "/documentation/ModuleName/ExtendedModule", containsAutomaticTopicSectionFor: kind, context: context, bundle: bundle)
@@ -98,7 +98,7 @@ class AutomaticCurationTests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode, file: file, line: line)
         
@@ -117,7 +117,7 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testAutomaticTopicsSkippingCustomCuratedSymbols() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
             // Curate some of members of SideClass in an API collection
             try """
             # Some API collection
@@ -136,7 +136,7 @@ class AutomaticCurationTests: XCTestCase {
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         // Compile the render node to flex the automatic curator
         let symbol = node.semantic as! Symbol
@@ -172,7 +172,7 @@ class AutomaticCurationTests: XCTestCase {
         for curatedIndices in variationsOfChildrenToCurate {
             let manualCuration = curatedIndices.map { "- <\(allExpectedChildren[$0])>" }.joined(separator: "\n")
             
-            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
                 try """
                 # ``SideKit/SideClass``
 
@@ -186,7 +186,7 @@ class AutomaticCurationTests: XCTestCase {
                 """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
             
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
             // Compile docs and verify the generated Topics section
             let symbol = node.semantic as! Symbol
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -231,7 +231,7 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testSeeAlsoSectionForAutomaticallyCuratedTopics() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("sidekit.symbols.json")))
             
             // Copy `SideClass` a handful of times
@@ -348,7 +348,7 @@ class AutomaticCurationTests: XCTestCase {
         
         // The first topic section
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
@@ -364,7 +364,7 @@ class AutomaticCurationTests: XCTestCase {
         
         // The second topic section
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassFour", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassFour", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
@@ -377,7 +377,7 @@ class AutomaticCurationTests: XCTestCase {
         
         // The second topic section
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassSix", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassSix", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
@@ -389,21 +389,21 @@ class AutomaticCurationTests: XCTestCase {
         
         // The automatically curated symbols shouldn't have a See Also section
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassEight", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassEight", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             XCTAssertNil(renderNode.seeAlsoSections.first, "This symbol was automatically curated and shouldn't have a See Also section")
         }
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassNine", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassNine", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             XCTAssertNil(renderNode.seeAlsoSections.first, "This symbol was automatically curated and shouldn't have a See Also section")
         }
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassTen", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassTen", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
@@ -421,7 +421,7 @@ class AutomaticCurationTests: XCTestCase {
             forResource: "TopLevelCuration.symbols", withExtension: "json", subdirectory: "Test Resources")!
         
         // Create a test bundle copy with the symbol graph from above
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: topLevelCurationSGFURL, to: url.appendingPathComponent("TopLevelCuration.symbols.json"))
         }
         defer {
@@ -430,7 +430,7 @@ class AutomaticCurationTests: XCTestCase {
 
         do {
             // Get the framework render node
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
@@ -443,7 +443,7 @@ class AutomaticCurationTests: XCTestCase {
         
         do {
             // Get the `A` render node
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/A", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/A", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
@@ -483,7 +483,7 @@ class AutomaticCurationTests: XCTestCase {
         // Load the "MixedLanguageProtocol Implementations" API COllection
         let protocolImplementationsNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
                 sourceLanguages: [.swift, .objectiveC]
             )
@@ -509,7 +509,7 @@ class AutomaticCurationTests: XCTestCase {
         
         let frameworkDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/MixedLanguageFramework",
                 sourceLanguages: [.swift, .objectiveC]
             )
@@ -578,7 +578,7 @@ class AutomaticCurationTests: XCTestCase {
         let whatsitSymbols = Bundle.module.url(
             forResource: "Whatsit-Objective-C.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: whatsitSymbols, to: url.appendingPathComponent("Whatsit-Objective-C.symbols.json"))
         }
         defer {
@@ -587,7 +587,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let frameworkDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/Whatsit",
                 sourceLanguages: [.objectiveC]
             )
@@ -613,7 +613,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let classDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/Whatsit/Whatsit",
                 sourceLanguages: [.objectiveC]
             )
@@ -639,7 +639,7 @@ class AutomaticCurationTests: XCTestCase {
         let symbolURL = Bundle.module.url(
             forResource: "TypeSubscript.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: symbolURL, to: url.appendingPathComponent("TypeSubscript.symbols.json"))
         }
         defer {
@@ -648,7 +648,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let containerDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/ThirdOrder/SomeStruct",
                 sourceLanguages: [.swift]
             )
@@ -675,7 +675,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let rootDocumentationNode = try context.entity(
             with: .init(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/CxxSymbols",
                 sourceLanguage: .objectiveC
             )
@@ -765,7 +765,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let protocolDocumentationNode = try context.entity(
             with: .init(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/ShapeKit/OverloadedProtocol",
                 sourceLanguage: .swift))
 
@@ -819,7 +819,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let protocolDocumentationNode = try context.entity(
             with: .init(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/ShapeKit/OverloadedProtocol",
                 sourceLanguage: .swift))
 
@@ -1244,7 +1244,7 @@ class AutomaticCurationTests: XCTestCase {
              let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
              let (_, bundle, context) = try loadBundle(from: catalogURL)
 
-             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift))
+             let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift))
 
              // Compile docs and verify the generated Topics section
              var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)

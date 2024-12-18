@@ -146,7 +146,7 @@ private extension DocumentationContentRendererTests {
     var nodeWithSubheadingAndNavigatorVariants: DocumentationNode {
         var node = DocumentationNode(
             reference: ResolvedTopicReference(
-                bundleIdentifier: "org.swift.example",
+                bundleID: "org.swift.example",
                 path: "/documentation/class",
                 fragment: nil,
                 sourceLanguage: .swift
@@ -198,7 +198,7 @@ private extension DocumentationContentRendererTests {
             ]),
             roleHeadingVariants: .init(swiftVariant: ""),
             platformNameVariants: .init(swiftVariant: nil),
-            moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
+            moduleReference: ResolvedTopicReference(bundleID: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
             externalIDVariants: .init(swiftVariant: nil),
             accessLevelVariants: .init(swiftVariant: nil),
             availabilityVariants: .init(swiftVariant: Availability(availability: [])),
@@ -210,13 +210,13 @@ private extension DocumentationContentRendererTests {
             seeAlsoVariants: .init(swiftVariant: nil),
             returnsSectionVariants: .init(swiftVariant: nil),
             parametersSectionVariants: .init(swiftVariant: nil),
-            dictionaryKeysSectionVariants: .init(swiftVariant: nil),
-            possibleValuesSectionVariants: .init(swiftVariant: nil),
-            httpEndpointSectionVariants: .init(swiftVariant: nil),
-            httpBodySectionVariants: .init(swiftVariant: nil),
-            httpParametersSectionVariants: .init(swiftVariant: nil),
-            httpResponsesSectionVariants: .init(swiftVariant: nil),
-            redirectsVariants: .init(swiftVariant: nil)
+            dictionaryKeysSection: nil,
+            possibleValuesSection: nil,
+            httpEndpointSection: nil,
+            httpBodySection: nil,
+            httpParametersSection: nil,
+            httpResponsesSection: nil,
+            redirects: nil
         )
         
         return node

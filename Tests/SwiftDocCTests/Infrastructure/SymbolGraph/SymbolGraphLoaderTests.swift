@@ -119,7 +119,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let tempURL = try createTemporaryDirectory()
 
         let symbolGraphSourceURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
         var symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: try Data(contentsOf: symbolGraphSourceURL))
         
@@ -148,7 +148,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     /// Tests if we detect correctly a Mac Catalyst graph
     func testLoadingiOSAndCatalystGraphs() throws {
         func testBundleCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) throws -> (URL, DocumentationBundle, DocumentationContext) {
-            return try testBundleAndContext(copying: "TestBundle", configureBundle: { bundleURL in
+            return try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: { bundleURL in
                 // Create an iOS symbol graph file
                 let iOSGraphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
                 let renamediOSGraphURL = bundleURL.appendingPathComponent(iOSSymbolGraphName)
@@ -214,7 +214,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     // Tests if main and bystanders graphs are loaded
     func testLoadingModuleBystanderExtensions() throws {
-        let (_, bundle, _) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (_, bundle, _) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
@@ -1791,7 +1791,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
-                identifier: "com.example.test"
+                id: "com.example.test"
             ),
             baseURL: URL(string: "https://example.com/example")!,
             symbolGraphURLs: symbolGraphURLs,

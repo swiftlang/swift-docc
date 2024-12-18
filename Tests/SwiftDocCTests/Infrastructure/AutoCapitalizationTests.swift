@@ -57,16 +57,14 @@ class AutoCapitalizationTests: XCTestCase {
             parameters: ["one", "two", "three", "four", "five"]
         )
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
@@ -104,16 +102,14 @@ class AutoCapitalizationTests: XCTestCase {
             parameters: ["one", "two", "three", "four", "five"]
         )
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
@@ -147,16 +143,14 @@ class AutoCapitalizationTests: XCTestCase {
             parameters: []
         )
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         

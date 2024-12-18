@@ -33,7 +33,7 @@ class DoxygenTests: XCTestCase {
                 )
             }
 
-        let tempURL = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
@@ -86,10 +86,9 @@ class DoxygenTests: XCTestCase {
                     ]
                 )),
             ])
-        ])
 
-        let (_, bundle, context) = try loadBundle(from: tempURL)
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
 
         // Verify the expected content in the in-memory model
         let node = try context.entity(with: reference)

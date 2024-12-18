@@ -13,6 +13,9 @@ import SymbolKit
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+#if canImport(UniformTypeIdentifiers)
+import UniformTypeIdentifiers
+#endif
 #if os(Windows)
 import WinSDK
 #endif
@@ -116,15 +119,7 @@ public class FileServer {
         
         #if os(macOS)
         
-        let unmanagedFileUTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext as CFString, nil)
-        guard let fileUTI = unmanagedFileUTI?.takeRetainedValue() else {
-            return defaultMimeType
-        }
-        guard let mimeType = UTTypeCopyPreferredTagWithClass (fileUTI, kUTTagClassMIMEType)?.takeRetainedValue() else {
-            return defaultMimeType
-        }
-        
-        return (mimeType as NSString) as String
+        return UTType(filenameExtension: ext)?.preferredMIMEType ?? defaultMimeType
 
         #elseif os(Windows)
 
