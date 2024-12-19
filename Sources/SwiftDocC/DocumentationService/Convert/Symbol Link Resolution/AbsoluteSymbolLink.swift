@@ -14,6 +14,7 @@ import SymbolKit
 /// An absolute link to a symbol.
 ///
 /// You can use this model to validate a symbol link and access its different parts.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 public struct AbsoluteSymbolLink: CustomStringConvertible {
     /// The identifier for the documentation bundle this link is from.
     public let bundleID: String
@@ -130,8 +131,10 @@ public struct AbsoluteSymbolLink: CustomStringConvertible {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 extension AbsoluteSymbolLink {
     /// A component of a symbol link.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     public struct LinkComponent: CustomStringConvertible {
         /// The name of the symbol represented by the link component.
         public let name: String
@@ -207,6 +210,7 @@ extension AbsoluteSymbolLink {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 extension AbsoluteSymbolLink.LinkComponent {
     /// A suffix attached to a documentation link to disambiguate it from other symbols
     /// that share the same base name.

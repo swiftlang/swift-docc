@@ -12,6 +12,9 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 
+// This test uses ``AbsoluteSymbolLink`` which is deprecated.
+// Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 class AbsoluteSymbolLinkTests: XCTestCase {
     func testCreationOfValidLinks() throws {
         let validLinks = [
