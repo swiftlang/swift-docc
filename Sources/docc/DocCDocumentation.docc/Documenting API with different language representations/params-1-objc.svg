@@ -1,0 +1,28 @@
+<svg width="300" height="157" viewBox="0 0 300 157" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { fill: black; }
+    text.heading { font-family: "HelveticaNeue", Helvetica, Arial, sans-serif; font-size: 15px; }
+    text.param { font-family: "Menlo", monospace; font-weight: bold; font-size: 8.5px; }
+    text.lang { fill: #0066ff; font-weight: 600; }
+    rect { height: 10px; rx: 2px; ry: 2px; fill: #e3e3e3; }
+    rect.code { fill: #d8d8d8; }
+    rect.del { fill: none; stroke: red; stroke-dasharray: 4px; }
+  </style>
+  <text class="heading lang" x="295" y="17.3" text-anchor="end">Objective-C</text>
+    
+  <text class="heading" x="5" y="17.3">Parameters</text>
+  <text class="param" x="13.5" y="35.92">someValue</text>
+  <rect x="22.5" y="41.92" width="142.37"/>
+  
+  <text class="param" x="13.5" y="69.67">error</text>
+  <rect x="22.5" y="75.17" width="261.73"/>
+  <rect x="22.5" y="88.42" width="84.85"/>
+  <rect class="code" x="108.35" y="88.42" width="12.55" />
+  <rect x="121.9" y="88.42" width="81.01"/>
+  
+  <text class="heading" x="5" y="132.6">Return Value</text>
+  <rect class="code" x="5.5" y="144.1" width="12.55"/>
+  <rect x="19.05" y="144.1" width="152.52"/>
+  <rect class="code" x="172.57" y="144.1" width="8.03"/>
+  <rect x="181.6" y="144.1" width="80.67"/>
+</svg>

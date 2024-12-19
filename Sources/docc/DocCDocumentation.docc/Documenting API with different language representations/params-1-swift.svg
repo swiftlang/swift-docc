@@ -1,0 +1,24 @@
+<svg width="300" height="157" viewBox="0 0 300 157" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { fill: black; }
+    text.heading { font-family: "HelveticaNeue", Helvetica, Arial, sans-serif; font-size: 15px; }
+    text.param { font-family: "Menlo", monospace; font-weight: bold; font-size: 8.5px; }
+    text.lang { fill: #0066ff; font-weight: 600; }
+    rect { height: 10px; rx: 2px; ry: 2px; fill: #e3e3e3; }
+    rect.code { fill: #d8d8d8; }
+    rect.del { fill: none; stroke: red; stroke-dasharray: 4px; height: 9.5px; }
+  </style>
+  
+  <text class="heading lang" x="295" y="17.3" text-anchor="end">Swift</text>
+    
+  <text class="heading" x="5" y="17.3">Parameters</text>
+  <text class="param" x="13.5" y="35.92">someValue</text>
+  <rect x="22.5" y="41.92" width="142.37"/>
+  
+  <rect class="del" x="13.5" y="63.4" width="25.3" style="height: 8px"/>
+  <rect class="del" x="22.5" y="75.17" width="261.73"/>
+  <rect class="del" x="22.5" y="88.42" width="180.75"/>
+  
+  <rect class="del" x="6.5" y="121.2" width="86.3" style="height: 13.5px"/>
+  <rect class="del" x="6.5" y="144.1" width="257.67"/>
+</svg>
