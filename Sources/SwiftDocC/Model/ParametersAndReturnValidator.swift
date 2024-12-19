@@ -669,12 +669,18 @@ private extension Return {
     func possiblyDocumentsFailureBehavior() -> Bool {
         contents.contains(where: { markup in
             let formatted = markup.format().lowercased()
+            
             // Check if the authored markup contains one of a handful of words as an indication that it possibly documents what happens when an error occurs.
-            return ["error", "`nil`", "fails", "failure"].contains(where: { word in
-                formatted.contains(word)
-            })
+            return returnValueDescribesErrorRegex.firstMatch(in: formatted, range: NSRange(formatted.startIndex ..< formatted.endIndex, in: formatted)) != nil
+        })
     }
 }
+    
+/// A regular expression that finds the words; "error", "fail", "fails", "failure", "failures", "nil", and "null".
+/// These words only match at word boundaries or when surrounded by single backticks ("`").
+///
+/// This is used as a heuristic to give an indication if the return value documentation possibly documents what happens when an error occurs.
+private let returnValueDescribesErrorRegex = try! NSRegularExpression(pattern: "(\\b|`)(error|fail(ure)?s?|nil|null)(\\b|`)", options: .caseInsensitive)
 
 private extension SymbolGraph.Symbol.FunctionSignature {
     mutating func merge(with signature: Self, selector: UnifiedSymbolGraph.Selector) {

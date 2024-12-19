@@ -113,12 +113,20 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     
     func testExtendsReturnValueDocumentation() throws {
         for (returnValueDescription, expectsExtendedDocumentation) in [
+            // Expects to extend the documentation
             ("Returns some value.", true),
+            ("Returns some failsafe value.", true),
+            ("Returns some errorless value.", true),
+            ("Returns a NSNull value.", true),
+            
+            // Expects to not extend the documentation
             ("Returns some value, except if the function fails.", false),
             ("Returns some value. If an error occurs, this function doesn't return a value.", false),
             ("Returns some value. On failure, this function doesn't return a value.", false),
             ("Returns some value. If something happens, this function returns `nil` instead.", false),
             ("Returns some value, or `nil` if something goes wrong.", false),
+            ("Returns some value, or `NULL` if something goes wrong.", false),
+            ("Returns some value or a null-pointer.", false),
         ] {
             let catalog = Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
