@@ -67,8 +67,8 @@ public enum LinkCompletionTools {
                 )
             case .typeSignature(let parameterTypes, let returnTypes):
                 self = .typeSignature(
-                    parameterTypes: parameterTypes.map { typeNames in typeNames.map { String($0) }},
-                    returnTypes: returnTypes.map { typeNames in typeNames.map { String($0) }}
+                    parameterTypes: parameterTypes?.map { String($0) },
+                    returnTypes: returnTypes?.map { String($0) }
                 )
             case nil:
                 self = .none
@@ -103,16 +103,14 @@ public enum LinkCompletionTools {
             )
         }
         
+        let disambiguatedValues = disambiguationContainer.disambiguatedValues()
         // Compute the minimal suggested disambiguation for each symbol and return their string suffixes in the original symbol's order.
-        var disambiguationsInOrder = [String](repeating: "", count: collidingSymbols.count)
-        for (node, disambiguation) in disambiguationContainer.disambiguatedValues() {
-            guard let index = identifiersInOrder.firstIndex(of: node.identifier) else {
+        return identifiersInOrder.map { identifier in
+            guard let (_, disambiguation) =  disambiguatedValues.first(where: { $0.value.identifier == identifier }) else {
                 fatalError("Each node in the `DisambiguationContainer` should always have a entry in the `disambiguatedValues`")
             }
-            disambiguationsInOrder[index] = disambiguation.makeSuffix()
+            return disambiguation.makeSuffix()
         }
-        
-        return disambiguationsInOrder
     }
     
     /// Information about a symbol for link completion purposes.

@@ -112,6 +112,7 @@ class LinkCompletionToolsTests: XCTestCase {
         XCTAssertFalse(symbol.matches(.typeSignature(parameterTypes: ["Bool", "_"], returnTypes: ["_"])))
         XCTAssertFalse(symbol.matches(.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["_"])))
         XCTAssertFalse(symbol.matches(.typeSignature(parameterTypes: ["_", "_"], returnTypes: ["Int"])))
+        XCTAssertFalse(symbol.matches(.typeSignature(parameterTypes: ["String", "Int"], returnTypes: ["Bool"])))
     }
     
     func testUSRHashing() {
