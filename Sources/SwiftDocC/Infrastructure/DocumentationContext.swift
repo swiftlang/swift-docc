@@ -1577,14 +1577,14 @@ public class DocumentationContext {
                 {
                     switch (source.kind, target.kind) {
                     case (.dictionaryKey, .dictionary):
-                        let dictionaryKey = DictionaryKey(name: sourceSymbol.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        let dictionaryKey = DictionaryKey(name: sourceSymbol.names.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
                         if keysByTarget[edge.target] == nil {
                             keysByTarget[edge.target] = [dictionaryKey]
                         } else {
                             keysByTarget[edge.target]?.append(dictionaryKey)
                         }
                     case (.httpParameter, .httpRequest):
-                        let parameter = HTTPParameter(name: sourceSymbol.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        let parameter = HTTPParameter(name: sourceSymbol.names.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
                         if parametersByTarget[edge.target] == nil {
                             parametersByTarget[edge.target] = [parameter]
                         } else {
@@ -1594,14 +1594,14 @@ public class DocumentationContext {
                         let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
                         bodyByTarget[edge.target] = body
                     case (.httpParameter, .httpBody):
-                        let parameter = HTTPParameter(name: sourceSymbol.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        let parameter = HTTPParameter(name: sourceSymbol.names.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
                         if bodyParametersByTarget[edge.target] == nil {
                             bodyParametersByTarget[edge.target] = [parameter]
                         } else {
                             bodyParametersByTarget[edge.target]?.append(parameter)
                         }
                     case (.httpResponse, .httpRequest):
-                        let statusParts = sourceSymbol.title.split(separator: " ", maxSplits: 1)
+                        let statusParts = sourceSymbol.names.title.split(separator: " ", maxSplits: 1)
                         let statusCode = UInt(statusParts[0]) ?? 0
                         let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
                         let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
@@ -1649,7 +1649,7 @@ public class DocumentationContext {
             if let semantic = target?.semantic as? Symbol {
                 // Add any body parameters to existing body record
                 var localBody = body
-                if let identifier = body.symbol?.preciseIdentifier, let bodyParameters = bodyParametersByTarget[identifier] {
+                if let identifier = body.symbol?.identifier.precise, let bodyParameters = bodyParametersByTarget[identifier] {
                     localBody.parameters = bodyParameters.sorted(by: \.name)
                 }
                 if semantic.httpBodySection == nil {

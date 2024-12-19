@@ -806,3 +806,21 @@ private extension SymbolGraph.Relationship.Kind {
         }
     }
 }
+
+// MARK: Link completion
+
+// This extension can't be defined in another file because it uses file-private API.
+extension LinkCompletionTools {
+    /// Creates a new path hierarchy node for link completion purposes.
+    ///
+    /// Use these nodes to compute disambiguation and match against parsed link components.
+    ///
+    /// - Important: The nodes and identifier are only intended for link completion purposes. _Don't_ add them to the path hierarchy or try and resolve links for them.
+    static func _makeNodeAndIdentifier(name: String) -> (PathHierarchy.Node, ResolvedIdentifier) {
+        let node = PathHierarchy.Node(name: name)
+        let id   = ResolvedIdentifier()
+        
+        node.identifier = id
+        return (node, id)
+    }
+}
