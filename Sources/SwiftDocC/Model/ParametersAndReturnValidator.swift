@@ -278,13 +278,16 @@ struct ParametersAndReturnValidator {
     
     /// Checks if the symbol's documentation is inherited from another source location.
     private func hasInheritedDocumentationComment(symbol: UnifiedSymbolGraph.Symbol) -> Bool {
-        let symbolLocationURI = symbol.documentedSymbol?.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)?.uri
-        for case .sourceCode(let location, _) in docChunkSources {
-            // Check if the symbol has documentation from another source location
-            return location?.uri != symbolLocationURI
+        guard let documentedSymbol = symbol.documentedSymbol else {
+            // If there's no doc comment, any documentation comes from an extension file and isn't inherited from another symbol.
+            return false
         }
-        // If the symbol didn't have any in-source documentation, check if there's a extension file override.
-        return docChunkSources.isEmpty
+        
+        // A symbol has inherited documentation if the doc comment doesn't come from the current module.
+        let moduleNames: Set<String> = symbol.modules.values.reduce(into: []) { $0.insert($1.name) }
+        return !moduleNames.contains(where: { moduleName in
+            documentedSymbol.isDocCommentFromSameModule(symbolModuleName: moduleName) == true
+        })
     }
     
     private typealias Signatures = [DocumentationDataVariantsTrait: SymbolGraph.Symbol.FunctionSignature]
