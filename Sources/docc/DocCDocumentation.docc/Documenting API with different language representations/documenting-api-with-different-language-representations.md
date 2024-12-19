@@ -52,10 +52,30 @@ func doSomething(with someValue: Int) throws
 
 Because the Swift representation of this method only has the "someValue" parameter and no return value, DocC hides the "error" parameter documentation and the return value documentation from the Swift version of this symbol's page.
 
+@Row {
+  @Column {
+    ![](params-1-swift)    
+  }
+  @Column {
+    ![](params-1-objc)
+  }    
+}
+
 You don't need to document the Objective-C representation's "error" parameter or the Objective-C specific return value for methods that correspond to throwing functions in Swift.
 DocC automatically adds a generic description for the "error" parameter for the Objective-C version of that symbol's page. 
+If you want to customize this documentation you can manually document the "error" parameter.
+Doing so won't change the Swift version of that symbol's page.
 
 When the Swift representation returns `Void`---which corresponds to a `BOOL` return value in Objective-C (like in the example above)---DocC adds a generic description of the `BOOL` return value to the Objective-C version of that symbol's page. 
+
+@Row {
+  @Column {
+    ![](params-2-swift)    
+  }
+  @Column {
+    ![](params-2-objc)
+  }    
+}
 
 When the Swift representation returns a value---which corresponds to a `nullable` return value in Objective-C---DocC extends your return value documentation, for the Objective-C version of that symbol's page, to describe that the methods returns `nil` if an error occurs unless your documentation already covers this behavior. 
 For example, consider this throwing function in Swift and its corresponding Objective-C interface:
@@ -65,7 +85,7 @@ For example, consider this throwing function in Swift and its corresponding Obje
 ```swift
 /// - Parameters:
 ///   - someValue: Some description of this parameter.
-/// - Returns: Some description of this return value.
+/// - Returns: Some general description of this return value.
 @objc func doSomething(with someValue: Int) throws -> String
 ```
 
@@ -81,14 +101,24 @@ DocC displays the "someValue" parameter documentation and return value documenta
 For the Objective-C representation, with two parameters and a nullable return value,
 DocC displays the "someValue" parameter documentation, generic "error" parameter documentation, and extends the return value documentation with a generic description about the Objective-C specific `nil` return value when the method encounters an error. 
 
-If you want to customize this documentation you can manually document the "error" parameter and return value.
-Doing so won't change the Swift version of that symbol's page.
-DocC will still hide the parameter and return value documentation that doesn't apply to each source language's version of that symbol's page.
+@Row {
+  @Column {
+    ![](params-3-swift)    
+  }
+  @Column {
+    ![](params-3-objc)
+  }    
+}
 
-If your return value documentation already describes the `nil` return value, DocC won't extent it with the generic `nil` value description.
+> Tip:
+> If you document the Objective-C specific `nil` return value for a method that corresponds to a throwing function in Swift,
+> but don't provide more information to the reader than "On failure, this method returns `nil`", 
+> consider removing that written documentation to let DocC display its generic description about the Objective-C specific `nil` return value, 
+> only on the Objective-C version of that symbol's page.
 
-> Note:
-> If you document the Objective-C specific `nil` return value for a method that correspond to a throwing function in Swift, 
-> DocC will display that documentation as-is on the Swift version of that page where is has a non-optional return type.
+The return value documentation you write displays on both the Swift and Objective-C versions of that symbol's page.
+DocC won't add its generic `nil` return value description to the Objective-C page, 
+if your return value documentation already describes that the method returns `nil` when it fails or encounters an error,
+but that Objective-C specific documentation you've written will display on the Swift version of that page where the symbol has a non-optional return type.
 
 <!-- Copyright (c) 2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
