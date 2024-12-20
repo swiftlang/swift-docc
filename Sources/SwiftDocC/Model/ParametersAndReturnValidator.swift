@@ -364,8 +364,8 @@ struct ParametersAndReturnValidator {
             }
         }
         
-        if returns.contents.contains(where: { $0.format().lowercased().contains("error") }) {
-            // If the existing returns value documentation mentions "error" at all, don't add anything
+        if returns.possiblyDocumentsFailureBehavior() {
+            // If the existing returns value documentation appears to describe the failure / error behavior, don't add anything
             return nil
         }
         if signatures[.objectiveC]?.returns == [.init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")] {
@@ -663,6 +663,24 @@ struct ParametersAndReturnValidator {
 }
 
 // MARK: Helper extensions
+
+private extension Return {
+    /// Applies a basic heuristic to give an indication if the return value documentation possibly documents what happens when an error occurs
+    func possiblyDocumentsFailureBehavior() -> Bool {
+        contents.contains(where: { markup in
+            let formatted = markup.format().lowercased()
+            
+            // Check if the authored markup contains one of a handful of words as an indication that it possibly documents what happens when an error occurs.
+            return returnValueDescribesErrorRegex.firstMatch(in: formatted, range: NSRange(formatted.startIndex ..< formatted.endIndex, in: formatted)) != nil
+        })
+    }
+}
+    
+/// A regular expression that finds the words; "error", "fail", "fails", "failure", "failures", "nil", and "null".
+/// These words only match at word boundaries or when surrounded by single backticks ("`").
+///
+/// This is used as a heuristic to give an indication if the return value documentation possibly documents what happens when an error occurs.
+private let returnValueDescribesErrorRegex = try! NSRegularExpression(pattern: "(\\b|`)(error|fail(ure)?s?|nil|null)(\\b|`)", options: .caseInsensitive)
 
 private extension SymbolGraph.Symbol.FunctionSignature {
     mutating func merge(with signature: Self, selector: UnifiedSymbolGraph.Selector) {
