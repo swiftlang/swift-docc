@@ -1368,6 +1368,7 @@ class SymbolTests: XCTestCase {
             
             let newDocComment = self.makeLineList(
                 docComment: docComment,
+                moduleName: nil,
                 startOffset: .init(
                     line: docCommentLineOffset,
                     character: 0
