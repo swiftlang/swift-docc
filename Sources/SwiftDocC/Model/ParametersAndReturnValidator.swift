@@ -284,7 +284,7 @@ struct ParametersAndReturnValidator {
         }
         
         // A symbol has inherited documentation if the doc comment doesn't come from the current module.
-        let moduleNames: Set<String> = symbol.modules.values.reduce(into: []) { $0.insert($1.name) }
+        let moduleNames = symbol.modules.values.reduce(into: Set()) { $0.insert($1.name) }
         return !moduleNames.contains(where: { moduleName in
             documentedSymbol.isDocCommentFromSameModule(symbolModuleName: moduleName) == true
         })
