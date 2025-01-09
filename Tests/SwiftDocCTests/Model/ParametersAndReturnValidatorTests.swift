@@ -132,6 +132,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         docComment: nil,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .swift,
                         parameters: [],
                         returnValue: .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS")
@@ -144,6 +145,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         
                         - Returns: \(returnValueDescription)
                         """,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .objectiveC,
                         parameters: [(name: "error", externalName: nil)],
                         returnValue: .init(kind: .typeIdentifier, spelling: "NSString", preciseIdentifier: "c:objc(cs)NSString")
