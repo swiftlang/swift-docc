@@ -132,6 +132,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         docComment: nil,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .swift,
                         parameters: [],
                         returnValue: .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS")
@@ -144,6 +145,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         
                         - Returns: \(returnValueDescription)
                         """,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .objectiveC,
                         parameters: [(name: "error", externalName: nil)],
                         returnValue: .init(kind: .typeIdentifier, spelling: "NSString", preciseIdentifier: "c:objc(cs)NSString")
@@ -468,6 +470,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         docComment: nil,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .swift,
                         parameters: [],
                         returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
@@ -480,6 +483,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         
                         - Returns: Some return value description.
                         """,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .objectiveC,
                         parameters: [(name: "error", externalName: nil)],
                         returnValue: .init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")
@@ -511,6 +515,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 JSONFile(name: "Platform1-ModuleName.symbols.json", content: makeSymbolGraph(
                     platform: .init(operatingSystem: .init(name: "Platform1")),
                     docComment: nil,
+                    docCommentModuleName: "ModuleName",
                     sourceLanguage: .objectiveC,
                     parameters: [(name: "first", externalName: nil)],
                     returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
@@ -519,6 +524,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 JSONFile(name: "Platform2-ModuleName.symbols.json", content: makeSymbolGraph(
                     platform: .init(operatingSystem: .init(name: "Platform2")),
                     docComment: nil,
+                    docCommentModuleName: "ModuleName",
                     sourceLanguage: .objectiveC,
                     parameters: [(name: "first", externalName: nil), (name: "second", externalName: nil)],
                     returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
@@ -527,6 +533,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 JSONFile(name: "Platform3-ModuleName.symbols.json", content: makeSymbolGraph(
                     platform: .init(operatingSystem: .init(name: "Platform3")),
                     docComment: nil,
+                    docCommentModuleName: "ModuleName",
                     sourceLanguage: .objectiveC,
                     parameters: [(name: "first", externalName: nil),],
                     returnValue: .init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")
@@ -566,6 +573,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         docComment: nil,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .swift,
                         parameters: [(name: "error", externalName: nil)],
                         returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
@@ -578,6 +586,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         
                         - Parameter error: Some parameter description.
                         """,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .objectiveC,
                         parameters: [(name: "error", externalName: nil)],
                         returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
@@ -725,14 +734,28 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         10 +   /// - Parameter first: Some parameter description
            |                                                    ╰─suggestion: Document 'second' parameter
         """)
-        
-        
+    }
+    
+    func testDoesNotWarnAboutInheritedDocumentation() throws {
+        let warningOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameter second: Some parameter description
+            - Returns: Nothing.
+            """,
+            docCommentModuleName: "SomeOtherModule",
+            parameters: [(name: "first", externalName: "with"), (name: "second", externalName: "and")],
+            returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+        )
+        XCTAssertEqual(warningOutput, "")
     }
     
     // MARK: Test helpers
     
     private func warningOutputRaisedFrom(
         docComment: String,
+        docCommentModuleName: String? = "ModuleName",
         parameters: [(name: String, externalName: String?)],
         returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment,
         file: StaticString = #file,
@@ -749,6 +772,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     docComment: docComment,
+                    docCommentModuleName: docCommentModuleName,
                     sourceLanguage: .swift,
                     parameters: parameters,
                     returnValue: returnValue
@@ -776,6 +800,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     private func makeSymbolGraph(docComment: String) -> SymbolGraph {
         makeSymbolGraph(
             docComment: docComment,
+            docCommentModuleName: "ModuleName",
             sourceLanguage: .swift,
             parameters: [
                 ("firstParameter", nil),
@@ -790,12 +815,13 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     private func makeSymbolGraph(
         platform: SymbolGraph.Platform = .init(),
         docComment: String?,
+        docCommentModuleName: String?,
         sourceLanguage: SourceLanguage,
         parameters: [(name: String, externalName: String?)],
         returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment
     ) -> SymbolGraph {
         return makeSymbolGraph(
-            moduleName: "ModuleName",
+            moduleName: "ModuleName", // Don't use `docCommentModuleName` here.
             platform: platform,
             symbols: [
                 makeSymbol(
@@ -804,6 +830,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     kind: .func,
                     pathComponents: ["functionName(...)"],
                     docComment: docComment,
+                    moduleName: docCommentModuleName,
                     location: (start, symbolURL),
                     signature: .init(
                         parameters: parameters.map {
