@@ -25,12 +25,7 @@ extension PathHierarchyBasedLinkResolver {
         var node = pathHierarchy.lookup[nodeID]! // Only the path hierarchy can create its IDs and a created ID always matches a node
         
         func matchesRequestedLanguage(_ node: PathHierarchy.Node) -> Bool {
-            guard let symbol = node.symbol,
-                  let language = SourceLanguage(knownLanguageIdentifier: symbol.identifier.interfaceLanguage)
-            else {
-                return false
-            }
-            return language == sourceLanguage
+             node.languages.contains(sourceLanguage)
         }
         
         if !matchesRequestedLanguage(node) {
