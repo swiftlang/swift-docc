@@ -157,7 +157,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             
             XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
             
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
