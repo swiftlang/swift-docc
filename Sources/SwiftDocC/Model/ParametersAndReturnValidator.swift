@@ -133,17 +133,19 @@ struct ParametersAndReturnValidator {
         var allKnownFunctionParameterNames: Set<String> = []
         var parameterNamesByExternalName: [String: Set<String>] = [:]
         
-        // Wrap the parameters in a class so that matches can be tracked across signatures.
+        // Wrap the documented parameters in classes so that `isMatchedInAnySignature` can be modified and tracked across different signatures.
+        // This is used later in this method body to raise warnings about documented parameters that wasn't found in any symbol representation's function signature.
         class ParameterReference {
             let wrapped: Parameter
             init(_ parameter: Parameter) {
                 self.wrapped = parameter
             }
             
-            var isMatchedInAnyLanguage: Bool = false
+            var isMatchedInAnySignature: Bool = false
             var name: String { wrapped.name }
         }
         let parameterReferences = parameters.map { ParameterReference($0) }
+        // Accumulate which unnamed parameters in the function signatures are missing documentation.
         var undocumentedUnnamedParameters = Set<Int>()
         
         for (trait, signature) in signatures {
@@ -172,11 +174,11 @@ struct ParametersAndReturnValidator {
             //  - One that the "last" parameter is missing documentation
             //  - One that the "anything" parameter doesn't exist in the function signature.
             //
-            // Again, unless the developer documents the mixed named and unnamed parameters out-of-order, both approached behave the same.
+            // Again, unless the developer documents the mixed named and unnamed parameters out-of-order, both approaches behave the same.
             
             // As described above, match the named function parameters first.
             for (index, functionParameter) in signature.parameters.enumerated() where !functionParameter.isUnnamed {
-                // While we're looping over the parameters, gather information about the function parameters use in diagnostics later in this method body.
+                // While we're looping over the parameters, gather information about the function parameters to use in diagnostics later in this method body.
                 if let externalName = functionParameter.externalName {
                     parameterNamesByExternalName[externalName, default: []].insert(functionParameter.name)
                 }
@@ -187,22 +189,22 @@ struct ParametersAndReturnValidator {
                     continue
                 }
                 let parameter = remainingDocumentedParameters.remove(at: parameterIndex)
-                parameter.isMatchedInAnyLanguage = true
+                parameter.isMatchedInAnySignature = true
                 orderedParameters[index] = parameter
             }
             
             // As describe above, match the unnamed parameters last.
-            var unnamedParameterIndex = 0 // Track how many unnamed parameters we've encountered.
+            var unnamedParameterNumber = 0 // Track how many unnamed parameters we've encountered.
             for (index, functionParameter) in signature.parameters.enumerated() where functionParameter.isUnnamed {
-                defer { unnamedParameterIndex += 1 }
+                defer { unnamedParameterNumber += 1 }
                 guard !remainingDocumentedParameters.isEmpty else {
-                    //
-                    undocumentedUnnamedParameters.insert(unnamedParameterIndex)
+                    // If the function signature has more unnamed parameters than there are documented parameters, the remaining function parameters are missing documentation.
+                    undocumentedUnnamedParameters.insert(unnamedParameterNumber)
                     continue
                 }
                 // Match this function parameter with a named documented parameter.
                 let parameter = remainingDocumentedParameters.removeFirst()
-                parameter.isMatchedInAnyLanguage = true
+                parameter.isMatchedInAnySignature = true
                 orderedParameters[index] = parameter
             }
             
@@ -218,8 +220,8 @@ struct ParametersAndReturnValidator {
             variants[trait] = ParametersSection(parameters: orderedParameters.compactMap { $0?.wrapped })
         }
         
-        // Diagnose documented parameters that's not found in any language representation's function signature.
-        for parameterReference in parameterReferences where !parameterReference.isMatchedInAnyLanguage && !allKnownFunctionParameterNames.contains(parameterReference.name) {
+        // Diagnose documented parameters that aren't found in any language representation's function signature.
+        for parameterReference in parameterReferences where !parameterReference.isMatchedInAnySignature && !allKnownFunctionParameterNames.contains(parameterReference.name) {
             let parameter = parameterReference.wrapped
             if let matchingParameterNames = parameterNamesByExternalName[parameter.name] {
                 diagnosticEngine.emit(makeExternalParameterNameProblem(parameter, knownParameterNamesWithSameExternalName: matchingParameterNames.sorted()))
