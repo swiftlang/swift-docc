@@ -751,6 +751,159 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(warningOutput, "")
     }
     
+    func testDocumentingTwoUnnamedParameters() throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                docComment: """
+                Some function description
+                
+                - Parameters: 
+                  - first: Some unnamed parameter description
+                  - anything: Some second unnamed parameter description
+                """,
+                docCommentModuleName: "ModuleName",
+                sourceLanguage: .swift,
+                parameters: .init(repeating: (name: "", externalName: nil), count: 2),
+                returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+            ))
+        ])
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let parameterSections = symbol.parametersSectionVariants
+        XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["first", "anything"])
+        XCTAssertEqual(parameterSections[.swift]?.parameters.first?.contents.map({ $0.format() }).joined(), "Some unnamed parameter description")
+        XCTAssertEqual(parameterSections[.swift]?.parameters.last?.contents.map({ $0.format() }).joined(), "Some second unnamed parameter description")
+        XCTAssertNil(parameterSections[.objectiveC])
+        
+        let returnsSections = symbol.returnsSectionVariants
+        XCTAssertNil(returnsSections[.swift])
+        XCTAssertNil(returnsSections[.objectiveC])
+    }
+    
+    func testDocumentingMixedNamedAndUnnamedParameters() throws {
+        // This test verifies the behavior of documenting two named parameters and one unnamed parameter.
+        //
+        // It checks different combinations of which parameter is unnamed:
+        // "_ second third"   "first _ third"   "first second _"
+        // And different combinations of the order that these parameters are documented:
+        // "anything second third"   "second anything third"    "second third anything"  etc.
+        
+        let functionParameterNames = ["first", "second", "third"]
+        
+        // Check each possible parameter that could be unnamed
+        for unnamedParameterIndex in functionParameterNames.indices {
+            var functionParameterNames = functionParameterNames
+            functionParameterNames[unnamedParameterIndex] = "_"
+            
+            var expectedParameterNames = functionParameterNames
+            expectedParameterNames[unnamedParameterIndex] = "anything"
+            
+            // Check each possible order that these parameters could be documented.
+            for index in functionParameterNames.indices {
+                var documentedParameterNames = functionParameterNames
+                documentedParameterNames.remove(at: unnamedParameterIndex)
+                documentedParameterNames.insert("anything", at: index)
+                XCTAssertEqual(documentedParameterNames.count, functionParameterNames.count)
+                
+                let catalog = Folder(name: "unit-test.docc", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Parameters: 
+                          - \(documentedParameterNames[0]): Some \(documentedParameterNames[0]) parameter description
+                          - \(documentedParameterNames[1]): Some \(documentedParameterNames[1]) parameter description
+                          - \(documentedParameterNames[2]): Some \(documentedParameterNames[2]) parameter description
+                        """,
+                        docCommentModuleName: "ModuleName",
+                        sourceLanguage: .swift,
+                        parameters: functionParameterNames.map { (name: $0, externalName: nil) },
+                        returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+                    ))
+                ])
+                let (bundle, context) = try loadBundle(catalog: catalog)
+                
+                XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+                
+                let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+                let node = try context.entity(with: reference)
+                let symbol = try XCTUnwrap(node.semantic as? Symbol)
+                
+                let parameterSections = symbol.parametersSectionVariants
+                // Verify that the parameter names are in the expected order.
+                XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), expectedParameterNames)
+                // Verify that the parameter descriptions are in the expected order.
+                XCTAssertEqual(parameterSections[.swift]?.parameters[0].contents.map { $0.format() }.joined(), "Some \(expectedParameterNames[0]) parameter description")
+                XCTAssertEqual(parameterSections[.swift]?.parameters[1].contents.map { $0.format() }.joined(), "Some \(expectedParameterNames[1]) parameter description")
+                XCTAssertEqual(parameterSections[.swift]?.parameters[2].contents.map { $0.format() }.joined(), "Some \(expectedParameterNames[2]) parameter description")
+                XCTAssertNil(parameterSections[.objectiveC])
+                
+                let returnsSections = symbol.returnsSectionVariants
+                XCTAssertNil(returnsSections[.swift])
+                XCTAssertNil(returnsSections[.objectiveC])
+            }
+        }
+    }
+    
+    func testWarningsForMissingOrExtraUnnamedParameters() throws {
+        let returnValue = SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
+        
+        let tooFewParametersOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameters: 
+              - first: Some unnamed parameter description
+            """,
+            parameters: .init(repeating: (name: "", externalName: nil), count: 3),
+            returnValue: returnValue
+        )
+        
+        XCTAssertEqual(tooFewParametersOutput, """
+        warning: Unnamed parameter #2 is missing documentation
+          --> /path/to/SomeFile.swift:11:52-11:52
+        9  |   ///
+        10 |   /// - Parameters:
+        11 +   ///   - first: Some unnamed parameter description
+           |                                                    ╰─suggestion: Document unnamed parameter #2
+
+        warning: Unnamed parameter #3 is missing documentation
+          --> /path/to/SomeFile.swift:11:52-11:52
+        9  |   ///
+        10 |   /// - Parameters:
+        11 +   ///   - first: Some unnamed parameter description
+           |                                                    ╰─suggestion: Document unnamed parameter #3
+        """)
+        
+        let tooManyParametersOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameters: 
+              - first: Some unnamed parameter description
+              - anything: Some second unnamed parameter description
+              - third: More parameters than the function signature
+            """,
+            parameters: .init(repeating: (name: "", externalName: nil), count: 2),
+            returnValue: returnValue
+        )
+        XCTAssertEqual(tooManyParametersOutput, """
+        warning: Parameter 'third' not found in function declaration
+          --> /path/to/SomeFile.swift:13:9-13:61
+        11 |   ///   - first: Some unnamed parameter description
+        12 |   ///   - anything: Some second unnamed parameter description
+        13 +   ///   - third: More parameters than the function signature
+           |         ╰─suggestion: Remove 'third' parameter documentation
+        """)
+    }
+    
     // MARK: Test helpers
     
     private func warningOutputRaisedFrom(
