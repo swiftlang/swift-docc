@@ -117,7 +117,6 @@ class SymbolBreadcrumbTests: XCTestCase {
             assertNoVariantsForRenderHierarchy(reference, context, bundle) // Same breadcrumbs in both languages
         }
         do {
-//            let reference = moduleReference.appendingPath("MixedLanguageProtocol")
             let reference = try XCTUnwrap(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/MixedLanguageProtocol" }))
             XCTAssertEqual(reference.sourceLanguages.count, 2, "Symbol has 2 language representations")
             
