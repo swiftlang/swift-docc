@@ -130,52 +130,109 @@ struct ParametersAndReturnValidator {
         }
         
         var variants = DocumentationDataVariants<ParametersSection>()
-        var allKnownParameterNames: Set<String> = []
+        var allKnownFunctionParameterNames: Set<String> = []
         var parameterNamesByExternalName: [String: Set<String>] = [:]
-        // Group the parameters by name to be able to diagnose parameters documented more than once.
-        let parametersByName = [String: [Parameter]](grouping: parameters, by: \.name)
+        
+        // Wrap the documented parameters in classes so that `isMatchedInAnySignature` can be modified and tracked across different signatures.
+        // This is used later in this method body to raise warnings about documented parameters that wasn't found in any symbol representation's function signature.
+        class ParameterReference {
+            let wrapped: Parameter
+            init(_ parameter: Parameter) {
+                self.wrapped = parameter
+            }
+            
+            var isMatchedInAnySignature: Bool = false
+            var name: String { wrapped.name }
+        }
+        let parameterReferences = parameters.map { ParameterReference($0) }
+        // Accumulate which unnamed parameters in the function signatures are missing documentation.
+        var undocumentedUnnamedParameters = Set<Int>()
         
         for (trait, signature) in signatures {
-            // Collect all language representations's parameter information from the function signatures.
-            let knownParameterNames = Set(signature.parameters.map(\.name))
-            allKnownParameterNames.formUnion(knownParameterNames)
+            // Insert parameter documentation in the order of the signature.
+            var orderedParameters = [ParameterReference?](repeating: nil, count: signature.parameters.count)
+            var remainingDocumentedParameters = parameterReferences
             
-            // Remove documented parameters that don't apply to this language representation's function signature.
-            var languageApplicableParametersByName = parametersByName.filter { knownParameterNames.contains($0.key) }
+            // Some languages support both names and unnamed parameters, and allow mixing them in the same declaration.
+            // It's an uncommon style to mix both in the same declaration but if the developer's code does this we try to minimize warnings
+            // and display as much written documentation as possible on the rendered page by matching _named_ parameters first.
+            // This only matters if the developer _both_ mixes named and unnamed parameters in the same declaration and documents those parameters out-of-order.
+            //
+            // For example, consider this C function:
+            //
+            //     /// - Parameters:
+            //     ///   - first: Some documentation
+            //     ///   - last: Some documentation
+            //     ///   - anything: Some documentation
+            //     void functionName (int first, int /*unnamed*/, int last);
+            //
+            // Because there is a parameter named "last", the 2nd parameter documentation matches the 3rd (named) function parameter instead of the 2nd (unnamed).
+            // This means that the above doesn't raise any warnings and that the displayed order on the page is "first", "anything", "last".
+            //
+            // If we'd matched unnamed parameters first, the above would have matched the 2nd ("last") parameter documentation with the 2nd unnamed function parameter,
+            // which would have resulted in two confusing warnings:
+            //  - One that the "last" parameter is missing documentation
+            //  - One that the "anything" parameter doesn't exist in the function signature.
+            //
+            // Again, unless the developer documents the mixed named and unnamed parameters out-of-order, both approaches behave the same.
+            
+            // As described above, match the named function parameters first.
+            for (index, functionParameter) in signature.parameters.enumerated() where !functionParameter.isUnnamed {
+                // While we're looping over the parameters, gather information about the function parameters to use in diagnostics later in this method body.
+                if let externalName = functionParameter.externalName {
+                    parameterNamesByExternalName[externalName, default: []].insert(functionParameter.name)
+                }
+                allKnownFunctionParameterNames.insert(functionParameter.name)
+                
+                // Match this function parameter with a named documented parameter.
+                guard let parameterIndex = remainingDocumentedParameters.firstIndex(where: { $0.name == functionParameter.name }) else {
+                    continue
+                }
+                let parameter = remainingDocumentedParameters.remove(at: parameterIndex)
+                parameter.isMatchedInAnySignature = true
+                orderedParameters[index] = parameter
+            }
+            
+            // As describe above, match the unnamed parameters last.
+            var unnamedParameterNumber = 0 // Track how many unnamed parameters we've encountered.
+            for (index, functionParameter) in signature.parameters.enumerated() where functionParameter.isUnnamed {
+                defer { unnamedParameterNumber += 1 }
+                guard !remainingDocumentedParameters.isEmpty else {
+                    // If the function signature has more unnamed parameters than there are documented parameters, the remaining function parameters are missing documentation.
+                    undocumentedUnnamedParameters.insert(unnamedParameterNumber)
+                    continue
+                }
+                // Match this function parameter with a named documented parameter.
+                let parameter = remainingDocumentedParameters.removeFirst()
+                parameter.isMatchedInAnySignature = true
+                orderedParameters[index] = parameter
+            }
             
             // Add a missing error parameter documentation if needed.
             if trait == .objectiveC, Self.shouldAddObjectiveCErrorParameter(signatures, parameters) {
-                languageApplicableParametersByName["error"] = [Parameter(name: "error", contents: Self.objcErrorDescription)] // This parameter is synthesized and doesn't have a source range.
+                orderedParameters.append(
+                    ParameterReference(
+                        Parameter(name: "error", contents: Self.objcErrorDescription) // This parameter is synthesized and doesn't have a source range.
+                    )
+                )
             }
             
-            // Ensure that the parameters are displayed in the order that they need to be passed.
-            var sortedParameters: [Parameter] = []
-            sortedParameters.reserveCapacity(languageApplicableParametersByName.count)
-            for parameter in signature.parameters {
-                if let foundParameter = languageApplicableParametersByName[parameter.name]?.first {
-                    sortedParameters.append(foundParameter)
-                }
-                // While we're looping over the parameters, gather the parameters with external names so that this information can be
-                // used to diagnose authored documentation that uses the "external name" instead of the "name" to refer to the parameter.
-                if let externalName = parameter.externalName {
-                    parameterNamesByExternalName[externalName, default: []].insert(parameter.name)
-                }
-            }
-            
-            variants[trait] = ParametersSection(parameters: sortedParameters)
+            variants[trait] = ParametersSection(parameters: orderedParameters.compactMap { $0?.wrapped })
         }
         
-        // Diagnose documented parameters that's not found in any language representation's function signature.
-        for parameter in parameters where !allKnownParameterNames.contains(parameter.name) {
+        // Diagnose documented parameters that aren't found in any language representation's function signature.
+        for parameterReference in parameterReferences where !parameterReference.isMatchedInAnySignature && !allKnownFunctionParameterNames.contains(parameterReference.name) {
+            let parameter = parameterReference.wrapped
             if let matchingParameterNames = parameterNamesByExternalName[parameter.name] {
                 diagnosticEngine.emit(makeExternalParameterNameProblem(parameter, knownParameterNamesWithSameExternalName: matchingParameterNames.sorted()))
             } else {
-                diagnosticEngine.emit(makeExtraParameterProblem(parameter, knownParameterNames: allKnownParameterNames, symbolKind: symbolKind))
+                diagnosticEngine.emit(makeExtraParameterProblem(parameter, knownParameterNames: allKnownFunctionParameterNames, symbolKind: symbolKind))
             }
         }
         
         // Diagnose parameters that are documented more than once.
-        for (name, parameters) in parametersByName where allKnownParameterNames.contains(name) && parameters.count > 1 {
+        let documentedParametersByName = [String: [Parameter]](grouping: parameters, by: \.name)
+        for (name, parameters) in documentedParametersByName where allKnownFunctionParameterNames.contains(name) && parameters.count > 1 {
             let first = parameters.first! // Each group is guaranteed to be non-empty.
             for parameter in parameters.dropFirst() {
                 diagnosticEngine.emit(makeDuplicateParameterProblem(parameter, previous: first))
@@ -191,7 +248,7 @@ struct ParametersAndReturnValidator {
         if let parameterNameOrder = signatures.values.map(\.parameters).max(by: { $0.count < $1.count })?.map(\.name) {
             let parametersEndLocation = parameters.last?.range?.upperBound
             
-            var missingParameterNames = allKnownParameterNames.subtracting(["error"]).filter { parametersByName[$0] == nil }
+            var missingParameterNames = allKnownFunctionParameterNames.subtracting(["error"]).filter { documentedParametersByName[$0] == nil }
             for parameter in parameters {
                 // Parameters that are documented using their external name already has raised a more specific diagnostic.
                 if let documentedByExternalName = parameterNamesByExternalName[parameter.name] {
@@ -199,14 +256,19 @@ struct ParametersAndReturnValidator {
                 }
             }
 
-            for parameterName in missingParameterNames{
+            for parameterName in missingParameterNames {
                 // Look for the parameter that should come after the missing parameter to insert the placeholder documentation in the right location.
                 let parameterAfter = parameterNameOrder.drop(while: { $0 != parameterName }).dropFirst()
-                    .mapFirst(where: { parametersByName[$0]?.first! /* Each group is guaranteed to be non-empty */ })
+                    .mapFirst(where: { documentedParametersByName[$0]?.first! /* Each group is guaranteed to be non-empty */ })
                 
                 // Match the placeholder formatting with the other parameters; either as a standalone parameter or as an item in a parameters outline.
-                let standalone = parameterAfter?.isStandalone ?? parametersByName.first?.value.first?.isStandalone ?? false
+                let standalone = parameterAfter?.isStandalone ?? parameters.first?.isStandalone ?? false
                 diagnosticEngine.emit(makeMissingParameterProblem(name: parameterName, before: parameterAfter, standalone: standalone, lastParameterEndLocation: parametersEndLocation))
+            }
+            
+            for unnamedParameterNumber in undocumentedUnnamedParameters.sorted() {
+                let standalone = parameters.first?.isStandalone ?? false
+                diagnosticEngine.emit(makeMissingUnnamedParameterProblem(unnamedParameterNumber: unnamedParameterNumber, standalone: standalone, lastParameterEndLocation: parametersEndLocation))
             }
         }
         
@@ -584,7 +646,7 @@ struct ParametersAndReturnValidator {
         )
     }
     
-    /// Creates a new problem about a parameter that's missing documentation.
+    /// Creates a new problem about a named parameter that's missing documentation.
     ///
     /// ## Example
     /// 
@@ -603,6 +665,51 @@ struct ParametersAndReturnValidator {
     ///   - location: The end of the last parameter. Used as the diagnostic location when the undocumented parameter is the last parameter of the symbol.
     /// - Returns: A new problem that suggests that the developer adds documentation for the parameter.
     private func makeMissingParameterProblem(name: String, before nextParameter: Parameter?, standalone: Bool, lastParameterEndLocation: SourceLocation?) -> Problem {
+        _makeMissingParameterProblem(
+            diagnosticSummary: "Parameter \(name.singleQuoted) is missing documentation",
+            solutionText: "Document \(name.singleQuoted) parameter",
+            replacementText: Self.newParameterDescription(name: name, standalone: standalone),
+            before: nextParameter,
+            standalone: standalone,
+            lastParameterEndLocation: lastParameterEndLocation
+        )
+    }
+    /// Creates a new problem about an unnamed parameter that's missing documentation.
+    ///
+    /// ## Example
+    /// 
+    /// ```c
+    /// /// - Parameters:
+    /// ///   - firstValue: Description of the first parameter
+    /// ///                                                   ^
+    /// ///                                                   Unnamed parameter #1 is missing documentation
+    /// void doSomething(int firstValue, int /*unnamed*/);
+    /// ```
+    /// 
+    /// - Parameters:
+    ///   - unnamedParameterNumber: A number indicating which unnamed parameter this diagnostic refers to.
+    ///   - standalone: `true` if the existing documented parameters use the standalone syntax `- Parameter someValue:` or `false` if the existing documented parameters use the `- someValue` syntax within a `- Parameters:` list.
+    ///   - location: The end of the last parameter. Used as the diagnostic location when the undocumented parameter is the last parameter of the symbol.
+    /// - Returns: A new problem that suggests that the developer adds documentation for the parameter.
+    private func makeMissingUnnamedParameterProblem(unnamedParameterNumber: Int, standalone: Bool, lastParameterEndLocation: SourceLocation?) -> Problem {
+        _makeMissingParameterProblem(
+            diagnosticSummary: "Unnamed parameter #\(unnamedParameterNumber + 1) is missing documentation",
+            solutionText: "Document unnamed parameter #\(unnamedParameterNumber + 1)",
+            replacementText: Self.newUnnamedParameterDescription(standalone: standalone),
+            before: nil,
+            standalone: standalone,
+            lastParameterEndLocation: lastParameterEndLocation
+        )
+    }
+    
+    private func _makeMissingParameterProblem(
+        diagnosticSummary: String,
+        solutionText: String,
+        replacementText: String,
+        before nextParameter: Parameter?,
+        standalone: Bool,
+        lastParameterEndLocation: SourceLocation?
+    ) -> Problem {
         let solutions: [Solution]
         if let insertLocation = nextParameter?.range?.lowerBound ?? lastParameterEndLocation {
             let extraWhitespace = "\n///" + String(repeating: " ", count: (nextParameter?.range?.lowerBound.column ?? 1 + (standalone ? 0 : 2) /* indent items in a parameter outline by 2 spaces */) - 1)
@@ -612,17 +719,17 @@ struct ParametersAndReturnValidator {
                 // ///   - nextParameter: Description
                 //      ^inserting "- parameterName: placeholder\n///  "
                 //                                              ^^^^ add newline after to insert before the other parameter
-                replacement = Self.newParameterDescription(name: name, standalone: standalone) + extraWhitespace
+                replacement = replacementText + extraWhitespace
             } else {
                 // /// - Parameters:
                 // ///   - otherParameter: Description
                 //                                    ^inserting "\n///  - parameterName: placeholder"
                 //                                                ^^^^ add newline before to insert after the last parameter
-                replacement = extraWhitespace + Self.newParameterDescription(name: name, standalone: standalone)
+                replacement = extraWhitespace + replacementText
             }
             solutions = [
                 Solution(
-                    summary: "Document \(name.singleQuoted) parameter",
+                    summary: solutionText,
                     replacements: [
                         Replacement(range: adjusted(insertLocation ..< insertLocation), replacement: replacement)
                     ]
@@ -638,7 +745,7 @@ struct ParametersAndReturnValidator {
                 severity: .warning,
                 range: adjusted(lastParameterEndLocation.map { $0 ..< $0 }),
                 identifier: "org.swift.docc.MissingParameterDocumentation",
-                summary: "Parameter \(name.singleQuoted) is missing documentation"
+                summary: diagnosticSummary
             ),
             possibleSolutions: solutions
         )
@@ -662,6 +769,10 @@ struct ParametersAndReturnValidator {
     
     private static func newParameterDescription(name: String, standalone: Bool) -> String {
         "- \(standalone ? "Parameter " : "")\(name): <#parameter description#>"
+    }
+    
+    private static func newUnnamedParameterDescription(standalone: Bool) -> String {
+        "- \(standalone ? "Parameter " : "")<#uniqueParameterName#>: <#parameter description#>"
     }
 }
 
@@ -713,5 +824,13 @@ private extension SymbolGraph.Symbol.FunctionSignature {
                 return
             }
         }
+    }
+}
+
+private extension SymbolGraph.Symbol.FunctionSignature.FunctionParameter {
+    /// A Boolean value indicating whether this function parameter is "unnamed".
+    var isUnnamed: Bool {
+        // C and C++ use "" to indicate an unnamed function parameter whereas Swift use "_" to indicate an unnamed function parameter.
+        name.isEmpty || name == "_"
     }
 }
