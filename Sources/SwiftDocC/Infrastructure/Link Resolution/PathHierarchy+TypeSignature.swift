@@ -22,26 +22,77 @@ extension PathHierarchy {
         
         let isSwift = symbol.identifier.interfaceLanguage == SourceLanguage.swift.id
         return (
-            signature.parameters.map { parameterTypeSpellings(for: $0.declarationFragments, isSwift: isSwift) },
-            returnTypeSpellings(for: signature.returns, isSwift: isSwift).map { [$0] } ?? []
+            signature.parameters.map { parameterTypeSpelling(for: $0.declarationFragments, isSwift: isSwift) },
+            returnTypeSpellings(for: signature.returns, isSwift: isSwift)
         )
     }
     
-    private static func parameterTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
-        typeSpellings(for: fragments, isSwift: isSwift)
+    /// Creates a type disambiguation string from the given function parameter declaration fragments.
+    private static func parameterTypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
+        var accumulated = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        
+        // Add a null-terminator to create a String from the accumulated UTF-8 code units.
+        accumulated.append(0)
+        return accumulated.withUnsafeBufferPointer { pointer in
+            String(cString: pointer.baseAddress!)
+        }
     }
     
-    private static func returnTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String? {
+    /// Creates a list of type disambiguation strings for the function return declaration fragments.
+    ///
+    /// Unlike ``parameterTypeSpelling(for:isSwift:)``, this function splits Swift tuple return values is split into smaller disambiguation elements.
+    /// This makes it possible to disambiguate a `(Int, String)` return value using either `->(Int,_)`, `->(_,String)`,  or `->(_,_)` (depending on the other overloads).
+    private static func returnTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> [String] {
         if fragments.count == 1, knownVoidReturnValues.contains(fragments.first!) {
             // We don't want to list "void" return values as type disambiguation
-            return nil
+            return []
         }
-        return typeSpellings(for: fragments, isSwift: isSwift)
+        var spelling = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        
+        guard isSwift, spelling[...].isTuple() else {
+            // Add a null-terminator to create a String from the accumulated UTF-8 code units.
+            spelling.append(0)
+            let stringSpelling = spelling.withUnsafeBufferPointer { pointer in
+                String(cString: pointer.baseAddress!)
+            }
+            return [stringSpelling]
+        }
+        
+        // This return value is a tuple that should be split into smaller type spellings
+        var returnSpellings: [String] = []
+        
+        var depth = 0
+        let endIndex = spelling.count - 1 // before the trailing ")"
+        var substringStartIndex = 1 // skip the leading "("
+        for index in 1 /* after the leading "(" */ ..< endIndex {
+            switch spelling[index] {
+            case openParen:
+                depth += 1
+            case closeParen:
+                depth -= 1
+            case comma where depth == 0:
+                // Split here
+                defer { substringStartIndex = index + 1 /* skip the "," */ }
+                
+                returnSpellings.append(
+                    String(decoding: spelling[substringStartIndex ..< index], as: UTF8.self)
+                )
+                
+            default:
+                continue
+            }
+        }
+        returnSpellings.append(
+            String(decoding: spelling[substringStartIndex ..< endIndex], as: UTF8.self)
+        )
+        
+        return returnSpellings
     }
     
     private static let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage.flatMap { $0.value }
     
-    private static func typeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
+    /// Returns the type name spelling as sequence of UTF-8 code units _without_ null-termination.
+    private static func utf8TypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> ContiguousArray<UTF8.CodeUnit> {
         // This function joins the spelling of the text and identifier declaration fragments and applies Swift syntactic sugar;
         // `Array<Element>` -> `[Element]`, `Optional<Wrapped>` -> `Wrapped?`, and `Dictionary<Key,Value>` -> `[Key:Value]`
         
@@ -152,11 +203,7 @@ extension PathHierarchy {
             accumulated.applySwiftSyntacticSugar(markers: markers)
         }
         
-        // Add a null-terminator to create a String from the accumulated UTF-8 code units.
-        accumulated.append(0)
-        return accumulated.withUnsafeBufferPointer { pointer in
-            String(cString: pointer.baseAddress!)
-        }
+        return accumulated
     }
 }
 
