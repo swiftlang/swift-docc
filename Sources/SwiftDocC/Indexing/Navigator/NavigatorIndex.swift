@@ -479,7 +479,11 @@ extension NavigatorIndex {
         
         /// The data provider.
         @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-        public let renderNodeProvider: RenderNodeProvider?
+        public var renderNodeProvider: RenderNodeProvider? {
+            _renderNodeProvider as! RenderNodeProvider?
+        }
+        // This property only exist to be able to assign `nil` to `renderNodeProvider` in the new initializer without causing a deprecation warning.
+        private let _renderNodeProvider: Any?
         
         /// The documentation archive to build an index from.
         public let archiveURL: URL?
@@ -575,7 +579,7 @@ extension NavigatorIndex {
         ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
         public init(archiveURL: URL? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.archiveURL = archiveURL
-            self.renderNodeProvider = nil
+            self._renderNodeProvider = nil
             self.outputURL = outputURL
             self.bundleIdentifier = bundleIdentifier
             self.sortRootChildrenByName = sortRootChildrenByName
@@ -587,7 +591,7 @@ extension NavigatorIndex {
         @available(*, deprecated, renamed: "init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)", message: "Use 'init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)' instead. This deprecated API will be removed after 6.2 is released")
         @_disfavoredOverload
         public init(renderNodeProvider: RenderNodeProvider? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
-            self.renderNodeProvider = renderNodeProvider
+            self._renderNodeProvider = renderNodeProvider
             self.archiveURL = nil
             self.outputURL = outputURL
             self.bundleIdentifier = bundleIdentifier
