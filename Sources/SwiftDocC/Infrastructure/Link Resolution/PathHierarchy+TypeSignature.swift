@@ -100,6 +100,7 @@ extension PathHierarchy {
                             swiftBracketsStack.push(.square)
                             
                         case closeAngle, closeParen, closeSquare:
+                            assert(!swiftBracketsStack.isEmpty, "Unexpectedly found more closing brackets than open brackets in \(String(cString: accumulated + [0]) + fragment.spelling)")
                             swiftBracketsStack.pop()
                             
                         case colon where swiftBracketsStack.isCurrentScopeSquareBracket,
@@ -199,6 +200,10 @@ extension PathHierarchy {
         /// A Boolean value that indicates whether the current scope is square brackets.
         var isCurrentScopeSquareBracket: Bool {
             stack.last == .square
+        }
+        
+        var isEmpty: Bool {
+            stack.isEmpty
         }
     }
 }
