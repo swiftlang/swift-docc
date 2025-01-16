@@ -54,6 +54,9 @@ extension PathHierarchy {
         
         // Iterating over the declaration fragments to accumulate their spelling and to identify places that need to apply syntactic sugar.
         var markers = ContiguousArray<Int>()
+        // Track the current [], (), and <> scopes to identify when ":" is a part of the type name.
+        var swiftBracketsStack = SwiftBracketsStack()
+        
         for fragment in fragments {
             let preciseIdentifier = fragment.preciseIdentifier
             if isSwift {
@@ -84,17 +87,38 @@ extension PathHierarchy {
                     // Accumulate all of the identifier tokens' spelling.
                     accumulated.append(contentsOf: fragment.spelling.utf8)
                     
-                case .text: // In Swift, only `text` tokens contains whitespace so they're handled separately.
-                    // Text tokens like "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
+                case .text: // In Swift, we're only want some `text` tokens characters in the type disambiguation.
+                    // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
-                    var spelling = fragment.spelling.utf8[...]
-                    // If the type spelling is a parameter, if often starts with a leading ":" that's not part of the type name.
-                    if accumulated.isEmpty, spelling.first == colon {
-                        _ = spelling.removeFirst()
-                    }
-                    
-                    // Ignore whitespace in text tokens. Here we use a loop instead of `filter` to avoid a potential temporary allocation.
-                    for char in spelling where char != space {
+                    let utf8Spelling = fragment.spelling.utf8
+                    for index in utf8Spelling.indices {
+                        let char = utf8Spelling[index]
+                        switch char {
+                        case openAngle:
+                            swiftBracketsStack.push(.angle)
+                        case openParen:
+                            swiftBracketsStack.push(.paren)
+                        case openSquare:
+                            swiftBracketsStack.push(.square)
+                            
+                        case closeAngle:
+                            guard utf8Spelling.startIndex < index, utf8Spelling[utf8Spelling.index(before: index)] != hyphen else {
+                                break // "->" shouldn't count when balancing brackets but should still be included in the type spelling.
+                            }
+                            fallthrough
+                        case closeSquare, closeParen:
+                            assert(!swiftBracketsStack.isEmpty, "Unexpectedly found more closing brackets than open brackets in \(fragments.map(\.spelling).joined())")
+                            swiftBracketsStack.pop()
+                            
+                        case colon where swiftBracketsStack.isCurrentScopeSquareBracket,
+                             comma, fullStop, question, hyphen:
+                            break // Include this character
+                            
+                        default:
+                            continue // Skip this character
+                        }
+                        
+                        // Unless the switch-statement (above) continued the next iteration, add this character to the accumulated type spelling.
                         accumulated.append(char)
                     }
                     
@@ -158,6 +182,37 @@ extension PathHierarchy {
             String(cString: pointer.baseAddress!)
         }
     }
+    
+    /// A small helper type that tracks the scope of nested brackets; `()`, `[]`, or `<>`.
+    private struct SwiftBracketsStack {
+        enum Bracket {
+            case angle  // <>
+            case square // []
+            case paren  // ()
+        }
+        private var stack: ContiguousArray<Bracket>
+        init() {
+            stack = []
+            stack.reserveCapacity(32) // Some temporary space to work with.
+        }
+        
+        /// Push a new bracket scope to the stack.
+        mutating func push(_ scope: Bracket) {
+            stack.append(scope)
+        }
+        /// Pop the current bracket scope from the stack.
+        mutating func pop() {
+            _ = stack.popLast()
+        }
+        /// A Boolean value that indicates whether the current scope is square brackets.
+        var isCurrentScopeSquareBracket: Bool {
+            stack.last == .square
+        }
+        
+        var isEmpty: Bool {
+            stack.isEmpty
+        }
+    }
 }
 
 // A collection of UInt8 raw values for various UTF-8 characters that this implementation frequently checks for
@@ -176,6 +231,7 @@ private let openParen   = UTF8.CodeUnit(ascii: "(")
 private let closeParen  = UTF8.CodeUnit(ascii: ")")
 
 private let comma       = UTF8.CodeUnit(ascii: ",")
+private let fullStop    = UTF8.CodeUnit(ascii: ".")
 private let question    = UTF8.CodeUnit(ascii: "?")
 private let colon       = UTF8.CodeUnit(ascii: ":")
 private let hyphen      = UTF8.CodeUnit(ascii: "-")
