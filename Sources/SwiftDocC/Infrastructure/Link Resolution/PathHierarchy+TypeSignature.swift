@@ -90,7 +90,9 @@ extension PathHierarchy {
                 case .text: // In Swift, we're only want some `text` tokens characters in the type disambiguation.
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
-                    for char in fragment.spelling.utf8 {
+                    let utf8Spelling = fragment.spelling.utf8
+                    for index in utf8Spelling.indices {
+                        let char = utf8Spelling[index]
                         switch char {
                         case openAngle:
                             swiftBracketsStack.push(.angle)
@@ -99,8 +101,13 @@ extension PathHierarchy {
                         case openSquare:
                             swiftBracketsStack.push(.square)
                             
-                        case closeAngle, closeParen, closeSquare:
-                            assert(!swiftBracketsStack.isEmpty, "Unexpectedly found more closing brackets than open brackets in \(String(cString: accumulated + [0]) + fragment.spelling)")
+                        case closeAngle:
+                            guard utf8Spelling.startIndex < index, utf8Spelling[utf8Spelling.index(before: index)] != hyphen else {
+                                break // "->" shouldn't count when balancing brackets but should still be included in the type spelling.
+                            }
+                            fallthrough
+                        case closeSquare, closeParen:
+                            assert(!swiftBracketsStack.isEmpty, "Unexpectedly found more closing brackets than open brackets in \(fragments.map(\.spelling).joined())")
                             swiftBracketsStack.pop()
                             
                         case colon where swiftBracketsStack.isCurrentScopeSquareBracket,
