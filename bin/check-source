@@ -44,6 +44,7 @@ for language in swift-or-c bash md-or-tutorial html docker; do
   declare -a matching_files
   declare -a exceptions
   declare -a reader
+  expections=( )
   matching_files=( -name '*' )
   reader=head
   case "$language" in
@@ -135,7 +136,6 @@ EOF
     cd "$here/.."
     find . \
       \( \! -path './.build/*' -a \
-      \! -path './bin/benchmark/.build/*' -a \
       \! -name '.' -a \
       \( "${matching_files[@]}" \) -a \
       \( \! \( "${exceptions[@]}" \) \) \) | while read line; do
