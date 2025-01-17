@@ -1368,7 +1368,7 @@ class PathHierarchyTests: XCTestCase {
             return PathHierarchy.functionSignatureTypeNames(for: SymbolGraph.Symbol(
                 identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
                 names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
-                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display NAme"), mixins: [
+                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"), mixins: [
                     SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
                         parameters: [
                             .init(name: "someName", externalName: "with", declarationFragments: [
@@ -1418,6 +1418,30 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
         ]))
         
+        // any Sequence<Int>
+        // The Swift symbol graph extractor emits `any` differently than `some` (rdar://142814138).
+        XCTAssertEqual("Sequence<Int>", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "any ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Sequence", preciseIdentifier: "s:ST"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // (Int, String)
+        // Swift _does_ support overloading by tuple labels but we don't include tuple labels in the type disambiguation because it would be
+        // longer and harder to read/write in the common case when the other overloads aren't tuples with the same types but different labels.
+        // In the rare case of actual overloads only distinguishable by tuple labels they would all require hash disambiguation instead.
+        XCTAssertEqual("(Int,String)", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "(number ", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ", text", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+        ]))
+         
         // Array<(Int,Double)>
         XCTAssertEqual("[(Int,Double)]", functionSignatureParameterTypeName([
             .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
@@ -1470,6 +1494,52 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ",", preciseIdentifier: nil),
             .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // [[Double: Int]]
+        XCTAssertEqual("[[Double:Int]]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: " : ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]]", preciseIdentifier: nil),
+        ]))
+        
+        // [ ([Int]?) : Int]
+        XCTAssertEqual("[([Int]?):Int]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[ ([", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]?) : ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]", preciseIdentifier: nil),
+        ]))
+        
+        // [Array<(_: Int)>: (number: Int, text: String)]
+        XCTAssertEqual("[[(Int)]:(Int,String)]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(_:", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ")>: (number", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ", text", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ")]", preciseIdentifier: nil),
+        ]))
+        
+        // [[Int: Int] : [Int: Int]]
+        XCTAssertEqual("[[Int:Int]:[Int:Int]]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "] : [", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]]", preciseIdentifier: nil),
         ]))
         
         // (Dictionary<Double,Int>)->Array<String>
