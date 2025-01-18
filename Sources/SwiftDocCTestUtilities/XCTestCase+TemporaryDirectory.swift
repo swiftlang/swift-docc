@@ -36,8 +36,9 @@ public extension XCTestCase {
     ///
     /// - Parameters:
     ///   - pathComponents: The name of the temporary directory.
+    ///   - fileManager: The file manager that will create the directory.
     /// - Returns: The URL of the newly created directory.
-    func createTemporaryDirectory(named: String) throws -> URL {
+    func createTemporaryDirectory(named: String, fileManager: FileManager = .default) throws -> URL {
         try createTemporaryDirectory(pathComponents: named)
     }
         
@@ -47,8 +48,9 @@ public extension XCTestCase {
     ///
     /// - Parameters:
     ///   - pathComponents: Additional path components to add to the temporary URL.
+    ///   - fileManager: The file manager that will create the directory.
     /// - Returns: The URL of the newly created directory.
-    func createTemporaryDirectory(pathComponents: String...) throws -> URL {
+    func createTemporaryDirectory(pathComponents: String..., fileManager: FileManager = .default) throws -> URL {
         let bundleParentDir = Bundle(for: Self.self).bundleURL.deletingLastPathComponent()
         let baseURL = bundleParentDir.appendingPathComponent(name.replacingWhitespaceAndPunctuation(with: "-"))
         
@@ -60,20 +62,20 @@ public extension XCTestCase {
         
         addTeardownBlock {
             do {
-                if FileManager.default.fileExists(atPath: baseURL.path) {
-                    try FileManager.default.removeItem(at: baseURL)
+                if fileManager.fileExists(atPath: baseURL.path) {
+                    try fileManager.removeItem(at: baseURL)
                 }
             } catch {
                 XCTFail("Failed to remove temporary directory: '\(error)'")
             }
         }
         
-        if !FileManager.default.fileExists(atPath: bundleParentDir.path) {
+        if !fileManager.fileExists(atPath: bundleParentDir.path) {
             // Create the base URL directory without intermediate directories so that an error is raised if the parent directory doesn't exist.
-            try FileManager.default.createDirectory(at: baseURL, withIntermediateDirectories: false, attributes: nil)
+            try fileManager.createDirectory(at: baseURL, withIntermediateDirectories: false, attributes: nil)
         }
          
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
+        try fileManager.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
         
         return tempURL
     }

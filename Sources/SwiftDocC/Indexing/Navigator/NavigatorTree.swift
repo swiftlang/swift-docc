@@ -119,12 +119,7 @@ public class NavigatorTree {
         
         func __read() {
             let deadline = DispatchTime.now() + timeout
-#if swift(>=5.10)
-            // Access to this local variable is synchronized using the DispatchQueue `queue`, passed as an argument.
-            nonisolated(unsafe) var processedNodes = [NavigatorTree.Node]()
-#else
             var processedNodes = [NavigatorTree.Node]()
-#endif
             
             while readingCursor.cursor < readingCursor.data.count {
                 let length = MemoryLayout<UInt32>.stride

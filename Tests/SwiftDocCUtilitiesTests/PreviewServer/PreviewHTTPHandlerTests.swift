@@ -33,8 +33,10 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         let response = Response()
         
+        XCTAssertNoThrow(try channel.pipeline.addHandler(HTTPResponseEncoder()).wait())
         XCTAssertNoThrow(try channel.pipeline.addHandler(response).wait())
         XCTAssertNoThrow(try channel.pipeline.addHandler(channelHandler).wait())
+        XCTAssertNoThrow(try channel.pipeline.addHandler(HTTPServerPipelineHandler()).wait())
 
         XCTAssertNoThrow(try channel.connect(to: SocketAddress(ipAddress: "127.0.0.1", port: 1)).wait())
 
