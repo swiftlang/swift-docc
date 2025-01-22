@@ -71,12 +71,12 @@ extension PathHierarchy {
             case closeParen:
                 depth -= 1
             case comma where depth == 0:
-                // Split here
-                defer { substringStartIndex = index + 1 /* skip the "," */ }
-                
+                // Split here without including the comma in the return value spelling.
                 returnSpellings.append(
                     String(decoding: spelling[substringStartIndex ..< index], as: UTF8.self)
                 )
+                // Also, skip past the comma for the next return value spelling.
+                substringStartIndex = index + 1
                 
             default:
                 continue
