@@ -1767,7 +1767,7 @@ class PathHierarchyTests: XCTestCase {
                 _functionSignatureTypeNames(signature, language: .swift)
             }
             
-            // func doSomething(someName: ((Int, String), Date)) -> ([Int, String?])
+            // func doSomething(someName: ((Int, String), Date)) -> ([Int], String?)
             let tupleArgument = functionSignatureTypeNames(.init(
                 parameters: [
                     .init(name: "someName", externalName: nil, declarationFragments: [
@@ -1790,7 +1790,37 @@ class PathHierarchyTests: XCTestCase {
                 ])
             )
             XCTAssertEqual(tupleArgument?.parameterTypeNames, ["((Int,String),Date)"])
-            XCTAssertEqual(tupleArgument?.returnTypeNames, ["([Int],String?)"])
+            XCTAssertEqual(tupleArgument?.returnTypeNames, ["[Int]", "String?"])
+            
+             // func doSomething() -> ((Double, Double) -> Double, [Int: (Int, Int)], (Bool, Bool), String?)
+            let bigTupleReturnType = functionSignatureTypeNames(.init(
+                parameters: [],
+                returns: [
+                    .init(kind: .text, spelling: "((", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ", [", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ": (", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ")], (", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: "), ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                    .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                    .init(kind: .text, spelling: ">)", preciseIdentifier: nil),
+                ])
+            )
+            XCTAssertEqual(bigTupleReturnType?.parameterTypeNames, [])
+            XCTAssertEqual(bigTupleReturnType?.returnTypeNames, ["(Double,Double)->Double", "[Int:(Int,Int)]", "(Bool,Bool)", "String?"])
             
             // func doSomething(with someName: [Int?: String??])
             let dictionaryWithOptionalsArgument = functionSignatureTypeNames(.init(
@@ -3168,6 +3198,56 @@ class PathHierarchyTests: XCTestCase {
                 (symbolID: "function-overload-1", disambiguation: "-(String,_,_)"),        //   String  _       _
                 (symbolID: "function-overload-2", disambiguation: "-(_,[Bool],_)"),        //   _       [Bool]  _
                 (symbolID: "function-overload-3", disambiguation: "-(_,_,(Float)->Void)"), //   _       _       (Float)->Void
+            ])
+        }
+        
+        // Each overload has one unique element in the tuple _return_ type
+        do {
+            func makeSignature(first: DeclToken..., second: DeclToken..., third: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
+                .init(
+                    parameters: [],
+                    returns: makeFragments([.text("(")] + [first, second, third].joined(separator: [.text(", ")]) + [.text(")")])
+                )
+            }
+            
+            //  String   [Int]   (Double)->Void
+            //  String?  [Bool]  (Double)->Void
+            //  String?  [Int]   (Float)->Void
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  String   [Int]   (Double)->Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: stringType,                        // String
+                            second: arrayType, "<", intType, ">",     // [Int]
+                            third: "(", doubleType, ") -> ", voidType // (Double)->Void
+                        )),
+                        
+                        //  String?  [Bool]  (Double)->Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: arrayType, "<", boolType, ">",     // [Bool]
+                            third: "(", doubleType, ") -> ", voidType  // (Double)->Void
+                        )),
+                        
+                        //  String?  [Int]   (Float)->Void
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: arrayType, "<", intType, ">",      // [Int]
+                            third: "(", floatType, ") -> ", voidType   // (Float)->Void
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:second:third:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "->(String,_,_)"),        //   String  _       _
+                (symbolID: "function-overload-2", disambiguation: "->(_,[Bool],_)"),        //   _       [Bool]  _
+                (symbolID: "function-overload-3", disambiguation: "->(_,_,(Float)->Void)"), //   _       _       (Float)->Void
             ])
         }
         
