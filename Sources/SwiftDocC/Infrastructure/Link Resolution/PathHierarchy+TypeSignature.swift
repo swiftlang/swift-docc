@@ -22,26 +22,68 @@ extension PathHierarchy {
         
         let isSwift = symbol.identifier.interfaceLanguage == SourceLanguage.swift.id
         return (
-            signature.parameters.map { parameterTypeSpellings(for: $0.declarationFragments, isSwift: isSwift) },
-            returnTypeSpellings(for: signature.returns, isSwift: isSwift).map { [$0] } ?? []
+            signature.parameters.map { parameterTypeSpelling(for: $0.declarationFragments, isSwift: isSwift) },
+            returnTypeSpellings(for: signature.returns, isSwift: isSwift)
         )
     }
     
-    private static func parameterTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
-        typeSpellings(for: fragments, isSwift: isSwift)
+    /// Creates a type disambiguation string from the given function parameter declaration fragments.
+    private static func parameterTypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
+        let accumulated = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        
+        return String(decoding: accumulated, as: UTF8.self)
     }
     
-    private static func returnTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String? {
+    /// Creates a list of type disambiguation strings for the function return declaration fragments.
+    ///
+    /// Unlike ``parameterTypeSpelling(for:isSwift:)``, this function splits Swift tuple return values is split into smaller disambiguation elements.
+    /// This makes it possible to disambiguate a `(Int, String)` return value using either `->(Int,_)`, `->(_,String)`,  or `->(_,_)` (depending on the other overloads).
+    private static func returnTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> [String] {
         if fragments.count == 1, knownVoidReturnValues.contains(fragments.first!) {
             // We don't want to list "void" return values as type disambiguation
-            return nil
+            return []
         }
-        return typeSpellings(for: fragments, isSwift: isSwift)
+        let spelling = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        
+        guard isSwift, spelling[...].isTuple() else {
+            return [String(decoding: spelling, as: UTF8.self)]
+        }
+        
+        // This return value is a tuple that should be split into smaller type spellings
+        var returnSpellings: [String] = []
+        
+        var depth = 0
+        let endIndex = spelling.count - 1 // before the trailing ")"
+        var substringStartIndex = 1 // skip the leading "("
+        for index in 1 /* after the leading "(" */ ..< endIndex {
+            switch spelling[index] {
+            case openParen:
+                depth += 1
+            case closeParen:
+                depth -= 1
+            case comma where depth == 0:
+                // Split here without including the comma in the return value spelling.
+                returnSpellings.append(
+                    String(decoding: spelling[substringStartIndex ..< index], as: UTF8.self)
+                )
+                // Also, skip past the comma for the next return value spelling.
+                substringStartIndex = index + 1
+                
+            default:
+                continue
+            }
+        }
+        returnSpellings.append(
+            String(decoding: spelling[substringStartIndex ..< endIndex], as: UTF8.self)
+        )
+        
+        return returnSpellings
     }
     
     private static let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage.flatMap { $0.value }
     
-    private static func typeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
+    /// Returns the type name spelling as sequence of UTF-8 code units _without_ null-termination.
+    private static func utf8TypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> ContiguousArray<UTF8.CodeUnit> {
         // This function joins the spelling of the text and identifier declaration fragments and applies Swift syntactic sugar;
         // `Array<Element>` -> `[Element]`, `Optional<Wrapped>` -> `Wrapped?`, and `Dictionary<Key,Value>` -> `[Key:Value]`
         
@@ -162,13 +204,13 @@ extension PathHierarchy {
                 markers[index] -= difference
                 
                 assert(accumulated[markers[index]] == uppercaseA || accumulated[markers[index]] == uppercaseD  || accumulated[markers[index]] == uppercaseO, """
-                Unexpectedly found '\(String(cString: [accumulated[index], 0]))' at \(index) which should be either an Array, Optional, or Dictionary marker in \(String(cString: accumulated + [0]))
+                Unexpectedly found '\(String(Unicode.Scalar(accumulated[index])))' at \(index) which should be either an Array, Optional, or Dictionary marker in \(String(decoding: accumulated, as: UTF8.self)))
                 """)
             }
         }
         
         assert(markers.allSatisfy { [uppercaseA, uppercaseD, uppercaseO].contains(accumulated[$0]) }, """
-        Unexpectedly found misaligned markers: \(markers.map { "(index: \($0), char: \(String(cString: [accumulated[$0], 0])))" })
+        Unexpectedly found misaligned markers: \(markers.map { "(index: \($0), char: \(String(Unicode.Scalar(accumulated[$0])))" })
         """)
         
         // Check if we need to apply syntactic sugar to the accumulated declaration fragment spellings.
@@ -176,11 +218,7 @@ extension PathHierarchy {
             accumulated.applySwiftSyntacticSugar(markers: markers)
         }
         
-        // Add a null-terminator to create a String from the accumulated UTF-8 code units.
-        accumulated.append(0)
-        return accumulated.withUnsafeBufferPointer { pointer in
-            String(cString: pointer.baseAddress!)
-        }
+        return accumulated
     }
     
     /// A small helper type that tracks the scope of nested brackets; `()`, `[]`, or `<>`.
@@ -279,7 +317,7 @@ private extension ContiguousArray<UTF8.CodeUnit> {
                 angleBracketStack.append(index)
             case closeAngle where self[index - 1] != hyphen: // "->" isn't the closing bracket of a generic
                 guard let open = angleBracketStack.popLast() else {
-                    assertionFailure("Encountered unexpected generic scope brackets in \(String(cString: self + [0]))")
+                    assertionFailure("Encountered unexpected generic scope brackets in \(String(decoding: self, as: UTF8.self))")
                     return
                 }
                 
@@ -307,8 +345,8 @@ private extension ContiguousArray<UTF8.CodeUnit> {
         // Iterate over all the marked angle bracket pairs (from end to start) and replace the marked text with the syntactic sugar alternative.
         while !markedAngleBracketPairs.isEmpty {
             let (open, close) = markedAngleBracketPairs.removeLast()
-            assert(self[open] == openAngle, "Start marker at \(open) is '\(String(cString: [self[open], 0]))' instead of '<' in \(String(cString: self + [0]))")
-            assert(self[close] == closeAngle, "End marker at \(close) is '\(String(cString: [self[close], 0]))' instead of '>' in \(String(cString: self + [0]))")
+            assert(self[open] == openAngle, "Start marker at \(open) is '\(String(Unicode.Scalar(self[open])))' instead of '<' in \(String(decoding: self, as: UTF8.self))")
+            assert(self[close] == closeAngle, "End marker at \(close) is '\(String(Unicode.Scalar(self[close])))' instead of '>' in \(String(decoding: self, as: UTF8.self))")
             
             // The caller accumulated a single character for each marker that indicated the type of syntactic sugar to apply.
             let marker = open - 1
@@ -349,12 +387,12 @@ private extension ContiguousArray<UTF8.CodeUnit> {
                     }
                     else if $0 == closeAngle || $0 == closeParen {
                         depth -= 1
-                        assert(depth >= 0, "Unexpectedly found more closing brackets than open brackets in \(String(cString: self[open + 1 ..< close] + [0]))")
+                        assert(depth >= 0, "Unexpectedly found more closing brackets than open brackets in \(String(decoding: self[open + 1 ..< close], as: UTF8.self))")
                     }
                     return false // keep scanning
                 }
                 guard let commaIndex = self[open + 1 /* skip the known opening bracket */ ..< close /* skip the known closing bracket */].firstIndex(where: predicate) else {
-                    assertionFailure("Didn't find ',' in \(String(cString: self[open + 1 ..< close] + [0]))")
+                    assertionFailure("Didn't find ',' in \(String(decoding: self[open + 1 ..< close], as: UTF8.self))")
                     return
                 }
                 
