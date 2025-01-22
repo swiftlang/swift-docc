@@ -204,13 +204,13 @@ extension PathHierarchy {
                 markers[index] -= difference
                 
                 assert(accumulated[markers[index]] == uppercaseA || accumulated[markers[index]] == uppercaseD  || accumulated[markers[index]] == uppercaseO, """
-                Unexpectedly found '\(String(cString: [accumulated[index], 0]))' at \(index) which should be either an Array, Optional, or Dictionary marker in \(String(cString: accumulated + [0]))
+                Unexpectedly found '\(String(Unicode.Scalar(accumulated[index])))' at \(index) which should be either an Array, Optional, or Dictionary marker in \(String(decoding: accumulated, as: UTF8.self)))
                 """)
             }
         }
         
         assert(markers.allSatisfy { [uppercaseA, uppercaseD, uppercaseO].contains(accumulated[$0]) }, """
-        Unexpectedly found misaligned markers: \(markers.map { "(index: \($0), char: \(String(cString: [accumulated[$0], 0])))" })
+        Unexpectedly found misaligned markers: \(markers.map { "(index: \($0), char: \(String(Unicode.Scalar(accumulated[$0])))" })
         """)
         
         // Check if we need to apply syntactic sugar to the accumulated declaration fragment spellings.
@@ -317,7 +317,7 @@ private extension ContiguousArray<UTF8.CodeUnit> {
                 angleBracketStack.append(index)
             case closeAngle where self[index - 1] != hyphen: // "->" isn't the closing bracket of a generic
                 guard let open = angleBracketStack.popLast() else {
-                    assertionFailure("Encountered unexpected generic scope brackets in \(String(cString: self + [0]))")
+                    assertionFailure("Encountered unexpected generic scope brackets in \(String(decoding: self, as: UTF8.self))")
                     return
                 }
                 
@@ -345,8 +345,8 @@ private extension ContiguousArray<UTF8.CodeUnit> {
         // Iterate over all the marked angle bracket pairs (from end to start) and replace the marked text with the syntactic sugar alternative.
         while !markedAngleBracketPairs.isEmpty {
             let (open, close) = markedAngleBracketPairs.removeLast()
-            assert(self[open] == openAngle, "Start marker at \(open) is '\(String(cString: [self[open], 0]))' instead of '<' in \(String(cString: self + [0]))")
-            assert(self[close] == closeAngle, "End marker at \(close) is '\(String(cString: [self[close], 0]))' instead of '>' in \(String(cString: self + [0]))")
+            assert(self[open] == openAngle, "Start marker at \(open) is '\(String(Unicode.Scalar(self[open])))' instead of '<' in \(String(decoding: self, as: UTF8.self))")
+            assert(self[close] == closeAngle, "End marker at \(close) is '\(String(Unicode.Scalar(self[close])))' instead of '>' in \(String(decoding: self, as: UTF8.self))")
             
             // The caller accumulated a single character for each marker that indicated the type of syntactic sugar to apply.
             let marker = open - 1
@@ -387,12 +387,12 @@ private extension ContiguousArray<UTF8.CodeUnit> {
                     }
                     else if $0 == closeAngle || $0 == closeParen {
                         depth -= 1
-                        assert(depth >= 0, "Unexpectedly found more closing brackets than open brackets in \(String(cString: self[open + 1 ..< close] + [0]))")
+                        assert(depth >= 0, "Unexpectedly found more closing brackets than open brackets in \(String(decoding: self[open + 1 ..< close], as: UTF8.self))")
                     }
                     return false // keep scanning
                 }
                 guard let commaIndex = self[open + 1 /* skip the known opening bracket */ ..< close /* skip the known closing bracket */].firstIndex(where: predicate) else {
-                    assertionFailure("Didn't find ',' in \(String(cString: self[open + 1 ..< close] + [0]))")
+                    assertionFailure("Didn't find ',' in \(String(decoding: self[open + 1 ..< close], as: UTF8.self))")
                     return
                 }
                 
