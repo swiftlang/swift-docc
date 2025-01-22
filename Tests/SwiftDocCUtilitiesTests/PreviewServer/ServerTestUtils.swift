@@ -92,8 +92,10 @@ func responseWithPipeline(request: HTTPRequestHead, handler factory: RequestHand
 
     let response = Response()
     
+    XCTAssertNoThrow(try channel.pipeline.addHandler(HTTPResponseEncoder()).wait(), file: (file), line: line)
     XCTAssertNoThrow(try channel.pipeline.addHandler(response).wait(), file: (file), line: line)
     XCTAssertNoThrow(try channel.pipeline.addHandler(channelHandler).wait(), file: (file), line: line)
+    XCTAssertNoThrow(try channel.pipeline.addHandler(HTTPServerPipelineHandler()).wait(), file: (file), line: line)
 
     XCTAssertNoThrow(try channel.connect(to: SocketAddress(ipAddress: "127.0.0.1", port: 1)).wait(), file: (file), line: line)
 

@@ -111,7 +111,7 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
         
         // If we don't need to keep the connection alive, close `context` after flushing the response
         if !self.keepAlive {
-            promise.futureResult.assumeIsolated().whenComplete { _ in context.close(promise: nil) }
+            promise.futureResult.whenComplete { _ in context.close(promise: nil) }
         }
 
         context.writeAndFlush(self.wrapOutboundOut(.end(trailers)), promise: promise)
