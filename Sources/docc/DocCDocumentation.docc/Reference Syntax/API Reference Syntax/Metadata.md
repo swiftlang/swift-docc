@@ -56,6 +56,17 @@ to add additional URLs for a page.
 > Note: Starting with version 6.0, @Redirected is supported as a child directive of @Metadata. In
 previous versions, @Redirected must be used as a top level directive.
 
+### Usage in documentation comments
+
+You can specify `@Metadata` configuration in documentation comments to specify ``Available`` directives. Other metadata directives are 
+not supported in documentation comments.  
+
+> Note: Don't specify an `@Metadata` directive in both the symbol's documentation comment and its documentation extension file.
+If you have one in each, DocC will pick the one in the documentation extension and discard the one in the documentation
+comment.
+
+> Earlier versions: Before Swift-DocC 6.1, `@Metadata` was not supported in documentation comments.
+
 ## Topics
 
 ### Extending or Overriding Source Documentation
@@ -78,6 +89,7 @@ previous versions, @Redirected must be used as a top level directive.
 ### Customizing the Languages of an Article
 
 - ``SupportedLanguage``
+- ``AlternateRepresentation``
 
 ### Customizing the Availability Information of a Page
 

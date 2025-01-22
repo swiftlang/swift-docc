@@ -441,30 +441,22 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         return url.absoluteString
     }
     
-    // Note: The source language of a `ResolvedTopicReference` is not considered when
-    // hashing and checking for equality. This is intentional as DocC uses a single
-    // ResolvedTopicReference to refer to all source language variants of a topic.
-    //
-    // This allows clients to look up topic references without knowing ahead of time
-    // which languages they are available in.
-    
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(_storage.identifierPathAndFragment)
+        hasher.combine(_storage)
     }
     
     public static func == (lhs: ResolvedTopicReference, rhs: ResolvedTopicReference) -> Bool {
-        return lhs._storage.identifierPathAndFragment == rhs._storage.identifierPathAndFragment
+        return lhs._storage == rhs._storage
     }
     
     /// Storage for a resolved topic reference's state.
     ///
     /// This is a reference type which allows ``ResolvedTopicReference`` to have copy-on-write behavior.
-    class Storage {
+    class Storage: Hashable {
         let bundleID: DocumentationBundle.Identifier
         let path: String
         let fragment: String?
         let sourceLanguages: Set<SourceLanguage>
-        let identifierPathAndFragment: String
         
         let url: URL
         
@@ -482,7 +474,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             self.path = path
             self.fragment = fragment
             self.sourceLanguages = sourceLanguages
-            self.identifierPathAndFragment = "\(bundleID)\(path)\(fragment ?? "")"
             
             var components = URLComponents()
             components.scheme = ResolvedTopicReference.urlScheme
@@ -492,6 +483,28 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             self.url = components.url!
             self.pathComponents = self.url.pathComponents
             self.absoluteString = self.url.absoluteString
+        }
+        
+        // Note: The source language of a `ResolvedTopicReference` is not considered when
+        // hashing and checking for equality. This is intentional as DocC uses a single
+        // ResolvedTopicReference to refer to all source language variants of a topic.
+        //
+        // This allows clients to look up topic references without knowing ahead of time
+        // which languages they are available in.
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(path)
+            hasher.combine(fragment)
+            // Ignore the bundle ID in the hash even if it's used for equality (below).
+            // _Almost_ all content should be local, with the same bundle ID, so hashing it doesn't contribute to meaningful uniqueness
+            // and since the module name is already included in the path, paths very rarely collide across archives (where the bundle ID would help).
+        }
+        
+        static func == (lhs: Storage, rhs: Storage) -> Bool {
+            lhs.path     == rhs.path     &&
+            lhs.fragment == rhs.fragment &&
+            lhs.bundleID == rhs.bundleID // Compare bundle ID last since it's expected to be the same for _almost_ all content in the build.
+
         }
     }
     

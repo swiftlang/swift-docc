@@ -491,7 +491,7 @@ extension ExtendedTypeFormatTransformation {
                     relationships.append(.init(source: symbol.identifier.precise,
                                                target: parent.identifier.precise,
                                                kind: .inContextOf,
-                                               targetFallback: parent.title))
+                                               targetFallback: parent.names.title))
                     symbolIsConnectedToParent[symbol.identifier.precise] = true
                 }
                 

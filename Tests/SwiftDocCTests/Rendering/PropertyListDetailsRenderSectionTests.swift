@@ -52,12 +52,10 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
             }
             """
             let symbolGraphString = makeSymbolGraphString(moduleName: "MyModule", symbols: symbolJSON)
-            let tempURL = try createTempFolder(content: [
-                Folder(name: "unit-test.docc", content: [
-                    TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
-                ])
+            let catalog = Folder(name: "unit-test.docc", content: [
+                TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
             ])
-            let (_, bundle, context) = try loadBundle(from: tempURL)
+            let (bundle, context) = try loadBundle(catalog: catalog)
             let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
             let renderNode = converter.convert(node)

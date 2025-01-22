@@ -83,6 +83,7 @@ public typealias BundleIdentifier = String
 /// - ``parents(of:)``
 ///
 public class DocumentationContext {
+    private let signposter = ConvertActionConverter.signposter
 
     /// An error that's encountered while interacting with a ``SwiftDocC/DocumentationContext``.
     public enum ContextError: DescribedError {
@@ -563,6 +564,11 @@ public class DocumentationContext {
      Attempt to resolve links in curation-only documentation, converting any ``TopicReferences`` from `.unresolved` to `.resolved` where possible.
      */
     private func resolveLinks(curatedReferences: Set<ResolvedTopicReference>, bundle: DocumentationBundle) {
+        let signpostHandle = signposter.beginInterval("Resolve links", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Resolve links", signpostHandle)
+        }
+        
         let references = Array(curatedReferences)
         let results = Synchronized<[LinkResolveResult]>([])
         results.sync({ $0.reserveCapacity(references.count) })
@@ -612,6 +618,19 @@ public class DocumentationContext {
                 resolver.visit(documentationNode.semantic)
             }
             
+            // Also resolve the node's alternate representations. This isn't part of the node's 'semantic' value (resolved above).
+            if let alternateRepresentations = documentationNode.metadata?.alternateRepresentations {
+                for alternateRepresentation in alternateRepresentations {
+                    let resolutionResult = resolver.resolve(
+                        alternateRepresentation.reference,
+                        in: bundle.rootReference,
+                        range: alternateRepresentation.originalMarkup.range,
+                        severity: .warning
+                    )
+                    alternateRepresentation.reference = .resolved(resolutionResult)
+                }
+            }
+
             let problems: [Problem]
             if documentationNode.semantic is Article {
                 // Diagnostics for articles have correct source ranges and don't need to be modified.
@@ -708,6 +727,11 @@ public class DocumentationContext {
         tutorialArticles: [SemanticResult<TutorialArticle>],
         bundle: DocumentationBundle
     ) {
+        let signpostHandle = signposter.beginInterval("Resolve links", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Resolve links", signpostHandle)
+        }
+        
         let sourceLanguages = soleRootModuleReference.map { self.sourceLanguages(for: $0) } ?? [.swift]
 
         // Tutorial table-of-contents
@@ -1037,7 +1061,11 @@ public class DocumentationContext {
     /// A lookup of resolved references based on the reference's absolute string.
     private(set) var referenceIndex = [String: ResolvedTopicReference]()
     
-    private func nodeWithInitializedContent(reference: ResolvedTopicReference, match foundDocumentationExtension: DocumentationContext.SemanticResult<Article>?) -> DocumentationNode {
+    private func nodeWithInitializedContent(
+        reference: ResolvedTopicReference,
+        match foundDocumentationExtension: DocumentationContext.SemanticResult<Article>?,
+        bundle: DocumentationBundle
+    ) -> DocumentationNode {
         guard var updatedNode = documentationCache[reference] else {
             fatalError("A topic reference that has already been resolved should always exist in the cache.")
         }
@@ -1045,7 +1073,9 @@ public class DocumentationContext {
         // Pull a matched article out of the cache and attach content to the symbol
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
-            engine: diagnosticEngine
+            engine: diagnosticEngine,
+            bundle: bundle,
+            context: self
         )
 
         // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
@@ -1147,6 +1177,11 @@ public class DocumentationContext {
     ) throws {
         // Making sure that we correctly let decoding memory get released, do not remove the autorelease pool.
         try autoreleasepool {
+            let signpostHandle = signposter.beginInterval("Register symbols", id: signposter.makeSignpostID())
+            defer {
+                signposter.endInterval("Register symbols", signpostHandle)
+            }
+            
             /// We need only unique relationships so we'll collect them in a set.
             var combinedRelationshipsBySelector = [UnifiedSymbolGraph.Selector: Set<SymbolGraph.Relationship>]()
             /// Also track the unique relationships across all languages and platforms
@@ -1157,7 +1192,9 @@ public class DocumentationContext {
             var moduleReferences = [String: ResolvedTopicReference]()
             
             // Build references for all symbols in all of this module's symbol graphs.
-            let symbolReferences = linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+            let symbolReferences = signposter.withIntervalSignpost("Disambiguate references") {
+                linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+            }
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             documentationCache.reserveCapacity(symbolReferences.count)
@@ -1223,7 +1260,9 @@ public class DocumentationContext {
                     let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguages: moduleInterfaceLanguages, defaultSymbol: moduleSymbol)
                     moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: bundle)
                     
-                    addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference)
+                    signposter.withIntervalSignpost("Add symbols to topic graph", id: signposter.makeSignpostID()) {
+                        addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference)
+                    }
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
@@ -1375,15 +1414,21 @@ public class DocumentationContext {
             )
 
             // Parse and prepare the nodes' content concurrently.
-            let updatedNodes = Array(documentationCache.symbolReferences).concurrentMap { finalReference in
-                // Match the symbol's documentation extension and initialize the node content.
-                let match = uncuratedDocumentationExtensions[finalReference]
-                let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
-                
-                return ((
-                    node: updatedNode,
-                    matchedArticleURL: match?.source
-                ))
+            let updatedNodes = signposter.withIntervalSignpost("Parse symbol markup", id: signposter.makeSignpostID()) {
+                Array(documentationCache.symbolReferences).concurrentMap { finalReference in
+                    // Match the symbol's documentation extension and initialize the node content.
+                    let match = uncuratedDocumentationExtensions[finalReference]
+                    let updatedNode = nodeWithInitializedContent(
+                        reference: finalReference,
+                        match: match,
+                        bundle: bundle
+                    )
+                    
+                    return ((
+                        node: updatedNode,
+                        matchedArticleURL: match?.source
+                    ))
+                }
             }
             
             // Update cache with up-to-date nodes
@@ -1532,14 +1577,14 @@ public class DocumentationContext {
                 {
                     switch (source.kind, target.kind) {
                     case (.dictionaryKey, .dictionary):
-                        let dictionaryKey = DictionaryKey(name: sourceSymbol.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        let dictionaryKey = DictionaryKey(name: sourceSymbol.names.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
                         if keysByTarget[edge.target] == nil {
                             keysByTarget[edge.target] = [dictionaryKey]
                         } else {
                             keysByTarget[edge.target]?.append(dictionaryKey)
                         }
                     case (.httpParameter, .httpRequest):
-                        let parameter = HTTPParameter(name: sourceSymbol.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        let parameter = HTTPParameter(name: sourceSymbol.names.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
                         if parametersByTarget[edge.target] == nil {
                             parametersByTarget[edge.target] = [parameter]
                         } else {
@@ -1549,14 +1594,14 @@ public class DocumentationContext {
                         let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
                         bodyByTarget[edge.target] = body
                     case (.httpParameter, .httpBody):
-                        let parameter = HTTPParameter(name: sourceSymbol.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        let parameter = HTTPParameter(name: sourceSymbol.names.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
                         if bodyParametersByTarget[edge.target] == nil {
                             bodyParametersByTarget[edge.target] = [parameter]
                         } else {
                             bodyParametersByTarget[edge.target]?.append(parameter)
                         }
                     case (.httpResponse, .httpRequest):
-                        let statusParts = sourceSymbol.title.split(separator: " ", maxSplits: 1)
+                        let statusParts = sourceSymbol.names.title.split(separator: " ", maxSplits: 1)
                         let statusCode = UInt(statusParts[0]) ?? 0
                         let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
                         let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
@@ -1572,17 +1617,15 @@ public class DocumentationContext {
             }
         }
         
-        let trait = DocumentationDataVariantsTrait(for: selector)
-        
         // Merge in all the dictionary keys for each target into their section variants.
         keysByTarget.forEach { targetIdentifier, keys in
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
-                let keys = keys.sorted { $0.name < $1.name }
-                if semantic.dictionaryKeysSectionVariants[trait] == nil {
-                    semantic.dictionaryKeysSectionVariants[trait] = DictionaryKeysSection(dictionaryKeys: keys)
+                let keys = keys.sorted(by: \.name)
+                if semantic.dictionaryKeysSection == nil {
+                    semantic.dictionaryKeysSection = DictionaryKeysSection(dictionaryKeys: keys)
                 } else {
-                    semantic.dictionaryKeysSectionVariants[trait]?.mergeDictionaryKeys(keys)
+                    semantic.dictionaryKeysSection?.mergeDictionaryKeys(keys)
                 }
             }
         }
@@ -1591,11 +1634,11 @@ public class DocumentationContext {
         parametersByTarget.forEach { targetIdentifier, parameters in
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
-                let parameters = parameters.sorted { $0.name < $1.name }
-                if semantic.httpParametersSectionVariants[trait] == nil {
-                    semantic.httpParametersSectionVariants[trait] = HTTPParametersSection(parameters: parameters)
+                let parameters = parameters.sorted(by: \.name)
+                if semantic.httpParametersSection == nil {
+                    semantic.httpParametersSection = HTTPParametersSection(parameters: parameters)
                 } else {
-                    semantic.httpParametersSectionVariants[trait]?.mergeParameters(parameters)
+                    semantic.httpParametersSection?.mergeParameters(parameters)
                 }
             }
         }
@@ -1606,13 +1649,13 @@ public class DocumentationContext {
             if let semantic = target?.semantic as? Symbol {
                 // Add any body parameters to existing body record
                 var localBody = body
-                if let identifier = body.symbol?.preciseIdentifier, let bodyParameters = bodyParametersByTarget[identifier] {
-                    localBody.parameters = bodyParameters.sorted { $0.name < $1.name }
+                if let identifier = body.symbol?.identifier.precise, let bodyParameters = bodyParametersByTarget[identifier] {
+                    localBody.parameters = bodyParameters.sorted(by: \.name)
                 }
-                if semantic.httpBodySectionVariants[trait] == nil {
-                    semantic.httpBodySectionVariants[trait] = HTTPBodySection(body: localBody)
+                if semantic.httpBodySection == nil {
+                    semantic.httpBodySection = HTTPBodySection(body: localBody)
                 } else {
-                    semantic.httpBodySectionVariants[trait]?.mergeBody(localBody)
+                    semantic.httpBodySection?.mergeBody(localBody)
                 }
             }
         }
@@ -1621,11 +1664,11 @@ public class DocumentationContext {
         responsesByTarget.forEach { targetIdentifier, responses in
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
-                let responses = responses.sorted { $0.statusCode < $1.statusCode }
-                if semantic.httpResponsesSectionVariants[trait] == nil {
-                    semantic.httpResponsesSectionVariants[trait] = HTTPResponsesSection(responses: responses)
+                let responses = responses.sorted(by: \.statusCode)
+                if semantic.httpResponsesSection == nil {
+                    semantic.httpResponsesSection = HTTPResponsesSection(responses: responses)
                 } else {
-                    semantic.httpResponsesSectionVariants[trait]?.mergeResponses(responses)
+                    semantic.httpResponsesSection?.mergeResponses(responses)
                 }
             }
         }
@@ -2177,9 +2220,16 @@ public class DocumentationContext {
             )
             
             do {
-                try symbolGraphLoader.loadAll()
-                let pathHierarchy = PathHierarchy(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents)
-                hierarchyBasedResolver = PathHierarchyBasedLinkResolver(pathHierarchy: pathHierarchy)
+                try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
+                    try symbolGraphLoader.loadAll()
+                }
+                hierarchyBasedResolver = signposter.withIntervalSignpost("Build PathHierarchy", id: signposter.makeSignpostID()) {
+                    PathHierarchyBasedLinkResolver(pathHierarchy: PathHierarchy(
+                        symbolGraphLoader: symbolGraphLoader,
+                        bundleName: urlReadablePath(bundle.displayName),
+                        knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
+                    ))
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2191,7 +2241,9 @@ public class DocumentationContext {
         // First, all the resources are added since they don't reference anything else.
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                try self.registerMiscResources(from: bundle)
+                try signposter.withIntervalSignpost("Load resources", id: signposter.makeSignpostID()) {
+                    try self.registerMiscResources(from: bundle)
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2215,7 +2267,9 @@ public class DocumentationContext {
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                result = try self.registerDocuments(from: bundle)
+                result = try signposter.withIntervalSignpost("Load documents", id: signposter.makeSignpostID()) {
+                    try self.registerDocuments(from: bundle)
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2226,7 +2280,9 @@ public class DocumentationContext {
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
+                try signposter.withIntervalSignpost("Load external resolvers", id: signposter.makeSignpostID()) {
+                    try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2361,7 +2417,9 @@ public class DocumentationContext {
         try shouldContinueRegistration()
 
         // Fourth, automatically curate all symbols that haven't been curated manually
-        let automaticallyCurated = autoCurateSymbolsInTopicGraph()
+        let automaticallyCurated = signposter.withIntervalSignpost("Auto-curate symbols ", id: signposter.makeSignpostID()) {
+            autoCurateSymbolsInTopicGraph()
+        }
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
         allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), bundle: bundle, initial: allCuratedReferences)
@@ -2407,7 +2465,9 @@ public class DocumentationContext {
         }
         
         // Seventh, the complete topic graph—with all nodes and all edges added—is analyzed.
-        topicGraphGlobalAnalysis()
+        signposter.withIntervalSignpost("Analyze topic graph", id: signposter.makeSignpostID()) {
+            topicGraphGlobalAnalysis()
+        }
         
         preResolveModuleNames()
     }
@@ -2606,6 +2666,11 @@ public class DocumentationContext {
     /// - Returns: The references of all the symbols that were curated.
     @discardableResult
     func crawlSymbolCuration(in references: [ResolvedTopicReference], bundle: DocumentationBundle, initial: Set<ResolvedTopicReference> = []) throws -> Set<ResolvedTopicReference> {
+        let signpostHandle = signposter.beginInterval("Curate symbols", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Curate symbols", signpostHandle)
+        }
+        
         var crawler = DocumentationCurator(in: self, bundle: bundle, initial: initial)
 
         for reference in references {
@@ -2767,6 +2832,9 @@ public class DocumentationContext {
             default: break
             }
         }
+        
+        // Run analysis to determine whether manually configured alternate representations are valid.
+        analyzeAlternateRepresentations()
         
         // Run global ``TopicGraph`` global analysis.
         analyzeTopicGraph()
@@ -3130,6 +3198,118 @@ extension DocumentationContext {
             }
             return Problem(diagnostic: Diagnostic(source: source, severity: .information, range: nil, identifier: "org.swift.docc.SymbolNotCurated", summary: "You haven't curated \(node.reference.absoluteString.singleQuoted)"), possibleSolutions: [Solution(summary: "Add a link to \(node.reference.absoluteString.singleQuoted) from a Topics group of another documentation node.", replacements: [])])
         }
+        diagnosticEngine.emit(problems)
+    }
+        
+    func analyzeAlternateRepresentations() {
+        var problems = [Problem]()
+
+        func listSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> String {
+            sourceLanguages.sorted(by: { language1, language2 in
+                // Emit Swift first, then alphabetically.
+                switch (language1, language2) {
+                case (.swift, _): return true
+                case (_, .swift): return false
+                default: return language1.id < language2.id
+                }
+            }).map(\.name).list(finalConjunction: .and)
+        }
+        func removeAlternateRepresentationSolution(_ alternateRepresentation: AlternateRepresentation) -> [Solution] {
+            [Solution(
+                summary: "Remove this alternate representation",
+                replacements: alternateRepresentation.originalMarkup.range.map { [Replacement(range: $0, replacement: "")] } ?? [])]
+        }
+
+        for reference in knownPages {
+            guard let entity = try? self.entity(with: reference), let alternateRepresentations = entity.metadata?.alternateRepresentations else { continue }
+            
+            var sourceLanguageToReference: [SourceLanguage: AlternateRepresentation] = [:]
+            for alternateRepresentation in alternateRepresentations {
+                // Check if the entity is not a symbol, as only symbols are allowed to specify custom alternate representations
+                guard entity.symbol != nil else {
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Custom alternate representations are not supported for page kind \(entity.kind.name.singleQuoted)",
+                            explanation: "Alternate representations are only supported for symbols."
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    ))
+                    continue
+                }
+
+                guard case .resolved(.success(let alternateRepresentationReference)) = alternateRepresentation.reference,
+                      let alternateRepresentationEntity = try? self.entity(with: alternateRepresentationReference) else {
+                    continue
+                }
+                
+                // Check if the resolved entity is not a symbol, as only symbols are allowed as custom alternate representations
+                guard alternateRepresentationEntity.symbol != nil else {
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.UnsupportedPageKind",
+                            summary: "Page kind \(alternateRepresentationEntity.kind.name.singleQuoted) is not allowed as a custom alternate language representation",
+                            explanation: "Symbols can only specify other symbols as custom language representations."
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    ))
+                    continue
+                }
+                
+                // Check if the documented symbol already has alternate representations from in-source annotations.
+                let duplicateSourceLanguages = alternateRepresentationEntity.availableSourceLanguages.intersection(entity.availableSourceLanguages)
+                if !duplicateSourceLanguages.isEmpty {
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                            summary: "\(entity.name.plainText.singleQuoted) already has a representation in \(listSourceLanguages(duplicateSourceLanguages))",
+                            explanation: "Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for."
+                        ),
+                        possibleSolutions: [Solution(summary: "Replace this alternate language representation with a symbol which isn't available in \(listSourceLanguages(entity.availableSourceLanguages))", replacements: [])]
+                    ))
+                }
+                
+                let duplicateAlternateLanguages = Set(sourceLanguageToReference.keys).intersection(alternateRepresentationEntity.availableSourceLanguages)
+                if !duplicateAlternateLanguages.isEmpty {
+                    let notes: [DiagnosticNote] = duplicateAlternateLanguages.compactMap { duplicateAlternateLanguage in
+                        guard let alreadyExistingRepresentation = sourceLanguageToReference[duplicateAlternateLanguage],
+                              let range = alreadyExistingRepresentation.originalMarkup.range,
+                              let source = range.source else {
+                            return nil
+                        }
+                        
+                        return DiagnosticNote(source: source, range: range, message: "This directive already specifies an alternate \(duplicateAlternateLanguage.name) representation.")
+                    }
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: alternateRepresentation.originalMarkup.range?.source,
+                            severity: .warning,
+                            range: alternateRepresentation.originalMarkup.range,
+                            identifier: "org.swift.docc.AlternateRepresentation.DuplicateLanguageDefinition",
+                            summary: "A custom alternate language representation for \(listSourceLanguages(duplicateAlternateLanguages)) has already been specified",
+                            explanation: "Only one custom alternate language representation can be specified per language.",
+                            notes: notes
+                        ),
+                        possibleSolutions: removeAlternateRepresentationSolution(alternateRepresentation)
+                    ))
+                }
+                
+                // Update mapping from source language to alternate declaration, for diagnostic purposes
+                for alreadySeenLanguage in alternateRepresentationEntity.availableSourceLanguages {
+                    sourceLanguageToReference[alreadySeenLanguage] = alternateRepresentation
+                }
+            }
+        }
+        
         diagnosticEngine.emit(problems)
     }
 }

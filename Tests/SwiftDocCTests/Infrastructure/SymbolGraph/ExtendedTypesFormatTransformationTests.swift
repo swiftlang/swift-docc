@@ -29,11 +29,11 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
         XCTAssert(try ExtendedTypeFormatTransformation.transformExtensionBlockFormatToExtendedTypeFormat(&graph, moduleName: "A"))
         
         // check the expected symbols exist
-        let extendedModuleA = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedModule && symbol.title == "A" }))
+        let extendedModuleA = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedModule && symbol.names.title == "A" }))
         
-        let extendedTypeA = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.title == "A" }))
-        let extendedTypeATwo = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.title == "ATwo" }))
-        let extendedTypeB = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.title == "B" }))
+        let extendedTypeA = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.names.title == "A" }))
+        let extendedTypeATwo = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.names.title == "ATwo" }))
+        let extendedTypeB = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.names.title == "B" }))
         
         let addedMemberSymbolsTypeA = graph.symbols.values.filter({ symbol in symbol.kind.identifier == .property && symbol.pathComponents[symbol.pathComponents.count-2] == "A" })
         XCTAssertEqual(addedMemberSymbolsTypeA.count, 2)
@@ -87,16 +87,16 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
         XCTAssert(try ExtendedTypeFormatTransformation.transformExtensionBlockFormatToExtendedTypeFormat(&graph, moduleName: "A"))
         
         // check the expected symbols exist
-        let extendedModuleA = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedModule && symbol.title == "A" }))
+        let extendedModuleA = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedModule && symbol.names.title == "A" }))
         
-        let extendedTypeUnextended = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .unknownExtendedType && symbol.title == "Unextended" }))
+        let extendedTypeUnextended = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .unknownExtendedType && symbol.names.title == "Unextended" }))
         
         // this ancestor is also extended so its kind should be known
-        let extendedTypeUnextendedDotExtended = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.title == "Unextended.Extended" }))
+        let extendedTypeUnextendedDotExtended = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.names.title == "Unextended.Extended" }))
         
-        let extendedTypeUnextendedDotExtendedDotUnextendedInner = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .unknownExtendedType && symbol.title == "Unextended.Extended.UnextendedInner" }))
+        let extendedTypeUnextendedDotExtendedDotUnextendedInner = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .unknownExtendedType && symbol.names.title == "Unextended.Extended.UnextendedInner" }))
         
-        let extendedTypeUnextendedDotExtendedDotUnextendedInnerDotA = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.title == "Unextended.Extended.UnextendedInner.A" }))
+        let extendedTypeUnextendedDotExtendedDotUnextendedInnerDotA = try XCTUnwrap(graph.symbols.values.first(where: { symbol in symbol.kind.identifier == .extendedStructure && symbol.names.title == "Unextended.Extended.UnextendedInner.A" }))
         
         // check the expected relationships exist
         XCTAssertNotNil(graph.relationships.first(where: { relationship in

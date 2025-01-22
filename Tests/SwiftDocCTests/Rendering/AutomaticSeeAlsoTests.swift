@@ -18,7 +18,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with no authored See Also and with no curated siblings
     /// does not have a See Also section.
     func testNoSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -41,7 +41,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with authored See Also and with no curated siblings
     /// does include an authored See Also section
     func testAuthoredSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -77,7 +77,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with authored See Also and with curated siblings
     /// does include both in See Also with authored section first
     func testAuthoredAndAutomaticSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -138,7 +138,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     // Duplicate of the `testAuthoredAndAutomaticSeeAlso()` test above
     // but with automatic see also creation disabled
     func testAuthoredSeeAlsoWithDisabledAutomaticSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -201,7 +201,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     // Duplicate of the `testAuthoredAndAutomaticSeeAlso()` test above
     // but with automatic see also creation globally disabled
     func testAuthoredSeeAlsoWithGloballyDisabledAutomaticSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``

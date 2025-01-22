@@ -17,7 +17,7 @@ import SymbolKit
 
 class RenderNodeTranslatorTests: XCTestCase {
     private func findDiscussion(forSymbolPath: String, configureBundle: ((URL) throws -> Void)? = nil) throws -> ContentRenderSection? {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configureBundle: configureBundle)
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: configureBundle)
         
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: forSymbolPath, sourceLanguage: .swift))
         
@@ -223,7 +223,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
             
     func testArticleRoles() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         
         // Verify article's role
@@ -281,7 +281,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     // Verifies that links to sections include their container's abstract rdar://72110558
     func testSectionAbstracts() throws {
         // Create an article including a link to a tutorial section
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
             try """
             # Article
             Article abstract
@@ -303,7 +303,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
 
     func testEmptyTaskGroupsNotRendered() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         
         let source = """
@@ -365,7 +365,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     /// Tests the ordering of automatic groups for symbols
     func testAutomaticTaskGroupsOrderingInSymbols() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             SideClass abstract
@@ -492,7 +492,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     /// Tests the ordering of automatic groups for articles
     func testAutomaticTaskGroupsOrderingInArticles() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # Article
             Article abstract
@@ -599,7 +599,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
     /// Tests the ordering of automatic groups in defining protocol
     func testOrderingOfAutomaticGroupsInDefiningProtocol() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             //
         })
         
@@ -649,7 +649,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             forResource: "FancyProtocol.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
         // Create a test bundle copy with the symbol graph from above
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: fancyProtocolSGFURL, to: url.appendingPathComponent("FancyProtocol.symbols.json"))
         }
 
@@ -885,7 +885,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     // Verifies we don't render links to non linkable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
@@ -925,7 +925,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testLinkInAbstract() throws {
         do {
             // First verify that `SideKit` page does not contain render reference to `SideKit/SideClass/Element`.
-            let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+            let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
             
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
@@ -940,7 +940,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         
         do {
             // Create a bundle with a link in abstract, then verify the render reference is present in `SideKit` render node references.
-            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
                 try """
                 # ``SideKit/SideClass``
                 This is a link to <doc:/documentation/SideKit/SideClass/Element>.
@@ -1273,7 +1273,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testExpectedRoleHeadingIsAssigned() throws {
-        let exampleDocumentation = Folder(
+        let catalog = Folder(
             name: "unit-test.docc",
             content: [
                 TextFile(name: "APICollection.md", utf8Content: """
@@ -1334,8 +1334,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         func renderNodeArticleFromReferencePath(
             referencePath: String
@@ -1364,7 +1363,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testExpectedRoleHeadingWhenAutomaticRoleHeadingIsDisabled() throws {
-        let exampleDocumentation = Folder(
+        let catalog = Folder(
             name: "unit-test.docc",
             content: [
                 TextFile(name: "APICollection.md", utf8Content: """
@@ -1427,8 +1426,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
 
         func renderNodeArticleFromReferencePath(
             referencePath: String
@@ -1496,5 +1494,85 @@ class RenderNodeTranslatorTests: XCTestCase {
                 XCTAssert(renderNode.references.keys.contains(otherReference.absoluteString))
             }
         }
+    }
+    
+    func testAlternateRepresentationsRenderedAsVariants() throws {
+        let (bundle, context) = try loadBundle(catalog: Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(name: "Symbol.md", utf8Content: """
+                # ``Symbol``
+                @Metadata {
+                    @AlternateRepresentation(``CounterpartSymbol``)
+                }
+                A symbol extension file defining an alternate representation.
+                """),
+                TextFile(name: "OtherSymbol.md", utf8Content: """
+                # ``OtherSymbol``
+                @Metadata {
+                    @AlternateRepresentation(``MissingCounterpart``)
+                }
+                A symbol extension file defining an alternate representation which doesn't exist.
+                """),
+                TextFile(name: "MultipleSwiftVariantsSymbol.md", utf8Content: """
+                # ``MultipleSwiftVariantsSymbol``
+                @Metadata {
+                    @AlternateRepresentation(``Symbol``)
+                }
+                A symbol extension file defining an alternate representation which is also in Swift.
+                """),
+                JSONFile(
+                    name: "unit-test.swift.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["Symbol"]),
+                            makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["OtherSymbol"]),
+                            makeSymbol(id: "multiple-swift-variants-symbol-id", kind: .class, pathComponents: ["MultipleSwiftVariantsSymbol"]),
+                        ]
+                    )
+                ),
+                JSONFile(
+                    name: "unit-test.occ.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [
+                            makeSymbol(id: "counterpart-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["CounterpartSymbol"]),
+                        ]
+                    )
+                ),
+            ]
+        ))
+
+        func renderNodeArticleFromReferencePath(
+            referencePath: String
+        ) throws -> RenderNode {
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: referencePath, sourceLanguage: .swift)
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            return try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+        }
+        
+        // Assert that CounterpartSymbol's source languages have been added as source languages of Symbol
+        var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/Symbol")
+        XCTAssertEqual(renderNode.variants?.count, 2)
+        XCTAssertEqual(renderNode.variants, [
+            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/symbol"]),
+            .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unit-test/counterpartsymbol"])
+        ])
+        
+        // Assert that alternate representations which can't be resolved are ignored
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/OtherSymbol")
+        XCTAssertEqual(renderNode.variants?.count, 1)
+        XCTAssertEqual(renderNode.variants, [
+            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/othersymbol"]),
+        ])
+
+        // Assert that duplicate alternate representations are not added as variants
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/MultipleSwiftVariantsSymbol")
+        XCTAssertEqual(renderNode.variants?.count, 1)
+        XCTAssertEqual(renderNode.variants, [
+            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/multipleswiftvariantssymbol"]),
+        ])
     }
 }

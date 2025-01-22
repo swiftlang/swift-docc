@@ -1106,8 +1106,8 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("documentation", nil), ("MixedFramework", nil), ("MyEnum", nil)])
     }
     
-    func testTestBundle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+    func testUnrealisticMixedTestCatalog() throws {
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let linkResolver = try XCTUnwrap(context.linkResolver.localResolver)
         let tree = try XCTUnwrap(linkResolver.pathHierarchy)
         
@@ -1368,7 +1368,7 @@ class PathHierarchyTests: XCTestCase {
             return PathHierarchy.functionSignatureTypeNames(for: SymbolGraph.Symbol(
                 identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
                 names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
-                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display NAme"), mixins: [
+                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"), mixins: [
                     SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
                         parameters: [
                             .init(name: "someName", externalName: "with", declarationFragments: [
@@ -1418,6 +1418,30 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
         ]))
         
+        // any Sequence<Int>
+        // The Swift symbol graph extractor emits `any` differently than `some` (rdar://142814138).
+        XCTAssertEqual("Sequence<Int>", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "any ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Sequence", preciseIdentifier: "s:ST"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // (Int, String)
+        // Swift _does_ support overloading by tuple labels but we don't include tuple labels in the type disambiguation because it would be
+        // longer and harder to read/write in the common case when the other overloads aren't tuples with the same types but different labels.
+        // In the rare case of actual overloads only distinguishable by tuple labels they would all require hash disambiguation instead.
+        XCTAssertEqual("(Int,String)", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "(number ", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ", text", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+        ]))
+         
         // Array<(Int,Double)>
         XCTAssertEqual("[(Int,Double)]", functionSignatureParameterTypeName([
             .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
@@ -1470,6 +1494,52 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ",", preciseIdentifier: nil),
             .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // [[Double: Int]]
+        XCTAssertEqual("[[Double:Int]]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: " : ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]]", preciseIdentifier: nil),
+        ]))
+        
+        // [ ([Int]?) : Int]
+        XCTAssertEqual("[([Int]?):Int]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[ ([", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]?) : ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]", preciseIdentifier: nil),
+        ]))
+        
+        // [Array<(_: Int)>: (number: Int, text: String)]
+        XCTAssertEqual("[[(Int)]:(Int,String)]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(_:", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ")>: (number", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ", text", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ")]", preciseIdentifier: nil),
+        ]))
+        
+        // [[Int: Int] : [Int: Int]]
+        XCTAssertEqual("[[Int:Int]:[Int:Int]]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "] : [", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]]", preciseIdentifier: nil),
         ]))
         
         // (Dictionary<Double,Int>)->Array<String>
@@ -1697,7 +1767,7 @@ class PathHierarchyTests: XCTestCase {
                 _functionSignatureTypeNames(signature, language: .swift)
             }
             
-            // func doSomething(someName: ((Int, String), Date)) -> ([Int, String?])
+            // func doSomething(someName: ((Int, String), Date)) -> ([Int], String?)
             let tupleArgument = functionSignatureTypeNames(.init(
                 parameters: [
                     .init(name: "someName", externalName: nil, declarationFragments: [
@@ -1720,7 +1790,37 @@ class PathHierarchyTests: XCTestCase {
                 ])
             )
             XCTAssertEqual(tupleArgument?.parameterTypeNames, ["((Int,String),Date)"])
-            XCTAssertEqual(tupleArgument?.returnTypeNames, ["([Int],String?)"])
+            XCTAssertEqual(tupleArgument?.returnTypeNames, ["[Int]", "String?"])
+            
+             // func doSomething() -> ((Double, Double) -> Double, [Int: (Int, Int)], (Bool, Bool), String?)
+            let bigTupleReturnType = functionSignatureTypeNames(.init(
+                parameters: [],
+                returns: [
+                    .init(kind: .text, spelling: "((", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ", [", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ": (", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ")], (", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: "), ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                    .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                    .init(kind: .text, spelling: ">)", preciseIdentifier: nil),
+                ])
+            )
+            XCTAssertEqual(bigTupleReturnType?.parameterTypeNames, [])
+            XCTAssertEqual(bigTupleReturnType?.returnTypeNames, ["(Double,Double)->Double", "[Int:(Int,Int)]", "(Bool,Bool)", "String?"])
             
             // func doSomething(with someName: [Int?: String??])
             let dictionaryWithOptionalsArgument = functionSignatureTypeNames(.init(
@@ -2410,7 +2510,7 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             Folder(name: "clang", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
@@ -2440,8 +2540,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2453,7 +2552,7 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             Folder(name: "clang", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
@@ -2483,8 +2582,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2496,7 +2594,7 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             Folder(name: "clang", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
@@ -2524,8 +2622,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2537,7 +2634,7 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             Folder(name: "clang", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
@@ -2567,8 +2664,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2581,7 +2677,7 @@ class PathHierarchyTests: XCTestCase {
         let otherID = "some-other-symbol-id"
         let memberID = "some-member-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
@@ -2595,8 +2691,7 @@ class PathHierarchyTests: XCTestCase {
             ))
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
@@ -2606,7 +2701,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testLinkToTopicSection() throws {
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
@@ -2650,8 +2745,7 @@ class PathHierarchyTests: XCTestCase {
             """)
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let moduleID = try tree.find(path: "/ModuleName", onlyFindSymbols: true)
@@ -2705,7 +2799,7 @@ class PathHierarchyTests: XCTestCase {
     func testModuleAndCollidingTechnologyRootHasPathsForItsSymbols() throws {
         let symbolID = "some-symbol-id"
         
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
@@ -2725,8 +2819,7 @@ class PathHierarchyTests: XCTestCase {
             """)
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
@@ -2754,12 +2847,12 @@ class PathHierarchyTests: XCTestCase {
             ))
         }
         
-        let multiPlatform = Folder(name: "unit-test.docc", content: [
+        let multiPlatformCatalog = Folder(name: "unit-test.docc", content: [
             makeSymbolGraphFile(platformName: "PlatformOne"),
             makeSymbolGraphFile(platformName: "PlatformTwo"),
         ])
         
-        let (_, _, context) = try loadBundle(from: createTempFolder(content: [multiPlatform]))
+        let (_, context) = try loadBundle(catalog: multiPlatformCatalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2767,10 +2860,10 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths[defaultImplementationID], "/ModuleName/SomeProtocolName/someProtocolRequirement()-3docm")
         
         // Verify that the multi platform paths are the same as the single platform paths
-        let singlePlatform = Folder(name: "unit-test.docc", content: [
+        let singlePlatformCatalog = Folder(name: "unit-test.docc", content: [
             makeSymbolGraphFile(platformName: "PlatformOne"),
         ])
-        let (_, _, singlePlatformContext) = try loadBundle(from: createTempFolder(content: [singlePlatform]))
+        let (_, singlePlatformContext) = try loadBundle(catalog: singlePlatformCatalog)
         let singlePlatformPaths = singlePlatformContext.linkResolver.localResolver.pathHierarchy.caseInsensitiveDisambiguatedPaths()
         XCTAssertEqual(paths[protocolRequirementID], singlePlatformPaths[protocolRequirementID])
         XCTAssertEqual(paths[defaultImplementationID], singlePlatformPaths[defaultImplementationID])
@@ -3105,6 +3198,56 @@ class PathHierarchyTests: XCTestCase {
                 (symbolID: "function-overload-1", disambiguation: "-(String,_,_)"),        //   String  _       _
                 (symbolID: "function-overload-2", disambiguation: "-(_,[Bool],_)"),        //   _       [Bool]  _
                 (symbolID: "function-overload-3", disambiguation: "-(_,_,(Float)->Void)"), //   _       _       (Float)->Void
+            ])
+        }
+        
+        // Each overload has one unique element in the tuple _return_ type
+        do {
+            func makeSignature(first: DeclToken..., second: DeclToken..., third: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
+                .init(
+                    parameters: [],
+                    returns: makeFragments([.text("(")] + [first, second, third].joined(separator: [.text(", ")]) + [.text(")")])
+                )
+            }
+            
+            //  String   [Int]   (Double)->Void
+            //  String?  [Bool]  (Double)->Void
+            //  String?  [Int]   (Float)->Void
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  String   [Int]   (Double)->Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: stringType,                        // String
+                            second: arrayType, "<", intType, ">",     // [Int]
+                            third: "(", doubleType, ") -> ", voidType // (Double)->Void
+                        )),
+                        
+                        //  String?  [Bool]  (Double)->Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: arrayType, "<", boolType, ">",     // [Bool]
+                            third: "(", doubleType, ") -> ", voidType  // (Double)->Void
+                        )),
+                        
+                        //  String?  [Int]   (Float)->Void
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: arrayType, "<", intType, ">",      // [Int]
+                            third: "(", floatType, ") -> ", voidType   // (Float)->Void
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:second:third:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "->(String,_,_)"),        //   String  _       _
+                (symbolID: "function-overload-2", disambiguation: "->(_,[Bool],_)"),        //   _       [Bool]  _
+                (symbolID: "function-overload-3", disambiguation: "->(_,_,(Float)->Void)"), //   _       _       (Float)->Void
             ])
         }
         
@@ -3460,6 +3603,9 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil), ("/=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil), ("///=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil), ("+/-(_:_:)", nil)])
+        
+        // "☜⃩" is a symbol with a symbol diacritic mark.
+        assertParsedPathComponents("☜⃩/(_:_:)", [("☜⃩/(_:_:)", nil)])
 
         // Check parsing return values and parameter types
         assertParsedPathComponents("..<(_:_:)->Bool", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"]))])
@@ -3569,7 +3715,7 @@ class PathHierarchyTests: XCTestCase {
             """),
         ])
         
-        let (_, _, context) = try loadBundle(from: createTempFolder(content: [catalog]))
+        let (_, context) = try loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let rootIdentifier = try XCTUnwrap(tree.modules.first?.identifier)
