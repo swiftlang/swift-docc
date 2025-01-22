@@ -29,13 +29,9 @@ extension PathHierarchy {
     
     /// Creates a type disambiguation string from the given function parameter declaration fragments.
     private static func parameterTypeSpelling(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
-        var accumulated = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        let accumulated = utf8TypeSpelling(for: fragments, isSwift: isSwift)
         
-        // Add a null-terminator to create a String from the accumulated UTF-8 code units.
-        accumulated.append(0)
-        return accumulated.withUnsafeBufferPointer { pointer in
-            String(cString: pointer.baseAddress!)
-        }
+        return String(decoding: accumulated, as: UTF8.self)
     }
     
     /// Creates a list of type disambiguation strings for the function return declaration fragments.
@@ -47,15 +43,10 @@ extension PathHierarchy {
             // We don't want to list "void" return values as type disambiguation
             return []
         }
-        var spelling = utf8TypeSpelling(for: fragments, isSwift: isSwift)
+        let spelling = utf8TypeSpelling(for: fragments, isSwift: isSwift)
         
         guard isSwift, spelling[...].isTuple() else {
-            // Add a null-terminator to create a String from the accumulated UTF-8 code units.
-            spelling.append(0)
-            let stringSpelling = spelling.withUnsafeBufferPointer { pointer in
-                String(cString: pointer.baseAddress!)
-            }
-            return [stringSpelling]
+            return [String(decoding: spelling, as: UTF8.self)]
         }
         
         // This return value is a tuple that should be split into smaller type spellings
