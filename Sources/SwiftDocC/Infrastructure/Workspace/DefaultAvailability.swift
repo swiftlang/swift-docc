@@ -143,13 +143,13 @@ public struct DefaultAvailability: Codable, Equatable {
             // If a module doesn't contain default availability information for any of the fallback platforms,
             // infer it from the corresponding mapped value.
             platformAvailabilities + DefaultAvailability.fallbackPlatforms.flatMap { (fallbackPlatform, platform) in
-                platform.compactMap { pla in
-                    if !platformAvailabilities.contains(where: { $0.platformName == pla }),
+                platform.compactMap { platformName in
+                    if !platformAvailabilities.contains(where: { $0.platformName == platformName }),
                        let fallbackAvailability = platformAvailabilities.first(where: { $0.platformName == fallbackPlatform }),
                        let fallbackIntroducedVersion = fallbackAvailability.introducedVersion
                     {
                         return DefaultAvailability.ModuleAvailability(
-                            platformName: pla,
+                            platformName: platformName,
                             platformVersion: fallbackIntroducedVersion
                         )
                     }
