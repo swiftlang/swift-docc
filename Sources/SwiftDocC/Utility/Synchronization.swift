@@ -35,6 +35,9 @@ public class Synchronized<Value> {
     #elseif os(Linux) || os(Android)
     /// A lock type appropriate for the current platform.
     var lock: UnsafeMutablePointer<pthread_mutex_t>
+    #elseif os(FreeBSD)
+    /// A lock type appropriate for the current platform.
+    var lock: UnsafeMutablePointer<pthread_mutex_t?>
     #elseif os(Windows)
     var lock: UnsafeMutablePointer<SRWLOCK>
     #else
@@ -52,6 +55,10 @@ public class Synchronized<Value> {
         #elseif os(Linux) || os(Android)
         lock = UnsafeMutablePointer<pthread_mutex_t>.allocate(capacity: 1)
         lock.initialize(to: pthread_mutex_t())
+        pthread_mutex_init(lock, nil)
+        #elseif os(FreeBSD)
+        lock = UnsafeMutablePointer<pthread_mutex_t?>.allocate(capacity: 1)
+        lock.initialize(to: nil)
         pthread_mutex_init(lock, nil)
         #elseif os(Windows)
         lock = UnsafeMutablePointer<SRWLOCK>.allocate(capacity: 1)
@@ -75,6 +82,9 @@ public class Synchronized<Value> {
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
         #elseif os(Linux) || os(Android)
+        pthread_mutex_lock(lock)
+        defer { pthread_mutex_unlock(lock) }
+        #elseif os(FreeBSD)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
         #elseif os(Windows)
@@ -111,6 +121,9 @@ extension Lock {
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
         #elseif os(Linux) || os(Android)
+        pthread_mutex_lock(lock)
+        defer { pthread_mutex_unlock(lock) }
+        #elseif os(FreeBSD)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
         #elseif os(Windows)
