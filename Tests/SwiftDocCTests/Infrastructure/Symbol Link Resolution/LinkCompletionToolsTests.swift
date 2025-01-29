@@ -169,8 +169,8 @@ class LinkCompletionToolsTests: XCTestCase {
         
         XCTAssertEqual(Disambiguation.kindAndOrHash(kind: "class", hash: nil).suffix,
                        "-class")
-        XCTAssertEqual(Disambiguation.kindAndOrHash(kind: nil, hash: "h1a2s3h").suffix,
-                       "-h1a2s3h")
+        XCTAssertEqual(Disambiguation.kindAndOrHash(kind: nil, hash: "z3jl").suffix,
+                       "-z3jl")
         
         XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: [], returnTypes: nil).suffix,
                        "-()")
@@ -192,5 +192,28 @@ class LinkCompletionToolsTests: XCTestCase {
                        "-(_,Bool)->Int")
         XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int", "_", "String"]).suffix,
                        "-(_,Bool)->(Int,_,String)")
+    }
+    
+    func testParsingDisambiguationSuffixStrings() throws {
+        for disambiguationSuffixString in [
+            "",
+            "-class",
+            "-z3jl",
+            
+            "-()",
+            "-(Int)",
+            "-(Int,_,String)",
+            
+            "->()",
+            "->Int",
+            "->(Int,_,String)",
+            
+            "-(_,Bool)->()",
+            "-(_,Bool)->Int",
+            "-(_,Bool)->(Int,_,String)",
+        ] {
+            let parsedLinkComponent = try XCTUnwrap(LinkCompletionTools.parse(linkString: "SymbolName\(disambiguationSuffixString)").first)
+            XCTAssertEqual(parsedLinkComponent.disambiguation.suffix, disambiguationSuffixString)
+        }
     }
 }
