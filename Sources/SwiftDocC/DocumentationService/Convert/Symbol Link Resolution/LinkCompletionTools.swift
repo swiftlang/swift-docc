@@ -74,6 +74,39 @@ public enum LinkCompletionTools {
                 self = .none
             }
         }
+        
+        /// A string representation of the disambiguation.
+        public var suffix: String {
+            typealias Disambiguation = PathHierarchy.DisambiguationContainer.Disambiguation
+            
+            switch self {
+            case .kindAndOrHash(let kind?, nil):
+                return Disambiguation.kind(kind).makeSuffix()
+            case .kindAndOrHash(nil,       let hash?):
+                return Disambiguation.hash(hash).makeSuffix()
+            case .kindAndOrHash(let kind?, let hash?): // This is never necessary but a developer could redundantly write it in a parsed link
+                return Disambiguation.kind(kind).makeSuffix() + Disambiguation.hash(hash).makeSuffix()
+                
+            case .typeSignature(let parameterTypes?, nil):
+                return Disambiguation.parameterTypes(parameterTypes).makeSuffix()
+            case .typeSignature(nil,                 let returnTypes?):
+                return Disambiguation.returnTypes(returnTypes).makeSuffix()
+            case .typeSignature(let parameterTypes?, let returnTypes?):
+                return Disambiguation.mixedTypes(parameterTypes: parameterTypes, returnTypes: returnTypes).makeSuffix()
+                
+            // Unexpected error cases
+            case .kindAndOrHash(kind: nil, hash: nil):
+                assertionFailure("Parsed `.kindAndOrHash` disambiguation missing both kind and hash should use `.none` instead. This is a logic bug.")
+                return Disambiguation.none.makeSuffix()
+            case .typeSignature(parameterTypes: nil, returnTypes: nil):
+                assertionFailure("Parsed `.typeSignature` disambiguation missing both parameter types and return types should use `.none` instead. This is a logic bug.")
+                return Disambiguation.none.makeSuffix()
+                
+            // Since this is within DocC we want to have an error if we don't handle new future cases.
+            case .none, ._nonFrozenEnum_useDefaultCase:
+                return Disambiguation.none.makeSuffix()
+            }
+        }
     }
     
     /// Suggests the minimal most readable disambiguation string for each symbol with the same name.
