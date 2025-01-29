@@ -112,7 +112,7 @@ public struct InfoPlist: File, DataRepresentable {
             self.identifier = identifier
             self.defaultAvailability = defaultAvailability
         }
-
+        
         public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
             displayName = try container.decodeIfPresent(String.self, forKey: .displayName)

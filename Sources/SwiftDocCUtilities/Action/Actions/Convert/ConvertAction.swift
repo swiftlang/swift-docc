@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -145,8 +145,10 @@ public struct ConvertAction: AsyncAction {
         // Inject current platform versions if provided
         if var currentPlatforms {
             // Add missing platforms if their fallback platform is present.
-            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
-                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            for (fallbackPlatform, platforms) in DefaultAvailability.fallbackPlatforms {
+                for platform in platforms where currentPlatforms[platform.displayName] == nil {
+                    currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+                }
             }
             configuration.externalMetadata.currentPlatforms = currentPlatforms
         }
