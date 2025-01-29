@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -591,10 +591,12 @@ extension Symbol {
     func mergeAvailabilities(unifiedSymbol: UnifiedSymbolGraph.Symbol) {
         for (selector, mixins) in unifiedSymbol.mixins {
             let trait = DocumentationDataVariantsTrait(for: selector)
-            if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
+            guard let availabilityVariantTrait = availabilityVariants[trait] else {
+                return
+            }
+            if let unifiedSymbolAvailability = mixins.getValueIfPresent(for: SymbolGraph.Symbol.Availability.self) {
                 unifiedSymbolAvailability.availability.forEach { availabilityItem in
-                    guard let availabilityVariantTrait = availabilityVariants[trait] else { return }
-                    if (availabilityVariantTrait.availability.contains(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
+                    guard availabilityVariantTrait.availability.firstIndex(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue }) == nil else {
                         return
                     }
                     availabilityVariants[trait]?.availability.append(availabilityItem)
