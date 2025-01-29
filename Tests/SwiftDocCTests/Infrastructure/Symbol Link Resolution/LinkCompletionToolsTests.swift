@@ -161,4 +161,36 @@ class LinkCompletionToolsTests: XCTestCase {
             "-(_,String)", "->Wrapped", "-(_,Double)",
         ])
     }
+    
+    func testDisambiguationSuffixStrings() {
+        typealias Disambiguation = LinkCompletionTools.ParsedDisambiguation
+        
+        XCTAssertEqual(Disambiguation.none.suffix,"")
+        
+        XCTAssertEqual(Disambiguation.kindAndOrHash(kind: "class", hash: nil).suffix,
+                       "-class")
+        XCTAssertEqual(Disambiguation.kindAndOrHash(kind: nil, hash: "h1a2s3h").suffix,
+                       "-h1a2s3h")
+        
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: [], returnTypes: nil).suffix,
+                       "-()")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["Int"], returnTypes: nil).suffix,
+                       "-(Int)")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["Int", "_", "String"], returnTypes: nil).suffix,
+                       "-(Int,_,String)")
+        
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: []).suffix,
+                       "->()")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: ["Int"]).suffix,
+                       "->Int")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: ["Int", "_", "String"]).suffix,
+                       "->(Int,_,String)")
+        
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: []).suffix,
+                       "-(_,Bool)->()")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int"]).suffix,
+                       "-(_,Bool)->Int")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int", "_", "String"]).suffix,
+                       "-(_,Bool)->(Int,_,String)")
+    }
 }
