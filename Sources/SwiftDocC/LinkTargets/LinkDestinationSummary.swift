@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -311,7 +311,7 @@ public extension DocumentationNode {
         renderNode: RenderNode,
         includeTaskGroups: Bool = true
     ) -> [LinkDestinationSummary] {
-        guard let bundle = context.bundle, bundle.identifier == reference.bundleIdentifier else {
+        guard let bundle = context.bundle, bundle.id == reference.bundleID else {
             // Don't return anything for external references that don't have a bundle in the context.
             return []
         }
@@ -336,8 +336,8 @@ public extension DocumentationNode {
             default:
                 var topicSectionGroups: [LinkDestinationSummary.TaskGroup] = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
 
-                if let overloadChildren = context.topicGraph.overloads(of: self.reference), !overloadChildren.isEmpty {
-                    topicSectionGroups.append(.init(title: "Overloads", identifiers: overloadChildren.map(\.absoluteString)))
+                if let overloads = context.linkResolver.localResolver.overloads(ofGroup: reference) {
+                    topicSectionGroups.append(.init(title: "Overloads", identifiers: overloads.map(\.absoluteString)))
                 }
 
                 taskGroups = topicSectionGroups

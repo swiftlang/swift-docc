@@ -17,22 +17,21 @@ struct HTTPResponsesSectionTranslator: RenderSectionTranslator {
         renderNode: inout RenderNode,
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
-        translateSectionToVariantCollection(
-            documentationDataVariants: symbol.httpResponsesSectionVariants
-        ) { _, httpResponsesSection in
-            // Filter out responses that aren't backed by a symbol
-            let filteredResponses = httpResponsesSection.responses.filter { $0.symbol != nil }
-            
-            if filteredResponses.isEmpty { return nil }
-            
-            return RESTResponseRenderSection(
+        guard let httpResponsesSection = symbol.httpResponsesSection else { return nil }
+        
+        // Filter out responses that aren't backed by a symbol
+        let filteredResponses = httpResponsesSection.responses.filter { $0.symbol != nil }
+        guard !filteredResponses.isEmpty else { return nil }
+        
+        return VariantCollection(defaultValue: CodableContentSection(
+            RESTResponseRenderSection(
                 title: HTTPResponsesSection.title,
                 responses: filteredResponses.map { translateResponse($0, &renderNodeTranslator) }
             )
-        }
+        ))
     }
     
-    func translateResponse(_ response: HTTPResponse, _ renderNodeTranslator: inout RenderNodeTranslator) -> RESTResponse {
+    private func translateResponse(_ response: HTTPResponse, _ renderNodeTranslator: inout RenderNodeTranslator) -> RESTResponse {
         let responseContent = renderNodeTranslator.visitMarkupContainer(
             MarkupContainer(response.contents)
         ) as! [RenderBlockContent]
@@ -71,7 +70,7 @@ struct HTTPResponsesSectionTranslator: RenderSectionTranslator {
     }
     
     // Default reason strings in case one not explicitly set.
-    static let reasonForStatusCode: [UInt: String] = [
+    private static let reasonForStatusCode: [UInt: String] = [
         100: "Continue",
         101: "Switching Protocols",
         200: "OK",

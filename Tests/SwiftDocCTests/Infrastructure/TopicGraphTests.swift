@@ -16,7 +16,7 @@ class TopicGraphTests: XCTestCase {
         /// Returns a ``ResolvedTopicReference`` with the given title, with a phony source language, kind, and source. These are not for testing specific relationships, only abstract graph connectivity.
         static func testNodeWithTitle(_ title: String) -> TopicGraph.Node {
             let urlSafeTitle = title.replacingOccurrences(of: " ", with: "_")
-            let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(urlSafeTitle)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(urlSafeTitle)", sourceLanguage: .swift)
             return TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(urlSafeTitle)")), title: title)
         }
         
@@ -55,36 +55,6 @@ class TopicGraphTests: XCTestCase {
             graph.addEdge(from: testNodeWithTitle("A"), to: testNodeWithTitle("B"))
             graph.addEdge(from: testNodeWithTitle("B"), to: testNodeWithTitle("C"))
             graph.addEdge(from: testNodeWithTitle("C"), to: testNodeWithTitle("A"))
-            return graph
-        }
-
-        /// Return a graph with overload group information:
-        ///
-        /// ```
-        /// Parent
-        ///   -> A
-        ///   -> B
-        ///   -> Overload Group
-        ///     -> A
-        ///     -> B
-        /// ```
-        static var withOverloadGroup: TopicGraph {
-            var graph = TopicGraph()
-
-            let parent = testNodeWithTitle("Parent")
-            let group = testNodeWithTitle("Overload Group")
-            let a = testNodeWithTitle("A")
-            let b = testNodeWithTitle("B")
-
-            graph.addEdge(from: parent, to: a)
-            graph.addEdge(from: parent, to: b)
-            graph.addEdge(from: parent, to: group)
-
-            graph.addEdge(from: group, to: a)
-            graph.addEdge(from: group, to: b)
-
-            graph.nodes[group.reference]?.isOverloadGroup = true
-
             return graph
         }
     }
@@ -275,15 +245,5 @@ class TopicGraphTests: XCTestCase {
                 }
             }
         }
-    }
-
-    func testCollectOverloads() {
-        let graph = TestGraphs.withOverloadGroup
-        let overloadGroup = TestGraphs.testNodeWithTitle("Overload Group")
-
-        XCTAssertEqual(graph.overloads(of: overloadGroup.reference), [
-            TestGraphs.testNodeWithTitle("A").reference,
-            TestGraphs.testNodeWithTitle("B").reference,
-        ])
     }
 }

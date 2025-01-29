@@ -48,7 +48,7 @@ class TermListTests: XCTestCase {
     }
     
     func testLinksAndCodeVoiceAsTerms() throws {
-        let tempURL = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 TextFile(name: "Article.md", utf8Content: """
                 # Article
@@ -77,21 +77,22 @@ class TermListTests: XCTestCase {
                         )
                     ]
                 )),
-            ]),
-        ])
+            ])
             
         let resolver = TestMultiResultExternalReferenceResolver()
         resolver.entitiesToReturn["/path/to/something"] = .success(
             .init(referencePath: "/path/to/something")
         )
         
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: ["com.external.testbundle": resolver])
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle": resolver]
+        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         
         let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
         
@@ -160,8 +161,8 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (bundle, context) = try testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - term First term : A paragraph that
@@ -203,8 +204,8 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (bundle, context) = try testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - Not a term list, and

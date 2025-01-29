@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import XCTest
 class TopicRenderReferenceEncoderTests: XCTestCase {
 
     func testRenderNodeSkipsReferences() throws {
-        var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
+        var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
@@ -51,7 +51,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     func testTopicReferenceEncoder() throws {
         // Create a render node
-        var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
+        var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
@@ -124,7 +124,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // Create many render nodes.
         let nodes = (0..<1000)
             .map({ i -> RenderNode in
-                var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass\(i)", sourceLanguage: .swift), kind: .article)
+                var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass\(i)", sourceLanguage: .swift), kind: .article)
                 node.references = references
                 return node
             })
@@ -158,7 +158,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     /// Verifies that when JSON encoder should sort keys, the custom render reference cache
     /// respects that setting and prints the referencs in alphabetical order.
     func testSortedReferences() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
         // Create a JSON encoder
@@ -170,7 +170,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // For reach topic encode its render node and verify the references are in alphabetical order.
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             
             // Get the encoded JSON as string
             let encodedData = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: cache)
@@ -218,7 +218,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     // Verifies that there is no extra comma at the end of the references list.
     func testRemovesLastReferencesListDelimiter() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
         // Create a JSON encoder
@@ -228,7 +228,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // For reach topic encode its render node and verify the references are in alphabetical order.
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
-            let renderNode = try converter.convert(node)
+            let renderNode = converter.convert(node)
             
             // Get the encoded JSON as string
             let encodedData = try renderNode.encodeToJSON(with: encoder)

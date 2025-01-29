@@ -20,7 +20,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     /// A resolver returning mock symbols.
     class TestSymbolResolver: GlobalExternalSymbolResolver {
         func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
-            let reference = ResolvedTopicReference(bundleIdentifier: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift)
+            let reference = ResolvedTopicReference(bundleID: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift)
             let entity = LinkResolver.ExternalEntity(
                 topicRenderReference: TopicRenderReference(
                     identifier: .init(preciseIdentifier),
@@ -39,7 +39,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     
     func testNoMetricAddedIfNoExternalTopicsAreResolved() throws {
         // Load bundle without using external resolvers
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         XCTAssertTrue(context.externallyResolvedLinks.isEmpty)
         
         // Try adding external topics metrics
@@ -55,7 +55,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+            let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -64,8 +64,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             ## Topics
                 
             ### External references
-            - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol1>
-            - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol2>
+            - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
+            - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
             
@@ -93,7 +93,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
+            let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -102,8 +102,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             ## Topics
                 
             ### External references
-            - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol1>
-            - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol2>
+            - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
+            - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
             
@@ -131,7 +131,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         let externalResolver = self.externalResolver
 
         // Load a bundle with external links
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
         try """
         # ``SideKit/SideClass``
 
@@ -140,8 +140,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         ## Topics
             
         ### External references
-        - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol1>
-        - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol2>
+        - <doc://\(externalResolver.bundleID)/path/to/external/symbol1>
+        - <doc://\(externalResolver.bundleID)/path/to/external/symbol2>
         """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
     

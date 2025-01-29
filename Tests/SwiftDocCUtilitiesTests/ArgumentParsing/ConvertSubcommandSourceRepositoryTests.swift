@@ -16,7 +16,7 @@ import ArgumentParser
 
 class ConvertSubcommandSourceRepositoryTests: XCTestCase {
     private let testBundleURL = Bundle.module.url(
-        forResource: "TestBundle",
+        forResource: "LegacyBundle_DoNotUseInNewTests",
         withExtension: "docc",
         subdirectory: "Test Bundles"
     )!

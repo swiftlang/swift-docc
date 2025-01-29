@@ -57,11 +57,14 @@ public struct DocumentationBundle {
         info.displayName
     }
     
-    /// A identifier for this unit of documentation
-    ///
-    /// The string is typically in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
+    @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
     public var identifier: String {
-        info.identifier
+        id.rawValue
+    }
+    
+    /// The documentation bundle's stable and locally unique identifier.
+    public var id: DocumentationBundle.Identifier {
+        info.id
     }
 
     /**
@@ -107,7 +110,6 @@ public struct DocumentationBundle {
 
     /// A custom JSON settings file used to theme renderer output.
     public let themeSettings: URL?
-    
     /// A URL prefix to be appended to the relative presentation URL.
     ///
     /// This is used when a built documentation is hosted in a known location.
@@ -142,9 +144,9 @@ public struct DocumentationBundle {
         self.customHeader = customHeader
         self.customFooter = customFooter
         self.themeSettings = themeSettings
-        self.rootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
-        self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
-        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+        self.rootReference = ResolvedTopicReference(bundleID: info.id, path: "/", sourceLanguage: .swift)
+        self.documentationRootReference = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
+        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
         self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }

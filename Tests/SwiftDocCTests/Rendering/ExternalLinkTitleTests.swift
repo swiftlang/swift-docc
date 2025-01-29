@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ import Markdown
 public class ExternalLinkTitleTests: XCTestCase {
     private func getTranslatorAndBlockContentForMarkup(_ markupSource: String) throws -> (translator: RenderNodeTranslator, content: [RenderBlockContent]) {
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let testReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc", path: "/test", sourceLanguage: .swift)
+        let testReference = ResolvedTopicReference(bundleID: "org.swift.docc", path: "/test", sourceLanguage: .swift)
         let node = DocumentationNode(reference: testReference,
                                      kind: .article,
                                      sourceLanguage: .swift,
@@ -24,7 +24,7 @@ public class ExternalLinkTitleTests: XCTestCase {
                                      semantic: Semantic())
         
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let result = translator.visit(MarkupContainer(document.children)) as! [RenderBlockContent]
         

@@ -41,7 +41,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
     private var markupResolver: ExternalMarkupReferenceWalker
     
     /// Collected unresolved external references, grouped by the bundle ID.
-    var collectedExternalReferences: [BundleIdentifier: [UnresolvedTopicReference]] {
+    var collectedExternalReferences: [DocumentationBundle.Identifier: [UnresolvedTopicReference]] {
         return markupResolver.collectedExternalLinks.mapValues { links in
             links.map(UnresolvedTopicReference.init(topicURL:))
         }
@@ -49,7 +49,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
     
     /// Creates a new semantic walker that collects links to other documentation sources.
     /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    init(localBundleID: BundleIdentifier) {
+    init(localBundleID: DocumentationBundle.Identifier) {
         self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
     }
     
@@ -205,32 +205,32 @@ struct ExternalReferenceWalker: SemanticVisitor {
             }
         }
 
-        for dictionaryKeysSection in symbol.dictionaryKeysSectionVariants.allValues.map(\.variant) {
+        if let dictionaryKeysSection = symbol.dictionaryKeysSection {
             for dictionaryKeys in dictionaryKeysSection.dictionaryKeys {
                 for markup in dictionaryKeys.contents { visitMarkup(markup) }
             }
         }
 
-        for httpParametersSection in symbol.httpParametersSectionVariants.allValues.map(\.variant) {
+        if let httpParametersSection = symbol.httpParametersSection {
             for param in httpParametersSection.parameters {
                 for markup in param.contents { visitMarkup(markup) }
             }
         }
 
-        for httpResponsesSection in symbol.httpResponsesSectionVariants.allValues.map(\.variant) {
+        if let httpResponsesSection = symbol.httpResponsesSection {
             for param in httpResponsesSection.responses {
                 for markup in param.contents { visitMarkup(markup) }
             }
         }
 
-        for httpBodySection in symbol.httpBodySectionVariants.allValues.map(\.variant) {
+        if let httpBodySection = symbol.httpBodySection {
             for markup in httpBodySection.body.contents { visitMarkup(markup) }
             for parameter in httpBodySection.body.parameters {
                 for markup in parameter.contents { visitMarkup(markup) }
             }
         }
 
-        for possibleValuesSection in symbol.possibleValuesSectionVariants.allValues.map(\.variant) {
+        if let possibleValuesSection = symbol.possibleValuesSection {
             for possibleValue in possibleValuesSection.possibleValues {
                 for markup in possibleValue.contents { visitMarkup(markup) }
             }

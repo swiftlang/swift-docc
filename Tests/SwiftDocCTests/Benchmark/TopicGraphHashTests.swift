@@ -14,7 +14,7 @@ import XCTest
 class TopicGraphHashTests: XCTestCase {
     func testTopicGraphSameHash() throws {
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, context) = try testBundleAndContext(named: "TestBundle")
+            let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
             return testBenchmark.metrics[0].result
@@ -32,7 +32,7 @@ class TopicGraphHashTests: XCTestCase {
     func testTopicGraphChangedHash() throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         do {
             let testBenchmark = Benchmark()
@@ -51,7 +51,7 @@ class TopicGraphHashTests: XCTestCase {
         }
         
         // Here we'll add a completely new node and curated it in the topic graph
-        let newNode = TopicGraph.Node(reference: .init(bundleIdentifier: #function, path: "/newSymbol", sourceLanguage: .swift), kind: .article, source: .external, title: "External Article")
+        let newNode = TopicGraph.Node(reference: .init(bundleID: #function, path: "/newSymbol", sourceLanguage: .swift), kind: .article, source: .external, title: "External Article")
         context.topicGraph.addNode(newNode)
         // We can force unwrap below because we're guaranteed to find at least one node which is not `newNode`
         context.topicGraph.addEdge(from: context.topicGraph.nodes.values.first(where: { existingNode -> Bool in
@@ -88,7 +88,7 @@ class TopicGraphHashTests: XCTestCase {
             "/externally/resolved/path/to/article2": .success(.init(referencePath: "/externally/resolved/path/to/article2")),
         ]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [
             "com.external.testbundle" : resolver
         ]) { url in
             // Add external links to the MyKit Topics.
@@ -105,7 +105,7 @@ class TopicGraphHashTests: XCTestCase {
         }
         
         // Get MyKit symbol
-        let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let entity = try context.entity(with: .init(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift))
         let taskGroupLinks = try XCTUnwrap((entity.semantic as? Symbol)?.topics?.taskGroups.first?.links.compactMap({ $0.destination }))
         
         // Verify the task group links have been resolved and are still present in the link list.
@@ -117,7 +117,7 @@ class TopicGraphHashTests: XCTestCase {
         ])
         
         // Verify correct hierarchy under `MyKit` in the topic graph dump including external symbols.
-        let myKitRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let myKitRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let myKitNode = try XCTUnwrap(context.topicGraph.nodeWithReference(myKitRef))
         
         let expectedHierarchyWithExternalSymbols = """

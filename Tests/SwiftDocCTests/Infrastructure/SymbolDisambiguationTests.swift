@@ -324,7 +324,7 @@ class SymbolDisambiguationTests: XCTestCase {
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "SymbolDisambiguationTests",
-                identifier: "com.test.SymbolDisambiguationTests"),
+                id: "com.test.SymbolDisambiguationTests"),
             symbolGraphURLs: [swiftSymbolGraphURL, objcSymbolGraphURL],
             markupURLs: [],
             miscResourceURLs: []

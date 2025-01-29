@@ -26,7 +26,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Returns: `YES` if doing something was successful, or `NO` if an error occurred.
         // - (void)doSomethingWith:(NSInteger)someValue error:(NSError **)error;
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInObjectiveC/doSomething(with:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/doSomething(with:)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -47,7 +47,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Returns: Some string. If an error occurs, this method returns `nil` and assigns an appropriate error object to the `error` parameter.
         // - (nullable NSString *)returnSomethingAndReturnError:(NSError **)error;
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInObjectiveC/returnSomething()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInObjectiveC/returnSomething()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -68,7 +68,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Throws: Some error if something does wrong
         // @objc public func doSomething(with someValue: Int) throws { }
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInSwift/doSomething(with:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInSwift/doSomething(with:)", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -93,7 +93,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         // /// - Throws: Some error if something does wrong
         // @objc public func returnSomething() throws -> String { "" }
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ErrorParameters/MyClassInSwift/returnSomething()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ErrorParameters/MyClassInSwift/returnSomething()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
@@ -108,6 +108,72 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             let returnsSections = symbol.returnsSectionVariants
             XCTAssertEqual(returnsSections[.swift]?.content.map({ $0.format() }).joined(), "Some string.")
             XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some string. On failure, this method returns `nil`.")
+        }
+    }
+    
+    func testExtendsReturnValueDocumentation() throws {
+        for (returnValueDescription, expectsExtendedDocumentation) in [
+            // Expects to extend the documentation
+            ("Returns some value.", true),
+            ("Returns some failsafe value.", true),
+            ("Returns some errorless value.", true),
+            ("Returns a NSNull value.", true),
+            
+            // Expects to not extend the documentation
+            ("Returns some value, except if the function fails.", false),
+            ("Returns some value. If an error occurs, this function doesn't return a value.", false),
+            ("Returns some value. On failure, this function doesn't return a value.", false),
+            ("Returns some value. If something happens, this function returns `nil` instead.", false),
+            ("Returns some value, or `nil` if something goes wrong.", false),
+            ("Returns some value, or `NULL` if something goes wrong.", false),
+            ("Returns some value or a null-pointer.", false),
+        ] {
+            let catalog = Folder(name: "unit-test.docc", content: [
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: nil,
+                        docCommentModuleName: "ModuleName",
+                        sourceLanguage: .swift,
+                        parameters: [],
+                        returnValue: .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS")
+                    ))
+                ]),
+                Folder(name: "clang", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Returns: \(returnValueDescription)
+                        """,
+                        docCommentModuleName: "ModuleName",
+                        sourceLanguage: .objectiveC,
+                        parameters: [(name: "error", externalName: nil)],
+                        returnValue: .init(kind: .typeIdentifier, spelling: "NSString", preciseIdentifier: "c:objc(cs)NSString")
+                    ))
+                ])
+            ])
+            
+            let (bundle, context) = try loadBundle(catalog: catalog)
+            
+            XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+            
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            
+            let parameterSections = symbol.parametersSectionVariants
+            XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), [], "The Swift variant has no error parameter")
+            XCTAssertEqual(parameterSections[.objectiveC]?.parameters.map(\.name), ["error"])
+            XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "On output, a pointer to an error object that describes why the method failed, or `nil` if no error occurred. If you are not interested in the error information, pass `nil` for this parameter.")
+            
+            let returnsSections = symbol.returnsSectionVariants
+            let expectedReturnValueDescription = returnValueDescription.replacingOccurrences(of: "\'", with: "’")
+            XCTAssertEqual(returnsSections[.swift]?.content.map({ $0.format() }).joined(), expectedReturnValueDescription)
+            if expectsExtendedDocumentation {
+                XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "\(expectedReturnValueDescription) On failure, this method returns `nil`.")
+            } else {
+                XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), expectedReturnValueDescription)
+            }
         }
     }
     
@@ -296,12 +362,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         symbolGraph.symbols["symbol-id"]?.mixins[SymbolGraph.Symbol.FunctionSignature.mixinKey] = nil
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
     }
@@ -313,12 +377,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             No parameters section
             """)
         
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
     }
@@ -331,12 +393,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
               - secondParameter: One description
               - thirdParameter: Another description
             """)
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 2)
         let endOfParameterSectionLocation = SourceLocation(line: start.line + 5, column: start.character + 40, source: symbolURL)
@@ -372,12 +432,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             - Parameter secondParameter: One description
             - Parameter thirdParameter: Another description
             """)
-        let url = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
-            ])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, _, context) = try loadBundle(from: url)
+        let (_, context) = try loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 2)
         let endOfParameterSectionLocation = SourceLocation(line: start.line + 4, column: start.character + 48, source: symbolURL)
@@ -407,11 +465,12 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithOnlyErrorParameter() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         docComment: nil,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .swift,
                         parameters: [],
                         returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
@@ -424,18 +483,18 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         
                         - Returns: Some return value description.
                         """,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .objectiveC,
                         parameters: [(name: "error", externalName: nil)],
                         returnValue: .init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")
                     ))
                 ])
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -450,12 +509,13 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithDifferentSignaturesOnDifferentPlatforms() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 // One parameter, void return
                 JSONFile(name: "Platform1-ModuleName.symbols.json", content: makeSymbolGraph(
                     platform: .init(operatingSystem: .init(name: "Platform1")),
                     docComment: nil,
+                    docCommentModuleName: "ModuleName",
                     sourceLanguage: .objectiveC,
                     parameters: [(name: "first", externalName: nil)],
                     returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
@@ -464,6 +524,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 JSONFile(name: "Platform2-ModuleName.symbols.json", content: makeSymbolGraph(
                     platform: .init(operatingSystem: .init(name: "Platform2")),
                     docComment: nil,
+                    docCommentModuleName: "ModuleName",
                     sourceLanguage: .objectiveC,
                     parameters: [(name: "first", externalName: nil), (name: "second", externalName: nil)],
                     returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
@@ -472,6 +533,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 JSONFile(name: "Platform3-ModuleName.symbols.json", content: makeSymbolGraph(
                     platform: .init(operatingSystem: .init(name: "Platform3")),
                     docComment: nil,
+                    docCommentModuleName: "ModuleName",
                     sourceLanguage: .objectiveC,
                     parameters: [(name: "first", externalName: nil),],
                     returnValue: .init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")
@@ -487,12 +549,12 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 - Returns: Some description of the return value that is only available on platform 3.
                 """)
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -506,11 +568,12 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     func testFunctionWithErrorParameterButVoidType() throws {
-        let url = try createTempFolder(content: [
+        let catalog =
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         docComment: nil,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .swift,
                         parameters: [(name: "error", externalName: nil)],
                         returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
@@ -523,18 +586,19 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         
                         - Parameter error: Some parameter description.
                         """,
+                        docCommentModuleName: "ModuleName",
                         sourceLanguage: .objectiveC,
                         parameters: [(name: "error", externalName: nil)],
                         returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
                     ))
                 ])
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: url)
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
@@ -670,14 +734,181 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         10 +   /// - Parameter first: Some parameter description
            |                                                    ╰─suggestion: Document 'second' parameter
         """)
+    }
+    
+    func testDoesNotWarnAboutInheritedDocumentation() throws {
+        let warningOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameter second: Some parameter description
+            - Returns: Nothing.
+            """,
+            docCommentModuleName: "SomeOtherModule",
+            parameters: [(name: "first", externalName: "with"), (name: "second", externalName: "and")],
+            returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+        )
+        XCTAssertEqual(warningOutput, "")
+    }
+    
+    func testDocumentingTwoUnnamedParameters() throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                docComment: """
+                Some function description
+                
+                - Parameters: 
+                  - first: Some unnamed parameter description
+                  - anything: Some second unnamed parameter description
+                """,
+                docCommentModuleName: "ModuleName",
+                sourceLanguage: .swift,
+                parameters: .init(repeating: (name: "", externalName: nil), count: 2),
+                returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+            ))
+        ])
         
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let parameterSections = symbol.parametersSectionVariants
+        XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["first", "anything"])
+        XCTAssertEqual(parameterSections[.swift]?.parameters.first?.contents.map({ $0.format() }).joined(), "Some unnamed parameter description")
+        XCTAssertEqual(parameterSections[.swift]?.parameters.last?.contents.map({ $0.format() }).joined(), "Some second unnamed parameter description")
+        XCTAssertNil(parameterSections[.objectiveC])
+        
+        let returnsSections = symbol.returnsSectionVariants
+        XCTAssertNil(returnsSections[.swift])
+        XCTAssertNil(returnsSections[.objectiveC])
+    }
+    
+    func testDocumentingMixedNamedAndUnnamedParameters() throws {
+        // This test verifies the behavior of documenting two named parameters and one unnamed parameter.
+        //
+        // It checks different combinations of which parameter is unnamed:
+        // "_ second third"   "first _ third"   "first second _"
+        // And different combinations of the order that these parameters are documented:
+        // "anything second third"   "second anything third"    "second third anything"  etc.
+        
+        let functionParameterNames = ["first", "second", "third"]
+        
+        // Check each possible parameter that could be unnamed
+        for unnamedParameterIndex in functionParameterNames.indices {
+            var functionParameterNames = functionParameterNames
+            functionParameterNames[unnamedParameterIndex] = "_"
+            
+            var expectedParameterNames = functionParameterNames
+            expectedParameterNames[unnamedParameterIndex] = "anything"
+            
+            // Check each possible order that these parameters could be documented.
+            for index in functionParameterNames.indices {
+                var documentedParameterNames = functionParameterNames
+                documentedParameterNames.remove(at: unnamedParameterIndex)
+                documentedParameterNames.insert("anything", at: index)
+                XCTAssertEqual(documentedParameterNames.count, functionParameterNames.count)
+                
+                let catalog = Folder(name: "unit-test.docc", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Parameters: 
+                          - \(documentedParameterNames[0]): Some \(documentedParameterNames[0]) parameter description
+                          - \(documentedParameterNames[1]): Some \(documentedParameterNames[1]) parameter description
+                          - \(documentedParameterNames[2]): Some \(documentedParameterNames[2]) parameter description
+                        """,
+                        docCommentModuleName: "ModuleName",
+                        sourceLanguage: .swift,
+                        parameters: functionParameterNames.map { (name: $0, externalName: nil) },
+                        returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+                    ))
+                ])
+                let (bundle, context) = try loadBundle(catalog: catalog)
+                
+                XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+                
+                let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+                let node = try context.entity(with: reference)
+                let symbol = try XCTUnwrap(node.semantic as? Symbol)
+                
+                let parameterSections = symbol.parametersSectionVariants
+                // Verify that the parameter names are in the expected order.
+                XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), expectedParameterNames)
+                // Verify that the parameter descriptions are in the expected order.
+                XCTAssertEqual(parameterSections[.swift]?.parameters[0].contents.map { $0.format() }.joined(), "Some \(expectedParameterNames[0]) parameter description")
+                XCTAssertEqual(parameterSections[.swift]?.parameters[1].contents.map { $0.format() }.joined(), "Some \(expectedParameterNames[1]) parameter description")
+                XCTAssertEqual(parameterSections[.swift]?.parameters[2].contents.map { $0.format() }.joined(), "Some \(expectedParameterNames[2]) parameter description")
+                XCTAssertNil(parameterSections[.objectiveC])
+                
+                let returnsSections = symbol.returnsSectionVariants
+                XCTAssertNil(returnsSections[.swift])
+                XCTAssertNil(returnsSections[.objectiveC])
+            }
+        }
+    }
+    
+    func testWarningsForMissingOrExtraUnnamedParameters() throws {
+        let returnValue = SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
+        
+        let tooFewParametersOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameters: 
+              - first: Some unnamed parameter description
+            """,
+            parameters: .init(repeating: (name: "", externalName: nil), count: 3),
+            returnValue: returnValue
+        )
+        
+        XCTAssertEqual(tooFewParametersOutput, """
+        warning: Unnamed parameter #2 is missing documentation
+          --> /path/to/SomeFile.swift:11:52-11:52
+        9  |   ///
+        10 |   /// - Parameters:
+        11 +   ///   - first: Some unnamed parameter description
+           |                                                    ╰─suggestion: Document unnamed parameter #2
+
+        warning: Unnamed parameter #3 is missing documentation
+          --> /path/to/SomeFile.swift:11:52-11:52
+        9  |   ///
+        10 |   /// - Parameters:
+        11 +   ///   - first: Some unnamed parameter description
+           |                                                    ╰─suggestion: Document unnamed parameter #3
+        """)
+        
+        let tooManyParametersOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameters: 
+              - first: Some unnamed parameter description
+              - anything: Some second unnamed parameter description
+              - third: More parameters than the function signature
+            """,
+            parameters: .init(repeating: (name: "", externalName: nil), count: 2),
+            returnValue: returnValue
+        )
+        XCTAssertEqual(tooManyParametersOutput, """
+        warning: Parameter 'third' not found in function declaration
+          --> /path/to/SomeFile.swift:13:9-13:61
+        11 |   ///   - first: Some unnamed parameter description
+        12 |   ///   - anything: Some second unnamed parameter description
+        13 +   ///   - third: More parameters than the function signature
+           |         ╰─suggestion: Remove 'third' parameter documentation
+        """)
     }
     
     // MARK: Test helpers
     
     private func warningOutputRaisedFrom(
         docComment: String,
+        docCommentModuleName: String? = "ModuleName",
         parameters: [(name: String, externalName: String?)],
         returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment,
         file: StaticString = #file,
@@ -694,6 +925,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     docComment: docComment,
+                    docCommentModuleName: docCommentModuleName,
                     sourceLanguage: .swift,
                     parameters: parameters,
                     returnValue: returnValue
@@ -721,6 +953,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     private func makeSymbolGraph(docComment: String) -> SymbolGraph {
         makeSymbolGraph(
             docComment: docComment,
+            docCommentModuleName: "ModuleName",
             sourceLanguage: .swift,
             parameters: [
                 ("firstParameter", nil),
@@ -735,12 +968,13 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     private func makeSymbolGraph(
         platform: SymbolGraph.Platform = .init(),
         docComment: String?,
+        docCommentModuleName: String?,
         sourceLanguage: SourceLanguage,
         parameters: [(name: String, externalName: String?)],
         returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment
     ) -> SymbolGraph {
         return makeSymbolGraph(
-            moduleName: "ModuleName",
+            moduleName: "ModuleName", // Don't use `docCommentModuleName` here.
             platform: platform,
             symbols: [
                 makeSymbol(
@@ -749,6 +983,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     kind: .func,
                     pathComponents: ["functionName(...)"],
                     docComment: docComment,
+                    moduleName: docCommentModuleName,
                     location: (start, symbolURL),
                     signature: .init(
                         parameters: parameters.map {

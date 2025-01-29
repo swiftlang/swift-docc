@@ -72,7 +72,7 @@ class SymbolAvailabilityTests: XCTestCase {
         )
         let (bundle, context) = try loadBundle(catalog: catalog)
         let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: reference.path, sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: reference.path, sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         return try XCTUnwrap((translator.visit(node.semantic as! Symbol) as! RenderNode).metadata.platformsVariants.defaultValue)
     }

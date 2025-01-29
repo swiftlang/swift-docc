@@ -15,14 +15,14 @@ class DocumentationBundleInfoTests: XCTestCase {
     // Test whether the bundle correctly loads the test bundle Info.plist file.
     func testLoadTestBundleInfoPlist() throws {
         let infoPlistURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("Info.plist")
 
         let infoPlistData = try Data(contentsOf: infoPlistURL)
         let info = try DocumentationBundle.Info(from: infoPlistData)
         
         XCTAssertEqual(info.displayName, "Test Bundle")
-        XCTAssertEqual(info.identifier, "org.swift.docc.example")
+        XCTAssertEqual(info.id.rawValue, "org.swift.docc.example")
         XCTAssertEqual(info.defaultCodeListingLanguage, "swift")
     }
 
@@ -82,7 +82,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Info Plist Display Name",
-                identifier: "com.info.Plist"
+                id: "com.info.Plist"
             )
         )
         
@@ -93,7 +93,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Fallback Display Name",
-                identifier: "com.fallback.Identifier"
+                id: "com.fallback.Identifier"
             )
         )
         
@@ -104,7 +104,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Fallback Display Name",
-                identifier: "com.info.Plist"
+                id: "com.info.Plist"
             )
         )
         
@@ -128,7 +128,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Info Plist Display Name",
-                identifier: "com.info.Plist"
+                id: "com.info.Plist"
             )
         )
     }
@@ -237,7 +237,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             info,
             DocumentationBundle.Info(
                 displayName: "Display Name",
-                identifier: "swift.org.Identifier",
+                id: "swift.org.Identifier",
                 defaultCodeListingLanguage: "swift",
                 defaultModuleKind: "Executable",
                 defaultAvailability: DefaultAvailability(
@@ -257,7 +257,7 @@ class DocumentationBundleInfoTests: XCTestCase {
     func testFallbackToInfoInBundleDiscoveryOptions() throws {
         let info = DocumentationBundle.Info(
             displayName: "Display Name",
-            identifier: "swift.org.Identifier",
+            id: "swift.org.Identifier",
             defaultCodeListingLanguage: "swift",
             defaultModuleKind: "Executable",
             defaultAvailability: DefaultAvailability(
@@ -341,7 +341,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Derived Display Name",
-                identifier: "Derived Display Name"
+                id: "Derived Display Name"
             )
         )
     }
@@ -366,7 +366,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Derived Display Name",
-                identifier: "org.swift.docc.example"
+                id: "org.swift.docc.example"
             )
         )
     }
@@ -390,7 +390,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Example",
-                identifier: "Example"
+                id: "Example"
             )
         )
     }

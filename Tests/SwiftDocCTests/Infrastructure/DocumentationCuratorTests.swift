@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -28,10 +28,10 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCrawl() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
-        let mykit = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
+        let mykit = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
 
         var symbolsWithCustomCuration = [ResolvedTopicReference]()
         var curatedRelationships = [ParentChild]()
@@ -75,7 +75,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCrawlDiagnostics() throws {
-        let (tempCatalogURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (tempCatalogURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = url.appendingPathComponent("documentation/myfunction.md")
             
             try """
@@ -98,7 +98,7 @@ class DocumentationCuratorTests: XCTestCase {
         let extensionFile = tempCatalogURL.appendingPathComponent("documentation/myfunction.md")
         
         var crawler = DocumentationCurator(in: context, bundle: bundle)
-        let mykit = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
+        let mykit = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
         
         XCTAssertNoThrow(try crawler.crawlChildren(of: mykit.reference, prepareForCuration: { _ in }, relateNodes: { _, _ in }))
         
@@ -278,14 +278,14 @@ class DocumentationCuratorTests: XCTestCase {
     }
 
     func testSymbolLinkResolving() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         let crawler = DocumentationCurator.init(in: context, bundle: bundle)
         
         // Resolve top-level symbol in module parent
         do {
             let symbolLink = SymbolLink(destination: "MyClass")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
             let reference = crawler.referenceFromSymbolLink(link: symbolLink, resolved: parent)
             XCTAssertEqual(reference?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass")
         }
@@ -293,7 +293,7 @@ class DocumentationCuratorTests: XCTestCase {
         // Resolve top-level symbol in self
         do {
             let symbolLink = SymbolLink(destination: "MyClass")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             let reference = crawler.referenceFromSymbolLink(link: symbolLink, resolved: parent)
             XCTAssertEqual(reference?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass")
         }
@@ -301,7 +301,7 @@ class DocumentationCuratorTests: XCTestCase {
         // Resolve top-level symbol in a child
         do {
             let symbolLink = SymbolLink(destination: "MyClass")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let reference = crawler.referenceFromSymbolLink(link: symbolLink, resolved: parent)
             XCTAssertEqual(reference?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass")
         }
@@ -309,7 +309,7 @@ class DocumentationCuratorTests: XCTestCase {
         // Resolve child in its parent
         do {
             let symbolLink = SymbolLink(destination: "myFunction()")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             let reference = crawler.referenceFromSymbolLink(link: symbolLink, resolved: parent)
             XCTAssertEqual(reference?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()")
         }
@@ -317,7 +317,7 @@ class DocumentationCuratorTests: XCTestCase {
         // Do not resolve when not found
         do {
             let symbolLink = SymbolLink(destination: "myFunction")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
             let reference = crawler.referenceFromSymbolLink(link: symbolLink, resolved: parent)
             XCTAssertEqual(reference?.absoluteString, nil)
         }
@@ -325,20 +325,20 @@ class DocumentationCuratorTests: XCTestCase {
         // Fail to resolve across modules
         do {
             let symbolLink = SymbolLink(destination: "MyClass")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift)
             XCTAssertNil(crawler.referenceFromSymbolLink(link: symbolLink, resolved: parent))
         }
     }
     
     func testLinkResolving() throws {
-        let (sourceRoot, bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (sourceRoot, bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
         
         // Resolve and curate an article in module root (absolute link)
         do {
             let link = Link(destination: "doc:article")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
             guard let reference = crawler.referenceFromLink(link: link, resolved: parent, source: sourceRoot) else {
                 XCTFail("Did not resolve reference from link")
                 return
@@ -352,7 +352,7 @@ class DocumentationCuratorTests: XCTestCase {
         // Resolve/curate an article in module root (relative link)
         do {
             let link = Link(destination: "doc:article")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
             guard let reference = crawler.referenceFromLink(link: link, resolved: parent, source: sourceRoot) else {
                 XCTFail("Did not resolve reference from link")
                 return
@@ -366,7 +366,7 @@ class DocumentationCuratorTests: XCTestCase {
         // Resolve/curate article in the module root from within a child symbol
         do {
             let link = Link(destination: "doc:article")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             guard let reference = crawler.referenceFromLink(link: link, resolved: parent, source: sourceRoot) else {
                 XCTFail("Did not resolve reference from link")
                 return
@@ -380,13 +380,13 @@ class DocumentationCuratorTests: XCTestCase {
         // Resolve/curate absolute link from a different module parent
         do {
             let link = Link(destination: "doc:documentation/Test-Bundle/article")
-            let parent = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
+            let parent = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
             XCTAssertNotNil(crawler.referenceFromLink(link: link, resolved: parent, source: sourceRoot))
         }
     }
     
     func testGroupLinkValidation() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
             // Create a sidecar with invalid group links
             try! """
             # ``SideKit``
@@ -427,7 +427,7 @@ class DocumentationCuratorTests: XCTestCase {
         }
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift)
         
         try crawler.crawlChildren(of: reference, prepareForCuration: {_ in }) { (_, _) in }
 
@@ -482,7 +482,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testMixedManualAndAutomaticCuration() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
@@ -490,23 +490,25 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", symbol.topics?.taskGroups.first?.links.first?.destination)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity)
+        let renderNode = converter.convert(entity)
         
         // Verify the article identifier is included in the task group for the render node.
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", renderNode.topicSections.first?.identifiers.first)
         
         // Verify that the ONLY curation for `TopClass/name` is the manual curation under `MyArticle`
         // and the automatic curation under `TopClass` is not present.
-        let nameReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
+        let nameReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
         XCTAssertEqual(context.finitePaths(to: nameReference).map({ $0.map(\.path) }), [
+            ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass-API-Collection"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
 
         // Verify that the BOTH manual curations for `TopClass/age` are preserved
         // even if one of the manual curations overlaps with the inheritance edge from the symbol graph.
-        let ageReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
+        let ageReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
         XCTAssertEqual(context.finitePaths(to: ageReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass"],
+            ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass-API-Collection"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
     }
@@ -516,7 +518,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testMultipleManualCurationIsPreserved() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
         
         XCTAssertEqual(context.finitePaths(to: reference).map({ $0.map({ $0.path }) }), [
             [

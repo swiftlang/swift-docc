@@ -25,7 +25,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
 
     override func setUpWithError() throws {
         func renderSection(for bundle: DocumentationBundle, in context: DocumentationContext) throws -> ContentRenderSection {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
 
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -34,7 +34,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
             return renderNode.primaryContentSections.first! as! ContentRenderSection
         }
 
-        let (_, bundleWithLanguageDefault, context) = try testBundleAndContext(copying: "TestBundle")
+        let (_, bundleWithLanguageDefault, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         testBundleWithLanguageDefault = bundleWithLanguageDefault
 
@@ -42,7 +42,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         testBundleWithoutLanguageDefault = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: testBundleWithLanguageDefault.displayName,
-                identifier: testBundleWithLanguageDefault.identifier,
+                id: testBundleWithLanguageDefault.id,
                 defaultCodeListingLanguage: nil
             ),
             baseURL: testBundleWithLanguageDefault.baseURL,

@@ -47,7 +47,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { errorMessage in
             XCTFail("No error output is expected for this test executable. Got:\n\(errorMessage)")
         })
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
         #endif
     }
     
@@ -88,7 +88,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         )
         
         let resolver = try makeResolver(testMetadata)
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
         
         // Resolve the reference
         let unresolved = TopicReference.unresolved(
@@ -197,7 +197,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             })
 
             return try OutOfProcessReferenceResolver(
-                bundleIdentifier: "com.test.bundle",
+                bundleID: "com.test.bundle",
                 server: server,
                 convertRequestIdentifier: "convert-id"
             )
@@ -267,7 +267,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         
         let resolver = try makeResolver(testMetadata)
         
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
         
         // Resolve the symbol
         let (_, entity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")
@@ -393,7 +393,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             })
 
             return try OutOfProcessReferenceResolver(
-                bundleIdentifier: "com.test.bundle",
+                bundleID: "com.test.bundle",
                 server: server,
                 convertRequestIdentifier: "convert-id"
             )
@@ -423,14 +423,14 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             XCTAssertEqual(errorMessage, "Some error output\n")
             didReadErrorOutputExpectation.fulfill()
         })
-        XCTAssertEqual(resolver?.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver?.bundleID, "com.test.bundle")
         
         wait(for: [didReadErrorOutputExpectation], timeout: 20.0)
         #endif
     }
     
     func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver, file: StaticString = #file, line: UInt = #line) throws {
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle", file: file, line: line)
+        XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
         let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!)))
         guard case .failure(_, let error) = resolverResult else {
             XCTFail("Encountered an unexpected type of error.", file: file, line: line)
@@ -495,7 +495,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         })
         
         let resolver = try OutOfProcessReferenceResolver(
-            bundleIdentifier: "com.test.bundle", server: server, convertRequestIdentifier: "convert-id")
+            bundleID: "com.test.bundle", server: server, convertRequestIdentifier: "convert-id")
         
         try assertForwardsResolverErrors(resolver: resolver)
     }
@@ -674,7 +674,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
         
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver.bundleID, "com.test.bundle")
         
         XCTAssertThrowsError(try resolver.resolveInformationForTopicURL(URL(string: "doc://com.test.bundle/something")!)) {
             guard case OutOfProcessReferenceResolver.Error.executableSentBundleIdentifierAgain = $0 else {
@@ -720,7 +720,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         )
                 
         let resolver = try makeResolver(testMetadata)
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle", file: file, line: line)
+        XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
 
         // Resolve the reference
         let unresolved = TopicReference.unresolved(
@@ -826,7 +826,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             })
 
             return try OutOfProcessReferenceResolver(
-                bundleIdentifier: "com.test.bundle",
+                bundleID: "com.test.bundle",
                 server: server,
                 convertRequestIdentifier: "convert-id"
             )

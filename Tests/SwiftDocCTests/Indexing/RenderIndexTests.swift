@@ -24,7 +24,7 @@ final class RenderIndexTests: XCTestCase {
         )
         
         try XCTAssertEqual(
-            generatedRenderIndex(for: "TestBundle", with: "org.swift.docc.example"),
+            generatedRenderIndex(for: "LegacyBundle_DoNotUseInNewTests", with: "org.swift.docc.example"),
             RenderIndex.fromURL(expectedIndexURL)
         )
     }
@@ -240,6 +240,15 @@ final class RenderIndexTests: XCTestCase {
                             "type": "method"
                           }
                         ]
+                      },
+                      {
+                        "title": "Type Aliases",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/foo-c.typealias",
+                        "title": "Foo",
+                        "type": "typealias"
                       },
                       {
                         "title": "Enumerations",

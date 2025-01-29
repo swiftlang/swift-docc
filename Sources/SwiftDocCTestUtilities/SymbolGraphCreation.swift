@@ -47,6 +47,7 @@ extension XCTestCase {
     
     package func makeLineList(
         docComment: String,
+        moduleName: String?,
         startOffset: SymbolGraph.LineList.SourceRange.Position = defaultSymbolPosition,
         url: URL = defaultSymbolURL
     ) -> SymbolGraph.LineList {
@@ -64,7 +65,8 @@ extension XCTestCase {
                     )
                 },
             // We want to include the file:// scheme here
-            uri: url.absoluteString
+            uri: url.absoluteString,
+            moduleName: moduleName
         )
     }
     
@@ -83,6 +85,7 @@ extension XCTestCase {
         kind kindID: SymbolGraph.Symbol.KindIdentifier,
         pathComponents: [String],
         docComment: String? = nil,
+        moduleName: String? = nil,
         accessLevel: SymbolGraph.Symbol.AccessControl = .init(rawValue: "public"), // Defined internally in SwiftDocC
         location: (position: SymbolGraph.LineList.SourceRange.Position, url: URL)? = (defaultSymbolPosition, defaultSymbolURL),
         signature: SymbolGraph.Symbol.FunctionSignature? = nil,
@@ -104,11 +107,12 @@ extension XCTestCase {
         
         return SymbolGraph.Symbol(
             identifier: SymbolGraph.Symbol.Identifier(precise: id, interfaceLanguage: language.id),
-            names: makeSymbolNames(name: pathComponents.first!),
+            names: makeSymbolNames(name: pathComponents.last!),
             pathComponents: pathComponents,
             docComment: docComment.map {
                 makeLineList(
                     docComment: $0,
+                    moduleName: moduleName,
                     startOffset: location?.position ?? defaultSymbolPosition,
                     url: location?.url ?? defaultSymbolURL
                 )

@@ -15,6 +15,8 @@ import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: AsyncAction {
+    private let signposter = ConvertActionConverter.signposter
+    
     let rootURL: URL?
     let targetDirectory: URL
     let htmlTemplateDirectory: URL?
@@ -162,17 +164,20 @@ public struct ConvertAction: AsyncAction {
         }
         
         if let outOfProcessResolver {
-            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleID] = outOfProcessResolver
             configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
-        let inputProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
-        let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
-            startingPoint: documentationBundleURL,
-            allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
-            options: bundleDiscoveryOptions
-        )
+        let (bundle, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
+            try DocumentationContext.InputsProvider(fileManager: fileManager)
+            .inputsAndDataProvider(
+                startingPoint: documentationBundleURL,
+                allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
+                options: bundleDiscoveryOptions
+            )
+        }
+
         self.configuration = configuration
         
         self.bundle = bundle
@@ -208,6 +213,11 @@ public struct ConvertAction: AsyncAction {
     }
     
     private func _perform(logHandle: inout LogHandle, temporaryFolder: URL) async throws -> (ActionResult, DocumentationContext) {
+        let convertSignpostHandle = signposter.beginInterval("Convert", id: signposter.makeSignpostID())
+        defer {
+            signposter.endInterval("Convert", convertSignpostHandle)
+        }
+        
         // Add the default diagnostic console writer now that we know what log handle it should write to.
         if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
             diagnosticEngine.add(
@@ -278,9 +288,11 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.identifier)
+        let indexer = try Indexer(outputURL: temporaryFolder, bundleID: bundle.id)
 
-        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        let context = try signposter.withIntervalSignpost("Register", id: signposter.makeSignpostID()) {
+            try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        }
         
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
@@ -290,7 +302,7 @@ public struct ConvertAction: AsyncAction {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleIdentifier: bundle.identifier
+            bundleID: bundle.id
         )
 
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
@@ -306,14 +318,16 @@ public struct ConvertAction: AsyncAction {
         let analysisProblems: [Problem]
         let conversionProblems: [Problem]
         do {
-            conversionProblems = try ConvertActionConverter.convert(
-                bundle: bundle,
-                context: context,
-                outputConsumer: outputConsumer,
-                sourceRepository: sourceRepository,
-                emitDigest: emitDigest,
-                documentationCoverageOptions: documentationCoverageOptions
-            )
+            conversionProblems = try signposter.withIntervalSignpost("Process") {
+                try ConvertActionConverter.convert(
+                    bundle: bundle,
+                    context: context,
+                    outputConsumer: outputConsumer,
+                    sourceRepository: sourceRepository,
+                    emitDigest: emitDigest,
+                    documentationCoverageOptions: documentationCoverageOptions
+                )
+            }
             analysisProblems = context.problems
         } catch {
             if emitDigest {
@@ -368,7 +382,9 @@ public struct ConvertAction: AsyncAction {
             
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
-            let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
+            let indexerProblems = signposter.withIntervalSignpost("Finalize navigator index") {
+                indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
+            }
             postConversionProblems.append(contentsOf: indexerProblems)
             
             benchmark(end: finalizeNavigationIndexMetric)
@@ -424,7 +440,7 @@ public struct ConvertAction: AsyncAction {
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleIdentifier: bundle.identifier
+                bundleID: bundle.id
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)
@@ -438,6 +454,8 @@ public struct ConvertAction: AsyncAction {
     }
     
     func moveOutput(from: URL, to: URL) throws {
-        return try Self.moveOutput(from: from, to: to, fileManager: fileManager)
+        try signposter.withIntervalSignpost("Move output") {
+            try Self.moveOutput(from: from, to: to, fileManager: fileManager)
+        }
     }
 }

@@ -34,7 +34,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is loaded from Info.plist and applied during render time
     func testBundleWithDefaultAvailability() throws {
         // Copy an Info.plist with default availability
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
             
@@ -71,7 +71,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Test if the default availability is used for modules
         do {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -81,7 +81,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Test if the default availability is used for symbols with no explicit availability
         do {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-3743d", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-3743d", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -91,7 +91,7 @@ class DefaultAvailabilityTests: XCTestCase {
 
         // Test if the default availability is NOT used for symbols with explicit availability
         do {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -131,7 +131,7 @@ class DefaultAvailabilityTests: XCTestCase {
             JSONFile(name: "MyKit.symbols.json", content: makeSymbolGraph(moduleName: "MyKit")),
         ])
         
-        let (_, bundle, context) = try loadBundle(from: createTempFolder(content: [catalog]), configuration: configuration)
+        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
         let reference = try XCTUnwrap(context.soleRootModuleReference, file: file, line: line)
         
         // Test whether we:
@@ -177,7 +177,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Set a beta status for the docs (which would normally be set via command line argument)
         configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configuration: configuration) { (url) in
             // Copy an Info.plist with default availability of macOS 10.15.1
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
@@ -185,7 +185,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Test if the module availability is not "beta" for the "macOS" platform (since 10.15.1 != 10.16)
         do {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -202,10 +202,10 @@ class DefaultAvailabilityTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         // Set a beta status for the docs (which would normally be set via command line argument)
         configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
-        let (_, bundle, context) = try testBundleAndContext(named: "TestBundle", configuration: configuration)
+        let (_, bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", configuration: configuration)
         
         do {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             
             // Add some available and unavailable platforms to the symbol
@@ -336,7 +336,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleID: bundle.id,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )
@@ -592,7 +592,6 @@ class DefaultAvailabilityTests: XCTestCase {
             symbolGraphOperatingSystemPlatformName: "platform_name",
             symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [makeAvailabilityItem(domainName: "platform_name", introduced: SymbolGraph.SemanticVersion(string: "1.2.3"))])]
         )
-        
         XCTAssertEqual(availability.map { "\($0.domain?.rawValue ?? "<nil>") \($0.introducedVersion?.description ?? "<nil>")" }.sorted(), [
             // This is from the Info.plist value
             "Platform Name 1.2.3",
@@ -602,7 +601,7 @@ class DefaultAvailabilityTests: XCTestCase {
             // "platform_name <nil>"
         ])
     }
-    
+        
     func testSymbolGraphPlatformNameWithDifferentNameInDefaultAvailabilityWithoutVersion() throws {
         let availability = try symbolAvailability(
             defaultAvailability: [.init(platformName: .init(operatingSystemName: "Platform Name"), platformVersion: nil)],
@@ -616,7 +615,7 @@ class DefaultAvailabilityTests: XCTestCase {
             // "platform_name <nil>"
         ])
     }
-    
+        
     func testSymbolAvailabilityPlatformNameWithDifferentNameInDefaultAvailabilityWithoutVersion() throws {
         let availability = try symbolAvailability(
             defaultAvailability: [.init(platformName: .init(operatingSystemName: "Platform Name"), platformVersion: nil)],
@@ -630,7 +629,7 @@ class DefaultAvailabilityTests: XCTestCase {
             "platform_name <nil>"
         ])
     }
-    
+        
     func testSymbolAvailabilityDoesNotDisplayOperatingSystemPlatformFromSymbolGraph() throws {
         let availability = try symbolAvailability(
             defaultAvailability: [.init(platformName: .init(operatingSystemName: "macOS"), platformVersion: "1.2.3")],
@@ -662,7 +661,7 @@ class DefaultAvailabilityTests: XCTestCase {
             "macOS 1.2.3",
         ])
     }
-    
+        
     func testSymbolAvailabilityDoesNotDisplayOperatingSystemPlatformFromSymbolGraphButDoesDisplayItsOwnWithoutVersion() throws {
         let availability = try symbolAvailability(
             defaultAvailability: [.init(platformName: .init(operatingSystemName: "macOS"), platformVersion: "1.2.3")],
@@ -722,7 +721,7 @@ class DefaultAvailabilityTests: XCTestCase {
             symbolGraphOperatingSystemPlatformName: "ios",
             symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [makeAvailabilityItem(domainName: "iOS", introduced: SymbolGraph.SemanticVersion(string: "1.2.3"))])]
         )
-
+        
         XCTAssertEqual(availability.map(\.testDescription).sorted(), [
             // These are from the platform fallbacks.
             "iOS 1.2.3",
@@ -737,7 +736,7 @@ class DefaultAvailabilityTests: XCTestCase {
             symbolGraphOperatingSystemPlatformName: "ios",
             symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [makeAvailabilityItem(domainName: "macOS", introduced: SymbolGraph.SemanticVersion(string: "1.2.3"))])]
         )
-
+        
         XCTAssertEqual(availability.map(\.testDescription).sorted(), [
             // These are from the Info.plist value (and platform fallbacks)
             "iOS <nil>",
@@ -776,7 +775,7 @@ class DefaultAvailabilityTests: XCTestCase {
         let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SymbolName")
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
         let availability = try XCTUnwrap(symbol.availability?.availability)
-
+        
         XCTAssertEqual(availability.map(\.testDescription).sorted(), [
             "macOS 1.2.3",
             // Shouldn't display these
@@ -830,6 +829,102 @@ class DefaultAvailabilityTests: XCTestCase {
         ])
     }
     
+    func testInheritDefaultAvailabilityOptions() throws {
+
+        let symbols = [
+            makeSymbol(id: "c:@F@SymbolWithAvailability", kind: .class, pathComponents: ["Foo"], otherMixins: [
+                SymbolGraph.Symbol.Availability(availability: [
+                    makeAvailabilityItem(domainName: "iOS", introduced: .init(major: 10, minor: 0, patch: 0))
+                ])
+            ]),
+            makeSymbol(id: "c:@F@SymbolWithoutAvailability", kind: .class, pathComponents: ["Foo"])
+        ]
+        
+        var catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(defaultAvailability: [
+                    "MyModule": [
+                        .init(platformName: .iOS, platformVersion: nil)
+                    ]
+                ]),
+                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(
+                    moduleName: "MyModule",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "ios")),
+                    symbols: symbols,
+                    relationships: []
+                ))
+            ]
+        )
+        var (bundle, context) = try loadBundle(catalog: catalog)
+        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
+            return
+        }
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // Verify we add the version number into the symbols that have availability annotation.
+            "iOS 10.0.0",
+            "iPadOS 10.0.0",
+            "macCatalyst 10.0.0"
+        ])
+        
+        
+        (bundle, context) = try loadBundle(catalog: catalog)
+        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithoutAvailability'")
+            return
+        }
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // Verify we don't add the version number into the symbols that don't have availability annotation.
+            "iOS <nil>",
+            "iPadOS <nil>",
+            "macCatalyst <nil>"
+        ])
+        
+        
+        catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(defaultAvailability: [
+                    "MyModule": [
+                        .init(platformName: .iOS, platformVersion: "8.0.0"),
+                        .init(platformName: .watchOS, platformVersion: nil)
+                    ]
+                ]),
+                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(
+                    moduleName: "MyModule",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "ios")),
+                    symbols: symbols,
+                    relationships: []
+                ))
+            ]
+        )
+        (bundle, context) = try loadBundle(catalog: catalog)
+        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
+            return
+        }
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // Verify we add the version number into the symbols that have availability annotation.
+            "iOS 10.0.0",
+            "iPadOS 10.0.0",
+            "macCatalyst 10.0.0",
+            "watchOS <nil>"
+        ])
+        
+        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithoutAvailability'")
+            return
+        }
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // Verify we add the default version number into the symbols that don't have availability annotation.
+            "iOS 8.0.0",
+            "iPadOS 8.0.0",
+            "macCatalyst 8.0.0",
+            "watchOS <nil>"
+        ])
+        
+    }
 }
 
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {

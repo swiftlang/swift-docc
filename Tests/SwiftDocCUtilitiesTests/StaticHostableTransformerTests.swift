@@ -20,7 +20,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
     func testStaticHostableTransformerOutput() async throws {
         
         // Convert a test bundle as input for the StaticHostableTransformer
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
         let targetURL = try createTemporaryDirectory()
 
         let fileManager = FileManager.default
@@ -55,8 +55,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         let indexHTMLData = try StaticHostableTransformer.indexHTMLData(in: testTemplateURL, with: basePath, fileManager: fileManager)
         
         let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
-        let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
+        let transformer = StaticHostableTransformer(dataDirectory: dataURL, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
         
         try transformer.transform()
         
@@ -123,7 +122,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
     
     func testStaticHostableTransformerIndexHTMLOutput() async throws {
         // Convert a test bundle as input for the StaticHostableTransformer
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
 
         let targetURL = try createTemporaryDirectory()
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
@@ -144,7 +143,6 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         _ = try await action.perform(logHandle: .none)
 
         let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
 
         let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         try Folder.testHTMLTemplateDirectory.write(to: testTemplateURL)
@@ -160,10 +158,10 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
 
         let fileManager = FileManager.default
         for (basePath, testValue) in basePaths {
-            let outputURL = try createTemporaryDirectory().appendingPathComponent("output")
+            let outputURL = try createTemporaryDirectory().appendingPathComponent("output/")
             let indexHTMLData = try StaticHostableTransformer.indexHTMLData(in: testTemplateURL, with: basePath, fileManager: FileManager.default)
           
-            let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
+            let transformer = StaticHostableTransformer(dataDirectory: dataURL, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
 
             try transformer.transform()
 

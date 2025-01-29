@@ -161,7 +161,7 @@ struct RenderHierarchyTranslator {
         
         if let tutorial = (try? context.entity(with: tutorialReference).semantic) as? Tutorial, let assessments = tutorial.assessments, !assessments.questions.isEmpty {
             // Add hardcoded assessment section.
-            let assessmentReference = ResolvedTopicReference(bundleIdentifier: tutorialReference.bundleIdentifier, path: tutorialReference.path, fragment: RenderHierarchyTranslator.assessmentsAnchor, sourceLanguage: .swift)
+            let assessmentReference = ResolvedTopicReference(bundleID: tutorialReference.bundleID, path: tutorialReference.path, fragment: RenderHierarchyTranslator.assessmentsAnchor, sourceLanguage: .swift)
             renderHierarchyTutorial.landmarks.append(RenderHierarchyLandmark(reference: RenderReferenceIdentifier(assessmentReference.absoluteString), kind: .assessment))
             
             let urlGenerator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
@@ -207,7 +207,9 @@ struct RenderHierarchyTranslator {
         )
         
         for language in symbolReference.sourceLanguages where language != symbolReference.sourceLanguage {
-            guard let variantPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: language) else {
+            guard let variantPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: language),
+                  variantPathReferences != mainPathReferences
+            else {
                 continue
             }
             hierarchyVariants.variants.append(.init(

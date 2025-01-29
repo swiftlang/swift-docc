@@ -243,18 +243,18 @@ Root
     }
     
     func testLoadingNavigatorIndexDoesNotCacheReferences() throws {
-        let uniqueTestBundleIdentifier = #function
+        let uniqueTestBundleIdentifier: DocumentationBundle.Identifier = #function
         
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         
-        let root = generateSmallTree(bundleIdentifier: uniqueTestBundleIdentifier)
+        let root = generateSmallTree(bundleIdentifier: uniqueTestBundleIdentifier.rawValue)
         
         let original = NavigatorTree(root: root)
         try original.write(to: indexURL)
         _ = try NavigatorTree.read(
             from: indexURL,
-            bundleIdentifier: uniqueTestBundleIdentifier,
+            bundleIdentifier: uniqueTestBundleIdentifier.rawValue,
             atomically: true
         )
         
@@ -397,7 +397,7 @@ Root
     }
     
     func testNavigatorIndexGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -471,7 +471,7 @@ Root
         //     ├────────────┐│
         //     ▼            ▼▼
         //  first() ◀──▶ second()
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             InfoPlist(identifier: testBundleIdentifier),
             
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -586,8 +586,7 @@ Root
             """),
         ])
         
-        let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (bundle, context) = try loadBundle(catalog: catalog)
         
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -617,11 +616,15 @@ Root
             ┃ ┣╸first()
             ┃ ┃ ┣╸Manual curation
             ┃ ┃ ┗╸second()
-            ┃ ┗╸OtherSymbol
+            ┃ ┣╸OtherSymbol
+            ┃ ┃ ┣╸Manual curation
+            ┃ ┃ ┗╸second()
+            ┃ ┃   ┣╸Manual curation
+            ┃ ┃   ┗╸first()
+            ┃ ┣╸Instance Methods
+            ┃ ┗╸second()
             ┃   ┣╸Manual curation
-            ┃   ┗╸second()
-            ┃     ┣╸Manual curation
-            ┃     ┗╸first()
+            ┃   ┗╸first()
             ┗╸OtherSymbol
               ┣╸Manual curation
               ┗╸second()
@@ -635,8 +638,8 @@ Root
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
-        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.identifier, sortRootChildrenByName: true, groupByLanguage: true)
-        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.identifier, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         fromMemoryBuilder.setup()
         fromDecodedBuilder.setup()
         
@@ -892,7 +895,7 @@ Root
     }
     
     func testNavigatorIndexUsingPageTitleGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -941,7 +944,7 @@ Root
     }
     
     func testNavigatorIndexGenerationNoPaths() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         var results = Set<String>()
         
@@ -953,7 +956,7 @@ Root
             
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
-                let renderNode = try converter.convert(entity)
+                let renderNode = converter.convert(entity)
                 try builder.index(renderNode: renderNode)
             }
             
@@ -998,7 +1001,7 @@ Root
     }
     
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
-        let navigatorIndex = try generatedNavigatorIndex(for: "TestBundle", bundleIdentifier: testBundleIdentifier)
+        let navigatorIndex = try generatedNavigatorIndex(for: "LegacyBundle_DoNotUseInNewTests", bundleIdentifier: testBundleIdentifier)
         
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
@@ -1018,7 +1021,7 @@ Root
 
     
     func testNavigatorIndexGenerationWithCuratedFragment() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -1081,7 +1084,7 @@ Root
     }
     
     func testNavigatorIndexAvailabilityGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1190,7 +1193,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.identifier, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -1206,12 +1209,12 @@ Root
         
         let imageReference = try XCTUnwrap(renderIndex.references["plus.svg"])
         XCTAssertEqual(imageReference.asset.variants.values.map(\.path).sorted(), [
-            "/images/\(bundle.identifier)/plus.svg",
+            "/images/\(bundle.id)/plus.svg",
         ])
     }
     
     func testNavigatorIndexDifferentHasherGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1660,7 +1663,7 @@ Root
     }
     
     func testNavigatorIndexAsReadOnlyFile() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         let targetURL = try createTemporaryDirectory()
@@ -1669,7 +1672,7 @@ Root
         
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
-            let renderNode = try converter.convert(entity)
+            let renderNode = converter.convert(entity)
             try builder.index(renderNode: renderNode)
         }
         
@@ -1848,7 +1851,7 @@ Root
     
     func testNormalizedNavigatorIndexIdentifier() throws {
         let topicReference = ResolvedTopicReference(
-            bundleIdentifier: "org.swift.example",
+            bundleID: "org.swift.example",
             path: "/documentation/path/sub-path",
             fragment: nil,
             sourceLanguage: .swift
@@ -1865,7 +1868,7 @@ Root
         )
         
         let topicReferenceWithCapitalization = ResolvedTopicReference(
-            bundleIdentifier: "org.Swift.Example",
+            bundleID: "org.Swift.Example",
             path: "/documentation/Path/subPath",
             fragment: nil,
             sourceLanguage: .swift
@@ -1882,7 +1885,7 @@ Root
         )
         
         let topicReferenceWithFragment = ResolvedTopicReference(
-            bundleIdentifier: "org.Swift.Example",
+            bundleID: "org.Swift.Example",
             path: "/documentation/Path/subPath",
             fragment: "FRAGMENT",
             sourceLanguage: .swift
