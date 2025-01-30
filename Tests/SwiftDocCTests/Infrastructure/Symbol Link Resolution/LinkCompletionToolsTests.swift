@@ -161,4 +161,25 @@ class LinkCompletionToolsTests: XCTestCase {
             "-(_,String)", "->Wrapped", "-(_,Double)",
         ])
     }
+    
+    func testSuggestingBothParameterAndReturnTypesInTheSameDisambiguation() {
+        let overloads = [
+            (parameters: ["Int"],  returns: []),      // (Int)  -> Void
+            (parameters: ["Bool"], returns: []),      // (Bool) -> Void
+            (parameters: ["Int"],  returns: ["Int"]), // (Int)  -> Int
+        ].map {
+            LinkCompletionTools.SymbolInformation(
+                kind: "func",
+                symbolIDHash: "\($0)".stableHashString,
+                parameterTypes: $0.parameters,
+                returnTypes: $0.returns
+            )
+        }
+        
+        XCTAssertEqual(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: overloads), [
+            "-(Int)->()", // Only parameter type would be ambiguous with 3rd overload & only return type would be ambiguous with 2nd overload.
+            "-(Bool)",    // The only overload with a `Bool` value
+            "->_",        // The only overload that returns something
+        ])
+    }
 }
