@@ -3623,6 +3623,10 @@ class PathHierarchyTests: XCTestCase {
         
         assertParsedPathComponents("something(first:second:third:)->(String,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "Int", "Bool"]))])
         
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->()", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: []))])
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->Int", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: ["Int"]))])
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->(String,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: ["String", "Int", "Bool"]))])
+        
         // Check closure parameters
         assertParsedPathComponents("map(_:)-((Element)->T)", [("map(_:)", .typeSignature(parameterTypes: ["(Element)->T"], returnTypes: nil))])
         assertParsedPathComponents("map(_:)->[T]", [("map(_:)", .typeSignature(parameterTypes: nil, returnTypes: ["[T]"]))])

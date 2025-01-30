@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1930,8 +1930,10 @@ Document
             var configuration = DocumentationContext.Configuration()
             // Add missing platforms if their fallback platform is present.
             var currentPlatforms = currentPlatforms ?? [:]
-            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
-                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            for (fallbackPlatform, platforms) in DefaultAvailability.fallbackPlatforms {
+                for platform in platforms where currentPlatforms[platform.displayName] == nil {
+                    currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+                }
             }
             configuration.externalMetadata.currentPlatforms = currentPlatforms
             

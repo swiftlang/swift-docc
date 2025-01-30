@@ -474,20 +474,14 @@ extension PathHierarchy.PathParser {
                 return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: parameterTypes, returnTypes: nil))
             } else if scanner.hasPrefix("->") {
                 _ = scanner.take(2)
-                let returnTypes = scanner.scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
+                let returnTypes = scanner.scanReturnTypes()
                 return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: parameterTypes, returnTypes: returnTypes))
             }
         } else if let parameterStartRange = possibleDisambiguationText.range(of: "->") {
             let name = original[..<parameterStartRange.lowerBound]
             var scanner = StringScanner(original[parameterStartRange.upperBound...])
             
-            let returnTypes: [Substring]
-            if scanner.peek() == "(" {
-                _ = scanner.take() // the leading parenthesis
-                returnTypes = scanner.scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
-            } else {
-                returnTypes = [scanner.takeAll()]
-            }
+            let returnTypes = scanner.scanReturnTypes()
             return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: nil, returnTypes: returnTypes))
         }
         
@@ -541,6 +535,15 @@ private struct StringScanner {
 
     // MARK: Parsing argument types by scanning
     
+    mutating func scanReturnTypes() -> [Substring] {
+        if peek() == "(" {
+            _ = take() // the leading parenthesis
+            return scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
+        } else {
+            return [takeAll()]
+        }
+    }
+        
     mutating func scanArguments() -> [Substring] {
         guard peek() != ")" else {
             _ = take() // drop the ")"

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,6 +23,7 @@ struct SymbolGraphLoader {
     private var dataLoader: (URL, DocumentationBundle) throws -> Data
     private var bundle: DocumentationBundle
     private var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
+    private var symbolsByPlatformRegisteredPerModule: [String: [String: [SymbolGraph.Symbol.Identifier]]] = [:]
     
     /// Creates a new symbol graph loader
     /// - Parameters:
@@ -83,8 +84,8 @@ struct SymbolGraphLoader {
                 symbolGraphTransformer?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
-                // If the bundle provides availability defaults add symbol availability data.
-                self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
+               
+                
 
                 // main symbol graphs are ambiguous
                 var usesExtensionSymbolFormat: Bool? = nil
@@ -101,6 +102,13 @@ struct SymbolGraphLoader {
                 
                 // Store the decoded graph in `loadedGraphs`
                 loadingLock.sync {
+                    // Track the operating system platforms found in the symbol graphs of this module.
+                    if let modulePlatform = symbolGraph.module.platform.name {
+                        for symbol in symbolGraph.symbols.values {
+                            symbolsByPlatformRegisteredPerModule[moduleName, default: [:]][modulePlatform, default: []].append(symbol.identifier)
+                        }
+                    }
+                    // self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
                     loadedGraphs[symbolGraphURL] = (usesExtensionSymbolFormat, symbolGraph)
                 }
             } catch {
@@ -172,16 +180,10 @@ struct SymbolGraphLoader {
                 defaultUnavailablePlatforms = unavailablePlatforms.map(\.platformName)
                 defaultAvailableInformation = availablePlatforms
             }
-            
-            let platformsFoundInSymbolGraphs: [PlatformName] = unifiedGraph.moduleData.compactMap {
-                guard let platformName = $0.value.platform.name else { return nil }
-                return PlatformName(operatingSystemName: platformName)
-            }
-
             addMissingAvailability(
                 unifiedGraph: &unifiedGraph,
                 unconditionallyUnavailablePlatformNames: defaultUnavailablePlatforms,
-                registeredPlatforms: platformsFoundInSymbolGraphs,
+                symbolsByPlatformName: symbolsByPlatformRegisteredPerModule[unifiedGraph.moduleName] ?? [:],
                 defaultAvailabilities: defaultAvailableInformation
             )
         }
@@ -215,122 +217,137 @@ struct SymbolGraphLoader {
 
         return (symbolGraph, isMainSymbolGraph)
     }
+
     
-    /// Adds the missing fallback and default availability information to the unified symbol graph
-    /// in case it didn't exists in the loaded symbol graphs.
+    /**
+    Fills lacking availability information with fallback logic and default availability, if available.
+     
+    This method adds to every symbol the fallback availability items.
+    After this, it adds the default availability information if the symbol is available in the given platform.
+    
+    - parameter unifiedGraph: The generated unified graph.
+    - parameter unconditionallyUnavailablePlatformNames: Platforms to not add as synthesized availability items.
+    - parameter symbolsByPlatformName: Symbols found in symbolgraph grouped by operating system platform name.
+    - parameter defaultAvailabilities: The module default availabilities defined in the Info.plist.
+    */
     private func addMissingAvailability(
         unifiedGraph: inout UnifiedSymbolGraph,
         unconditionallyUnavailablePlatformNames: [PlatformName],
-        registeredPlatforms: [PlatformName],
+        symbolsByPlatformName: [String: [SymbolGraph.Symbol.Identifier]],
         defaultAvailabilities: [DefaultAvailability.ModuleAvailability]
     ) {
-        // The fallback platforms that are missing from the unified graph correspond to
-        // the fallback platforms that have not been registered yet,
-        // are not marked as unavailable,
-        // and the corresponding inheritance platform has a SGF (has been registered).
-        let missingFallbackPlatforms = DefaultAvailability.fallbackPlatforms.filter {
-            !registeredPlatforms.contains($0.key) &&
-            !unconditionallyUnavailablePlatformNames.contains($0.key) &&
-            registeredPlatforms.contains($0.value)
-        }
-        // Platforms that are defined in the Info.plist that had no corresponding SGF
-        // and are not being added as fallback of another platform.
-        let missingAvailabilities = defaultAvailabilities.filter {
-            !missingFallbackPlatforms.keys.contains($0.platformName) &&
-            !registeredPlatforms.contains($0.platformName)
+        // The fallback platforms that are not marked as unavailable in the default availability.
+        var fallbackPlatforms = DefaultAvailability.fallbackPlatforms
+        fallbackPlatforms.forEach { (inheritedPlatform, platforms) in
+            fallbackPlatforms[inheritedPlatform] = platforms.filter({
+                !unconditionallyUnavailablePlatformNames.contains($0)
+            })
         }
         
-        unifiedGraph.symbols.values.forEach { symbol in
+        unifiedGraph.symbols.forEach { (symbolID, symbol) in
+            // The platforms the symbol is available at grouped by interface language.
+            var platformsAvailableByLanguage: [String: Set<String?>] = [:]
             for (selector, _) in symbol.mixins {
-                if var symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
-                    guard !symbolAvailability.availability.isEmpty else { continue }
-                    // For platforms with a fallback option (e.g., Catalyst and iOS), apply the explicit availability annotation of the fallback platform when it is not explicitly available on the primary platform.
-                    DefaultAvailability.fallbackPlatforms.forEach { (fallbackPlatform, inheritedPlatform) in
-                        guard
-                            var inheritedAvailability = symbolAvailability.availability.first(where: {
+                for item in symbol.availability[selector] ?? [] where item.introducedVersion != nil {
+                    platformsAvailableByLanguage[selector.interfaceLanguage, default: []].insert(item.domain?.rawValue)
+                }
+            }
+            // Add fallback availability.
+            for (selector, mixins) in symbol.mixins {
+        
+                // Platforms available for the given symbol in the given language variant.
+                var platformsAvailable = platformsAvailableByLanguage[selector.interfaceLanguage] ?? []
+
+                // The symbol availability for the given selector.
+                var symbolAvailability = mixins.getValueIfPresent(for: SymbolGraph.Symbol.Availability.self)?.availability ?? []
+                
+                // Add availability of platforms with an inherited platform (e.g iOS and iPadOS).
+                if !symbolAvailability.isEmpty {
+                    fallbackPlatforms.forEach { (inheritedPlatform, fallbackPlatforms) in
+                        // The availability item the fallbak platform fallbacks from.
+                        guard var inheritedAvailability = symbolAvailability.first(where: {
                                 $0.matches(inheritedPlatform)
-                            }),
-                            let fallbackAvailabilityIntroducedVersion = symbolAvailability.availability.first(where: {
-                                $0.matches(fallbackPlatform)
-                            })?.introducedVersion,
-                            let defaultAvailabilityIntroducedVersion = defaultAvailabilities.first(where: { $0.platformName ==  fallbackPlatform })?.introducedVersion
-                        else { return }
-                        // Ensure that the availability version is not overwritten if the symbol has an explicit availability annotation for that platform.
-                        if SymbolGraph.SemanticVersion(string: defaultAvailabilityIntroducedVersion) == fallbackAvailabilityIntroducedVersion {
-                            inheritedAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
-                            symbolAvailability.availability.removeAll(where: {
-                                $0.matches(fallbackPlatform)
-                            })
-                            symbolAvailability.availability.append(inheritedAvailability)
+                        }) else {
+                            return
                         }
-                    }
-                    // Add fallback availability.
-                    for (fallbackPlatform, inheritedPlatform) in missingFallbackPlatforms {
-                        if !symbolAvailability.contains(fallbackPlatform) {
-                            for var fallbackAvailability in symbolAvailability.availability {
-                                // Add the platform fallback to the availability mixin the platform is inheriting from.
-                                // The added availability copies the entire availability information,
-                                // including deprecated and obsolete versions.
-                                if fallbackAvailability.matches(inheritedPlatform) {
-                                    fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
-                                    symbolAvailability.availability.append(fallbackAvailability)
+                        for fallbackPlatform in fallbackPlatforms {
+                            // Check that the symbol does not have an explicit availability annotation for the fallback platform already.
+                            if !platformsAvailable.contains(fallbackPlatform.rawValue) {
+                                // Check that the symbol does not have some availability information for the fallback platform.
+                                // If it does adds the introduced version from the inherited availability item.
+                                if let availabilityForFallbackPlatformIdx = symbolAvailability.firstIndex(where: {
+                                    $0.domain?.rawValue == fallbackPlatform.rawValue
+                                }) {
+                                    if symbolAvailability[availabilityForFallbackPlatformIdx].isUnconditionallyUnavailable {
+                                        continue
+                                    }
+                                    symbolAvailability[availabilityForFallbackPlatformIdx].introducedVersion = inheritedAvailability.introducedVersion
+                                    continue
+                                }
+                                // The symbols does not contains any information for the fallback platform
+                                inheritedAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
+                                symbolAvailability.append(inheritedAvailability)
+                                if inheritedAvailability.introducedVersion != nil {
+                                    platformsAvailable.insert(fallbackPlatform.rawValue)
                                 }
                             }
                         }
                     }
-                    // Add the missing default platform availability.
-                    missingAvailabilities.forEach { missingAvailability in
-                        if !symbolAvailability.contains(missingAvailability.platformName) {
-                            guard let defaultAvailability = AvailabilityItem(missingAvailability) else { return }
-                            symbolAvailability.availability.append(defaultAvailability)
+                }
+                
+                // Add the module default availability information.
+                defaultAvailabilities.forEach { defaultAvailability in
+                    
+                    // Check that if there was a symbolgraph for this platform, the symbol was present on it,
+                    // if not it means that the symbol is not available for the default platform.
+                    guard symbolsByPlatformName[defaultAvailability.platformName.rawValue]?.contains(where: {
+                        symbolID == $0.precise
+                    }) != false else {
+                        return
+                    }
+                    
+                    // Check that the symbol does not has explicit availability for this platform already.
+                    if !platformsAvailable.contains(defaultAvailability.platformName.rawValue) {
+                        // If the  missing availability corresponds to a fallback platform, and there's default availability for the platform that this one fallbacks from, don't add it.
+                        if let fallbackPlatform = fallbackPlatforms.first(where: { $0.value.contains(defaultAvailability.platformName)}), platformsAvailable.contains(fallbackPlatform.key.rawValue) {
+                            return
+                        }
+                        guard var defaultAvailabilityItem = AvailabilityItem(defaultAvailability) else { return }
+                        
+                        // Check if the symbol already has this availability item.
+                        if let idx = symbolAvailability.firstIndex(where: {
+                            $0.domain?.rawValue == defaultAvailability.platformName.rawValue
+                        }) {
+                            // If the symbol is marked as unavailable don't add the default availability.
+                            if symbolAvailability[idx].isUnconditionallyUnavailable || (symbolAvailability[idx].obsoletedVersion != nil) {
+                                return
+                            }
+                            defaultAvailabilityItem.deprecatedVersion = symbolAvailability[idx].deprecatedVersion
+                            defaultAvailabilityItem.isUnconditionallyDeprecated = symbolAvailability[idx].isUnconditionallyDeprecated
+                            symbolAvailability.remove(at: idx)
+                        }
+                        symbolAvailability.append(defaultAvailabilityItem)
+                        
+                        // If the default availability has fallback platforms, add them now.
+                        for (inheritedPlatform, fallbackPlatforms) in fallbackPlatforms {
+                            // Check that the fallback platform has not been added already to the symbol,
+                            // and that it does not has it's own default availability information.
+                            if inheritedPlatform == defaultAvailability.platformName {
+                                for fallbackPlatform in fallbackPlatforms {
+                                    if (
+                                        !platformsAvailable.contains(fallbackPlatform.rawValue) &&
+                                        !defaultAvailabilities.contains(where: {$0.platformName.rawValue == fallbackPlatform.rawValue})
+                                    ) {
+                                        defaultAvailabilityItem.domain =  SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
+                                        symbolAvailability.append(defaultAvailabilityItem)
+                                    }
+                                }
+                            }
                         }
                     }
-                    symbol.mixins[selector]![SymbolGraph.Symbol.Availability.mixinKey] = symbolAvailability
                 }
+                symbol.mixins[selector]![SymbolGraph.Symbol.Availability.mixinKey] = SymbolGraph.Symbol.Availability(availability: symbolAvailability)
             }
-        }
-    }    
-
-    /// If the bundle defines default availability for the symbols in the given symbol graph
-    /// this method adds them to each of the symbols in the graph.
-    private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
-        // Check if there are defined default availabilities for the current module
-        if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
-            let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
-
-            // Prepare a default availability versions lookup for this module.
-            let defaultAvailabilityVersionByPlatform = defaultAvailabilities
-                .reduce(into: [PlatformName: SymbolGraph.SemanticVersion](), { result, defaultAvailability in
-                    if let introducedVersion = defaultAvailability.introducedVersion, let version = SymbolGraph.SemanticVersion(string: introducedVersion) {
-                        result[defaultAvailability.platformName] = version
-                    }
-                })
-            
-            // Map all symbols and add default availability for any missing platforms
-            let symbolsWithFilledIntroducedVersions = symbolGraph.symbols.mapValues { symbol -> SymbolGraph.Symbol in
-                var symbol = symbol
-                let defaultModuleVersion = defaultAvailabilityVersionByPlatform[platformName]
-                // The availability item for each symbol of the given module.
-                let modulePlatformAvailabilityItem = AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue), introducedVersion: defaultModuleVersion, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
-                // Check if the symbol has existing availabilities from source
-                var availability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability ?? SymbolGraph.Symbol.Availability(availability: [])
-            
-                // Fill introduced versions when missing.
-                availability.availability = availability.availability.map {
-                    $0.fillingMissingIntroducedVersion(
-                        from: defaultAvailabilityVersionByPlatform,
-                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
-                    )
-                }
-                // Add the module availability information to each of the symbols availability mixin.
-                if !availability.contains(platformName) {
-                    availability.availability.append(modulePlatformAvailabilityItem)
-                }
-                symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = availability
-                
-                return symbol
-            }
-            symbolGraph.symbols = symbolsWithFilledIntroducedVersions
         }
     }
     
@@ -482,55 +499,6 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
                   isUnconditionallyDeprecated: false,
                   isUnconditionallyUnavailable: false,
                   willEventuallyBeDeprecated: false)
-    }
-
-    /**
-     Fills lacking availability information with defaults, if available.
-     
-     If this item does not have an `introducedVersion`, attempt to fill it
-     in from the `defaults`. If the defaults do not have a version for
-     this item's domain/platform, also try the `fallbackPlatform`.
-
-     - parameter defaults: Default module availabilities for each platform mentioned in a documentation bundle's `Info.plist`
-     - parameter fallbackPlatform: An optional fallback platform name if this item's domain isn't found in the `defaults`.
-     */
-    func fillingMissingIntroducedVersion(from defaults: [PlatformName: SymbolGraph.SemanticVersion],
-                                         fallbackPlatform: String?) -> SymbolGraph.Symbol.Availability.AvailabilityItem {
-        // If this availability item doesn't have a domain, do nothing.
-        guard let domain = self.domain else {
-            return self
-        }
-        
-        var newValue = self
-        // To ensure the uniformity of platform availability names derived from SGFs,
-        // we replace the original domain value with a value from the platform's name
-        // since the platform name maps aliases to the canonical name.
-        let platformName = PlatformName(operatingSystemName: domain.rawValue)
-        newValue.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue)
-
-        // If a symbol is unconditionally unavailable for a given domain,
-        // don't add an introduced version here as it may cause it to
-        // incorrectly display availability information
-        guard !isUnconditionallyUnavailable else {
-            return newValue
-        }
-
-        // If this had an explicit introduced version from source, don't replace it.
-        guard introducedVersion == nil else {
-            return newValue
-        }
-
-        let fallbackPlatformName = fallbackPlatform.map(PlatformName.init(operatingSystemName:))
-        
-        // Try to find a default version string for this availability
-        // item's platform (a.k.a. domain)
-        guard let platformVersion = defaults[platformName] ??
-            fallbackPlatformName.flatMap({ defaults[$0] }) else {
-            return newValue
-        }
-
-        newValue.introducedVersion = platformVersion
-        return newValue
     }
 }
 
