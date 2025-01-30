@@ -57,7 +57,7 @@
     {
       "identity" : "swift-docc-plugin",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-docc-plugin.git",
+      "location" : "https://github.com/swiftlang/swift-docc-plugin.git",
       "state" : {
         "revision" : "26ac5758409154cc448d7ab82389c520fa8a8247",
         "version" : "1.3.0"
@@ -66,7 +66,7 @@
     {
       "identity" : "swift-docc-symbolkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-docc-symbolkit.git",
+      "location" : "https://github.com/swiftlang/swift-docc-symbolkit.git",
       "state" : {
         "branch" : "main",
         "revision" : "96bce1cfad4f4d7e265c1eb46729ebf8a7695f4b"
@@ -75,7 +75,7 @@
     {
       "identity" : "swift-lmdb",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-lmdb.git",
+      "location" : "https://github.com/swiftlang/swift-lmdb.git",
       "state" : {
         "branch" : "main",
         "revision" : "c42582487fe84f72a4d417dd2d8493757bd4d072"
@@ -84,7 +84,7 @@
     {
       "identity" : "swift-markdown",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-markdown.git",
+      "location" : "https://github.com/swiftlang/swift-markdown.git",
       "state" : {
         "branch" : "main",
         "revision" : "d21714073e0d16ba78eebdf36724863afc36871d"
