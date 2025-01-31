@@ -13,6 +13,7 @@ import XCTest
 import SymbolKit
 import Markdown
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     
@@ -500,72 +501,53 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
-    func testDictionaryKeysSectionVariants() throws {
-        func propertiesSection(in renderNode: RenderNode) throws -> PropertiesRenderSection {
-            let propertiesSectionIndex = 1
+    func testDictionaryKeysSection() throws {
+        let keySymbol = makeSymbol(id: "some-key", language: .data, kind: .dictionaryKey, pathComponents: ["SomeDictionary", "SomeKey"])
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-dictionary", language: .data, kind: .dictionary, pathComponents: ["SomeDictionary"]),
+                keySymbol,
+            ]))
+        ])
+        
+        let (bundle, context) = try loadBundle(catalog: catalog)
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let dictionaryReference = moduleReference.appendingPath("SomeDictionary")
+        
+        let node = try context.entity(with: dictionaryReference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        func propertiesSection(for dictionaryKeysSection: DictionaryKeysSection) throws -> PropertiesRenderSection {
+            symbol.dictionaryKeysSection = dictionaryKeysSection
+            context.documentationCache[dictionaryReference] = node
             
-            guard renderNode.primaryContentSections.indices.contains(propertiesSectionIndex) else {
-                XCTFail("Missing properties section")
-                return PropertiesRenderSection(title: "Properties", items: [])
-            }
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let renderNode = converter.convert(node)
             
-            return try XCTUnwrap(renderNode.primaryContentSections[propertiesSectionIndex] as? PropertiesRenderSection)
+            return try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PropertiesRenderSection }))
         }
         
         // Dictionary Keys that are backed by a SymbolGraph symbol survive to the render section...
-        try assertMultiVariantSymbol(
-            configureSymbol: { symbol in
-                let keySymbol1 = SymbolGraph.Symbol(identifier: SymbolGraph.Symbol.Identifier(precise: "precise1", interfaceLanguage: "swift"), names: SymbolGraph.Symbol.Names(title: "Title1", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["path1"], docComment: nil, accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(rawIdentifier: "dictKey", displayName: "Key"), mixins: [:])
-                let keySymbol2 = SymbolGraph.Symbol(identifier: SymbolGraph.Symbol.Identifier(precise: "precise2", interfaceLanguage: "swift"), names: SymbolGraph.Symbol.Names(title: "Title2", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["path2"], docComment: nil, accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(rawIdentifier: "dictKey", displayName: "Key"), mixins: [:])
-                
-                symbol.dictionaryKeysSectionVariants[.swift] = DictionaryKeysSection(
-                    dictionaryKeys: [DictionaryKey(name: "Swift property", contents: [], symbol: keySymbol1)]
-                )
-                
-                symbol.dictionaryKeysSectionVariants[.objectiveC] = DictionaryKeysSection(
-                    dictionaryKeys: [DictionaryKey(name: "Objective-C property", contents: [], symbol: keySymbol2)]
-                )
-            },
-            assertOriginalRenderNode: { renderNode in
-                let propertiesSection = try propertiesSection(in: renderNode)
-                
-                XCTAssertEqual(propertiesSection.items.count, 1)
-                
-                let property = try XCTUnwrap(propertiesSection.items.first)
-                XCTAssertEqual(property.name, "Swift property")
-                XCTAssertEqual(property.content, [])
-            },
-            assertAfterApplyingVariant: { renderNode in
-                let propertiesSection = try propertiesSection(in: renderNode)
-                
-                XCTAssertEqual(propertiesSection.items.count, 1)
-                
-                let property = try XCTUnwrap(propertiesSection.items.first)
-                XCTAssertEqual(property.name, "Objective-C property")
-                XCTAssertEqual(property.content, [])
-            }
-        )
+        do {
+            let propertiesSection = try propertiesSection(for: DictionaryKeysSection(dictionaryKeys: [
+                DictionaryKey(name: "Some property", contents: [], symbol: keySymbol)
+            ]))
+            
+            XCTAssertEqual(propertiesSection.items.count, 1)
+            
+            let property = try XCTUnwrap(propertiesSection.items.first)
+            XCTAssertEqual(property.name, "Some property")
+            XCTAssertEqual(property.content, [])
+        }
         
         // ... but Dictionary Keys that are NOT backed by a SymbolGraph symbol get filtered out.
-        try assertMultiVariantSymbol(
-            configureSymbol: { symbol in
-                symbol.dictionaryKeysSectionVariants[.swift] = DictionaryKeysSection(
-                    dictionaryKeys: [DictionaryKey(name: "Swift property", contents: [], symbol: nil)]
-                )
-                
-                symbol.dictionaryKeysSectionVariants[.objectiveC] = DictionaryKeysSection(
-                    dictionaryKeys: [DictionaryKey(name: "Objective-C property", contents: [], symbol: nil)]
-                )
-            },
-            assertOriginalRenderNode: { renderNode in
-                let propertiesSection = try propertiesSection(in: renderNode)
-                XCTAssertEqual(propertiesSection.items.count, 0)
-            },
-            assertAfterApplyingVariant: { renderNode in
-                let propertiesSection = try propertiesSection(in: renderNode)
-                XCTAssertEqual(propertiesSection.items.count, 0)
-            }
-        )
+        do {
+            let propertiesSection = try propertiesSection(for: DictionaryKeysSection(dictionaryKeys: [
+                DictionaryKey(name: "Some property", contents: [], symbol: nil) // No symbol for this key
+            ]))
+            
+            XCTAssertEqual(propertiesSection.items.count, 0)
+        }
     }
     
     func testDiscussionSectionVariants() throws {
