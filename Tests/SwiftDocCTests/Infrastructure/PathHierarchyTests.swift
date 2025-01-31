@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -3457,6 +3457,55 @@ class PathHierarchyTests: XCTestCase {
                 (symbolID: "function-overload-2", disambiguation: "-(_,Int)->Bool"),   //  ( _  Int   )   ->   Bool
                 (symbolID: "function-overload-3", disambiguation: "-(_,Float)->Int"),  //  ( _  Float )   ->   Int
                 (symbolID: "function-overload-4", disambiguation: "-(_,Float)->Bool"), //  ( _  Float )   ->   Bool
+            ])
+        }
+        
+        // Each overload requires a combination parameters and return values to disambiguate
+        do {
+            //  Int   ->  ()
+            //  Bool  ->  ()
+            //  Int   ->  Int
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  Int   ->  Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [intType]), // Int
+                            ], returns: makeFragments([                   // ->
+                                voidType                                  // ()
+                            ])
+                        )),
+                        
+                        //  Bool   ->  Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [boolType]), // Bool
+                            ], returns: makeFragments([                    // ->
+                                voidType                                   // ()
+                            ])
+                        )),
+                        
+                        //  Int    ->  Int
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [intType]), // Int
+                            ], returns: makeFragments([                   // ->
+                                intType                                   // Int
+                            ])
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(Int)->()"), //  ( Int  )  ->  ()
+                (symbolID: "function-overload-2", disambiguation: "-(Bool)"),    //  ( Bool )
+                (symbolID: "function-overload-3", disambiguation: "->_"),        //            ->  _
             ])
         }
         
