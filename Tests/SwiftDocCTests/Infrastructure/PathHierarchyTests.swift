@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -3460,6 +3460,55 @@ class PathHierarchyTests: XCTestCase {
             ])
         }
         
+        // Each overload requires a combination parameters and return values to disambiguate
+        do {
+            //  Int   ->  ()
+            //  Bool  ->  ()
+            //  Int   ->  Int
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  Int   ->  Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [intType]), // Int
+                            ], returns: makeFragments([                   // ->
+                                voidType                                  // ()
+                            ])
+                        )),
+                        
+                        //  Bool   ->  Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [boolType]), // Bool
+                            ], returns: makeFragments([                    // ->
+                                voidType                                   // ()
+                            ])
+                        )),
+                        
+                        //  Int    ->  Int
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [intType]), // Int
+                            ], returns: makeFragments([                   // ->
+                                intType                                   // Int
+                            ])
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(Int)->()"), //  ( Int  )  ->  ()
+                (symbolID: "function-overload-2", disambiguation: "-(Bool)"),    //  ( Bool )
+                (symbolID: "function-overload-3", disambiguation: "->_"),        //            ->  _
+            ])
+        }
+        
         // Two overloads with more than 64 parameters, but some unique
         do {
             let spellOutFormatter = NumberFormatter()
@@ -3622,6 +3671,10 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("something(first:second:third:)->(_,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "Int", "Bool"]))])
         
         assertParsedPathComponents("something(first:second:third:)->(String,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "Int", "Bool"]))])
+        
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->()", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: []))])
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->Int", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: ["Int"]))])
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->(String,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: ["String", "Int", "Bool"]))])
         
         // Check closure parameters
         assertParsedPathComponents("map(_:)-((Element)->T)", [("map(_:)", .typeSignature(parameterTypes: ["(Element)->T"], returnTypes: nil))])
