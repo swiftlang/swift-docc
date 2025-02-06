@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -55,10 +55,20 @@ public struct ValidatedURL: Hashable, Equatable {
     ///
     /// Use this to parse author provided documentation links that may contain links to on-page subsections. Escaping the fragment allows authors
     /// to write links to subsections using characters that wouldn't otherwise be allowed in a fragment of a URL.
+    ///
+    /// - Important: Documentation links don't include query items but "?" may appear in the link's path.
     init?(parsingAuthoredLink string: String) {
         // Try to parse the string without escaping anything
-        if let parsed = ValidatedURL(parsingExact: string) {
-            self.components = parsed.components
+        if var parsedComponents = ValidatedURL(parsingExact: string)?.components {
+            // Documentation links don't include query items but "?" may appear in the link's path.
+            // If `URLComponents` decoded a `query`, move that over to the `path` instead.
+            if let query = parsedComponents.query {
+                parsedComponents.path += "?\(query)"
+                parsedComponents.query = nil
+            }
+            
+            assert(parsedComponents.string != nil, "Failed to parse authored link \(string.singleQuoted)")
+            self.components = parsedComponents
             return
         }
         
@@ -113,6 +123,7 @@ public struct ValidatedURL: Hashable, Equatable {
             components.percentEncodedPath = path
         }
         
+        assert(components.string != nil, "Failed to parse authored link \(string.singleQuoted)")
         self.components = components
     }
     
