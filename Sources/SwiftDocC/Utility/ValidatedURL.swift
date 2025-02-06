@@ -95,12 +95,13 @@ public struct ValidatedURL: Hashable, Equatable {
             remainder = remainder.dropFirst("\(ResolvedTopicReference.urlScheme):".count)
             
             if remainder.hasPrefix("//") {
+                remainder = remainder.dropFirst(2) // Don't include the "//" prefix in the `host` component.
                 // The authored link includes a bundle ID
-                guard let startOfPath = remainder.dropFirst(2).firstIndex(of: "/") else {
+                guard let startOfPath = remainder.firstIndex(of: "/") else {
                     // The link started with "doc://" but didn't contain another "/" to start of the path.
                     return nil
                 }
-                components.percentEncodedHost = String(remainder[..<startOfPath]).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+                components.percentEncodedHost = String(remainder[..<startOfPath]).addingPercentEncodingIfNeeded(withAllowedCharacters: .urlHostAllowed)
                 remainder = remainder[startOfPath...]
             }
         }
@@ -110,14 +111,14 @@ public struct ValidatedURL: Hashable, Equatable {
         // by documentation links and symbol links.
         if let fragmentSeparatorIndex = remainder.firstIndex(of: "#") {
             // Encode the path substring and fragment substring separately
-            guard let path = String(remainder[..<fragmentSeparatorIndex]).addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            guard let path = String(remainder[..<fragmentSeparatorIndex]).addingPercentEncodingIfNeeded(withAllowedCharacters: .urlPathAllowed) else {
                 return nil
             }
             components.percentEncodedPath = path
-            components.percentEncodedFragment = String(remainder[fragmentSeparatorIndex...].dropFirst()).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
+            components.percentEncodedFragment = remainder[fragmentSeparatorIndex...].dropFirst().addingPercentEncodingIfNeeded(withAllowedCharacters: .urlFragmentAllowed)
         } else {
             // Since the link didn't include a fragment, the rest of the string is the path.
-            guard let path = String(remainder).addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            guard let path = remainder.addingPercentEncodingIfNeeded(withAllowedCharacters: .urlPathAllowed) else {
                 return nil
             }
             components.percentEncodedPath = path
@@ -169,5 +170,39 @@ public struct ValidatedURL: Hashable, Equatable {
     /// The URL as an RFC 3986 compliant `URL` value.
     var url: URL {
         return components.url!
+    }
+}
+
+private extension StringProtocol {
+    /// Returns a percent encoded version of the string or the original string if it is already percent encoded.
+    func addingPercentEncodingIfNeeded(withAllowedCharacters allowedCharacters: CharacterSet) -> String? {
+        var needsPercentEncoding: Bool {
+            for (index, character) in unicodeScalars.indexed() where !allowedCharacters.contains(character) {
+                if character == "%" {
+                    // % isn't allowed in a URL fragment but it is also the escape character for percent encoding.
+                    let firstFollowingIndex  = unicodeScalars.index(after: index)
+                    let secondFollowingIndex = unicodeScalars.index(after: firstFollowingIndex)
+                    
+                    guard secondFollowingIndex < unicodeScalars.endIndex else {
+                        // There's not two characters after the "%". This "%" can't represent a percent encoded character.
+                        return true
+                    }
+                    // If either of the two following characters aren't hex digits, the "%" doesn't represent a
+                    return !Character(unicodeScalars[firstFollowingIndex]).isHexDigit
+                        || !Character(unicodeScalars[secondFollowingIndex]).isHexDigit
+                    
+                } else {
+                    // Any other disallowed character is an indication that this substring needs percent encoding.
+                    return true
+                }
+            }
+            return false
+        }
+        
+        return if needsPercentEncoding {
+            addingPercentEncoding(withAllowedCharacters: allowedCharacters)
+        } else {
+            String(self)
+        }
     }
 }
