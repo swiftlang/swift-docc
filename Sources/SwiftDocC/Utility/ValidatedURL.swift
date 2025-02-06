@@ -61,7 +61,8 @@ public struct ValidatedURL: Hashable, Equatable {
         // Try to parse the string without escaping anything
         if var parsedComponents = ValidatedURL(parsingExact: string)?.components {
             // Documentation links don't include query items but "?" may appear in the link's path.
-            // If `URLComponents` decoded a `query`, move that over to the `path` instead.
+            // If `URLComponents` decoded a `query`, that's correct from a general URL standpoint but incorrect from a documentation link standpoint.
+            // To create a valid documentation link, we move the `query` component and its "?" separator into the `path` component.
             if let query = parsedComponents.query {
                 parsedComponents.path += "?\(query)"
                 parsedComponents.query = nil
