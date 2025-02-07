@@ -11,7 +11,7 @@
 import Foundation
 #if os(Windows)
 import ucrt
-#elseif os(Linux) || os(Android)
+#elseif os(Linux) || os(Android) || os(FreeBSD)
 import Glibc
 #else
 import Darwin

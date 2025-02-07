@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,24 +16,10 @@ import SwiftDocCTestUtilities
 
 class SymbolAvailabilityTests: XCTestCase {
     
-    private func symbolGraphJSONFile(
-        symbolGraphOperatingSystemPlatformName: String,
-        symbols: [SymbolGraph.Symbol]
-    ) -> JSONFile<SymbolGraph> {
-        JSONFile(
-            name: "ModuleName-\(symbolGraphOperatingSystemPlatformName).symbols.json",
-            content: makeSymbolGraph(
-                moduleName: "ModuleName",
-                platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: symbolGraphOperatingSystemPlatformName), environment: nil),
-                symbols: symbols,
-                relationships: []
-            )
-        )
-    }
-    
     private func symbolAvailability(
             defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
-            symbolGraphs: [(operatingSystemPlatformName: String, symbols: [SymbolGraph.Symbol])],
+            symbolGraphOperatingSystemPlatformName: String,
+            symbols: [SymbolGraph.Symbol],
             symbolName: String
     ) throws -> [SymbolGraph.Symbol.Availability.AvailabilityItem] {
             let catalog = Folder(
@@ -42,7 +28,13 @@ class SymbolAvailabilityTests: XCTestCase {
                     InfoPlist(defaultAvailability: [
                         "ModuleName": defaultAvailability
                     ]),
-                ] + symbolGraphs.map({ symbolGraphJSONFile(symbolGraphOperatingSystemPlatformName: $0.operatingSystemPlatformName, symbols: $0.symbols) })
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: symbolGraphOperatingSystemPlatformName), environment: nil),
+                        symbols: symbols,
+                        relationships: []
+                    )),
+                ]
             )
             let (_, context) = try loadBundle(catalog: catalog)
             let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
@@ -120,56 +112,4 @@ class SymbolAvailabilityTests: XCTestCase {
         ])
     }
     
-    func testNonExistingSymbolInOperatingSystemPlatform() throws {
-        let symbolGraphs: [(operatingSystemPlatformName: String, symbols: [SymbolGraph.Symbol])] = [(
-            operatingSystemPlatformName: "iOS",
-            symbols: [
-                makeSymbol(
-                    id: "platform-1-symbol",
-                    kind: .class,
-                    pathComponents: ["SymbolNameiOS"],
-                    availability: [makeAvailabilityItem(domainName: "iOS", introduced: SymbolGraph.SemanticVersion(string: "1.2.3"))]
-                )
-            ]
-        ), (
-            operatingSystemPlatformName: "macOS",
-            symbols: [
-                makeSymbol(
-                    id: "platform-2-symbol",
-                    kind: .class,
-                    pathComponents: ["SymbolNamemacOS"],
-                    availability: [makeAvailabilityItem(domainName: "macOS", introduced: SymbolGraph.SemanticVersion(string: "1.2.3"))]
-                )
-            ]
-        )]
-        
-        // Test that if a symbol exists in a symbol graph, but it does not exists in another symbol graph,
-        // the symbol is only available in that single platform.
-        XCTAssertEqual(
-            try symbolAvailability(defaultAvailability: [], symbolGraphs: symbolGraphs, symbolName: "SymbolNameiOS").map(\.testDescription).sorted(), [
-            "iOS 1.2.3 - <nil>",
-            "iPadOS 1.2.3 - <nil>",
-            "macCatalyst 1.2.3 - <nil>",
-            // Shouldn't display this
-            // "macOS 1.2.3 - <nil>",
-            // because the symbol does not exists in the macOS SGF.
-        ])
-        
-        XCTAssertEqual(
-            try symbolAvailability(defaultAvailability: [], symbolGraphs: symbolGraphs, symbolName: "SymbolNamemacOS").map(\.testDescription).sorted(), [
-            "macOS 1.2.3 - <nil>",
-            // Shouldn't display these
-            // "iOS 1.2.3 - <nil>"
-            // "iPadOS 1.2.3 - <nil>"
-            // "macCatalyst 1.2.3 - <nil>"
-            // because the symbol does not exists in the iOS SGF.
-        ])
-    }
-    
-}
-
-private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
-    var testDescription: String {
-        "\(self.domain?.rawValue ?? "<nil>") \(self.introducedVersion?.description ?? "<nil>") - \(self.deprecatedVersion?.description ?? "<nil>")"
-    }
 }
