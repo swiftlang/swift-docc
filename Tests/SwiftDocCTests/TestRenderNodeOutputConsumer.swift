@@ -24,6 +24,8 @@ class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
     func consume(problems: [Problem]) throws { }
     func consume(assetsInBundle bundle: DocumentationBundle) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
+    func consumeIncremental(linkableElementSummary: LinkDestinationSummary) throws { }
+    func finishedConsumingLinkElementSummaries() throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [RenderReference]]) throws { }
     func consume(benchmarks: Benchmark) throws { }
