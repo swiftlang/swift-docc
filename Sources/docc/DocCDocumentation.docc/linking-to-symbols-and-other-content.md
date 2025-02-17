@@ -13,6 +13,17 @@ DocC supports the following link types to enable navigation between pages:
 | Tutorial | Links to a tutorial in your documentation catalog.
 | Web      | Links to an external URL.
 
+When you link to a symbol from an article's content, DocC automatically creates a "mentioned in" link from mentioned symbol's page to the article that mentioned the symbol.
+These "mentioned in" links helps the reader find conceptual content that put a specific symbol in context or that describe how to accomplish some task using that symbol.
+
+DocC only creates "mentioned in" links when an _article_ links to a symbol and only when that link appears in the article's _content_.
+Links in topic groups---that organize your documentation into a hierarchy of topics and subtopics---doesn't produce "mentioned in" links.
+For more information about topic groups, see <doc:adding-structure-to-your-documentation-pages>.  
+
+> Earlier Versions:
+> Before Swift-DocC 6.2, automatic "mentioned in" links require that you pass the `--enable-experimental-mentioned-in` command line flag to `docc`. 
+> This flag is available as of Swift-DocC 6.0. 
+
 ### Navigate to a Symbol
 
 To add a link to a symbol in your module, wrap the symbol's name in a set of double backticks (\`\`):
