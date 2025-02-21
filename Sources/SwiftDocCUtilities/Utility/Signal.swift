@@ -20,7 +20,9 @@ public struct Signal {
     public static func on(_ signals: [Int32], callback: @convention(c) @escaping (Int32) -> Void) {
         var signalAction = sigaction()
         
-        #if os(Linux)
+        #if canImport(Musl)
+        signalAction.__sa_handler = unsafeBitCast(callback, to: sigaction.__Unnamed_union___sa_handler.self)
+        #elseif os(Linux)
         // This is where we get to use a triple underscore in a method name.
         signalAction.__sigaction_handler = unsafeBitCast(callback, to: sigaction.__Unnamed_union___sigaction_handler.self)
         #elseif os(Android)
