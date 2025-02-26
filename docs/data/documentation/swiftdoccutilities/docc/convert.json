@@ -87,6 +87,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/14ArgumentParser20AsyncParsableCommandP",
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser15ParsableCommandP",
         "doc:\/\/SwiftDocCUtilities\/Se"
@@ -119,14 +120,12 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/additionalSymbolGraphDirectory",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/additionalSymbolGraphFiles",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/allowArbitraryCatalogDirectories",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/analyze",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/defaultCodeListingLanguage",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/dependencies",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/diagnosticLevel",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/diagnosticsOutputPath",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/documentationBundle",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/documentationCatalog",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/emitDigest",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/emitLMDBIndex",
@@ -134,7 +133,6 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalLinkHierarchySerialization",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalMentionedIn",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalOverloadedSymbolPresentation",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalParametersAndReturnsValidation",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableInheritedDocs",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableParametersAndReturnsValidation",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalDocumentationCoverageOptions",
@@ -142,10 +140,8 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalModifyCatalogWithGeneratedCuration",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fallbackBundleDisplayName",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fallbackBundleIdentifier",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fallbackBundleVersion",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fallbackDefaultModuleKind",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/formatConsoleOutputForTools",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/index",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/outOfProcessLinkResolverOption",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/outputURL",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/platforms",
@@ -161,7 +157,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/run()-6n6ql",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/run()",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/validate()-1hb4l"
       ],
       "title" : "Instance Methods"
@@ -178,6 +174,7 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/AsyncParsableCommand-Implementations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/ParsableArguments-Implementations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/ParsableCommand-Implementations"
       ],
@@ -206,6 +203,11 @@
 "doc://SwiftDocCUtilities/14ArgumentParser17ParsableArgumentsP": {
   "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
   "title" : "ArgumentParser.ParsableArguments",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocCUtilities/14ArgumentParser20AsyncParsableCommandP": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser20AsyncParsableCommandP",
+  "title" : "ArgumentParser.AsyncParsableCommand",
   "type" : "unresolvable"
 },
 "doc://SwiftDocCUtilities/Se": {
@@ -295,6 +297,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert"
 },
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/AsyncParsableCommand-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/AsyncParsableCommand-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "AsyncParsableCommand Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/asyncparsablecommand-implementations"
+},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/ParsableArguments-Implementations": {
   "abstract" : [
 
@@ -357,45 +370,6 @@
   "title" : "additionalSymbolGraphDirectory",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/additionalsymbolgraphdirectory"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/additionalSymbolGraphFiles": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "additionalSymbolGraphFiles"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/additionalSymbolGraphFiles",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "additionalSymbolGraphFiles",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/additionalsymbolgraphfiles"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/allowArbitraryCatalogDirectories": {
   "abstract" : [
@@ -677,41 +651,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/diagnosticsoutputpath"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/documentationBundle": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "documentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:18SwiftDocCUtilities25DocumentationBundleOptiona",
-      "text" : "DocumentationBundleOption"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/documentationBundle",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "documentationBundle",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/documentationbundle"
-},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/documentationCatalog": {
   "abstract" : [
     {
@@ -987,41 +926,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentaloverloadedsymbolpresentation"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableExperimentalParametersAndReturnsValidation": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "enableExperimentalParametersAndReturnsValidation"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalParametersAndReturnsValidation",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "enableExperimentalParametersAndReturnsValidation",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentalparametersandreturnsvalidation"
-},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableInheritedDocs": {
   "abstract" : [
     {
@@ -1289,48 +1193,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/fallbackbundleidentifier"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/fallbackBundleVersion": {
-  "abstract" : [
-    {
-      "text" : "A user-provided fallback version for the documentation bundle.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "fallbackBundleVersion"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fallbackBundleVersion",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "fallbackBundleVersion",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/fallbackbundleversion"
-},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/fallbackDefaultModuleKind": {
   "abstract" : [
     {
@@ -1408,44 +1270,6 @@
   "title" : "formatConsoleOutputForTools",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/formatconsoleoutputfortools"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/index": {
-  "abstract" : [
-    {
-      "text" : "This value is provided for backwards compatibility with existing clients but will be removed soon. Renamed to ‘–emit-lmdb-index’.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "index"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/index",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "index",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/index"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/init()": {
   "abstract" : [
@@ -1666,7 +1490,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/providedoutputurl"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/run()-6n6ql": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/run()": {
   "abstract" : [
 
   ],
@@ -1689,15 +1513,23 @@
     },
     {
       "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/run()-6n6ql",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/run()",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "run()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/run()-6n6ql"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/run()"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/sourceRepositoryArguments": {
   "abstract" : [

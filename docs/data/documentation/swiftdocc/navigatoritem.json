@@ -138,14 +138,6 @@
   ],
   "topicSections" : [
     {
-      "anchor" : "Operators",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/==(_:_:)"
-      ],
-      "title" : "Operators"
-    },
-    {
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
@@ -168,14 +160,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/title"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Instance-Methods",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/hash(into:)"
-      ],
-      "title" : "Instance Methods"
     },
     {
       "anchor" : "Default-Implementations",
@@ -397,70 +381,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatoritem"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/==(_:_:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "=="
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorItemC",
-      "text" : "NavigatorItem"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorItemC",
-      "text" : "NavigatorItem"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/==(_:_:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "==(_:_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatoritem\/==(_:_:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/Equatable-Implementations": {
   "abstract" : [
 
@@ -564,60 +484,6 @@
   "title" : "description",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatoritem\/description"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/hash(into:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "hash"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "into"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "inout"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:s6HasherV",
-      "text" : "Hasher"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/hash(into:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "hash(into:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatoritem\/hash(into:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/init(from:)": {
   "abstract" : [

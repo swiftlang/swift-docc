@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Preview.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Preview.swift#L43"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Preview.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

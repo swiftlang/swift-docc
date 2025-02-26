@@ -215,10 +215,6 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalSymbolResolver",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackAssetResolver",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackReferenceResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
         "doc:\/\/SwiftDocC\/s8CopyableP"
       ],
@@ -271,6 +267,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/init(bundleID:server:convertRequestIdentifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/init(bundleIdentifier:server:convertRequestIdentifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/init(processLocation:errorOutputHandler:)"
       ],
@@ -280,6 +277,7 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/bundleID",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/bundleIdentifier"
       ],
       "title" : "Instance Properties"
@@ -300,17 +298,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/Response"
       ],
       "title" : "Enumerations"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ExternalReferenceResolver-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ExternalSymbolResolver-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/FallbackAssetResolver-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/FallbackReferenceResolver-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -343,11 +330,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalDocumentationSources": {
   "abstract" : [
-    {
-      "text" : "The lookup of external documentation sources by their bundle identifiers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -393,11 +378,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/globalExternalSymbolResolver": {
   "abstract" : [
-    {
-      "text" : "A type that resolves all symbols that are referenced in symbol graph files but can’t be found in any of the locally available symbol graph files.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -480,134 +463,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/externaldocumentationsource"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ExternalReferenceResolver": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "ExternalReferenceResolver"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "ExternalReferenceResolver"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "ExternalReferenceResolver",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/externalreferenceresolver"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ExternalSymbolResolver": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "ExternalSymbolResolver"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalSymbolResolver",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "ExternalSymbolResolver"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "ExternalSymbolResolver",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/externalsymbolresolver"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/FallbackAssetResolver": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "FallbackAssetResolver"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackAssetResolver",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "FallbackAssetResolver"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "FallbackAssetResolver",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/fallbackassetresolver"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/FallbackReferenceResolver": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "FallbackReferenceResolver"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackReferenceResolver",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "FallbackReferenceResolver"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "FallbackReferenceResolver",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/fallbackreferenceresolver"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/GlobalExternalSymbolResolver": {
   "abstract" : [
     {
@@ -675,50 +530,6 @@
   "title" : "OutOfProcessReferenceResolver",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/ExternalReferenceResolver-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ExternalReferenceResolver-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ExternalReferenceResolver Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/externalreferenceresolver-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/ExternalSymbolResolver-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ExternalSymbolResolver-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ExternalSymbolResolver Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/externalsymbolresolver-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/FallbackAssetResolver-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/FallbackAssetResolver-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "FallbackAssetResolver Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/fallbackassetresolver-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/FallbackReferenceResolver-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/FallbackReferenceResolver-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "FallbackReferenceResolver Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/fallbackreferenceresolver-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/Request": {
   "abstract" : [
@@ -822,7 +633,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/response"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/bundleIdentifier": {
+"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/bundleID": {
   "abstract" : [
     {
       "text" : "The bundle identifier for the reference resolver in the other process.",
@@ -833,6 +644,50 @@
     {
       "kind" : "keyword",
       "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bundleID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/bundleID",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "bundleID",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/bundleid"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/bundleIdentifier": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
     },
     {
       "kind" : "text",
@@ -859,13 +714,99 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/bundleidentifier"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/init(bundleIdentifier:server:convertRequestIdentifier:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/init(bundleID:server:convertRequestIdentifier:)": {
   "abstract" : [
     {
       "text" : "Creates a new reference resolver that interacts with a documentation service.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "server"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationServerC",
+      "text" : "DocumentationServer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "convertRequestIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/init(bundleID:server:convertRequestIdentifier:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(bundleID:server:convertRequestIdentifier:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/init(bundleid:server:convertrequestidentifier:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/init(bundleIdentifier:server:convertRequestIdentifier:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

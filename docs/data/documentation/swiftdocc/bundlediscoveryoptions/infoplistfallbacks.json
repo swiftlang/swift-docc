@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationWorkspaceDataProvider.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspaceDataProvider.swift#L56"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspaceDataProvider.swift#L58"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

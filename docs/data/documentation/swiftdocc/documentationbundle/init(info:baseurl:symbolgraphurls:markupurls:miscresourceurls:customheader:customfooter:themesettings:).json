@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Creates a documentation bundle.",
+      "text" : "Creates a new collection of build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
@@ -9,7 +9,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle"
       ]
     ]
@@ -183,7 +183,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L110"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L129"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -369,7 +369,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "Information about the bundle.",
+                  "text" : "Non-content information or metadata about this unit of documentation.",
                   "type" : "text"
                 }
               ],
@@ -397,7 +397,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "Symbol Graph JSON files for the modules documented by the bundle.",
+                  "text" : "Symbol graph JSON input files for the module that’s represented by this unit of documentation.",
                   "type" : "text"
                 }
               ],
@@ -411,7 +411,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "DocC Markup files of the bundle.",
+                  "text" : "Documentation markup input files for this unit of documentation.",
                   "type" : "text"
                 }
               ],
@@ -425,7 +425,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "Miscellaneous resources of the bundle.",
+                  "text" : "Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.",
                   "type" : "text"
                 }
               ],
@@ -518,7 +518,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
     {
-      "text" : "A documentation bundle.",
+      "text" : "A collection of the build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
@@ -586,7 +586,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)": {
   "abstract" : [
     {
-      "text" : "Creates a documentation bundle.",
+      "text" : "Creates a new collection of build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
@@ -752,19 +752,19 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/init(info:baseurl:symbolgraphurls:markupurls:miscresourceurls:customheader:customfooter:themesettings:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
   "abstract" : [
     {
-      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "text" : "Learn how to discover documentation inputs on the file system.",
       "type" : "text"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
   "kind" : "article",
   "role" : "collectionGroup",
-  "title" : "Bundle Discovery",
+  "title" : "Input Discovery",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 }
 }
 }

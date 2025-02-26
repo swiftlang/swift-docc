@@ -45,7 +45,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Merge.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Merge.swift#L160"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Merge.swift#L163"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

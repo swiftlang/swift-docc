@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L593"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L636"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -1167,7 +1167,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/redirects": {
   "abstract" : [
     {
-      "text" : "Any redirect information of the first variant of the symbol, if the symbol has been moved from another location.",
+      "text" : "Any redirect information of the symbol, if the symbol has been moved from another location.",
       "type" : "text"
     }
   ],

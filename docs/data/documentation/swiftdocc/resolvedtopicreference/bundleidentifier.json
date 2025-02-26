@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The identifier of the bundle that owns this documentation topic.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -49,6 +54,9 @@
       {
         "name" : "SwiftDocC"
       }
+    ],
+    "platforms" : [
+
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
@@ -195,11 +203,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ResolvedTopicReference/bundleIdentifier": {
   "abstract" : [
-    {
-      "text" : "The identifier of the bundle that owns this documentation topic.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

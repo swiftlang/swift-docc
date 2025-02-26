@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeprecationSummary.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DeprecationSummary.swift#L38"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DeprecationSummary.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

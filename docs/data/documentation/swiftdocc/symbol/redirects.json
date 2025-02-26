@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Any redirect information of the first variant of the symbol, if the symbol has been moved from another location.",
+      "text" : "Any redirect information of the symbol, if the symbol has been moved from another location.",
       "type" : "text"
     }
   ],
@@ -10,11 +10,6 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol"
-      ],
-      [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/Redirected-Implementations"
       ]
     ]
   },
@@ -24,7 +19,6 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC6SymbolC9redirectsSayAA8RedirectCGSgvp",
     "fragments" : [
       {
@@ -60,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L687"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L258"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -102,23 +96,7 @@
             },
             {
               "kind" : "text",
-              "text" : "]? { "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "get"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "set"
-            },
-            {
-              "kind" : "text",
-              "text" : " }"
+              "text" : "]?"
             }
           ]
         }
@@ -264,17 +242,6 @@
   "title" : "Symbol",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Symbol/Redirected-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/Redirected-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Redirected Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbol\/redirected-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/abstract": {
   "abstract" : [
@@ -1191,7 +1158,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/redirects": {
   "abstract" : [
     {
-      "text" : "Any redirect information of the first variant of the symbol, if the symbol has been moved from another location.",
+      "text" : "Any redirect information of the symbol, if the symbol has been moved from another location.",
       "type" : "text"
     }
   ],

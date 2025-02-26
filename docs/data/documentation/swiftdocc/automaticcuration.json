@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AutomaticCuration.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Topic%20Graph\/AutomaticCuration.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Topic%20Graph\/AutomaticCuration.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -100,9 +100,7 @@
       "anchor" : "Documentation-Context",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext"
       ],
       "title" : "Documentation Context"
     }
@@ -202,74 +200,6 @@
   "title" : "DocumentationContext",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProvider": {
-  "abstract" : [
-    {
-      "text" : "A type that provides information about documentation bundles and their content.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProvider"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProvider"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationContextDataProvider",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextdataprovider"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProviderDelegate": {
-  "abstract" : [
-    {
-      "text" : "An object that responds to changes in available documentation bundles for a specific provider.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProviderDelegate"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProviderDelegate"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationContextDataProviderDelegate",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextdataproviderdelegate"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextGroup": {
   "abstract" : [

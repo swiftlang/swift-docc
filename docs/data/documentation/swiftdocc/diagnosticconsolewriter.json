@@ -158,7 +158,6 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/finalize()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/flush()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/receive(_:)"
       ],
@@ -236,40 +235,6 @@
   "title" : "DiagnosticConsoleWriter",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/finalize()": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "finalize"
-    },
-    {
-      "kind" : "text",
-      "text" : "() "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/finalize()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "finalize()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/finalize()"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/flush()": {
   "abstract" : [

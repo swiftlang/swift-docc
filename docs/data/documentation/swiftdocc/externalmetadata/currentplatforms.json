@@ -9,7 +9,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata"
       ]
     ]
@@ -187,20 +187,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
-  "abstract" : [
-    {
-      "text" : "Learn how to explore a documentation workspace and discover bundles.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Bundle Discovery",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/ExternalMetadata": {
   "abstract" : [
     {
@@ -284,6 +270,20 @@
   "title" : "currentPlatforms",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/externalmetadata\/currentplatforms"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
+  "abstract" : [
+    {
+      "text" : "Learn how to discover documentation inputs on the file system.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Input Discovery",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformVersion": {
   "abstract" : [

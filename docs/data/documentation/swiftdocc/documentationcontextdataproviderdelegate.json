@@ -5,11 +5,21 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -45,9 +55,12 @@
         "text" : "DocumentationContextDataProviderDelegate"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L34"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -105,18 +118,6 @@
   "sections" : [
 
   ],
-  "seeAlsoSections" : [
-    {
-      "anchor" : "Documentation-Context",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticCuration"
-      ],
-      "title" : "Documentation Context"
-    }
-  ],
   "topicSections" : [
     {
       "anchor" : "Instance-Methods",
@@ -156,40 +157,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AutomaticCuration": {
-  "abstract" : [
-    {
-      "text" : "A set of functions that add automatic symbol curation to a topic graph.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "AutomaticCuration"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticCuration",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "AutomaticCuration"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "AutomaticCuration",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/automaticcuration"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
   "abstract" : [
     {
@@ -224,40 +191,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProvider": {
-  "abstract" : [
-    {
-      "text" : "A type that provides information about documentation bundles and their content.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProvider"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProvider"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationContextDataProvider",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextdataprovider"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProviderDelegate": {
   "abstract" : [
     {
@@ -265,6 +198,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -315,6 +249,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -394,6 +329,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -449,20 +385,6 @@
   "title" : "dataProvider(_:didRemoveBundle:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontextdataproviderdelegate\/dataprovider(_:didremovebundle:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextGroup": {
-  "abstract" : [
-    {
-      "text" : "Build and query the in-memory documentation model.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Documentation Context",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextgroup"
 }
 }
 }

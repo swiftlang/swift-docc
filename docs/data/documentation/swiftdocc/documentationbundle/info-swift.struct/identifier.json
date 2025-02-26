@@ -1,15 +1,20 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The unique identifier of the bundle.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'id' instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct"
       ]
@@ -49,6 +54,9 @@
       {
         "name" : "SwiftDocC"
       }
+    ],
+    "platforms" : [
+
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle+Info.swift",
@@ -90,6 +98,18 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:SS",
               "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -136,7 +156,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
     {
-      "text" : "A documentation bundle.",
+      "text" : "A collection of the build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
@@ -203,11 +223,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Info-swift.struct/identifier": {
   "abstract" : [
-    {
-      "text" : "The unique identifier of the bundle.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -238,19 +256,19 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/info-swift.struct\/identifier"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
   "abstract" : [
     {
-      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "text" : "Learn how to discover documentation inputs on the file system.",
       "type" : "text"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
   "kind" : "article",
   "role" : "collectionGroup",
-  "title" : "Bundle Discovery",
+  "title" : "Input Discovery",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 }
 }
 }

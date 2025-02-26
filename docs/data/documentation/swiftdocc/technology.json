@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "An overview of the educational materials under a specific technology or technology area.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'TutorialTableOfContents' instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -18,11 +23,11 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC10TechnologyC",
+    "externalID" : "s:9SwiftDocC10Technologya",
     "fragments" : [
       {
         "kind" : "keyword",
-        "text" : "class"
+        "text" : "typealias"
       },
       {
         "kind" : "text",
@@ -44,13 +49,16 @@
         "text" : "Technology"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "Technology.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Technology.swift#L15"
+      "fileName" : "TutorialTableOfContents.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/TutorialTableOfContents.swift#L125"
     },
     "role" : "symbol",
-    "roleHeading" : "Class",
-    "symbolKind" : "class",
+    "roleHeading" : "Type Alias",
+    "symbolKind" : "typealias",
     "title" : "Technology"
   },
   "primaryContentSections" : [
@@ -66,15 +74,7 @@
           "tokens" : [
             {
               "kind" : "keyword",
-              "text" : "final"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "class"
+              "text" : "typealias"
             },
             {
               "kind" : "text",
@@ -83,30 +83,21 @@
             {
               "kind" : "identifier",
               "text" : "Technology"
+            },
+            {
+              "kind" : "text",
+              "text" : " = "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialTableOfContents",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC23TutorialTableOfContentsC",
+              "text" : "TutorialTableOfContents"
             }
           ]
         }
       ],
       "kind" : "declarations"
-    }
-  ],
-  "relationshipsSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic"
-      ],
-      "kind" : "relationships",
-      "title" : "Inherits From",
-      "type" : "inheritsFrom"
-    },
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible",
-        "doc:\/\/SwiftDocC\/SQ"
-      ],
-      "kind" : "relationships",
-      "title" : "Conforms To",
-      "type" : "conformsTo"
     }
   ],
   "schemaVersion" : {
@@ -116,55 +107,6 @@
   },
   "sections" : [
 
-  ],
-  "topicSections" : [
-    {
-      "anchor" : "Initializers",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/init(from:source:for:in:problems:)"
-      ],
-      "title" : "Initializers"
-    },
-    {
-      "anchor" : "Instance-Properties",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/abstract",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/intro",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/name",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/originalMarkup",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/redirects",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/resources",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/volumes"
-      ],
-      "title" : "Instance Properties"
-    },
-    {
-      "anchor" : "Instance-Methods",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/accept(_:)"
-      ],
-      "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Type-Properties",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/directiveName",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/introducedVersion"
-      ],
-      "title" : "Type Properties"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/DirectiveConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
-    }
   ],
   "variants" : [
     {
@@ -180,11 +122,6 @@
   ]
 , 
 "references": {
-"doc://SwiftDocC/SQ": {
-  "identifier" : "doc:\/\/SwiftDocC\/SQ",
-  "title" : "Swift.Equatable",
-  "type" : "unresolvable"
-},
 "doc://SwiftDocC/documentation/SwiftDocC": {
   "abstract" : [
     {
@@ -199,119 +136,15 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible": {
-  "abstract" : [
-    {
-      "text" : "A semantic object formed from a directive after a series of semantic analysis checks.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DirectiveConvertible"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DirectiveConvertible"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DirectiveConvertible",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/directiveconvertible"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Intro": {
-  "abstract" : [
-    {
-      "text" : "An introductory section for instructional pages.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Intro"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Intro",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Intro"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Intro",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/intro"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
-  "abstract" : [
-    {
-      "text" : "A semantic object is an abstract element with children which also are semantic objects.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Semantic"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Semantic"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Semantic",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semantic"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Technology": {
   "abstract" : [
-    {
-      "text" : "An overview of the educational materials under a specific technology or technology area.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "class"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -335,305 +168,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/technology"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/directiveconvertible-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/abstract": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "abstract"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown9ParagraphV",
-      "text" : "Paragraph"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/abstract",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "abstract",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/abstract"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/accept(_:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "accept"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "V"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
-    },
-    {
-      "kind" : "keyword",
-      "text" : "inout"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "V"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "V"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC15SemanticVisitorP6ResultQa",
-      "text" : "Result"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/accept(_:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "accept(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/accept(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/directiveName": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "directiveName"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/directiveName",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "directiveName",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/directivename"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/init(from:source:for:in:problems:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "?("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "from"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
-      "text" : "BlockDirective"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "source"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "for"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "in"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "problems"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "inout"
-    },
-    {
-      "kind" : "text",
-      "text" : " ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
-    },
-    {
-      "kind" : "text",
-      "text" : "])"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/init(from:source:for:in:problems:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(from:source:for:in:problems:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/init(from:source:for:in:problems:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/intro": {
+"doc://SwiftDocC/documentation/SwiftDocC/TutorialTableOfContents": {
   "abstract" : [
     {
-      "text" : "The ",
-      "type" : "text"
-    },
-    {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Intro",
-      "isActive" : true,
-      "type" : "reference"
-    },
-    {
-      "text" : " section for this technology.",
+      "text" : "A top-level page that organizes a collection of tutorials into a hierarchy of volumes and chapters.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "class"
     },
     {
       "kind" : "text",
@@ -641,257 +186,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "intro"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC5IntroC",
-      "text" : "Intro"
+      "text" : "TutorialTableOfContents"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/intro",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialTableOfContents",
   "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "intro",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/intro"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/introducedVersion": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
+  "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "introducedVersion"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
+      "text" : "TutorialTableOfContents"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/introducedVersion",
-  "kind" : "symbol",
   "role" : "symbol",
-  "title" : "introducedVersion",
+  "title" : "TutorialTableOfContents",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/introducedversion"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/name": {
-  "abstract" : [
-    {
-      "text" : "The name of the technology.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "name"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/name",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "name",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/name"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/originalMarkup": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "originalMarkup"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
-      "text" : "BlockDirective"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/originalMarkup",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "originalMarkup",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/originalmarkup"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/redirects": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "redirects"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8RedirectC",
-      "text" : "Redirect"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/redirects",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "redirects",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/redirects"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/resources": {
-  "abstract" : [
-    {
-      "text" : "Additional resources to aid in learning the technology.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "resources"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC9ResourcesC",
-      "text" : "Resources"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/resources",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "resources",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/resources"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Technology/volumes": {
-  "abstract" : [
-    {
-      "text" : "The sections that outline the technology.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "volumes"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC6VolumeC",
-      "text" : "Volume"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology\/volumes",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "volumes",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology\/volumes"
+  "url" : "\/documentation\/swiftdocc\/tutorialtableofcontents"
 }
 }
 }

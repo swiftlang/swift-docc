@@ -160,14 +160,6 @@
       "title" : "Instance Properties"
     },
     {
-      "anchor" : "Instance-Methods",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Name-swift.enum\/hash(into:)"
-      ],
-      "title" : "Instance Methods"
-    },
-    {
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
@@ -389,60 +381,6 @@
   "title" : "description",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/name-swift.enum\/description"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Name-swift.enum/hash(into:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "hash"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "into"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "inout"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:s6HasherV",
-      "text" : "Hasher"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Name-swift.enum\/hash(into:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "hash(into:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/name-swift.enum\/hash(into:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Name-swift.enum/symbol(name:)": {
   "abstract" : [

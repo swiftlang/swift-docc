@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Build the index using the passed instance of ",
-      "type" : "text"
-    },
-    {
-      "code" : "RenderNodeProvider",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if available.",
+      "text" : "Build the index using the render nodes files in the provided documentation archive.",
       "type" : "text"
     }
   ],
@@ -64,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L1255"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L1271"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -124,7 +116,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "A list containing all the problems encountered during indexing.",
+              "text" : "A list containing all the errors encountered during indexing.",
               "type" : "text"
             }
           ],
@@ -146,14 +138,32 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "If a provider is not available, this method would generate a fatal error.",
+                  "text" : "Either ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/archiveURL",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " or ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/renderNodeProvider",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " is set.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "Note",
+          "name" : "Precondition",
           "style" : "note",
           "type" : "aside"
         }
@@ -319,18 +329,51 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/archiveURL": {
+  "abstract" : [
+    {
+      "text" : "The documentation archive to build an index from.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "archiveURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/archiveURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "archiveURL",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/archiveurl"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/build()": {
   "abstract" : [
     {
-      "text" : "Build the index using the passed instance of ",
-      "type" : "text"
-    },
-    {
-      "code" : "RenderNodeProvider",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if available.",
+      "text" : "Build the index using the render nodes files in the provided documentation archive.",
       "type" : "text"
     }
   ],
@@ -367,6 +410,48 @@
   "title" : "build()",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/build()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/renderNodeProvider": {
+  "abstract" : [
+    {
+      "text" : "The data provider.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "renderNodeProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderNodeProviderP",
+      "text" : "RenderNodeProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/renderNodeProvider",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "renderNodeProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/rendernodeprovider"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Problem": {
   "abstract" : [

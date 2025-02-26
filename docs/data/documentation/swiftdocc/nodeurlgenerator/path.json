@@ -95,7 +95,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/documentation(path:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/documentationCuration(parentPath:articleName:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/technology(technologyName:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/tutorial(bundleName:tutorialName:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/tutorial(bundleName:tutorialName:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/tutorialTableOfContents(name:)"
       ],
       "title" : "Enumeration Cases"
     },
@@ -606,6 +607,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -710,6 +712,52 @@
   "title" : "NodeURLGenerator.Path.tutorial(bundleName:tutorialName:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/path\/tutorial(bundlename:tutorialname:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/Path/tutorialTableOfContents(name:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tutorialTableOfContents"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/tutorialTableOfContents(name:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "NodeURLGenerator.Path.tutorialTableOfContents(name:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/path\/tutorialtableofcontents(name:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/Path/tutorialsFolder": {
   "abstract" : [

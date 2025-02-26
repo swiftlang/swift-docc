@@ -226,7 +226,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/miscResourceURLs": {
   "abstract" : [
     {
-      "text" : "Miscellaneous resources of the bundle.",
+      "text" : "Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.",
       "type" : "text"
     }
   ],

@@ -39,7 +39,15 @@
         {
           "inlineContent" : [
             {
-              "text" : "The documentation context generally manages the in-memory documentation including:",
+              "text" : "A documentation context is the the in-memory representation of a “unit” of documentation (for example a module, package, or technology).",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "The context is generally responsible for:",
               "type" : "text"
             }
           ],
@@ -140,21 +148,34 @@
           "type" : "heading"
         },
         {
-          "code" : [
-            "let workspace = DocumentationWorkspace()",
-            "let context = try DocumentationContext(dataProvider: workspace)"
-          ],
-          "syntax" : "swift",
-          "type" : "codeListing"
-        },
-        {
           "inlineContent" : [
             {
-              "text" : "During initialization the context will inspect the available bundles in the workspace and load any symbol graph files and markup files.",
+              "text" : "Use ",
+              "type" : "text"
+            },
+            {
+              "code" : "DocumentationContext\/init(bundle:dataProvider:diagnosticEngine:configuration:)",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " to create a context for a given bundle:",
               "type" : "text"
             }
           ],
           "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "let inputsProvider = DocumentationContext.InputsProvider()",
+            "let (bundle, dataProvider) = try inputsProvider.inputsAndDataProvider(",
+            "    startingPoint: catalogURL, ",
+            "    options: bundleDiscoveryOptions",
+            ")",
+            "",
+            "let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)"
+          ],
+          "syntax" : "swift",
+          "type" : "codeListing"
         },
         {
           "anchor" : "Accessing-Documentation",
@@ -183,7 +204,7 @@
         {
           "code" : [
             "let reference = ResolvedTopicReference(",
-            "    bundleIdentifier: \"com.mybundle\",",
+            "    bundleID: \"com.mybundle\",",
             "    path: \"\/documentation\/ValidationKit\/EmailValidator\",",
             "    fragment: nil,",
             "    sourceLanguage: .swift)",
@@ -207,22 +228,6 @@
           ],
           "syntax" : "swift",
           "type" : "codeListing"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "And finally to print all known paths in the context:",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "code" : [
-            "context.knownIdentifiers.forEach({ print($0) })"
-          ],
-          "syntax" : "swift",
-          "type" : "codeListing"
         }
       ],
       "kind" : "content"
@@ -241,7 +246,7 @@
       "anchor" : "Content-Discovery",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery"
       ],
       "title" : "Content Discovery"
     }
@@ -251,8 +256,6 @@
       "anchor" : "Documentation-Context",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticCuration"
       ],
       "title" : "Documentation Context"
@@ -523,74 +526,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/entity(with:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProvider": {
-  "abstract" : [
-    {
-      "text" : "A type that provides information about documentation bundles and their content.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProvider"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProvider"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationContextDataProvider",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextdataprovider"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProviderDelegate": {
-  "abstract" : [
-    {
-      "text" : "An object that responds to changes in available documentation bundles for a specific provider.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProviderDelegate"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProviderDelegate"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationContextDataProviderDelegate",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextdataproviderdelegate"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode": {
   "abstract" : [
     {
@@ -624,20 +559,6 @@
   "title" : "DocumentationNode",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
-  "abstract" : [
-    {
-      "text" : "Learn how to explore a documentation workspace and discover bundles.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Bundle Discovery",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ExternalDocumentationSource": {
   "abstract" : [
@@ -706,6 +627,20 @@
   "title" : "GlobalExternalSymbolResolver",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/globalexternalsymbolresolver"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
+  "abstract" : [
+    {
+      "text" : "Learn how to discover documentation inputs on the file system.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Input Discovery",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator": {
   "abstract" : [

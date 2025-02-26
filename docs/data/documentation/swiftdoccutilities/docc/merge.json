@@ -87,6 +87,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/14ArgumentParser20AsyncParsableCommandP",
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser15ParsableCommandP",
         "doc:\/\/SwiftDocCUtilities\/Se"
@@ -122,7 +123,8 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/landingPageCatalog",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/outputURL",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/synthesizedLandingPageKind",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/synthesizedLandingPageName"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/synthesizedLandingPageName",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/synthesizedLandingPageTopicsStyle"
       ],
       "title" : "Instance Properties"
     },
@@ -130,7 +132,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/run()-4ybqk"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/run()"
       ],
       "title" : "Instance Methods"
     },
@@ -146,6 +148,7 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/AsyncParsableCommand-Implementations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/ParsableArguments-Implementations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/ParsableCommand-Implementations"
       ],
@@ -174,6 +177,11 @@
 "doc://SwiftDocCUtilities/14ArgumentParser17ParsableArgumentsP": {
   "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
   "title" : "ArgumentParser.ParsableArguments",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocCUtilities/14ArgumentParser20AsyncParsableCommandP": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser20AsyncParsableCommandP",
+  "title" : "ArgumentParser.AsyncParsableCommand",
   "type" : "unresolvable"
 },
 "doc://SwiftDocCUtilities/Se": {
@@ -262,6 +270,17 @@
   "title" : "Docc.Merge",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/merge"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Merge/AsyncParsableCommand-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/AsyncParsableCommand-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "AsyncParsableCommand Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/merge\/asyncparsablecommand-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Merge/ParsableArguments-Implementations": {
   "abstract" : [
@@ -500,7 +519,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/merge\/outputurl"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Merge/run()-4ybqk": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Merge/run()": {
   "abstract" : [
 
   ],
@@ -523,15 +542,23 @@
     },
     {
       "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/run()-4ybqk",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/run()",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "run()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/merge\/run()-4ybqk"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/merge\/run()"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Merge/synthesizedLandingPageKind": {
   "abstract" : [
@@ -600,6 +627,49 @@
   "title" : "synthesizedLandingPageName",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/merge\/synthesizedlandingpagename"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Merge/synthesizedLandingPageTopicsStyle": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "synthesizedLandingPageTopicsStyle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17TopicsVisualStyleC",
+      "text" : "TopicsVisualStyle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17TopicsVisualStyleC0E0O",
+      "text" : "Style"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Merge\/synthesizedLandingPageTopicsStyle",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "synthesizedLandingPageTopicsStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/merge\/synthesizedlandingpagetopicsstyle"
 }
 }
 }

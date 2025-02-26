@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The lookup of external documentation sources by their bundle identifiers.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'configuration.externalDocumentationConfiguration.sources' instead. This deprecated API will be removed after Swift 6.2 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -20,6 +25,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC20DocumentationContextC08externalC7SourcesSDySSAA08ExternalC6Source_pGvp",
     "fragments" : [
       {
@@ -62,9 +68,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L228"
+      "fileName" : "DocumentationContext+Deprecated.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Context\/Deprecated\/DocumentationContext+Deprecated.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -116,7 +125,23 @@
             },
             {
               "kind" : "text",
-              "text" : "]"
+              "text" : "] { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -167,6 +192,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -230,11 +256,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalDocumentationSources": {
   "abstract" : [
-    {
-      "text" : "The lookup of external documentation sources by their bundle identifiers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

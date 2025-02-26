@@ -9,7 +9,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery"
       ]
     ]
   },
@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DefaultAvailability.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L40"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L44"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -127,6 +127,10 @@
             "            <string>Platform Name<\/string>",
             "            <key>version<\/key>",
             "            <string>Version Number<\/string>",
+            "        <\/dict>",
+            "        <dict>",
+            "            <key>name<\/key>",
+            "            <string>Platform Name<\/string>",
             "        <\/dict>",
             "        <dict>",
             "            <key>name<\/key>",
@@ -483,20 +487,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/defaultavailability\/init(with:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
-  "abstract" : [
-    {
-      "text" : "Learn how to explore a documentation workspace and discover bundles.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Bundle Discovery",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/ExternalMetadata": {
   "abstract" : [
     {
@@ -530,6 +520,20 @@
   "title" : "ExternalMetadata",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/externalmetadata"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
+  "abstract" : [
+    {
+      "text" : "Learn how to discover documentation inputs on the file system.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Input Discovery",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformVersion": {
   "abstract" : [

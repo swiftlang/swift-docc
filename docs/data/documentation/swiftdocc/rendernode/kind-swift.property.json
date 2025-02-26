@@ -236,11 +236,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/hierarchy": {
   "abstract" : [
-    {
-      "text" : "Hierarchy information about the context in which this documentation node is placed.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

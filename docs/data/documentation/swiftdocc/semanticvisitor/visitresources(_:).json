@@ -76,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticVisitor.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L123"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L126"
     },
     "required" : true,
     "role" : "symbol",

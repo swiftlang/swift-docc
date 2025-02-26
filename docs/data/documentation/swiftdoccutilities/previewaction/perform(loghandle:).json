@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:18SwiftDocCUtilities13PreviewActionC7perform9logHandleAA0E6ResultV0aB1C03LogH0O_tKF",
+    "externalID" : "s:18SwiftDocCUtilities13PreviewActionC7perform9logHandleAA0E6ResultV0aB1C03LogH0Oz_tYaKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -46,6 +46,14 @@
         "text" : ": "
       },
       {
+        "kind" : "keyword",
+        "text" : "inout"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
         "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
         "text" : "LogHandle"
@@ -53,6 +61,14 @@
       {
         "kind" : "text",
         "text" : ") "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "async"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "keyword",
@@ -75,7 +91,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PreviewAction.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/PreviewAction.swift#L103"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/PreviewAction.swift#L89"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -118,6 +134,14 @@
               "text" : ": "
             },
             {
+              "kind" : "keyword",
+              "text" : "inout"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
               "text" : "LogHandle"
@@ -125,6 +149,14 @@
             {
               "kind" : "text",
               "text" : ") "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "async"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "keyword",
@@ -329,6 +361,14 @@
       "text" : ": "
     },
     {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
       "text" : "LogHandle"
@@ -336,6 +376,14 @@
     {
       "kind" : "text",
       "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "keyword",

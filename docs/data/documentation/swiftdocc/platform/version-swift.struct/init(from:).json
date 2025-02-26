@@ -68,10 +68,6 @@
         "name" : "SwiftDocC"
       }
     ],
-    "remoteSource" : {
-      "fileName" : "AvailabilityIndex+Ext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex+Ext.swift#L363"
-    },
     "role" : "symbol",
     "roleHeading" : "Initializer",
     "symbolKind" : "init",

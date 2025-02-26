@@ -108,7 +108,6 @@
       "anchor" : "Command-Line-Options",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption"
       ],
@@ -449,38 +448,6 @@
   "title" : "Docc",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationBundleOption": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "typealias"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationBundleOption"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationBundleOption"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationBundleOption",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/documentationbundleoption"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption": {
   "abstract" : [

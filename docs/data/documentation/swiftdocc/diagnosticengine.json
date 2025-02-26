@@ -139,7 +139,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/clearDiagnostics()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-1xqdb",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-5rcke",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/finalize()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/flush()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/hasConsumer(matching:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/remove(_:)"
@@ -468,36 +467,6 @@
   "title" : "filterLevel",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticengine\/filterlevel"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/finalize()": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "finalize"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/finalize()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "finalize()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/finalize()"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/flush()": {
   "abstract" : [

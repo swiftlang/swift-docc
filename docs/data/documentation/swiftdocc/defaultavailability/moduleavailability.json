@@ -9,7 +9,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability"
       ]
     ]
@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DefaultAvailability.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L43"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L47"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -121,8 +121,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability\/introducedVersion",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability\/platformName",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability\/platformVersion"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability\/platformName"
       ],
       "title" : "Instance Properties"
     },
@@ -410,7 +409,7 @@
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "?)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability\/init(platformName:platformVersion:)",
@@ -547,57 +546,19 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/defaultavailability\/moduleavailability\/platformname"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DefaultAvailability/ModuleAvailability/platformVersion": {
+"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
   "abstract" : [
     {
-      "text" : "A string representation of the version for this platform.",
+      "text" : "Learn how to discover documentation inputs on the file system.",
       "type" : "text"
     }
   ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "platformVersion"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability\/platformVersion",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "platformVersion",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/defaultavailability\/moduleavailability\/platformversion"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
-  "abstract" : [
-    {
-      "text" : "Learn how to explore a documentation workspace and discover bundles.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
   "kind" : "article",
   "role" : "collectionGroup",
-  "title" : "Bundle Discovery",
+  "title" : "Input Discovery",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 }
 }
 }

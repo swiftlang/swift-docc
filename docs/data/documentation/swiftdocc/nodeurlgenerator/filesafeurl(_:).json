@@ -68,7 +68,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NodeURLGenerator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L185"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L188"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",

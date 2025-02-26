@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Symbol Graph JSON files for the modules documented by this bundle.",
+      "text" : "Symbol graph JSON input files for the module that’s represented by this unit of documentation.",
       "type" : "text"
     }
   ],
@@ -9,7 +9,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle"
       ]
     ]
@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L75"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L91"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -102,6 +102,26 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Tutorial or article-only documentation won’t have any symbol graph JSON files.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -111,6 +131,24 @@
   },
   "sections" : [
 
+  ],
+  "seeAlsoSections" : [
+    {
+      "anchor" : "Related-Documentation",
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isSymbolGraphFile(_:)"
+      ],
+      "title" : "Related Documentation"
+    },
+    {
+      "anchor" : "Input-files",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/markupURLs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/miscResourceURLs"
+      ],
+      "title" : "Input files"
+    }
   ],
   "variants" : [
     {
@@ -143,7 +181,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
     {
-      "text" : "A documentation bundle.",
+      "text" : "A collection of the build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
@@ -174,10 +212,92 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/markupURLs": {
+  "abstract" : [
+    {
+      "text" : "Documentation markup input files for this unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "markupURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/markupURLs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "markupURLs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/markupurls"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/miscResourceURLs": {
+  "abstract" : [
+    {
+      "text" : "Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "miscResourceURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/miscResourceURLs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "miscResourceURLs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/miscresourceurls"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/symbolGraphURLs": {
   "abstract" : [
     {
-      "text" : "Symbol Graph JSON files for the modules documented by this bundle.",
+      "text" : "Symbol graph JSON input files for the module that’s represented by this unit of documentation.",
       "type" : "text"
     }
   ],
@@ -215,19 +335,73 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/symbolgraphurls"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundleFileTypes/isSymbolGraphFile(_:)": {
   "abstract" : [
     {
-      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "text" : "Checks if a file is a symbol graph file.",
       "type" : "text"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isSymbolGraphFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isSymbolGraphFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isSymbolGraphFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes\/issymbolgraphfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
+  "abstract" : [
+    {
+      "text" : "Learn how to discover documentation inputs on the file system.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
   "kind" : "article",
   "role" : "collectionGroup",
-  "title" : "Bundle Discovery",
+  "title" : "Input Discovery",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 }
 }
 }

@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "External metadata injected into the context, for example via command line arguments.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'configuration.externalMetadata' instead. This deprecated API will be removed after Swift 6.2 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -20,6 +25,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC20DocumentationContextC16externalMetadataAA08ExternalF0Vvp",
     "fragments" : [
       {
@@ -49,9 +55,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L285"
+      "fileName" : "DocumentationContext+Deprecated.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Context\/Deprecated\/DocumentationContext+Deprecated.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -90,6 +99,26 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC16ExternalMetadataV",
               "text" : "ExternalMetadata"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -169,11 +198,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalMetadata": {
   "abstract" : [
-    {
-      "text" : "External metadata injected into the context, for example via command line arguments.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

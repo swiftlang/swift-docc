@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Documentation about a technology.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'tutorialTableOfContents' This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -34,7 +39,7 @@
       },
       {
         "kind" : "keyword",
-        "text" : "let"
+        "text" : "var"
       },
       {
         "kind" : "text",
@@ -68,9 +73,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "Kind.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Kind.swift#L91"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Kind.swift#L224"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",
@@ -98,7 +106,7 @@
             },
             {
               "kind" : "keyword",
-              "text" : "let"
+              "text" : "var"
             },
             {
               "kind" : "text",
@@ -127,6 +135,18 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
               "text" : "Kind"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -254,11 +274,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/technology": {
   "abstract" : [
-    {
-      "text" : "Documentation about a technology.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -270,7 +288,7 @@
     },
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",

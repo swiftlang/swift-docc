@@ -133,7 +133,11 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertiesRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTBodyRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTParametersRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResourcesRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection",
@@ -711,6 +715,74 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/propertiesrendersection"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListDetailsRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains details about a property list key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListDetailsRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListDetailsRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PropertyListDetailsRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylistdetailsrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RESTBodyRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a REST request-body details.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RESTBodyRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTBodyRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RESTBodyRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RESTBodyRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/restbodyrendersection"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RESTEndpointRenderSection": {
   "abstract" : [
     {
@@ -744,6 +816,74 @@
   "title" : "RESTEndpointRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/restendpointrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RESTParametersRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a list of REST parameters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RESTParametersRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTParametersRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RESTParametersRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RESTParametersRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/restparametersrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RESTResponseRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that displays a list of REST responses.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RESTResponseRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RESTResponseRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RESTResponseRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/restresponserendersection"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RelationshipsRenderSection": {
   "abstract" : [

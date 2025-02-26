@@ -147,7 +147,6 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/init(_:)"
       ],
       "title" : "Initializers"
@@ -156,8 +155,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/sync(_:)-17wqu",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/sync(_:)-2cxyk"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/sync(_:)"
       ],
       "title" : "Instance Methods"
     }
@@ -224,70 +222,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/synchronized"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Synchronized/init()": {
-  "abstract" : [
-    {
-      "text" : "Creates a new lock.",
-      "type" : "text"
-    }
-  ],
-  "conformance" : {
-    "availabilityPrefix" : [
-      {
-        "text" : "Available when",
-        "type" : "text"
-      }
-    ],
-    "conformancePrefix" : [
-      {
-        "text" : "Conforms when",
-        "type" : "text"
-      }
-    ],
-    "constraints" : [
-      {
-        "code" : "Value",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " is ",
-        "type" : "text"
-      },
-      {
-        "code" : "()",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : ".",
-        "type" : "text"
-      }
-    ]
-  },
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/init()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/synchronized\/init()"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Synchronized/init(_:)": {
   "abstract" : [
     {
@@ -320,7 +254,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/synchronized\/init(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Synchronized/sync(_:)-17wqu": {
+"doc://SwiftDocC/documentation/SwiftDocC/Synchronized/sync(_:)": {
   "abstract" : [
     {
       "text" : "Performs a given block of code while synchronizing over the type’s stored value.",
@@ -397,109 +331,12 @@
       "text" : "Result"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/sync(_:)-17wqu",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/sync(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "sync(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/synchronized\/sync(_:)-17wqu"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Synchronized/sync(_:)-2cxyk": {
-  "abstract" : [
-
-  ],
-  "conformance" : {
-    "availabilityPrefix" : [
-      {
-        "text" : "Available when",
-        "type" : "text"
-      }
-    ],
-    "conformancePrefix" : [
-      {
-        "text" : "Conforms when",
-        "type" : "text"
-      }
-    ],
-    "constraints" : [
-      {
-        "code" : "Value",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " is ",
-        "type" : "text"
-      },
-      {
-        "code" : "()",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : ".",
-        "type" : "text"
-      }
-    ]
-  },
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "sync"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Result"
-    },
-    {
-      "kind" : "text",
-      "text" : ">(() "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Result"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "rethrows"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Result"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/sync(_:)-2cxyk",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "sync(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/synchronized\/sync(_:)-2cxyk"
+  "url" : "\/documentation\/swiftdocc\/synchronized\/sync(_:)"
 }
 }
 }

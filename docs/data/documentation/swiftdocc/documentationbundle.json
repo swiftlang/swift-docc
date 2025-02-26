@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A documentation bundle.",
+      "text" : "A collection of the build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
@@ -9,7 +9,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery"
       ]
     ]
   },
@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L37"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -93,32 +93,15 @@
         {
           "inlineContent" : [
             {
-              "text" : "A documentation bundle stores all of the authored content and metadata for a collection of topics and\/or frameworks.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "No content data is immediately loaded when creating a ",
+              "text" : "A unit of documentation may for example cover a framework, library, or tool.",
               "type" : "text"
             },
             {
-              "code" : "DocumentationBundle",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " except for its ",
+              "text" : " ",
               "type" : "text"
             },
             {
-              "code" : "Info.plist",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ". Its purpose is to provide paths on disk for documentation resources.",
+              "text" : "Projects or packages may have multiple units of documentation to represent the different consumable products in that project or package.",
               "type" : "text"
             }
           ],
@@ -138,29 +121,48 @@
   ],
   "seeAlsoSections" : [
     {
-      "anchor" : "Documentation-Bundles",
+      "anchor" : "Documentation-Bundle",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes"
       ],
-      "title" : "Documentation Bundles"
+      "title" : "Documentation Bundle"
     }
   ],
   "topicSections" : [
     {
-      "anchor" : "Bundle-Metadata",
+      "anchor" : "Input-files",
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/displayName",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/identifier",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/version"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/markupURLs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/symbolGraphURLs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/miscResourceURLs"
       ],
-      "title" : "Bundle Metadata"
+      "title" : "Input files"
+    },
+    {
+      "anchor" : "Render-customization",
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/customHeader",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/customFooter",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/themeSettings"
+      ],
+      "title" : "Render customization"
+    },
+    {
+      "anchor" : "Metadata",
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/info-swift.property",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/displayName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/identifier-swift.property"
+      ],
+      "title" : "Metadata"
     },
     {
       "anchor" : "Structures",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier-swift.struct",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct"
       ],
       "title" : "Structures"
@@ -181,17 +183,14 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/articlesDocumentationRootReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/attributedCodeListings",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/baseURL",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/customFooter",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/customHeader",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/documentationRootReference",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/info-swift.property",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/markupURLs",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/miscResourceURLs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/id",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/rootReference",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/symbolGraphURLs",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/technologyTutorialsRootReference",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/themeSettings",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/tutorialsRootReference"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/tutorialTableOfContentsContainer",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/tutorialsContainerReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/tutorialsRootReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/version"
       ],
       "title" : "Instance Properties"
     },
@@ -239,6 +238,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -269,7 +269,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
     {
-      "text" : "A documentation bundle.",
+      "text" : "A collection of the build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
@@ -299,6 +299,40 @@
   "title" : "DocumentationBundle",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Identifier-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "A stable and locally unique identifier for a collection of documentation inputs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Identifier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Identifier"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationBundle.Identifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier-swift.struct"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Info-swift.struct": {
   "abstract" : [
@@ -575,7 +609,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/displayName": {
   "abstract" : [
     {
-      "text" : "The bundle’s human-readable display name.",
+      "text" : "A human-readable display name for this unit of documentation.",
       "type" : "text"
     }
   ],
@@ -646,13 +680,57 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/documentationrootreference"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/identifier": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/id": {
   "abstract" : [
     {
-      "text" : "The documentation bundle identifier.",
+      "text" : "The documentation bundle’s stable and locally unique identifier.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/id",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "id",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/id"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/identifier-swift.property": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -676,17 +754,17 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/identifier",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/identifier-swift.property",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "identifier",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier"
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier-swift.property"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/info-swift.property": {
   "abstract" : [
     {
-      "text" : "Information about this documentation bundle that’s unrelated to its documentation content.",
+      "text" : "Non-content information or metadata about this unit of documentation.",
       "type" : "text"
     }
   ],
@@ -925,7 +1003,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)": {
   "abstract" : [
     {
-      "text" : "Creates a documentation bundle.",
+      "text" : "Creates a new collection of build inputs for a unit of documentation.",
       "type" : "text"
     }
   ],
@@ -1094,7 +1172,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/markupURLs": {
   "abstract" : [
     {
-      "text" : "DocC Markup files of the bundle.",
+      "text" : "Documentation markup input files for this unit of documentation.",
       "type" : "text"
     }
   ],
@@ -1135,7 +1213,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/miscResourceURLs": {
   "abstract" : [
     {
-      "text" : "Miscellaneous resources of the bundle.",
+      "text" : "Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.",
       "type" : "text"
     }
   ],
@@ -1210,7 +1288,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/symbolGraphURLs": {
   "abstract" : [
     {
-      "text" : "Symbol Graph JSON files for the modules documented by this bundle.",
+      "text" : "Symbol graph JSON input files for the module that’s represented by this unit of documentation.",
       "type" : "text"
     }
   ],
@@ -1250,11 +1328,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/technologyTutorialsRootReference": {
   "abstract" : [
-    {
-      "text" : "Default path to resolve tutorials.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1326,13 +1402,85 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/themesettings"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/tutorialsRootReference": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/tutorialTableOfContentsContainer": {
   "abstract" : [
     {
-      "text" : "Default path to resolve technology links.",
+      "text" : "Default path to resolve tutorial table-of-contents links.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tutorialTableOfContentsContainer"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
+      "text" : "ResolvedTopicReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/tutorialTableOfContentsContainer",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "tutorialTableOfContentsContainer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/tutorialtableofcontentscontainer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/tutorialsContainerReference": {
+  "abstract" : [
+    {
+      "text" : "Default path to resolve tutorial links.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tutorialsContainerReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
+      "text" : "ResolvedTopicReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/tutorialsContainerReference",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "tutorialsContainerReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/tutorialscontainerreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/tutorialsRootReference": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1370,6 +1518,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1438,19 +1587,19 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
   "abstract" : [
     {
-      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "text" : "Learn how to discover documentation inputs on the file system.",
       "type" : "text"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
   "kind" : "article",
   "role" : "collectionGroup",
-  "title" : "Bundle Discovery",
+  "title" : "Input Discovery",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 }
 }
 }

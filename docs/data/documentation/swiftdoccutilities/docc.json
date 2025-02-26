@@ -85,6 +85,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/14ArgumentParser20AsyncParsableCommandP",
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser15ParsableCommandP",
         "doc:\/\/SwiftDocCUtilities\/Se"
@@ -127,7 +128,6 @@
       "anchor" : "Command-Line-Options",
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption"
       ],
@@ -165,6 +165,7 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/AsyncParsableCommand-Implementations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/ParsableArguments-Implementations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/ParsableCommand-Implementations"
       ],
@@ -193,6 +194,11 @@
 "doc://SwiftDocCUtilities/14ArgumentParser17ParsableArgumentsP": {
   "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
   "title" : "ArgumentParser.ParsableArguments",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocCUtilities/14ArgumentParser20AsyncParsableCommandP": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser20AsyncParsableCommandP",
+  "title" : "ArgumentParser.AsyncParsableCommand",
   "type" : "unresolvable"
 },
 "doc://SwiftDocCUtilities/Se": {
@@ -315,6 +321,17 @@
   "title" : "Docc",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/AsyncParsableCommand-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/AsyncParsableCommand-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "AsyncParsableCommand Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/asyncparsablecommand-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
@@ -618,38 +635,6 @@
   "title" : "init(from:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/init(from:)"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationBundleOption": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "typealias"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationBundleOption"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationBundleOption"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationBundleOption",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/documentationbundleoption"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/IndexAction": {
   "abstract" : [

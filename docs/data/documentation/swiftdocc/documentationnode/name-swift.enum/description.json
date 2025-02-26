@@ -60,7 +60,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Name.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Name.swift#L34"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Name.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

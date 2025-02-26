@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L133"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L139"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -217,11 +217,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/hierarchy": {
   "abstract" : [
-    {
-      "text" : "Hierarchy information about the context in which this documentation node is placed.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

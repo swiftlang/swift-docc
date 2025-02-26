@@ -184,6 +184,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/content(for:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/content(forAssetNamed:bundleID:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/content(forAssetNamed:bundleIdentifier:)"
       ],
       "title" : "Instance Methods"
@@ -480,13 +481,95 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreferencestore\/content(for:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceStore/content(forAssetNamed:bundleIdentifier:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceStore/content(forAssetNamed:bundleID:)": {
   "abstract" : [
     {
       "text" : "Returns asset information for the given asset name.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "content"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "forAssetNamed"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV",
+      "text" : "DataAsset"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/content(forAssetNamed:bundleID:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "content(forAssetNamed:bundleID:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreferencestore\/content(forassetnamed:bundleid:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceStore/content(forAssetNamed:bundleIdentifier:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

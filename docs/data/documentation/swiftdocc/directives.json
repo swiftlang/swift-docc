@@ -118,9 +118,9 @@
       "title" : "Semantic Elements"
     },
     {
-      "anchor" : "Technology-Directives",
+      "anchor" : "Tutorial-Table-of-Contents-Directives",
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialTableOfContents",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialReference",
@@ -128,7 +128,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article"
       ],
-      "title" : "Technology Directives"
+      "title" : "Tutorial Table of Contents Directives"
     },
     {
       "anchor" : "Tutorials-Directives",
@@ -1350,40 +1350,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Technology": {
-  "abstract" : [
-    {
-      "text" : "An overview of the educational materials under a specific technology or technology area.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Technology"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Technology"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Technology",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyBound": {
   "abstract" : [
     {
@@ -1391,6 +1357,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1489,16 +1456,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Tutorial": {
   "abstract" : [
     {
-      "text" : "A tutorial to complete in order to gain knowledge of a ",
-      "type" : "text"
-    },
-    {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
-      "isActive" : true,
-      "type" : "reference"
-    },
-    {
-      "text" : ".",
+      "text" : "A tutorial to complete in order to gain knowledge of a technology.",
       "type" : "text"
     }
   ],
@@ -1665,6 +1623,40 @@
   "title" : "TutorialSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tutorialsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TutorialTableOfContents": {
+  "abstract" : [
+    {
+      "text" : "A top-level page that organizes a collection of tutorials into a hierarchy of volumes and chapters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TutorialTableOfContents"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialTableOfContents",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TutorialTableOfContents"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TutorialTableOfContents",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tutorialtableofcontents"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/VideoMedia": {
   "abstract" : [

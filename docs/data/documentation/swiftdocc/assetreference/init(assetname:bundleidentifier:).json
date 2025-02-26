@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Creates a reference from a given asset name and the bundle it is apart of.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'init(assetName:bundleID:)' instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -69,9 +74,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L353"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L363"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -209,11 +217,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AssetReference/init(assetName:bundleIdentifier:)": {
   "abstract" : [
-    {
-      "text" : "Creates a reference from a given asset name and the bundle it is apart of.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

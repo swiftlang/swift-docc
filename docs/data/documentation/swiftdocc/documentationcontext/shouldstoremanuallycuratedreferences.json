@@ -1,32 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "A value to control whether the set of manually curated references found during bundle registration should be stored. Defaults to ",
-      "type" : "text"
-    },
-    {
-      "code" : "false",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ". Setting this property to ",
-      "type" : "text"
-    },
-    {
-      "code" : "false",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " clears any stored references from ",
-      "type" : "text"
-    },
-    {
-      "code" : "manuallyCuratedReferences",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'configuration.experimentalCoverageConfiguration.shouldStoreManuallyCuratedReferences' instead. This deprecated API will be removed after Swift 6.2 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -44,6 +25,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC20DocumentationContextC36shouldStoreManuallyCuratedReferencesSbvp",
     "fragments" : [
       {
@@ -73,9 +55,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L128"
+      "fileName" : "DocumentationContext+Deprecated.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Context\/Deprecated\/DocumentationContext+Deprecated.swift#L43"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -212,35 +197,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/shouldStoreManuallyCuratedReferences": {
   "abstract" : [
-    {
-      "text" : "A value to control whether the set of manually curated references found during bundle registration should be stored. Defaults to ",
-      "type" : "text"
-    },
-    {
-      "code" : "false",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ". Setting this property to ",
-      "type" : "text"
-    },
-    {
-      "code" : "false",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " clears any stored references from ",
-      "type" : "text"
-    },
-    {
-      "code" : "manuallyCuratedReferences",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

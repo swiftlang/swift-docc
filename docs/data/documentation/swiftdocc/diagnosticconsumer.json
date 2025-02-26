@@ -133,8 +133,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/finalize()",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/flush()-3o49i",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/flush()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/receive(_:)"
       ],
       "title" : "Instance Methods"
@@ -270,52 +269,13 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticconsumer"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer/finalize()": {
-  "abstract" : [
-    {
-      "text" : "Inform the consumer that the engine has sent all diagnostics for this build.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "finalize"
-    },
-    {
-      "kind" : "text",
-      "text" : "() "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/finalize()",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "finalize()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticconsumer\/finalize()"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer/flush()-3o49i": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer/flush()": {
   "abstract" : [
     {
       "text" : "Inform the consumer that the engine has sent all diagnostics in a given context.",
       "type" : "text"
     }
   ],
-  "defaultImplementations" : 1,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -338,13 +298,13 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/flush()-3o49i",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/flush()",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "flush()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticconsumer\/flush()-3o49i"
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsumer\/flush()"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer/receive(_:)": {
   "abstract" : [

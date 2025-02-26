@@ -70,7 +70,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Kind.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Kind.swift#L78"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Kind.swift#L76"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

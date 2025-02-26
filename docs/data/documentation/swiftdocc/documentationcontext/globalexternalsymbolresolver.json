@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "A type that resolves all symbols that are referenced in symbol graph files but can’t be found in any of the locally available symbol graph files.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'configuration.externalDocumentationConfiguration.globalSymbolResolver' instead. This deprecated API will be removed after Swift 6.2 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -20,6 +25,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC20DocumentationContextC28globalExternalSymbolResolverAA06GlobalfgH0_pSgvp",
     "fragments" : [
       {
@@ -53,9 +59,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L237"
+      "fileName" : "DocumentationContext+Deprecated.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Context\/Deprecated\/DocumentationContext+Deprecated.swift#L37"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -97,7 +106,23 @@
             },
             {
               "kind" : "text",
-              "text" : ")?"
+              "text" : ")? { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -177,11 +202,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/globalExternalSymbolResolver": {
   "abstract" : [
-    {
-      "text" : "A type that resolves all symbols that are referenced in symbol graph files but can’t be found in any of the locally available symbol graph files.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

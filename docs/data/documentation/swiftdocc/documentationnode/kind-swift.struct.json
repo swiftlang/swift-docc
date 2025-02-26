@@ -183,6 +183,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/technologyOverview",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/tutorial",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/tutorialArticle",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/tutorialTableOfContents",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/typeAlias",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/typeConstant",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/typeDef",
@@ -3181,11 +3182,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/technology": {
   "abstract" : [
-    {
-      "text" : "Documentation about a technology.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -3197,7 +3196,7 @@
     },
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",
@@ -3235,11 +3234,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/technologyOverview": {
   "abstract" : [
-    {
-      "text" : "A technology overview.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -3251,7 +3248,7 @@
     },
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",
@@ -3394,6 +3391,60 @@
   "title" : "tutorialArticle",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/tutorialarticle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/tutorialTableOfContents": {
+  "abstract" : [
+    {
+      "text" : "Documentation about a tutorial table-of-contents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tutorialTableOfContents"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/tutorialTableOfContents",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "tutorialTableOfContents",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/tutorialtableofcontents"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/typeAlias": {
   "abstract" : [
@@ -3935,7 +3986,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/volume": {
   "abstract" : [
     {
-      "text" : "A volume of documentation within a technology.",
+      "text" : "A volume of documentation within a tutorial table-of-contents.",
       "type" : "text"
     }
   ],

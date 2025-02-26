@@ -132,7 +132,8 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/offsetWithRange(_:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/offsetWithRange(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/withRangeOffset(by:)"
       ],
       "title" : "Instance Methods"
     }
@@ -688,6 +689,78 @@
   "title" : "summary",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic\/summary"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/withRangeOffset(by:)": {
+  "abstract" : [
+    {
+      "text" : "Returns the diagnostic with its range offset by the given documentation comment range.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "withRangeOffset"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "by"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV",
+      "text" : "LineList"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+      "text" : "SourceRange"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/withRangeOffset(by:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "withRangeOffset(by:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/withrangeoffset(by:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer": {
   "abstract" : [

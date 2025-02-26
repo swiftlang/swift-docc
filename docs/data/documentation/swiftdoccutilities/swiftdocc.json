@@ -49,6 +49,14 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageLevel"
       ],
       "title" : "Extended Enumerations"
+    },
+    {
+      "anchor" : "Extended-Types",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/TopicsVisualStyle"
+      ],
+      "title" : "Extended Types"
     }
   ],
   "variants" : [
@@ -217,6 +225,23 @@
   "title" : "Problem",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/problem"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/TopicsVisualStyle": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/TopicsVisualStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TopicsVisualStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicsVisualStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/topicsvisualstyle"
 }
 }
 }

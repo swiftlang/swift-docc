@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorItem.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorItem.swift#L176"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorItem.swift#L156"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

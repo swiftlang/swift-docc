@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeprecationSummary.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DeprecationSummary.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DeprecationSummary.swift#L34"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -159,11 +159,35 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " directive top-level in both articles and documentation extension files.",
+              "text" : " directive top-level in articles, documentation extension files, or documentation comments.",
               "type" : "text"
             }
           ],
           "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Before Swift-DocC 6.1, ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "@DeprecationSummary",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " was not supported in documentation comments.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Earlier versions",
+          "style" : "note",
+          "type" : "aside"
         },
         {
           "content" : [

@@ -79,7 +79,7 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " command with a given documentation bundle ",
+              "text" : " command with a given documentation catalog ",
               "type" : "text"
             },
             {

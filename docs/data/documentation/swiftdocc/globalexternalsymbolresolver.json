@@ -229,11 +229,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/globalExternalSymbolResolver": {
   "abstract" : [
-    {
-      "text" : "A type that resolves all symbols that are referenced in symbol graph files but can’t be found in any of the locally available symbol graph files.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

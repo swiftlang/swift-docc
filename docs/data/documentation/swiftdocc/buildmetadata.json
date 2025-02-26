@@ -106,6 +106,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/init(bundleDisplayName:bundleID:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/init(bundleDisplayName:bundleIdentifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/init(from:)"
       ],
@@ -116,6 +117,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/bundleDisplayName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/bundleID",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/schemaVersion"
       ],
@@ -231,13 +233,57 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/buildmetadata\/bundledisplayname"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata/bundleIdentifier": {
+"doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata/bundleID": {
   "abstract" : [
     {
       "text" : "The bundle identifier of the documentation bundle that DocC built.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bundleID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/bundleID",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "bundleID",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/buildmetadata\/bundleid"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata/bundleIdentifier": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -268,13 +314,78 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/buildmetadata\/bundleidentifier"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata/init(bundleDisplayName:bundleIdentifier:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata/init(bundleDisplayName:bundleID:)": {
   "abstract" : [
     {
       "text" : "Creates a build metadata value for a documentation bundle built by DocC.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleDisplayName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BuildMetadata\/init(bundleDisplayName:bundleID:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(bundleDisplayName:bundleID:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/buildmetadata\/init(bundledisplayname:bundleid:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata/init(bundleDisplayName:bundleIdentifier:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

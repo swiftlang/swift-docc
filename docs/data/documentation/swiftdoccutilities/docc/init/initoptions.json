@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Init.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Init.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Init.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

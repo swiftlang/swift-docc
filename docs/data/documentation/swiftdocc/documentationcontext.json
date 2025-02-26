@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L82"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L85"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -157,7 +157,8 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate",
+        "doc:\/\/SwiftDocC\/s8CopyableP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -177,8 +178,6 @@
       "anchor" : "Documentation-Context",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticCuration"
       ],
       "title" : "Documentation Context"
@@ -202,10 +201,18 @@
       "title" : "Getting documentation relationships"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Configuration-swift.struct"
+      ],
+      "title" : "Structures"
+    },
+    {
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/init(dataProvider:diagnosticEngine:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/init(dataProvider:diagnosticEngine:configuration:)"
       ],
       "title" : "Initializers"
     },
@@ -213,13 +220,10 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/configuration-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/diagnosticEngine",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalDocumentationSources",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalMetadata",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalReferenceResolvers",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalSymbolResolver",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/fallbackAssetResolvers",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/fallbackReferenceResolvers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/globalExternalSymbolResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/knownIdentifiers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/knownPages",
@@ -229,7 +233,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredBundles",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/rootModules",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/rootTechnologies",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/shouldStoreManuallyCuratedReferences"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/shouldStoreManuallyCuratedReferences",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/tutorialTableOfContentsReferences"
       ],
       "title" : "Instance Properties"
     },
@@ -245,8 +250,11 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/documentationExtensionURL(for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/identifier(forAssetName:in:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/referenceForFileURL(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredDownloadsAssets(for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredDownloadsAssets(forBundleID:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredImageAssets(for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredImageAssets(forBundleID:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredVideoAssets(for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredVideoAssets(forBundleID:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/resolve(_:in:fromSymbolLink:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/resolveAsset(named:in:withType:)",
@@ -415,6 +423,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/assettype"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Configuration-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "A collection of configuration to apply to a documentation context during initialization.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Configuration"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Configuration-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Configuration"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext.Configuration",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/configuration-swift.struct"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError": {
   "abstract" : [
     {
@@ -499,6 +541,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -573,6 +616,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -750,6 +794,52 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/children(of:kind:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/configuration-swift.property": {
+  "abstract" : [
+    {
+      "text" : "A collection of configuration for this context.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "configuration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC13ConfigurationV",
+      "text" : "Configuration"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/configuration-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "configuration",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/configuration-swift.property"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/dataProvider(_:didAddBundle:)": {
   "abstract" : [
     {
@@ -773,6 +863,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -851,6 +942,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1123,11 +1215,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalDocumentationSources": {
   "abstract" : [
-    {
-      "text" : "The lookup of external documentation sources by their bundle identifiers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1173,11 +1263,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalMetadata": {
   "abstract" : [
-    {
-      "text" : "External metadata injected into the context, for example via command line arguments.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1208,196 +1296,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/externalmetadata"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalReferenceResolvers": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "externalReferenceResolvers"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16BundleIdentifiera",
-      "text" : "BundleIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : " : any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25ExternalReferenceResolverP",
-      "text" : "ExternalReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalReferenceResolvers",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "externalReferenceResolvers",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/externalreferenceresolvers"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalSymbolResolver": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "externalSymbolResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : ": (any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22ExternalSymbolResolverP",
-      "text" : "ExternalSymbolResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : ")?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalSymbolResolver",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "externalSymbolResolver",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/externalsymbolresolver"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/fallbackAssetResolvers": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "fallbackAssetResolvers"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16BundleIdentifiera",
-      "text" : "BundleIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : " : any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC21FallbackAssetResolverP",
-      "text" : "FallbackAssetResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/fallbackAssetResolvers",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "fallbackAssetResolvers",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/fallbackassetresolvers"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/fallbackReferenceResolvers": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "fallbackReferenceResolvers"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16BundleIdentifiera",
-      "text" : "BundleIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : " : any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25FallbackReferenceResolverP",
-      "text" : "FallbackReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/fallbackReferenceResolvers",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "fallbackReferenceResolvers",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/fallbackreferenceresolvers"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/globalExternalSymbolResolver": {
   "abstract" : [
-    {
-      "text" : "A type that resolves all symbols that are referenced in symbol graph files but can’t be found in any of the locally available symbol graph files.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1507,7 +1410,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/identifier(forassetname:in:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/init(dataProvider:diagnosticEngine:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/init(dataProvider:diagnosticEngine:configuration:)": {
   "abstract" : [
     {
       "text" : "Initializes a documentation context with a given ",
@@ -1522,6 +1425,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -1563,6 +1467,32 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "configuration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC13ConfigurationV",
+      "text" : "Configuration"
+    },
+    {
+      "kind" : "text",
       "text" : ") "
     },
     {
@@ -1570,12 +1500,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/init(dataProvider:diagnosticEngine:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/init(dataProvider:diagnosticEngine:configuration:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(dataProvider:diagnosticEngine:)",
+  "title" : "init(dataProvider:diagnosticEngine:configuration:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/init(dataprovider:diagnosticengine:)"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/init(dataprovider:diagnosticengine:configuration:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/isFileExtension(_:supported:)": {
   "abstract" : [
@@ -2022,6 +1952,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2073,7 +2004,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/registeredbundles"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredDownloadsAssets(forBundleID:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredDownloadsAssets(for:)": {
   "abstract" : [
     {
       "text" : "Returns a list of all the download assets that registered for a given ",
@@ -2088,6 +2019,71 @@
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "registeredDownloadsAssets"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV",
+      "text" : "DataAsset"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredDownloadsAssets(for:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "registeredDownloadsAssets(for:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/registereddownloadsassets(for:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredDownloadsAssets(forBundleID:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2139,7 +2135,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/registereddownloadsassets(forbundleid:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredImageAssets(forBundleID:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredImageAssets(for:)": {
   "abstract" : [
     {
       "text" : "Returns a list of all the image assets that registered for a given ",
@@ -2154,6 +2150,71 @@
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "registeredImageAssets"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV",
+      "text" : "DataAsset"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredImageAssets(for:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "registeredImageAssets(for:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/registeredimageassets(for:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredImageAssets(forBundleID:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2205,7 +2266,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/registeredimageassets(forbundleid:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredVideoAssets(forBundleID:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredVideoAssets(for:)": {
   "abstract" : [
     {
       "text" : "Returns a list of all the video assets that registered for a given ",
@@ -2220,6 +2281,71 @@
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "registeredVideoAssets"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
+      "text" : "Identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV",
+      "text" : "DataAsset"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredVideoAssets(for:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "registeredVideoAssets(for:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/registeredvideoassets(for:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredVideoAssets(forBundleID:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2731,11 +2857,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/rootTechnologies": {
   "abstract" : [
-    {
-      "text" : "The root technology nodes of the Topic Graph.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2777,6 +2901,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2813,35 +2938,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/shouldStoreManuallyCuratedReferences": {
   "abstract" : [
-    {
-      "text" : "A value to control whether the set of manually curated references found during bundle registration should be stored. Defaults to ",
-      "type" : "text"
-    },
-    {
-      "code" : "false",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ". Setting this property to ",
-      "type" : "text"
-    },
-    {
-      "code" : "false",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " clears any stored references from ",
-      "type" : "text"
-    },
-    {
-      "code" : "manuallyCuratedReferences",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -3005,6 +3104,47 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/title(for:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/tutorialTableOfContentsReferences": {
+  "abstract" : [
+    {
+      "text" : "The tutorial table-of-contents nodes in the topic graph.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tutorialTableOfContentsReferences"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
+      "text" : "ResolvedTopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/tutorialTableOfContentsReferences",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "tutorialTableOfContentsReferences",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/tutorialtableofcontentsreferences"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/updateAsset(named:asset:in:)": {
   "abstract" : [
     {
@@ -3088,40 +3228,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/updateasset(named:asset:in:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProvider": {
-  "abstract" : [
-    {
-      "text" : "A type that provides information about documentation bundles and their content.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProvider"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationContextDataProvider"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationContextDataProvider",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextdataprovider"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProviderDelegate": {
   "abstract" : [
     {
@@ -3129,6 +3235,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -3177,6 +3284,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -3237,6 +3345,11 @@
   "title" : "TopicReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicreference"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

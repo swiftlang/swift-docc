@@ -1,16 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Returns a list of all the image assets that registered for a given ",
-      "type" : "text"
-    },
-    {
-      "code" : "bundleIdentifier",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -78,9 +75,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L1743"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L1852"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -154,45 +154,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The identifier of the bundle to return image assets for.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "bundleIdentifier"
-        }
-      ]
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "A list of all the image assets for the given bundle.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -238,6 +199,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -335,19 +297,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/registeredImageAssets(forBundleID:)": {
   "abstract" : [
-    {
-      "text" : "Returns a list of all the image assets that registered for a given ",
-      "type" : "text"
-    },
-    {
-      "code" : "bundleIdentifier",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A volume of documentation within a technology.",
+      "text" : "A volume of documentation within a tutorial table-of-contents.",
       "type" : "text"
     }
   ],
@@ -70,7 +70,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Kind.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Kind.swift#L70"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Kind.swift#L68"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",
@@ -255,7 +255,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/volume": {
   "abstract" : [
     {
-      "text" : "A volume of documentation within a technology.",
+      "text" : "A volume of documentation within a tutorial table-of-contents.",
       "type" : "text"
     }
   ],

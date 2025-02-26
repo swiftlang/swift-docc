@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The bundle identifier of the documentation bundle that DocC built.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -48,6 +53,9 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "BuildMetadata.swift",
       "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/BuildMetadata.swift#L27"
@@ -88,6 +96,18 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:SS",
               "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -167,11 +187,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/BuildMetadata/bundleIdentifier": {
   "abstract" : [
-    {
-      "text" : "The bundle identifier of the documentation bundle that DocC built.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

@@ -28,7 +28,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC20RenderNodeTranslatorV15visitTechnologyyAA0C4Tree_pSgAA0G0CF",
+    "externalID" : "s:9SwiftDocC20RenderNodeTranslatorV15visitTechnologyyAA0C4Tree_pSgAA23TutorialTableOfContentsCF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -48,8 +48,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC10TechnologyC",
-        "text" : "Technology"
+        "preciseIdentifier" : "s:9SwiftDocC23TutorialTableOfContentsC",
+        "text" : "TutorialTableOfContents"
       },
       {
         "kind" : "text",
@@ -70,9 +70,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "RenderNodeTranslator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L375"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L376"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -131,10 +134,10 @@
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialTableOfContents",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC10TechnologyC",
-              "text" : "Technology"
+              "preciseIdentifier" : "s:9SwiftDocC23TutorialTableOfContentsC",
+              "text" : "TutorialTableOfContents"
             },
             {
               "kind" : "text",
@@ -230,6 +233,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -249,8 +253,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10TechnologyC",
-      "text" : "Technology"
+      "preciseIdentifier" : "s:9SwiftDocC23TutorialTableOfContentsC",
+      "text" : "TutorialTableOfContents"
     },
     {
       "kind" : "text",
@@ -318,10 +322,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderingmodel"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Technology": {
+"doc://SwiftDocC/documentation/SwiftDocC/TutorialTableOfContents": {
   "abstract" : [
     {
-      "text" : "An overview of the educational materials under a specific technology or technology area.",
+      "text" : "A top-level page that organizes a collection of tutorials into a hierarchy of volumes and chapters.",
       "type" : "text"
     }
   ],
@@ -336,21 +340,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "Technology"
+      "text" : "TutorialTableOfContents"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialTableOfContents",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "Technology"
+      "text" : "TutorialTableOfContents"
     }
   ],
   "role" : "symbol",
-  "title" : "Technology",
+  "title" : "TutorialTableOfContents",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technology"
+  "url" : "\/documentation\/swiftdocc\/tutorialtableofcontents"
 }
 }
 }

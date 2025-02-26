@@ -230,6 +230,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitTutorialArticle(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitTutorialReference(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitTutorialSection(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitTutorialTableOfContents(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitVideoMedia(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitVolume(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitXcodeRequirement(_:)"
@@ -1501,6 +1502,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1520,8 +1522,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10TechnologyC",
-      "text" : "Technology"
+      "preciseIdentifier" : "s:9SwiftDocC23TutorialTableOfContentsC",
+      "text" : "TutorialTableOfContents"
     },
     {
       "kind" : "text",
@@ -1778,6 +1780,53 @@
   "title" : "visitTutorialSection(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernodetranslator\/visittutorialsection(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTranslator/visitTutorialTableOfContents(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTutorialTableOfContents"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC23TutorialTableOfContentsC",
+      "text" : "TutorialTableOfContents"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> (any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10RenderTreeP",
+      "text" : "RenderTree"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitTutorialTableOfContents(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitTutorialTableOfContents(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetranslator\/visittutorialtableofcontents(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTranslator/visitVideoMedia(_:)": {
   "abstract" : [

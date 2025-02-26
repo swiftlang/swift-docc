@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PathHierarchy+Serialization.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Link%20Resolution\/PathHierarchy+Serialization.swift#L139"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Link%20Resolution\/PathHierarchy+Serialization.swift#L147"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",

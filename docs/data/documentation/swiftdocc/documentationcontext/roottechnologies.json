@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The root technology nodes of the Topic Graph.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'tutorialTableOfContentsReferences' This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -53,9 +58,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L160"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L177"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -185,11 +193,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/rootTechnologies": {
   "abstract" : [
-    {
-      "text" : "The root technology nodes of the Topic Graph.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

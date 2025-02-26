@@ -112,7 +112,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/init(from:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/init(tokens:identifier:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/init(tokens:identifier:conformance:)"
       ],
       "title" : "Initializers"
     },
@@ -120,6 +120,7 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/conformance",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/identifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/tokens"
       ],
@@ -290,6 +291,44 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/declaration\/equatable-implementations"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/Declaration/conformance": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "conformance"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18ConformanceSectionV",
+      "text" : "ConformanceSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/conformance",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "conformance",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/declaration\/conformance"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/Declaration/identifier": {
   "abstract" : [
     {
@@ -369,7 +408,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/declaration\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/Declaration/init(tokens:identifier:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/Declaration/init(tokens:identifier:conformance:)": {
   "abstract" : [
     {
       "text" : "Creates a new other declaration for a symbol that is connected to this one, e.g. an overload.",
@@ -426,15 +465,32 @@
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "conformance"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18ConformanceSectionV",
+      "text" : "ConformanceSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/init(tokens:identifier:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/init(tokens:identifier:conformance:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(tokens:identifier:)",
+  "title" : "init(tokens:identifier:conformance:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/declaration\/init(tokens:identifier:)"
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct\/declaration\/init(tokens:identifier:conformance:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct/Declaration/tokens": {
   "abstract" : [

@@ -74,8 +74,7 @@
         {
           "code" : [
             "let converter = DocumentationNodeConverter(bundle: myBundle, context: myContext)",
-            "let renderNode = converter.convert(documentationNode, ",
-            "    at: sourceURL, from: bundle)"
+            "let renderNode = converter.convert(documentationNode)"
           ],
           "syntax" : "swift",
           "type" : "codeListing"
@@ -150,7 +149,6 @@
       "anchor" : "Render-Node-Rewriter",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationContext",
@@ -254,40 +252,6 @@
   "title" : "LinkDestinationSummary",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation": {
-  "abstract" : [
-    {
-      "text" : "A transformation that removes automatically curated See Also sections.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/removeautomaticallycuratedseealsosectionstransformation"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RemoveUnusedReferencesTransformation": {
   "abstract" : [

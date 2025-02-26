@@ -481,6 +481,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/assetReferences",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/downloadNotAvailableSummary",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/headings",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/hierarchyVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/identifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/topicSectionsStyle"
       ],
@@ -1731,11 +1732,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/hierarchy": {
   "abstract" : [
-    {
-      "text" : "Hierarchy information about the context in which this documentation node is placed.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1769,6 +1768,56 @@
   "title" : "hierarchy",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/hierarchy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/hierarchyVariants": {
+  "abstract" : [
+    {
+      "text" : "Hierarchy information about the context in which this documentation node is placed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hierarchyVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15RenderHierarchyO",
+      "text" : "RenderHierarchy"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/hierarchyVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "hierarchyVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/hierarchyvariants"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/identifier": {
   "abstract" : [

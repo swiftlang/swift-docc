@@ -260,11 +260,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalDocumentationSources": {
   "abstract" : [
-    {
-      "text" : "The lookup of external documentation sources by their bundle identifiers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

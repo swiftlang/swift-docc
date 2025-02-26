@@ -48,24 +48,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "DocC starts with content discovery by parsing the documentation sources in your documentation bundle. Next, it validates and semantically analyzes them and then builds an in-memory model of the compiled documentation. Once the in-memory model is finalized, DocC converts each topic into a persistable representation it can store on disk.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "To use the compiled documentation, either query the in-memory model directly or convert its nodes to their render-friendly representation. For example, the ",
-              "type" : "text"
-            },
-            {
-              "code" : "SwiftDocCUtilities",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " framework enumerates all the nodes in DocC’s in-memory model, converts each node for rendering, and finally writes the complete documentation to the disk.",
+              "text" : "DocC starts with input discovery by categorizing the documentation sources in your documentation catalog. Next, it loads and parses the those inputs to create in-memory models of the documentation pages. Once the in-memory model is finalized, DocC converts each topic into a persistable, render-friendly representation it can store on disk.",
               "type" : "text"
             }
           ],
@@ -80,43 +63,15 @@
         {
           "inlineContent" : [
             {
-              "text" : "DocC starts discovery by creating a ",
+              "text" : "DocC starts by creating a ",
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace",
-              "isActive" : true,
-              "type" : "reference"
+              "code" : "DocumentationContext\/InputsProvider",
+              "type" : "codeVoice"
             },
             {
-              "text" : " to interact with the file system and a ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : " that manages the in-memory model for the built documentation.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "When a documentation bundle is found in the workspace by a ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : ", the following files are recognized and processed (others are ignored):",
+              "text" : " to discover the inputs from the user-provided command line arguments. These inputs are:",
               "type" : "text"
             }
           ],
@@ -129,15 +84,7 @@
                 {
                   "inlineContent" : [
                     {
-                      "text" : "An ",
-                      "type" : "text"
-                    },
-                    {
-                      "code" : "Info.plist",
-                      "type" : "codeVoice"
-                    },
-                    {
-                      "text" : " file containing meta information like the bundle display name.",
+                      "text" : "Markup files, tutorial files, and assets (for example images)",
                       "type" : "text"
                     }
                   ],
@@ -150,15 +97,7 @@
                 {
                   "inlineContent" : [
                     {
-                      "text" : "Symbol-graph files with the ",
-                      "type" : "text"
-                    },
-                    {
-                      "code" : ".symbols.json",
-                      "type" : "codeVoice"
-                    },
-                    {
-                      "text" : " extension.",
+                      "text" : "Symbol graph files, describing the symbols in a given module (types, functions, variables, etc.) and their relationships (inheritance, conformance, etc.)",
                       "type" : "text"
                     }
                   ],
@@ -171,15 +110,7 @@
                 {
                   "inlineContent" : [
                     {
-                      "text" : "Authored markup files with an ",
-                      "type" : "text"
-                    },
-                    {
-                      "code" : ".md",
-                      "type" : "codeVoice"
-                    },
-                    {
-                      "text" : " extension",
+                      "text" : "Meta information about this “unit” of documentation (for example a custom display name)",
                       "type" : "text"
                     }
                   ],
@@ -192,60 +123,7 @@
                 {
                   "inlineContent" : [
                     {
-                      "text" : "Authored tutorial files with a ",
-                      "type" : "text"
-                    },
-                    {
-                      "code" : ".tutorial",
-                      "type" : "codeVoice"
-                    },
-                    {
-                      "text" : " extension",
-                      "type" : "text"
-                    }
-                  ],
-                  "type" : "paragraph"
-                }
-              ]
-            },
-            {
-              "content" : [
-                {
-                  "inlineContent" : [
-                    {
-                      "text" : "Additional documentation assets with known extensions like ",
-                      "type" : "text"
-                    },
-                    {
-                      "code" : ".png",
-                      "type" : "codeVoice"
-                    },
-                    {
-                      "text" : ", ",
-                      "type" : "text"
-                    },
-                    {
-                      "code" : ".jpg",
-                      "type" : "codeVoice"
-                    },
-                    {
-                      "text" : ", ",
-                      "type" : "text"
-                    },
-                    {
-                      "code" : ".mov",
-                      "type" : "codeVoice"
-                    },
-                    {
-                      "text" : ", and ",
-                      "type" : "text"
-                    },
-                    {
-                      "code" : ".zip",
-                      "type" : "codeVoice"
-                    },
-                    {
-                      "text" : ".",
+                      "text" : "Customizations to the render template.",
                       "type" : "text"
                     }
                   ],
@@ -259,7 +137,31 @@
         {
           "inlineContent" : [
             {
-              "text" : "You can organize the files in any way, as long as ",
+              "text" : "Markup, tutorials, assets, and render-template-customization can only be discovered as files inside of a documentation catalog (",
+              "type" : "text"
+            },
+            {
+              "code" : ".docc",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " directory).",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Symbol graph files can either be discovered as files inside of a documentation catalog or as additional files provided via user-provided command line arguments.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Meta information can either be discovered from an optional top-level ",
               "type" : "text"
             },
             {
@@ -267,7 +169,40 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " is in the root of the directory tree. Here is an example of a bundle, that groups topic files in logical groups with an additional directory for shared asset files:",
+              "text" : " file inside of a documentation catalog or as provided values via user-provided command line arguments. All meta information is optional.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "You can organize the files inside the documentation catalog according to your preference,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "as long as the optional ",
+              "type" : "text"
+            },
+            {
+              "code" : "Info.plist",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : "–containing optional meta information–and the optional render customization files are top-level.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For example, this catalog groups files based on their topic with an additional directory for shared asset files:",
               "type" : "text"
             }
           ],
@@ -304,20 +239,24 @@
         {
           "inlineContent" : [
             {
-              "text" : "This phase starts with registering all symbols from the available symbol graphs into a documentation ",
+              "text" : "This phase starts with creating a ",
               "type" : "text"
             },
             {
-              "inlineContent" : [
-                {
-                  "text" : "topic graph",
-                  "type" : "text"
-                }
-              ],
-              "type" : "emphasis"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
-              "text" : " in memory.",
+              "text" : " using the discovered inputs from the previous phase.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "This begins loading and registering the inputs with the context.",
               "type" : "text"
             }
           ],
@@ -326,7 +265,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "The symbol graph files are machine generated and describe all available symbols in a framework (types, functions, variables, etc.) and their relationships, for example, inheritance and conformance.",
+              "text" : "The first input that the context registers is the symbol information. The symbol information comes from “symbol graph files” which are machine generated and describe all available symbols in a framework (types, functions, variables, etc.) and their relationships (inheritance, conformance, etc.).",
               "type" : "text"
             }
           ],
@@ -390,7 +329,7 @@
         },
         {
           "anchor" : "Curation",
-          "level" : 3,
+          "level" : 4,
           "text" : "Curation",
           "type" : "heading"
         },
@@ -673,74 +612,6 @@
   "title" : "DocumentationNode",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace": {
-  "abstract" : [
-    {
-      "text" : "The documentation workspace provides a unified interface for accessing serialized documentation bundles and their files, from a variety of sources.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationWorkspace"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationWorkspace"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationWorkspace",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspace"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceDataProvider": {
-  "abstract" : [
-    {
-      "text" : "A type that vends bundles and responds to requests for data.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationWorkspaceDataProvider"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationWorkspaceDataProvider"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationWorkspaceDataProvider",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspacedataprovider"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode": {
   "abstract" : [

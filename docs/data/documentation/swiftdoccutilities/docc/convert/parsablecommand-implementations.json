@@ -33,14 +33,6 @@
   ],
   "topicSections" : [
     {
-      "anchor" : "Instance-Methods",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/run()-8t5t8"
-      ],
-      "title" : "Instance Methods"
-    },
-    {
       "anchor" : "Type-Properties",
       "generated" : true,
       "identifiers" : [
@@ -53,8 +45,8 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/helpMessage(for:includeHidden:columns:)",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/main()",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/main(_:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/main()-9d1m2",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/main(_:)-5gmpg",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/parseAsRoot(_:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/usageString(for:includeHidden:)"
       ],
@@ -292,7 +284,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/helpmessage(for:includehidden:columns:)"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/main()": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/main()-9d1m2": {
   "abstract" : [
 
   ],
@@ -322,14 +314,14 @@
       "text" : "()"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/main()",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/main()-9d1m2",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "main()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/main()"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/main()-9d1m2"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/main(_:)": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/main(_:)-5gmpg": {
   "abstract" : [
 
   ],
@@ -368,12 +360,12 @@
       "text" : "]?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/main(_:)",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/main(_:)-5gmpg",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "main(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/main(_:)"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/main(_:)-5gmpg"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/parseAsRoot(_:)": {
   "abstract" : [
@@ -433,39 +425,6 @@
   "title" : "parseAsRoot(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/parseasroot(_:)"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/run()-8t5t8": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "run"
-    },
-    {
-      "kind" : "text",
-      "text" : "() "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/run()-8t5t8",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "run()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/run()-8t5t8"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/usageString(for:includeHidden:)": {
   "abstract" : [

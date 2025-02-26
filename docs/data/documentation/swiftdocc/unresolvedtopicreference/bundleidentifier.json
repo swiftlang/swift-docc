@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The bundle identifier, if one was provided in the host name component of the original URL.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -54,9 +59,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L519"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L545"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -233,11 +241,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/UnresolvedTopicReference/bundleIdentifier": {
   "abstract" : [
-    {
-      "text" : "The bundle identifier, if one was provided in the host name component of the original URL.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

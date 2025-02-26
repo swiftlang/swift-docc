@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:18SwiftDocCUtilities10InitActionV7perform9logHandleAA0E6ResultV0aB1C03LogH0O_tKF",
+    "externalID" : "s:18SwiftDocCUtilities10InitActionV7perform9logHandleAA0E6ResultV0aB1C03LogH0Oz_tYaKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -46,6 +46,14 @@
         "text" : ": "
       },
       {
+        "kind" : "keyword",
+        "text" : "inout"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
         "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
         "text" : "LogHandle"
@@ -53,6 +61,14 @@
       {
         "kind" : "text",
         "text" : ") "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "async"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "keyword",
@@ -95,14 +111,6 @@
           "tokens" : [
             {
               "kind" : "keyword",
-              "text" : "mutating"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "keyword",
               "text" : "func"
             },
             {
@@ -126,6 +134,14 @@
               "text" : ": "
             },
             {
+              "kind" : "keyword",
+              "text" : "inout"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
               "text" : "LogHandle"
@@ -133,6 +149,14 @@
             {
               "kind" : "text",
               "text" : ") "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "async"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "keyword",
@@ -310,6 +334,14 @@
       "text" : ": "
     },
     {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
       "text" : "LogHandle"
@@ -317,6 +349,14 @@
     {
       "kind" : "text",
       "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "keyword",

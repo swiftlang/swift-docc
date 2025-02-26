@@ -97,7 +97,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertService.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/ConvertService.swift#L55"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/ConvertService.swift#L43"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

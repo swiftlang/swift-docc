@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Returns asset information for the given asset name.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'content(forAssetNamed:bundleID:)' instead. This deprecated API will be removed after 6.2 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -86,9 +91,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "RenderReferenceStore.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderReferenceStore.swift#L41"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderReferenceStore.swift#L46"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -286,11 +294,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceStore/content(forAssetNamed:bundleIdentifier:)": {
   "abstract" : [
-    {
-      "text" : "Returns asset information for the given asset name.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

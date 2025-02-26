@@ -310,16 +310,6 @@
       "kind" : "content"
     }
   ],
-  "relationshipsSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action"
-      ],
-      "kind" : "relationships",
-      "title" : "Conforms To",
-      "type" : "conformsTo"
-    }
-  ],
   "schemaVersion" : {
     "major" : 0,
     "minor" : 3,
@@ -358,14 +348,6 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/perform(logHandle:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "anchor" : "Default-Implementations",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/Action-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -395,40 +377,6 @@
   "title" : "SwiftDocCUtilities",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Action": {
-  "abstract" : [
-    {
-      "text" : "An independent unit of work in the command-line workflow.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Action"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Action"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Action",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/action"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ConvertAction": {
   "abstract" : [
@@ -565,17 +513,6 @@
   "title" : "InitAction",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/initaction"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction/Action-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/Action-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Action Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/initaction\/action-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction/init(catalogOutputDirectory:documentationTitle:catalogTemplate:)": {
   "abstract" : [
@@ -734,6 +671,14 @@
       "text" : ": "
     },
     {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
       "text" : "LogHandle"
@@ -741,6 +686,14 @@
     {
       "kind" : "text",
       "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "keyword",

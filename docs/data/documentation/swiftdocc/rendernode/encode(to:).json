@@ -77,7 +77,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Codable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/RenderNode+Codable.swift#L74"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/RenderNode+Codable.swift#L77"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

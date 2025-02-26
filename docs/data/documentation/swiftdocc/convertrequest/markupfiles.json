@@ -226,7 +226,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/markupURLs": {
   "abstract" : [
     {
-      "text" : "DocC Markup files of the bundle.",
+      "text" : "Documentation markup input files for this unit of documentation.",
       "type" : "text"
     }
   ],

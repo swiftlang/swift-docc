@@ -87,6 +87,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/14ArgumentParser20AsyncParsableCommandP",
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser15ParsableCommandP",
         "doc:\/\/SwiftDocCUtilities\/Se"
@@ -119,7 +120,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/bundleIdentifier",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/documentationBundle",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/documentationArchive",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/outputURL",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/verbose"
       ],
@@ -129,7 +130,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/run()-6f8ki"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/run()"
       ],
       "title" : "Instance Methods"
     },
@@ -145,6 +146,7 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/AsyncParsableCommand-Implementations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/ParsableArguments-Implementations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/ParsableCommand-Implementations"
       ],
@@ -173,6 +175,11 @@
 "doc://SwiftDocCUtilities/14ArgumentParser17ParsableArgumentsP": {
   "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
   "title" : "ArgumentParser.ParsableArguments",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocCUtilities/14ArgumentParser20AsyncParsableCommandP": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser20AsyncParsableCommandP",
+  "title" : "ArgumentParser.AsyncParsableCommand",
   "type" : "unresolvable"
 },
 "doc://SwiftDocCUtilities/Se": {
@@ -261,6 +268,17 @@
   "title" : "Docc.Index",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/index"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/AsyncParsableCommand-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/AsyncParsableCommand-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "AsyncParsableCommand Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/asyncparsablecommand-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/ParsableArguments-Implementations": {
   "abstract" : [
@@ -363,7 +381,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/configuration-53oo7"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/documentationBundle": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/documentationArchive": {
   "abstract" : [
     {
       "text" : "The user-provided path to a ",
@@ -389,7 +407,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "documentationBundle"
+      "text" : "documentationArchive"
     },
     {
       "kind" : "text",
@@ -401,12 +419,12 @@
       "text" : "DocCArchiveOption"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/documentationBundle",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/documentationArchive",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "documentationBundle",
+  "title" : "documentationArchive",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/documentationbundle"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/documentationarchive"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/init()": {
   "abstract" : [
@@ -508,7 +526,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/outputurl"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/run()-6f8ki": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/run()": {
   "abstract" : [
 
   ],
@@ -531,15 +549,23 @@
     },
     {
       "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/run()-6f8ki",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/run()",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "run()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/run()-6f8ki"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/run()"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/verbose": {
   "abstract" : [

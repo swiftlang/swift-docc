@@ -33,14 +33,6 @@
   ],
   "topicSections" : [
     {
-      "anchor" : "Instance-Methods",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/run()-97dpc"
-      ],
-      "title" : "Instance Methods"
-    },
-    {
       "anchor" : "Type-Properties",
       "generated" : true,
       "identifiers" : [
@@ -53,8 +45,8 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/helpMessage(for:includeHidden:columns:)",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main()",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main(_:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main()-701hh",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main(_:)-xkwh",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/parseAsRoot(_:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/usageString(for:includeHidden:)"
       ],
@@ -289,7 +281,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/helpmessage(for:includehidden:columns:)"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/main()": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/main()-701hh": {
   "abstract" : [
 
   ],
@@ -319,14 +311,14 @@
       "text" : "()"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main()",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main()-701hh",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "main()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/main()"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/main()-701hh"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/main(_:)": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/main(_:)-xkwh": {
   "abstract" : [
 
   ],
@@ -365,12 +357,12 @@
       "text" : "]?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main(_:)",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main(_:)-xkwh",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "main(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/main(_:)"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/main(_:)-xkwh"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/parseAsRoot(_:)": {
   "abstract" : [
@@ -430,39 +422,6 @@
   "title" : "parseAsRoot(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/parseasroot(_:)"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/run()-97dpc": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "run"
-    },
-    {
-      "kind" : "text",
-      "text" : "() "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/run()-97dpc",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "run()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/run()-97dpc"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/usageString(for:includeHidden:)": {
   "abstract" : [

@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L63"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L62"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -119,7 +119,6 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Error\/missingBundleIdentifier",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Error\/missingBundleIndentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Error\/missingTitle(description:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Error\/navigatorIndexIsNil"
       ],
@@ -415,32 +414,6 @@
   "title" : "NavigatorIndex.Error.missingBundleIdentifier",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/error\/missingbundleidentifier"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Error/missingBundleIndentifier": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "case"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "missingBundleIndentifier"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Error\/missingBundleIndentifier",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "NavigatorIndex.Error.missingBundleIndentifier",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatorindex\/error\/missingbundleindentifier"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Error/missingTitle(description:)": {
   "abstract" : [

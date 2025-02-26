@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Preview.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Preview.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Preview.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
