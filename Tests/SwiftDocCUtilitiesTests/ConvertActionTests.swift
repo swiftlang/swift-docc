@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -547,6 +547,9 @@ class ConvertActionTests: XCTestCase {
         }
     }
 
+    // This test uses ``Digest.Diagnostic`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testOutputFolderContainsDiagnosticJSONWhenThereAreWarnings() async throws {
         // Documentation bundle that contains an image
         let bundle = Folder(name: "unit-test.docc", content: [
@@ -603,6 +606,15 @@ class ConvertActionTests: XCTestCase {
             ]),
             JSONFile(name: "diagnostics.json", content: [
                 Digest.Diagnostic(
+                    start: nil,
+                    source: nil,
+                    severity: .warning,
+                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
+                    explanation: nil,
+                    notes: []
+                ),
+                
+                Digest.Diagnostic(
                     start: .init(line: 11, column: 7),
                     source: URL(string: "TechnologyX.tutorial"),
                     severity: .warning,
@@ -615,6 +627,9 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
     
+    // This test uses ``Digest.Diagnostic`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testOutputFolderContainsDiagnosticJSONWhenThereAreErrorsAndNoTemplate() async throws {
         // Documentation bundle that contains an image
         let bundle = Folder(name: "unit-test.docc", content: [
@@ -654,6 +669,15 @@ class ConvertActionTests: XCTestCase {
         let expectedOutput = Folder(name: ".docc-build", content: [
             JSONFile(name: "diagnostics.json", content: [
                 Digest.Diagnostic(
+                    start: nil,
+                    source: nil,
+                    severity: .warning,
+                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
+                    explanation: nil,
+                    notes: []
+                ),
+                
+                Digest.Diagnostic(
                     start: .init(line: 6, column: 4),
                     source: URL(string: "TechnologyX.tutorial"),
                     severity: .warning,
@@ -682,6 +706,9 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
     
+    // This test uses ``Digest.Diagnostic`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testWarningForUncuratedTutorial() async throws {
         // Documentation bundle that contains an image
         let bundle = Folder(name: "unit-test.docc", content: [
@@ -733,6 +760,15 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             JSONFile(name: "diagnostics.json", content: [
+                Digest.Diagnostic(
+                    start: nil,
+                    source: nil,
+                    severity: .warning,
+                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
+                    explanation: nil,
+                    notes: []
+                ),
+                
                 Digest.Diagnostic(
                     start: nil,
                     source: URL(string: "TechnologyX.tutorial"),
@@ -825,6 +861,9 @@ class ConvertActionTests: XCTestCase {
 
     /// Verifies that digest is correctly emitted for API documentation topics
     /// like module pages, symbols, and articles.
+    // This test uses ``Digest.Diagnostic`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testMetadataIsWrittenToOutputFolderAPIDocumentation() async throws {
         // Example documentation bundle that contains an image
         let bundle = Folder(name: "unit-test.docc", content: [
@@ -1259,6 +1298,9 @@ class ConvertActionTests: XCTestCase {
         }))
     }
 
+    // This test uses ``Digest.Diagnostic`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testMetadataIsWrittenToOutputFolder() async throws {
         // Example documentation bundle that contains an image
         let bundle = Folder(name: "unit-test.docc", content: [
@@ -2351,6 +2393,9 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(action.configuration.externalMetadata.inheritDocs, false)
     }
     
+    // This test uses ``Digest.Diagnostic`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testEmitsDigest() async throws {
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),

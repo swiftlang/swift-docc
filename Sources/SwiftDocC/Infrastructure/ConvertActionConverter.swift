@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -54,7 +54,7 @@ package enum ConvertActionConverter {
         
         guard !context.problems.containsErrors else {
             if emitDigest {
-                try outputConsumer.consume(problems: context.problems)
+                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems)
             }
             return []
         }
@@ -198,7 +198,7 @@ package enum ConvertActionConverter {
         if emitDigest {
             signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
                 do {
-                    try outputConsumer.consume(problems: context.problems + conversionProblems)
+                    try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems + conversionProblems)
                 } catch {
                     recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
                 }

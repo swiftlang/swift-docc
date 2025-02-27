@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,6 +16,7 @@ import Foundation
 /// or store them in memory.
 public protocol ConvertOutputConsumer {
     /// Consumes an array of problems that were generated during a conversion.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func consume(problems: [Problem]) throws
     
     /// Consumes a render node that was generated during a conversion.
@@ -57,4 +58,41 @@ public extension ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
+}
+
+// Default implementation so that conforming types don't need to implement deprecated API.
+public extension ConvertOutputConsumer {
+    func consume(problems: [Problem]) throws {}
+}
+
+package protocol _DeprecatedConsumeProblemsAccess {
+    func _consume(problems: [Problem]) throws
+}
+
+package struct _Deprecated<Consumer: ConvertOutputConsumer>: _DeprecatedConsumeProblemsAccess {
+    private let consumer: Consumer
+    package init(_ consumer: Consumer) {
+        self.consumer = consumer
+    }
+    
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+    package func _consume(problems: [Problem]) throws {
+        var problems = problems
+        
+        if !problems.isEmpty {
+            problems.insert(
+                Problem(diagnostic: Diagnostic(
+                    severity: .warning,
+                    identifier: "org.swift.docc.DeprecatedDiagnosticsDigets",
+                    summary: """
+                    The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. \
+                    Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.
+                    """)
+                ),
+                at: 0
+            )
+        }
+        
+        try consumer.consume(problems: problems)
+    }
 }

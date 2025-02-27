@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -212,7 +212,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             if let rootURL {
                 throw Error.doesNotContainBundle(url: rootURL)
             } else {
-                try outputConsumer.consume(problems: context.problems)
+                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems)
                 throw GeneratedDataProvider.Error.notEnoughDataToGenerateBundle(options: bundleDiscoveryOptions, underlyingError: nil)
             }
         }
@@ -232,7 +232,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         guard !context.problems.containsErrors else {
             if emitDigest {
-                try outputConsumer.consume(problems: context.problems)
+                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems)
             }
             return (analysisProblems: context.problems, conversionProblems: [])
         }
@@ -367,7 +367,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         if emitDigest {
             do {
-                try outputConsumer.consume(problems: context.problems + conversionProblems)
+                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems + conversionProblems)
             } catch {
                 recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
             }
