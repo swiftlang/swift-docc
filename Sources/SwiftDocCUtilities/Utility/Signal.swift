@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,8 +20,10 @@ public struct Signal {
     public static func on(_ signals: [Int32], callback: @convention(c) @escaping (Int32) -> Void) {
         var signalAction = sigaction()
         
-        #if os(Linux)
-        // This is where we get to use a triple underscore in a method name.
+        // Different libraries name the `sigaction` fields and handler type differently.
+        #if canImport(Musl)
+        signalAction.__sa_handler = unsafeBitCast(callback, to: sigaction.__Unnamed_union___sa_handler.self)
+        #elseif os(Linux)
         signalAction.__sigaction_handler = unsafeBitCast(callback, to: sigaction.__Unnamed_union___sigaction_handler.self)
         #elseif os(Android)
         signalAction.sa_handler = callback
