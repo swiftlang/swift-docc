@@ -158,7 +158,9 @@ public struct DocumentationBundle {
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }
     
-    @available(*, deprecated, renamed: "init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)", message: "Use 'init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)' instead. This deprecated API will be removed after 6.1 is released")
+
+    @_disfavoredOverload
+    @available(*, deprecated, renamed: "init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:customScripts:)", message: "Use 'init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:customScripts:)' instead. This deprecated API will be removed after 6.1 is released")
     public init(
         info: Info,
         baseURL: URL = URL(string: "/")!,
@@ -170,7 +172,7 @@ public struct DocumentationBundle {
         customFooter: URL? = nil,
         themeSettings: URL? = nil
     ) {
-        self.init(info: info, baseURL: baseURL, symbolGraphURLs: symbolGraphURLs, markupURLs: markupURLs, miscResourceURLs: miscResourceURLs, customHeader: customHeader, customFooter: customFooter, themeSettings: themeSettings)
+        self.init(info: info, baseURL: baseURL, symbolGraphURLs: symbolGraphURLs, markupURLs: markupURLs, miscResourceURLs: miscResourceURLs, customHeader: customHeader, customFooter: customFooter, themeSettings: themeSettings, customScripts: nil)
         self.attributedCodeListings = attributedCodeListings
     }
     

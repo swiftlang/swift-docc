@@ -165,7 +165,8 @@ extension DocumentationContext.InputsProvider {
             miscResourceURLs: foundContents.resources,
             customHeader:  shallowContent.first(where: FileTypes.isCustomHeader),
             customFooter:  shallowContent.first(where: FileTypes.isCustomFooter),
-            themeSettings: shallowContent.first(where: FileTypes.isThemeSettingsFile)
+            themeSettings: shallowContent.first(where: FileTypes.isThemeSettingsFile),
+            customScripts: shallowContent.first(where: FileTypes.isCustomScriptsFile)
         )
     }
 
