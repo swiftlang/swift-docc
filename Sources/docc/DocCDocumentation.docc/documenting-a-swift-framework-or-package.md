@@ -71,9 +71,7 @@ step-by-step, interactive content. For more information, see
 > Important: To use a documentation catalog in a Swift package, make sure the 
 manifest's Swift tools version is set to `5.5` or later. 
 
-### Creating a Documentation Catalog
-
-To create a documentation catalog in your package, create a folder with the extension `.docc`. Documentation catalogs are associated with a target within your package an must reside within that target's `Sources` folder.
+To associate a documentation catalog with a target in your package, add the catalog to the same directory as the target's other source files (`[PackageRoot]/Sources/[TargetName]` by default).
 
 ## Building, Publishing, and Previewing Documentation with the DocC Plug-in
 
