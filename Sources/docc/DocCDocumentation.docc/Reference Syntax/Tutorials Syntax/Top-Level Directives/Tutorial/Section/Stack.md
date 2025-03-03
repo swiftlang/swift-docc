@@ -19,7 +19,7 @@ Use the Stack directive to horizontally arrange between one and three groupings 
         @ContentAndMedia {
             Add the ability for users to customize sloths and select their powers.
             
-            @Image(source: "01-creating-section2.png", alt: "An outline of a sloth surrounded by four power type icons. The power type icons are arranged in the following order, clockwise from the top: fire, wind, lightning, and ice.")
+            @Image(source: 01-creating-section2.png, alt: "An outline of a sloth surrounded by four power type icons. The power type icons are arranged in the following order, clockwise from the top: fire, wind, lightning, and ice.")
         }
         
         @Stack {
