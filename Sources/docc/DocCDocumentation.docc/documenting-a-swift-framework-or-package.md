@@ -47,7 +47,7 @@ By default, DocC compiles only in-source symbol documentation and then
 groups those symbols together by their kind, such as protocols, classes, 
 enumerations, and so forth. When you want to provide additional content or 
 customize the organization of symbols, use a documentation 
-catalog.
+catalog (a directory with a '.docc' extension).
 
 DocC combines the public API information from the Swift compiler with the 
 contents of the documentation catalog to generate a much richer DocC Archive.
