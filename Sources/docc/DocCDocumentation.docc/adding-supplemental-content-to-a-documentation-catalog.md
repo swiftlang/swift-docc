@@ -4,7 +4,7 @@ Include articles and extension files to extend your source documentation comment
 
 ## Overview
 
-A documentation catalog contains files that enrich your source documentation
+A documentation catalog (a directory with a '.docc' extension) contains files that enrich your source documentation
 comments. Two types of files that documentation catalogs can contain are
 articles and extension files.
 
