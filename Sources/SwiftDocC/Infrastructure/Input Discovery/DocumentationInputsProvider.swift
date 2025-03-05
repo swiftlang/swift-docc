@@ -25,6 +25,7 @@ extension DocumentationContext {
     ///  ``DocumentationBundle/symbolGraphURLs``  | ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
     ///  ``DocumentationBundle/info``             | ``DocumentationBundleFileTypes/isInfoPlistFile(_:)``
     ///  ``DocumentationBundle/themeSettings``    | ``DocumentationBundleFileTypes/isThemeSettingsFile(_:)``
+    ///  ``DocumentationBundle/customScripts``    | ``DocumentationBundleFileTypes/isCustomScriptsFile(_:)``
     ///  ``DocumentationBundle/customHeader``     | ``DocumentationBundleFileTypes/isCustomHeader(_:)``
     ///  ``DocumentationBundle/customFooter``     | ``DocumentationBundleFileTypes/isCustomFooter(_:)``
     ///  ``DocumentationBundle/miscResourceURLs`` | Any file not already matched above.
