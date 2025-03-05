@@ -129,7 +129,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         }
         
         // Copy all registered custom scripts to the output directory.
-        for customScript in context.registeredCustomScripts(forBundleID: bundleIdentifier) {
+        for customScript in context.registeredCustomScripts(for: bundleID) {
             try copyAsset(customScript, to: scriptsDirectory)
         }
 

@@ -1841,7 +1841,7 @@ public class DocumentationContext {
         }
     }
 
-    /// Returns a list of all the image assets that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the image assets that registered for a given `bundleID`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return image assets for.
     /// - Returns: A list of all the image assets for the given bundle.
@@ -1854,7 +1854,7 @@ public class DocumentationContext {
         registeredImageAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
     
-    /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the video assets that registered for a given `bundleID`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return video assets for.
     /// - Returns: A list of all the video assets for the given bundle.
@@ -1867,7 +1867,7 @@ public class DocumentationContext {
         registeredVideoAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
 
-    /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the download assets that registered for a given `bundleID`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return download assets for.
     /// - Returns: A list of all the download assets for the given bundle.
@@ -1880,12 +1880,12 @@ public class DocumentationContext {
         registeredDownloadsAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
     
-    /// Returns a list of all the custom scripts that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the custom scripts that registered for a given `bundleID`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return download assets for.
+    /// - Parameter bundleID: The identifier of the bundle to return custom scripts for.
     /// - Returns: A list of all the custom scripts for the given bundle.
-    public func registeredCustomScripts(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedScriptExtensions, forBundleID: bundleIdentifier)
+    public func registeredCustomScripts(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        return registeredAssets(withExtensions: DocumentationContext.supportedScriptExtensions, forBundleID: bundleID)
     }
 
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
