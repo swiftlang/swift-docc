@@ -1,0 +1,16 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 6,
+            "patch": 0
+        },
+        "generator": "SwiftPM"
+    },
+    "module": {
+        "name": "Snippets",
+        "platform": {}
+    },
+    "symbols": [],
+    "relationships": []
+}

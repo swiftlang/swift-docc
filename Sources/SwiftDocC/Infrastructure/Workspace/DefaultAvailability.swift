@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -131,10 +131,10 @@ public struct DefaultAvailability: Codable, Equatable {
     
     /// Fallback availability information for platforms we either don't emit SGFs for
     /// or have the same availability information as another platform.
-    ///
-    /// The key corresponds to the fallback platform and the value to the platform it's
-    /// fallbacking from.
-    package static let fallbackPlatforms: [PlatformName: [PlatformName]] = [.iOS: [.catalyst, .iPadOS]]
+    package static let fallbackPlatforms: [PlatformName: PlatformName] = [
+        .catalyst: .iOS,
+        .iPadOS: .iOS,
+    ]
 
     /// Creates a default availability module.
     /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
@@ -142,19 +142,17 @@ public struct DefaultAvailability: Codable, Equatable {
             self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
             // If a module doesn't contain default availability information for any of the fallback platforms,
             // infer it from the corresponding mapped value.
-            platformAvailabilities + DefaultAvailability.fallbackPlatforms.flatMap { (fallbackPlatform, platform) in
-                platform.compactMap { platformName in
-                    if !platformAvailabilities.contains(where: { $0.platformName == platformName }),
-                       let fallbackAvailability = platformAvailabilities.first(where: { $0.platformName == fallbackPlatform }),
-                       let fallbackIntroducedVersion = fallbackAvailability.introducedVersion
-                    {
-                        return DefaultAvailability.ModuleAvailability(
-                            platformName: platformName,
-                            platformVersion: fallbackIntroducedVersion
-                        )
-                    }
-                    return nil
+            platformAvailabilities + DefaultAvailability.fallbackPlatforms.compactMap { (platform, fallbackPlatform) in
+                if !platformAvailabilities.contains(where: { $0.platformName == platform }),
+                   let fallbackAvailability = platformAvailabilities.first(where: { $0.platformName == fallbackPlatform }),
+                   let fallbackIntroducedVersion = fallbackAvailability.introducedVersion
+                {
+                    return DefaultAvailability.ModuleAvailability(
+                        platformName: platform,
+                        platformVersion: fallbackIntroducedVersion
+                    )
                 }
+                return nil
             }
         }
     }
