@@ -22,4 +22,5 @@ Place the `Snippet` directive to embed a code example from the project's snippet
 
 If the snippet had slices annotated within it, an individual slice of the snippet can be referenced with the `slice` option. Without the option defined, the directive embeds the entire snippet.
 
-<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+
