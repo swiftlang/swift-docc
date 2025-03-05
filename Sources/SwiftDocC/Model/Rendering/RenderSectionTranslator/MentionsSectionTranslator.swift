@@ -15,7 +15,7 @@ struct MentionsSectionTranslator: RenderSectionTranslator {
     }
 
     func translateSection(for symbol: Symbol, renderNode: inout RenderNode, renderNodeTranslator: inout RenderNodeTranslator) -> VariantCollection<CodableContentSection?>? {
-        guard FeatureFlags.current.isExperimentalMentionedInEnabled else {
+        guard FeatureFlags.current.isMentionedInEnabled else {
             return nil
         }
 

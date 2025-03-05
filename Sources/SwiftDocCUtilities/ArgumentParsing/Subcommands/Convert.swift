@@ -503,11 +503,17 @@ extension Docc {
             var enableExperimentalOverloadedSymbolPresentation = false
             
             @Flag(
-                name: .customLong("enable-experimental-mentioned-in"),
+                name: .customLong("mentioned-in"),
+                inversion: .prefixedEnableDisable,
                 help: ArgumentHelp("Render a section on symbol documentation which links to articles that mention that symbol", discussion: """
                 Validates and filters symbols' parameter and return value documentation based on the symbol's function signature in each language representation.
                 """)
             )
+            var enableMentionedIn = true
+            
+            // This flag only exist to allow developers to pass the previous '--enable-experimental-...' flag without errors.
+            @Flag(name: .customLong("enable-experimental-mentioned-in"), help: .hidden)
+            @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
             var enableExperimentalMentionedIn = false
 
             @Flag(
@@ -536,6 +542,7 @@ extension Docc {
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-json-index", message: "This flag has no effect. The JSON render is emitted by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "This flag has no effect. Doxygen support is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-parameters-and-returns-validation", message: "This flag has no effect. Parameter and return value validation is enabled by default.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-mentioned-in", message: "This flag has no effect. Automatic mentioned in sections is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "Use '--emit-lmdb-index' indead.")
                 emitLMDBIndex = emitLMDBIndex
             }
@@ -598,9 +605,14 @@ extension Docc {
 
         /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in"
         /// links on symbols.
+        public var enableMentionedIn: Bool {
+            get { featureFlags.enableMentionedIn }
+            set { featureFlags.enableMentionedIn = newValue }
+        }
+        @available(*, deprecated, renamed: "enableMentionedIn", message: "Use 'enableMentionedIn' instead. This deprecated API will be removed after 6.2 is released")
         public var enableExperimentalMentionedIn: Bool {
-            get { featureFlags.enableExperimentalMentionedIn }
-            set { featureFlags.enableExperimentalMentionedIn = newValue }
+            get { enableMentionedIn }
+            set { enableMentionedIn = newValue }
         }
         
         /// A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.
