@@ -45,7 +45,7 @@ Add an ``Image`` directive to show a preview of what the reader sees after perfo
                 Add the `sloth` parameter to initialize the `CustomizedSlothView` in the preview provider, and pass a new `Sloth` instance for the value.
                 
                 @Code(name: "CustomizedSlothView.swift", file: "01-creating-code-02-07.swift") {
-                    @Image(source: "preview-01-creating-code-02-07.png", alt: "A portrait of a generic sloth displayed in the center of the canvas.")
+                    @Image(source: preview-01-creating-code-02-07, alt: "A portrait of a generic sloth displayed in the center of the canvas.")
                 }
             }
 
@@ -53,7 +53,7 @@ Add an ``Image`` directive to show a preview of what the reader sees after perfo
                 Set the preview provider sloth's `name` to `"Super Sloth"`, `color` to `.blue`, and `power` to `.ice`.
                 
                 @Code(name: "CustomizedSlothView.swift", file: "01-creating-code-02-08.swift") {
-                    @Image(source: "preview-01-creating-code-02-08.png", alt: "A portrait of an ice sloth on top, followed by four power icons below. The power icons, clockwise from top left, include: ice, fire, wind, and lightning. The ice icon is selected.")
+                    @Image(source: preview-01-creating-code-02-08, alt: "A portrait of an ice sloth on top, followed by four power icons below. The power icons, clockwise from top left, include: ice, fire, wind, and lightning. The ice icon is selected.")
                 }    
             
                 ...
@@ -85,4 +85,4 @@ The following items can include a code element:
 
 - ``Image``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
