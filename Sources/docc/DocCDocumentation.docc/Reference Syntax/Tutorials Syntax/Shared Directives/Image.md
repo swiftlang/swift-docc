@@ -42,7 +42,7 @@ For example, the following are all valid DocC image filenames:
 
 - term `sloth.png`: An image that's independent of all appearance modes and display scales.
 - term `sloth~dark.png`: An image that's specific to dark mode, but is display-scale independent.
-- term `sloth~dark@2x.png`: An image that's specific to dark mode and the 2x display scale.
+- term `sloth~dark@2x.png`: An image that's specific to dark mode and the 2× display scale.
 
 Omit the appearance and display scale components when specifying an image name for the `source` parameter. 
 For example, if you write `@Image(source: overview-hero, alt: " ... ")` and the reader views that tutorial page **on a display that has dark appearance mode** enabled, the system displays *overview-hero~dark@2x.png*. 
