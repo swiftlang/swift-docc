@@ -80,7 +80,7 @@ public final class Links: Semantic, AutomaticDirectiveConvertible, MarkupContain
         return content.elements
     }
     
-    func validate(source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         _ = Semantic.Analyses.HasExactlyOneUnorderedList<Links, AnyLink>(
             severityIfNotFound: .warning
         ).analyze(

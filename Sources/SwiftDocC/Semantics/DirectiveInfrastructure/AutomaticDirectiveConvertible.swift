@@ -26,12 +26,7 @@ protocol AutomaticDirectiveConvertible: DirectiveConvertible, Semantic {
     ///
     /// Return false if a serious enough error is encountered such that the directive
     /// should not be initialized.
-    func validate(
-        source: URL?,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
-        problems: inout [Problem]
-    ) -> Bool
+    func validate(source: URL?, problems: inout [Problem]) -> Bool
     
     /// The key paths to any property wrapped directive arguments, child directives,
     /// or child markup properties.
@@ -80,12 +75,7 @@ extension AutomaticDirectiveConvertible {
         String(describing: self)
     }
     
-    func validate(
-        source: URL?,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
-        problems: inout [Problem]
-    ) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         return true
     }
     
@@ -361,7 +351,7 @@ extension AutomaticDirectiveConvertible {
             return nil
         }
         
-        guard validate(source: source, for: bundle, in: context, problems: &problems) else {
+        guard validate(source: source, problems: &problems) else {
             return nil
         }
     }

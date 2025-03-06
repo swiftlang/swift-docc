@@ -57,7 +57,7 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
         "deviceFrame" : \VideoMedia._deviceFrame,
     ]
     
-    func validate(source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         if !FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled && deviceFrame != nil {
             let diagnostic = Diagnostic(
                 source: source,

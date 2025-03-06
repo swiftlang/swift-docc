@@ -103,7 +103,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         self.originalMarkup = originalMarkup
     }
     
-    func validate(source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
         if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty {
             let diagnostic = Diagnostic(

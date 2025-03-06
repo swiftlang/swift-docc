@@ -43,7 +43,7 @@ public final class Stack: Semantic, AutomaticDirectiveConvertible {
     
     static let childrenLimit = 3
     
-    func validate(source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         if contentAndMedia.count > Stack.childrenLimit {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.HasAtMost<\(Stack.self), \(ContentAndMedia.self)>(\(Stack.childrenLimit))", summary: "\(Stack.directiveName.singleQuoted) directive accepts at most \(Stack.childrenLimit) \(ContentAndMedia.directiveName.singleQuoted) child directives")
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
