@@ -13,7 +13,7 @@ import Markdown
 
 extension Semantic.Analyses {
     /// Checks for any directives that are not valid as direct children of the parent directive.
-    public struct HasOnlyKnownDirectives<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasOnlyKnownDirectives<Parent: Semantic & DirectiveConvertible> {
         let severityIfFound: DiagnosticSeverity?
         let allowedDirectives: [String]
         let allowsMarkup: Bool

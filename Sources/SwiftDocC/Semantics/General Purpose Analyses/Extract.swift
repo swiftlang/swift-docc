@@ -15,7 +15,7 @@ extension Semantic.Analyses {
     /**
      Separates `children` into directives whose names match `Child.directiveName` and those remaining, attempting to convert extracted children to the semantic `Child` type.
      */
-    public struct ExtractAll<Child: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct ExtractAll<Child: Semantic & DirectiveConvertible> {
         public init() {}
         
         public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
@@ -54,7 +54,7 @@ extension Semantic.Analyses {
     /**
      Separates `children` into markup elements that are of a specific type without performing any further analysis.
      */
-    public struct ExtractAllMarkup<Child: Markup>: SemanticAnalysis {
+    public struct ExtractAllMarkup<Child: Markup> {
         public init() {}
         
         public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {

@@ -12,7 +12,7 @@ import Foundation
 import Markdown
 
 extension Semantic.Analyses {
-    public struct HasOnlyKnownArguments<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasOnlyKnownArguments<Parent: Semantic & DirectiveConvertible> {
         let severityIfFound: DiagnosticSeverity?
         let allowedArguments: [String]
         public init(severityIfFound: DiagnosticSeverity?, allowedArguments: [String]) {

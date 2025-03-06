@@ -15,7 +15,7 @@ extension Semantic.Analyses {
     /**
      Checks to see if a directive has child markup content.
      */
-    public struct HasContent<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasContent<Parent: Semantic & DirectiveConvertible> {
         let additionalContext: String
         public init(additionalContext: String? = nil) {
             if let additionalContext,

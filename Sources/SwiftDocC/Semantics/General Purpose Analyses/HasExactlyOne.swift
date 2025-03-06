@@ -15,7 +15,7 @@ extension Semantic.Analyses {
     /**
      Checks a parent directive for the presence of exactly one child directive to be converted to a type ``SemanticAnalysis/Result``. If so, return that child and the remainder.
      */
-    public struct HasExactlyOne<Parent: Semantic & DirectiveConvertible, Child: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasExactlyOne<Parent: Semantic & DirectiveConvertible, Child: Semantic & DirectiveConvertible> {
         let severityIfNotFound: DiagnosticSeverity?
         public init(severityIfNotFound: DiagnosticSeverity?) {
             self.severityIfNotFound = severityIfNotFound
@@ -95,7 +95,7 @@ extension Semantic.Analyses {
     }
     
     /// Checks a parent directive for the presence of exactly one of two child directives---but not both---to be converted to a type ``SemanticAnalysis/Result``. If so, return that child and the remainder.
-    public struct HasExactlyOneOf<Parent: Semantic & DirectiveConvertible, Child1: Semantic & DirectiveConvertible, Child2: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasExactlyOneOf<Parent: Semantic & DirectiveConvertible, Child1: Semantic & DirectiveConvertible, Child2: Semantic & DirectiveConvertible> {
         let severityIfNotFound: DiagnosticSeverity?
         public init(severityIfNotFound: DiagnosticSeverity?) {
             self.severityIfNotFound = severityIfNotFound
@@ -145,7 +145,7 @@ extension Semantic.Analyses {
         }
     }
     
-    public struct HasExactlyOneImageOrVideoMedia<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasExactlyOneImageOrVideoMedia<Parent: Semantic & DirectiveConvertible> {
         let severityIfNotFound: DiagnosticSeverity?
         public init(severityIfNotFound: DiagnosticSeverity?) {
             self.severityIfNotFound = severityIfNotFound
@@ -157,7 +157,7 @@ extension Semantic.Analyses {
         }
     }
         
-    public struct HasExactlyOneMedia<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasExactlyOneMedia<Parent: Semantic & DirectiveConvertible> {
         let severityIfNotFound: DiagnosticSeverity?
         
         init(severityIfNotFound: DiagnosticSeverity?) {
@@ -217,7 +217,7 @@ extension Semantic.Analyses {
         }
     }
 
-    public struct HasExactlyOneUnorderedList<Parent: Semantic & DirectiveConvertible, ListElement>: SemanticAnalysis {
+    public struct HasExactlyOneUnorderedList<Parent: Semantic & DirectiveConvertible, ListElement> {
         let severityIfNotFound: DiagnosticSeverity?
 
         init(severityIfNotFound: DiagnosticSeverity?) {
