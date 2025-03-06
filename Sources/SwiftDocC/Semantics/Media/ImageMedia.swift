@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -47,7 +47,7 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
         "deviceFrame" : \ImageMedia._deviceFrame,
     ]
     
-    func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> Bool {
         if !FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled && deviceFrame != nil {
             let diagnostic = Diagnostic(
                 source: source,
