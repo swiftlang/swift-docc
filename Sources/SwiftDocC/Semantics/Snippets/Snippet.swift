@@ -30,8 +30,6 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
         "slice" : \Snippet._slice,
     ]
     
-    static var hiddenFromDocumentation = true
-    
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup

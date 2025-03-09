@@ -5253,6 +5253,162 @@
           "domain" : "Swift-DocC",
           "introduced" : {
             "major" : 5,
+            "minor" : 6,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Snippet"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "path"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "slice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - path: The path components of a symbol link that would be used to resolve a reference to a snippet,"
+          },
+          {
+            "text" : "     only occurring as a block directive argument."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - slice: An optional named range to limit the lines shown."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Snippet"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Snippet",
+            "spelling" : "Snippet"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Snippet"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "path"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "slice"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Snippet"
+      },
+      "pathComponents" : [
+        "Snippet"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
             "minor" : 5,
             "patch" : 0
           }
