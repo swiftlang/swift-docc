@@ -61,7 +61,7 @@ struct TransformForStaticHostingAction: AsyncAction {
             // as we want to preserve anything intentionally left in the output URL by `setupOutputDirectory`
             for sourceItem in try fileManager.contentsOfDirectory(at: rootURL, includingPropertiesForKeys: [], options:[.skipsHiddenFiles]) {
                 let targetItem = outputURL.appendingPathComponent(sourceItem.lastPathComponent)
-                try fileManager.copyItem(at: sourceItem, to: targetItem)
+                try fileManager._copyItem(at: sourceItem, to: targetItem)
             }
         }
 
@@ -81,7 +81,7 @@ struct TransformForStaticHostingAction: AsyncAction {
             if fileManager.fileExists(atPath: target.path){
                 try fileManager.removeItem(at: target)
             }
-            try fileManager.copyItem(at: source, to: target)
+            try fileManager._copyItem(at: source, to: target)
         }
         
         // Transform the indexHTML if needed.
