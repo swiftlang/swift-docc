@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -407,7 +407,7 @@ public class DocumentationContext {
     ///   - problems: A mutable collection of problems to update with any problem encountered during the semantic analysis.
     /// - Returns: The result of the semantic analysis.
     private func analyze(_ document: Document, at source: URL, in bundle: DocumentationBundle, engine: DiagnosticEngine) -> Semantic? {
-        var analyzer = SemanticAnalyzer(source: source, context: self, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: source, bundle: bundle)
         let result = analyzer.visit(document)
         engine.emit(analyzer.problems)
         return result
@@ -1074,8 +1074,7 @@ public class DocumentationContext {
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
             engine: diagnosticEngine,
-            bundle: bundle,
-            context: self
+            bundle: bundle
         )
 
         // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
@@ -2010,7 +2009,7 @@ public class DocumentationContext {
             }
             let article = Article(
                 markup: articleResult.value.markup,
-                metadata: Metadata(from: metadataMarkup, for: bundle, in: self),
+                metadata: Metadata(from: metadataMarkup, for: bundle),
                 redirects: articleResult.value.redirects,
                 options: articleResult.value.options
             )
@@ -2043,7 +2042,7 @@ public class DocumentationContext {
                 Heading(level: 1, Text(title)),
                 metadataDirectiveMarkup
             )
-            let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
+            let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle)
             let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
             let documentationNode = DocumentationNode(
                 reference: reference,

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,12 +19,12 @@ class JustificationTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(directive.name, Justification.directiveName)
-            let justification = Justification(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let justification = Justification(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(justification)
             XCTAssertNil(justification?.reaction)
             XCTAssertTrue(problems.isEmpty)
@@ -44,12 +44,12 @@ class JustificationTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(directive.name, Justification.directiveName)
-            let justification = Justification(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let justification = Justification(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertTrue(problems.isEmpty)
             XCTAssertNotNil(justification)
             XCTAssertEqual(justification?.reaction, "Correct!")
