@@ -70,7 +70,7 @@ struct MergeAction: AsyncAction {
                 try? fileManager.createDirectory(at: toDirectory, withIntermediateDirectories: false, attributes: nil)
                 for from in (try? fileManager.contentsOfDirectory(at: fromDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
                     // Copy each file or subdirectory
-                    try fileManager.copyItem(at: from, to: toDirectory.appendingPathComponent(from.lastPathComponent))
+                    try fileManager._copyItem(at: from, to: toDirectory.appendingPathComponent(from.lastPathComponent))
                 }
             }
             guard let jsonIndexData = fileManager.contents(atPath: archive.appendingPathComponent("index/index.json").path) else {
@@ -125,7 +125,7 @@ struct MergeAction: AsyncAction {
             contents: RenderJSONEncoder.makeEncoder().encode(renderNode)
         )
         // It's expected that this will fail if combined archive doesn't support static hosting.
-        try? fileManager.copyItem(
+        try? fileManager._copyItem(
             at: targetURL.appendingPathComponent("index.html"),
             to: targetURL.appendingPathComponent("/documentation/index.html")
         )
