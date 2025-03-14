@@ -106,7 +106,7 @@ class TestFileSystemTests: XCTestCase {
     func testCopyFiles() throws {
         let fs = try makeTestFS()
         
-        try fs.copyItem(at: URL(string: "/main/nested/myfile1.txt")!, to: URL(string: "/main/myfile1.txt")!)
+        try fs._copyItem(at: URL(string: "/main/nested/myfile1.txt")!, to: URL(string: "/main/myfile1.txt")!)
         XCTAssertEqual(fs.dump(), """
         /
         ├─ main/
@@ -121,7 +121,7 @@ class TestFileSystemTests: XCTestCase {
     func testCopyFolders() throws {
         let fs = try makeTestFS()
         
-        try fs.copyItem(at: URL(string: "/main/nested")!, to: URL(string: "/copy")!)
+        try fs._copyItem(at: URL(string: "/main/nested")!, to: URL(string: "/copy")!)
         XCTAssertEqual(fs.dump(), """
         /
         ├─ copy/
@@ -286,7 +286,7 @@ class TestFileSystemTests: XCTestCase {
         XCTAssertEqual(fs.contents(atPath: "/main/test.txt"), Data(base64Encoded: "TEST"))
         
         // Copy a file and test the contents are identical with original
-        try fs.copyItem(at: URL(string: "/main/test.txt")!, to: URL(string: "/main/clone.txt")!)
+        try fs._copyItem(at: URL(string: "/main/test.txt")!, to: URL(string: "/main/clone.txt")!)
         XCTAssertTrue(fs.contentsEqual(atPath: "/main/test.txt", andPath: "/main/clone.txt"))
         
         _ = try fs.createFile(at: URL(string:"/main/notclone.txt")!, contents: Data(base64Encoded: "TESTTEST")!)
