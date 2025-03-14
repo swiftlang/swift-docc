@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1029,7 +1029,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: bundle, in: context)?.language
+                SupportedLanguage(from: $0, source: nil, for: bundle)?.language
             }
             
             // If the task group has a set of supported languages, see if it should render for the allowed traits.

@@ -18,13 +18,17 @@ extension Semantic.Analyses {
     public struct ExtractAll<Child: Semantic & DirectiveConvertible> {
         public init() {}
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
+        @available(*, deprecated, renamed: "analyze(_:children:source:for:problems:)", message: "Use 'analyze(_:children:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released")
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
+            analyze(directive, children: children, source: source, for: bundle, problems: &problems)
+        }
+        
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
             return Semantic.Analyses.extractAll(
                 childType: Child.self,
                 children: children,
                 source: source,
                 for: bundle,
-                in: context,
                 problems: &problems
             ) as! ([Child], MarkupContainer)
         }
@@ -35,7 +39,6 @@ extension Semantic.Analyses {
         children: some Sequence<Markup>,
         source: URL?,
         for bundle: DocumentationBundle,
-        in context: DocumentationContext,
         problems: inout [Problem]
     ) -> ([DirectiveConvertible], remainder: MarkupContainer) {
         let (candidates, remainder) = children.categorize { child -> BlockDirective? in
@@ -46,7 +49,7 @@ extension Semantic.Analyses {
             return childDirective
         }
         let converted = candidates.compactMap {
-            childType.init(from: $0, source: source, for: bundle, in: context, problems: &problems)
+            childType.init(from: $0, source: source, for: bundle, problems: &problems)
         }
         return (converted, remainder: MarkupContainer(remainder))
     }

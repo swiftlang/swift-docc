@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,12 +19,12 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(tutorial)
             XCTAssertEqual(
                 [
@@ -195,12 +195,12 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(tutorial)
             XCTAssertTrue(problems.isEmpty)
             tutorial.map { tutorial in
@@ -354,12 +354,12 @@ Tutorial @1:1-150:2 projectFiles: nil
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(tutorial)
             XCTAssertEqual(1, tutorial?.sections.count)
             XCTAssertEqual([
