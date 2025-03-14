@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -62,9 +62,9 @@ public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abst
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == TutorialTableOfContents.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialTableOfContents>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialTableOfContents>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<TutorialTableOfContents>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<TutorialTableOfContents>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
     
         let requiredName = Semantic.Analyses.HasArgument<TutorialTableOfContents, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         let requiredIntro = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems).0
