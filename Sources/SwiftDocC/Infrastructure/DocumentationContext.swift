@@ -3974,13 +3974,13 @@ extension Diagnostic {
         return Diagnostic(
             source: nil,
             severity: .warning,
-            diagnostic: "Documentation contains multiple root pages",
             identifier: "org.swift.docc.MultipleRootPages",
             summary: "Found \(roots.count) root pages in documentation",
             explanation: """
-                Documentation should have exactly one root page. Found root pages:
-                - Primary: \(primaryRoot.path)
-                - Additional: \(additionalRoots.map { $0.path }.joined(separator: "\n  "))
+                Documentation should have exactly one root page. Found these root pages:
+                Primary: \(primaryRoot.path)
+                Additional:
+                \(additionalRoots.map { $0.path }.joined(separator: "\n"))
                 """
         )
     }
@@ -3996,7 +3996,8 @@ extension DocumentationContext {
         // Warn if multiple roots found
         if roots.count > 1 {
             let diagnostic = Diagnostic.multipleRootPagesWarning(roots: roots)
-            diagnosticEngine.emit(diagnostic)
+            let problem = Problem(diagnostic: diagnostic)
+            diagnosticEngine.emit(problem)
         }
     }
 }

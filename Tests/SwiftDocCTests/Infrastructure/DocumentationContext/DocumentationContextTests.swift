@@ -7204,39 +7204,43 @@ extension String {
 }
 
 func testWarnsOnMultipleRootPagesDetails() throws {
+    // Set up the bundle and context using the static method
     let (bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
         try """
         # Additional Root
         @TechnologyRoot
-
         Additional root page
         """.write(
-            to: url.appendingPathComponent("additional-root.md"), atomically: true, encoding: .utf8)
+            to: url.appendingPathComponent("additional-root.md"),
+            atomically: true,
+            encoding: .utf8
+        )
     }
 
-    // Find the warning diagnostic
-    let warning = try XCTUnwrap(
+    // Find the warning diagnostic in the context
+    let warning: Problem = try XCTUnwrap(
         context.problems.first {
             $0.diagnostic.identifier == "org.swift.docc.MultipleRootPages"
         }
     )
 
-    // Verify warning details
+    // Verify the warning details
     XCTAssertEqual(warning.diagnostic.severity, .warning)
     XCTAssertEqual(
         warning.diagnostic.summary,
         "Found 2 root pages in documentation"
     )
     XCTAssertTrue(
-        warning.diagnostic.explanation.contains("Documentation should have exactly one root page"),
+        warning.diagnostic.explanation?.contains("Documentation should have exactly one root page")
+            ?? false,
         "Warning only one root page is allowed"
     )
     XCTAssertTrue(
-        warning.diagnostic.explanation.contains("Primary:"),
+        warning.diagnostic.explanation?.contains("Primary:") ?? false,
         "Warning identify the primary root"
     )
     XCTAssertTrue(
-        warning.diagnostic.explanation.contains("Additional:"),
+        warning.diagnostic.explanation?.contains("Additional:") ?? false,
         "Warning list additional roots"
     )
 }
