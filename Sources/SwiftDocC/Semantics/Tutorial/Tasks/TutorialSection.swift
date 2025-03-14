@@ -77,7 +77,7 @@ public final class TutorialSection: Semantic, DirectiveConvertible, Abstracted, 
         }
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == TutorialSection.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialSection>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
@@ -88,14 +88,14 @@ public final class TutorialSection: Semantic, DirectiveConvertible, Abstracted, 
         
         var remainder: MarkupContainer
         let optionalSteps: Steps?
-        (optionalSteps, remainder) = Semantic.Analyses.HasExactlyOne<TutorialSection, Steps>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (optionalSteps, remainder) = Semantic.Analyses.HasExactlyOne<TutorialSection, Steps>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
         
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         let redirects: [Redirect]
-            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
-        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, in: context, problems: &problems)
+        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, problems: &problems)
         
         guard let title = requiredTitle else {
             return nil

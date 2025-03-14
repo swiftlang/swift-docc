@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -332,8 +332,7 @@ public struct DocumentationNode {
     mutating func initializeSymbolContent(
         documentationExtension: Article?,
         engine: DiagnosticEngine,
-        bundle: DocumentationBundle,
-        context: DocumentationContext
+        bundle: DocumentationBundle
     ) {
         precondition(unifiedSymbol != nil && symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
         
@@ -341,7 +340,6 @@ public struct DocumentationNode {
             documentedSymbol: unifiedSymbol?.documentedSymbol,
             documentationExtension: documentationExtension,
             bundle: bundle,
-            context: context,
             engine: engine
         )
         
@@ -503,7 +501,6 @@ public struct DocumentationNode {
         documentedSymbol: SymbolGraph.Symbol?,
         documentationExtension: Article?,
         bundle: DocumentationBundle? = nil,
-        context: DocumentationContext? = nil,
         engine: DiagnosticEngine
     ) -> (
         markup: Markup,
@@ -543,7 +540,7 @@ public struct DocumentationNode {
 
             var problems = [Problem]()
             
-            if let bundle, let context {
+            if let bundle {
                 metadata = DirectiveParser()
                     .parseSingleDirective(
                         Metadata.self,
@@ -551,7 +548,6 @@ public struct DocumentationNode {
                         parentType: Symbol.self,
                         source: docCommentLocation?.url,
                         bundle: bundle,
-                        context: context,
                         problems: &problems
                     )
                 

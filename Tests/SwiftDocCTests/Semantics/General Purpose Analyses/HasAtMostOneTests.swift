@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,11 +19,11 @@ class HasAtMostOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertTrue(problems.isEmpty)
@@ -40,11 +40,11 @@ class HasAtMostOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertTrue(problems.isEmpty)
@@ -63,11 +63,11 @@ class HasAtMostOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertEqual(2, problems.count)
@@ -90,11 +90,11 @@ class HasAtMostOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let (match, remainder) = Semantic.Analyses.HasAtMostOne<TestParent, TestChild>().analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertTrue(problems.isEmpty)
