@@ -71,7 +71,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         func copyAsset(_ asset: DataAsset, to destinationFolder: URL) throws {
             for sourceURL in asset.variants.values where !sourceURL.isAbsoluteWebURL {
                 let assetName = sourceURL.lastPathComponent
-                try fileManager.copyItem(
+                try fileManager._copyItem(
                     at: sourceURL,
                     to: destinationFolder.appendingPathComponent(assetName, isDirectory: false)
                 )
@@ -143,7 +143,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
             if fileManager.fileExists(atPath: targetFile.path) {
                 try fileManager.removeItem(at: targetFile)
             }
-            try fileManager.copyItem(at: themeSettings, to: targetFile)
+            try fileManager._copyItem(at: themeSettings, to: targetFile)
         }
     }
     
