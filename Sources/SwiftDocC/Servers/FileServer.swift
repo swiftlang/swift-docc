@@ -20,6 +20,13 @@ import UniformTypeIdentifiers
 import WinSDK
 #endif
 
+#if canImport(os)
+    import os
+    private let logger = Logger(subsystem: "org.swift.docc", category: "FileServer")
+#else
+    private let logger = NoOpLoggerShim()
+#endif
+
 fileprivate let slashCharSet = CharacterSet(charactersIn: "/")
 
 /**
@@ -95,7 +102,7 @@ public class FileServer {
             mimeType = FileServer.mimeType(for: url.pathExtension)
         } else { // request is for a path, we need to fake a redirect here
             if url.pathComponents.isEmpty {
-                xlog("Tried to load an invalid URL: \(url.absoluteString).\nFalling back to serve index.html.")
+                logger.log("Tried to load an invalid URL: \(url.absoluteString).\nFalling back to serve index.html.")
             }
             mimeType = "text/html"
             data = self.data(for: baseURL.appendingPathComponent("/index.html"))
