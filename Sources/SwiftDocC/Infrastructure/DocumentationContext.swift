@@ -3363,3 +3363,47 @@ extension DataAsset {
 
 @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 extension DocumentationContext: DocumentationContextDataProviderDelegate {}
+
+//added diagnostic for multiple root pages
+
+extension Diagnostic {
+    static func multipleRootPagesWarning(roots: [ResolvedTopicReference]) -> Diagnostic {
+        let primaryRoot = roots.first!
+        let additionalRoots = Array(roots.dropFirst())
+
+        return Diagnostic(
+            source: nil,
+            severity: .warning,
+            identifier: "org.swift.docc.MultipleRootPages",
+            summary: "Found \(roots.count) root pages in documentation",
+            explanation: """
+                Documentation should have exactly one root page. Found these root pages:
+                Primary: \(primaryRoot.path)
+                Additional:
+                \(additionalRoots.map { $0.path }.joined(separator: "\n"))
+                """
+        )
+    }
+}
+
+extension DocumentationContext {
+    private func validateRootPageCount() {
+        //get all root pages
+        let roots = topicGraph.nodes.values.filter { node in
+            return node.kind == .article && parents(of: node.reference).isEmpty
+        }.map { $0.reference }
+
+        //warn if multiple roots found
+        if roots.count > 1 {
+            let diagnostic = Diagnostic.multipleRootPagesWarning(roots: roots)
+            let problem = Problem(diagnostic: diagnostic)
+            diagnosticEngine.emit(problem)
+        }
+    }
+}
+
+extension DocumentationContext {
+    func processRootModules() throws {
+        validateRootPageCount()
+    }
+}
