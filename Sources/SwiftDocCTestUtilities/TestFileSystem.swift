@@ -317,15 +317,6 @@ package class TestFileSystem: FileManagerProtocol {
         URL(fileURLWithPath: "/tmp/\(ProcessInfo.processInfo.globallyUniqueString)", isDirectory: true)
     }
     
-    enum Errors: DescribedError {
-        case invalidPath(String)
-        var errorDescription: String {
-            switch self { 
-                case .invalidPath(let path): return "Invalid path '\(path)'"
-            }
-        }
-    }
-    
     /// Returns a stable string representation of the file system from a given subpath.
     ///
     /// - Parameter path: The path to the sub hierarchy to dump to a string representation.
