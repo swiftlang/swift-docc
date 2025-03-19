@@ -25,11 +25,11 @@ The `Image` directive displays an image in your tutorial. Provide the name of an
 ````
 
 Images can exist anywhere in your documentation catalog ('.docc' directory). but it's good practice to use subdirectories to organize the content and assets in your documentation.
-Regardless of organization within your catalog, each image need to have a unique name. 
+Regardless of organization within your catalog, each image needs to have a unique name. 
 
 The supported image file extensions are `png`, `jpg`, `jpeg`, `svg` and `gif`.
 
-- Tip: To differentiate tutorial images from reference documentation images, you may wish to prefix image file names with tutorial.
+- Tip: To differentiate tutorial images from reference documentation images, you may wish to prefix image file names with "tutorial".
 
 ### Provide Image Variants
 
