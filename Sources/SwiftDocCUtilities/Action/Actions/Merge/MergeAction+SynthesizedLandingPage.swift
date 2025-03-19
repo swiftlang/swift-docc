@@ -137,6 +137,7 @@ private struct RootNodeRenderReference: Decodable {
         
         let identifier = try container.decode(ResolvedTopicReference.self, forKey: .identifier)
         let rawIdentifier = identifier.url.absoluteString
+        let imageReferencePrefix = identifier.bundleID.rawValue + "/"
         
         // Every node should include a reference to the root page.
         // For reference documentation, this is because the root appears as a link in the breadcrumbs on every page.
@@ -145,14 +146,21 @@ private struct RootNodeRenderReference: Decodable {
         // If the root page has a reference to itself, then that the fastest and easiest way to access the correct topic render reference.
         if container.contains(.references) {
             let referencesContainer = try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .references)
-            if let selfReference = try referencesContainer.decodeIfPresent(TopicRenderReference.self, forKey: .init(stringValue: rawIdentifier)) {
-                renderReference = selfReference
-                
+            if var selfReference = try referencesContainer.decodeIfPresent(TopicRenderReference.self, forKey: .init(stringValue: rawIdentifier)) {
                 renderDependencies = try Self.decodeDependencyReferences(
                     container: referencesContainer,
                     images: selfReference.images,
+                    imageReferencePrefix: imageReferencePrefix,
                     abstract: selfReference.abstract
                 )
+                
+                // Image references don't include the bundle ID that they're part of and can collide with other images.
+                for index in selfReference.images.indices {
+                    selfReference.images[index].identifier.addPrefix(imageReferencePrefix)
+                }
+               
+                renderReference = selfReference
+                
                 return
             }
         }
@@ -161,19 +169,26 @@ private struct RootNodeRenderReference: Decodable {
         // we can create a new topic reference by decoding a little bit more information from the render node.
         let metadata = try container.decode(RenderMetadata.self, forKey: .metadata)
         
+        var prefixedImages = metadata.images
+        // Image references don't include the bundle ID that they're part of and can collide with other images.
+        for index in prefixedImages.indices {
+            prefixedImages[index].identifier.addPrefix(imageReferencePrefix)
+        }
+        
         renderReference = TopicRenderReference(
             identifier: RenderReferenceIdentifier(rawIdentifier),
             title: metadata.title ?? identifier.lastPathComponent,
             abstract: try container.decodeIfPresent([RenderInlineContent].self, forKey: .abstract) ?? [],
             url: identifier.path.lowercased(),
             kind: try container.decode(RenderNode.Kind.self, forKey: .kind),
-            images: metadata.images
+            images: prefixedImages
         )
         
         if container.contains(.references) {
             renderDependencies = try Self.decodeDependencyReferences(
                 container: try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .references),
-                images: renderReference.images,
+                images: metadata.images,
+                imageReferencePrefix: imageReferencePrefix,
                 abstract: renderReference.abstract
             )
             
@@ -182,13 +197,20 @@ private struct RootNodeRenderReference: Decodable {
         }
     }
     
-    private static func decodeDependencyReferences(container: KeyedDecodingContainer<RootNodeRenderReference.StringCodingKey>, images: [TopicImage], abstract: [RenderInlineContent]) throws -> [any RenderReference] {
+    private static func decodeDependencyReferences(
+        container: KeyedDecodingContainer<RootNodeRenderReference.StringCodingKey>,
+        images: [TopicImage],
+        imageReferencePrefix: String,
+        abstract: [RenderInlineContent]
+    ) throws -> [any RenderReference] {
         var references: [any RenderReference] = []
 
         for image in images {
-            references.append(
-                try container.decode(ImageReference.self, forKey: .init(stringValue: image.identifier.identifier))
-            )
+            // Image references don't include the bundle ID that they're part of and can collide with other images.
+            var imageRef = try container.decode(ImageReference.self, forKey: .init(stringValue: image.identifier.identifier))
+            imageRef.identifier.addPrefix(imageReferencePrefix)
+            
+            references.append(imageRef)
         }
         
         for case .reference(identifier: let identifier, isActive: _, overridingTitle: _, overridingTitleInlineContent: _) in abstract {
@@ -198,5 +220,11 @@ private struct RootNodeRenderReference: Decodable {
         }
         
         return references
+    }
+}
+
+private extension RenderReferenceIdentifier {
+    mutating func addPrefix(_ prefix: String) {
+        identifier = prefix + identifier
     }
 }

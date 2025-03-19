@@ -981,19 +981,19 @@ class MergeActionTests: XCTestCase {
         let rootPage = try JSONDecoder().decode(RenderNode.self, from: rootPageData)
         
         XCTAssertEqual(rootPage.references.keys.sorted(), [
+            "First/first-card.png",
+            "Second/second-card.png",
             "doc://First/documentation/First",
             "doc://First/documentation/First/Article#Some-heading",
             "doc://Second/documentation/Second",
             "doc://Second/documentation/Second/Article#Some-heading",
-            "first-card.png",
-            "second-card.png",
         ])
         
         let firstCardRelativeURL = try XCTUnwrap(URL(string: "/images/First/first-card.png"))
         XCTAssertEqual(
-            rootPage.references["first-card.png"] as? ImageReference,
+            rootPage.references["First/first-card.png"] as? ImageReference,
             ImageReference(
-                identifier: RenderReferenceIdentifier("first-card.png"),
+                identifier: RenderReferenceIdentifier("First/first-card.png"),
                 imageAsset: DataAsset(
                     variants: [
                         DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): firstCardRelativeURL
@@ -1008,9 +1008,9 @@ class MergeActionTests: XCTestCase {
         
         let secondCardRelativeURL = try XCTUnwrap(URL(string: "/images/Second/second-card.png"))
         XCTAssertEqual(
-            rootPage.references["second-card.png"] as? ImageReference,
+            rootPage.references["Second/second-card.png"] as? ImageReference,
             ImageReference(
-                identifier: RenderReferenceIdentifier("second-card.png"),
+                identifier: RenderReferenceIdentifier("Second/second-card.png"),
                 imageAsset: DataAsset(
                     variants: [
                         DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): secondCardRelativeURL
