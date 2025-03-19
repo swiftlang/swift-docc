@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,9 +13,17 @@ import SwiftDocC
 
 extension MergeAction {
     struct RootRenderReferences {
-        var documentation, tutorials: [TopicRenderReference]
+        struct Information {
+            var reference: TopicRenderReference
+            var dependencies: RenderReferenceDependencies
+            
+            var rawIdentifier: String {
+                reference.identifier.identifier
+            }
+        }
+        var documentation, tutorials: [Information]
         
-        fileprivate var all: [TopicRenderReference] {
+        fileprivate var all: [Information] {
             documentation + tutorials
         }
         var isEmpty: Bool {
@@ -27,7 +35,7 @@ extension MergeAction {
     }
     
     func readRootNodeRenderReferencesIn(dataDirectory: URL) throws -> RootRenderReferences {
-        func inner(url: URL) throws -> [TopicRenderReference] {
+        func inner(url: URL) throws -> [RootRenderReferences.Information] {
             try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
                 .compactMap {
                     guard $0.pathExtension == "json" else {
@@ -35,11 +43,12 @@ extension MergeAction {
                     }
                     
                     let data = try fileManager.contents(of: $0)
-                    return try JSONDecoder().decode(RootNodeRenderReference.self, from: data)
-                        .renderReference
+                    let decoded = try JSONDecoder().decode(RootNodeRenderReference.self, from: data)
+                    
+                    return .init(reference: decoded.renderReference, dependencies: decoded.renderDependencies)
                 }
                 .sorted(by: { lhs, rhs in
-                    lhs.title < rhs.title
+                    lhs.reference.title < rhs.reference.title
                 })
         }
         
@@ -72,21 +81,26 @@ extension MergeAction {
         if rootRenderReferences.containsBothKinds {
             // If the combined archive contains both documentation and tutorial content, create separate topic sections for each.
             renderNode.topicSections = [
-                .init(title: "Modules", abstract: nil, discussion: nil, identifiers: rootRenderReferences.documentation.map(\.identifier.identifier)),
-                .init(title: "Tutorials", abstract: nil, discussion: nil, identifiers: rootRenderReferences.tutorials.map(\.identifier.identifier)),
+                .init(title: "Modules", abstract: nil, discussion: nil, identifiers: rootRenderReferences.documentation.map(\.rawIdentifier)),
+                .init(title: "Tutorials", abstract: nil, discussion: nil, identifiers: rootRenderReferences.tutorials.map(\.rawIdentifier)),
             ]
         } else {
             // Otherwise, create a single unnamed topic section
             renderNode.topicSections = [
-                .init(title: nil, abstract: nil, discussion: nil, identifiers: (rootRenderReferences.all).map(\.identifier.identifier)),
+                .init(title: nil, abstract: nil, discussion: nil, identifiers: (rootRenderReferences.all).map(\.rawIdentifier)),
             ]
         }
         
         for renderReference in rootRenderReferences.documentation {
-            renderNode.references[renderReference.identifier.identifier] = renderReference
+            renderNode.references[renderReference.rawIdentifier] = renderReference.reference
+            
+            for imageReference in renderReference.dependencies.imageReferences {
+                renderNode.references[imageReference.identifier.identifier] = imageReference
+            }
         }
         for renderReference in rootRenderReferences.tutorials {
-            renderNode.references[renderReference.identifier.identifier] = renderReference
+            renderNode.references[renderReference.rawIdentifier] = renderReference.reference
+            // Tutorial pages don't have page images.
         }
         
         return renderNode
@@ -97,6 +111,7 @@ extension MergeAction {
 private struct RootNodeRenderReference: Decodable {
     /// The decoded root node render reference
     var renderReference: TopicRenderReference
+    var renderDependencies: RenderReferenceDependencies
     
     enum CodingKeys: CodingKey {
         // The only render node keys that should be needed
@@ -107,7 +122,7 @@ private struct RootNodeRenderReference: Decodable {
     
     struct StringCodingKey: CodingKey {
         var stringValue: String
-        init?(stringValue: String) {
+        init(stringValue: String) {
             self.stringValue = stringValue
         }
         var intValue: Int? = nil
@@ -130,8 +145,15 @@ private struct RootNodeRenderReference: Decodable {
         // If the root page has a reference to itself, then that the fastest and easiest way to access the correct topic render reference.
         if container.contains(.references) {
             let referencesContainer = try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .references)
-            if let selfReference = try referencesContainer.decodeIfPresent(TopicRenderReference.self, forKey: .init(stringValue: rawIdentifier)!) {
+            if let selfReference = try referencesContainer.decodeIfPresent(TopicRenderReference.self, forKey: .init(stringValue: rawIdentifier)) {
                 renderReference = selfReference
+                
+                let imageReferences = try Self.decodeImageReferences(container: referencesContainer, images: selfReference.images)
+                renderDependencies = RenderReferenceDependencies(
+                    topicReferences: [],
+                    linkReferences: [],
+                    imageReferences: imageReferences
+                )
                 return
             }
         }
@@ -148,5 +170,27 @@ private struct RootNodeRenderReference: Decodable {
             kind: try container.decode(RenderNode.Kind.self, forKey: .kind),
             images: metadata.images
         )
+        
+        let imageReferences: [ImageReference]
+        if !metadata.images.isEmpty, container.contains(.references) {
+            imageReferences = try Self.decodeImageReferences(
+                container: try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .references),
+                images: metadata.images
+            )
+        } else {
+            imageReferences = []
+        }
+        
+        renderDependencies = RenderReferenceDependencies(
+            topicReferences: [],
+            linkReferences: [],
+            imageReferences: imageReferences
+        )
+    }
+    
+    private static func decodeImageReferences(container: KeyedDecodingContainer<RootNodeRenderReference.StringCodingKey>, images: [TopicImage]) throws -> [ImageReference] {
+        try images.map { image in
+            try container.decode(ImageReference.self, forKey: .init(stringValue: image.identifier.identifier))
+        }
     }
 }

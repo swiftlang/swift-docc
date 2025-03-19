@@ -64,7 +64,7 @@ package class TestFileSystem: FileManagerProtocol {
         files["/tmp"] = Self.folderFixtureData
  
         for folder in folders {
-            try addFolder(folder)
+            try addFolder(folder, basePath: URL(fileURLWithPath: "/"))
         }
     }
 
@@ -127,13 +127,13 @@ package class TestFileSystem: FileManagerProtocol {
     }
     
     @discardableResult
-    func addFolder(_ folder: Folder) throws -> [String] {
+    package func addFolder(_ folder: Folder, basePath: URL) throws -> [String] {
         guard !disableWriting else { return [] }
         
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        let rootURL = URL(fileURLWithPath: "/\(folder.name)")
+        let rootURL = basePath.appendingPathComponent(folder.name)// URL(fileURLWithPath: "/\(folder.name)")
         files[rootURL.path] = Self.folderFixtureData
         let fileList = try filesIn(folder: folder, at: rootURL)
         files.merge(fileList, uniquingKeysWith: +)
