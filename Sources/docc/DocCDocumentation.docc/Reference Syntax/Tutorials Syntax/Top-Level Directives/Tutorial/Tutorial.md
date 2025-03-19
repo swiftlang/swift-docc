@@ -89,7 +89,7 @@ A tutorial page begins with an introduction section, defined by an ``Intro`` dir
     @Intro(title: "Creating and Building a Swift Package") {
         This tutorial guides you through creating and building a Swift Package. Use the package to add your own re-usable classes and structures.
         
-        @Image(source: "creating-intro.png", alt: "An image of the Swift logo.")
+        @Image(source: creating-intro, alt: "An image of the Swift logo.")
     }
 
     ...
@@ -122,13 +122,13 @@ Define sections using the ``Section`` directive. You can optionally start with d
             @Step {
                 Create the directory.
                 
-                @Image(source: "placeholder-image.png", alt: "A screenshot showing the command to type in the terminal to create the directory.")
+                @Image(source: placeholder-image, alt: "A screenshot showing the command to type in the terminal to create the directory.")
             }
             
             @Step {
                 Create the Swift Package. 
                 
-                @Image(source: "placeholder-image.png", alt: "A screenshot showing the command to type in the terminal to create the Swift package.")
+                @Image(source: placeholder-image, alt: "A screenshot showing the command to type in the terminal to create the Swift package.")
             }
             
             @Step {
@@ -256,4 +256,4 @@ A tutorial page can contain the following items:
 
 - <doc:building-an-interactive-tutorial>
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
