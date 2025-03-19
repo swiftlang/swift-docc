@@ -30,7 +30,7 @@ Use the `Step` directive to define a single task the reader performs within a se
                 @Step {
                     Create the folder.
                     
-                    @Image(source: "placeholder-image.png", alt: "A screenshot using the `mkdir` command to create a folder to place SlothCreator in.")
+                    @Image(source: placeholder-image, alt: "A screenshot using the `mkdir` command to create a folder to place SlothCreator in.")
                 }
                 
                 ...
@@ -82,4 +82,4 @@ The following items can include a step:
 - ``Image``
 - ``Video``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
