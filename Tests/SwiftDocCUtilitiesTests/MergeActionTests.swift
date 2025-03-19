@@ -854,7 +854,7 @@ class MergeActionTests: XCTestCase {
                 TextFile(name: "\(name).md", utf8Content: """
                 # My root
                 
-                A root page with a custom "card" page icon in the "\(name.lowercased())" project.
+                A root page with a custom "card" page icon in the "\(name.lowercased())" project that links to <doc:Article#Some-heading>
                 
                 @Metadata {
                   @PageImage(purpose: card, source: \(name.lowercased())-card)
@@ -867,6 +867,8 @@ class MergeActionTests: XCTestCase {
                 # Some article
                 
                 An article in the "\(name.lowercased())" project.
+                
+                ## Some heading
                 """),
             ])
             
@@ -882,7 +884,11 @@ class MergeActionTests: XCTestCase {
             
             let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: .init())
 
-            XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)
+            XCTAssert(
+                context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.SummaryContainsLink" }.isEmpty,
+                "Unexpected problems: \(context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.SummaryContainsLink" }.map(\.diagnostic.summary).joined(separator: "\n"))",
+                file: file, line: line
+            )
             
             let outputPath = baseOutputDir.appendingPathComponent("\(name).doccarchive", isDirectory: true)
             
@@ -976,7 +982,9 @@ class MergeActionTests: XCTestCase {
         
         XCTAssertEqual(rootPage.references.keys.sorted(), [
             "doc://First/documentation/First",
+            "doc://First/documentation/First/Article#Some-heading",
             "doc://Second/documentation/Second",
+            "doc://Second/documentation/Second/Article#Some-heading",
             "first-card.png",
             "second-card.png",
         ])
@@ -1012,6 +1020,28 @@ class MergeActionTests: XCTestCase {
                     ],
                     context: .display
                 )
+            )
+        )
+        
+        XCTAssertEqual(
+            rootPage.references["doc://First/documentation/First/Article#Some-heading"] as? TopicRenderReference,
+            TopicRenderReference(
+                identifier: RenderReferenceIdentifier("doc://First/documentation/First/Article#Some-heading"),
+                title: "Some heading",
+                abstract: [],
+                url: "/documentation/first/article#Some-heading",
+                kind: .section
+            )
+        )
+        
+        XCTAssertEqual(
+            rootPage.references["doc://Second/documentation/Second/Article#Some-heading"] as? TopicRenderReference,
+            TopicRenderReference(
+                identifier: RenderReferenceIdentifier("doc://Second/documentation/Second/Article#Some-heading"),
+                title: "Some heading",
+                abstract: [],
+                url: "/documentation/second/article#Some-heading",
+                kind: .section
             )
         )
     }

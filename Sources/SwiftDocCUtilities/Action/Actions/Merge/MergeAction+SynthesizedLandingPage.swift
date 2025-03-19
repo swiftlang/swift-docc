@@ -15,7 +15,7 @@ extension MergeAction {
     struct RootRenderReferences {
         struct Information {
             var reference: TopicRenderReference
-            var dependencies: RenderReferenceDependencies
+            var dependencies: [any RenderReference]
             
             var rawIdentifier: String {
                 reference.identifier.identifier
@@ -94,8 +94,8 @@ extension MergeAction {
         for renderReference in rootRenderReferences.documentation {
             renderNode.references[renderReference.rawIdentifier] = renderReference.reference
             
-            for imageReference in renderReference.dependencies.imageReferences {
-                renderNode.references[imageReference.identifier.identifier] = imageReference
+            for dependencyReference in renderReference.dependencies {
+                renderNode.references[dependencyReference.identifier.identifier] = dependencyReference
             }
         }
         for renderReference in rootRenderReferences.tutorials {
@@ -111,7 +111,7 @@ extension MergeAction {
 private struct RootNodeRenderReference: Decodable {
     /// The decoded root node render reference
     var renderReference: TopicRenderReference
-    var renderDependencies: RenderReferenceDependencies
+    var renderDependencies: [any RenderReference]
     
     enum CodingKeys: CodingKey {
         // The only render node keys that should be needed
@@ -148,11 +148,10 @@ private struct RootNodeRenderReference: Decodable {
             if let selfReference = try referencesContainer.decodeIfPresent(TopicRenderReference.self, forKey: .init(stringValue: rawIdentifier)) {
                 renderReference = selfReference
                 
-                let imageReferences = try Self.decodeImageReferences(container: referencesContainer, images: selfReference.images)
-                renderDependencies = RenderReferenceDependencies(
-                    topicReferences: [],
-                    linkReferences: [],
-                    imageReferences: imageReferences
+                renderDependencies = try Self.decodeDependencyReferences(
+                    container: referencesContainer,
+                    images: selfReference.images,
+                    abstract: selfReference.abstract
                 )
                 return
             }
@@ -171,26 +170,33 @@ private struct RootNodeRenderReference: Decodable {
             images: metadata.images
         )
         
-        let imageReferences: [ImageReference]
-        if !metadata.images.isEmpty, container.contains(.references) {
-            imageReferences = try Self.decodeImageReferences(
+        if container.contains(.references) {
+            renderDependencies = try Self.decodeDependencyReferences(
                 container: try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .references),
-                images: metadata.images
+                images: renderReference.images,
+                abstract: renderReference.abstract
             )
+            
         } else {
-            imageReferences = []
+            renderDependencies = []
         }
-        
-        renderDependencies = RenderReferenceDependencies(
-            topicReferences: [],
-            linkReferences: [],
-            imageReferences: imageReferences
-        )
     }
     
-    private static func decodeImageReferences(container: KeyedDecodingContainer<RootNodeRenderReference.StringCodingKey>, images: [TopicImage]) throws -> [ImageReference] {
-        try images.map { image in
-            try container.decode(ImageReference.self, forKey: .init(stringValue: image.identifier.identifier))
+    private static func decodeDependencyReferences(container: KeyedDecodingContainer<RootNodeRenderReference.StringCodingKey>, images: [TopicImage], abstract: [RenderInlineContent]) throws -> [any RenderReference] {
+        var references: [any RenderReference] = []
+
+        for image in images {
+            references.append(
+                try container.decode(ImageReference.self, forKey: .init(stringValue: image.identifier.identifier))
+            )
         }
+        
+        for case .reference(identifier: let identifier, isActive: _, overridingTitle: _, overridingTitleInlineContent: _) in abstract {
+            references.append(
+                try container.decode(TopicRenderReference.self, forKey: .init(stringValue: identifier.identifier))
+            )
+        }
+        
+        return references
     }
 }
