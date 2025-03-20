@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -330,7 +330,7 @@ public struct ConvertAction: AsyncAction {
         } catch {
             if emitDigest {
                 let problem = Problem(description: (error as? DescribedError)?.errorDescription ?? error.localizedDescription, source: nil)
-                try outputConsumer.consume(problems: context.problems + [problem])
+                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems + [problem])
                 try moveOutput(from: temporaryFolder, to: targetDirectory)
             }
             throw error
