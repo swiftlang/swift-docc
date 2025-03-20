@@ -107,6 +107,7 @@ struct FileRequestHandler: RequestHandlerFactory {
         TopLevelAssetFileMetadata(filePath: "/favicon.ico", mimetype: "image/x-icon"),
         TopLevelAssetFileMetadata(filePath: "/theme-settings.js", mimetype: "text/javascript"),
         TopLevelAssetFileMetadata(filePath: "/theme-settings.json", mimetype: "application/json"),
+        TopLevelAssetFileMetadata(filePath: "/custom-scripts.json", mimetype: "application/json"),
     ]
     
     /// Returns a Boolean value that indicates whether the given path is located inside an asset folder.

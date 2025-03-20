@@ -120,6 +120,18 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         for downloadAsset in context.registeredDownloadsAssets(for: bundleID) {
             try copyAsset(downloadAsset, to: downloadsDirectory)
         }
+        
+        // Create custom scripts directory if needed. Do not append the bundle identifier.
+        let scriptsDirectory = targetFolder
+            .appendingPathComponent("custom-scripts", isDirectory: true)
+        if !fileManager.directoryExists(atPath: scriptsDirectory.path) {
+            try fileManager.createDirectory(at: scriptsDirectory, withIntermediateDirectories: true, attributes: nil)
+        }
+        
+        // Copy all registered custom scripts to the output directory.
+        for customScript in context.registeredCustomScripts(for: bundleID) {
+            try copyAsset(customScript, to: scriptsDirectory)
+        }
 
         // If the bundle contains a `header.html` file, inject a <template> into
         // the `index.html` file using its contents. This will only be done if
@@ -144,6 +156,16 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
                 try fileManager.removeItem(at: targetFile)
             }
             try fileManager._copyItem(at: themeSettings, to: targetFile)
+        }
+        
+        // Copy the `custom-scripts.json` file into the output directory if one
+        // is provided.
+        if let customScripts = bundle.customScripts {
+            let targetFile = targetFolder.appendingPathComponent(customScripts.lastPathComponent, isDirectory: false)
+            if fileManager.fileExists(atPath: targetFile.path) {
+                try fileManager.removeItem(at: targetFile)
+            }
+            try fileManager.copyItem(at: customScripts, to: targetFile)
         }
     }
     
