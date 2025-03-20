@@ -17,8 +17,14 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
 
-    /// Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.
-    public var isExperimentalLinkHierarchySerializationEnabled = false
+    /// Whether or not support for emitting a serialized version of the local link resolution information is enabled.
+    public var isLinkHierarchySerializationEnabled = true
+    
+    @available(*, deprecated, renamed: "isLinkHierarchySerializationEnabled", message: "Use 'isLinkHierarchySerializationEnabled' instead. This deprecated API will be removed after 6.2 is released")
+    public var isExperimentalLinkHierarchySerializationEnabled: Bool {
+        get { isLinkHierarchySerializationEnabled }
+        set { isLinkHierarchySerializationEnabled = newValue }
+    }
     
     /// Whether or not experimental support for combining overloaded symbol pages is enabled.
     public var isExperimentalOverloadedSymbolPresentationEnabled = false
