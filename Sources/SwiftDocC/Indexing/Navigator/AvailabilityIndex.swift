@@ -141,7 +141,7 @@ public class AvailabilityIndex: Codable {
         case data, interfaceLanguages, languageToPlatforms, platforms
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(identifierToInfo, forKey: .data)
         try container.encode(platforms, forKey: .platforms)
@@ -149,7 +149,7 @@ public class AvailabilityIndex: Codable {
         try container.encode(languageToPlatforms, forKey: .languageToPlatforms)
     }
     
-    public required init(from decoder: Decoder) throws {
+    public required init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         identifierToInfo = try values.decode([Int: Info].self, forKey: .data)
         platforms = try values.decode(Set<Platform.Name>.self, forKey: .platforms)

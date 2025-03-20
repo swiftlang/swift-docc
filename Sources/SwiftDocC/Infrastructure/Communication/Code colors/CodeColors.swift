@@ -180,7 +180,7 @@ extension CodeColors: Codable {
         case buildConfigId
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.background = try container.decodeIfPresent(SRGBColor.self, forKey: .background)
@@ -200,7 +200,7 @@ extension CodeColors: Codable {
         self.buildConfigId = try container.decodeIfPresent(SRGBColor.self, forKey: .buildConfigId)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(background, forKey: .background)
         try container.encode(lineHighlight, forKey: .lineHighlight)

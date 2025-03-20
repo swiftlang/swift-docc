@@ -127,8 +127,8 @@ class ExternalReferenceResolverServiceClient {
     }
 
     enum Error: Swift.Error {
-        case failedToEncodeRequest(underlyingError: Swift.Error)
-        case invalidResponse(underlyingError: Swift.Error)
+        case failedToEncodeRequest(underlyingError: any Swift.Error)
+        case invalidResponse(underlyingError: any Swift.Error)
         case invalidResponseType(receivedType: String)
         case missingPayload
         case timeout

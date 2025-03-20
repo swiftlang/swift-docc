@@ -57,7 +57,7 @@ public final class TutorialSection: Semantic, DirectiveConvertible, Abstracted, 
         return originalMarkup.range
     }
     
-    public var markup: Markup {
+    public var markup: any Markup {
         return originalMarkup
     }
     

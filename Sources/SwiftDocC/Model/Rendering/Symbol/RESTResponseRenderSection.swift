@@ -93,7 +93,7 @@ public struct RESTResponse: Codable, TextIndexing, Equatable {
         self.content = content
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         status = try container.decode(UInt.self, forKey: .status)
         reason = try container.decodeIfPresent(String.self, forKey: .reason)

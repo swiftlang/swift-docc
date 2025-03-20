@@ -412,7 +412,7 @@ class ExternalLinkableTests: XCTestCase {
             }
             
             // TODO: DataAsset doesn't round-trip encode/decode
-            summary.references = summary.references?.compactMap { (original: RenderReference) -> RenderReference? in
+            summary.references = summary.references?.compactMap { (original: RenderReference) -> (any RenderReference)? in
                 guard var imageRef = original as? ImageReference else { return nil }
                 imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
                     return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: bundle.id.rawValue)
@@ -420,7 +420,7 @@ class ExternalLinkableTests: XCTestCase {
                 imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
                     return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: bundle.id.rawValue), value)
                 })
-                return imageRef as RenderReference
+                return imageRef as (any RenderReference)
             }
             
             

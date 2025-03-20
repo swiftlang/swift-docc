@@ -48,8 +48,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     
     private(set) var context: DocumentationContext
     private let workspace: DocumentationWorkspace
-    private var currentDataProvider: DocumentationWorkspaceDataProvider?
-    private var dataProvider: DocumentationWorkspaceDataProvider
+    private var currentDataProvider: (any DocumentationWorkspaceDataProvider)?
+    private var dataProvider: any DocumentationWorkspaceDataProvider
     
     /// An optional closure that sets up a context before the conversion begins.
     @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
@@ -139,7 +139,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         currentPlatforms: [String : PlatformVersion]?,
         workspace: DocumentationWorkspace,
         context: DocumentationContext,
-        dataProvider: DocumentationWorkspaceDataProvider,
+        dataProvider: any DocumentationWorkspaceDataProvider,
         externalIDsToConvert: [String]? = nil,
         documentPathsToConvert: [String]? = nil,
         bundleDiscoveryOptions: BundleDiscoveryOptions,
@@ -265,7 +265,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         var indexingRecords = [IndexingRecord]()
         var linkSummaries = [LinkDestinationSummary]()
-        var assets = [RenderReferenceType : [RenderReference]]()
+        var assets = [RenderReferenceType : [any RenderReference]]()
         
         let references = context.knownPages
         let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
@@ -442,7 +442,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     ///   - problems: The array that the created problem should be appended to.
     ///   - identifier: A unique identifier the problem.
     private func recordProblem(
-        from error: Swift.Error,
+        from error: any Swift.Error,
         in problems: inout [Problem],
         withIdentifier identifier: String
     ) {

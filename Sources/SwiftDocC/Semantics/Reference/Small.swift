@@ -48,7 +48,7 @@ public final class Small: Semantic, AutomaticDirectiveConvertible, MarkupContain
         return [content]
     }
     
-    var childMarkup: [Markup] {
+    var childMarkup: [any Markup] {
         return content.elements
     }
     
@@ -61,7 +61,7 @@ public final class Small: Semantic, AutomaticDirectiveConvertible, MarkupContain
 }
 
 extension Small: RenderableDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         // Render the content normally
         let renderBlockContent = content.elements.flatMap { markupElement in
             return contentCompiler.visit(markupElement) as! [RenderBlockContent]

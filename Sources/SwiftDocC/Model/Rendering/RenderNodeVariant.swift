@@ -42,7 +42,7 @@ extension RenderNode {
                 }
             }
             
-            public init(from decoder: Decoder) throws {
+            public init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
 
                 if let language = try container.decodeIfPresent(String.self, forKey: .interfaceLanguage) {
@@ -53,7 +53,7 @@ extension RenderNode {
                 throw Error.invalidTrait
             }
             
-            public func encode(to encoder: Encoder) throws {
+            public func encode(to encoder: any Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
                 
                 switch self {
@@ -78,13 +78,13 @@ extension RenderNode {
             self.paths = paths
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             traits = try container.decode([Trait].self, forKey: .traits)
             paths = try container.decode([String].self, forKey: .paths)
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(traits, forKey: .traits)
             try container.encode(paths, forKey: .paths)

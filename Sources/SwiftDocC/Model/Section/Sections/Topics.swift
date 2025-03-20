@@ -18,13 +18,13 @@ public struct TopicsSection: GroupedSection {
     public static var title: String? {
         return "Topics"
     }
-    public var content: [Markup]
+    public var content: [any Markup]
     
     /// Creates a new topics section with the given content.
     /// - Parameters:
     ///   - content: The markup content elements for this section.
     ///   - originalLinkRangesByGroup: Any original link ranges, if links were modified.
-    init(content: [Markup], originalLinkRangesByGroup: GroupedLinkRanges = []) {
+    init(content: [any Markup], originalLinkRangesByGroup: GroupedLinkRanges = []) {
         self.content = content
         self.originalLinkRangesByGroup = originalLinkRangesByGroup.isEmpty ? linkRanges() : originalLinkRangesByGroup
     }

@@ -48,7 +48,7 @@ public struct DocumentationNode {
     ///
     /// After the ``semantic`` object is created, consulting this property is likely incorrect because
     /// it does not include information such as resolved links.
-    public var markup: Markup
+    public var markup: any Markup
     
     /// The parsed documentation structure that's described by the documentation content of this documentation node.
     public var semantic: Semantic!
@@ -83,7 +83,7 @@ public struct DocumentationNode {
         }
 
         let source: Source
-        let markup: Markup
+        let markup: any Markup
     }
 
     /// Where the documentation for the current node came from: source code or documentation extension.
@@ -167,7 +167,7 @@ public struct DocumentationNode {
     ///   - semantic: The parsed documentation structure that's described by the documentation content.
     ///   - platformNames: The names of the platforms for which the node is available.
     ///   - isVirtual: `true` if the node represents a virtual element that doesn't represent a rendered page of documentation, `false` otherwise.
-    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
+    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: any Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
         self.reference = reference
         self.kind = kind
         self.sourceLanguage = sourceLanguage
@@ -506,11 +506,11 @@ public struct DocumentationNode {
         context: DocumentationContext? = nil,
         engine: DiagnosticEngine
     ) -> (
-        markup: Markup,
+        markup: any Markup,
         docChunks: [DocumentationChunk],
         metadata: Metadata?
     ) {
-        let markup: Markup
+        let markup: any Markup
         var documentationChunks: [DocumentationChunk]
         
         var metadata: Metadata?
@@ -621,7 +621,7 @@ public struct DocumentationNode {
             if let documentationExtensionMarkup = documentationExtension?.markup {
                 // An `Article` always starts with a level 1 heading (and return `nil` if that's not the first child).
                 // For documentation extension files, this heading is a link to the symbol—which isn't part of the content—so it is ignored.
-                let documentationExtensionChildren = documentationExtensionMarkup.children.dropFirst().compactMap { $0 as? BlockMarkup }
+                let documentationExtensionChildren = documentationExtensionMarkup.children.dropFirst().compactMap { $0 as? (any BlockMarkup) }
                 
                 documentationChunks.append(DocumentationChunk(source: .documentationExtension, markup: documentationExtensionMarkup))
                 markup = Document(Array(docCommentMarkup.blockChildren) + documentationExtensionChildren)

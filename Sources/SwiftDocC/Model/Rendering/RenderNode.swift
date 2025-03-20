@@ -124,7 +124,7 @@ public struct RenderNode: VariantContainer {
     /// The references used in the render node. These can be references to other nodes, media, and more.
     ///
     /// The key for each reference is the ``RenderReferenceIdentifier/identifier`` of the reference's ``RenderReference/identifier``.
-    public var references: [String: RenderReference] = [:]
+    public var references: [String: any RenderReference] = [:]
         
     @available(*, deprecated, message: "Use 'hierarchyVariants' instead. This deprecated API will be removed after 6.2 is released")
     public var hierarchy: RenderHierarchy? {
@@ -150,7 +150,7 @@ public struct RenderNode: VariantContainer {
     public var abstractVariants: VariantCollection<[RenderInlineContent]?> = .init(defaultValue: nil)
     
     /// The default value of the main sections of a reference documentation node.
-    public var primaryContentSections: [RenderSection] {
+    public var primaryContentSections: [any RenderSection] {
         get { primaryContentSectionsVariants.compactMap(\.defaultValue?.section) }
         set {
             primaryContentSectionsVariants = newValue.enumerated().map { index, section in
@@ -253,7 +253,7 @@ public struct RenderNode: VariantContainer {
     /// The sections of this node.
     ///
     /// For tutorial pages, this property is the top-level grouping for the page's contents.
-    public var sections: [RenderSection] = []
+    public var sections: [any RenderSection] = []
     
     /// The kind of content represented by this node.
     public enum Kind: String, Codable {
@@ -263,7 +263,7 @@ public struct RenderNode: VariantContainer {
         case section
         case overview
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
             switch try container.decode(String.self) {
             case "symbol":

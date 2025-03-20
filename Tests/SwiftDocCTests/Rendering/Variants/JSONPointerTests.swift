@@ -63,7 +63,7 @@ class JSONPointerTests: XCTestCase {
     /// - "property"
     /// - Index 0
     /// - "property/with~special/~characters"
-    private func createCodingPathWithSpecialCharacters() throws -> [CodingKey] {
+    private func createCodingPathWithSpecialCharacters() throws -> [any CodingKey] {
         let encoder = JSONEncoder()
         let codingPathContainer = CodingPathContainer()
         encoder.userInfo[.codingPath] = codingPathContainer
@@ -76,7 +76,7 @@ class JSONPointerTests: XCTestCase {
             case property
         }
         
-        func encode(to encoder: Encoder) throws {
+        func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encodeIfPresent([NestedValue()], forKey: .property)
         }
@@ -86,13 +86,13 @@ class JSONPointerTests: XCTestCase {
                 case propertyWithSpecialCharacters = "property/with~special/~characters"
             }
             
-            func encode(to encoder: Encoder) throws {
+            func encode(to encoder: any Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
                 try container.encodeIfPresent(NestedValue(), forKey: .propertyWithSpecialCharacters)
             }
             
             struct NestedValue: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     (encoder.userInfo[.codingPath] as? CodingPathContainer)?.codingPath = encoder.codingPath
                 }
             }
@@ -100,7 +100,7 @@ class JSONPointerTests: XCTestCase {
     }
     
     class CodingPathContainer {
-        var codingPath: [CodingKey]? = nil
+        var codingPath: [any CodingKey]? = nil
     }
 }
 

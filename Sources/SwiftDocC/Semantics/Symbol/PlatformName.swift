@@ -30,12 +30,12 @@ public struct PlatformName: Codable, Hashable, Equatable {
         self.displayName = displayName ?? rawValue
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(displayName)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let name = try container.decode(String.self)
         self.init(operatingSystemName: name)

@@ -17,7 +17,7 @@ struct MergeAction: AsyncAction {
     var archives: [URL]
     var landingPageInfo: LandingPageInfo
     var outputURL: URL
-    var fileManager: FileManagerProtocol
+    var fileManager: any FileManagerProtocol
     
     /// Information about how the merge action should create landing page content for the combined archive
     enum LandingPageInfo {
@@ -200,7 +200,7 @@ struct MergeAction: AsyncAction {
         guard existingContents.isEmpty else {
             struct NonEmptyOutputError: DescribedError {
                 var existingContents: [URL]
-                var fileManager: FileManagerProtocol
+                var fileManager: any FileManagerProtocol
                 
                 var errorDescription: String {
                     var contentDescriptions = existingContents

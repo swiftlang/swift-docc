@@ -18,7 +18,7 @@ extension Semantic.Analyses {
     public struct ExtractAll<Child: Semantic & DirectiveConvertible> {
         public init() {}
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
             return Semantic.Analyses.extractAll(
                 childType: Child.self,
                 children: children,
@@ -31,13 +31,13 @@ extension Semantic.Analyses {
     }
     
     static func extractAll(
-        childType: DirectiveConvertible.Type,
-        children: some Sequence<Markup>,
+        childType: any DirectiveConvertible.Type,
+        children: some Sequence<any Markup>,
         source: URL?,
         for bundle: DocumentationBundle,
         in context: DocumentationContext,
         problems: inout [Problem]
-    ) -> ([DirectiveConvertible], remainder: MarkupContainer) {
+    ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {
         let (candidates, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
                 childType.canConvertDirective(childDirective) else {
@@ -57,7 +57,7 @@ extension Semantic.Analyses {
     public struct ExtractAllMarkup<Child: Markup> {
         public init() {}
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
             let (matches, remainder) = children.categorize {
                 $0 as? Child
             }
@@ -65,7 +65,7 @@ extension Semantic.Analyses {
         }
         
         @available(*, deprecated, renamed: "analyze(_:children:source:problems:)", message: "Use 'analyze(_:children:source:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
             analyze(directive, children: children, source: source, problems: &problems)
         }
     }

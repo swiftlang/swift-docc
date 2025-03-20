@@ -18,7 +18,7 @@ indirect enum JSON: Codable {
     case boolean(Bool)
     case null
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         if container.decodeNil() {
             self = .null
@@ -35,7 +35,7 @@ indirect enum JSON: Codable {
         }
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .dictionary(let dictionary):

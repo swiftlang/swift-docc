@@ -59,7 +59,7 @@ enum SymbolGraphConcurrentDecoder {
         
         var symbolGraph: SymbolGraph!
 
-        let decodeError = Synchronized<Error?>(nil)
+        let decodeError = Synchronized<(any Error)?>(nil)
         let symbols = Synchronized<[String: SymbolGraph.Symbol]>([:])
 
         let group = DispatchGroup()
@@ -120,7 +120,7 @@ enum SymbolGraphConcurrentDecoder {
         
         typealias CodingKeys = SymbolGraph.CodingKeys
 
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             
             let metadata = try container.decode(SymbolGraph.Metadata.self, forKey: .metadata)
@@ -137,7 +137,7 @@ enum SymbolGraphConcurrentDecoder {
 
         typealias CodingKeys = SymbolGraph.CodingKeys
 
-        init(from decoder: Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             
             symbols = try container.decode([OptionalBatchSymbol].self, forKey: .symbols)
@@ -156,7 +156,7 @@ enum SymbolGraphConcurrentDecoder {
         ///
         /// > Warning: Crashes when decoding using a decoder that is not correctly
         /// configured for concurrent decoding.
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let check = decoder.userInfo[CodingUserInfoKey.batchIndex] as! Int
             let count = (decoder.userInfo[CodingUserInfoKey.symbolCounter] as! Counter).increment()
             let batches = decoder.userInfo[CodingUserInfoKey.batchCount] as! Int

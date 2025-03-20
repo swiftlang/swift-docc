@@ -88,8 +88,8 @@ public struct TopicReferenceResolutionErrorInfo: Hashable {
 }
 
 extension TopicReferenceResolutionErrorInfo {
-    init(_ error: Error, solutions: [Solution] = []) {
-        if let describedError = error as? DescribedError {
+    init(_ error: any Error, solutions: [Solution] = []) {
+        if let describedError = error as? (any DescribedError) {
             self.message = describedError.errorDescription
             self.note = describedError.recoverySuggestion
         } else {
@@ -276,7 +276,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         case url, interfaceLanguage
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         enum TopicReferenceDeserializationError: Error {
             case unexpectedURLScheme(url: URL, scheme: String)
             case missingBundleIdentifier(url: URL)
@@ -417,7 +417,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         return url.lastPathComponent
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(url.absoluteString, forKey: .url)
         

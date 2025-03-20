@@ -106,7 +106,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
         markupContainer.elements.forEach { markupResolver.visit($0) }
     }
     
-    mutating func visitMarkup(_ markup: Markup) {
+    mutating func visitMarkup(_ markup: any Markup) {
         visitMarkupContainer(MarkupContainer(markup))
     }
 
@@ -180,7 +180,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
 
     mutating func visitComment(_ comment: Comment) { }
 
-    mutating func visitSection(_ section: Section) {
+    mutating func visitSection(_ section: any Section) {
         for markup in section.content { visitMarkup(markup) }
     }
 

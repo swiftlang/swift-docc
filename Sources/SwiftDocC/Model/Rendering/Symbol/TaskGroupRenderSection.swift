@@ -17,7 +17,7 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
     /// An optional abstract summary for the section.
     public let abstract: [RenderInlineContent]?
     /// An optional discussion for the section.
-    public var discussion: RenderSection? {
+    public var discussion: (any RenderSection)? {
         get {
             typeErasedSection?.value
         }
@@ -47,7 +47,7 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
     ///   - identifiers: A list of topic-graph references.
     ///   - generated: If `true`, this is an automatically generated group. If `false`, this is an authored group.
     ///   - anchor: An optional anchor that can be used to link to the task group.
-    public init(title: String?, abstract: [RenderInlineContent]?, discussion: RenderSection?, identifiers: [String], generated: Bool = false, anchor: String? = nil) {
+    public init(title: String?, abstract: [RenderInlineContent]?, discussion: (any RenderSection)?, identifiers: [String], generated: Bool = false, anchor: String? = nil) {
         self.title = title
         self.abstract = abstract
         self.identifiers = identifiers
@@ -61,7 +61,7 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
         case title, abstract, discussion, identifiers, generated, anchor
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encodeIfPresent(title, forKey: .title)
@@ -74,7 +74,7 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
         try container.encodeIfPresent(anchor, forKey: .anchor)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         title = try container.decodeIfPresent(String.self, forKey: .title)

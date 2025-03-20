@@ -9,7 +9,7 @@
 */
 
 extension TutorialSectionsRenderSection {
-    public func indexingRecords(onPage page: ResolvedTopicReference, references: [String: RenderReference]) throws -> [IndexingRecord] {
+    public func indexingRecords(onPage page: ResolvedTopicReference, references: [String: any RenderReference]) throws -> [IndexingRecord] {
         return tasks.map { section -> IndexingRecord in
             let sectionReference = page.withFragment(section.anchor)
             let summary: String

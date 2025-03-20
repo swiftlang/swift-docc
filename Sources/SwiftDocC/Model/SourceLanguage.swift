@@ -141,7 +141,7 @@ public struct SourceLanguage: Hashable, Codable, Comparable {
         case linkDisambiguationID
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: SourceLanguage.CodingKeys.self)
         
         let name = try container.decode(String.self, forKey: SourceLanguage.CodingKeys.name)
@@ -152,7 +152,7 @@ public struct SourceLanguage: Hashable, Codable, Comparable {
         self.init(name: name, id: id, idAliases: idAliases, linkDisambiguationID: linkDisambiguationID)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: SourceLanguage.CodingKeys.self)
         
         try container.encode(self.name, forKey: SourceLanguage.CodingKeys.name)

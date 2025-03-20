@@ -118,7 +118,7 @@ extension PathHierarchy.FileRepresentation.Node {
         case symbolID
     }
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.name = try container.decode(String.self, forKey: .name)
@@ -127,7 +127,7 @@ extension PathHierarchy.FileRepresentation.Node {
         self.symbolID = try container.decodeIfPresent(SymbolGraph.Symbol.Identifier.self, forKey: .symbolID)
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container: KeyedEncodingContainer = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(self.name, forKey: .name)

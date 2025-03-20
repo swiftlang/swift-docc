@@ -52,7 +52,7 @@ public extension DataRepresentable {
 
 /// An abstract representation of a folder, containing some files or folders.
 public struct Folder: File {
-    public init(name: String, content: [File]) {
+    public init(name: String, content: [any File]) {
         self.name = name
         self.content = content
     }
@@ -60,9 +60,9 @@ public struct Folder: File {
     public let name: String
 
     /// The files and sub folders that this folder contains.
-    public let content: [File]
+    public let content: [any File]
     
-    public func appendingFile(_ newFile: File) -> Folder {
+    public func appendingFile(_ newFile: any File) -> Folder {
         return Folder(name: name, content: content + [newFile])
     }
 
@@ -76,7 +76,7 @@ public struct Folder: File {
 
 extension Folder {
     /// Returns a flat list of a folder's recursive listing for testing purposes.
-    public var recursiveContent: [File] {
+    public var recursiveContent: [any File] {
         var result = content
         for file in content {
             if let content = (file as? Folder)?.recursiveContent {
@@ -249,7 +249,7 @@ extension XCTestCase {
     /// - Parameters:
     ///   - content: The files and subfolders to write to a temporary location
     /// - Returns: The temporary location where the temporary folder was written.
-    public func createTempFolder(content: [File]) throws -> URL {
+    public func createTempFolder(content: [any File]) throws -> URL {
         let temporaryDirectory = try createTemporaryDirectory().appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
         let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
         try folder.write(to: temporaryDirectory)
@@ -276,13 +276,13 @@ extension Folder {
         filePaths: [String],
         renderNodeReferencePrefix: String? = nil,
         isEmptyDirectoryCheck: (String) -> Bool = { _ in false }
-    ) -> [File] {
+    ) -> [any File] {
         guard !filePaths.isEmpty else {
             return []
         }
         typealias Path = [String]
         
-        func _makeStructure(paths: [Path], accumulatedBasePath: String) -> [File] {
+        func _makeStructure(paths: [Path], accumulatedBasePath: String) -> [any File] {
             assert(paths.allSatisfy { !$0.isEmpty })
             
             let grouped = [String: [Path]](grouping: paths, by: { $0.first! }).mapValues {
@@ -332,7 +332,7 @@ private struct DumpableNode {
     var name: String
     var children: [DumpableNode]?
     
-    init(_ file: File) {
+    init(_ file: any File) {
         if let folder = file as? Folder {
             name = file.name
             children = folder.content.map { DumpableNode($0) }

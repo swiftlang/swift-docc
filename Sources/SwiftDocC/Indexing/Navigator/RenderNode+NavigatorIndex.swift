@@ -16,9 +16,9 @@ protocol NavigatorIndexableRenderNodeRepresentation<Metadata> {
     
     // Information that's the same for all language variants
     var identifier: ResolvedTopicReference { get }
-    var references: [String: RenderReference] { get }
+    var references: [String: any RenderReference] { get }
     var kind: RenderNode.Kind { get }
-    var sections: [RenderSection] { get }
+    var sections: [any RenderSection] { get }
     
     // Information that's different for each language variant
     var metadata: Metadata { get }

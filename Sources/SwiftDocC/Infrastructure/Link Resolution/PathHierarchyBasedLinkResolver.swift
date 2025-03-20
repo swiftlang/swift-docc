@@ -147,7 +147,7 @@ final class PathHierarchyBasedLinkResolver {
         )
     }
     
-    private func addTutorial(reference: ResolvedTopicReference, source: URL, landmarks: [Landmark]) {
+    private func addTutorial(reference: ResolvedTopicReference, source: URL, landmarks: [any Landmark]) {
         let tutorialID = pathHierarchy.addTutorial(name: linkName(filename: source.deletingPathExtension().lastPathComponent))
         resolvedReferenceMap[tutorialID] = reference
         

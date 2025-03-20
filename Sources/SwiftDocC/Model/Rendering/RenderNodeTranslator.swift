@@ -50,7 +50,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     var symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     
-    public mutating func visitCode(_ code: Code) -> RenderTree? {
+    public mutating func visitCode(_ code: Code) -> (any RenderTree)? {
         let fileType = NSString(string: code.fileName).pathExtension
         guard let fileIdentifier = context.identifier(forAssetName: code.fileReference.path, in: identifier) else {
             return nil
@@ -88,7 +88,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
     }
     
-    public mutating func visitSteps(_ steps: Steps) -> RenderTree? {
+    public mutating func visitSteps(_ steps: Steps) -> (any RenderTree)? {
         let stepsContent = steps.content.flatMap { child -> [RenderBlockContent] in
             return visit(child) as! [RenderBlockContent]
         }
@@ -96,7 +96,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return stepsContent
     }
     
-    public mutating func visitStep(_ step: Step) -> RenderTree? {
+    public mutating func visitStep(_ step: Step) -> (any RenderTree)? {
         let renderBlock = visitMarkupContainer(MarkupContainer(step.content)) as! [RenderBlockContent]
         let caption = visitMarkupContainer(MarkupContainer(step.caption)) as! [RenderBlockContent]
         
@@ -112,7 +112,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return result
     }
     
-    public mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> RenderTree? {
+    public mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> (any RenderTree)? {
         let introduction = contentLayouts(tutorialSection.introduction)
         let stepsContent: [RenderBlockContent]
         if let steps = tutorialSection.stepsContent {
@@ -131,7 +131,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return TutorialSectionsRenderSection.Section(title: tutorialSection.title, contentSection: introduction, stepsSection: stepsContent, anchor: urlReadableFragment(tutorialSection.title))
     }
     
-    public mutating func visitTutorial(_ tutorial: Tutorial) -> RenderTree? {
+    public mutating func visitTutorial(_ tutorial: Tutorial) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .tutorial)
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
@@ -231,7 +231,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let nextTopicIndex, nextTopicIndex < surroundingTopics.count {
             let nextTopicReference = surroundingTopics[nextTopicIndex]
             let nextTopicReferenceIdentifier = visitResolvedTopicReference(nextTopicReference.reference) as! RenderReferenceIdentifier
-            let nextTopic = try! context.entity(with: nextTopicReference.reference).semantic as! Abstracted & Titled
+            let nextTopic = try! context.entity(with: nextTopicReference.reference).semantic as! any (Abstracted & Titled)
             
             let image = callToActionImage.map { visit($0) as! RenderReferenceIdentifier }
             
@@ -259,7 +259,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return CallToActionSection(title: title, abstract: abstract, media: image, action: action, featuredEyebrow: eyebrow)
     }
     
-    private mutating func inlineAbstractContentInTopic(_ topic: Abstracted) -> [RenderInlineContent] {
+    private mutating func inlineAbstractContentInTopic(_ topic: any Abstracted) -> [RenderInlineContent] {
         if let abstract = topic.abstract {
             return (visitMarkupContainer(MarkupContainer(abstract)) as! [RenderBlockContent]).firstParagraph
         }
@@ -267,7 +267,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return []
     }
     
-    public mutating func visitIntro(_ intro: Intro) -> RenderTree? {
+    public mutating func visitIntro(_ intro: Intro) -> (any RenderTree)? {
         var section = IntroRenderSection(title: intro.title)
         section.content = visitMarkupContainer(intro.content) as! [RenderBlockContent]
         
@@ -282,11 +282,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     /// Add a requirement reference and return its identifier.
-    public mutating func visitXcodeRequirement(_ requirement: XcodeRequirement) -> RenderTree? {
+    public mutating func visitXcodeRequirement(_ requirement: XcodeRequirement) -> (any RenderTree)? {
         fatalError("TODO")
     }
     
-    public mutating func visitAssessments(_ assessments: Assessments) -> RenderTree? {
+    public mutating func visitAssessments(_ assessments: Assessments) -> (any RenderTree)? {
         let renderSectionAssessments: [TutorialAssessmentsRenderSection.Assessment] = assessments.questions.map { question in
             return self.visitMultipleChoice(question) as! TutorialAssessmentsRenderSection.Assessment
         }
@@ -294,13 +294,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return TutorialAssessmentsRenderSection(assessments: renderSectionAssessments, anchor: RenderHierarchyTranslator.assessmentsAnchor)
     }
     
-    public mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) -> RenderTree? {
+    public mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) -> (any RenderTree)? {
         let questionPhrasing = visit(multipleChoice.questionPhrasing) as! [RenderBlockContent]
         let content = visitMarkupContainer(multipleChoice.content) as! [RenderBlockContent]
         return TutorialAssessmentsRenderSection.Assessment(title: questionPhrasing, content: content, choices: multipleChoice.choices.map { visitChoice($0) } as! [TutorialAssessmentsRenderSection.Assessment.Choice])
     }
     
-    public mutating func visitChoice(_ choice: Choice) -> RenderTree? {
+    public mutating func visitChoice(_ choice: Choice) -> (any RenderTree)? {
         return TutorialAssessmentsRenderSection.Assessment.Choice(
             content: visitMarkupContainer(choice.content) as! [RenderBlockContent],
             isCorrect: choice.isCorrect,
@@ -309,12 +309,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         )
     }
     
-    public mutating func visitJustification(_ justification: Justification) -> RenderTree? {
+    public mutating func visitJustification(_ justification: Justification) -> (any RenderTree)? {
         return visitMarkupContainer(justification.content) as! [RenderBlockContent]
     }
         
     // Visits a container and expects the elements to be block level elements
-    public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> RenderTree? {
+    public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> (any RenderTree)? {
         var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
         let content = markupContainer.elements.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderBlockContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
@@ -326,7 +326,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     // Visits a collection of inline markup elements.
-    public mutating func visitMarkup(_ markup: [Markup]) -> RenderTree? {
+    public mutating func visitMarkup(_ markup: [any Markup]) -> (any RenderTree)? {
         var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
         let content = markup.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderInlineContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
@@ -337,7 +337,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
 
     // Visits a single inline markup element.
-    public mutating func visitMarkup(_ markup: Markup) -> RenderTree? {
+    public mutating func visitMarkup(_ markup: any Markup) -> (any RenderTree)? {
         return visitMarkup(Array(markup.children))
     }
     
@@ -358,7 +358,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         for node in context.breadthFirstSearch(from: identifier) {
             guard let entity = try? context.entity(with: node.reference),
-                  let durationMinutes = (entity.semantic as? Timed)?.durationMinutes
+                  let durationMinutes = (entity.semantic as? (any Timed))?.durationMinutes
             else {
                 continue
             }
@@ -373,7 +373,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
 
     @available(*, deprecated) // This is a deprecated protocol requirement
-    public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> RenderTree? {
+    public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> (any RenderTree)? {
         visitTutorialTableOfContents(technology)
     }
 
@@ -417,8 +417,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return node
     }
     
-    private mutating func createTopicRenderReferences() -> [String: RenderReference] {
-        var renderReferences: [String: RenderReference] = [:]
+    private mutating func createTopicRenderReferences() -> [String: any RenderReference] {
+        var renderReferences: [String: any RenderReference] = [:]
         let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
         
         for reference in collectedTopicReferences {
@@ -477,7 +477,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.references.merge(references) { _, new in new }
     }
 
-    public mutating func visitVolume(_ volume: Volume) -> RenderTree? {
+    public mutating func visitVolume(_ volume: Volume) -> (any RenderTree)? {
         var volumeSection = VolumeRenderSection(name: volume.name)
         volumeSection.image = volume.image.map { visit($0) as! RenderReferenceIdentifier }
         volumeSection.content = volume.content.map { visitMarkupContainer($0) as! [RenderBlockContent] }
@@ -485,11 +485,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return volumeSection
     }
     
-    public mutating func visitImageMedia(_ imageMedia: ImageMedia) -> RenderTree? {
+    public mutating func visitImageMedia(_ imageMedia: ImageMedia) -> (any RenderTree)? {
         return createAndRegisterRenderReference(forMedia: imageMedia.source, altText: imageMedia.altText)
     }
     
-    public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> RenderTree? {
+    public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> (any RenderTree)? {
         return createAndRegisterRenderReference(
             forMedia: videoMedia.source,
             poster: videoMedia.poster,
@@ -497,7 +497,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         )
     }
     
-    public mutating func visitChapter(_ chapter: Chapter) -> RenderTree? {
+    public mutating func visitChapter(_ chapter: Chapter) -> (any RenderTree)? {
         guard !chapter.topicReferences.isEmpty else {
             // If the chapter has no tutorials, return `nil`.
             return nil
@@ -511,7 +511,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return renderChapter
     }
     
-    public mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> RenderTree? {
+    public mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> (any RenderTree)? {
         var layout: ContentAndMediaSection.Layout? {
             switch contentAndMedia.layout {
             case .horizontal: return .horizontal
@@ -529,7 +529,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return section
     }
         
-    public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> RenderTree? {
+    public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> (any RenderTree)? {
         switch context.resolve(tutorialReference.topic, in: bundle.rootReference) {
         case let .failure(reference, _):
             return RenderReferenceIdentifier(reference.topicURL.absoluteString)
@@ -538,12 +538,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
     }
     
-    public mutating func visitResolvedTopicReference(_ resolvedTopicReference: ResolvedTopicReference) -> RenderTree {
+    public mutating func visitResolvedTopicReference(_ resolvedTopicReference: ResolvedTopicReference) -> any RenderTree {
         collectedTopicReferences.append(resolvedTopicReference)
         return RenderReferenceIdentifier(resolvedTopicReference.absoluteString)
     }
         
-    public mutating func visitResources(_ resources: Resources) -> RenderTree? {
+    public mutating func visitResources(_ resources: Resources) -> (any RenderTree)? {
         let tiles = resources.tiles.map { visitTile($0) as! RenderTile }
         let content = visitMarkupContainer(resources.content) as! [RenderBlockContent]
         return ResourcesRenderSection(tiles: tiles, content: content)
@@ -588,7 +588,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return action
     }
     
-    public mutating func visitTile(_ tile: Tile) -> RenderTree? {
+    public mutating func visitTile(_ tile: Tile) -> (any RenderTree)? {
         let action = tile.destination.map { visitLink($0, defaultTitle: RenderTile.defaultCallToActionTitle(for: tile.identifier)) }
         
         var section = RenderTile(identifier: .init(tileIdentifier: tile.identifier), title: tile.title, action: action, media: nil)
@@ -597,7 +597,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return section
     }
     
-    public mutating func visitArticle(_ article: Article) -> RenderTree? {
+    public mutating func visitArticle(_ article: Article) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .article)
         // Contains symbol references declared in the Topics section.
         var topicSectionContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
@@ -875,7 +875,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return node
     }
     
-    public mutating func visitTutorialArticle(_ article: TutorialArticle) -> RenderTree? {
+    public mutating func visitTutorialArticle(_ article: TutorialArticle) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .article)
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
@@ -962,15 +962,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
     }
     
-    public mutating func visitStack(_ stack: Stack) -> RenderTree? {
+    public mutating func visitStack(_ stack: Stack) -> (any RenderTree)? {
         return stack.contentAndMedia.map { self.visitContentAndMedia($0) as! ContentAndMediaSection } as [ContentAndMediaSection]
     }
     
-    public mutating func visitComment(_ comment: Comment) -> RenderTree? {
+    public mutating func visitComment(_ comment: Comment) -> (any RenderTree)? {
         return nil
     }
     
-    public mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> RenderTree? {
+    public mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> (any RenderTree)? {
         return nil
     }
 
@@ -1021,7 +1021,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     ///
     ///   - contentCompiler: The current render content compiler.
     private mutating func renderGroups(
-        _ topics: GroupedSection,
+        _ topics: any GroupedSection,
         allowExternalLinks: Bool,
         allowedTraits: Set<DocumentationDataVariantsTrait>,
         availableTraits: Set<DocumentationDataVariantsTrait>,
@@ -1195,7 +1195,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
     }
     
-    public mutating func visitSymbol(_ symbol: Symbol) -> RenderTree? {
+    public mutating func visitSymbol(_ symbol: Symbol) -> (any RenderTree)? {
         let documentationNode = try! context.entity(with: identifier)
         
         let identifier = identifier.addingSourceLanguages(documentationNode.availableSourceLanguages)
@@ -1842,7 +1842,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     mutating func createRenderSections(
         for symbol: Symbol,
         renderNode: inout RenderNode,
-        translators: [RenderSectionTranslator]
+        translators: [any RenderSectionTranslator]
     ) -> [VariantCollection<CodableContentSection?>] {
         translators.compactMap { translator in
             translator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &self)
@@ -1913,7 +1913,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     /// Generate a RenderProperty object from markup content and symbol data.
-    mutating func createRenderProperty(name: String, contents: [Markup], required: Bool, symbol: SymbolGraph.Symbol?) -> RenderProperty {
+    mutating func createRenderProperty(name: String, contents: [any Markup], required: Bool, symbol: SymbolGraph.Symbol?) -> RenderProperty {
         let parameterContent = self.visitMarkupContainer(
             MarkupContainer(contents)
         ) as! [RenderBlockContent]

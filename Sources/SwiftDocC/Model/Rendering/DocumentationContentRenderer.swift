@@ -29,14 +29,14 @@ extension RenderReferenceDependencies: Codable {
         case topicReferences, linkReferences, imageReferences
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(topicReferences, forKey: .topicReferences)
         try container.encode(linkReferences, forKey: .linkReferences)
         try container.encodeIfNotEmpty(imageReferences, forKey: .imageReferences)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         topicReferences = try container.decode([ResolvedTopicReference].self, forKey: .topicReferences)
         linkReferences = try container.decode([LinkReference].self, forKey: .linkReferences)
@@ -360,7 +360,7 @@ public class DocumentationContentRenderer {
                 extractAbstract(from: abstract)
             } ?? .init(defaultValue: [])
         } else {
-            abstractContent = .init(defaultValue: extractAbstract(from: (abstractedNode?.semantic as? Abstracted)?.abstract))
+            abstractContent = .init(defaultValue: extractAbstract(from: (abstractedNode?.semantic as? (any Abstracted))?.abstract))
         }
         
         // Collect the reference dependencies.
@@ -369,7 +369,7 @@ public class DocumentationContentRenderer {
 
         let isRequired = (node?.semantic as? Symbol)?.isRequired ?? false
 
-        let estimatedTime = (node?.semantic as? Timed)?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
+        let estimatedTime = (node?.semantic as? (any Timed))?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
         
         // Add key information for property lists.
         // If the symbol overrides the title with a custom name, display the symbol key.

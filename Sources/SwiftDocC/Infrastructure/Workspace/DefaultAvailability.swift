@@ -94,7 +94,7 @@ public struct DefaultAvailability: Codable, Equatable {
             self.versionInformation = .unavailable
         }
 
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             platformName = try values.decode(PlatformName.self, forKey: .platformName)
             if let unavailable = try values.decodeIfPresent(Bool.self, forKey: .unavailable), unavailable == true {
@@ -112,7 +112,7 @@ public struct DefaultAvailability: Codable, Equatable {
             }
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(platformName, forKey: .platformName)
             switch versionInformation {
@@ -157,13 +157,13 @@ public struct DefaultAvailability: Codable, Equatable {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let modules = try container.decode([String: [ModuleAvailability]].self)
         self.init(with: modules)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(modules)
     }

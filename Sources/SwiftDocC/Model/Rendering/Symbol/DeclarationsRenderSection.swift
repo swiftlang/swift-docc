@@ -31,7 +31,7 @@ extension DeclarationsRenderSection: TextIndexing {
         return []
     }
     
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return ""
     }
 }
@@ -150,7 +150,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
             case text, kind, identifier, preciseIdentifier, highlight, otherDeclarations
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             
             try container.encode(text, forKey: .text)
@@ -160,7 +160,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
             try container.encodeIfPresent(highlight, forKey: .highlight)
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             
             text = try container.decode(String.self, forKey: .text)
@@ -229,7 +229,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         self.otherDeclarations = otherDeclarations
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         tokens = try container.decode([Token].self, forKey: .tokens)
         platforms = try container.decode([PlatformName?].self, forKey: .platforms)
@@ -237,7 +237,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         otherDeclarations = try container.decodeIfPresent(OtherDeclarations.self, forKey: .otherDeclarations)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: DeclarationRenderSection.CodingKeys.self)
         try container.encode(self.tokens, forKey: DeclarationRenderSection.CodingKeys.tokens)
         try container.encode(self.platforms, forKey: DeclarationRenderSection.CodingKeys.platforms)
@@ -251,7 +251,7 @@ extension DeclarationRenderSection: TextIndexing {
         return []
     }
 
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return ""
     }
 }

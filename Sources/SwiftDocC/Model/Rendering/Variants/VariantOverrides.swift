@@ -49,12 +49,12 @@ public class VariantOverrides: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(values)
     }
     
-    public required init(from decoder: Decoder) throws {
+    public required init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.values = try container.decode([VariantOverride].self)
     }

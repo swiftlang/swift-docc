@@ -34,7 +34,7 @@ public struct RelationshipsRenderSection: RenderSection, Equatable {
         self.identifiers = identifiers
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         type = try container.decode(String.self, forKey: .type)
         title = try container.decode(String.self, forKey: .title)

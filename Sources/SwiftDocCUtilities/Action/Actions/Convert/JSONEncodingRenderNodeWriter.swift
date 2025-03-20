@@ -18,7 +18,7 @@ class JSONEncodingRenderNodeWriter {
     private let renderNodeURLGenerator: NodeURLGenerator
     private let targetFolder: URL
     private let transformForStaticHostingIndexHTML: URL?
-    private let fileManager: FileManagerProtocol
+    private let fileManager: any FileManagerProtocol
     private let renderReferenceCache = RenderReferenceCache([:])
     
     /// Creates a writer object that write render node JSON into a given folder.
@@ -26,7 +26,7 @@ class JSONEncodingRenderNodeWriter {
     /// - Parameters:
     ///   - targetFolder: The folder to which the writer object writes the files.
     ///   - fileManager: The file manager with which the writer object writes data to files.
-    init(targetFolder: URL, fileManager: FileManagerProtocol, transformForStaticHostingIndexHTML: URL?) {
+    init(targetFolder: URL, fileManager: any FileManagerProtocol, transformForStaticHostingIndexHTML: URL?) {
         self.renderNodeURLGenerator = NodeURLGenerator(
             baseURL: targetFolder.appendingPathComponent("data", isDirectory: true)
         )

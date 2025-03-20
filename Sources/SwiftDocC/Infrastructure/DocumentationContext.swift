@@ -16,7 +16,7 @@ import SymbolKit
 @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationContextDataProvider {
     /// An object to notify when bundles are added or removed.
-    var delegate: DocumentationContextDataProviderDelegate? { get set }
+    var delegate: (any DocumentationContextDataProviderDelegate)? { get set }
     
     /// The documentation bundles that this data provider provides.
     var bundles: [BundleIdentifier: DocumentationBundle] { get }
@@ -42,7 +42,7 @@ public protocol DocumentationContextDataProviderDelegate: AnyObject {
     ///   - bundle: The bundle that was added.
     ///
     /// - Note: This method is called after the `dataProvider` has been added the bundle to its `bundles` property.
-    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle:  DocumentationBundle) throws
+    func dataProvider(_ dataProvider: any DocumentationContextDataProvider, didAddBundle bundle:  DocumentationBundle) throws
     
     /// Called when the `dataProvider` has removed a documentation bundle from its list of `bundles`.
     ///
@@ -51,7 +51,7 @@ public protocol DocumentationContextDataProviderDelegate: AnyObject {
     ///   - bundle: The bundle that was removed.
     ///
     /// - Note: This method is called after the `dataProvider` has been removed the bundle from its `bundles` property.
-    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle:  DocumentationBundle) throws
+    func dataProvider(_ dataProvider: any DocumentationContextDataProvider, didRemoveBundle bundle:  DocumentationBundle) throws
 }
 
 /// Documentation bundles use a string value as a unique identifier.
@@ -119,14 +119,14 @@ public class DocumentationContext {
     
     private enum _Provider {
         @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
-        case legacy(DocumentationContextDataProvider)
-        case new(DataProvider)
+        case legacy(any DocumentationContextDataProvider)
+        case new(any DataProvider)
     }
     private var dataProvider: _Provider
 
     /// The provider of documentation bundles for this context.
     @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
-    private var _legacyDataProvider: DocumentationContextDataProvider! {
+    private var _legacyDataProvider: (any DocumentationContextDataProvider)! {
         get {
             switch dataProvider {
             case .legacy(let legacyDataProvider):
@@ -294,7 +294,7 @@ public class DocumentationContext {
     /// - Throws: If an error is encountered while registering a documentation bundle.
     @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public init(
-        dataProvider: DocumentationContextDataProvider,
+        dataProvider: any DocumentationContextDataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
     ) throws {
@@ -320,7 +320,7 @@ public class DocumentationContext {
     /// - Throws: If an error is encountered while registering a documentation bundle.
     package init(
         bundle: DocumentationBundle,
-        dataProvider: DataProvider,
+        dataProvider: any DataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
     ) throws {
@@ -340,7 +340,7 @@ public class DocumentationContext {
     ///   - dataProvider: The provider that added this bundle.
     ///   - bundle: The bundle that was added.
     @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
+    public func dataProvider(_ dataProvider: any DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
             // Enable reference caching for this documentation bundle.
             ResolvedTopicReference.enableReferenceCaching(for: bundle.id)
@@ -355,7 +355,7 @@ public class DocumentationContext {
     ///   - dataProvider: The provider that removed this bundle.
     ///   - bundle: The bundle that was removed.
     @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
+    public func dataProvider(_ dataProvider: any DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         linkResolver.localResolver?.unregisterBundle(identifier: bundle.id)
         
         // Purge the reference cache for this bundle and disable reference caching for
@@ -893,7 +893,7 @@ public class DocumentationContext {
         
         var references: [ResolvedTopicReference: URL] = [:]
 
-        let decodeError = Synchronized<Error?>(nil)
+        let decodeError = Synchronized<(any Error)?>(nil)
         
         // Load and analyze documents concurrently
         let analyzedDocuments: [(URL, Semantic)] = bundle.markupURLs.concurrentPerform { url, results in
@@ -943,7 +943,7 @@ public class DocumentationContext {
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
-            let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is AnyLink
+            let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is (any AnyLink)
             
             if let firstFoundAtURL = references[reference], !isDocumentationExtension {
                 let problem = Problem(
@@ -1039,7 +1039,7 @@ public class DocumentationContext {
         return (tutorialTableOfContentsResults, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
-    private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
+    private func insertLandmarks(_ landmarks: some Sequence<any Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
         for landmark in landmarks {
             guard let range = landmark.range else {
                 continue
@@ -1328,7 +1328,7 @@ public class DocumentationContext {
             // Track the symbols that have multiple matching documentation extension files for diagnostics.
             var symbolsWithMultipleDocumentationExtensionMatches = [ResolvedTopicReference: [SemanticResult<Article>]]()
             for documentationExtension in documentationExtensions {
-                guard let link = documentationExtension.value.title?.child(at: 0) as? AnyLink else {
+                guard let link = documentationExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
                 
@@ -1736,7 +1736,7 @@ public class DocumentationContext {
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
     func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], moduleReference: ResolvedTopicReference, fileURL otherSymbolGraphURL: URL?) throws {
-        let mergeError = Synchronized<Error?>(nil)
+        let mergeError = Synchronized<(any Error)?>(nil)
         
         let results: [AddSymbolResultWithProblems] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
             guard let defaultSymbol = symbol.defaultSymbol, let swiftSelector = symbol.defaultSelector, let module = symbol.modules[swiftSelector] else {
@@ -2157,7 +2157,7 @@ public class DocumentationContext {
             for sourceLanguage in node.availableSourceLanguages {
                 symbol.automaticTaskGroupsVariants[.init(interfaceLanguage: sourceLanguage.id)] = [automaticTaskGroup]
             }
-        } else if var taskGroupProviding = node.semantic as? AutomaticTaskGroupsProviding {
+        } else if var taskGroupProviding = node.semantic as? (any AutomaticTaskGroupsProviding) {
             taskGroupProviding.automaticTaskGroups = [automaticTaskGroup]
         }
         
@@ -2206,7 +2206,7 @@ public class DocumentationContext {
         let discoveryGroup = DispatchGroup()
         let discoveryQueue = DispatchQueue(label: "org.swift.docc.Discovery", qos: .unspecified, attributes: .concurrent, autoreleaseFrequency: .workItem)
         
-        let discoveryError = Synchronized<Error?>(nil)
+        let discoveryError = Synchronized<(any Error)?>(nil)
 
         // Load all bundle symbol graphs into the loader.
         var symbolGraphLoader: SymbolGraphLoader!
@@ -2784,12 +2784,12 @@ public class DocumentationContext {
             let symbolPath = reference.url.pathComponents.dropFirst(2).joined(separator: "/")
             let firstExtension = documentationExtensions.first!
             
-            guard let link = firstExtension.value.title?.child(at: 0) as? AnyLink else {
+            guard let link = firstExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                 fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(firstExtension.source.absoluteString.singleQuoted)")
             }
             let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
             let notes: [DiagnosticNote] = documentationExtensions.dropFirst().map { documentationExtension in
-                guard let link = documentationExtension.value.title?.child(at: 0) as? AnyLink else {
+                guard let link = documentationExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
                 return DiagnosticNote(source: documentationExtension.source, range: link.range ?? zeroRange, message: "\(symbolPath.singleQuoted) is also documented here.")

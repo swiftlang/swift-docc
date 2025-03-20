@@ -369,7 +369,7 @@ public enum RenderBlockContent: Equatable {
         
         /// Encodes the aside style into the specified encoder.
         /// - Parameter encoder: The encoder to write data to.
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             // For backwards compatibility, encode only the display name and
             // not a key-value pair.
             var container = encoder.singleValueContainer()
@@ -378,7 +378,7 @@ public enum RenderBlockContent: Equatable {
         
         /// Creates an aside style by decoding the specified decoder.
         /// - Parameter decoder: The decoder to read data from.
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
             self.rawValue = try container.decode(String.self)
         }
@@ -421,12 +421,12 @@ public enum RenderBlockContent: Equatable {
             self.cells = cells
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.singleValueContainer()
             try container.encode(cells)
         }
 
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
             cells = try container.decode([Cell].self)
         }
@@ -642,7 +642,7 @@ extension RenderBlockContent.Table: Codable {
         case colspan, rowspan
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.header = try container.decode(RenderBlockContent.HeaderType.self, forKey: .header)
@@ -672,7 +672,7 @@ extension RenderBlockContent.Table: Codable {
         self.extendedData = extendedData
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(header, forKey: .header)
         if let alignments, !alignments.isEmpty, !alignments.allSatisfy({ $0 == .unset }) {
@@ -705,7 +705,7 @@ extension RenderBlockContent: Codable {
         case identifier
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(BlockType.self, forKey: .type)
         
@@ -811,7 +811,7 @@ extension RenderBlockContent: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type, forKey: .type)
         

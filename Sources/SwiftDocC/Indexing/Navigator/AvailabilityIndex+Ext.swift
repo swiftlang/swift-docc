@@ -105,7 +105,7 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
         return name
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         let name = try values.decode(String.self, forKey: .name)

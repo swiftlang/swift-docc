@@ -42,7 +42,7 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
     public let content: MarkupContainer
     
     /// A ``Media`` item to display next to the ``content``.
-    public let media: Media?
+    public let media: (any Media)?
     
     override var children: [Semantic] {
         return [content] + (media.map { [$0] } ?? [])
@@ -65,7 +65,7 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
         }
     }
     
-    init(originalMarkup: BlockDirective, title: String?, layout: Layout?, eyebrow: String?, content: MarkupContainer, media: Media?, mediaPosition: MediaPosition) {
+    init(originalMarkup: BlockDirective, title: String?, layout: Layout?, eyebrow: String?, content: MarkupContainer, media: (any Media)?, mediaPosition: MediaPosition) {
         self.originalMarkup = originalMarkup
         self.title = title
         self.layout = layout

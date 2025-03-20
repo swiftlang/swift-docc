@@ -27,7 +27,7 @@ extension RenderNodeTransforming {
     ///
     /// - Parameter otherTransformation: The other transformation to apply after the receiver.
     /// - Returns: A new transformation that applies the two transformations, one after another.
-    public func then(_ otherTransformation: RenderNodeTransforming) -> RenderNodeTransformationComposition {
+    public func then(_ otherTransformation: any RenderNodeTransforming) -> RenderNodeTransformationComposition {
         return RenderNodeTransformationComposition(first: self, second: otherTransformation)
     }
 }

@@ -608,7 +608,7 @@ extension CoverageDataEntry.KindSpecificData {
         }
     }
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let discriminant = try container.decode(
             Discriminant.self,
@@ -654,7 +654,7 @@ extension CoverageDataEntry.KindSpecificData {
 
     }
 
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(discriminant, forKey: .discriminant)
 
