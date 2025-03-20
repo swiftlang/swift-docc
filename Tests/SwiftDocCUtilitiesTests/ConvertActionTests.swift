@@ -1532,7 +1532,7 @@ class ConvertActionTests: XCTestCase {
             expectedCoverageInfoCount: Int,
             expectedCoverageFileExist: Bool,
             coverageOptions: DocumentationCoverageOptions,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) async throws {
             let fileSystem = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])

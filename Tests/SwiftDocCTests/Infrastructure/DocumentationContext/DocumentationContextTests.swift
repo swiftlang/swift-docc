@@ -5568,7 +5568,7 @@ let expected = """
 
 }
 
-func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
+func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #filePath, line: UInt = #line) {
     // The default message by XCTAssertEqual isn't helpful in this case as it dumps both values in the console
     // and is difficult to track any changes
     guard lhs.removingLeadingSpaces == rhs.removingLeadingSpaces else {

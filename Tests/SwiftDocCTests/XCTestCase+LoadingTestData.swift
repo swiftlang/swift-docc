@@ -61,7 +61,7 @@ extension XCTestCase {
         return (bundle, context)
     }
     
-    func testCatalogURL(named name: String, file: StaticString = #file, line: UInt = #line) throws -> URL {
+    func testCatalogURL(named name: String, file: StaticString = #filePath, line: UInt = #line) throws -> URL {
         try XCTUnwrap(
             Bundle.module.url(forResource: name, withExtension: "docc", subdirectory: "Test Bundles"),
             file: file, line: line
@@ -159,7 +159,7 @@ extension XCTestCase {
     func parseDirective<Directive: DirectiveConvertible>(
         _ directive: Directive.Type,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (problemIdentifiers: [String], directive: Directive?) {
         let (bundle, context) = try testBundleAndContext()
@@ -192,7 +192,7 @@ extension XCTestCase {
         _ directive: Directive.Type,
         catalog: Folder,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (
         renderBlockContent: [RenderBlockContent],
@@ -208,7 +208,7 @@ extension XCTestCase {
         _ directive: Directive.Type,
         in bundleName: String? = nil,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
         let (renderedContent, problems, directive, _) = try parseDirective(
@@ -226,7 +226,7 @@ extension XCTestCase {
         _ directive: Directive.Type,
         in bundleName: String? = nil,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (
         renderBlockContent: [RenderBlockContent],
@@ -250,7 +250,7 @@ extension XCTestCase {
         bundle: DocumentationBundle,
         context: DocumentationContext,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (
         renderBlockContent: [RenderBlockContent],

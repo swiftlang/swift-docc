@@ -136,13 +136,13 @@ class BundleDiscoveryTests: XCTestCase {
         
         let expectedBundle = try parsedBundle(from: CopyOfFolder(original: testBundleLocation))
         
-        func checkExpectedFilesFoundIn(_ folder: File, file: StaticString = #file, line: UInt = #line) throws {
+        func checkExpectedFilesFoundIn(_ folder: File, file: StaticString = #filePath, line: UInt = #line) throws {
             let bundle = try parsedBundle(from: folder)
             
             XCTAssertEqual(bundle.id, expectedBundle.id)
             XCTAssertEqual(bundle.displayName, expectedBundle.displayName)
             
-            func assertEqualFiles(_ got: [URL], _ expected: [URL], file: StaticString = #file, line: UInt = #line) {
+            func assertEqualFiles(_ got: [URL], _ expected: [URL], file: StaticString = #filePath, line: UInt = #line) {
                 let gotFileNames = Set(got.map { $0.lastPathComponent })
                 let expectedFileNames = Set(expected.map { $0.lastPathComponent })
                 
