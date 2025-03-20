@@ -624,7 +624,7 @@ class ReferenceResolverTests: XCTestCase {
             _ symbol2: Symbol,
             keyPath: KeyPath<Symbol, DocumentationDataVariants<Variant>>,
             assertion: (Variant, Variant) -> (),
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) {
             let variants1Values = symbol1[keyPath: keyPath].allValues
@@ -651,7 +651,7 @@ class ReferenceResolverTests: XCTestCase {
         func populateObjCVariantAndCreateAssertion<Variant>(
             keyPath: ReferenceWritableKeyPath<Symbol, DocumentationDataVariants<Variant>>,
             assertion: @escaping (Variant, Variant) -> (),
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) -> ((_ resolvedSymbol: Symbol) -> Void) {
             symbol[keyPath: keyPath][.objectiveC] = symbol[keyPath: keyPath].firstValue
@@ -676,7 +676,7 @@ class ReferenceResolverTests: XCTestCase {
         func populateObjCVariantAndCreateAssertion<Variant: Equatable>(
             keyPath: ReferenceWritableKeyPath<Symbol, DocumentationDataVariants<Variant>>,
             assertion: @escaping (Variant, Variant) -> () = { XCTAssertEqual($0, $1, file: #file, line: #line) },
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) -> ((_ resolvedSymbol: Symbol) -> Void) {
             populateObjCVariantAndCreateAssertion(keyPath: keyPath, assertion: assertion)

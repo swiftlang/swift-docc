@@ -429,7 +429,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         #endif
     }
     
-    func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver, file: StaticString = #file, line: UInt = #line) throws {
+    func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver, file: StaticString = #filePath, line: UInt = #line) throws {
         XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
         let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!)))
         guard case .failure(_, let error) = resolverResult else {
@@ -702,7 +702,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     
     func assertSymbolBetaStatus(
         platforms: [OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability], expectedStatus isBeta: Bool,
-        file: StaticString = #file, line: UInt = #line,
+        file: StaticString = #filePath, line: UInt = #line,
         makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver
     ) throws {
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(

@@ -137,7 +137,7 @@ class SymbolBreadcrumbTests: XCTestCase {
         _ reference: ResolvedTopicReference,
         _ context: DocumentationContext,
         _ bundle: DocumentationBundle,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
@@ -151,7 +151,7 @@ class SymbolBreadcrumbTests: XCTestCase {
         _ reference: ResolvedTopicReference,
         _ context: DocumentationContext,
         _ bundle: DocumentationBundle,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)

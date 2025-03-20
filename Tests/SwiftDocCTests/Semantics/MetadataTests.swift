@@ -414,7 +414,7 @@ class MetadataTests: XCTestCase {
     
     func parseMetadataFromSource(
         _ source: String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (problems: [String], metadata: Metadata) {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])

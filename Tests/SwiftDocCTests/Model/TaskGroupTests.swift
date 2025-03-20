@@ -386,7 +386,7 @@ class TaskGroupTests: XCTestCase {
     }
     
     func testTopicContentOrder() throws {
-        func assertExpectedParsedTaskGroupContent(_ content: String, file: StaticString = #file, line: UInt = #line) throws {
+        func assertExpectedParsedTaskGroupContent(_ content: String, file: StaticString = #filePath, line: UInt = #line) throws {
             let document = Document(parsing: """
                 # Title
                 

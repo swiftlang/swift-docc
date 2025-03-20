@@ -121,7 +121,7 @@ class DefaultAvailabilityTests: XCTestCase {
         ])
     }
 
-    private func assertRenderedPlatformsFor(currentPlatforms: [String : PlatformVersion], equal expected: [String], file: StaticString = #file, line: UInt = #line) throws {
+    private func assertRenderedPlatformsFor(currentPlatforms: [String : PlatformVersion], equal expected: [String], file: StaticString = #filePath, line: UInt = #line) throws {
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = currentPlatforms
         

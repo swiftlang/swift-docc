@@ -836,7 +836,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func assertDefaultImplementationCollectionTitles(
         in renderNode: RenderNode,
         _ expectedTitles: [String],
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         let defaultImplementationSection = try XCTUnwrap(
