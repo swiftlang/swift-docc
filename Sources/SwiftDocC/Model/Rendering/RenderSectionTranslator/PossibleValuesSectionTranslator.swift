@@ -16,13 +16,12 @@ import Markdown
 struct PossibleValuesSectionTranslator: RenderSectionTranslator {
     
     func translateSection(for symbol: Symbol, renderNode: inout RenderNode, renderNodeTranslator: inout RenderNodeTranslator) -> VariantCollection<CodableContentSection?>? {
+        guard let possibleValuesSection = symbol.possibleValuesSection else { return nil }
         
-        return translateSectionToVariantCollection(
-               documentationDataVariants: symbol.possibleValuesSectionVariants
-        ) { _, possibleValuesSection in
+        return VariantCollection(defaultValue: CodableContentSection(
             // Render the possible values with the matching description from the
             // possible values listed in the markdown.
-            return PossibleValuesRenderSection(
+            PossibleValuesRenderSection(
                 title: PropertyListPossibleValuesSection.title,
                 values: possibleValuesSection.possibleValues.map { possibleValueTag in
                     let valueContent = renderNodeTranslator.visitMarkupContainer(
@@ -34,8 +33,6 @@ struct PossibleValuesSectionTranslator: RenderSectionTranslator {
                     )
                 }
             )
-        }
+        ))
     }
-    
 }
-

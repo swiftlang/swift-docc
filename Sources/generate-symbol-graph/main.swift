@@ -258,7 +258,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
     }
     let directiveSymbols = Set(directiveSymbolUSRs)
         .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
-        .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
+        .map { (String($0.names.title.split(separator: ".").last ?? $0.names.title[...]), $0) }
     
     let missingDirectiveSymbolNames: [String] = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
         guard relationship.kind == .conformsTo,
@@ -297,7 +297,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
         }
         
         let directiveSymbolMembers = swiftDocCFrameworkSymbolGraph.relationships.filter {
-            return $0.kind == .memberOf && $0.target == directiveSymbol.preciseIdentifier!
+            return $0.kind == .memberOf && $0.target == directiveSymbol.identifier.precise
         }
         .map(\.source)
         .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
@@ -313,9 +313,9 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
             }
             
             let argumentSymbol = directiveSymbolMembers.first { member in
-                member.title == argument.propertyLabel && member.docComment != nil
+                member.names.title == argument.propertyLabel && member.docComment != nil
             } ?? directiveSymbolMembers.first { member in
-                member.title == argument.name && member.docComment != nil
+                member.names.title == argument.name && member.docComment != nil
             }
             
             guard let argumentDocComment = argumentSymbol?.docComment else {
@@ -369,10 +369,10 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
             ).first!
             
             let allowedValueType = directiveSymbolMembers.first { member in
-                member.title.split(separator: ".").last == argumentType[...]
+                member.names.title.split(separator: ".").last == argumentType[...]
             }
             
-            guard let allowedValueType = allowedValueType?.preciseIdentifier else {
+            guard let allowedValueType = allowedValueType?.identifier.precise else {
                 continue
             }
             
@@ -384,7 +384,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
             
             for allowedValue in allowedValues {
                 guard let allowedValueDocComment = childrenOfAllowedValueType.first(where: {
-                    $0.title.contains(allowedValue)
+                    $0.names.title.contains(allowedValue)
                 })?.docComment else { continue }
                 
                 for (index, line) in allowedValueDocComment.lines.map(\.text).enumerated() {

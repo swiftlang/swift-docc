@@ -26,7 +26,7 @@ extension AsyncAction {
             // If a template directory has been provided, create the temporary build folder with its contents
             // Ensure that the container exists
             try? fileManager.createDirectory(at: targetURL.deletingLastPathComponent(), withIntermediateDirectories: false, attributes: nil)
-            try fileManager.copyItem(at: template, to: targetURL)
+            try fileManager._copyItem(at: template, to: targetURL)
         } else {
             // Otherwise, create an empty directory
             try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)

@@ -579,6 +579,24 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertEqual(disabledFlagConvert.enableParametersAndReturnsValidation, false)
     }
     
+    func testMentionedFeatureFlag() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        XCTAssertEqual(noFlagConvert.enableMentionedIn, true)
+        
+        // It's allowed to pass the previous "--enable-experimental-..." flag.
+        let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-mentioned-in"])
+        XCTAssertEqual(oldFlagConvert.enableMentionedIn, true)
+        
+        // It's allowed to pass the redundant "--enable-..." flag.
+        let enabledFlagConvert = try Docc.Convert.parse(["--enable-mentioned-in"])
+        XCTAssertEqual(enabledFlagConvert.enableMentionedIn, true)
+        
+        // Passing the "--disable-..." flag turns of the feature.
+        let disabledFlagConvert = try Docc.Convert.parse(["--disable-mentioned-in"])
+        XCTAssertEqual(disabledFlagConvert.enableMentionedIn, false)
+    }
+    
     func testExternalLinkSupportFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])

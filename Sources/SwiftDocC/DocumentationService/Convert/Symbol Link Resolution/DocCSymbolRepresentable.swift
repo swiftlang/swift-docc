@@ -12,6 +12,7 @@ import Foundation
 import SymbolKit
 
 /// A type that can be converted to a DocC symbol.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 public protocol DocCSymbolRepresentable: Equatable {
     /// A namespaced, unique identifier for the kind of symbol.
     ///
@@ -31,6 +32,7 @@ public protocol DocCSymbolRepresentable: Equatable {
     var title: String { get }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 public extension DocCSymbolRepresentable {
     /// The given symbol information as a symbol link component.
     ///
@@ -49,6 +51,7 @@ public extension DocCSymbolRepresentable {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 extension AbsoluteSymbolLink.LinkComponent {
     /// Given an array of symbols that are overloads for the symbol represented
     /// by this link component, returns those that are precisely identified by the component.
@@ -135,6 +138,7 @@ extension AbsoluteSymbolLink.LinkComponent {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 public extension Collection where Element: DocCSymbolRepresentable {
     /// Given a collection of colliding symbols, returns the disambiguation suffix required
     /// for each symbol to disambiguate it from the others in the collection.
@@ -173,6 +177,7 @@ extension SymbolGraph.Symbol: @retroactive Equatable {}
 extension UnifiedSymbolGraph.Symbol: @retroactive Equatable {}
 #endif
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 extension SymbolGraph.Symbol: DocCSymbolRepresentable {
     public var preciseIdentifier: String? {
         self.identifier.precise
@@ -191,6 +196,7 @@ extension SymbolGraph.Symbol: DocCSymbolRepresentable {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 extension UnifiedSymbolGraph.Symbol: DocCSymbolRepresentable {
     public var preciseIdentifier: String? {
         self.uniqueIdentifier

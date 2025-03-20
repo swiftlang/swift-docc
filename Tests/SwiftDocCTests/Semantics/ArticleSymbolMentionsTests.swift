@@ -36,10 +36,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertEqual(gottenArticle, article)
     }
 
-    /// If the `--enable-mentioned-in` flag is passed, symbol mentions in the test bundle's
-    /// articles should be recorded.
     func testSymbolLinkCollectorEnabled() throws {
-        enableFeatureFlag(\.isExperimentalMentionedInEnabled)
         let (bundle, context) = try createMentionedInTestBundle()
 
         // The test bundle currently only has one article with symbol mentions
@@ -61,9 +58,14 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertEqual(mentioningArticle, gottenArticle)
     }
 
-    /// If the `--enable-experimental-mentioned-in` flag is not passed, symbol mentions in the test bundle's
-    /// articles should not be recorded.
     func testSymbolLinkCollectorDisabled() throws {
+        let currentFeatureFlags = FeatureFlags.current
+        addTeardownBlock {
+            FeatureFlags.current = currentFeatureFlags
+        }
+        FeatureFlags.current.isMentionedInEnabled = false
+        
+        
         let (bundle, context) = try createMentionedInTestBundle()
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 

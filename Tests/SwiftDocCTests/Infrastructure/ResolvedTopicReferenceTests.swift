@@ -83,4 +83,11 @@ class ResolvedTopicReferenceTests: XCTestCase {
             _ = topicReference.absoluteString
         }
     }
+    
+    func testDifferentReferencesAreNotEqual() {
+        XCTAssertNotEqual(
+            ResolvedTopicReference(bundleID: "com.example", path: "/OneTwo", fragment: nil,   sourceLanguage: .swift),
+            ResolvedTopicReference(bundleID: "com.example", path: "/One",    fragment: "Two", sourceLanguage: .swift)
+        )
+    }
 }

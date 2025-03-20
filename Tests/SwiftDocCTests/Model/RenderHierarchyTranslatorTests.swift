@@ -179,10 +179,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
                 "doc://GeometricalShapes/documentation/GeometricalShapes",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
             ],
-            expectedObjectiveCPaths: [
-                "doc://GeometricalShapes/documentation/GeometricalShapes",
-                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle", // named TLACircle in Objective-C
-            ]
+            expectedObjectiveCPaths: nil // Same in both languages. Only encoded once.
         )
 
         // extern const TLACircle TLACircleZero NS_SWIFT_NAME(Circle.zero);

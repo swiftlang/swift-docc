@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -54,9 +54,9 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == MultipleChoice.directiveName)
         
-        _ = Semantic.Analyses.HasOnlyKnownArguments<MultipleChoice>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<MultipleChoice>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<MultipleChoice>(severityIfFound: .warning, allowedDirectives: [Choice.directiveName, ImageMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<MultipleChoice>(severityIfFound: .warning, allowedDirectives: [Choice.directiveName, ImageMedia.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
         var remainder = MarkupContainer(directive.children)
         let requiredPhrasing: Paragraph?

@@ -129,19 +129,16 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             return Redirect(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
         }
         
-        let metadata: [Metadata]
-        (metadata, remainder) = remainder.categorize { child -> Metadata? in
-            guard let childDirective = child as? BlockDirective, childDirective.name == Metadata.directiveName else {
-                return nil
-            }
-            return Metadata(from: childDirective, source: source, for: bundle, in: context)
-        }
-        
-        for extraMetadata in metadata.dropFirst() {
-            problems.append(Problem(diagnostic: Diagnostic(source: source, severity: .warning, range: extraMetadata.originalMarkup.range, identifier: "org.swift.docc.HasAtMostOne<\(Article.self), \(Metadata.self)>.DuplicateChildren", summary: "Duplicate \(Metadata.directiveName.singleQuoted) child directive", explanation: nil, notes: []), possibleSolutions: []))
-        }
-        
-        var optionalMetadata = metadata.first
+        var optionalMetadata = DirectiveParser()
+            .parseSingleDirective(
+                Metadata.self,
+                from: &remainder,
+                parentType: Article.self,
+                source: source,
+                bundle: bundle,
+                context: context,
+                problems: &problems
+            )
 
         // Append any redirects found in the metadata to the redirects
         // found in the main content.

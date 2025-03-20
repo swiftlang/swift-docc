@@ -207,7 +207,9 @@ struct RenderHierarchyTranslator {
         )
         
         for language in symbolReference.sourceLanguages where language != symbolReference.sourceLanguage {
-            guard let variantPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: language) else {
+            guard let variantPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: language),
+                  variantPathReferences != mainPathReferences
+            else {
                 continue
             }
             hierarchyVariants.variants.append(.init(

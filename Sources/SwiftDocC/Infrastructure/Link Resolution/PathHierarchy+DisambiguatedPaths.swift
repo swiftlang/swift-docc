@@ -266,8 +266,7 @@ extension PathHierarchy.DisambiguationContainer {
                 types: { element in
                     guard let parameterTypes = element.parameterTypes,
                           !parameterTypes.isEmpty,
-                          let returnTypes = element.returnTypes,
-                          !returnTypes.isEmpty
+                          let returnTypes = element.returnTypes
                     else {
                         return nil
                     }

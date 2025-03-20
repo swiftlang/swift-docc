@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1366,7 +1366,7 @@ class PathHierarchyTests: XCTestCase {
             return PathHierarchy.functionSignatureTypeNames(for: SymbolGraph.Symbol(
                 identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
                 names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
-                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display NAme"), mixins: [
+                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"), mixins: [
                     SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
                         parameters: [
                             .init(name: "someName", externalName: "with", declarationFragments: [
@@ -1416,6 +1416,30 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
         ]))
         
+        // any Sequence<Int>
+        // The Swift symbol graph extractor emits `any` differently than `some` (rdar://142814138).
+        XCTAssertEqual("Sequence<Int>", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "any ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Sequence", preciseIdentifier: "s:ST"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // (Int, String)
+        // Swift _does_ support overloading by tuple labels but we don't include tuple labels in the type disambiguation because it would be
+        // longer and harder to read/write in the common case when the other overloads aren't tuples with the same types but different labels.
+        // In the rare case of actual overloads only distinguishable by tuple labels they would all require hash disambiguation instead.
+        XCTAssertEqual("(Int,String)", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "(number ", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ", text", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+        ]))
+         
         // Array<(Int,Double)>
         XCTAssertEqual("[(Int,Double)]", functionSignatureParameterTypeName([
             .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
@@ -1468,6 +1492,52 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ",", preciseIdentifier: nil),
             .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // [[Double: Int]]
+        XCTAssertEqual("[[Double:Int]]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: " : ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]]", preciseIdentifier: nil),
+        ]))
+        
+        // [ ([Int]?) : Int]
+        XCTAssertEqual("[([Int]?):Int]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[ ([", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]?) : ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]", preciseIdentifier: nil),
+        ]))
+        
+        // [Array<(_: Int)>: (number: Int, text: String)]
+        XCTAssertEqual("[[(Int)]:(Int,String)]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(_:", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ")>: (number", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ", text", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ")]", preciseIdentifier: nil),
+        ]))
+        
+        // [[Int: Int] : [Int: Int]]
+        XCTAssertEqual("[[Int:Int]:[Int:Int]]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "[[", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "] : [", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: "]]", preciseIdentifier: nil),
         ]))
         
         // (Dictionary<Double,Int>)->Array<String>
@@ -1695,7 +1765,7 @@ class PathHierarchyTests: XCTestCase {
                 _functionSignatureTypeNames(signature, language: .swift)
             }
             
-            // func doSomething(someName: ((Int, String), Date)) -> ([Int, String?])
+            // func doSomething(someName: ((Int, String), Date)) -> ([Int], String?)
             let tupleArgument = functionSignatureTypeNames(.init(
                 parameters: [
                     .init(name: "someName", externalName: nil, declarationFragments: [
@@ -1718,7 +1788,37 @@ class PathHierarchyTests: XCTestCase {
                 ])
             )
             XCTAssertEqual(tupleArgument?.parameterTypeNames, ["((Int,String),Date)"])
-            XCTAssertEqual(tupleArgument?.returnTypeNames, ["([Int],String?)"])
+            XCTAssertEqual(tupleArgument?.returnTypeNames, ["[Int]", "String?"])
+            
+             // func doSomething() -> ((Double, Double) -> Double, [Int: (Int, Int)], (Bool, Bool), String?)
+            let bigTupleReturnType = functionSignatureTypeNames(.init(
+                parameters: [],
+                returns: [
+                    .init(kind: .text, spelling: "((", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                    .init(kind: .text, spelling: ", [", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ": (", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ")], (", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: "), ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                    .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                    .init(kind: .text, spelling: ">)", preciseIdentifier: nil),
+                ])
+            )
+            XCTAssertEqual(bigTupleReturnType?.parameterTypeNames, [])
+            XCTAssertEqual(bigTupleReturnType?.returnTypeNames, ["(Double,Double)->Double", "[Int:(Int,Int)]", "(Bool,Bool)", "String?"])
             
             // func doSomething(with someName: [Int?: String??])
             let dictionaryWithOptionalsArgument = functionSignatureTypeNames(.init(
@@ -3099,6 +3199,56 @@ class PathHierarchyTests: XCTestCase {
             ])
         }
         
+        // Each overload has one unique element in the tuple _return_ type
+        do {
+            func makeSignature(first: DeclToken..., second: DeclToken..., third: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
+                .init(
+                    parameters: [],
+                    returns: makeFragments([.text("(")] + [first, second, third].joined(separator: [.text(", ")]) + [.text(")")])
+                )
+            }
+            
+            //  String   [Int]   (Double)->Void
+            //  String?  [Bool]  (Double)->Void
+            //  String?  [Int]   (Float)->Void
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  String   [Int]   (Double)->Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: stringType,                        // String
+                            second: arrayType, "<", intType, ">",     // [Int]
+                            third: "(", doubleType, ") -> ", voidType // (Double)->Void
+                        )),
+                        
+                        //  String?  [Bool]  (Double)->Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: arrayType, "<", boolType, ">",     // [Bool]
+                            third: "(", doubleType, ") -> ", voidType  // (Double)->Void
+                        )),
+                        
+                        //  String?  [Int]   (Float)->Void
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:second:third:)"], signature: makeSignature(
+                            first: optionalType, "<", stringType, ">", // String?
+                            second: arrayType, "<", intType, ">",      // [Int]
+                            third: "(", floatType, ") -> ", voidType   // (Float)->Void
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:second:third:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "->(String,_,_)"),        //   String  _       _
+                (symbolID: "function-overload-2", disambiguation: "->(_,[Bool],_)"),        //   _       [Bool]  _
+                (symbolID: "function-overload-3", disambiguation: "->(_,_,(Float)->Void)"), //   _       _       (Float)->Void
+            ])
+        }
+        
         // Second overload requires combination of two non-unique types to disambiguate
         do {
             //  String   Set<Int>  (Double)->Void
@@ -3308,6 +3458,55 @@ class PathHierarchyTests: XCTestCase {
             ])
         }
         
+        // Each overload requires a combination parameters and return values to disambiguate
+        do {
+            //  Int   ->  ()
+            //  Bool  ->  ()
+            //  Int   ->  Int
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  Int   ->  Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [intType]), // Int
+                            ], returns: makeFragments([                   // ->
+                                voidType                                  // ()
+                            ])
+                        )),
+                        
+                        //  Bool   ->  Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [boolType]), // Bool
+                            ], returns: makeFragments([                    // ->
+                                voidType                                   // ()
+                            ])
+                        )),
+                        
+                        //  Int    ->  Int
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:)"], signature: .init(
+                            parameters: [
+                                makeParameter("first",  decl: [intType]), // Int
+                            ], returns: makeFragments([                   // ->
+                                intType                                   // Int
+                            ])
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(Int)->()"), //  ( Int  )  ->  ()
+                (symbolID: "function-overload-2", disambiguation: "-(Bool)"),    //  ( Bool )
+                (symbolID: "function-overload-3", disambiguation: "->_"),        //            ->  _
+            ])
+        }
+        
         // Two overloads with more than 64 parameters, but some unique
         do {
             let spellOutFormatter = NumberFormatter()
@@ -3451,6 +3650,9 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil), ("/=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil), ("///=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil), ("+/-(_:_:)", nil)])
+        
+        // "☜⃩" is a symbol with a symbol diacritic mark.
+        assertParsedPathComponents("☜⃩/(_:_:)", [("☜⃩/(_:_:)", nil)])
 
         // Check parsing return values and parameter types
         assertParsedPathComponents("..<(_:_:)->Bool", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"]))])
@@ -3467,6 +3669,10 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("something(first:second:third:)->(_,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "Int", "Bool"]))])
         
         assertParsedPathComponents("something(first:second:third:)->(String,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "Int", "Bool"]))])
+        
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->()", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: []))])
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->Int", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: ["Int"]))])
+        assertParsedPathComponents("something(first:second:third:)-(Int,_)->(String,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: ["Int", "_"], returnTypes: ["String", "Int", "Bool"]))])
         
         // Check closure parameters
         assertParsedPathComponents("map(_:)-((Element)->T)", [("map(_:)", .typeSignature(parameterTypes: ["(Element)->T"], returnTypes: nil))])

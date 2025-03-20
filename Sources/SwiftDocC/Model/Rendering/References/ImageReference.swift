@@ -74,7 +74,7 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         var result = [VariantProxy]()
         // sort assets by URL path for deterministic sorting of images
         asset.variants.sorted(by: \.value.path).forEach { (key, value) in
-            let url = value.isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent, prefixComponent: encoder.assetPrefixComponent)
+            let url = renderURL(for: value, prefixComponent: encoder.assetPrefixComponent)
             result.append(VariantProxy(url: url, traits: key, svgID: asset.metadata[value]?.svgID))
         }
         try container.encode(result, forKey: .variants)

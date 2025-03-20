@@ -17,6 +17,7 @@ class DirectiveIndexTests: XCTestCase {
         XCTAssertEqual(
             DirectiveIndex.shared.indexedDirectives.keys.sorted(),
             [
+                "AlternateRepresentation",
                 "Assessments",
                 "AutomaticArticleSubheading",
                 "AutomaticSeeAlso",
