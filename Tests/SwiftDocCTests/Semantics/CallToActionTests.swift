@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,12 +21,12 @@ class CallToActionTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let (bundle, _) = try testBundleAndContext(named: "SampleBundle")
 
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = CallToAction(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(callToAction)
             XCTAssertEqual(2, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -41,12 +41,12 @@ class CallToActionTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
 
-            let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+            let (bundle, _) = try testBundleAndContext(named: "SampleBundle")
 
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+                let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
                 XCTAssertNil(callToAction)
                 XCTAssertEqual(1, problems.count)
                 let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -63,12 +63,12 @@ class CallToActionTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
 
-            let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+            let (bundle, _) = try testBundleAndContext(named: "SampleBundle")
 
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+                let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
                 XCTAssertNil(callToAction)
                 XCTAssertEqual(1, problems.count)
                 let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -85,12 +85,12 @@ class CallToActionTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let (bundle, _) = try testBundleAndContext(named: "SampleBundle")
 
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = CallToAction(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(callToAction)
             XCTAssertEqual(1, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -104,12 +104,12 @@ class CallToActionTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
 
-            let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+            let (bundle, _) = try testBundleAndContext(named: "SampleBundle")
 
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+                let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
                 XCTAssertNotNil(callToAction)
                 XCTAssert(problems.isEmpty)
             }
@@ -141,11 +141,11 @@ class CallToActionTests: XCTestCase {
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
 
-            let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+            let (bundle, _) = try testBundleAndContext(named: "SampleBundle")
 
             var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = try XCTUnwrap(CallToAction(from: directive, source: nil, for: bundle, in: context, problems: &problems))
+            let callToAction = try XCTUnwrap(CallToAction(from: directive, source: nil, for: bundle, problems: &problems))
             XCTAssert(problems.isEmpty)
             
             XCTAssertEqual(callToAction.buttonLabel(for: nil), expectedDefaultLabel)

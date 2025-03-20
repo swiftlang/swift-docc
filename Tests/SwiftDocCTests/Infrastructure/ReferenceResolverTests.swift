@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -26,7 +26,7 @@ class ReferenceResolverTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, in: context, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)!
         
         var resolver = ReferenceResolver(context: context, bundle: bundle)
         _ = resolver.visitIntro(intro)
@@ -45,7 +45,7 @@ class ReferenceResolverTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)!
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)!
         
         var resolver = ReferenceResolver(context: context, bundle: bundle)
         _ = resolver.visit(contentAndMedia)
@@ -62,7 +62,7 @@ class ReferenceResolverTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, in: context, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)!
         
         var resolver = ReferenceResolver(context: context, bundle: bundle)
         
@@ -563,7 +563,7 @@ class ReferenceResolverTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext()
         var problems = [Problem]()
 
-        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems))
+        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: bundle, problems: &problems))
         var resolver = ReferenceResolver(context: context, bundle: bundle)
         _ = resolver.visitChapter(chapter)
         XCTAssertFalse(resolver.problems.containsErrors)
@@ -786,7 +786,6 @@ class ReferenceResolverTests: XCTestCase {
             from: Document(parsing: documentationExtensionContent, source: documentationExtensionURL, options: [.parseSymbolLinks, .parseBlockDirectives]),
             source: documentationExtensionURL,
             for: bundle,
-            in: context,
             problems: &ignoredProblems
         )
         XCTAssert(ignoredProblems.isEmpty, "Unexpected problems creating article")

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -162,7 +162,7 @@ extension XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws -> (problemIdentifiers: [String], directive: Directive?) {
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         
         let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
         let document = Document(parsing: content(), source: source, options: .parseBlockDirectives)
@@ -174,7 +174,6 @@ extension XCTestCase {
             from: blockDirectiveContainer,
             source: source,
             for: bundle,
-            in: context,
             problems: &problems
         )
         
@@ -265,7 +264,7 @@ extension XCTestCase {
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var analyzer = SemanticAnalyzer(source: source, context: context, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: source, bundle: bundle)
         let result = analyzer.visit(blockDirectiveContainer)
         context.diagnosticEngine.emit(analyzer.problems)
         

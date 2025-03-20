@@ -166,7 +166,7 @@ public final class Tile: Semantic, DirectiveConvertible {
         self.init(originalMarkup: directive, identifier: tileIdentifier, title: title, destination: destination, content: MarkupContainer(directive.children))
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for _: DocumentationBundle, problems: inout [Problem]) {
         switch directive.name {
         case Tile.DirectiveNames.documentation.rawValue:
             self.init(genericTile: directive,
