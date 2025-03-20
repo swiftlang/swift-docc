@@ -16,7 +16,7 @@ public struct CoverageAction: AsyncAction {
     init(
         documentationCoverageOptions: DocumentationCoverageOptions,
         workingDirectory: URL,
-        fileManager: FileManagerProtocol
+        fileManager: any FileManagerProtocol
     ) {
         self.documentationCoverageOptions = documentationCoverageOptions
         self.workingDirectory = workingDirectory
@@ -25,7 +25,7 @@ public struct CoverageAction: AsyncAction {
 
     public let documentationCoverageOptions: DocumentationCoverageOptions
     let workingDirectory: URL
-    private let fileManager: FileManagerProtocol
+    private let fileManager: any FileManagerProtocol
 
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         switch documentationCoverageOptions.level {

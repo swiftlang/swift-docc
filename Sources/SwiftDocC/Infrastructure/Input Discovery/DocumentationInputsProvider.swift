@@ -53,11 +53,11 @@ extension DocumentationContext {
     /// - ``InputsFromSymbolGraphError``
     package struct InputsProvider {
         /// The file manager that the provider uses to read file and directory contents from the file system.
-        private var fileManager: FileManagerProtocol
+        private var fileManager: any FileManagerProtocol
 
         /// Creates a new documentation inputs provider.
         /// - Parameter fileManager: The file manager that the provider uses to read file and directory contents from the file system.
-        package init(fileManager: FileManagerProtocol) {
+        package init(fileManager: any FileManagerProtocol) {
             self.fileManager = fileManager
         }
 
@@ -222,7 +222,7 @@ extension DocumentationContext.InputsProvider {
         let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
         
         let topLevelPages: [URL]
-        let provider: DataProvider
+        let provider: any DataProvider
         if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName, let url = URL(string: "in-memory-data://\(moduleName).md") {
             let synthesizedExtensionFileData = Data("""
                 # ``\(moduleName)``
@@ -261,7 +261,7 @@ private struct SymbolGraphModuleContainer: Decodable {
 
     typealias CodingKeys = SymbolGraph.CodingKeys
 
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.module = try container.decode(SymbolGraph.Module.self, forKey: .module)
@@ -272,7 +272,7 @@ private struct SymbolGraphModuleContainer: Decodable {
 
 extension DocumentationContext.InputsProvider {
     /// A pair of documentation inputs and a corresponding data provider for those input files.
-    package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: DataProvider)
+    package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: any DataProvider)
     
     /// Traverses the file system from the given starting point to find a documentation catalog and creates a collection of documentation inputs from that catalog.
     ///
@@ -308,7 +308,7 @@ extension DocumentationContext.InputsProvider {
     private static let insufficientInputsErrorMessageBase = "The information provided as command line arguments isn't enough to generate documentation.\n"
     
     struct InputsFromSymbolGraphError: DescribedError {
-        var underlyingError: Error
+        var underlyingError: any Error
         
         var errorDescription: String {
             "\(DocumentationContext.InputsProvider.insufficientInputsErrorMessageBase)\n\(underlyingError.localizedDescription)"

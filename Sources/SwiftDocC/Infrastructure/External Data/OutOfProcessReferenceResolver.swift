@@ -49,7 +49,7 @@ import SymbolKit
 /// - ``Request``
 /// - ``Response``
 public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalExternalSymbolResolver {
-    private let externalLinkResolvingClient: ExternalLinkResolving
+    private let externalLinkResolvingClient: any ExternalLinkResolving
     
     @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
     public var bundleIdentifier: String {
@@ -325,7 +325,7 @@ private class LongRunningProcess: ExternalLinkResolving {
     private let input = Pipe()
     private let output = Pipe()
     private let errorOutput = Pipe()
-    private let errorReadSource: DispatchSourceRead
+    private let errorReadSource: any DispatchSourceRead
         
     func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
         if let request {
@@ -401,7 +401,7 @@ extension OutOfProcessReferenceResolver {
         /// Unable to determine the kind of message received.
         case invalidResponseKindFromClient
         /// Unable to decode the response from external reference resolver.
-        case unableToDecodeResponseFromClient(Data, Swift.Error)
+        case unableToDecodeResponseFromClient(Data, any Swift.Error)
         /// Unable to encode the request to send to the external reference resolver.
         case unableToEncodeRequestToClient(requestDescription: String)
         /// The request type was not known (neither 'topic' nor 'symbol').
@@ -463,7 +463,7 @@ extension OutOfProcessReferenceResolver {
             case asset
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
             case .topic(let url):
@@ -475,7 +475,7 @@ extension OutOfProcessReferenceResolver {
             }
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch container.allKeys.first {
             case .topic?:
@@ -522,7 +522,7 @@ extension OutOfProcessReferenceResolver {
             case asset
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch container.allKeys.first {
             case .bundleIdentifier?:
@@ -538,7 +538,7 @@ extension OutOfProcessReferenceResolver {
             }
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
             case .bundleIdentifier(let bundleIdentifier):
@@ -595,7 +595,7 @@ extension OutOfProcessReferenceResolver {
         public var topicImages: [TopicImage]?
                 
         /// References used in the content of the summarized element.
-        public var references: [RenderReference]?
+        public var references: [any RenderReference]?
         
         /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
         public var variants: [Variant]?
@@ -633,7 +633,7 @@ extension OutOfProcessReferenceResolver {
             platforms: [PlatformAvailability]? = nil,
             declarationFragments: DeclarationFragments? = nil,
             topicImages: [TopicImage]? = nil,
-            references: [RenderReference]? = nil,
+            references: [any RenderReference]? = nil,
             variants: [Variant]? = nil
         ) {
             self.kind = kind
@@ -722,7 +722,7 @@ extension OutOfProcessReferenceResolver.ResolvedInformation {
         case variants
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
@@ -741,7 +741,7 @@ extension OutOfProcessReferenceResolver.ResolvedInformation {
         
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(self.kind, forKey: .kind)

@@ -16,7 +16,7 @@ public protocol Section {
     static var title: String? { get }
     
     /// The section's markup content.
-    var content: [Markup] { get }
+    var content: [any Markup] { get }
 }
 
 extension Markup {

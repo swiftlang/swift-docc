@@ -19,7 +19,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
     let depthLimit: Int?
     let startingPointSymbolLink: String?
     
-    let fileManager: FileManagerProtocol
+    let fileManager: any FileManagerProtocol
     
     init(
         documentationCatalog: URL?,
@@ -27,7 +27,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
         outputURL: URL?,
         depthLimit: Int?,
         startingPointSymbolLink: String?,
-        fileManager: FileManagerProtocol = FileManager.default
+        fileManager: any FileManagerProtocol = FileManager.default
     ) throws {
         self.catalogURL = documentationCatalog
         if let outputURL = outputURL ?? documentationCatalog {

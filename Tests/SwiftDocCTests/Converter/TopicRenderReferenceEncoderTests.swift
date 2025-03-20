@@ -117,7 +117,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
             .map({ i in
                 TopicRenderReference(identifier: .init("reference\(i)"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil)
             })
-            .reduce(into: [String: RenderReference]()) { result, reference in
+            .reduce(into: [String: any RenderReference]()) { result, reference in
                 result[reference.identifier.identifier] = reference
             }
         
@@ -130,7 +130,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
             })
 
         let cache = RenderReferenceCache([:])
-        let encodingErrors = Synchronized<[Error]>([])
+        let encodingErrors = Synchronized<[any Error]>([])
         
         DispatchQueue.concurrentPerform(iterations: nodes.count) { i in
             do {

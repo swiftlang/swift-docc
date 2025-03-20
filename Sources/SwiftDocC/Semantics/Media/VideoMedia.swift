@@ -85,7 +85,7 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
 }
 
 extension VideoMedia: RenderableDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         var renderedCaption: [RenderInlineContent]?
         if let caption = caption.first {
             let blockContent = contentCompiler.visit(caption)

@@ -13,14 +13,14 @@
 /// An `AnyCodable` value forwards encoding and decoding operations to the underlying base.
 public struct AnyCodable: Codable, CustomDebugStringConvertible {
     /// The base encodable value.
-    public var value: Encodable
+    public var value: any Encodable
     
     /// Creates a codable value that wraps the given base.
-    public init(_ encodable: Encodable) {
+    public init(_ encodable: any Encodable) {
         value = encodable
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         if container.decodeNil() {
             value = JSON.null
@@ -29,7 +29,7 @@ public struct AnyCodable: Codable, CustomDebugStringConvertible {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         try value.encode(to: encoder)
     }
     

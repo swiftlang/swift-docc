@@ -24,7 +24,7 @@ extension MentionsRenderSection: TextIndexing {
         return []
     }
 
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return ""
     }
 }

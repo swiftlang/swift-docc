@@ -17,7 +17,7 @@ import Foundation
 /// you set via ``init(interval:)``.
 public class Throttle {
     private let throttleQueue = DispatchQueue(label: "com.throttlequeue")
-    private var currentTimer: DispatchSourceTimer?
+    private var currentTimer: (any DispatchSourceTimer)?
     
     let timeoutInterval: DispatchTimeInterval
     

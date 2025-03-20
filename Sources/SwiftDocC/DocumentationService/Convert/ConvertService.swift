@@ -138,7 +138,7 @@ public struct ConvertService: DocumentationService {
             }
             
             let bundle: DocumentationBundle
-            let dataProvider: DataProvider
+            let dataProvider: any DataProvider
             
             let inputProvider = DocumentationContext.InputsProvider()
             if let bundleLocation = request.bundleLocation,
@@ -305,7 +305,7 @@ extension Result {
     ///
     /// - Parameter transform: A closure that takes the failure value of the instance.
     func mapErrorToConvertServiceError(
-        _ transform: (Error) -> ConvertServiceError
+        _ transform: (any Error) -> ConvertServiceError
     ) -> Result<Success, ConvertServiceError> {
         mapError { error in
             switch error {

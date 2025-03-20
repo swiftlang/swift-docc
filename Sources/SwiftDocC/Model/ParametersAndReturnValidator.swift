@@ -417,7 +417,7 @@ struct ParametersAndReturnValidator {
     }
     
     /// Returns the updated return value content, with an added description of what happens when an error occurs, if needed.
-    private static func newObjectiveCReturnsContent(_ signatures: Signatures, returns: Return?) -> [Markup]? {
+    private static func newObjectiveCReturnsContent(_ signatures: Signatures, returns: Return?) -> [any Markup]? {
         guard hasSwiftThrowsObjectiveCErrorBridging(signatures) else { return nil }
         
         guard let returns, !returns.contents.isEmpty else {
@@ -439,7 +439,7 @@ struct ParametersAndReturnValidator {
         }
         
         let lastSentenceEndsWithPunctuation = returns.contents.last?.format().removingTrailingWhitespace().last?.isPunctuation == true
-        if let inlineContents = returns.contents as? [InlineMarkup] {
+        if let inlineContents = returns.contents as? [any InlineMarkup] {
             return [Paragraph(inlineContents + objcObjectErrorAddition(endPreviousSentence: !lastSentenceEndsWithPunctuation))]
         } else if let paragraphs = returns.contents as? [Paragraph] {
             guard let lastParagraph = paragraphs.last else {
@@ -753,17 +753,17 @@ struct ParametersAndReturnValidator {
     
     // MARK: Generated content
     
-    private static let objcErrorDescription: [Markup] = [
+    private static let objcErrorDescription: [any Markup] = [
         Paragraph([
-            Text("On output, a pointer to an error object that describes why the method failed, or ") as InlineMarkup, InlineCode("nil"), Text(" if no error occurred. If you are not interested in the error information, pass "), InlineCode("nil"), Text(" for this parameter.")
+            Text("On output, a pointer to an error object that describes why the method failed, or ") as (any InlineMarkup), InlineCode("nil"), Text(" if no error occurred. If you are not interested in the error information, pass "), InlineCode("nil"), Text(" for this parameter.")
         ])
     ]
-    private static let objcBoolErrorDescription: [Markup] = [
+    private static let objcBoolErrorDescription: [any Markup] = [
         Paragraph([
-            InlineCode("YES") as InlineMarkup, Text(" if the method succeeded, otherwise "), InlineCode("NO"), Text(".")
+            InlineCode("YES") as (any InlineMarkup), Text(" if the method succeeded, otherwise "), InlineCode("NO"), Text(".")
         ])
     ]
-    private static func objcObjectErrorAddition(endPreviousSentence: Bool) -> [InlineMarkup] {
+    private static func objcObjectErrorAddition(endPreviousSentence: Bool) -> [any InlineMarkup] {
         [Text("\(endPreviousSentence ? "." : "") On failure, this method returns "), InlineCode("nil"), Text(".")]
     }
     
