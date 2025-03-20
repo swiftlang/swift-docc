@@ -1,0 +1,168 @@
+name: Windows Build
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  windows-spm:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - branch: swift-6.0-release
+            tag: 6.0-RELEASE
+
+    name: SPM ${{ matrix.tag }}
+
+    steps:
+      - uses: compnerd/gha-setup-swift@main
+        with:
+          tag: ${{ matrix.tag }}
+          branch: ${{ matrix.branch }}
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: swift build -v
+
+      - name: Test
+        run: swift test -v
+
+  windows-cmake:
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - branch: swift-6.0-release
+            tag: 6.0-RELEASE
+
+    name: CMake ${{ matrix.tag }}
+
+    steps:
+      - uses: compnerd/gha-setup-vsdevenv@main
+
+      - uses: compnerd/gha-setup-swift@main
+        with:
+          tag: ${{ matrix.tag }}
+          branch: ${{ matrix.branch }}
+
+      - uses: actions/checkout@v4
+        with:
+          path: ${{ github.workspace }}/SourceCache/swift-docc
+
+      - uses: actions/checkout@v4
+        with:
+          repository: apple/swift-argument-parser
+          ref: refs/tags/1.4.0
+          path: ${{ github.workspace }}/SourceCache/swift-argument-parser
+
+      - uses: actions/checkout@v4
+        with:
+          repository: apple/swift-crypto
+          ref: refs/tags/3.9.1
+          path: ${{ github.workspace }}/SourceCache/swift-crypto
+
+      - uses: actions/checkout@v4
+        with:
+          repository: apple/swift-markdown
+          ref: refs/heads/main
+          path: ${{ github.workspace }}/SourceCache/swift-markdown
+
+      - uses: actions/checkout@v4
+        with:
+          repository: apple/swift-lmdb
+          ref: refs/heads/main
+          path: ${{ github.workspace }}/SourceCache/swift-lmdb
+
+      - uses: actions/checkout@v4
+        with:
+          repository: apple/swift-docc-symbolkit
+          ref: refs/heads/main
+          path: ${{ github.workspace }}/SourceCache/swift-docc-symbolkit
+
+      - uses: actions/checkout@v4
+        with:
+          repository: swiftlang/swift-cmark
+          ref: refs/heads/gfm
+          path: ${{ github.workspace }}/SourceCache/swift-cmark
+
+      - name: Build swift-argument-parser
+        run: |
+          cmake -B ${{ github.workspace }}/BinaryCache/swift-argument-parser `
+                -D BUILD_SHARED_LIBS=YES `
+                -D BUILD_TESTING=NO `
+                -D CMAKE_BUILD_TYPE=Release `
+                -G Ninja `
+                -S ${{ github.workspace }}/SourceCache/swift-argument-parser `
+                -D BUILD_EXAMPLES=NO
+          cmake --build ${{ github.workspace }}/BinaryCache/swift-argument-parser
+
+      - name: Build swift-crypto
+        run: |
+          cmake -B ${{ github.workspace }}/BinaryCache/swift-crypto `
+                -D BUILD_SHARED_LIBS=NO `
+                -D CMAKE_BUILD_TYPE=Release `
+                -G Ninja `
+                -S ${{ github.workspace }}/SourceCache/swift-crypto
+          cmake --build ${{ github.workspace }}/BinaryCache/swift-crypto
+
+      - name: Build cmark-gfm
+        run: |
+          cmake -B ${{ github.workspace }}/BinaryCache/swift-cmark `
+                -D BUILD_SHARED_LIBS=YES `
+                -D BUILD_TESTING=NO `
+                -D CMAKE_BUILD_TYPE=Release `
+                -G Ninja `
+                -S ${{ github.workspace }}/SourceCache/swift-cmark `
+                -D CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=YES
+          cmake --build ${{ github.workspace }}/BinaryCache/swift-cmark
+
+      - name: Build swift-markdown
+        run: |
+          cmake -B ${{ github.workspace }}/BinaryCache/swift-markdown `
+                -D BUILD_SHARED_LIBS=NO `
+                -D CMAKE_BUILD_TYPE=Release `
+                -G Ninja `
+                -S ${{ github.workspace }}/SourceCache/swift-markdown `
+                -D ArgumentParser_DIR=${{ github.workspace }}/BinaryCache/swift-argument-parser/cmake/modules `
+                -D cmark-gfm_DIR=${{ github.workspace }}/BinaryCache/swift-cmark/cmake/modules
+          cmake --build ${{ github.workspace }}/BinaryCache/swift-markdown
+
+      - name: Build LMDB
+        run: |
+          cmake -B ${{ github.workspace }}/BinaryCache/swift-lmdb `
+                -D BUILD_SHARED_LIBS=NO `
+                -D CMAKE_BUILD_TYPE=Release `
+                -G Ninja `
+                -S ${{ github.workspace }}/SourceCache/swift-lmdb
+          cmake --build ${{ github.workspace }}/BinaryCache/swift-lmdb
+
+      - name: Build SymbolKit
+        run: |
+          cmake -B ${{ github.workspace }}/BinaryCache/swift-docc-symbolkit `
+                -D BUILD_SHARED_LIBS=NO `
+                -D CMAKE_BUILD_TYPE=Release `
+                -G Ninja `
+                -S ${{ github.workspace }}/SourceCache/swift-docc-symbolkit
+          cmake --build ${{ github.workspace }}/BinaryCache/swift-docc-symbolkit
+
+      - name: Build DocC
+        run: |
+          cmake -B ${{ github.workspace }}/BinaryCache/swift-docc `
+                -D BUILD_SHARED_LIBS=YES `
+                -D CMAKE_BUILD_TYPE=Release `
+                -G Ninja `
+                -S ${{ github.workspace }}/SourceCache/swift-docc `
+                -D ArgumentParser_DIR=${{ github.workspace }}/BinaryCache/swift-argument-parser/cmake/modules `
+                -D SwiftCrypto_DIR=${{ github.workspace }}/BinaryCache/swift-crypto/cmake/modules `
+                -D SwiftMarkdown_DIR=${{ github.workspace }}/BinaryCache/swift-markdown/cmake/modules `
+                -D LMDB_DIR=${{ github.workspace }}/BinaryCache/swift-lmdb/cmake/modules `
+                -D SymbolKit_DIR=${{ github.workspace }}/BinaryCache/swift-symbolkit/cmake/modules `
+                -D cmark-gfm_DIR=${{ github.workspace }}/BinaryCache/cmark-gfm/cmake/modules
+          cmake --build ${{ github.workspace }}/BinaryCache/swift-docc
