@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -106,10 +106,10 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         precondition(directive.name == TutorialArticle.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialArticle>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, problems: &problems)
             
         Semantic.Analyses.HasOnlyKnownDirectives<TutorialArticle>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Stack.directiveName, ContentAndMedia.directiveName, Assessments.directiveName, ImageMedia.directiveName, Redirect.directiveName])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, problems: &problems)
         
         let optionalTime = Semantic.Analyses.HasArgument<TutorialArticle, Semantics.Time>(severityIfNotFound: .warning)
             .analyze(directive, arguments: arguments, problems: &problems)

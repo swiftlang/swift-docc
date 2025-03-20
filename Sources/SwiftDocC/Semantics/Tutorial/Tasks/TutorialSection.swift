@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -80,9 +80,9 @@ public final class TutorialSection: Semantic, DirectiveConvertible, Abstracted, 
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == TutorialSection.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialSection>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialSection>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<TutorialSection>(severityIfFound: .warning, allowedDirectives: [ContentAndMedia.directiveName, Stack.directiveName, Steps.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<TutorialSection>(severityIfFound: .warning, allowedDirectives: [ContentAndMedia.directiveName, Stack.directiveName, Steps.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
         let requiredTitle = Semantic.Analyses.HasArgument<TutorialSection, Semantics.Title>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         
