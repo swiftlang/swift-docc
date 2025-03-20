@@ -160,7 +160,7 @@ package class TestFileSystem: FileManagerProtocol {
         return files.keys.contains(path)
     }
     
-    package func copyItem(at source: URL, to destination: URL) throws {
+    package func _copyItem(at source: URL, to destination: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -185,7 +185,7 @@ package class TestFileSystem: FileManagerProtocol {
 
         let srcPath = srcURL.path
 
-        try copyItem(at: srcURL, to: dstURL)
+        try _copyItem(at: srcURL, to: dstURL)
         files.removeValue(forKey: srcPath)
         
         for (path, _) in files where path.hasPrefix(srcPath) {
@@ -315,15 +315,6 @@ package class TestFileSystem: FileManagerProtocol {
 
     package func uniqueTemporaryDirectory() -> URL {
         URL(fileURLWithPath: "/tmp/\(ProcessInfo.processInfo.globallyUniqueString)", isDirectory: true)
-    }
-    
-    enum Errors: DescribedError {
-        case invalidPath(String)
-        var errorDescription: String {
-            switch self { 
-                case .invalidPath(let path): return "Invalid path '\(path)'"
-            }
-        }
     }
     
     /// Returns a stable string representation of the file system from a given subpath.

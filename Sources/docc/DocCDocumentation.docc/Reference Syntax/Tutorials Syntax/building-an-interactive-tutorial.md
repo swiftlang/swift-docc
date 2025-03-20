@@ -33,13 +33,13 @@ Use a text editor and the following listing to create a table of contents file n
     @Intro(title: "Add a title for your introduction here.") {
         Add engaging introduction text here.
         
-        @Image(source: "toc-introduction-image-filename.png", alt: "Add an accessible description for your image here.")
+        @Image(source: toc-introduction-image-filename, alt: "Add an accessible description for your image here.")
     }
     
     @Chapter(name: "Add a chapter title here.") {
         Add chapter text here.
         
-        @Image(source: "chapter-image-filename-here.png", alt: "Add an accessible description for your image here.")
+        @Image(source: chapter-image-filename-here, alt: "Add an accessible description for your image here.")
         
         @TutorialReference(tutorial: "doc:tutorial-page-file-name-here")
         @TutorialReference(tutorial: "doc:another-tutorial-page-file-name-here")
@@ -65,21 +65,21 @@ Tutorial pages provide instructions that walk through using your APIs in realist
     @Intro(title: "Add the name of your title here.") {
         Add engaging introduction text here.
         
-        @Image(source: "intro-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
+        @Image(source: intro-image-filename-here, alt: "Add an accessible description for your image here.")
     }
     
     @Section(title: "Add the name of your section here.") {
         @ContentAndMedia {
             Add engaging section text here.
             
-            @Image(source: "section-image-filename-here.jpg", alt: "Add an accessible description for your image here.")    
+            @Image(source: section-image-filename-here, alt: "Add an accessible description for your image here.")    
         }
         
         @Steps {
             @Step {
                 Add engaging step 1 text here.
 
-                @Image(source: "step-1-image-filename-here.jpg", alt: "Add an accessible description for your step here.")
+                @Image(source: step-1-image-filename-here, alt: "Add an accessible description for your step here.")
             }
             
             @Step {
@@ -99,24 +99,24 @@ Replace the placeholders with your custom content. Use the ``Intro`` directive t
     @Intro(title: "Add a title for your tutorial page here.") {
         Add engaging introduction text here.
         
-        @Image(source: "tutorial-introduction-image-filename.png", alt: "Add an accessible description for your image here.")
+        @Image(source: tutorial-introduction-image-filename, alt: "Add an accessible description for your image here.")
     }
     
     @Section(title: "Add a section title here") {
         @ContentAndMedia {
             Add some content here to introduce the steps that follow.
             
-            @Image(source: "section-image-filename.png", alt: "Add an accessible description for your image here.")
+            @Image(source: section-image-filename, alt: "Add an accessible description for your image here.")
         }
         
         @Steps {
             @Step {
                 Provide text for a step here.
-                @Image(source: "step1-image-filename.png", alt: "Add an accessible description for your image here.")
+                @Image(source: step1-image-filename, alt: "Add an accessible description for your image here.")
             }
             @Step {
                 Provide text for another step here.
-                @Image(source: "step2-image-filename.png", alt: "Add an accessible description for your image here.")
+                @Image(source: step2-image-filename, alt: "Add an accessible description for your image here.")
             }
         }
     }
@@ -176,4 +176,4 @@ DocC compiles your documentation catalog and generates the tutorial. Copy the UR
 
 Learn how to share your documentation in <doc:distributing-documentation-to-other-developers>.
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

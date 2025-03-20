@@ -23,9 +23,14 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental support for combining overloaded symbol pages is enabled.
     public var isExperimentalOverloadedSymbolPresentationEnabled = false
     
-    /// Whether experimental support for automatically rendering links on symbol documentation to articles
-    /// that mention that symbol.
-    public var isExperimentalMentionedInEnabled = false
+    /// Whether support for automatically rendering links on symbol documentation to articles that mention that symbol is enabled.
+    public var isMentionedInEnabled = true
+    
+    @available(*, deprecated, renamed: "isMentionedInEnabled", message: "Use 'isMentionedInEnabled' instead. This deprecated API will be removed after 6.2 is released")
+    public var isExperimentalMentionedInEnabled: Bool {
+        get { isMentionedInEnabled }
+        set { isMentionedInEnabled = newValue }
+    }
     
     /// Whether or not support for validating parameters and return value documentation is enabled.
     public var isParametersAndReturnsValidationEnabled = true
@@ -36,12 +41,17 @@ public struct FeatureFlags: Codable {
         set { isParametersAndReturnsValidationEnabled = newValue }
     }
     
+    /// Creates a set of feature flags with all default values.
+    public init() {}
+    
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:
     ///   - additionalFlags: Any additional flags to set.
     ///
     ///     This field allows clients to set feature flags without adding new API.
+    @available(*, deprecated, renamed: "init()", message: "Use 'init()' instead. This deprecated API will be removed after 6.2 is released")
+    @_disfavoredOverload
     public init(
         additionalFlags: [String : Bool] = [:]
     ) {
