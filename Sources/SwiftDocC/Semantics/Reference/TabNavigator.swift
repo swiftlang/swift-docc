@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A container directive that arranges content into a tab-based layout.
 ///

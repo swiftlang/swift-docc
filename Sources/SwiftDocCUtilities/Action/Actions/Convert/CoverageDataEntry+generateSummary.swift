@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SwiftDocC
+public import Foundation
+public import SwiftDocC
 
 extension CoverageDataEntry {
     /// Outputs a short table summarizing the coverage statistics for a list of data entries in a file at the given URL.

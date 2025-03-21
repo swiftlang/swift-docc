@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SwiftDocC
+package import SwiftDocC
 
 /// An independent unit of work in the command-line workflow.
 ///

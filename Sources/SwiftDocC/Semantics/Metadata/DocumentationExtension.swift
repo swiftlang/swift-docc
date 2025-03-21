@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// Defines whether the content in a documentation extension file amends or replaces in-source documentation.
 ///

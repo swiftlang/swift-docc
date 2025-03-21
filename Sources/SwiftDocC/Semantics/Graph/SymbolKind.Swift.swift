@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 
 extension SymbolGraph.Symbol.KindIdentifier {
     /// The list of Swift-specific symbol kinds that could possibly have other symbols as children.

@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SwiftDocC
-import Foundation
+public import SwiftDocC
+public import Foundation
 
 /// The result of executing an action.
 public struct ActionResult {

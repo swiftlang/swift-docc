@@ -9,7 +9,7 @@
 */
 
 #if canImport(NIOHTTP1)
-import ArgumentParser
+public import ArgumentParser
 import Foundation
 
 extension Docc {

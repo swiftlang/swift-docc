@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /// Any kind of `Markdown.Markup` element that has a `destination` property.
 public protocol AnyLink: Markup {

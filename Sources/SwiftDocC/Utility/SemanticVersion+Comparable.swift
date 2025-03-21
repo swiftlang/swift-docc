@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 
 // Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
 // The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.

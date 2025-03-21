@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /**
  A short justification as to whether a ``Choice`` is correct for a question.

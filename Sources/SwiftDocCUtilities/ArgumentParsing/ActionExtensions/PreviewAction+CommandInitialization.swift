@@ -9,7 +9,7 @@
 */
 
 #if canImport(NIOHTTP1)
-import Foundation
+public import Foundation
 
 extension PreviewAction {
     /// Creates a preview action with the given preview options.

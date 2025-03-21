@@ -8,9 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import XCTest
-import SwiftDocC
+public import Foundation
+public import XCTest
+public import SwiftDocC
 
 /*
     This file contains API for working with folder hierarchies, and is extensible to allow for testing

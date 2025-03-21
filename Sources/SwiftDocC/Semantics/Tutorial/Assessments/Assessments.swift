@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A collection of questions about the concepts the documentation presents.
 public final class Assessments: Semantic, AutomaticDirectiveConvertible {

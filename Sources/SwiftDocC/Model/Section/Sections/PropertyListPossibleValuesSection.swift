@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 import SymbolKit
 
 public struct PropertyListPossibleValuesSection {

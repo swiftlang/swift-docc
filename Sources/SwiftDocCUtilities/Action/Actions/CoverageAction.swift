@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SwiftDocC
+public import SwiftDocC
 
 /// An action that creates documentation coverage info for a documentation bundle.
 public struct CoverageAction: AsyncAction {

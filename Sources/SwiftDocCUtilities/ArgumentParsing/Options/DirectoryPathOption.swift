@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import ArgumentParser
+public import Foundation
+public import ArgumentParser
 
 /// A parsable argument for an optional directory path.
 ///
