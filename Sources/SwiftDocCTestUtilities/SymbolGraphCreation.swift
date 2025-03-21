@@ -10,9 +10,9 @@
 
 
 import Foundation
-import XCTest
-import SymbolKit
-import SwiftDocC
+public import XCTest
+package import SymbolKit
+package import SwiftDocC
 
 // MARK: - Symbol Graph objects
 

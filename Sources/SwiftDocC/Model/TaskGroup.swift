@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /**
  A rewriter that extracts topic links for unordered list items.

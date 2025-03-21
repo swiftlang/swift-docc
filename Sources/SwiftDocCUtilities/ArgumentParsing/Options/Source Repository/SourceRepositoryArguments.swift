@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
+public import ArgumentParser
 import Foundation
 import SwiftDocC
 

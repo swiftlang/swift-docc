@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 public struct MentionsRenderSection: RenderSection, Codable, Equatable {
     public var kind: RenderSectionKind = .mentions

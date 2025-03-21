@@ -11,7 +11,7 @@
 // The WebKitCommunicationBridge is only available on platforms that support WebKit.
 #if canImport(WebKit)
 import Foundation
-import WebKit
+public import WebKit
 
 /// Provides bi-directional communication with a documentation renderer via JavaScript calls in a web view.
 public struct WebKitCommunicationBridge: CommunicationBridge {

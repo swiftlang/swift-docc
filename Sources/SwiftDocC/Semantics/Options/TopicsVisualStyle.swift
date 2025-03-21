@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive for specifying the style that should be used when rendering a page's
 /// Topics section.

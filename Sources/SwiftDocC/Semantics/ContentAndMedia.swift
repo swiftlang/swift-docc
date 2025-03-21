@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// A piece of media, such as an image or video, with an attached description.
 public final class ContentAndMedia: Semantic, DirectiveConvertible {

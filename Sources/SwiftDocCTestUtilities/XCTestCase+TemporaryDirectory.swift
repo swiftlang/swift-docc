@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import XCTest
+public import Foundation
+public import XCTest
 
 // These helpers methods exist to put temp files for different test executions in different locations when running in Swift CI.
 

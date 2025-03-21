@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// Unpacks data as a `T` value
 /// - Note: To save space and avoid padding the data, we unpack data without requiring alignment.

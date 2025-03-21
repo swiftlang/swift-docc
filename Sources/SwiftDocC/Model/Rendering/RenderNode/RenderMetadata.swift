@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// Arbitrary metadata for a render node.
 public struct RenderMetadata: VariantContainer {

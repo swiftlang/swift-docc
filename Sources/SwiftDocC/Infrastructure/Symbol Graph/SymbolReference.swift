@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 
 extension String {
     /// Returns a copy of the string with an appended hash of the given identifier.

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// An error that offers a plain-text error message.
 public protocol DescribedError: Foundation.LocalizedError {

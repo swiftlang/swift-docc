@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
-import SymbolKit
+public import Markdown
+public import SymbolKit
 
 /// Documentation about a parameter for an HTTP request.
 public struct HTTPParameter {

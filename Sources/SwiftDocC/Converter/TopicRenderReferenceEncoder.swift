@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A thread-safe cache for encoded render references.
 public typealias RenderReferenceCache = Synchronized<[String: (reference: Data, overrides: [VariantOverride])]>

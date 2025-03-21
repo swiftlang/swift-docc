@@ -8,9 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
-import SwiftDocC
-import Foundation
+public import ArgumentParser
+public import SwiftDocC
+public import Foundation
 
 extension Docc {
     /// Merge a list of documentation archives into a combined archive.

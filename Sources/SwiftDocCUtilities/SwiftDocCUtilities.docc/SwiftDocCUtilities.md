@@ -9,7 +9,7 @@ SwiftDocCUtilities provides a default, command-line workflow for DocC, powered b
 Use SwiftDocCUtilities to build a custom, command-line interface and extend it with additional commands. To add a new sub-command called `example`, create a conformant ``Action`` type, `ExampleAction`, that performs the desired work, and add it as a sub-command. Optionally, you can also reuse any of the provided actions like ``ConvertAction``.
 
 ```swift
-import ArgumentParser
+public import ArgumentParser
 
 public struct MyDocumentationTool: AsyncParsableCommand {
     public static var configuration = CommandConfiguration(
