@@ -169,4 +169,134 @@ class DocumentationContext_RootPageTests: XCTestCase {
         
         XCTAssertEqual(context.problems.count, 0)
     }
+    
+    func testWarnsAboutMultipleModuleRoots() throws {
+        let moduleOneSymbolGraph = SymbolGraph(
+            metadata: SymbolGraph.Metadata(
+                formatVersion: SymbolGraph.FormatVersion(major: 1, minor: 0, patch: 0),
+                generator: "unit-test"
+            ),
+            module: SymbolGraph.Module(
+                name: "ModuleOne",
+                platform: .init(architecture: nil, vendor: nil, operatingSystem: nil, environment: nil),
+                version: nil
+            ),
+            symbols: [],
+            relationships: []
+        )
+        
+        let moduleTwoSymbolGraph = SymbolGraph(
+            metadata: SymbolGraph.Metadata(
+                formatVersion: SymbolGraph.FormatVersion(major: 1, minor: 0, patch: 0),
+                generator: "unit-test"
+            ),
+            module: SymbolGraph.Module(
+                name: "ModuleTwo",
+                platform: .init(architecture: nil, vendor: nil, operatingSystem: nil, environment: nil),
+                version: nil
+            ),
+            symbols: [],
+            relationships: []
+        )
+        
+        let moduleOneSymbolGraphURL = try createTempFile(name: "module-one.symbols.json", content: try JSONEncoder().encode(moduleOneSymbolGraph))
+        let moduleTwoSymbolGraphURL = try createTempFile(name: "module-two.symbols.json", content: try JSONEncoder().encode(moduleTwoSymbolGraph))
+        
+        let (_, context) = try loadBundle(copying: "TestBundle", excludingPaths: ["TestBundle.symbols.json"], additionalSymbolGraphs: [moduleOneSymbolGraphURL, moduleTwoSymbolGraphURL])
+        
+        // Verify warning about multiple roots
+        let multipleRootsProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.MultipleModuleRoots" }))
+        XCTAssertEqual(multipleRootsProblem.diagnostic.severity, .warning)
+        XCTAssertTrue(multipleRootsProblem.diagnostic.summary.contains("ModuleOne") && multipleRootsProblem.diagnostic.summary.contains("ModuleTwo"), "The warning should mention both module names")
+        
+        // Verify diagnostic notes
+        XCTAssertEqual(multipleRootsProblem.diagnostic.notes.count, 2, "There should be a note for each module")
+        XCTAssertTrue(multipleRootsProblem.diagnostic.notes.contains { $0.message.contains("ModuleOne") })
+        XCTAssertTrue(multipleRootsProblem.diagnostic.notes.contains { $0.message.contains("ModuleTwo") })
+    }
+    
+    func testWarnsAboutMultipleManualRoots() throws {
+        let (_, context) = try loadBundle(catalog:
+            Folder(name: "MultipleRoots.docc", content: [
+                TextFile(name: "RootOne.md", utf8Content: """
+                # Root One
+                @Metadata {
+                   @TechnologyRoot
+                }
+                First root article
+                """),
+                
+                TextFile(name: "RootTwo.md", utf8Content: """
+                # Root Two
+                @Metadata {
+                   @TechnologyRoot
+                }
+                Second root article
+                """),
+                
+                InfoPlist(displayName: "MultipleRoots", identifier: "com.test.multipleroots"),
+            ])
+        )
+        
+        // Verify warning about multiple manual roots
+        let multipleManualRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleManualRoots" }
+        XCTAssertEqual(multipleManualRootProblems.count, 2, "There should be a warning for each manual root page")
+        
+        for problem in multipleManualRootProblems {
+            XCTAssertEqual(problem.diagnostic.severity, .warning)
+            XCTAssertTrue(problem.diagnostic.source?.lastPathComponent == "RootOne.md" || problem.diagnostic.source?.lastPathComponent == "RootTwo.md")
+            XCTAssertEqual(problem.possibleSolutions.count, 1, "There should be a solution to remove the TechnologyRoot directive")
+            
+            // Verify diagnostic notes
+            XCTAssertEqual(problem.diagnostic.notes.count, 1, "There should be a note for the other root page")
+            let otherRootName = problem.diagnostic.source?.lastPathComponent == "RootOne.md" ? "Root Two" : "Root One"
+            XCTAssertTrue(problem.diagnostic.notes.first?.message.contains(otherRootName) ?? false, "The note should mention the other root page")
+        }
+    }
+    
+    func testWarnsAboutManualRootWithModuleRoot() throws {
+        let symbolGraph = SymbolGraph(
+            metadata: SymbolGraph.Metadata(
+                formatVersion: SymbolGraph.FormatVersion(major: 1, minor: 0, patch: 0),
+                generator: "unit-test"
+            ),
+            module: SymbolGraph.Module(
+                name: "TestModule",
+                platform: .init(architecture: nil, vendor: nil, operatingSystem: nil, environment: nil),
+                version: nil
+            ),
+            symbols: [],
+            relationships: []
+        )
+        
+        let symbolGraphURL = try createTempFile(name: "test-module.symbols.json", content: try JSONEncoder().encode(symbolGraph))
+        
+        let tempFolder = try createTempFolder(content: [
+            Folder(name: "MixedRoots.docc", content: [
+                TextFile(name: "ManualRoot.md", utf8Content: """
+                # Manual Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                A manual root page
+                """),
+                
+                InfoPlist(displayName: "MixedRoots", identifier: "com.test.mixedroots"),
+            ])
+        ])
+        
+        let (_, context) = try loadBundle(from: URL(fileURLWithPath: tempFolder).appendingPathComponent("MixedRoots.docc"), additionalSymbolGraphs: [symbolGraphURL])
+        
+        //verify warning about manual root with module root
+        let manualWithModuleProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.ManualRootWithModuleRoot" }))
+        XCTAssertEqual(manualWithModuleProblem.diagnostic.severity, .warning)
+        XCTAssertEqual(manualWithModuleProblem.diagnostic.source?.lastPathComponent, "ManualRoot.md")
+        XCTAssertTrue(manualWithModuleProblem.diagnostic.summary.contains("Manual @TechnologyRoot found with a module root"))
+        XCTAssertTrue(manualWithModuleProblem.diagnostic.explanation.contains("TestModule"))
+        XCTAssertEqual(manualWithModuleProblem.possibleSolutions.count, 1, "There should be a solution to remove the TechnologyRoot directive")
+        
+        //verify diagnostic notes
+        XCTAssertEqual(manualWithModuleProblem.diagnostic.notes.count, 1, "There should be a note about the module")
+        XCTAssertTrue(manualWithModuleProblem.diagnostic.notes.first?.message.contains("TestModule") ?? false, "The note should mention the module name")
+    }
 }

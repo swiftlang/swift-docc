@@ -2809,11 +2809,177 @@ public class DocumentationContext {
         }
     }
     
+    //Detects and emits warnings for multiple root pages in the documentation.
+
+    private func emitWarningsForMultipleRoots() {
+        //Check for multiple root modules from symbol graphs
+        let rootModuleReferences = rootModules ?? []
+        let rootModulesFromSymbolGraph = rootModuleReferences.filter { reference in
+            guard let node = topicGraph.nodeWithReference(reference) else { return false }
+            //include actual modules from symbol graphs
+            return node.kind == .module && !node.isVirtual
+        }
+        
+        if rootModulesFromSymbolGraph.count > 1 {
+            //Multiple modules from symbol graph files
+            let moduleNames = rootModulesFromSymbolGraph.map { $0.lastPathComponent }
+            
+            //create diagnostic notes for each module
+            var notes = [DiagnosticNote]()
+            for moduleRef in rootModulesFromSymbolGraph {
+                let moduleName = moduleRef.lastPathComponent
+                notes.append(DiagnosticNote(
+                    source: nil,
+                    message: "Module '\(moduleName)' is one of multiple root modules"
+                ))
+            }
+            
+            let diagnostic = Diagnostic(
+                source: nil,
+                severity: .warning,
+                range: nil,
+                identifier: "org.swift.docc.MultipleModuleRoots",
+                summary: "Documentation contains symbol graphs for more than one main module: \(moduleNames.joined(separator: ", ").singleQuoted)",
+                explanation: "This may lead to unexpected behavior as it's not clear which module should be the primary root.",
+                notes: notes
+            )
+            diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: []))
+        }
+        
+        //check for manual technology roots
+        let manualRootPages = topicGraph.nodes.values.filter { node in
+            guard let documentationNode = documentationCache[node.reference] else { return false }
+            // Find nodes with @TechnologyRoot directive that aren't from symbol graphs
+            return documentationNode.semantic is Article && 
+                  (documentationNode.semantic as? Article)?.metadata?.technologyRoot != nil
+        }
+        
+        //multiple manual @TechnologyRoot pages
+        if manualRootPages.count > 1 {
+            //a mapping of root pages to their URLs for diagnostic notes
+            var rootPageURLs = [ResolvedTopicReference: URL]()
+            for rootPage in manualRootPages {
+                if let documentURL = try? documentURL(for: rootPage.reference) {
+                    rootPageURLs[rootPage.reference] = documentURL
+                }
+            }
+            
+            for rootPage in manualRootPages {
+                if let documentURL = try? documentURL(for: rootPage.reference),
+                   let documentationNode = documentationCache[rootPage.reference],
+                   let article = documentationNode.semantic as? Article,
+                   let technologyRoot = article.metadata?.technologyRoot {
+                    
+                    //diagnostic notes for the other root pages
+                    var notes = [DiagnosticNote]()
+                    for otherRootPage in manualRootPages where otherRootPage.reference != rootPage.reference {
+                        if let otherURL = rootPageURLs[otherRootPage.reference] {
+                            let technologyRootRange = (documentationCache[otherRootPage.reference]?.semantic as? Article)?.metadata?.technologyRoot?.originalMarkup.range
+                            notes.append(DiagnosticNote(
+                                source: otherURL,
+                                range: technologyRootRange,
+                                message: "'\(otherRootPage.title)' is also marked as a technology root"
+                            ))
+                        }
+                    }
+                    
+                    let diagnostic = Diagnostic(
+                        source: documentURL,
+                        severity: .warning,
+                        range: technologyRoot.originalMarkup.range,
+                        identifier: "org.swift.docc.MultipleManualRoots",
+                        summary: "Multiple @TechnologyRoot pages found in documentation",
+                        explanation: "The page \(rootPage.title.singleQuoted) is marked as a technology root, but there are other technology root pages in the documentation. This may lead to unexpected behavior.",
+                        notes: notes
+                    )
+                    
+                    let solutions: [Solution]
+                    if let range = technologyRoot.originalMarkup.range {
+                        solutions = [
+                            Solution(summary: "Remove the TechnologyRoot directive", replacements: [Replacement(range: range, replacement: "")])
+                        ]
+                    } else {
+                        solutions = []
+                    }
+                    
+                    diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+                }
+            }
+        }
+        
+        //@TechnologyRoot page + module from symbol graph
+        if manualRootPages.count == 1 && rootModulesFromSymbolGraph.count == 1 {
+            let rootPage = manualRootPages.first!
+            
+            //skip warning if either is a descendant of the other
+            let moduleReference = rootModulesFromSymbolGraph.first!
+            if !isDescendant(of: rootPage.reference, moduleReference) && !isDescendant(of: moduleReference, rootPage.reference) {
+                if let documentURL = try? documentURL(for: rootPage.reference),
+                   let documentationNode = documentationCache[rootPage.reference],
+                   let article = documentationNode.semantic as? Article,
+                   let technologyRoot = article.metadata?.technologyRoot {
+                    
+                    let moduleName = moduleReference.lastPathComponent
+                    
+                    //create a diagnostic note for the module
+                    let notes = [DiagnosticNote(
+                        source: nil,
+                        message: "Module '\(moduleName)' is already serving as a root"
+                    )]
+                    
+                    let diagnostic = Diagnostic(
+                        source: documentURL,
+                        severity: .warning,
+                        range: technologyRoot.originalMarkup.range,
+                        identifier: "org.swift.docc.ManualRootWithModuleRoot",
+                        summary: "Manual @TechnologyRoot found with a module root from symbol graph file",
+                        explanation: "The page \(rootPage.title.singleQuoted) is marked as a technology root, but the documentation also contains a module \(moduleName.singleQuoted) from a symbol graph file. This may lead to unexpected behavior.",
+                        notes: notes
+                    )
+                    
+                    let solutions: [Solution]
+                    if let range = technologyRoot.originalMarkup.range {
+                        solutions = [
+                            Solution(summary: "Remove the TechnologyRoot directive", replacements: [Replacement(range: range, replacement: "")])
+                        ]
+                    } else {
+                        solutions = []
+                    }
+                    
+                    diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+                }
+            }
+        }
+    }
+    
+    /**
+     Checks if a reference is a descendant of another reference in the topic graph.
+     
+     - Parameters:
+        - possibleDescendant: The reference to check if it's a descendant
+        - possibleAncestor: The reference to check if it's an ancestor
+     - Returns: `true` if possibleDescendant is a descendant of possibleAncestor, `false` otherwise
+     */
+    private func isDescendant(of possibleDescendant: ResolvedTopicReference, _ possibleAncestor: ResolvedTopicReference) -> Bool {
+        var current = possibleDescendant
+        while let parentReferences = try? parents(of: current), !parentReferences.isEmpty {
+            if parentReferences.contains(possibleAncestor) {
+                return true
+            }
+            // Check the first parent (we just need to find any path to the ancestor)
+            current = parentReferences[0]
+        }
+        return false
+    }
+    
     /**
      Analysis that runs after all nodes are successfully registered in the context.
      Useful for checks that need the complete node graph.
      */
     func topicGraphGlobalAnalysis() {
+        //check for multiple root pages and emit warnings
+        emitWarningsForMultipleRoots()
+        
         // Run any checks added to the context.
         let problems = knownIdentifiers.flatMap { reference in
             return configuration.topicAnalysisConfiguration.additionalChecks.flatMap { check in
@@ -3363,47 +3529,3 @@ extension DataAsset {
 
 @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 extension DocumentationContext: DocumentationContextDataProviderDelegate {}
-
-//added diagnostic for multiple root pages
-
-extension Diagnostic {
-    static func multipleRootPagesWarning(roots: [ResolvedTopicReference]) -> Diagnostic {
-        let primaryRoot = roots.first!
-        let additionalRoots = Array(roots.dropFirst())
-
-        return Diagnostic(
-            source: nil,
-            severity: .warning,
-            identifier: "org.swift.docc.MultipleRootPages",
-            summary: "Found \(roots.count) root pages in documentation",
-            explanation: """
-                Documentation should have exactly one root page. Found these root pages:
-                Primary: \(primaryRoot.path)
-                Additional:
-                \(additionalRoots.map { $0.path }.joined(separator: "\n"))
-                """
-        )
-    }
-}
-
-extension DocumentationContext {
-    private func validateRootPageCount() {
-        //get all root pages
-        let roots = topicGraph.nodes.values.filter { node in
-            return node.kind == .article && parents(of: node.reference).isEmpty
-        }.map { $0.reference }
-
-        //warn if multiple roots found
-        if roots.count > 1 {
-            let diagnostic = Diagnostic.multipleRootPagesWarning(roots: roots)
-            let problem = Problem(diagnostic: diagnostic)
-            diagnosticEngine.emit(problem)
-        }
-    }
-}
-
-extension DocumentationContext {
-    func processRootModules() throws {
-        validateRootPageCount()
-    }
-}
