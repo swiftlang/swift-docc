@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,6 +25,7 @@ import Markdown
  of another analysis. This prevents runaway performance problems and strange bugs.
  > It also makes it more amenable to parallelization should the need arise.
  */
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 public protocol SemanticAnalysis {
     /**
      The result of the analysis.
@@ -46,3 +47,30 @@ public protocol SemanticAnalysis {
      */
     func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Result
 }
+
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.ExtractAll:                     SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.ExtractAllMarkup:               SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasAtLeastOne:                  SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasExactlyOne:                  SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasExactlyOneOf:                SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasExactlyOneMedia:             SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasExactlyOneUnorderedList:     SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasExactlyOneImageOrVideoMedia: SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasAtMostOne:                   SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasContent:                     SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasOnlyKnownArguments:          SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasOnlyKnownDirectives:         SemanticAnalysis {}
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension Semantic.Analyses.HasOnlySequentialHeadings:      SemanticAnalysis {}

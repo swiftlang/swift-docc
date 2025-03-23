@@ -93,12 +93,6 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
     }
 }
 
-extension DownloadReference {
-    private func renderURL(for url: URL, prefixComponent: String?) -> URL {
-        url.isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent, prefixComponent: prefixComponent)
-    }
-}
-
 // Diffable conformance
 extension DownloadReference: RenderJSONDiffable {
     /// Returns the difference between this DownloadReference and the given one.

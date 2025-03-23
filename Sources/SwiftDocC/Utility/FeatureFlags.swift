@@ -41,12 +41,17 @@ public struct FeatureFlags: Codable {
         set { isParametersAndReturnsValidationEnabled = newValue }
     }
     
+    /// Creates a set of feature flags with all default values.
+    public init() {}
+    
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:
     ///   - additionalFlags: Any additional flags to set.
     ///
     ///     This field allows clients to set feature flags without adding new API.
+    @available(*, deprecated, renamed: "init()", message: "Use 'init()' instead. This deprecated API will be removed after 6.2 is released")
+    @_disfavoredOverload
     public init(
         additionalFlags: [String : Bool] = [:]
     ) {

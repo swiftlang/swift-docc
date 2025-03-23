@@ -21,11 +21,11 @@ Use a text editor to add a tutorial table of contents file to your documentation
         Create, catalog, and care for sloths using SlothCreator. 
         Get started with SlothCreator by building the demo app _Slothy_.
         
-        @Image(source: "slothcreator-intro.png", alt: "An illustration of 3 iPhones in portrait mode, displaying the UI of finding, creating, and taking care of a sloth in Slothy — the sample app that you build in this collection of tutorials.")
+        @Image(source: slothcreator-intro, alt: "An illustration of 3 iPhones in portrait mode, displaying the UI of finding, creating, and taking care of a sloth in Slothy — the sample app that you build in this collection of tutorials.")
     }
     
     @Chapter(name: "SlothCreator Essentials") {
-        @Image(source: "chapter1-slothcreatorEssentials.png", alt: "A wireframe of an app interface that has an outline of a sloth and four buttons below the sloth. The buttons display the following symbols, from left to right: snowflake, fire, wind, and lightning.")
+        @Image(source: chapter1-slothcreatorEssentials, alt: "A wireframe of an app interface that has an outline of a sloth and four buttons below the sloth. The buttons display the following symbols, from left to right: snowflake, fire, wind, and lightning.")
         
         Create custom sloths and edit their attributes and powers using SlothCreator.
         
