@@ -27,7 +27,7 @@ Members         | (0/0)           | (0/0)           | (0/0)
 Globals         | (0/0)           | (0/0)           | (0/0)
 
 
-Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          USR
+Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
 --No Symbols to display--
 
 """
@@ -38,7 +38,7 @@ Symbol Name                      Kind                             Abstract?     
         let source: [CoverageDataEntry] = [
             CoverageDataEntry(
                 title: "MyDocumentedUncuratedClass",
-                usr: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass",
+                referencePath: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass",
                 sourceLanguage: .swift,
                 availableSourceLanguages: [.swift],
                 kind: .class,
@@ -61,7 +61,7 @@ Members         | (0/0)           | (0/0)           | (0/0)
 Globals         | (0/0)           | (0/0)           | (0/0)
 
 
-Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          USR
+Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
 MyDocumentedUncuratedClass     | Class                          | true         | false        | false           | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass
 
 """
@@ -72,7 +72,7 @@ MyDocumentedUncuratedClass     | Class                          | true         |
         let source: [CoverageDataEntry] = [
             CoverageDataEntry(
                 title: "MyDocumentedUncuratedClass",
-                usr: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass",
+                referencePath: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass",
                 sourceLanguage: .swift,
                 availableSourceLanguages: [.swift],
                 kind: .class,
@@ -83,7 +83,7 @@ MyDocumentedUncuratedClass     | Class                          | true         |
                 kindSpecificData: .class(memberStats: [:])),
             CoverageDataEntry(
                 title: "MyDocumentedUncuratedClassProperty",
-                usr: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass/myProperty",
+                referencePath: "doc://org.swift.docc.example/documentation/MyLibrary/MyClass/myProperty",
                 sourceLanguage: .swift,
                 availableSourceLanguages: [.swift],
                 kind: .instanceProperty,
@@ -100,7 +100,7 @@ MyDocumentedUncuratedClass     | Class                          | true         |
             shouldGenerateDetailed: true
         )
         let expected = """
-Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          USR
+Symbol Name                      Kind                             Abstract?      Curated?       Code Listing?     Parameters     Language          Reference Path
 MyDocumentedUncuratedClass     | Class                          | true         | false        | true            | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass
 MyDocumentedUncuratedClassProp | Instance Property              | false        | true         | false           | -            | Swift           | doc://org.swift.docc.example/documentation/MyLibrary/MyClass/myProperty
 
