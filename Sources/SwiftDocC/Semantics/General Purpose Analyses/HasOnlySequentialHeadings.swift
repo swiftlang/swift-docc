@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,7 +27,7 @@ extension Semantic.Analyses {
       #### H4 <- invalid, skips H3 heading level
       ```
      */
-    public struct HasOnlySequentialHeadings<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasOnlySequentialHeadings<Parent: Semantic & DirectiveConvertible> {
         let severityIfFound: DiagnosticSeverity?
         let startingFromLevel: Int
         public init(severityIfFound: DiagnosticSeverity?, startingFromLevel: Int) {
@@ -38,7 +38,7 @@ extension Semantic.Analyses {
         /**
          - returns: All valid headings.
          */
-        @discardableResult public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [Heading] {
+        @discardableResult public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> [Heading] {
             var currentHeadingLevel = startingFromLevel
             var headings: [Heading] = []
             for case let child as Heading in children {
