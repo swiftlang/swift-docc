@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -180,11 +180,6 @@ public class NavigatorTree {
         }
         
         self.root = root
-    }
-    
-    @available(*, deprecated, renamed: "read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)", message: "Use 'read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)' instead. This deprecated API will be removed after 6.1 is released")
-    public func read(from url: URL, bundleIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
-        try self.read(from: url, bundleIdentifier: bundleIdentifier, timeout: timeout, delay: delay, queue: queue, presentationIdentifier: presentationIdentifier, broadcast: broadcast)
     }
         
     /**

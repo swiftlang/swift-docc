@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,14 +22,6 @@ public enum PropertyListTitleStyle: String, Codable, Equatable {
     /// ## See Also
     /// - ``TopicRenderReference/PropertyListKeyNames/displayName``
     case useDisplayName = "title"
-}
-
-@available(*, deprecated, renamed: "PropertyListTitleStyle", message: "Use 'PropertyListTitleStyle' instead. This deprecated API will be removed after 6.1 is released")
-public enum TitleStyle: String, Codable, Equatable {
-    @available(*, deprecated, renamed: "PropertyListTitleStyle.useRawKey", message: "Use 'PropertyListTitleStyle.useRawKey' instead. This deprecated API will be removed after 6.1 is released")
-    case symbol
-    @available(*, deprecated, renamed: "PropertyListTitleStyle.useDisplayName", message: "Use 'PropertyListTitleStyle.useDisplayName' instead. This deprecated API will be removed after 6.1 is released")
-    case title
 }
 
 /// A section that contains details about a property list key.
