@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -3126,21 +3126,6 @@ public class DocumentationContext {
             return nil
         } else {
             return nil
-        }
-    }
-
-    /// Attempt to resolve an unresolved code listing.
-    ///
-    /// - Parameters:
-    ///   - unresolvedCodeListingReference: The code listing reference to resolve.
-    ///   - parent: The topic the code listing reference appears in.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-    public func resolveCodeListing(_ unresolvedCodeListingReference: UnresolvedCodeListingReference, in parent: ResolvedTopicReference) -> AttributedCodeListing? {
-        switch dataProvider {
-        case .legacy(let legacyDataProvider):
-            legacyDataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
-        case .new:
-            nil
         }
     }
     

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -100,10 +100,5 @@ public class DocumentationContextConverter {
             symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
         )
         return translator.visit(node.semantic) as? RenderNode
-    }
-    
-    @available(*, deprecated, renamed: "renderNode(for:)", message: "Use 'renderNode(for:)' instead. This deprecated API will be removed after 6.1 is released")
-    public func renderNode(for node: DocumentationNode, at source: URL?) throws -> RenderNode? {
-        self.renderNode(for: node)
     }
 }
