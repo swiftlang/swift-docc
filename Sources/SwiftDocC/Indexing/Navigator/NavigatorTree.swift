@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// Defines an object that can be represented as raw Data and therefore serialized to/deserialized from disk.
 public protocol Serializable: LMDBData, RawRepresentable where RawValue == Data {}

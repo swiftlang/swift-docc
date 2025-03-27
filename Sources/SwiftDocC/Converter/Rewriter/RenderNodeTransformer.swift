@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// An object that modifies a render node by applying transformations to it.
 open class RenderNodeTransformer {

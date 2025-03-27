@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 extension Metadata {
     /// A directive that specifies when a documentation page is available for a given platform.

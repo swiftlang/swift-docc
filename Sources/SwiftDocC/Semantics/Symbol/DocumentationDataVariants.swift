@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 
 /// A model type that encapsulates variants of documentation node data.
 ///

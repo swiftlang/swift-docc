@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 
-public class InlineContentPlainTextTests: XCTestCase {
+class InlineContentPlainTextTests: XCTestCase {
     func testPlainTextFromCodeVoice() {
         let testText = "This text is code voiced."
         

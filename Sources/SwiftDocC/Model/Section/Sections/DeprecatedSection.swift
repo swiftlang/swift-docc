@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A section that contains deprecation information.
 public struct DeprecatedSection: Section {

@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A reference to a ``Tutorial`` or ``TutorialArticle`` by `URL`.
 public final class TutorialReference: Semantic, AutomaticDirectiveConvertible {

@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A block filled with an image.
 public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A logger that runs benchmarks and stores the results.
 public class Benchmark: Encodable {

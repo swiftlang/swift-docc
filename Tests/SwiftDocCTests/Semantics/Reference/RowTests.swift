@@ -11,7 +11,7 @@
 import Foundation
 
 import XCTest
-@testable import SwiftDocC
+@testable public import SwiftDocC
 import Markdown
 
 class RowTests: XCTestCase {

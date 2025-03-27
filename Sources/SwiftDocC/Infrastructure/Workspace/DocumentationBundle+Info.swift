@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 extension DocumentationBundle {
     /// Information about a documentation bundle that's unrelated to its documentation content.

@@ -9,8 +9,8 @@
 */
 
 import Foundation
-import Markdown
-import SymbolKit
+public import Markdown
+public import SymbolKit
 
 /// A programming symbol semantic type.
 ///

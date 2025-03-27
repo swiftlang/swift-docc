@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive for authoring authoring embedded
 /// previews of documentation links (similar to how links are currently

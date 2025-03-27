@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A utility type to apply variant overrides to an encoded render node.
 public struct RenderNodeVariantOverridesApplier {

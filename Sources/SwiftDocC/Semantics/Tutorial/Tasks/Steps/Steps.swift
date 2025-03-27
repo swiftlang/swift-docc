@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// Wraps a series of ``Step``s in a tutorial task section.
 public final class Steps: Semantic, DirectiveConvertible {

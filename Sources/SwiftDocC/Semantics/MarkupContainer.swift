@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /// A general purpose `Markup` semantic container.
 public final class MarkupContainer: Semantic {

@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A block filled with a video.
 public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {

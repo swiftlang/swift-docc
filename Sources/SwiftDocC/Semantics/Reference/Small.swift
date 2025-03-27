@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive for specifying small print text like legal, license, or copyright text that
 /// should be rendered in a smaller font size.

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /// A one-paragraph section that represents a symbol's abstract description.
 public struct AbstractSection: Section {

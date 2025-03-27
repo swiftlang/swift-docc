@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftDocC
+@testable public import SwiftDocC
 import SwiftDocCTestUtilities
 
 class PlistSymbolTests: XCTestCase {

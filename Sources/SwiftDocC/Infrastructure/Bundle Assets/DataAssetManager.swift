@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A container for a collection of data. Each data can have multiple variants.
 struct DataAssetManager {

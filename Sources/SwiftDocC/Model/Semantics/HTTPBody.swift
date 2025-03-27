@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
-import SymbolKit
+public import Markdown
+public import SymbolKit
 
 /// Documentation about the payload body of an HTTP request.
 public struct HTTPBody {

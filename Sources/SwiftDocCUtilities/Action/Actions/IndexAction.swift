@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SwiftDocC
+public import Foundation
+public import SwiftDocC
 
 /// An action that creates an index of a documentation bundle.
 public struct IndexAction: AsyncAction {
