@@ -88,7 +88,7 @@ extension AutomaticDirectiveConvertible {
     /// Performs some semantic analyses to determine whether a valid directive can be created
     /// and returns nils upon failure.
     ///
-    /// > Tip: ``DirectiveConvertible/init(from:source:for:in:problems:)`` performs
+    /// > Tip: ``DirectiveConvertible/init(from:source:for:problems:)`` performs
     /// the same function but supports collecting an array of problems for diagnostics.
     ///
     /// - Parameters:
@@ -99,8 +99,7 @@ extension AutomaticDirectiveConvertible {
     public init?(
         from directive: BlockDirective,
         source: URL? = nil,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext
+        for bundle: DocumentationBundle
     ) {
         var problems = [Problem]()
         
@@ -108,16 +107,19 @@ extension AutomaticDirectiveConvertible {
             from: directive,
             source: source,
             for: bundle,
-            in: context,
             problems: &problems
         )
+    }
+    
+    @available(*, deprecated, renamed: "init(from:source:for:)", message: "Use 'init(from:source:for:)' instead. This deprecated API will be removed after 6.2 is released")
+    public init?(from directive: BlockDirective, source: URL? = nil, for bundle: DocumentationBundle, in _: DocumentationContext) {
+        self.init(from: directive, source: source, for: bundle)
     }
     
     public init?(
         from directive: BlockDirective,
         source: URL?,
         for bundle: DocumentationBundle,
-        in context: DocumentationContext,
         problems: inout [Problem]
     ) {
         precondition(directive.name == Self.directiveName)
@@ -181,7 +183,6 @@ extension AutomaticDirectiveConvertible {
             children: remainder,
             source: source,
             for: bundle,
-            in: context,
             problems: &problems
         )
         
@@ -195,7 +196,6 @@ extension AutomaticDirectiveConvertible {
                     children: remainder,
                     source: source,
                     for: bundle,
-                    in: context,
                     problems: &problems
                 )
                 
@@ -220,7 +220,6 @@ extension AutomaticDirectiveConvertible {
                     children: remainder,
                     source: source,
                     for: bundle,
-                    in: context,
                     problems: &problems
                 )
                 
@@ -244,7 +243,6 @@ extension AutomaticDirectiveConvertible {
                     children: remainder,
                     source: source,
                     for: bundle,
-                    in: context,
                     problems: &problems
                 )
                 
@@ -259,7 +257,6 @@ extension AutomaticDirectiveConvertible {
                     children: remainder,
                     source: source,
                     for: bundle,
-                    in: context,
                     problems: &problems
                 )
                 

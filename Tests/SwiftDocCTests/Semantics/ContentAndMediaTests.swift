@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,9 +19,9 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
         XCTAssertEqual(0, problems.count)
     }
@@ -37,9 +37,9 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
         XCTAssertTrue(problems.isEmpty)
         contentAndMedia.map { contentAndMedia in
@@ -58,9 +58,9 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
         XCTAssertTrue(problems.isEmpty)
         contentAndMedia.map { contentAndMedia in
@@ -81,9 +81,9 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
         XCTAssertTrue(problems.isEmpty)
         contentAndMedia.map { contentAndMedia in
@@ -102,9 +102,9 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
         XCTAssertEqual(problems.count, 3)
         XCTAssertEqual(
