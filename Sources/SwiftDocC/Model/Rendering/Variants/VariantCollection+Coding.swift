@@ -15,7 +15,7 @@ extension KeyedEncodingContainer {
     mutating func encodeVariantCollection<Value>(
         _ variantCollection: VariantCollection<Value>,
         forKey key: Key,
-        encoder: Encoder
+        encoder: any Encoder
     ) throws {
         try encode(variantCollection, forKey: key)
     }
@@ -24,7 +24,7 @@ extension KeyedEncodingContainer {
     mutating func encodeVariantCollectionIfTrue(
         _ variantCollection: VariantCollection<Bool>,
         forKey key: Key,
-        encoder: Encoder
+        encoder: any Encoder
     ) throws {
         if variantCollection.defaultValue {
             try encode(variantCollection.defaultValue, forKey: key)
@@ -43,7 +43,7 @@ extension KeyedEncodingContainer {
     mutating func encodeVariantCollectionIfNotEmpty(
         _ variantCollection: VariantCollection<some Collection>,
         forKey key: Key,
-        encoder: Encoder
+        encoder: any Encoder
     ) throws {
         try encodeIfNotEmpty(variantCollection.defaultValue, forKey: key)
         
@@ -64,7 +64,7 @@ extension KeyedEncodingContainer {
     mutating func encodeVariantCollectionIfNotEmpty(
         _ variantCollection: VariantCollection<(some Collection)?>,
         forKey key: Key,
-        encoder: Encoder
+        encoder: any Encoder
     ) throws {
         if let defaultValue = variantCollection.defaultValue {
             try encodeIfNotEmpty(defaultValue, forKey: key)
@@ -86,7 +86,7 @@ extension KeyedEncodingContainer {
     mutating func encodeVariantCollection<Value>(
         _ variantCollection: VariantCollection<Value?>,
         forKey key: Key,
-        encoder: Encoder
+        encoder: any Encoder
     ) throws {
         try encodeIfPresent(variantCollection.defaultValue, forKey: key)
         
@@ -103,7 +103,7 @@ extension KeyedEncodingContainer {
     mutating func encodeVariantCollectionArrayIfNotEmpty<Value>(
         _ variantCollectionValues: [VariantCollection<Value?>],
         forKey key: Key,
-        encoder: Encoder
+        encoder: any Encoder
     ) throws {
         try encodeIfNotEmpty(variantCollectionValues.compactMap(\.defaultValue), forKey: key)
         

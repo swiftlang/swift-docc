@@ -188,7 +188,7 @@ extension AutomaticDirectiveConvertible {
         for childDirective in reflectedDirective.childDirectives {
             switch childDirective.requirements {
             case .one:
-                let parsedDirective: DirectiveConvertible?
+                let parsedDirective: (any DirectiveConvertible)?
                 (parsedDirective, remainder) = Semantic.Analyses.extractExactlyOne(
                     childType: childDirective.type,
                     parentDirective: directive,
@@ -213,7 +213,7 @@ extension AutomaticDirectiveConvertible {
                     childDirective.setValue(on: self, to: parsedDirective)
                 }
             case .zeroOrOne:
-                let parsedDirective: DirectiveConvertible?
+                let parsedDirective: (any DirectiveConvertible)?
                 (parsedDirective, remainder) = Semantic.Analyses.extractAtMostOne(
                     childType: childDirective.type,
                     parentDirective: directive,
@@ -226,7 +226,7 @@ extension AutomaticDirectiveConvertible {
                 
                 guard let parsedDirective else {
                     if childDirective.storedAsArray && !childDirective.storedAsOptional {
-                        childDirective.setValue(on: self, to: [DirectiveConvertible.Type]())
+                        childDirective.setValue(on: self, to: [any DirectiveConvertible.Type]())
                     }
                     
                     continue
@@ -238,7 +238,7 @@ extension AutomaticDirectiveConvertible {
                     childDirective.setValue(on: self, to: parsedDirective)
                 }
             case .zeroOrMore:
-                let parsedDirectives: [DirectiveConvertible]
+                let parsedDirectives: [any DirectiveConvertible]
                 (parsedDirectives, remainder) = Semantic.Analyses.extractAll(
                     childType: childDirective.type,
                     children: remainder,
@@ -252,7 +252,7 @@ extension AutomaticDirectiveConvertible {
                     childDirective.setValue(on: self, to: parsedDirectives)
                 }
             case .oneOrMore:
-                let parsedDirectives: [DirectiveConvertible]
+                let parsedDirectives: [any DirectiveConvertible]
                 (parsedDirectives, remainder) = Semantic.Analyses.extractAtLeastOne(
                     childType: childDirective.type,
                     parentDirective: directive,

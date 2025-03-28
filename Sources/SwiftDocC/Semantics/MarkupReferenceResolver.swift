@@ -90,28 +90,28 @@ struct MarkupReferenceResolver: MarkupRewriter {
         }
     }
 
-    mutating func visitImage(_ image: Image) -> Markup? {
+    mutating func visitImage(_ image: Image) -> (any Markup)? {
         if let reference = image.reference(in: bundle), !context.resourceExists(with: reference) {
             problems.append(unresolvedResourceProblem(resource: reference, source: image.range?.source, range: image.range, severity: .warning))
         }
 
         var image = image
         let newChildren = image.children.compactMap {
-            visit($0) as? InlineMarkup
+            visit($0) as? (any InlineMarkup)
         }
         image.replaceChildrenInRange(0..<image.childCount, with: newChildren)
         return image
     }
     
-    mutating func visitInlineHTML(_ inlineHTML: InlineHTML) -> Markup? {
+    mutating func visitInlineHTML(_ inlineHTML: InlineHTML) -> (any Markup)? {
         return inlineHTML
     }
     
-    mutating func visitLineBreak(_ lineBreak: LineBreak) -> Markup? {
+    mutating func visitLineBreak(_ lineBreak: LineBreak) -> (any Markup)? {
         return lineBreak
     }
 
-    mutating func visitLink(_ link: Link) -> Markup? {
+    mutating func visitLink(_ link: Link) -> (any Markup)? {
         guard let destination = link.destination else {
             return link
         }
@@ -150,7 +150,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         return resolve(reference: .unresolved(.init(topicURL: url)), range: range, severity: .warning, fromSymbolLink: true)
     }
     
-    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> Markup? {
+    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> (any Markup)? {
         guard let destination = symbolLink.destination else {
             return symbolLink
         }
@@ -163,11 +163,11 @@ struct MarkupReferenceResolver: MarkupRewriter {
         return symbolLink
     }
     
-    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> Markup? {
+    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> (any Markup)? {
         return thematicBreak
     }
 
-    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> Markup? {
+    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> (any Markup)? {
         let source = blockDirective.range?.source
         switch blockDirective.name {
         case Snippet.directiveName:

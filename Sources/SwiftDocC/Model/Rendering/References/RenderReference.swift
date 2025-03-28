@@ -43,12 +43,12 @@ public struct RenderReferenceIdentifier: Codable, Hashable, Equatable {
         self.identifier = identifier
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         identifier = try container.decode(String.self)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(identifier)
     }

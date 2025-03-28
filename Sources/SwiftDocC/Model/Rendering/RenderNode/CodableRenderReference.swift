@@ -12,13 +12,13 @@ import Foundation
 
 /// A Codable container for a render node reference.
 struct CodableRenderReference: Codable {
-    var reference: RenderReference
+    var reference: any RenderReference
     
-    init(_ reference: RenderReference) {
+    init(_ reference: any RenderReference) {
         self.reference = reference
     }
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(RenderReferenceType.self, forKey: .type)
         
@@ -50,7 +50,7 @@ struct CodableRenderReference: Codable {
         case type
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         try reference.encode(to: encoder)
     }
 }

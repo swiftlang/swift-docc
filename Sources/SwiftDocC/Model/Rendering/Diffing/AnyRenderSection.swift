@@ -12,13 +12,13 @@
 ///
 /// An `AnyRenderSection` value forwards difference operations to the underlying base type, each of which determine the difference differently.
 struct AnyRenderSection: Equatable, Encodable, RenderJSONDiffable {
-    var value: RenderSection
+    var value: any RenderSection
     
-    init(_ value: RenderSection) {
+    init(_ value: any RenderSection) {
         self.value = value
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         try value.encode(to: encoder)
     }
     

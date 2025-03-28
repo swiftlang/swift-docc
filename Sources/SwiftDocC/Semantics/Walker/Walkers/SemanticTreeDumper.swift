@@ -28,7 +28,7 @@ struct SemanticTreeDumper: SemanticWalker {
         path.append(semantic)
         result += indentationPrefix
         result += "\(type(of: semantic))"
-        if let directiveConvertible = semantic as? DirectiveConvertible,
+        if let directiveConvertible = semantic as? (any DirectiveConvertible),
             let range = directiveConvertible.originalMarkup.range {
             let start = range.lowerBound
             let end = range.upperBound

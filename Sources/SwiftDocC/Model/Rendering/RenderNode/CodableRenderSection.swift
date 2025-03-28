@@ -12,13 +12,13 @@ import Foundation
 
 /// A Codable container for sections within a Tutorial page.
 struct CodableRenderSection: Codable {
-    var section: RenderSection
+    var section: any RenderSection
     
-    init(_ section: RenderSection) {
+    init(_ section: any RenderSection) {
         self.section = section
     }
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let kind = try container.decode(RenderSectionKind.self, forKey: .kind)
         
@@ -49,7 +49,7 @@ struct CodableRenderSection: Codable {
         case kind
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         try section.encode(to: encoder)
     }
 }

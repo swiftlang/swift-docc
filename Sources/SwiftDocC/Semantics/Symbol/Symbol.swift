@@ -276,7 +276,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     public var isSPIVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
     
     /// The mixins of the symbol, in each language variant the symbol is available in.
-    var mixinsVariants: DocumentationDataVariants<[String: Mixin]>
+    var mixinsVariants: DocumentationDataVariants<[String: any Mixin]>
     
     /// Any automatically created task groups of the symbol, in each language variant the symbol is available in.
     var automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]>
@@ -305,7 +305,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         accessLevelVariants: DocumentationDataVariants<String>,
         availabilityVariants: DocumentationDataVariants<SymbolGraph.Symbol.Availability>,
         deprecatedSummaryVariants: DocumentationDataVariants<DeprecatedSection>,
-        mixinsVariants: DocumentationDataVariants<[String: Mixin]>,
+        mixinsVariants: DocumentationDataVariants<[String: any Mixin]>,
         declarationVariants: DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
         alternateDeclarationVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]> = .init(defaultVariantValue: [:]),
         alternateSignatureVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.FunctionSignature]]> = .init(defaultVariantValue: [:]),
@@ -752,7 +752,7 @@ extension Symbol {
     }
     
     /// The mixins of the first variant of the symbol.
-    var mixins: [String: Mixin]? {
+    var mixins: [String: any Mixin]? {
         get { mixinsVariants.firstValue }
         set { mixinsVariants.firstValue = newValue }
     }

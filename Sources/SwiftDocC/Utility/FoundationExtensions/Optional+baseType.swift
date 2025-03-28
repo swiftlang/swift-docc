@@ -17,7 +17,7 @@ protocol OptionallyWrapped {
 extension Optional: OptionallyWrapped {
     static func baseType() -> Any.Type {
         switch Wrapped.self {
-        case let wrapper as OptionallyWrapped.Type:
+        case let wrapper as any OptionallyWrapped.Type:
             return wrapper.baseType()
         default:
             return Wrapped.self
@@ -26,7 +26,7 @@ extension Optional: OptionallyWrapped {
 
     func baseType() -> Any.Type {
         switch self {
-        case .some(let wrapper as OptionallyWrapped):
+        case .some(let wrapper as any OptionallyWrapped):
             return wrapper.baseType()
         case .some(let wrapped):
             return type(of: wrapped)

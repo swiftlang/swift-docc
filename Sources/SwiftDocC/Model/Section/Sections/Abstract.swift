@@ -15,7 +15,7 @@ public struct AbstractSection: Section {
     public static var title: String? {
         return nil
     }
-    public var content: [Markup] {
+    public var content: [any Markup] {
         return paragraph.children.compactMap { $0.detachedFromParent }
     }
     

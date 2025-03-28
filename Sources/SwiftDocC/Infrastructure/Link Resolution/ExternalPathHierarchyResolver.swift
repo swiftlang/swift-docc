@@ -161,7 +161,7 @@ final class ExternalPathHierarchyResolver {
         }
     }
     
-    convenience init(dependencyArchive: URL, dataProvider: DataProvider) throws {
+    convenience init(dependencyArchive: URL, dataProvider: any DataProvider) throws {
         // ???: Should it be the callers responsibility to pass both these URLs?
         let linkHierarchyFile = dependencyArchive.appendingPathComponent("link-hierarchy.json")
         let entityURL = dependencyArchive.appendingPathComponent("linkable-entities.json")

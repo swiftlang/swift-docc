@@ -147,7 +147,7 @@ extension PathHierarchy {
             let firstComponent = path.first!
             
             // Keep track of the inner most error and raise that if no node is found.
-            var innerMostError: Swift.Error?
+            var innerMostError: (any Swift.Error)?
             
             // If the starting point's children match this component, descend the path hierarchy from there.
             if possibleStartingPoint.anyChildMatches(firstComponent) {

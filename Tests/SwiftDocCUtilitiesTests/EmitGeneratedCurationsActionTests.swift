@@ -20,7 +20,7 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
         let realCatalogURL = try XCTUnwrap(Bundle.module.url(forResource: "MixedLanguageFramework", withExtension: "docc", subdirectory: "Test Bundles"))
         
         func assertOutput(
-            initialContent: [File],
+            initialContent: [any File],
             depthLimit: Int?,
             startingPointSymbolLink: String?,
             expectedFilesList: [String],

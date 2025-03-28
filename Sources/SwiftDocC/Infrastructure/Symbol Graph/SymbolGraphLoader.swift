@@ -59,7 +59,7 @@ struct SymbolGraphLoader {
         let loadingLock = Lock()
 
         var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
-        var loadError: Error?
+        var loadError: (any Error)?
 
         let loadGraphAtURL: (URL) -> Void = { [dataLoader, bundle] symbolGraphURL in
             // Bail out in case a symbol graph has already errored

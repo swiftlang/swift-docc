@@ -18,7 +18,7 @@ import Foundation
 public class FileSystemRenderNodeProvider: RenderNodeProvider {
     
     /// The internal `FileSystemProvider` reference.
-    private let dataProvider: FileSystemProvider
+    private let dataProvider: any FileSystemProvider
     
     /// The list of problems the provider encountered during the process.
     private var problems = [Problem]()
@@ -29,7 +29,7 @@ public class FileSystemRenderNodeProvider: RenderNodeProvider {
     /**
      Initialize an instance to provide `RenderNode` instances from a give `FileSystemProvider`.
      */
-    public init(fileSystemProvider: FileSystemProvider) {
+    public init(fileSystemProvider: any FileSystemProvider) {
         dataProvider = fileSystemProvider
         
         // Insert the first node in the queue

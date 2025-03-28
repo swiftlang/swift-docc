@@ -26,11 +26,11 @@ extension Collection<RenderBlockContent.ListItem> {
     ///   entirely `.termList` elements. The order of the list items is
     ///   preserved from the order received.
     ///
-    func unorderedAndTermLists() -> [RenderContent] {
-        var contents = [RenderContent]()
+    func unorderedAndTermLists() -> [any RenderContent] {
+        var contents = [any RenderContent]()
         
         // Keep track of the recent list items that are of the same type
-        var runningListItems = [ListableItem]()
+        var runningListItems = [any ListableItem]()
         
         for item in self {
             
@@ -71,7 +71,7 @@ extension Collection<RenderBlockContent.ListItem> {
     ///
     /// > Important: This will `fatalError` if the given items are not
     ///   list items.
-    private func listWithItems(_ items: [ListableItem]) -> RenderContent {
+    private func listWithItems(_ items: [any ListableItem]) -> any RenderContent {
         if let unorderedListItems = items as? [RenderBlockContent.ListItem] {
             return RenderBlockContent.unorderedList(.init(items: unorderedListItems))
         } else if let termListItems = items as? [RenderBlockContent.TermListItem] {

@@ -217,7 +217,7 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
 fileprivate extension RenderNode {
     mutating func addVariantOverride(
         pointerComponents: [String],
-        value: Encodable,
+        value: any Encodable,
         traits: [RenderNode.Variant.Trait] = [.interfaceLanguage("objc")],
         operation: PatchOperation = .replace
     ) {

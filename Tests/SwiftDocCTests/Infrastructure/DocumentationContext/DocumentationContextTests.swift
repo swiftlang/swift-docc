@@ -1244,7 +1244,7 @@ class DocumentationContextTests: XCTestCase {
         struct TestData {
             let symbolGraphNames: [String]
             
-            var symbolGraphFiles: [File] {
+            var symbolGraphFiles: [any File] {
                 return symbolGraphNames.map { name in
                     CopyOfFile(original: Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                         .appendingPathComponent(name + ".symbols.json"))

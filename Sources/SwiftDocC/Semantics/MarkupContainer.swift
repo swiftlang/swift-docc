@@ -13,7 +13,7 @@ import Markdown
 /// A general purpose `Markup` semantic container.
 public final class MarkupContainer: Semantic {
     /// The `Markup` elements in the container.
-    public let elements: [Markup]
+    public let elements: [any Markup]
     
     /// Create an empty `Markup` semantic container.
     public convenience override init() {
@@ -23,7 +23,7 @@ public final class MarkupContainer: Semantic {
     /// Creates a new general-purpose markup container with the given elements.
     ///
     /// - Parameter elements: Zero or more markup elements.
-    public init(_ elements: Markup...) {
+    public init(_ elements: any Markup...) {
         self.elements = elements
     }
     
@@ -37,7 +37,7 @@ public final class MarkupContainer: Semantic {
     /// Creates a new general-purpose markup container with the elements of a sequence.
     ///
     /// - Parameter elements: A sequence of markup elements.
-    public init(_ elements: some Sequence<Markup>) {
+    public init(_ elements: some Sequence<any Markup>) {
         self.elements = Array(elements)
     }
         
@@ -47,15 +47,15 @@ public final class MarkupContainer: Semantic {
 }
 
 extension MarkupContainer: RandomAccessCollection {
-    public subscript(position: [Markup].Index) -> Markup {
+    public subscript(position: [any Markup].Index) -> any Markup {
         return elements[position]
     }
     
-    public var startIndex: [Markup].Index {
+    public var startIndex: [any Markup].Index {
         return elements.startIndex
     }
     
-    public var endIndex: [Markup].Index {
+    public var endIndex: [any Markup].Index {
         return elements.endIndex
     }
 }

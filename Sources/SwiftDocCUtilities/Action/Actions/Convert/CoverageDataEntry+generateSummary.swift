@@ -32,7 +32,7 @@ extension CoverageDataEntry {
     /// 'FileManagerProtocol' type.
     static func generateSummary(
         ofDataAt url: URL,
-        fileManager: FileManagerProtocol,
+        fileManager: any FileManagerProtocol,
         shouldGenerateBrief: Bool,
         shouldGenerateDetailed: Bool
     ) throws -> String {

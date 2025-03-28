@@ -23,7 +23,7 @@ enum TopicRenderReferenceEncoder {
     ///   instance to avoid encoding the same reference objects repeatedly.
     static func addRenderReferences(
         to renderNodeData: inout Data,
-        references: [String: RenderReference],
+        references: [String: any RenderReference],
         encodeAccumulatedVariantOverrides: Bool = false,
         encoder: JSONEncoder,
         renderReferenceCache referenceCache: RenderReferenceCache

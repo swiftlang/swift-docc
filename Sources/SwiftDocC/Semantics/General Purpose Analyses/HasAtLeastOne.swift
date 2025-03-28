@@ -23,7 +23,7 @@ extension Semantic.Analyses {
         
         public func analyze(
             _ directive: BlockDirective,
-            children: some Sequence<Markup>,
+            children: some Sequence<any Markup>,
             source: URL?,
             for bundle: DocumentationBundle,
             in context: DocumentationContext,
@@ -43,15 +43,15 @@ extension Semantic.Analyses {
     }
     
     static func extractAtLeastOne(
-        childType: DirectiveConvertible.Type,
+        childType: any DirectiveConvertible.Type,
         parentDirective: BlockDirective,
-        children: some Sequence<Markup>,
+        children: some Sequence<any Markup>,
         source: URL?,
         for bundle: DocumentationBundle,
         in context: DocumentationContext,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         problems: inout [Problem]
-    ) -> ([DirectiveConvertible], remainder: MarkupContainer) {
+    ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {
         let (matches, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
                 childType.canConvertDirective(childDirective)
@@ -78,7 +78,7 @@ extension Semantic.Analyses {
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
         }
         
-        let converted = matches.compactMap { childDirective -> DirectiveConvertible? in
+        let converted = matches.compactMap { childDirective -> (any DirectiveConvertible)? in
             return childType.init(
                 from: childDirective,
                 source: source,

@@ -14,6 +14,8 @@ import class Foundation.ProcessInfo
 
 let swiftSettings: [SwiftSetting] = [
     .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
+    
+    .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
 ]
 
 let package = Package(

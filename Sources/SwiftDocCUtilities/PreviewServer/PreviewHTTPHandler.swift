@@ -70,7 +70,7 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
         
         switch (requestPart, state) {
         case (.head(let head), _):
-            let handler: RequestHandlerFactory
+            let handler: any RequestHandlerFactory
             if FileRequestHandler.isAssetPath(head.uri) {
                 // Serve a static asset file.
                 handler = FileRequestHandler(rootURL: rootURL)

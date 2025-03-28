@@ -61,10 +61,10 @@ struct TaggedListItemExtractor: MarkupRewriter {
 
     init() {}
     
-    mutating func visitDocument(_ document: Document) -> Markup? {
+    mutating func visitDocument(_ document: Document) -> (any Markup)? {
         // Rewrite top level "- Note:" list elements to Note Aside elements. This happens during a Document level visit because the document is
         // the parent of the top level UnorderedList and is where the Aside elements should be added to become a sibling to the UnorderedList.
-        var result = [Markup]()
+        var result = [any Markup]()
 
         for child in document.children {
             // Only rewrite top-level unordered lists. Anything else is unmodified.
@@ -74,7 +74,7 @@ struct TaggedListItemExtractor: MarkupRewriter {
             }
 
             // Separate all the "- Note:" elements from the other list items.
-            let (noteItems, otherListItems) = unorderedList.listItems.categorize(where: { item -> [BlockMarkup]? in
+            let (noteItems, otherListItems) = unorderedList.listItems.categorize(where: { item -> [any BlockMarkup]? in
                 guard let tagName = item.extractTag()?.rawTag.lowercased(),
                       Aside.Kind.allCases.contains(where: { $0.rawValue.lowercased() == tagName })
                 else {
@@ -93,10 +93,10 @@ struct TaggedListItemExtractor: MarkupRewriter {
         }
 
         // After extracting the "- Note:" list elements, proceed to visit all markup to do local rewrites.
-        return Document(result.compactMap { visit($0) as? BlockMarkup })
+        return Document(result.compactMap { visit($0) as? (any BlockMarkup) })
     }
     
-    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> Markup? {
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> (any Markup)? {
         var newItems = [ListItem]()
         for item in unorderedList.listItems {
             guard let newItem = visit(item) as? ListItem else {
@@ -110,7 +110,7 @@ struct TaggedListItemExtractor: MarkupRewriter {
         return UnorderedList(newItems)
     }
     
-    mutating func visitListItem(_ listItem: ListItem) -> Markup? {
+    mutating func visitListItem(_ listItem: ListItem) -> (any Markup)? {
         /*
          This rewriter only extracts list items that are at the "top level", i.e.:
 
@@ -230,12 +230,12 @@ struct TaggedListItemExtractor: MarkupRewriter {
         return nil
     }
 
-    mutating func visitDoxygenParameter(_ doxygenParam: DoxygenParameter) -> Markup? {
+    mutating func visitDoxygenParameter(_ doxygenParam: DoxygenParameter) -> (any Markup)? {
         parameters.append(Parameter(doxygenParam))
         return nil
     }
 
-    mutating func visitDoxygenReturns(_ doxygenReturns: DoxygenReturns) -> Markup? {
+    mutating func visitDoxygenReturns(_ doxygenReturns: DoxygenReturns) -> (any Markup)? {
         returns.append(Return(doxygenReturns))
         return nil
     }
@@ -252,11 +252,11 @@ private struct ExtractedTag {
     /// The range of the raw tag text
     var tagRange: SourceRange?
     /// The complete content related to this tag
-    var contents: [Markup]
+    var contents: [any Markup]
     /// The range of the tag and its content
     var range: SourceRange?
     
-    init(rawTag: String, tagRange: SourceRange?, contents: [Markup], range: SourceRange?) {
+    init(rawTag: String, tagRange: SourceRange?, contents: [any Markup], range: SourceRange?) {
         self.rawTag = rawTag
         self.knownTag = .init(rawTag)
         self.tagRange = tagRange
@@ -383,7 +383,7 @@ private extension ListItem {
 }
 
 private extension Sequence<InlineMarkup> {
-    func splitNameAndContent() -> (name: String, nameRange: SourceRange?, content: [Markup])? {
+    func splitNameAndContent() -> (name: String, nameRange: SourceRange?, content: [any Markup])? {
         var iterator = makeIterator()
         guard let initialTextNode = iterator.next() as? Text else {
             return nil
@@ -401,11 +401,11 @@ private extension Sequence<InlineMarkup> {
         }
         let remainingInitialText = initialText.suffix(from: initialText.index(after: colonIndex)).drop { $0 == " " }
 
-        var newInlineContent: [InlineMarkup] = [Text(String(remainingInitialText))]
+        var newInlineContent: [any InlineMarkup] = [Text(String(remainingInitialText))]
         while let more = iterator.next() {
             newInlineContent.append(more)
         }
-        let newContent: [Markup] = [Paragraph(newInlineContent)]
+        let newContent: [any Markup] = [Paragraph(newInlineContent)]
         
         let nameRange: SourceRange? = initialTextNode.range.map { fullRange in
             var start = fullRange.lowerBound

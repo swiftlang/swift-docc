@@ -37,7 +37,7 @@ open class RenderNodeTransformer {
     ///
     /// - Parameter transformation: The transformation to apply.
     /// - Returns: The transformed render node.
-    public func apply(transformation: RenderNodeTransforming) -> RenderNode {
+    public func apply(transformation: any RenderNodeTransforming) -> RenderNode {
         let context = RenderNodeTransformationContext(referencesCount: referencesCount)
 
         return transformation

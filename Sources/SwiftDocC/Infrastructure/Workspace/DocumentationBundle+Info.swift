@@ -162,7 +162,7 @@ extension DocumentationBundle {
             }
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let bundleDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? BundleDiscoveryOptions
             let derivedDisplayName = decoder.userInfo[.derivedDisplayName] as? String
             

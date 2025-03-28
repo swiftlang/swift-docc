@@ -54,13 +54,13 @@ extension DocumentationBundle.Identifier: CustomStringConvertible {
 
 // Encode and decode the identifier as a single string value.
 extension DocumentationBundle.Identifier: Codable {
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let rawValue = try container.decode(String.self)
         self.init(rawValue: rawValue)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
     }

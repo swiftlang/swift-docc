@@ -74,7 +74,7 @@ struct DiagnosticFile: Codable {
         case version, diagnostics
     }
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         version = try container.decode(SemanticVersion.self, forKey: .version)
         try Self.verifyIsSupported(version)

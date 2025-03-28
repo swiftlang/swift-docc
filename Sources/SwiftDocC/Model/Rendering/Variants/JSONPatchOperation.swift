@@ -93,7 +93,7 @@ public enum JSONPatchOperation: Codable {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let operation = try container.decode(PatchOperation.self, forKey: .operation)
         
@@ -116,11 +116,11 @@ public enum JSONPatchOperation: Codable {
     /// - Parameters:
     ///   - pointer: The pointer to the value to replace.
     ///   - encodableValue: The value to use in the replacement.
-    public static func replace(pointer: JSONPointer, encodableValue: Encodable) -> JSONPatchOperation {
+    public static func replace(pointer: JSONPointer, encodableValue: any Encodable) -> JSONPatchOperation {
         .replace(pointer: pointer, value: AnyCodable(encodableValue))
     }
     
-    public static func add(pointer: JSONPointer, encodableValue: Encodable) -> JSONPatchOperation {
+    public static func add(pointer: JSONPointer, encodableValue: any Encodable) -> JSONPatchOperation {
         .add(pointer: pointer, value: AnyCodable(encodableValue))
     }
     
@@ -137,7 +137,7 @@ public enum JSONPatchOperation: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .replace(let pointer, let value):

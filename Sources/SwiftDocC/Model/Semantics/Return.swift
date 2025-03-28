@@ -13,7 +13,7 @@ import Markdown
 /// Documentation about a symbol's return value.
 public struct Return {
     /// The content that describe the return value for a symbol.
-    public var contents: [Markup]
+    public var contents: [any Markup]
     /// The text range where this return value was parsed.
     var range: SourceRange?
     
@@ -21,7 +21,7 @@ public struct Return {
     /// - Parameters:
     ///   - contents: The content that describe the return value for this symbol.
     ///   - range: The text range where this return value was parsed.
-    public init(contents: [Markup], range: SourceRange? = nil) {
+    public init(contents: [any Markup], range: SourceRange? = nil) {
         self.contents = contents
         self.range = range
     }

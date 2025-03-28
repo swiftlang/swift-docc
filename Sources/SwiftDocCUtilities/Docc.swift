@@ -10,8 +10,8 @@
 
 import ArgumentParser
 
-private var subcommands: [AsyncParsableCommand.Type] {
-    var subcommands: [AsyncParsableCommand.Type] = [
+private var subcommands: [any AsyncParsableCommand.Type] {
+    var subcommands: [any AsyncParsableCommand.Type] = [
         Docc.Convert.self,
         Docc.ProcessArchive.self,
         Docc.ProcessCatalog.self,

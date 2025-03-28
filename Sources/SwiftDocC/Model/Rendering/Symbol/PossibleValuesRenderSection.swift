@@ -48,13 +48,13 @@ public struct PossibleValuesRenderSection: RenderSection, Equatable {
         case kind, title, values
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decodeIfPresent(String.self, forKey: .title)
         values = try container.decode([NamedValue].self, forKey: .values)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)
         try container.encode(title, forKey: .title)

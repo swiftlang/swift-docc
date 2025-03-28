@@ -28,7 +28,7 @@ extension Docc {
         // The file manager used to validate the input and output directories.
         //
         // Provided as a static variable to allow for using a different file manager in unit tests.
-        static var _fileManager: FileManagerProtocol = FileManager.default
+        static var _fileManager: any FileManagerProtocol = FileManager.default
         
         // Note:
         // The order of the option groups in this file is reflected in the 'docc merge --help' output.
