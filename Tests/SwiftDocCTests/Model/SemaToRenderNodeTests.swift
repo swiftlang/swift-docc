@@ -1840,7 +1840,7 @@ Document
         Asserts if `expectedRoleHeading` does not match the parsed render node's `roleHeading` after it's parsed.
         Uses 'TestBundle's documentation as a base for compiling, overwriting 'article2' with `content`.
     */
-    private func assertRoleHeadingForArticleInTestBundle(expectedRoleHeading: String?, content: String, file: StaticString = #file, line: UInt = #line) throws {
+    private func assertRoleHeadingForArticleInTestBundle(expectedRoleHeading: String?, content: String, file: StaticString = #filePath, line: UInt = #line) throws {
         let renderNode = try renderNodeForArticleInTestBundle(content: content)
         XCTAssertEqual(expectedRoleHeading, renderNode.metadata.roleHeading, file: (file), line: line)
     }
@@ -1926,7 +1926,7 @@ Document
     }
     
     func testRendersBetaViolators() throws {
-        func makeTestBundle(currentPlatforms: [String : PlatformVersion]?, file: StaticString = #file, line: UInt = #line, referencePath: String) throws -> (DocumentationBundle, DocumentationContext, ResolvedTopicReference) {
+        func makeTestBundle(currentPlatforms: [String : PlatformVersion]?, file: StaticString = #filePath, line: UInt = #line, referencePath: String) throws -> (DocumentationBundle, DocumentationContext, ResolvedTopicReference) {
             var configuration = DocumentationContext.Configuration()
             // Add missing platforms if their fallback platform is present.
             var currentPlatforms = currentPlatforms ?? [:]

@@ -24,7 +24,7 @@ class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
         func assertCanResolveSymbolLinks(
             symbolPaths: String...,
             parentPath: String,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) {
             for symbolPath in symbolPaths {

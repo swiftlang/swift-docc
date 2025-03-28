@@ -178,7 +178,7 @@ class PlistSymbolTests: XCTestCase {
 
 
 /// Ensures a given render node can be encoded and decode back without throwing.
-public func AssertRoundtrip(for renderNode: RenderNode, file: StaticString = #file, line: UInt = #line) {
+public func AssertRoundtrip(for renderNode: RenderNode, file: StaticString = #filePath, line: UInt = #line) {
     // Ensure roundtripping, so we encode the render node and decode it back.
     do {
         let roundtripData = try JSONEncoder().encode(renderNode)

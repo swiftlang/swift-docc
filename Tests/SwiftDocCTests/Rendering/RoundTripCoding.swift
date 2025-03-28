@@ -17,7 +17,7 @@ import XCTest
 /// - Throws: An error if encoding or decoding of the given value failed.
 func assertRoundTripCoding<Value: Equatable>(
     _ value: Value,
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line
 ) throws where Value: Codable {
     let encoder = JSONEncoder()
@@ -42,7 +42,7 @@ func assertRoundTripCoding<Value: Equatable>(
 func assertJSONRepresentation<Value: Decodable & Equatable>(
     _ value: Value,
     _ json: String,
-    file: StaticString = #file,
+    file: StaticString = #filePath,
     line: UInt = #line
 ) throws {
     let decoder = JSONDecoder()

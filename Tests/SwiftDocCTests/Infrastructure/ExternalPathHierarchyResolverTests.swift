@@ -920,7 +920,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         func assertSuccessfullyResolves(
             authoredLink: String,
             to absoluteReferenceString: String? = nil,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
             let expectedAbsoluteReferenceString = absoluteReferenceString ?? {
@@ -943,7 +943,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         func assertBetaStatus(
             authoredLink: String,
             isBeta: Bool,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
             try assertResults(authoredLink: authoredLink) { result, label in
@@ -961,7 +961,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: String,
             errorMessage: String,
             solutions: [Solution],
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
            try assertResults(authoredLink: authoredLink) { result, label in

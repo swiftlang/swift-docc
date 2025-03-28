@@ -60,7 +60,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         var lines: [String]
     }
 
-    private func codeListing(at index: Int, in renderSection: ContentRenderSection, file: StaticString = #file, line: UInt = #line) throws -> CodeListing {
+    private func codeListing(at index: Int, in renderSection: ContentRenderSection, file: StaticString = #filePath, line: UInt = #line) throws -> CodeListing {
         if case let .codeListing(l) = renderSection.content[index] {
             return CodeListing(language: l.syntax, lines: l.code)
         }

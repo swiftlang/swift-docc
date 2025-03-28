@@ -21,7 +21,7 @@ import NIOHTTP1
 class FileRequestHandlerTests: XCTestCase {
     let fileIO = NonBlockingFileIO(threadPool: NIOThreadPool(numberOfThreads: 2))
 
-    private func verifyAsset(root: URL, path: String, body: String, type: String, file: StaticString = #file, line: UInt = #line) throws {
+    private func verifyAsset(root: URL, path: String, body: String, type: String, file: StaticString = #filePath, line: UInt = #line) throws {
         let request = makeRequestHead(uri: path)
         let factory = FileRequestHandler(rootURL: root)
         let response = try responseWithPipeline(request: request, handler: factory)

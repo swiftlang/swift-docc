@@ -36,7 +36,7 @@ class DocumentationContext_MixedLanguageSourceLanguagesTests: XCTestCase {
     func assertArticleAvailableSourceLanguages(
         moduleAvailableLanguages: Set<SourceLanguage>,
         expectedArticleDefaultLanguage: SourceLanguage,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         precondition(
