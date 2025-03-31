@@ -192,7 +192,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         try await assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on port -1")
     }
     
-    func assert(bindPort: Int, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line) async throws {
+    func assert(bindPort: Int, expectedErrorMessage: String, file: StaticString = #filePath, line: UInt = #line) async throws {
         #if os(macOS)
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
         defer {

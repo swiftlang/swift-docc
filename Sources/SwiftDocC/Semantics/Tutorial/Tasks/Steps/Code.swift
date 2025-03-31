@@ -32,7 +32,7 @@ public final class Code: Semantic, DirectiveConvertible {
     /// Whether a diff should be shown. See ``Code/fileName`` for more information.
     public let shouldResetDiff: Bool
     /// A preview image or video overlay.
-    public let preview: Media?
+    public let preview: (any Media)?
     
     enum Semantics {
         enum File: DirectiveArgument {
@@ -50,7 +50,7 @@ public final class Code: Semantic, DirectiveConvertible {
         }
     }
     
-    init(originalMarkup: BlockDirective, fileReference: ResourceReference, fileName: String, previousFileReference: ResourceReference?, shouldResetDiff: Bool, preview: Media?) {
+    init(originalMarkup: BlockDirective, fileReference: ResourceReference, fileName: String, previousFileReference: ResourceReference?, shouldResetDiff: Bool, preview: (any Media)?) {
         self.originalMarkup = originalMarkup
         self.fileReference = fileReference
         self.fileName = fileName

@@ -22,12 +22,12 @@ public import SwiftDocCTestUtilities
 
 protocol AssertableFile: File {
     /// Asserts that a file exist a given URL.
-    func __assertExist(at location: URL, fileManager: FileManagerProtocol, file: StaticString, line: UInt) // Implement this since protocol methods can't have default arguments.
+    func __assertExist(at location: URL, fileManager: any FileManagerProtocol, file: StaticString, line: UInt) // Implement this since protocol methods can't have default arguments.
 }
 
 extension AssertableFile {
     /// Asserts that a file exist a given URL.
-    func assertExist(at location: URL, fileManager: FileManagerProtocol = FileManager.default, file: StaticString = #file, line: UInt = #line) {
+    func assertExist(at location: URL, fileManager: any FileManagerProtocol = FileManager.default, file: StaticString = #filePath, line: UInt = #line) {
         __assertExist(at: location, fileManager: fileManager, file: (file), line: line)
     }
 }
@@ -44,7 +44,7 @@ extension AssertableFile {
 // MARK: -
 
 extension Folder: AssertableFile {
-    func __assertExist(at location: URL, fileManager: FileManagerProtocol, file: StaticString = #file, line: UInt = #line) {
+    func __assertExist(at location: URL, fileManager: any FileManagerProtocol, file: StaticString = #filePath, line: UInt = #line) {
         var isFolder: ObjCBool = false
         XCTAssert(fileManager.fileExists(atPath: location.path, isDirectory: &isFolder),
                   "Folder '\(name)' should exist at '\(location.path)'", file: (file), line: line)
@@ -57,7 +57,7 @@ extension Folder: AssertableFile {
 }
 
 extension InfoPlist: AssertableFile {
-    func __assertExist(at location: URL, fileManager: FileManagerProtocol, file: StaticString, line: UInt) {
+    func __assertExist(at location: URL, fileManager: any FileManagerProtocol, file: StaticString, line: UInt) {
         XCTAssert(fileManager.fileExists(atPath: location.path),
                   "File '\(name)' should exist at '\(location.path)'", file: (file), line: line)
         
@@ -83,7 +83,7 @@ extension InfoPlist: AssertableFile {
 }
 
 extension TextFile: AssertableFile {
-    func __assertExist(at location: URL, fileManager: FileManagerProtocol, file: StaticString, line: UInt) {
+    func __assertExist(at location: URL, fileManager: any FileManagerProtocol, file: StaticString, line: UInt) {
         XCTAssert(fileManager.fileExists(atPath: location.path),
                   "File '\(name)' should exist at '\(location.path)'", file: (file), line: line)
         XCTAssertEqual(fileManager.contents(atPath: location.path).map({ String(data: $0, encoding: .utf8)}), utf8Content,
@@ -92,7 +92,7 @@ extension TextFile: AssertableFile {
 }
 
 extension JSONFile: AssertableFile {
-    func __assertExist(at location: URL, fileManager: FileManagerProtocol, file: StaticString, line: UInt) {
+    func __assertExist(at location: URL, fileManager: any FileManagerProtocol, file: StaticString, line: UInt) {
         XCTAssert(fileManager.fileExists(atPath: location.path),
                   "File '\(name)' should exist at '\(location.path)'", file: (file), line: line)
         
@@ -124,7 +124,7 @@ extension JSONFile: AssertableFile {
 }
 
 extension CopyOfFile: AssertableFile {
-    func __assertExist(at location: URL, fileManager: FileManagerProtocol, file: StaticString, line: UInt) {
+    func __assertExist(at location: URL, fileManager: any FileManagerProtocol, file: StaticString, line: UInt) {
         XCTAssert(fileManager.fileExists(atPath: location.path),
                   "File '\(name)' should exist at '\(location.path)'", file: (file), line: line)
         

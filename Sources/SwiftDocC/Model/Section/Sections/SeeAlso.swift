@@ -14,7 +14,7 @@ public import Markdown
 public struct SeeAlsoSection: GroupedSection {
     public private(set) static var title: String? = "See Also"
     
-    public var content: [Markup]
+    public var content: [any Markup]
 
     /// The list of groups for the section.
     public var taskGroups: [TaskGroup] {

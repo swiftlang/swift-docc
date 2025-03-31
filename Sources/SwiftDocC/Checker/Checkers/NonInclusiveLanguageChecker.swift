@@ -129,7 +129,7 @@ public struct NonInclusiveLanguageChecker: Checker {
     ///   - markup: The markup element that contains the text.
     /// - Returns: An array of ranges at which the term was found.
     /// > Warning: Crashes if the term expression pattern is not valid.
-    func ranges(for term: Term, in text: String, of markup: Markup) -> [SourceRange] {
+    func ranges(for term: Term, in text: String, of markup: any Markup) -> [SourceRange] {
         var ranges = [SourceRange]()
 
         let regex = try! defaultRegularExpressions[term.expression]

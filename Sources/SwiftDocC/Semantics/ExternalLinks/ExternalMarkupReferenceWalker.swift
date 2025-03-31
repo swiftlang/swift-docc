@@ -20,7 +20,7 @@ struct ExternalMarkupReferenceWalker: MarkupVisitor {
     var collectedExternalLinks = [DocumentationBundle.Identifier: Set<ValidatedURL>]()
 
     /// Descends down the given elements' children.
-    mutating func defaultVisit(_ markup: Markup) {
+    mutating func defaultVisit(_ markup: any Markup) {
         for child in markup.children {
             self.visit(child)
         }

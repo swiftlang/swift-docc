@@ -359,7 +359,7 @@ extension ExtendedTypeFormatTransformation {
         extensionBlockToExtendedTypeMapping.reserveCapacity(extensionBlockSymbols.count)
         
         let createExtendedTypeSymbolAndAncestors = { (extensionBlockSymbol: SymbolGraph.Symbol, id: String) -> SymbolGraph.Symbol in
-            var newMixins = [String: Mixin]()
+            var newMixins = [String: any Mixin]()
             
             if var swiftExtension = extensionBlockSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self] {
                 swiftExtension.constraints = []

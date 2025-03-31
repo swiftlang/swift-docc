@@ -18,7 +18,7 @@ public import Foundation
 /// register documentation services using the ``register(service:)`` function.
 public class DocumentationServer: DocumentationServerProtocol {
     /// The services provided by the server.
-    public var services: [DocumentationServer.MessageType: DocumentationService] = [:]
+    public var services: [DocumentationServer.MessageType: any DocumentationService] = [:]
     
     /// Synchronization queue used for server operations.
     ///

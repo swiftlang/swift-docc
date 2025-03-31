@@ -19,7 +19,7 @@ extension AsyncAction {
     ///   - template: An optional template for the new directory.
     ///   - fileManager: The file manager to create the new directory.
     /// - Returns: The URL of the new unique directory.
-    static func createUniqueDirectory(inside container: URL, template: URL?, fileManager: FileManagerProtocol) throws -> URL {
+    static func createUniqueDirectory(inside container: URL, template: URL?, fileManager: any FileManagerProtocol) throws -> URL {
         let targetURL = container.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
         
         if let template {
@@ -39,7 +39,7 @@ extension AsyncAction {
     ///   - source: The file or directory to move.
     ///   - destination: The new location for the file or directory.
     ///   - fileManager: The file manager to move the file or directory.
-    static func moveOutput(from source: URL, to destination: URL, fileManager: FileManagerProtocol) throws {
+    static func moveOutput(from source: URL, to destination: URL, fileManager: any FileManagerProtocol) throws {
         // We only need to move output if it exists
         guard fileManager.fileExists(atPath: source.path) else { return }
         
@@ -51,7 +51,7 @@ extension AsyncAction {
         try fileManager.moveItem(at: source, to: destination)
     }
     
-    private static func ensureThatParentFolderExist(for location: URL, fileManager: FileManagerProtocol) throws {
+    private static func ensureThatParentFolderExist(for location: URL, fileManager: any FileManagerProtocol) throws {
         let parentFolder = location.deletingLastPathComponent()
         if !fileManager.directoryExists(atPath: parentFolder.path) {
             try fileManager.createDirectory(at: parentFolder, withIntermediateDirectories: false, attributes: nil)

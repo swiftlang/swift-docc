@@ -86,7 +86,7 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     
     enum Error: DescribedError {
         case unableToLoadSymbolGraphData(url: URL)
-        case notEnoughDataToGenerateBundle(options: BundleDiscoveryOptions, underlyingError: Swift.Error?)
+        case notEnoughDataToGenerateBundle(options: BundleDiscoveryOptions, underlyingError: (any Swift.Error)?)
         
         var errorDescription: String {
             switch self {
@@ -104,7 +104,7 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
                 
                 if let underlyingError {
                     errorMessage += """
-                    \((underlyingError as? DescribedError)?.errorDescription ?? underlyingError.localizedDescription)
+                    \((underlyingError as? (any DescribedError))?.errorDescription ?? underlyingError.localizedDescription)
                     
                     """
                 } else {
@@ -141,7 +141,7 @@ private struct SymbolGraphModuleContainer: Decodable {
     
     typealias CodingKeys = SymbolGraph.CodingKeys
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.module = try container.decode(SymbolGraph.Module.self, forKey: .module)

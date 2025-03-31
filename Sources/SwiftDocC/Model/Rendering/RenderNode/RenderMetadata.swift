@@ -250,7 +250,7 @@ extension RenderMetadata: Codable {
         public static let hasNoExpandedDocumentation = CodingKeys(stringValue: "hasNoExpandedDocumentation")
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         category = try container.decodeIfPresent(String.self, forKey: .category)
@@ -308,7 +308,7 @@ extension RenderMetadata: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encodeIfPresent(category, forKey: .category)

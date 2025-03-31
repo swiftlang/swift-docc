@@ -43,7 +43,7 @@ public struct AbstractContainsFormattedTextOnly: Checker {
         }
     }
     
-    private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: Markup) {
+    private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: any Markup) {
         let explanation = """
             Summary should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
             """

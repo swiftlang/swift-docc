@@ -49,7 +49,7 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
 }
 
 extension Snippet: RenderableDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         guard let snippet = Snippet(from: originalMarkup, for: contentCompiler.bundle, in: contentCompiler.context) else {
                 return []
             }

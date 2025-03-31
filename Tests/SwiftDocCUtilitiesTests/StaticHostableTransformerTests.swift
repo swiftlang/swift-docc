@@ -177,8 +177,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         }
     }
 
-
-    private func compareIndexHTML(fileManager: FileManagerProtocol, folder: URL, indexHTML: String) throws {
+    private func compareIndexHTML(fileManager: any FileManagerProtocol, folder: URL, indexHTML: String) throws {
 
         for item in try fileManager.contentsOfDirectory(atPath: folder.path) {
 

@@ -21,5 +21,5 @@ public protocol MarkupConvertible {
     ///   - bundle: The documentation bundle that the element belongs to.
     ///   - context: The documentation context that the element belongs to.
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the element.
-    init?(from markup: Markup, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem])
+    init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem])
 }

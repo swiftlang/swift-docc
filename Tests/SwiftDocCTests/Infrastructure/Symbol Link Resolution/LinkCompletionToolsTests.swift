@@ -17,7 +17,7 @@ class LinkCompletionToolsTests: XCTestCase {
         func assertParsing(
             _ linkString: String,
             equal expected: [(name: String, disambiguation: LinkCompletionTools.ParsedDisambiguation)],
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) {
             let got = LinkCompletionTools.parse(linkString: linkString)

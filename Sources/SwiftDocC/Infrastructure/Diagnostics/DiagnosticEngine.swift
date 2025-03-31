@@ -17,7 +17,7 @@ public final class DiagnosticEngine {
     private let workQueue = DispatchQueue(label: "org.swift.docc.DiagnosticsEngine.work-queue")
 
     /// The diagnostic consumers currently subscribed to this engine.
-    let consumers: Synchronized<[ObjectIdentifier: DiagnosticConsumer]> = .init([:])
+    let consumers: Synchronized<[ObjectIdentifier: any DiagnosticConsumer]> = .init([:])
     /// The diagnostics encountered by this engine.
     let diagnostics: Synchronized<[Problem]> = .init([])
     /// A flag that indicates whether this engine has emitted a diagnostics with a severity level of ``DiagnosticSeverity/error``.
@@ -32,7 +32,7 @@ public final class DiagnosticEngine {
     /// Returns a Boolean value indicating whether the engine contains a consumer that satisfies the given predicate.
     /// - Parameter predicate: A closure that takes one of the engine's consumers as its argument and returns a Boolean value that indicates whether the passed consumer represents a match.
     /// - Returns: `true` if the engine contains a consumer that satisfies predicate; otherwise, `false`.
-    public func hasConsumer(matching predicate: (DiagnosticConsumer) throws -> Bool) rethrows -> Bool {
+    public func hasConsumer(matching predicate: (any DiagnosticConsumer) throws -> Bool) rethrows -> Bool {
         try consumers.sync {
             try $0.values.contains(where: predicate)
         }
@@ -112,7 +112,7 @@ public final class DiagnosticEngine {
 
     /// Subscribes a given consumer to the diagnostics emitted by this engine.
     /// - Parameter consumer: The consumer to subscribe to this engine.
-    public func add(_ consumer: DiagnosticConsumer) {
+    public func add(_ consumer: any DiagnosticConsumer) {
         consumers.sync {
             $0[ObjectIdentifier(consumer)] = consumer
         }
@@ -120,7 +120,7 @@ public final class DiagnosticEngine {
 
     /// Unsubscribes a given consumer
     /// - Parameter consumer: The consumer to remove from this engine.
-    public func remove(_ consumer: DiagnosticConsumer) {
+    public func remove(_ consumer: any DiagnosticConsumer) {
         consumers.sync {
             $0.removeValue(forKey: ObjectIdentifier(consumer))
         }

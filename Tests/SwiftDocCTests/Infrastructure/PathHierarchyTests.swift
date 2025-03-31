@@ -3785,7 +3785,7 @@ class PathHierarchyTests: XCTestCase {
     
     // MARK: Test helpers
 
-    private func assertFindsPath(_ path: String, in tree: PathHierarchy, asSymbolID symbolID: String, file: StaticString = #file, line: UInt = #line) throws {
+    private func assertFindsPath(_ path: String, in tree: PathHierarchy, asSymbolID symbolID: String, file: StaticString = #filePath, line: UInt = #line) throws {
         do {
             let symbol = try tree.findSymbol(path: path)
             XCTAssertEqual(symbol.identifier.precise, symbolID, file: file, line: line)
@@ -3801,7 +3801,7 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    private func assertPathNotFound(_ path: String, in tree: PathHierarchy, file: StaticString = #file, line: UInt = #line) throws {
+    private func assertPathNotFound(_ path: String, in tree: PathHierarchy, file: StaticString = #filePath, line: UInt = #line) throws {
         do {
             let symbol = try tree.findSymbol(path: path)
             XCTFail("Unexpectedly found symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
@@ -3817,7 +3817,7 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    private func assertPathCollision(_ path: String, in tree: PathHierarchy, collisions expectedCollisions: [(symbolID: String, disambiguation: String)], file: StaticString = #file, line: UInt = #line) throws {
+    private func assertPathCollision(_ path: String, in tree: PathHierarchy, collisions expectedCollisions: [(symbolID: String, disambiguation: String)], file: StaticString = #filePath, line: UInt = #line) throws {
         do {
             let symbol = try tree.findSymbol(path: path)
             XCTFail("Unexpectedly found unambiguous symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
@@ -3846,7 +3846,7 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    private func assertPathRaisesErrorMessage(_ path: String, in tree: PathHierarchy, context: DocumentationContext, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line, _ additionalAssertion: (TopicReferenceResolutionErrorInfo) -> Void = { _ in }) throws {
+    private func assertPathRaisesErrorMessage(_ path: String, in tree: PathHierarchy, context: DocumentationContext, expectedErrorMessage: String, file: StaticString = #filePath, line: UInt = #line, _ additionalAssertion: (TopicReferenceResolutionErrorInfo) -> Void = { _ in }) throws {
         XCTAssertThrowsError(try tree.findSymbol(path: path), "Finding path \(path) didn't raise an error.",file: file,line: line) { untypedError in
             let error = untypedError as! PathHierarchy.Error
             let referenceError = error.makeTopicReferenceResolutionErrorInfo() { context.linkResolver.localResolver.fullName(of: $0, in: context) }
@@ -3855,7 +3855,7 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], file: StaticString = #file, line: UInt = #line) {
+    private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], file: StaticString = #filePath, line: UInt = #line) {
         let (actual, _) = PathHierarchy.PathParser.parse(path: path)
         XCTAssertEqual(actual.count, expected.count, "Incorrect number of path components for \(path.singleQuoted)", file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {

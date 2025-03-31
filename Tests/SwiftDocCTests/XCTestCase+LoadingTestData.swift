@@ -19,9 +19,9 @@ extension XCTestCase {
     /// Loads a documentation bundle from the given source URL and creates a documentation context.
     func loadBundle(
         from catalogURL: URL,
-        externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:],
-        externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
-        fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
+        externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
+        fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
         configuration: DocumentationContext.Configuration = .init()
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
@@ -61,7 +61,7 @@ extension XCTestCase {
         return (bundle, context)
     }
     
-    func testCatalogURL(named name: String, file: StaticString = #file, line: UInt = #line) throws -> URL {
+    func testCatalogURL(named name: String, file: StaticString = #filePath, line: UInt = #line) throws -> URL {
         try XCTUnwrap(
             Bundle.module.url(forResource: name, withExtension: "docc", subdirectory: "Test Bundles"),
             file: file, line: line
@@ -71,9 +71,9 @@ extension XCTestCase {
     func testBundleAndContext(
         copying name: String,
         excludingPaths excludedPaths: [String] = [],
-        externalResolvers: [DocumentationBundle.Identifier : ExternalDocumentationSource] = [:],
-        externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
-        fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        externalResolvers: [DocumentationBundle.Identifier : any ExternalDocumentationSource] = [:],
+        externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
+        fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
         configuration: DocumentationContext.Configuration = .init(),
         configureBundle: ((URL) throws -> Void)? = nil
@@ -108,15 +108,15 @@ extension XCTestCase {
     
     func testBundleAndContext(
         named name: String,
-        externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:],
-        fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
+        fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         configuration: DocumentationContext.Configuration = .init()
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let catalogURL = try testCatalogURL(named: name)
         return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
     }
     
-    func testBundleAndContext(named name: String, externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(named name: String, externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
         let (_, bundle, context) = try testBundleAndContext(named: name, externalResolvers: externalResolvers)
         return (bundle, context)
     }
@@ -159,7 +159,7 @@ extension XCTestCase {
     func parseDirective<Directive: DirectiveConvertible>(
         _ directive: Directive.Type,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (problemIdentifiers: [String], directive: Directive?) {
         let (bundle, context) = try testBundleAndContext()
@@ -192,13 +192,13 @@ extension XCTestCase {
         _ directive: Directive.Type,
         catalog: Folder,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
         directive: Directive?,
-        collectedReferences: [String : RenderReference]
+        collectedReferences: [String : any RenderReference]
     ) {
         let (bundle, context) = try loadBundle(catalog: catalog)
         return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
@@ -208,7 +208,7 @@ extension XCTestCase {
         _ directive: Directive.Type,
         in bundleName: String? = nil,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
         let (renderedContent, problems, directive, _) = try parseDirective(
@@ -226,13 +226,13 @@ extension XCTestCase {
         _ directive: Directive.Type,
         in bundleName: String? = nil,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
         directive: Directive?,
-        collectedReferences: [String : RenderReference]
+        collectedReferences: [String : any RenderReference]
     ) {
         let bundle: DocumentationBundle
         let context: DocumentationContext
@@ -250,13 +250,13 @@ extension XCTestCase {
         bundle: DocumentationBundle,
         context: DocumentationContext,
         content: () -> String,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
         directive: Directive?,
-        collectedReferences: [String : RenderReference]
+        collectedReferences: [String : any RenderReference]
     ) {
         context.diagnosticEngine.clearDiagnostics()
         
@@ -319,7 +319,7 @@ extension XCTestCase {
         )
         
         let collectedReferences = contentCompiler.videoReferences
-            .mapValues { $0 as RenderReference }
+            .mapValues { $0 as (any RenderReference) }
             .merging(
                 contentCompiler.imageReferences,
                 uniquingKeysWith: { videoReference, _ in

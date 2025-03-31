@@ -15,5 +15,5 @@ public struct ReturnsSection: Section {
     public static var title: String? {
         return "Return Value"
     }
-    public var content: [Markup]
+    public var content: [any Markup]
 }

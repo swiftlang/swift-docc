@@ -44,7 +44,7 @@ public struct WebKitCommunicationBridge: CommunicationBridge {
     /// - Throws: Throws a ``CommunicationBridgeError/unableToEncodeMessage(_:underlyingError:)`` if the communication bridge could not encode the given message to JSON.
     public func send(
         _ message: Message,
-        using evaluateJavaScript: (String, ((Any?, Error?) -> ())?) -> ()
+        using evaluateJavaScript: (String, ((Any?, (any Error)?) -> ())?) -> ()
     ) throws {
         do {
             let encodedMessage = try JSONEncoder().encode(message)
