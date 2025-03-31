@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A reference to a resource that can be downloaded.
 public struct DownloadReference: RenderReference, URLReference, Equatable {

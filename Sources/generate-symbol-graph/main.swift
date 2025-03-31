@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 @testable import SwiftDocC
 
 struct Directive {

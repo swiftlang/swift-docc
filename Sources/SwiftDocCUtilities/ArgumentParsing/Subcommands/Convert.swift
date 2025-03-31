@@ -8,9 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
+public import ArgumentParser
 import SwiftDocC
-import Foundation
+public import Foundation
 
 extension Docc {
     /// Converts documentation markup, assets, and symbol information into a documentation archive.

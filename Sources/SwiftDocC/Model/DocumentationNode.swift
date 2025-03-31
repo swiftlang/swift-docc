@@ -9,8 +9,8 @@
 */
 
 import Foundation
-import Markdown
-import SymbolKit
+public import Markdown
+public import SymbolKit
 
 /// A documentation node holds all the information about a documentation entity's content.
 ///

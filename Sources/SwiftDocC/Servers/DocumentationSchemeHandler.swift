@@ -8,10 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 #if canImport(WebKit)
-import WebKit
+public import WebKit
+public import Foundation
 
 public class DocumentationSchemeHandler: NSObject {
     

@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive to adjust Swift-DocC's default behaviors when rendering a page.
 ///

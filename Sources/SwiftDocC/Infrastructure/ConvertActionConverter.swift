@@ -11,7 +11,7 @@
 import Foundation
 
 #if canImport(os)
-import os
+package import os
 #endif
 
 package enum ConvertActionConverter {

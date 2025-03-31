@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+package import Foundation
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
-import SwiftDocC
+public import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: AsyncAction {

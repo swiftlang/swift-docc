@@ -17,6 +17,7 @@ let swiftSettings: [SwiftSetting] = [
     
     .enableUpcomingFeature("ConciseMagicFile"), // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
     .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
+    .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
 ]
 
 let package = Package(

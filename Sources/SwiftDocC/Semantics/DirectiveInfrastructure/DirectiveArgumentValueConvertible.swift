@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 protocol DirectiveArgumentValueConvertible {
     /// Instantiates an instance of the conforming directive argument value type from a string representation.

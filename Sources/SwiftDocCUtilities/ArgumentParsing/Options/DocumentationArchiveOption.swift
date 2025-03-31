@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
-import Foundation
+public import ArgumentParser
+public import Foundation
 
 /// Resolves and validates a URL value that provides the path to a documentation archive.
 public struct DocCArchiveOption: DirectoryPathOption {

@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SwiftDocC
+public import Foundation
+public import SwiftDocC
 
 /// An action that generates a documentation catalog from a template seed.
 public struct InitAction: AsyncAction {

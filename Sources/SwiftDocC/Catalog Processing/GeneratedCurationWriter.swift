@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import SymbolKit
 
 /// A type that writes the auto-generated curation into documentation extension files.

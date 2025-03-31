@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
+public import ArgumentParser
 
 private var subcommands: [any AsyncParsableCommand.Type] {
     var subcommands: [any AsyncParsableCommand.Type] = [

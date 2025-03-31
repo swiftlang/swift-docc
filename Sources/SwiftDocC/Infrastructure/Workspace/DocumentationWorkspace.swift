@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// The documentation workspace provides a unified interface for accessing serialized documentation bundles and their files, from a variety of sources.
 ///

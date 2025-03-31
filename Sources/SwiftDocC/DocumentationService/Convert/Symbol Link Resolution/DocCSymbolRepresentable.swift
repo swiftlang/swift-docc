@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 
 /// A type that can be converted to a DocC symbol.
 @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")

@@ -8,9 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import SymbolKit
-import Markdown
+public import Markdown
 
 /// A resolved or unresolved reference to a piece of documentation.
 ///
