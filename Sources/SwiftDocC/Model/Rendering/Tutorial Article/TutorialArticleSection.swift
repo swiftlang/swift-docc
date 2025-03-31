@@ -16,7 +16,7 @@ public struct TutorialArticleSection: RenderSection, Equatable {
     /// The contents of the Tutorial Article.
     public var content: [ContentLayout] = []
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         content = try container.decodeIfPresent([ContentLayout].self, forKey: .content) ?? []
     }
@@ -60,7 +60,7 @@ extension ContentLayout: Codable {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let kind = try container.decode(LayoutKind.self, forKey: .kind)
         
@@ -74,7 +74,7 @@ extension ContentLayout: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)
         

@@ -18,7 +18,7 @@ class KeyedEncodingContainerTests: XCTestCase {
         var age: Int
         var names: [String]
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             
             try container.encode(age, forKey: .age)

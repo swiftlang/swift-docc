@@ -23,7 +23,7 @@ indirect enum JSON: Decodable {
     case boolean(Bool)
     case null
     
-    init(from decoder: Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         if container.decodeNil() {
             self = .null

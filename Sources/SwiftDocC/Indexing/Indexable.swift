@@ -24,7 +24,7 @@ public protocol TextIndexing {
 
      - parameter references: A dictionary of references to resolve ``RenderInlineContent.reference` elements' inlined titles.
      */
-    func rawIndexableTextContent(references: [String: RenderReference]) -> String
+    func rawIndexableTextContent(references: [String: any RenderReference]) -> String
 }
 
 /**
@@ -52,13 +52,13 @@ extension Sequence<RenderBlockContent> {
         return self.flatMap { $0.headings }
     }
 
-    func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return self.map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
 }
 
 extension Sequence<RenderInlineContent> {
-    func rawIndexableTextContent(references: [String: RenderReference]) -> String {
+    func rawIndexableTextContent(references: [String: any RenderReference]) -> String {
         return self.map { $0.rawIndexableTextContent(references: references) }.joined()
     }
 }

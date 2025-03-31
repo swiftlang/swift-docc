@@ -93,7 +93,7 @@ package class TestFileSystem: FileManagerProtocol {
                     result[at.appendingPathComponent(folder.name).path] = Self.folderFixtureData
                     result.merge(try filesIn(folder: folder, at: at.appendingPathComponent(folder.name)), uniquingKeysWith: +)
                 
-                case let file as File & DataRepresentable:
+                case let file as any (File & DataRepresentable):
                     result[at.appendingPathComponent(file.name).path] = try file.data()
                     if let copy = file as? CopyOfFile {
                         result[copy.original.path] = try file.data()
@@ -361,7 +361,7 @@ package class TestFileSystem: FileManagerProtocol {
         }
     }
     
-    private func makeFileNotFoundError(_ url: URL) -> Error {
+    private func makeFileNotFoundError(_ url: URL) -> any Error {
         return CocoaError(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: url.path])
     }
 }

@@ -152,7 +152,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///
     /// This includes the element's ``topicImages`` or references from the element's ``abstract``.
     /// This also includes any references for all variants' content.
-    public var references: [RenderReference]?
+    public var references: [any RenderReference]?
     
     /// A variant of content for a summarized element.
     ///
@@ -275,7 +275,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         declarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
         redirects: [URL]? = nil,
         topicImages: [TopicImage]? = nil,
-        references: [RenderReference]? = nil,
+        references: [any RenderReference]? = nil,
         variants: [LinkDestinationSummary.Variant]
     ) {
         self.kind = kind
@@ -395,7 +395,7 @@ extension LinkDestinationSummary {
         platforms: [PlatformAvailability]?,
         compiler: inout RenderContentCompiler
     ) {
-        let redirects = (documentationNode.semantic as? Redirected)?.redirects?.map { $0.oldPath }
+        let redirects = (documentationNode.semantic as? (any Redirected))?.redirects?.map { $0.oldPath }
         let referenceURL = documentationNode.reference.url
         
         let topicImages = renderNode.metadata.images
@@ -413,7 +413,7 @@ extension LinkDestinationSummary {
                 relativePresentationURL: relativePresentationURL,
                 referenceURL: referenceURL,
                 title: ReferenceResolver.title(forNode: documentationNode),
-                abstract: (documentationNode.semantic as? Abstracted)?.renderedAbstract(using: &compiler),
+                abstract: (documentationNode.semantic as? (any Abstracted))?.renderedAbstract(using: &compiler),
                 availableLanguages: documentationNode.availableSourceLanguages,
                 platforms: platforms,
                 taskGroups: taskGroups,
@@ -526,7 +526,7 @@ extension LinkDestinationSummary {
     ///   - relativeParentPresentationURL: The bundle-relative path of the page that contain this section.
     ///   - page: The topic reference of the page that contain this section.
     ///   - compiler: The content compiler that's used to render the section's abstract.
-    init?(landmark: Landmark, relativeParentPresentationURL: URL, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
+    init?(landmark: any Landmark, relativeParentPresentationURL: URL, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
         let anchor = urlReadableFragment(landmark.title)
         
         guard let relativePresentationURL: URL = {
@@ -538,7 +538,7 @@ extension LinkDestinationSummary {
         }
         
         let abstract: Abstract?
-        if let abstracted = landmark as? Abstracted {
+        if let abstracted = landmark as? (any Abstracted) {
             abstract = abstracted.renderedAbstract(using: &compiler) ?? []
         } else if let paragraph = landmark.markup.children.lazy.compactMap({ $0 as? Paragraph }).first, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(paragraph).first {
             abstract = p.inlineContent
@@ -558,7 +558,7 @@ extension LinkDestinationSummary {
             taskGroups: [], // Landmarks have no children
             usr: nil, // Only symbols have a USR
             declarationFragments: nil, // Only symbols have declarations
-            redirects: (landmark as? Redirected)?.redirects?.map { $0.oldPath },
+            redirects: (landmark as? (any Redirected))?.redirects?.map { $0.oldPath },
             topicImages: nil, // Landmarks doesn't have topic images
             references: nil, // Landmarks have no references, since only topic image references is currently supported
             variants: []
@@ -576,7 +576,7 @@ extension LinkDestinationSummary {
         case declarationFragments = "fragments"
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind.id, forKey: .kind)
         try container.encode(relativePresentationURL, forKey: .relativePresentationURL)
@@ -598,7 +598,7 @@ extension LinkDestinationSummary {
         }
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let kindID = try container.decode(String.self, forKey: .kind)
         guard let foundKind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
@@ -643,7 +643,7 @@ extension LinkDestinationSummary.Variant {
         case declarationFragments = "fragments"
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(traits, forKey: .traits)
         try container.encodeIfPresent(kind?.id, forKey: .kind)
@@ -657,7 +657,7 @@ extension LinkDestinationSummary.Variant {
         try container.encodeIfPresent(topicImages, forKey: .topicImages)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let traits = try container.decode([RenderNode.Variant.Trait].self, forKey: .traits)
