@@ -86,7 +86,7 @@ final class Response: ChannelOutboundHandler {
 }
 
 /// Builds up a local host server channel pipeline, fire the preset request and returns the response.
-func responseWithPipeline(request: HTTPRequestHead, handler factory: any RequestHandlerFactory, file: StaticString = #file, line: UInt = #line) throws -> Response {
+func responseWithPipeline(request: HTTPRequestHead, handler factory: any RequestHandlerFactory, file: StaticString = #filePath, line: UInt = #line) throws -> Response {
     let channel = EmbeddedChannel()
     let channelHandler = MockHandler(requestHead: request, requestHandler: factory)
 

@@ -35,7 +35,7 @@ extension XCTestCase {
         return (bundle, context)
     }
     
-    func testCatalogURL(named name: String, file: StaticString = #file, line: UInt = #line) throws -> URL {
+    func testCatalogURL(named name: String, file: StaticString = #filePath, line: UInt = #line) throws -> URL {
         try XCTUnwrap(
             Bundle.module.url(forResource: name, withExtension: "docc", subdirectory: "Test Bundles"),
             file: file, line: line

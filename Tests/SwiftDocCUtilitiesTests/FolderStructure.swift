@@ -27,7 +27,7 @@ protocol AssertableFile: File {
 
 extension AssertableFile {
     /// Asserts that a file exist a given URL.
-    func assertExist(at location: URL, fileManager: any FileManagerProtocol = FileManager.default, file: StaticString = #file, line: UInt = #line) {
+    func assertExist(at location: URL, fileManager: any FileManagerProtocol = FileManager.default, file: StaticString = #filePath, line: UInt = #line) {
         __assertExist(at: location, fileManager: fileManager, file: (file), line: line)
     }
 }
@@ -44,7 +44,7 @@ extension AssertableFile {
 // MARK: -
 
 extension Folder: AssertableFile {
-    func __assertExist(at location: URL, fileManager: any FileManagerProtocol, file: StaticString = #file, line: UInt = #line) {
+    func __assertExist(at location: URL, fileManager: any FileManagerProtocol, file: StaticString = #filePath, line: UInt = #line) {
         var isFolder: ObjCBool = false
         XCTAssert(fileManager.fileExists(atPath: location.path, isDirectory: &isFolder),
                   "Folder '\(name)' should exist at '\(location.path)'", file: (file), line: line)

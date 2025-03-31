@@ -2052,7 +2052,7 @@ fileprivate func validateTree(node: NavigatorTree.Node, validator: (NavigatorTre
     return true
 }
 
-fileprivate func assertUniqueIDs(node: NavigatorTree.Node, message: String = "The tree has duplicated IDs.", file: StaticString = #file, line: UInt = #line) {
+fileprivate func assertUniqueIDs(node: NavigatorTree.Node, message: String = "The tree has duplicated IDs.", file: StaticString = #filePath, line: UInt = #line) {
     var collector = Set<UInt32>()
     var brokenItemTitle = ""
     

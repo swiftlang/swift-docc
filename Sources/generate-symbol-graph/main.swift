@@ -199,7 +199,7 @@ let supportedDirectives: [Directive] = [
     }
 
 func generateSwiftDocCFrameworkSymbolGraph() throws -> SymbolGraph {
-    let packagePath = URL(fileURLWithPath: #file)
+    let packagePath = URL(fileURLWithPath: #filePath) // Absolute path to this file
         .deletingLastPathComponent() // generate-symbol-graph
         .deletingLastPathComponent() // Sources
         .deletingLastPathComponent() // swift-docc
@@ -680,7 +680,7 @@ private struct SortedSymbolGraph: Codable {
     }
 }
 
-let output = URL(fileURLWithPath: #file)
+let output = URL(fileURLWithPath: #filePath) // Absolute path to this file
     .deletingLastPathComponent()
     .deletingLastPathComponent()
     .appendingPathComponent("docc/DocCDocumentation.docc/docc.symbols.json")

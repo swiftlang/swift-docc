@@ -29,7 +29,7 @@ class DirectoryMonitorTests: XCTestCase {
     
     /// Method that automates setting up a directory monitor, setting up the relevant expectations for a test,
     /// then executing a given trigger block and wait for the expectations to fullfill.
-    private func monitor(url rootURL: URL, forChangeAtURL expectedChangeOrigin: URL?, withDirectoryTreeReload isTreeReloadExpected: Bool, triggerBlock: () throws -> Void, file: StaticString = #file, line: UInt = #line) throws {
+    private func monitor(url rootURL: URL, forChangeAtURL expectedChangeOrigin: URL?, withDirectoryTreeReload isTreeReloadExpected: Bool, triggerBlock: () throws -> Void, file: StaticString = #filePath, line: UInt = #line) throws {
         // Creating a file will generate multiple fs events, we're interested in the fist one only
         // so we're using a Bool flag and a lock.
         let lock = NSLock()
@@ -89,7 +89,7 @@ class DirectoryMonitorTests: XCTestCase {
     }
     
     /// - Warning: Please do not overuse this method as it takes 10s of wait time and can potentially slow down running the test suite.
-    private func monitorNoUpdates(url: URL, testBlock: @escaping () throws -> Void, file: StaticString = #file, line: UInt = #line) throws {
+    private func monitorNoUpdates(url: URL, testBlock: @escaping () throws -> Void, file: StaticString = #filePath, line: UInt = #line) throws {
         let monitor = try DirectoryMonitor(root: url) { rootURL, url in
             XCTFail("Did produce file update event for a hidden file")
         }
