@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 import SymbolKit
 
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
@@ -49,7 +49,7 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
 }
 
 extension Snippet: RenderableDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         guard let snippet = Snippet(from: originalMarkup, for: contentCompiler.bundle) else {
                 return []
             }

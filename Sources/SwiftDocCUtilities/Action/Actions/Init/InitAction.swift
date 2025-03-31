@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SwiftDocC
+public import Foundation
+public import SwiftDocC
 
 /// An action that generates a documentation catalog from a template seed.
 public struct InitAction: AsyncAction {
@@ -23,7 +23,7 @@ public struct InitAction: AsyncAction {
         }
     }
     
-    private var fileManager: FileManagerProtocol
+    private var fileManager: any FileManagerProtocol
     private let catalogOutputURL: URL
     private let catalogTemplateKind: CatalogTemplateKind
     private let documentationTitle: String
@@ -39,7 +39,7 @@ public struct InitAction: AsyncAction {
         catalogOutputDirectory: URL,
         documentationTitle: String,
         catalogTemplate: CatalogTemplateKind,
-        fileManager: FileManagerProtocol
+        fileManager: any FileManagerProtocol
     ) throws {
         self.catalogOutputURL = catalogOutputDirectory
         self.documentationTitle = documentationTitle

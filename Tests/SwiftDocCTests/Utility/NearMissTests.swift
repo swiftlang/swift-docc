@@ -327,7 +327,7 @@ class NearMissTests: XCTestCase {
         against authored: String,
         expectedMatches: [String],
         acceptedMatches: [String] = [],
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         let matches = NearMiss.bestMatches(for: possibilities, against: authored)

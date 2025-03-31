@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SwiftDocC
-import Foundation
+package import SwiftDocC
+public import Foundation
 
 extension ConvertAction {
     /// Creates a convert action from the options in the given convert command.

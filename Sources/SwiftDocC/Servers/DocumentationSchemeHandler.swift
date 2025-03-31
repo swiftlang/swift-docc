@@ -8,10 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 #if canImport(WebKit)
-import WebKit
+public import WebKit
+public import Foundation
 
 public class DocumentationSchemeHandler: NSObject {
     
@@ -83,7 +82,7 @@ public class DocumentationSchemeHandler: NSObject {
 // MARK: WKURLSchemeHandler protocol
 extension DocumentationSchemeHandler: WKURLSchemeHandler {
 
-    public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+    public func webView(_ webView: WKWebView, start urlSchemeTask: any WKURLSchemeTask) {
         let (response, data) = self.response(to: urlSchemeTask.request)
         urlSchemeTask.didReceive(response)
         if let data {
@@ -92,7 +91,7 @@ extension DocumentationSchemeHandler: WKURLSchemeHandler {
         urlSchemeTask.didFinish()
     }
     
-    public func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
+    public func webView(_ webView: WKWebView, stop urlSchemeTask: any WKURLSchemeTask) {
         // TODO: add handler for a stop
     }
 

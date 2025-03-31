@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
  A section containing steps to complete to finish a ``Tutorial``.
@@ -57,7 +57,7 @@ public final class TutorialSection: Semantic, DirectiveConvertible, Abstracted, 
         return originalMarkup.range
     }
     
-    public var markup: Markup {
+    public var markup: any Markup {
         return originalMarkup
     }
     

@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 extension Semantic.Analyses {
     /**
@@ -22,11 +22,11 @@ extension Semantic.Analyses {
         }
         
         @available(*, deprecated, renamed: "analyze(_:children:source:for:problems:)", message: "Use 'analyze(_:children:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
             analyze(directive, children: children, source: source, for: bundle, problems: &problems)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
             return Semantic.Analyses.extractExactlyOne(
                 childType: Child.self,
                 parentDirective: directive,
@@ -40,14 +40,14 @@ extension Semantic.Analyses {
     }
     
     static func extractExactlyOne(
-        childType: DirectiveConvertible.Type,
+        childType: any DirectiveConvertible.Type,
         parentDirective: BlockDirective,
-        children: some Sequence<Markup>,
+        children: some Sequence<any Markup>,
         source: URL?,
         for bundle: DocumentationBundle,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         problems: inout [Problem]
-    ) -> (DirectiveConvertible?, remainder: MarkupContainer) {
+    ) -> ((any DirectiveConvertible)?, remainder: MarkupContainer) {
         let (candidates, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
                 childType.canConvertDirective(childDirective) else {
@@ -105,11 +105,11 @@ extension Semantic.Analyses {
         }
         
         @available(*, deprecated, renamed: "analyze(_:children:source:for:problems:)", message: "Use 'analyze(_:children:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> (Child1?, Child2?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> (Child1?, Child2?, remainder: MarkupContainer) {
             analyze(directive, children: children, source: source, for: bundle, problems: &problems)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child1?, Child2?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child1?, Child2?, remainder: MarkupContainer) {
             let (candidates, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective else {
                     return nil
@@ -160,11 +160,11 @@ extension Semantic.Analyses {
         }
         
         @available(*, deprecated, renamed: "analyze(_:children:source:for:problems:)", message: "Use 'analyze(_:children:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> (Media?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> ((any Media)?, remainder: MarkupContainer) {
             analyze(directive, children: children, source: source, for: bundle, problems: &problems)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Media?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> ((any Media)?, remainder: MarkupContainer) {
             let (foundImage, foundVideo, remainder) = HasExactlyOneOf<Parent, ImageMedia, VideoMedia>(severityIfNotFound: severityIfNotFound).analyze(directive, children: children, source: source, for: bundle, problems: &problems)
             return (foundImage ?? foundVideo, remainder)
         }
@@ -178,11 +178,11 @@ extension Semantic.Analyses {
         }
         
         @available(*, deprecated, renamed: "analyze(_:children:source:for:problems:)", message: "Use 'analyze(_:children:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> (Media?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> ((any Media)?, remainder: MarkupContainer) {
             analyze(directive, children: children, source: source, for: bundle, problems: &problems)
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Media?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> ((any Media)?, remainder: MarkupContainer) {
             let (mediaDirectives, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective else {
                     return nil
@@ -242,7 +242,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
 
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, problems: inout [Problem]) -> [ListElement]? {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems: inout [Problem]) -> [ListElement]? {
             var validElements: [ListElement] = []
 
             var (lists, notLists) = directive.children.categorize { $0 as? UnorderedList }
@@ -250,7 +250,7 @@ extension Semantic.Analyses {
             if !lists.isEmpty {
                 let list = lists.removeFirst()
 
-                let invalidElements: [Markup]
+                let invalidElements: [any Markup]
                 (validElements, invalidElements) = list.children.categorize { firstChildElement(in: $0) }
 
                 // Diagnose invalid list content.
@@ -280,11 +280,11 @@ extension Semantic.Analyses {
         }
         
         @available(*, deprecated, renamed: "analyze(_:children:source:problems:)", message: "Use 'analyze(_:children:source:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> [ListElement]? {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> [ListElement]? {
             analyze(directive, children: children, source: source, problems: &problems)
         }
 
-        func firstChildElement(in markup: Markup) -> ListElement? {
+        func firstChildElement(in markup: any Markup) -> ListElement? {
             return markup // ListItem
                 .child(at: 0)? // Paragraph
                 .child(at: 0) as? ListElement

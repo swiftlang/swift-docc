@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A semantic model for a view that arranges its children in a row.
 public final class Stack: Semantic, AutomaticDirectiveConvertible {

@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
  A document's abstract may only contain formatted text. Images and links are not allowed.
@@ -43,7 +43,7 @@ public struct AbstractContainsFormattedTextOnly: Checker {
         }
     }
     
-    private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: Markup) {
+    private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: any Markup) {
         let explanation = """
             Summary should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
             """

@@ -12,7 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 
-public class ExternalLinkTitleTests: XCTestCase {
+class ExternalLinkTitleTests: XCTestCase {
     private func getTranslatorAndBlockContentForMarkup(_ markupSource: String) throws -> (translator: RenderNodeTranslator, content: [RenderBlockContent]) {
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
         let testReference = ResolvedTopicReference(bundleID: "org.swift.docc", path: "/test", sourceLanguage: .swift)

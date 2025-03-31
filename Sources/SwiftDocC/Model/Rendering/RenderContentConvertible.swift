@@ -16,14 +16,14 @@ import Markdown
 /// This protocol is used by the `RenderContentCompiler` to render arbitrary directives
 /// that conform to renderable.
 protocol RenderableDirectiveConvertible: AutomaticDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent]
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent]
 }
 
 extension RenderableDirectiveConvertible {
     static func render(
         _ blockDirective: BlockDirective,
         with contentCompiler: inout RenderContentCompiler
-    ) -> [RenderContent] {
+    ) -> [any RenderContent] {
         guard let directive = Self.init(from: blockDirective, for: contentCompiler.bundle) else {
             return []
         }
@@ -33,12 +33,12 @@ extension RenderableDirectiveConvertible {
 }
 
 struct AnyRenderableDirectiveConvertibleType {
-    var underlyingType: RenderableDirectiveConvertible.Type
+    var underlyingType: any RenderableDirectiveConvertible.Type
     
     func render(
         _ blockDirective: BlockDirective,
         with contentCompiler: inout RenderContentCompiler
-    ) -> [RenderContent] {
+    ) -> [any RenderContent] {
         return underlyingType.render(blockDirective, with: &contentCompiler)
     }
     

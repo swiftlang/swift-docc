@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+package import Foundation
 
 /// A type that provides data for files.
 package protocol DataProvider {
@@ -22,7 +22,7 @@ package protocol DataProvider {
 /// A type that provides in-memory data for a known collection of files.
 struct InMemoryDataProvider: DataProvider {
     private let files: [URL: Data]
-    private let fallback: DataProvider?
+    private let fallback: (any DataProvider)?
     
     /// Creates a data provider with a collection of in-memory files.
     ///
@@ -32,7 +32,7 @@ struct InMemoryDataProvider: DataProvider {
     /// - Parameters:
     ///   - files: The in-memory data for the files that provider can provide
     ///   - fallback: The file manager that the provider uses as a fallback for any file it doesn't have in-memory data for.
-    init(files: [URL: Data], fallback: DataProvider?) {
+    init(files: [URL: Data], fallback: (any DataProvider)?) {
         self.files = files
         self.fallback = fallback
     }

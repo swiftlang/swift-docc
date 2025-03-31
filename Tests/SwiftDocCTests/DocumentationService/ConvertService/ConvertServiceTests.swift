@@ -2396,7 +2396,7 @@ class ConvertServiceTests: XCTestCase {
         source: URL,
         title: String?,
         isDocumentationExtensionContent: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         let topicContentKey = try XCTUnwrap(referenceStore.topics.keys.first { $0.path == topicPath })

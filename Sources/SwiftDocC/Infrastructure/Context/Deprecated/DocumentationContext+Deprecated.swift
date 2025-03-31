@@ -17,9 +17,9 @@ extension DocumentationContext {
     }
     
     @available(*, deprecated, renamed: "configuration.externalDocumentationConfiguration.sources", message: "Use 'configuration.externalDocumentationConfiguration.sources' instead. This deprecated API will be removed after Swift 6.2 is released.")
-    public var externalDocumentationSources: [BundleIdentifier: ExternalDocumentationSource] {
+    public var externalDocumentationSources: [BundleIdentifier: any ExternalDocumentationSource] {
         get {
-            var result = [BundleIdentifier: ExternalDocumentationSource]()
+            var result = [BundleIdentifier: any ExternalDocumentationSource]()
             for (key, value) in configuration.externalDocumentationConfiguration.sources {
                 result[key.rawValue] = value
             }
@@ -34,7 +34,7 @@ extension DocumentationContext {
     }
     
     @available(*, deprecated, renamed: "configuration.externalDocumentationConfiguration.globalSymbolResolver", message: "Use 'configuration.externalDocumentationConfiguration.globalSymbolResolver' instead. This deprecated API will be removed after Swift 6.2 is released.")
-    public var globalExternalSymbolResolver: GlobalExternalSymbolResolver? {
+    public var globalExternalSymbolResolver: (any GlobalExternalSymbolResolver)? {
         get { configuration.externalDocumentationConfiguration.globalSymbolResolver }
         set { configuration.externalDocumentationConfiguration.globalSymbolResolver = newValue }
     }

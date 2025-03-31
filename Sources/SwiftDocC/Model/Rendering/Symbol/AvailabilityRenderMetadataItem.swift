@@ -91,7 +91,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         case beta
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         name = try container.decodeIfPresent(String.self, forKey: .name)
         introduced = try container.decodeIfPresent(String.self, forKey: .introducedAt)
@@ -104,7 +104,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         isBeta = try container.decodeIfPresent(Bool.self, forKey: .beta)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encodeIfPresent(name, forKey: .name)

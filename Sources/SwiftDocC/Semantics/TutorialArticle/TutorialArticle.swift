@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
 An article alongside tutorial content, with the following structure:
@@ -52,7 +52,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
     /// The linkable parts of the tutorial article.
     ///
     /// Use these elements to create direct links to discrete sections within the tutorial.
-    public var landmarks: [Landmark]
+    public var landmarks: [any Landmark]
     
     override var children: [Semantic] {
         var semanticContent: [Semantic] = []
@@ -91,7 +91,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
     
     public let redirects: [Redirect]?
     
-    init(originalMarkup: BlockDirective, durationMinutes: Int?, intro: Intro?, content: [MarkupLayout], assessments: Assessments?, callToActionImage: ImageMedia?, landmarks: [Landmark], redirects: [Redirect]?) {
+    init(originalMarkup: BlockDirective, durationMinutes: Int?, intro: Intro?, content: [MarkupLayout], assessments: Assessments?, callToActionImage: ImageMedia?, landmarks: [any Landmark], redirects: [Redirect]?) {
         self.originalMarkup = originalMarkup
         self.durationMinutes = durationMinutes
         self.intro = intro
@@ -152,7 +152,7 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent(from markup: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> [MarkupLayout] {
+    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> [MarkupLayout] {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,

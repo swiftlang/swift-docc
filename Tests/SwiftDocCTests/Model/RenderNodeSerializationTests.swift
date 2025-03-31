@@ -297,7 +297,7 @@ class RenderNodeSerializationTests: XCTestCase {
     
     // MARK: - Utility functions
 
-    func checkRoundTrip(_ inputNode: RenderNode, file: StaticString = #file, line: UInt = #line) {
+    func checkRoundTrip(_ inputNode: RenderNode, file: StaticString = #filePath, line: UInt = #line) {
         // Make sure we're not using a shared encoder
         let testEncoder = JSONEncoder()
         let testDecoder = JSONDecoder()

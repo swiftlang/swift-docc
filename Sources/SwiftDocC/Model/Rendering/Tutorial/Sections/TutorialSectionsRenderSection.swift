@@ -65,7 +65,7 @@ extension TutorialSectionsRenderSection.Section: Codable {
         case title
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)
         contentSection = try container.decode([ContentLayout].self, forKey: .contentSection)
@@ -73,7 +73,7 @@ extension TutorialSectionsRenderSection.Section: Codable {
         anchor = try container.decode(String.self, forKey: .anchor)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(title, forKey: .title)
         try container.encode(contentSection, forKey: .contentSection)

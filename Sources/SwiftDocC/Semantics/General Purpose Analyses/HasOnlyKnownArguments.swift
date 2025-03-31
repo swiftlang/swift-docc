@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 extension Semantic.Analyses {
     public struct HasOnlyKnownArguments<Parent: Semantic & DirectiveConvertible> {
@@ -20,7 +20,7 @@ extension Semantic.Analyses {
             self.allowedArguments = allowedArguments
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, problems: inout [Problem]) -> [String: Markdown.DirectiveArgument] {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems: inout [Problem]) -> [String: Markdown.DirectiveArgument] {
             let arguments = directive.arguments(problems: &problems)
             if let severity = severityIfFound {
                 let unknownKeys = Set(arguments.keys).subtracting(allowedArguments)
@@ -44,7 +44,7 @@ extension Semantic.Analyses {
         }
         
         @available(*, deprecated, renamed: "analyze(_:children:source:problems:)", message: "Use 'analyze(_:children:source:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> [String: Markdown.DirectiveArgument] {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> [String: Markdown.DirectiveArgument] {
             analyze(directive, children: children, source: source, problems: &problems)
         }
     }

@@ -1359,7 +1359,7 @@ class SymbolTests: XCTestCase {
         docCommentLineOffset: Int = 0,
         articleContent: String?,
         diagnosticEngineFilterLevel: DiagnosticSeverity = .warning,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (DocumentationNode, [Problem]) {
         let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
@@ -1421,7 +1421,7 @@ class SymbolTests: XCTestCase {
     func makeDocumentationNodeSymbol(
         docComment: String,
         articleContent: String?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (Symbol, [Problem]) {
         let (node, problems) = try makeDocumentationNodeForSymbol(

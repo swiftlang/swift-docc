@@ -11,7 +11,7 @@
 // The WebKitCommunicationBridge is only available on platforms that support WebKit.
 #if canImport(WebKit)
 import Foundation
-import WebKit
+public import WebKit
 
 /// Provides bi-directional communication with a documentation renderer via JavaScript calls in a web view.
 public struct WebKitCommunicationBridge: CommunicationBridge {
@@ -44,7 +44,7 @@ public struct WebKitCommunicationBridge: CommunicationBridge {
     /// - Throws: Throws a ``CommunicationBridgeError/unableToEncodeMessage(_:underlyingError:)`` if the communication bridge could not encode the given message to JSON.
     public func send(
         _ message: Message,
-        using evaluateJavaScript: (String, ((Any?, Error?) -> ())?) -> ()
+        using evaluateJavaScript: (String, ((Any?, (any Error)?) -> ())?) -> ()
     ) throws {
         do {
             let encodedMessage = try JSONEncoder().encode(message)

@@ -21,7 +21,7 @@ struct SemanticAnalyzer: MarkupVisitor {
         self.bundle = bundle
     }
 
-    private mutating func analyzeChildren(of markup: Markup) -> [Semantic] {
+    private mutating func analyzeChildren(of markup: any Markup) -> [Semantic] {
         var semanticChildren = [Semantic]()
         for child in markup.children {
             guard let semantic = visit(child) else {
@@ -53,7 +53,7 @@ struct SemanticAnalyzer: MarkupVisitor {
         if let source {
             if !topLevelChildren.isEmpty, !DocumentationBundleFileTypes.isTutorialFile(source) {
                 // Only tutorials support top level directives. This document has top level directives but is not a tutorial file.
-                let directiveName = type(of: topLevelChildren.first! as! DirectiveConvertible).directiveName
+                let directiveName = type(of: topLevelChildren.first! as! (any DirectiveConvertible)).directiveName
                 let diagnostic = Diagnostic(source: source, severity: .warning, range: document.range, identifier: "org.swift.docc.unsupportedTopLevelChild", summary: "Found unsupported \(directiveName.singleQuoted) directive in '.\(source.pathExtension)' file", explanation: "Only '.tutorial' files support top-level directives")
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
                 return nil
@@ -87,7 +87,7 @@ struct SemanticAnalyzer: MarkupVisitor {
         
         // Diagnose more than one top-level directive
         for extraneousTopLevelChild in topLevelChildren.suffix(from: 1) {
-            if let directiveConvertible = extraneousTopLevelChild as? DirectiveConvertible,
+            if let directiveConvertible = extraneousTopLevelChild as? (any DirectiveConvertible),
                 let range = directiveConvertible.originalMarkup.range {
                 let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.extraneousTopLevelChild", summary: "Only one top-level directive from \(topLevelDirectives) may exist in a document; this directive will be ignored")
                 let solution = Solution(summary: "Remove this extraneous directive", replacements: [Replacement(range: range, replacement: "")])
@@ -174,7 +174,7 @@ struct SemanticAnalyzer: MarkupVisitor {
             
             // Analyze any structured markup directives (like @Row or @Column)
             // that are contained in the child markup of this directive.
-            if let markupContainingDirective = directive as? MarkupContaining {
+            if let markupContainingDirective = directive as? (any MarkupContaining) {
                 for markupElement in markupContainingDirective.childMarkup {
                     _ = visit(markupElement)
                 }
@@ -184,7 +184,7 @@ struct SemanticAnalyzer: MarkupVisitor {
         }
     }
 
-    func defaultVisit(_ markup: Markup) -> Semantic? {
+    func defaultVisit(_ markup: any Markup) -> Semantic? {
         return MarkupContainer(markup)
     }
     

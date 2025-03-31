@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// Additional resources that help users learn a technology.
 ///
@@ -57,7 +57,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == Resources.directiveName)
         
-        var remainder: [Markup]
+        var remainder: [any Markup]
         let requiredParagraph: Paragraph?
         if let firstParagraph = directive.child(at: 0) as? Paragraph {
             requiredParagraph = firstParagraph

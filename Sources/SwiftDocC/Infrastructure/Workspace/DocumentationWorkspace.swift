@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// The documentation workspace provides a unified interface for accessing serialized documentation bundles and their files, from a variety of sources.
 ///
@@ -100,11 +100,11 @@ public class DocumentationWorkspace: DocumentationContextDataProvider {
     /// A map of bundle identifiers to documentation bundles.
     public var bundles: [String: DocumentationBundle] = [:]
     /// A map of provider identifiers to data providers.
-    private var providers: [String: DocumentationWorkspaceDataProvider] = [:]
+    private var providers: [String: any DocumentationWorkspaceDataProvider] = [:]
     /// A map of bundle identifiers to provider identifiers (in other words, a map from a bundle to the provider that vends the bundle).
     private var bundleToProvider: [String: String] = [:]
     /// The delegate to notify when documentation bundles are added or removed from this workspace.
-    public weak var delegate: DocumentationContextDataProviderDelegate?
+    public weak var delegate: (any DocumentationContextDataProviderDelegate)?
     /// Creates a new, empty documentation workspace.
     public init() {}
     
@@ -115,7 +115,7 @@ public class DocumentationWorkspace: DocumentationContextDataProvider {
     /// - Parameters:
     ///   - provider: The workspace data provider to add to the workspace.
     ///   - options: The options that the data provider uses to discover documentation bundles that it provides to the delegate.
-    public func registerProvider(_ provider: DocumentationWorkspaceDataProvider, options: BundleDiscoveryOptions = .init()) throws {
+    public func registerProvider(_ provider: any DocumentationWorkspaceDataProvider, options: BundleDiscoveryOptions = .init()) throws {
         // We must add the provider before adding the bundle so that the delegate
         // may start making requests immediately.
         providers[provider.identifier] = provider
@@ -134,7 +134,7 @@ public class DocumentationWorkspace: DocumentationContextDataProvider {
     /// - Parameters:
     ///   - provider: The workspace data provider to remove from the workspace.
     ///   - options: The options that the data provider uses to discover documentation bundles that it removes from the delegate.
-    public func unregisterProvider(_ provider: DocumentationWorkspaceDataProvider, options: BundleDiscoveryOptions = .init()) throws {
+    public func unregisterProvider(_ provider: any DocumentationWorkspaceDataProvider, options: BundleDiscoveryOptions = .init()) throws {
         for bundle in try provider.bundles(options: options) {
             bundles[bundle.identifier] = nil
             bundleToProvider[bundle.identifier] = nil

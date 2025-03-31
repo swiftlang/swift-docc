@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A task scheduler that throttles execution within a given time interval.
 ///
@@ -17,7 +17,7 @@ import Foundation
 /// you set via ``init(interval:)``.
 public class Throttle {
     private let throttleQueue = DispatchQueue(label: "com.throttlequeue")
-    private var currentTimer: DispatchSourceTimer?
+    private var currentTimer: (any DispatchSourceTimer)?
     
     let timeoutInterval: DispatchTimeInterval
     

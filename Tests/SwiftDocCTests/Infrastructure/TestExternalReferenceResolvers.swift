@@ -24,7 +24,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
         var referencePath = "/externally/resolved/path"
         var fragment: String? = nil
         var title = "Externally Resolved Title"
-        var abstract: Markup = Document(parsing: "Externally Resolved Markup Content", options: [.parseBlockDirectives, .parseSymbolLinks])
+        var abstract: any Markup = Document(parsing: "Externally Resolved Markup Content", options: [.parseBlockDirectives, .parseSymbolLinks])
         var kind = DocumentationNode.Kind.article
         var language = SourceLanguage.swift
         var declarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
@@ -33,7 +33,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
     
     // When more tests use this we may find that there's a better way to describe this (for example by separating
     // the data for resolving references and for creating documentation nodes)
-    var entitiesToReturn: [String: Result<EntityInfo, Swift.Error>] = [:]
+    var entitiesToReturn: [String: Result<EntityInfo, any Swift.Error>] = [:]
     
     var assetsToReturn: [String: DataAsset] = [:]
     
@@ -66,7 +66,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
     
     // MARK: Private helper functions
     
-    private func result(path: String) -> Result<EntityInfo, Swift.Error> {
+    private func result(path: String) -> Result<EntityInfo, any Swift.Error> {
         guard let value = entitiesToReturn[path] else {
             fatalError("Missing test data to return for \(path). This is an error with the test.")
         }

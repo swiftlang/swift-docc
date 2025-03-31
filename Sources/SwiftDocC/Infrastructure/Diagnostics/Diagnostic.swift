@@ -8,9 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
-import SymbolKit
+public import Foundation
+public import Markdown
+public import SymbolKit
 
 /// A diagnostic explains a problem or issue that needs the end-user's attention.
 public struct Diagnostic {

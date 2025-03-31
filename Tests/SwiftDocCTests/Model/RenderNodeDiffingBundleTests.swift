@@ -333,7 +333,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         _ differences: JSONPatchDifferences,
         contains expectedDiff: JSONPatchOperation,
         valueType: Value.Type,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         guard let foundDiff = differences.first(where: { $0.pointer == expectedDiff.pointer &&
