@@ -31,9 +31,10 @@ class DocumentationInputsProviderTests: XCTestCase {
                         // This top-level Info.plist will be read for bundle information
                         InfoPlist(displayName: "CustomDisplayName"),
                         
-                        // These top-level files will be treated as a custom footer and a custom theme
+                        // Top-level files with customization
                         TextFile(name: "footer.html", utf8Content: ""),
                         TextFile(name: "theme-settings.json", utf8Content: ""),
+                        TextFile(name: "custom-scripts.json", utf8Content: ""),
                         
                         // Top-level content will be found
                         TextFile(name: "CCC.md", utf8Content: ""),
