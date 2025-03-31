@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,9 +17,9 @@ class IntroTests: XCTestCase {
         let source = "@Intro"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(intro)
         XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -42,9 +42,9 @@ class IntroTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(intro)
         XCTAssertTrue(problems.isEmpty)
         intro.map { intro in
@@ -68,9 +68,9 @@ class IntroTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(intro)
         XCTAssertEqual(2, problems.count)
         XCTAssertFalse(problems.containsErrors)

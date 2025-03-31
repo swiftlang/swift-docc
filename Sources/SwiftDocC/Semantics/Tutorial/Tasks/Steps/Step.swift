@@ -46,7 +46,7 @@ public final class Step: Semantic, DirectiveConvertible {
         self.caption = caption
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == Step.directiveName)
         
         _ = Semantic.Analyses.HasOnlyKnownArguments<Step>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, problems: &problems)
@@ -55,10 +55,10 @@ public final class Step: Semantic, DirectiveConvertible {
         
         var remainder: MarkupContainer
         let optionalMedia: (any Media)?
-        (optionalMedia, remainder) = Semantic.Analyses.HasExactlyOneMedia<Step>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (optionalMedia, remainder) = Semantic.Analyses.HasExactlyOneMedia<Step>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
         
         let optionalCode: Code?
-        (optionalCode, remainder) = Semantic.Analyses.HasExactlyOne<Step, Code>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (optionalCode, remainder) = Semantic.Analyses.HasExactlyOne<Step, Code>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         let paragraphs: [Paragraph]
         (paragraphs, remainder) = Semantic.Analyses.ExtractAllMarkup<Paragraph>().analyze(directive, children: remainder, source: source, problems: &problems)

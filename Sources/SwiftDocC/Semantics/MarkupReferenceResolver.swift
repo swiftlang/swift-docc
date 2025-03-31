@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -172,7 +172,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         switch blockDirective.name {
         case Snippet.directiveName:
             var problems = [Problem]()
-            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, in: context, problems: &problems) else {
+            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, problems: &problems) else {
                 return blockDirective
             }
             
@@ -192,7 +192,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 return blockDirective
             }
         case ImageMedia.directiveName:
-            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: bundle, in: context) else {
+            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: bundle) else {
                 return blockDirective
             }
             
@@ -210,7 +210,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             
             return blockDirective
         case VideoMedia.directiveName:
-            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: bundle, in: context) else {
+            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: bundle) else {
                 return blockDirective
             }
             

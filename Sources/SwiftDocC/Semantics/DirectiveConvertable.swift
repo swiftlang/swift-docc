@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -34,9 +34,11 @@ public protocol DirectiveConvertible {
     /// - Parameters:
     ///   -  directive: The parsed block directive to create a semantic object from.
     ///   -  source: The location of the source file that contains the markup for the parsed block directive.
-    ///   -  bundle: The documentation bundle that owns the directive.
-    ///   -  context: The documentation context in which the bundle resides.
+    ///   -  bundle: The documentation bundle that the source file belongs to.
     ///   -  problems: An inout array of ``Problem`` to be collected for later diagnostic reporting.
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem])
+    
+    @available(*, deprecated, renamed: "init(from:source:for:problems:)", message: "Use 'init(from:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released")
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem])
     
     /// Returns a Boolean value indicating whether the `DirectiveConvertible` recognizes the given directive.
@@ -51,6 +53,16 @@ public extension DirectiveConvertible {
     /// - Parameter directive: The directive to check for conversion compatibility.
     static func canConvertDirective(_ directive: BlockDirective) -> Bool {
         directiveName == directive.name
+    }
+    
+    // Default implementation to avoid source breaking changes. Remove this after 6.2 is released.
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+        fatalError("Directive named \(directive.name) doesn't implement either 'init(from:source:for:problems:)' or 'init(from:source:for:in:problems:)'")
+    }
+    
+    // Default implementation to new types don't need to implement a deprecated initializer. Remove this after 6.2 is released.
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+        self.init(from: directive, source: source, for: bundle, problems: &problems)
     }
 }
 

@@ -59,7 +59,7 @@ public final class Code: Semantic, DirectiveConvertible {
         self.preview = preview
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == Code.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
@@ -80,7 +80,7 @@ public final class Code: Semantic, DirectiveConvertible {
             shouldResetDiff = false
         }
        
-        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
         
         let optionalPreviousFileReference = Semantic.Analyses.HasArgument<Code, Semantics.PreviousFile>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems).map { argument in
             ResourceReference(bundleID: bundle.id, path: argument)
