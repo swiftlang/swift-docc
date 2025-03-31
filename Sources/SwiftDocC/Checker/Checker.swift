@@ -280,7 +280,7 @@ public struct CompositeChecker: Checker {
         }
     }
     
-    public mutating func visit(_ markup: Markup) -> () {
+    public mutating func visit(_ markup: any Markup) -> () {
         for i in checkers.indices {
             checkers[i].visit(markup)
         }

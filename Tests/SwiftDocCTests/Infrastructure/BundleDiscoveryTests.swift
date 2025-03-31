@@ -120,7 +120,7 @@ class BundleDiscoveryTests: XCTestCase {
     func testBundleFormat() throws {
         let allFiles = try flatListOfFiles()
         
-        func parsedBundle(from folder: File) throws -> DocumentationBundle {
+        func parsedBundle(from folder: any File) throws -> DocumentationBundle {
             let fileSystem = try TestFileSystem(folders: [
                 Folder(name: "path", content: [
                     Folder(name: "to", content: [
@@ -136,7 +136,7 @@ class BundleDiscoveryTests: XCTestCase {
         
         let expectedBundle = try parsedBundle(from: CopyOfFolder(original: testBundleLocation))
         
-        func checkExpectedFilesFoundIn(_ folder: File, file: StaticString = #file, line: UInt = #line) throws {
+        func checkExpectedFilesFoundIn(_ folder: any File, file: StaticString = #file, line: UInt = #line) throws {
             let bundle = try parsedBundle(from: folder)
             
             XCTAssertEqual(bundle.id, expectedBundle.id)

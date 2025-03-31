@@ -20,7 +20,7 @@ public final class Step: Semantic, DirectiveConvertible {
     public let originalMarkup: BlockDirective
     
     /// A piece of media associated with the step to display when selected.
-    public let media: Media?
+    public let media: (any Media)?
     
     /// A code file associated with the step to display when selected.
     public let code: Code?
@@ -38,7 +38,7 @@ public final class Step: Semantic, DirectiveConvertible {
         return contentChild + captionChild + codeChild
     }
     
-    init(originalMarkup: BlockDirective, media: Media?, code: Code?, content: MarkupContainer, caption: MarkupContainer) {
+    init(originalMarkup: BlockDirective, media: (any Media)?, code: Code?, content: MarkupContainer, caption: MarkupContainer) {
         self.originalMarkup = originalMarkup
         self.media = media
         self.code = code
@@ -54,7 +54,7 @@ public final class Step: Semantic, DirectiveConvertible {
         Semantic.Analyses.HasOnlyKnownDirectives<Step>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName, Code.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
         var remainder: MarkupContainer
-        let optionalMedia: Media?
+        let optionalMedia: (any Media)?
         (optionalMedia, remainder) = Semantic.Analyses.HasExactlyOneMedia<Step>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
         
         let optionalCode: Code?
@@ -66,7 +66,7 @@ public final class Step: Semantic, DirectiveConvertible {
         let content: MarkupContainer
         let caption: MarkupContainer
         
-        func diagnoseExtraneousContent(element: Markup) -> Problem {
+        func diagnoseExtraneousContent(element: any Markup) -> Problem {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: element.range, identifier: "org.swift.docc.\(Step.self).ExtraneousContent", summary: "Extraneous element: \(Step.directiveName.singleQuoted) directive should only have a single paragraph for its instructional content and an optional paragraph to serve as a caption")
             let solutions = element.range.map {
                 return [Solution(summary: "Remove extraneous element", replacements: [Replacement(range: $0, replacement: "")])]
@@ -111,7 +111,7 @@ public final class Step: Semantic, DirectiveConvertible {
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
         }
         
-        self.init(originalMarkup: directive, media: optionalMedia, code: optionalCode, content: MarkupContainer(content.elements), caption: MarkupContainer(caption.elements + blockQuotes as [Markup]))
+        self.init(originalMarkup: directive, media: optionalMedia, code: optionalCode, content: MarkupContainer(content.elements), caption: MarkupContainer(caption.elements + blockQuotes as [any Markup]))
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {

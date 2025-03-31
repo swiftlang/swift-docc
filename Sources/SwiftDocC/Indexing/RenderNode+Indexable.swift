@@ -23,7 +23,7 @@ extension RenderNode {
             .map { $0.rawIndexableTextContent(references: references) }.joined(separator: " ")
     }
     
-    private var contentSections: [RenderSection] {
+    private var contentSections: [any RenderSection] {
         guard kind == .symbol || (kind == .article && sections.isEmpty) else {
             return sections
         }

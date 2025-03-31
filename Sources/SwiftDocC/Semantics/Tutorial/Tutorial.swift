@@ -43,7 +43,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
     /// The linkable parts of the tutorial.
     ///
     /// Allows you to direct link to discrete sections within a tutorial.
-    public var landmarks: [Landmark] {
+    public var landmarks: [any Landmark] {
         return sections
     }
     

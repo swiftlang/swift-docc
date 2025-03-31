@@ -11,7 +11,7 @@
 import Foundation
 
 struct DirectiveIndex {
-    static let topLevelReferenceDirectives: [AutomaticDirectiveConvertible.Type] = [
+    static let topLevelReferenceDirectives: [any AutomaticDirectiveConvertible.Type] = [
         Metadata.self,
         Redirect.self,
         Snippet.self,
@@ -25,7 +25,7 @@ struct DirectiveIndex {
         VideoMedia.self,
     ]
     
-    static let topLevelTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [
+    static let topLevelTutorialDirectives: [any AutomaticDirectiveConvertible.Type] = [
         Tutorial.self,
     ]
     
@@ -34,7 +34,7 @@ struct DirectiveIndex {
     ///
     /// This is a temporary workaround until the migration is complete and these child directives
     /// can be automatically reflected from their parent directives.
-    private static let otherTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [
+    private static let otherTutorialDirectives: [any AutomaticDirectiveConvertible.Type] = [
         Stack.self,
         Chapter.self,
         Choice.self,
@@ -70,7 +70,7 @@ struct DirectiveIndex {
                 continue
             }
             
-            guard let automaticDirectiveConvertible = directive as? AutomaticDirectiveConvertible.Type else {
+            guard let automaticDirectiveConvertible = directive as? (any AutomaticDirectiveConvertible.Type) else {
                 continue
             }
             
@@ -89,7 +89,7 @@ struct DirectiveIndex {
         self.indexedDirectives = indexedDirectives
         
         self.renderableDirectives = indexedDirectives.compactMapValues { directive in
-            guard let renderableDirective = directive.type as? RenderableDirectiveConvertible.Type else {
+            guard let renderableDirective = directive.type as? (any RenderableDirectiveConvertible.Type) else {
                 return nil
             }
             
@@ -98,7 +98,7 @@ struct DirectiveIndex {
     }
     
     func reflection(
-        of directiveConvertible: AutomaticDirectiveConvertible.Type
+        of directiveConvertible: any AutomaticDirectiveConvertible.Type
     ) -> DirectiveMirror.ReflectedDirective {
         // It's a programmer error if an automatic directive convertible
         // is not in the pre-populated index.

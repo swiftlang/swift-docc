@@ -14,7 +14,7 @@ import SwiftDocC
 struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     var targetFolder: URL
     var bundleRootFolder: URL?
-    var fileManager: FileManagerProtocol
+    var fileManager: any FileManagerProtocol
     var context: DocumentationContext
     var renderNodeWriter: JSONEncodingRenderNodeWriter
     var indexer: ConvertAction.Indexer?
@@ -29,7 +29,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     init(
         targetFolder: URL,
         bundleRootFolder: URL?,
-        fileManager: FileManagerProtocol,
+        fileManager: any FileManagerProtocol,
         context: DocumentationContext,
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
@@ -159,7 +159,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         try fileManager.createFile(at: recordsURL, contents: data)
     }
     
-    func consume(assets: [RenderReferenceType : [RenderReference]]) throws {
+    func consume(assets: [RenderReferenceType : [any RenderReference]]) throws {
         let uniqueAssets = assets.mapValues({ referencesForTypeOfAsset in referencesForTypeOfAsset.uniqueElements(by: { $0.identifier }) })
         
         let digest = Digest.Assets(

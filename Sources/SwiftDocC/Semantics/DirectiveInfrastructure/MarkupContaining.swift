@@ -16,5 +16,5 @@ protocol MarkupContaining: DirectiveConvertible {
     ///
     /// This property does not necessarily return the markup contained only by this directive, it may
     /// be the concatenated markup contained by all of this directive's directive children.
-    var childMarkup: [Markup] { get }
+    var childMarkup: [any Markup] { get }
 }
