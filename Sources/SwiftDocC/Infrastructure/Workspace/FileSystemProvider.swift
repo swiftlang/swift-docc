@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A type that vends a tree of virtual filesystem objects.
 @available(*, deprecated, message: "Use 'FileManagerProtocol.recursiveFiles(startingPoint:)' instead. This deprecated API will be removed after 6.2 is released.")

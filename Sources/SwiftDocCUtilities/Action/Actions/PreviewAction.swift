@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SwiftDocC
+public import SwiftDocC
 
 #if canImport(NIOHTTP1)
 /// A preview server instance.

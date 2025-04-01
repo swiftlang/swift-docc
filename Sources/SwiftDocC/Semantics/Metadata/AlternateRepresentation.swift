@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 
 /// A directive that configures an alternate language representation of a symbol.

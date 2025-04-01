@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive that modifies Swift-DocC's default behavior for automatic subheading generation on
 /// article pages.

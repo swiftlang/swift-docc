@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// An object that modifies a render node by applying transformations to it.
 open class RenderNodeTransformer {
@@ -37,7 +37,7 @@ open class RenderNodeTransformer {
     ///
     /// - Parameter transformation: The transformation to apply.
     /// - Returns: The transformed render node.
-    public func apply(transformation: RenderNodeTransforming) -> RenderNode {
+    public func apply(transformation: any RenderNodeTransforming) -> RenderNode {
         let context = RenderNodeTransformationContext(referencesCount: referencesCount)
 
         return transformation

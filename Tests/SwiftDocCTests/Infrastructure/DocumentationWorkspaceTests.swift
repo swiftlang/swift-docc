@@ -195,11 +195,11 @@ class DocumentationWorkspaceTests: XCTestCase {
         }
         var record: [Event] = []
         
-        func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
+        func dataProvider(_ dataProvider: any DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
             record.append(.add(bundle.identifier))
         }
         
-        func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
+        func dataProvider(_ dataProvider: any DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
             record.append(.remove(bundle.identifier))
         }
     }

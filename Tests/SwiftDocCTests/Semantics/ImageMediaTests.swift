@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,9 +19,9 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(image)
         XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -38,9 +38,9 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(image)
         XCTAssertTrue(problems.isEmpty)
         image.map { image in
@@ -57,9 +57,9 @@ class ImageMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, context) = try testBundleAndContext()
+            let (bundle, _) = try testBundleAndContext()
             var problems = [Problem]()
-            let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(image)
             XCTAssertTrue(problems.isEmpty)
             image.map { image in
@@ -75,9 +75,9 @@ class ImageMediaTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(image)
         XCTAssertEqual(3, problems.count)
         XCTAssertFalse(problems.containsErrors)

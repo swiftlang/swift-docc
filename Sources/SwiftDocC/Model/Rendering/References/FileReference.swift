@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A reference to a file resource.
 ///
@@ -64,7 +64,7 @@ public struct FileReference: RenderReference, Equatable {
         self.highlights = highlights
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
         identifier = try values.decode(RenderReferenceIdentifier.self, forKey: .identifier)

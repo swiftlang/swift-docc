@@ -11,7 +11,7 @@
 import Foundation
 
 #if canImport(os)
-import os
+package import os
 #endif
 
 package enum ConvertActionConverter {
@@ -78,7 +78,7 @@ package enum ConvertActionConverter {
         // Arrays to gather additional metadata if `emitDigest` is `true`.
         var indexingRecords = [IndexingRecord]()
         var linkSummaries = [LinkDestinationSummary]()
-        var assets = [RenderReferenceType : [RenderReference]]()
+        var assets = [RenderReferenceType : [any RenderReference]]()
         var coverageInfo = [CoverageDataEntry]()
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
         
@@ -90,7 +90,7 @@ package enum ConvertActionConverter {
         // FIXME: In the future we could simplify this control flow by not catching these errors and turning them into diagnostics.
         // Since both error-level diagnostics and thrown errors fail the documentation build,
         // the only practical different this would have is that we stop on the first unexpected error instead of processing all pages and gathering all unexpected errors.
-        func recordProblem(from error: Swift.Error, in problems: inout [Problem], withIdentifier identifier: String) {
+        func recordProblem(from error: any Swift.Error, in problems: inout [Problem], withIdentifier identifier: String) {
             let problem = Problem(diagnostic: Diagnostic(
                 severity: .error,
                 identifier: "org.swift.docc.documentation-converter.\(identifier)",

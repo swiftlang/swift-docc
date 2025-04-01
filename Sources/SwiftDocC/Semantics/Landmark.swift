@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /// A linkable point on a page.
 public protocol Landmark {
@@ -19,14 +19,14 @@ public protocol Landmark {
     var title: String { get }
     
     /// The content of the landmark.
-    var markup: Markup { get }
+    var markup: any Markup { get }
 }
 
 extension Heading: Landmark {
     public var title: String {
         return plainText
     }
-    public var markup: Markup {
+    public var markup: any Markup {
         return self
     }
 }

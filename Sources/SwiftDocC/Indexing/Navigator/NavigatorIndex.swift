@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import Crypto
 
 /// A protocol to provide data to be indexed.
@@ -479,8 +479,8 @@ extension NavigatorIndex {
         
         /// The data provider.
         @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-        public var renderNodeProvider: RenderNodeProvider? {
-            _renderNodeProvider as! RenderNodeProvider?
+        public var renderNodeProvider: (any RenderNodeProvider)? {
+            _renderNodeProvider as! (any RenderNodeProvider)?
         }
         // This property only exist to be able to assign `nil` to `renderNodeProvider` in the new initializer without causing a deprecation warning.
         private let _renderNodeProvider: Any?
@@ -590,7 +590,7 @@ extension NavigatorIndex {
         
         @available(*, deprecated, renamed: "init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)", message: "Use 'init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)' instead. This deprecated API will be removed after 6.2 is released")
         @_disfavoredOverload
-        public init(renderNodeProvider: RenderNodeProvider? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
+        public init(renderNodeProvider: (any RenderNodeProvider)? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self._renderNodeProvider = renderNodeProvider
             self.archiveURL = nil
             self.outputURL = outputURL
@@ -1272,7 +1272,7 @@ extension NavigatorIndex {
             if let archiveURL {
                 return _build(archiveURL: archiveURL)
             } else {
-                return (self as _DeprecatedRenderNodeProviderAccess)._legacyBuild()
+                return (self as (any _DeprecatedRenderNodeProviderAccess))._legacyBuild()
             }
         }
         
@@ -1342,7 +1342,7 @@ fileprivate extension Error {
 extension LMDB.Database {
     enum NodeError: Error {
         /// A database error that includes the path of a specific node and the original database error.
-        case errorForPath(String, Error)
+        case errorForPath(String, any Error)
     }
     
     /**

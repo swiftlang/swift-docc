@@ -23,7 +23,7 @@ class DocumentationConverterTests: XCTestCase {
         func consume(assetsInBundle bundle: DocumentationBundle) throws {}
         func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
         func consume(indexingRecords: [IndexingRecord]) throws {}
-        func consume(assets: [RenderReferenceType: [RenderReference]]) throws {}
+        func consume(assets: [RenderReferenceType: [any RenderReference]]) throws {}
         func consume(benchmarks: Benchmark) throws {}
         func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {}
     }

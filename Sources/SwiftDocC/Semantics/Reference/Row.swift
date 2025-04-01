@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A container directive that arranges content into a grid-based row and column
 /// layout.
@@ -76,7 +76,7 @@ public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContainin
         return columns
     }
     
-    var childMarkup: [Markup] {
+    var childMarkup: [any Markup] {
         return columns.flatMap(\.childMarkup)
     }
     
@@ -117,7 +117,7 @@ extension Row {
             return [content]
         }
         
-        var childMarkup: [Markup] {
+        var childMarkup: [any Markup] {
             return content.elements
         }
         
@@ -131,7 +131,7 @@ extension Row {
 }
 
 extension Row: RenderableDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         let renderedColumns = columns.map { column in
             return RenderBlockContent.Row.Column(
                 size: column.size,

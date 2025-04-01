@@ -14,7 +14,7 @@ import XCTest
 
 class DataAssetManagerTests: XCTestCase {
     
-    func assertIsRegistered(named name: String, trait: DataTraitCollection, expectedURL: URL, manager: DataAssetManager, file: StaticString = #file, line: UInt = #line) {
+    func assertIsRegistered(named name: String, trait: DataTraitCollection, expectedURL: URL, manager: DataAssetManager, file: StaticString = #filePath, line: UInt = #line) {
         let data = manager.data(named: name, bestMatching: trait)!
         XCTAssertEqual(data.url, expectedURL)
         XCTAssertEqual(data.traitCollection, trait)

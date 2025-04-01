@@ -12,13 +12,13 @@
 ///
 /// An `AnyRenderReference` value forwards difference operations to the underlying base type, which implement the difference differently.
 struct AnyRenderReference: Encodable, Equatable, RenderJSONDiffable {
-    var value: RenderReference & Codable
+    var value: any (RenderReference & Codable)
     
-    init(_ value: RenderReference & Codable) {
+    init(_ value: any (RenderReference & Codable)) {
         self.value = value
     }
     
-    func encode(to encoder: Encoder) throws {
+    func encode(to encoder: any Encoder) throws {
         try value.encode(to: encoder)
     }
     

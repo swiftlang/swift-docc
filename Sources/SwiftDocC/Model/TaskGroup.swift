@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /**
  A rewriter that extracts topic links for unordered list items.
@@ -20,7 +20,7 @@ struct ExtractLinks: MarkupRewriter {
         case taskGroup
     }
     
-    var links = [AnyLink]()
+    var links = [any AnyLink]()
     var problems = [Problem]()
     var mode = Mode.taskGroup
         
@@ -86,7 +86,7 @@ struct ExtractLinks: MarkupRewriter {
         ])
     }
     
-    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> Markup? {
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> (any Markup)? {
         let remainingItems = unorderedList.children.map { $0 as! ListItem }
             .filter { item -> Bool in
                 guard item.childCount == 1 else { return true }
@@ -164,10 +164,10 @@ public struct TaskGroup {
     public var heading: Heading?
     
     /// The group's original contents, excluding its delimiting heading.
-    public var originalContent: [Markup]
+    public var originalContent: [any Markup]
     
     /// The group's remaining content after stripping topic links.
-    public var content: [Markup] {
+    public var content: [any Markup] {
         var extractor = ExtractLinks()
         return originalContent.compactMap {
             extractor.visit($0)
@@ -179,7 +179,7 @@ public struct TaskGroup {
      
      - Note: Links must be at the top level and have the `doc:` URL scheme.
      */
-    public var links: [AnyLink] {
+    public var links: [any AnyLink] {
         var extractor = ExtractLinks()
         for child in originalContent {
             _ = extractor.visit(child)
@@ -220,7 +220,7 @@ public struct TaskGroup {
     /// - Parameters:
     ///   - heading: The heading for this task group.
     ///   - content: The content, excluding the title, for this task group.
-    public init(heading: Heading?, content: [Markup]) {
+    public init(heading: Heading?, content: [any Markup]) {
         self.heading = heading
         self.originalContent = content
     }

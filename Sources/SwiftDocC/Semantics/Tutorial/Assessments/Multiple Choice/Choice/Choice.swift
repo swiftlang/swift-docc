@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /**
  One of possibly many choices in a ``MultipleChoice`` question.

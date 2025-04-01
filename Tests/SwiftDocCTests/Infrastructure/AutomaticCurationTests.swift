@@ -95,7 +95,7 @@ class AutomaticCurationTests: XCTestCase {
         containsAutomaticTopicSectionFor kind: SymbolGraph.Symbol.KindIdentifier,
         context: DocumentationContext,
         bundle: DocumentationBundle,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift))
@@ -771,7 +771,7 @@ class AutomaticCurationTests: XCTestCase {
 
         func assertAutomaticCuration(
             variants: Set<DocumentationDataVariantsTrait>,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
             let topics = try AutomaticCuration.topics(

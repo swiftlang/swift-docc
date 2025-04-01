@@ -248,7 +248,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         case images
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
         identifier = try values.decode(RenderReferenceIdentifier.self, forKey: .identifier)
@@ -281,7 +281,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         images = try values.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(type, forKey: .type)

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A collection of functions to check if a file is one of the documentation bundle files types.
 public enum DocumentationBundleFileTypes {

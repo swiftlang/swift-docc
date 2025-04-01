@@ -19,7 +19,7 @@ struct TransformForStaticHostingAction: AsyncAction {
     let outputIsExternal: Bool
     let htmlTemplateDirectory: URL
 
-    let fileManager: FileManagerProtocol
+    let fileManager: any FileManagerProtocol
     
     var diagnosticEngine: DiagnosticEngine
     
@@ -28,7 +28,7 @@ struct TransformForStaticHostingAction: AsyncAction {
          outputURL:URL?,
          hostingBasePath: String?,
          htmlTemplateDirectory: URL,
-         fileManager: FileManagerProtocol = FileManager.default,
+         fileManager: any FileManagerProtocol = FileManager.default,
          diagnosticEngine: DiagnosticEngine = .init()
     ) throws {
         // Initialize the action context.

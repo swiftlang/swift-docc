@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
  A focused semantic analysis of a `BlockDirective`, recording problems and producing a result.
@@ -45,7 +45,7 @@ public protocol SemanticAnalysis {
      - parameter problems: A container to append ``Problem``s encountered during the analysis
      - returns: A result of the analysis if required, such as a validated parameter or subsection.
      */
-    func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Result
+    func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Result
 }
 
 @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
