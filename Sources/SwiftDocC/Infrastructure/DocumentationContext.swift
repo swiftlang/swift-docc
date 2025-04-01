@@ -3127,21 +3127,6 @@ public class DocumentationContext {
             return nil
         }
     }
-
-    /// Attempt to resolve an unresolved code listing.
-    ///
-    /// - Parameters:
-    ///   - unresolvedCodeListingReference: The code listing reference to resolve.
-    ///   - parent: The topic the code listing reference appears in.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-    public func resolveCodeListing(_ unresolvedCodeListingReference: UnresolvedCodeListingReference, in parent: ResolvedTopicReference) -> AttributedCodeListing? {
-        switch dataProvider {
-        case .legacy(let legacyDataProvider):
-            legacyDataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
-        case .new:
-            nil
-        }
-    }
     
     /// The references of all nodes in the topic graph.
     public var knownIdentifiers: [ResolvedTopicReference] {
