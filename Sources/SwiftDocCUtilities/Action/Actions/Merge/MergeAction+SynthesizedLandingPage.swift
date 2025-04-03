@@ -13,7 +13,7 @@ import SwiftDocC
 
 extension MergeAction {
     struct RootRenderReferences {
-        struct Information {
+        fileprivate struct Information {
             var reference: TopicRenderReference
             var dependencies: [any RenderReference]
             
@@ -21,7 +21,7 @@ extension MergeAction {
                 reference.identifier.identifier
             }
         }
-        var documentation, tutorials: [Information]
+        fileprivate var documentation, tutorials: [Information]
         
         fileprivate var all: [Information] {
             documentation + tutorials
