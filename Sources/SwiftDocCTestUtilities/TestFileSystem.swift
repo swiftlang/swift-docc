@@ -133,7 +133,7 @@ package class TestFileSystem: FileManagerProtocol {
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        let rootURL = basePath.appendingPathComponent(folder.name)// URL(fileURLWithPath: "/\(folder.name)")
+        let rootURL = basePath.appendingPathComponent(folder.name)
         files[rootURL.path] = Self.folderFixtureData
         let fileList = try filesIn(folder: folder, at: rootURL)
         files.merge(fileList, uniquingKeysWith: +)
