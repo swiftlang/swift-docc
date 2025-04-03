@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1359,7 +1359,7 @@ class SymbolTests: XCTestCase {
         docCommentLineOffset: Int = 0,
         articleContent: String?,
         diagnosticEngineFilterLevel: DiagnosticSeverity = .warning,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (DocumentationNode, [Problem]) {
         let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
@@ -1395,7 +1395,7 @@ class SymbolTests: XCTestCase {
         let article: Article? = articleContent.flatMap {
             let document = Document(parsing: $0, options: .parseBlockDirectives)
             var problems = [Problem]()
-            let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+            let article = Article(from: document, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(article, "The sidecar Article couldn't be created.", file: (file), line: line)
             return article
         }
@@ -1412,8 +1412,7 @@ class SymbolTests: XCTestCase {
         node.initializeSymbolContent(
             documentationExtension: article,
             engine: engine,
-            bundle: bundle,
-            context: context
+            bundle: bundle
         )
         
         return (node, engine.problems)
@@ -1422,7 +1421,7 @@ class SymbolTests: XCTestCase {
     func makeDocumentationNodeSymbol(
         docComment: String,
         articleContent: String?,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> (Symbol, [Problem]) {
         let (node, problems) = try makeDocumentationNodeForSymbol(

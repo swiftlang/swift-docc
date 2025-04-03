@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// A top-level page that organizes a collection of tutorials into a hierarchy of volumes and chapters.
 ///
@@ -59,7 +59,7 @@ public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abst
         }
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == TutorialTableOfContents.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialTableOfContents>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
@@ -67,15 +67,15 @@ public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abst
         Semantic.Analyses.HasOnlyKnownDirectives<TutorialTableOfContents>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
     
         let requiredName = Semantic.Analyses.HasArgument<TutorialTableOfContents, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
-        let requiredIntro = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems).0
+        let requiredIntro = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems).0
         
         var volumes: [Volume]
         var remainder: MarkupContainer
-        (volumes, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Volume>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (volumes, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Volume>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
 
         // Retrieve chapters outside volumes.
         let chapters: [Chapter]
-        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Chapter>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Chapter>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
 
         if !chapters.isEmpty {
             if !volumes.isEmpty {
@@ -94,10 +94,10 @@ public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abst
         }
         
         let resources: Resources?
-        (resources, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Resources>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (resources, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Resources>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
 
         let redirects: [Redirect]
-            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         guard let name = requiredName,
             let intro = requiredIntro else {

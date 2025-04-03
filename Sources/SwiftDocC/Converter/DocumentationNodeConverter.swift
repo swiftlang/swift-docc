@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A converter from documentation nodes to render nodes.
 public struct DocumentationNodeConverter {
@@ -39,10 +39,5 @@ public struct DocumentationNodeConverter {
     public func convert(_ node: DocumentationNode) -> RenderNode {
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         return translator.visit(node.semantic) as! RenderNode
-    }
-    
-    @available(*, deprecated, renamed: "convert(_:)", message: "Use 'convert(_:)' instead. This deprecated API will be removed after 6.1 is released")
-    public func convert(_ node: DocumentationNode, at source: URL?) throws -> RenderNode {
-        return convert(node)
     }
 }

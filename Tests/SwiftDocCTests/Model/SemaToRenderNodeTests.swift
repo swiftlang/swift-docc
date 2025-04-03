@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,7 +25,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -412,7 +412,7 @@ class SemaToRenderNodeTests: XCTestCase {
             }
             
             var problems = [Problem]()
-            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+            guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
                 XCTFail("Couldn't create tutorial from markup: \(problems)")
                 return
             }
@@ -578,7 +578,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -815,7 +815,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -1596,7 +1596,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -1840,7 +1840,7 @@ Document
         Asserts if `expectedRoleHeading` does not match the parsed render node's `roleHeading` after it's parsed.
         Uses 'TestBundle's documentation as a base for compiling, overwriting 'article2' with `content`.
     */
-    private func assertRoleHeadingForArticleInTestBundle(expectedRoleHeading: String?, content: String, file: StaticString = #file, line: UInt = #line) throws {
+    private func assertRoleHeadingForArticleInTestBundle(expectedRoleHeading: String?, content: String, file: StaticString = #filePath, line: UInt = #line) throws {
         let renderNode = try renderNodeForArticleInTestBundle(content: content)
         XCTAssertEqual(expectedRoleHeading, renderNode.metadata.roleHeading, file: (file), line: line)
     }
@@ -1926,7 +1926,7 @@ Document
     }
     
     func testRendersBetaViolators() throws {
-        func makeTestBundle(currentPlatforms: [String : PlatformVersion]?, file: StaticString = #file, line: UInt = #line, referencePath: String) throws -> (DocumentationBundle, DocumentationContext, ResolvedTopicReference) {
+        func makeTestBundle(currentPlatforms: [String : PlatformVersion]?, file: StaticString = #filePath, line: UInt = #line, referencePath: String) throws -> (DocumentationBundle, DocumentationContext, ResolvedTopicReference) {
             var configuration = DocumentationContext.Configuration()
             // Add missing platforms if their fallback platform is present.
             var currentPlatforms = currentPlatforms ?? [:]
@@ -2508,7 +2508,7 @@ Document
         }
         
         var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -2528,7 +2528,7 @@ Document
                 return
             }
             
-            guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+            guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: bundle, problems: &problems) else {
                 XCTFail("Couldn't create tutorial from markup: \(problems)")
                 return
             }
@@ -2600,7 +2600,7 @@ Document
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorial = Tutorial(from: technologyDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -3245,7 +3245,7 @@ Document
             return
         }
         var problems = [Problem]()
-        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create technology from markup: \(problems)")
             return
         }

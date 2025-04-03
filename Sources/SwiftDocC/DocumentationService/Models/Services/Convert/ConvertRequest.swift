@@ -9,7 +9,7 @@
 */
 
 import SymbolKit
-import Foundation
+public import Foundation
 
 /// A request to convert in-memory documentation.
 public struct ConvertRequest: Codable {

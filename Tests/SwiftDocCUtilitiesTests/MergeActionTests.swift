@@ -1198,7 +1198,7 @@ class MergeActionTests: XCTestCase {
     ) -> Folder {
         let identifier = "com.example.\(name.lowercased())"
         
-        var content: [File] = [
+        var content: [any File] = [
             // Template files
             Folder(name: "css", content: [
                 TextFile(name: "something.css", utf8Content: ""),
@@ -1213,7 +1213,7 @@ class MergeActionTests: XCTestCase {
         ]
         
         // Content
-        var dataContent: [File] = []
+        var dataContent: [any File] = []
         if !documentationPages.isEmpty {
             if supportsStaticHosting {
                 content += [

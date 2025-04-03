@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,16 +11,6 @@
 import Foundation
 
 extension RenderNode {
-
-    /**
-     Returns a list of references for children pages.
-     
-     - Returns: A list of `RenderRelationshipsGroup`.
-     */
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-    public func childrenRelationship(for language: String? = nil) -> [RenderRelationshipsGroup] {
-        return (self as any NavigatorIndexableRenderNodeRepresentation).navigatorChildren(for: nil)
-    }
     
     /**
     Return the project files for a given `RenderNode`, if possible.

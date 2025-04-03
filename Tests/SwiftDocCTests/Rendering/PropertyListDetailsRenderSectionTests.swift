@@ -18,7 +18,7 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
 
     func testDecoding() throws {
         
-        func getPlistDetailsSection(arrayMode: CustomStringConvertible, baseType: CustomStringConvertible, rawKey: CustomStringConvertible) throws -> PropertyListDetailsRenderSection {
+        func getPlistDetailsSection(arrayMode: any CustomStringConvertible, baseType: any CustomStringConvertible, rawKey: any CustomStringConvertible) throws -> PropertyListDetailsRenderSection {
             let symbolJSON = """
             {
               "accessLevel" : "public",

@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A tutorial to complete in order to gain knowledge of a technology.
 public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted, Titled, Timed, Redirected {
@@ -43,7 +43,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
     /// The linkable parts of the tutorial.
     ///
     /// Allows you to direct link to discrete sections within a tutorial.
-    public var landmarks: [Landmark] {
+    public var landmarks: [any Landmark] {
         return sections
     }
     

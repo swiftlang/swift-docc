@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -158,12 +158,12 @@ class MetadataAvailabilityTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
+        let (bundle, _) = try testBundleAndContext(named: "AvailabilityBundle")
 
         try directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Directive.directiveName, directive.name)
-            let converted = Directive(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let converted = Directive(from: directive, source: nil, for: bundle, problems: &problems)
             try assert(converted, problems)
         }
     }

@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// Additional resources that help users learn a technology.
 ///
@@ -54,10 +54,10 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         self.redirects = redirects
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == Resources.directiveName)
         
-        var remainder: [Markup]
+        var remainder: [any Markup]
         let requiredParagraph: Paragraph?
         if let firstParagraph = directive.child(at: 0) as? Paragraph {
             requiredParagraph = firstParagraph
@@ -76,7 +76,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Redirect(from: childDirective, source: source, for: bundle, problems: &problems)
         }
         
         let tiles: [Tile]
@@ -84,7 +84,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             guard let childDirective = child as? BlockDirective, Tile.DirectiveNames(rawValue: childDirective.name) != nil else {
                 return nil
             }
-            return Tile(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Tile(from: childDirective, source: source, for: bundle, problems: &problems)
         }
         
         var seenTileDirectiveNames = Set<String>()

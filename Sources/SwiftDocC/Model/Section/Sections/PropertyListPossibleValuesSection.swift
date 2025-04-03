@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 import SymbolKit
 
 public struct PropertyListPossibleValuesSection {
@@ -22,13 +22,13 @@ public struct PropertyListPossibleValuesSection {
         /// The string representation of the value.
         public var value: String
         /// The content that describes the value.
-        public var contents: [Markup]
+        public var contents: [any Markup]
         /// The text range where the parameter name was parsed.
         var nameRange: SourceRange?
         /// The text range where this parameter was parsed.
         var range: SourceRange?
         
-        init(value: String, contents: [Markup], nameRange: SourceRange? = nil, range: SourceRange? = nil) {
+        init(value: String, contents: [any Markup], nameRange: SourceRange? = nil, range: SourceRange? = nil) {
             self.value = value
             self.contents = contents
             self.nameRange = nameRange

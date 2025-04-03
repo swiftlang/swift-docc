@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A block filled with an image.
 public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
@@ -75,7 +75,7 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
 }
 
 extension ImageMedia: RenderableDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         var renderedCaption: [RenderInlineContent]?
         if let caption = caption.first {
             let blockContent = contentCompiler.visit(caption)

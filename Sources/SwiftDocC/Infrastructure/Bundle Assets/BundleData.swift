@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// The data associated with a documentation resource, for a specific trait collection.
 public struct BundleData {

@@ -70,12 +70,12 @@ public struct CodeColorsPreferenceKey: Hashable, Codable {
     /// The color key renderers use for identifiers in build configuration code.
     public static let buildConfigId = CodeColorsPreferenceKey(rawValue: "buildConfigId")
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.rawValue = try container.decode(String.self)
     }

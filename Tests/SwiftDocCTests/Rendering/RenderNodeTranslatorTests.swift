@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -223,7 +223,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
             
     func testArticleRoles() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         
         // Verify article's role
@@ -236,7 +236,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let article = try XCTUnwrap(
-                Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+                Article(from: document.root, source: nil, for: bundle, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.article, DocumentationContentRenderer.roleForArticle(article, nodeKind: .article))
         }
@@ -256,7 +256,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify a collection group
             let article1 = try XCTUnwrap(
-                Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+                Article(from: document.root, source: nil, for: bundle, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.collectionGroup, DocumentationContentRenderer.roleForArticle(article1, nodeKind: .article))
             
@@ -272,7 +272,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify a collection
             let article2 = try XCTUnwrap(
-                Article(from: metadataDocument.root, source: nil, for: bundle, in: context, problems: &problems)
+                Article(from: metadataDocument.root, source: nil, for: bundle, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.collection, DocumentationContentRenderer.roleForArticle(article2, nodeKind: .article))
         }
@@ -339,7 +339,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
-            Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+            Article(from: document.root, source: nil, for: bundle, problems: &problems)
         )
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/taskgroups", fragment: nil, sourceLanguage: .swift)
         context.documentationCache[reference] = try DocumentationNode(reference: reference, article: article)
@@ -836,7 +836,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func assertDefaultImplementationCollectionTitles(
         in renderNode: RenderNode,
         _ expectedTitles: [String],
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         let defaultImplementationSection = try XCTUnwrap(

@@ -65,7 +65,7 @@ final class PreviewServer {
     private let threadPool = NIOThreadPool(numberOfThreads: System.coreCount)
 
     private var bootstrap: ServerBootstrap!
-    internal var channel: Channel!
+    internal var channel: (any Channel)!
     
     private let contentURL: URL
     

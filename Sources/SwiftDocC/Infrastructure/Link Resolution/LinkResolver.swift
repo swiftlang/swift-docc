@@ -13,8 +13,8 @@ import SymbolKit
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
-    var dataProvider: DataProvider
-    init(dataProvider: DataProvider) {
+    var dataProvider: any DataProvider
+    init(dataProvider: any DataProvider) {
         self.dataProvider = dataProvider
     }
     

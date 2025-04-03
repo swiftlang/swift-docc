@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A data provider that provides existing in-memory documentation bundles with files on the local filesystem.
 @available(*, deprecated, message: "Use 'DocumentationContext.InputProvider' instead. This deprecated API will be removed after 6.2 is released")

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// Each path component can be a maximum of 255 characters on HFS+ and ext* file systems,
 /// but we set the limit to 240 to leave a convenient buffer for adding

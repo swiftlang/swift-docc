@@ -28,7 +28,7 @@ public struct VolumeRenderSection: RenderSection, Equatable {
             return name.map { [$0] } ?? [] + content.headings
         }
 
-        public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+        public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
             return content.rawIndexableTextContent(references: references)
         }
 
@@ -68,7 +68,7 @@ public struct VolumeRenderSection: RenderSection, Equatable {
     }
     
     // Override encode(to:) to explicitly encode 'null' when 'name' is nil, for anonymous volumes.
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)
         try container.encode(name, forKey: .name)

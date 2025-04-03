@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 public struct MentionsRenderSection: RenderSection, Codable, Equatable {
     public var kind: RenderSectionKind = .mentions
@@ -24,7 +24,7 @@ extension MentionsRenderSection: TextIndexing {
         return []
     }
 
-    public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
+    public func rawIndexableTextContent(references: [String : any RenderReference]) -> String {
         return ""
     }
 }

@@ -8,14 +8,14 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /// A one-paragraph section that represents a symbol's abstract description.
 public struct AbstractSection: Section {
     public static var title: String? {
         return nil
     }
-    public var content: [Markup] {
+    public var content: [any Markup] {
         return paragraph.children.compactMap { $0.detachedFromParent }
     }
     

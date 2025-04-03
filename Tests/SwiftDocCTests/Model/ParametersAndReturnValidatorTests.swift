@@ -911,7 +911,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         docCommentModuleName: String? = "ModuleName",
         parameters: [(name: String, externalName: String?)],
         returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> String {
         let fileSystem = try TestFileSystem(folders: [

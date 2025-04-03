@@ -8,15 +8,15 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
-import SymbolKit
+public import Markdown
+public import SymbolKit
 
 /// Documentation about a dictionary key for a symbol.
 public struct DictionaryKey {
     /// The name of the dictionary key.
     public var name: String
     /// The content that describe the dictionary key.
-    public var contents: [Markup]
+    public var contents: [any Markup]
     /// The symbol graph symbol representing this dictionary key.
     public var symbol: SymbolGraph.Symbol?
     /// The required status of the dictionary key.
@@ -28,7 +28,7 @@ public struct DictionaryKey {
     ///   - contents: The content that describe this dictionary key.
     ///   - symbol: The symbol data extracted from the symbol graph.
     ///   - required: Flag indicating whether the key is required to be present in the dictionary.
-    public init(name: String, contents: [Markup], symbol: SymbolGraph.Symbol? = nil, required: Bool = false) {
+    public init(name: String, contents: [any Markup], symbol: SymbolGraph.Symbol? = nil, required: Bool = false) {
         self.name = name
         self.contents = contents
         self.symbol = symbol

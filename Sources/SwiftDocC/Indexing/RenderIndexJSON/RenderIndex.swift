@@ -56,7 +56,7 @@ public struct RenderIndex: Codable, Equatable {
         self.includedArchiveIdentifiers = includedArchiveIdentifiers
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.schemaVersion, forKey: .schemaVersion)
         try container.encode(self.interfaceLanguages, forKey: .interfaceLanguages)
@@ -64,7 +64,7 @@ public struct RenderIndex: Codable, Equatable {
         try container.encodeIfNotEmpty(self.includedArchiveIdentifiers, forKey: .includedArchiveIdentifiers)
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.schemaVersion = try container.decode(SemanticVersion.self, forKey: .schemaVersion)
         self.interfaceLanguages = try container.decode([String : [RenderIndex.Node]].self, forKey: .interfaceLanguages)
@@ -151,7 +151,7 @@ extension RenderIndex {
             case icon
         }
 
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             
             try container.encode(title, forKey: .title)
@@ -178,7 +178,7 @@ extension RenderIndex {
             try container.encodeIfPresent(icon, forKey: .icon)
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             
             title = try values.decode(String.self, forKey: .title)
