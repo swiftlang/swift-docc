@@ -433,5 +433,32 @@ class MetadataTests: XCTestCase {
         
         return (problemIDs, metadata)
     }
+
+    func testInvalidMetadataDirectivesInDocumentationCommentHaveSolution() throws {
+        let source = """
+        @Metadata {
+            @DisplayName("Custom Name")
+            @TechnologyRoot
+        }
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0)! as! BlockDirective
+        let (bundle, _) = try testBundleAndContext()
+        var problems = [Problem]()
+        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        
+        metadata?.validateForUseInDocumentationComment(symbolSource: nil, problems: &problems)
+        
+        XCTAssertEqual(problems.count, 2)
+        
+        // Verify that each problem has a solution to remove the directive
+        for problem in problems {
+            XCTAssertNotNil(problem.possibleSolutions)
+            XCTAssertEqual(problem.possibleSolutions?.count, 1)
+            XCTAssertEqual(problem.possibleSolutions?.first?.summary, "Remove this \(problem.diagnostic.identifier.split(separator: ".").last!) directive.")
+            XCTAssertEqual(problem.possibleSolutions?.first?.replacements.count, 1)
+            XCTAssertEqual(problem.possibleSolutions?.first?.replacements.first?.replacement, "")
+        }
+    }
 }
  

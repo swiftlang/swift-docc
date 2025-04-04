@@ -224,18 +224,20 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         
         problems.append(
             contentsOf: namesAndRanges.map { (name, range) in
-                Problem(
-                    diagnostic: Diagnostic(
-                        source: symbolSource,
-                        severity: .warning,
-                        range: range,
-                        identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
-                        summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
-                        explanation: "Specify this configuration in a documentation extension file"
-                        
-                        // TODO: It would be nice to offer a solution here that removes the directive for you (#1111, rdar://140846407)
-                    )
+                let diagnostic = Diagnostic(
+                    source: symbolSource,
+                    severity: .warning,
+                    range: range,
+                    identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
+                    summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
+                    explanation: "Specify this configuration in a documentation extension file"
                 )
+                
+                let solutions = range.map {
+                    [Solution(summary: "Remove this \(name.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
+                } ?? []
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
             }
         )
         
