@@ -13,9 +13,9 @@ import SymbolKit
 import Markdown
 
 public struct RenderReferenceDependencies {
-    var topicReferences = [ResolvedTopicReference]()
-    var linkReferences = [LinkReference]()
-    var imageReferences = [ImageReference]()
+    public var topicReferences = [ResolvedTopicReference]()
+    public var linkReferences = [LinkReference]()
+    public var imageReferences = [ImageReference]()
     
     public init(topicReferences: [ResolvedTopicReference] = [], linkReferences: [LinkReference] = [], imageReferences: [ImageReference] = []) {
         self.topicReferences = topicReferences

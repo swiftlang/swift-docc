@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
+import Foundation
 
 /// A converter from documentation nodes to render nodes.
 ///
