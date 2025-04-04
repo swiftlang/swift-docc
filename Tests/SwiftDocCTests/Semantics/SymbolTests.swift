@@ -1352,6 +1352,158 @@ class SymbolTests: XCTestCase {
         XCTAssert(problems.isEmpty)
     }
 
+    // MARK: - Leading Whitespace in Doc Comments
+
+    func testWithoutLeadingWhitespace() {
+        let lines = [
+            "One",
+            "Two Words",
+            "With Trailing Whitespace "
+        ]
+        let linesWithoutLeadingWhitespace = [
+            "One",
+            "Two Words",
+            "With Trailing Whitespace "
+        ]
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testWithLeadingWhitespace() {
+        let lines = [
+            "    One",
+            "    Two Words",
+            "    With Trailing Whitespace "
+        ]
+        let linesWithoutLeadingWhitespace = [
+            "One",
+            "Two Words",
+            "With Trailing Whitespace "
+        ]
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testWithIncreasingLeadingWhitespace() {
+        let lines = [
+            " One",
+            "  Two Words",
+            "   With Trailing Whitespace "
+        ]
+        let linesWithoutLeadingWhitespace = [
+            "One",
+            " Two Words",
+            "  With Trailing Whitespace "
+        ]
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testWithDecreasingLeadingWhitespace() {
+        let lines = [
+            "   One",
+            "  Two Words",
+            " With Trailing Whitespace "
+        ]
+        let linesWithoutLeadingWhitespace = [
+            "  One",
+            " Two Words",
+            "With Trailing Whitespace "
+        ]
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testWithoutLeadingWhitespaceBlankLines() {
+        let lines = [
+            "    One",
+            "      ",
+            "    Two Words",
+            "    ",
+            "    With Trailing Whitespace "
+        ]
+        let linesWithoutLeadingWhitespace = [
+            "One",
+            "  ",
+            "Two Words",
+            "",
+            "With Trailing Whitespace "
+        ]
+
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testWithoutLeadingWhitespaceEmptyLines() {
+        let lines = [
+            "    One",
+            "",
+            "    Two Words",
+            "",
+            "    With Trailing Whitespace "
+        ]
+        let linesWithoutLeadingWhitespace = [
+            "One",
+            "",
+            "Two Words",
+            "",
+            "With Trailing Whitespace "
+        ]
+
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testWithoutLeadingWhitespaceAllEmpty() {
+        let lines = [
+            "",
+            "",
+        ]
+        let linesWithoutLeadingWhitespace = [
+            "",
+            "",
+        ]
+
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testWithoutLeadingWhitespaceAllBlank() {
+        let lines = [
+            "   ",
+            "  ",
+        ]
+        let linesWithoutLeadingWhitespace = [
+            "   ",
+            "  ",
+        ]
+
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testWithoutLeadingWhitespaceEmpty() {
+        let lines = [String]()
+        let linesWithoutLeadingWhitespace = [String]()
+
+        XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
+    }
+
+    func testLeadingWhitespaceInDocComment() throws {
+        let (semanticWithLeadingWhitespace, problems) = try makeDocumentationNodeSymbol(
+            docComment: """
+                    This is an abstract.
+                     
+                    This is a multi-paragraph overview.
+                     
+                    It continues here.
+                """,
+            articleContent: nil
+        )
+        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(semanticWithLeadingWhitespace.abstract?.format(), "This is an abstract.")
+        let lines = semanticWithLeadingWhitespace.discussion?.content.map{ $0.format() } ?? []
+        let expectedDiscussion = """
+            This is a multi-paragraph overview.
+            
+            It continues here.
+            """
+        XCTAssertEqual(lines.joined(), expectedDiscussion)
+    }
+
+
     // MARK: - Helpers
     
     func makeDocumentationNodeForSymbol(
