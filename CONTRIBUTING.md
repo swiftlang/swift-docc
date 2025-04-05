@@ -64,7 +64,7 @@ installed.
 1. Checkout this repository using:
 
     ```bash
-    git clone git@github.com:apple/swift-docc.git
+    git clone git@github.com:swiftlang/swift-docc.git
     ```
 
 2. Navigate to the root of your cloned repository with:
