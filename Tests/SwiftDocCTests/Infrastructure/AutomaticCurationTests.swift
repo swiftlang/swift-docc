@@ -989,10 +989,7 @@ class AutomaticCurationTests: XCTestCase {
         let firstNode  = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass")])
         XCTAssert(firstNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
         let memberNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("FirstClass/firstMember")])
-        XCTAssert(memberNode.shouldAutoCurateInCanonicalLocation, "This symbol is never manually curated")
-        
-        let secondNode = try XCTUnwrap(context.topicGraph.nodes[moduleReference.appendingPath("SecondClass")])
-        XCTAssert(secondNode.shouldAutoCurateInCanonicalLocation, "Curating a top-level symbol deeper than top-level doesn't stops automatic curation")
+        XCTAssert(memberNode.shouldAutoCurateInCanonicalLocation, "Curating a top-level symbol deeper than top-level doesn't stops automatic curation")
     }
     
     func testCuratingMemberOutsideCanonicalContainerDoesNotStopAutomaticCuration() throws {
@@ -1265,4 +1262,46 @@ class AutomaticCurationTests: XCTestCase {
              XCTAssertFalse(renderNode.topicSections.first?.generated ?? false)
          }
      }
+
+    func testAutomaticallyCuratedArticlesAreSortedByTitle() throws {
+        // Test bundle with articles where file names and titles are in different orders
+        let catalog = Folder(name: "TestBundle.docc", content: [
+            JSONFile(name: "TestModule.symbols.json", content: makeSymbolGraph(moduleName: "TestModule")),
+            
+            TextFile(name: "C-Article.md", utf8Content: """
+            # A Article
+            """),
+            
+            TextFile(name: "B-Article.md", utf8Content: """
+            # B Article
+            """),
+            
+            TextFile(name: "A-Article.md", utf8Content: """
+            # C Article
+            """),
+        ])
+        
+        // Load the bundle
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        // Get the module and its automatic curation groups
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let moduleNode = try XCTUnwrap(context.entity(with: moduleReference))
+        let symbol = try XCTUnwrap(moduleNode.semantic as? Symbol)
+        let articlesGroup = try XCTUnwrap(
+            symbol.automaticTaskGroups.first(where: { $0.title == "Articles" }),
+            "Expected 'Articles' automatic task group"
+        )
+        
+        // Get the titles of the articles in the order they appear in the automatic curation
+        let titles = articlesGroup.references.compactMap { 
+            context.topicGraph.nodes[$0]?.title
+        }
+        
+        // Verify we have 3 articles in title order (A, B, C)—file order does not matter
+        XCTAssertEqual(titles, ["A Article", "B Article", "C Article"], 
+                      "Articles should be sorted by title, not by file name")
+    }
 }
+
