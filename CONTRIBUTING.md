@@ -55,7 +55,7 @@ support for generating and previewing documentation.
 ### Prerequisites
 
 Swift-DocC is a Swift package. If you're new to Swift package manager,
-the [documentation here](https://swift.org/getting-started#using-the-package-manager)
+the [documentation here](https://www.swift.org/documentation/package-manager/)
 provides an explanation of how to get started and the software you'll need
 installed.
 
@@ -64,7 +64,7 @@ installed.
 1. Checkout this repository using:
 
     ```bash
-    git clone git@github.com:apple/swift-docc.git
+    git clone git@github.com:swiftlang/swift-docc.git
     ```
 
 2. Navigate to the root of your cloned repository with:
