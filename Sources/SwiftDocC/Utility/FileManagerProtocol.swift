@@ -39,7 +39,7 @@ package protocol FileManagerProtocol: DataProvider {
     /// Returns `true` if a file exists at the given path.
     func fileExists(atPath: String) -> Bool
     /// Copies a file from one location on the file-system to another.
-    func copyItem(at: URL, to: URL) throws
+    func _copyItem(at: URL, to: URL) throws // Use a different name than FileManager to work around https://github.com/swiftlang/swift-foundation/issues/1125
     /// Moves a file from one location on the file-system to another.
     func moveItem(at: URL, to: URL) throws
     /// Creates a new file folder at the given location.
@@ -143,5 +143,26 @@ extension FileManager: FileManagerProtocol {
             files:       Array( allContents[..<partitionIndex] ),
             directories: Array( allContents[partitionIndex...] )
         )
+    }
+    
+    package func _copyItem(at source: URL, to destination: URL) throws {
+        // Call `NSFileManager/copyItem(at:to:)` and catch the error to workaround https://github.com/swiftlang/swift-foundation/issues/1125
+        do {
+            try copyItem(at: source, to: destination)
+        } catch let error as CocoaError {
+            // In Swift 6 on Linux, `FileManager/copyItems(at:to:)` raises an error _after_ successfully copying the files when it's moving over file attributes from the source to the destination.
+            // To workaround this issue, we check if the destination exist and the error wasn't that the destination _already_ existed.
+            if error.code != CocoaError.Code.fileWriteFileExists,
+               fileExists(atPath: destination.path)
+            {
+                // Ignore this error.
+                // The consequence is that the copied item may have some different attributes (creation date, owner, etc.) compared to the source.
+                // These attributes aren't critical for copying input files over to the output documentation archive.
+                return
+            }
+            
+            // Otherwise, if this was any other error or if the destination file doesn't exist after calling `FileManager/copyItems(at:to:)`, re-throw the error to the caller.
+            throw error
+        }
     }
 }
