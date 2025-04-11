@@ -1360,7 +1360,7 @@ class SymbolTests: XCTestCase {
             "Two Words",
             "With Trailing Whitespace "
         ]
-        let linesWithoutLeadingWhitespace = [
+        let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             "Two Words",
             "With Trailing Whitespace "
@@ -1374,7 +1374,7 @@ class SymbolTests: XCTestCase {
             "    Two Words",
             "    With Trailing Whitespace "
         ]
-        let linesWithoutLeadingWhitespace = [
+        let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             "Two Words",
             "With Trailing Whitespace "
@@ -1388,7 +1388,7 @@ class SymbolTests: XCTestCase {
             "  Two Words",
             "   With Trailing Whitespace "
         ]
-        let linesWithoutLeadingWhitespace = [
+        let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             " Two Words",
             "  With Trailing Whitespace "
@@ -1402,7 +1402,7 @@ class SymbolTests: XCTestCase {
             "  Two Words",
             " With Trailing Whitespace "
         ]
-        let linesWithoutLeadingWhitespace = [
+        let linesWithoutLeadingWhitespace: [Substring] = [
             "  One",
             " Two Words",
             "With Trailing Whitespace "
@@ -1418,7 +1418,7 @@ class SymbolTests: XCTestCase {
             "    ",
             "    With Trailing Whitespace "
         ]
-        let linesWithoutLeadingWhitespace = [
+        let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             "  ",
             "Two Words",
@@ -1437,7 +1437,7 @@ class SymbolTests: XCTestCase {
             "",
             "    With Trailing Whitespace "
         ]
-        let linesWithoutLeadingWhitespace = [
+        let linesWithoutLeadingWhitespace: [Substring] = [
             "One",
             "",
             "Two Words",
@@ -1453,7 +1453,7 @@ class SymbolTests: XCTestCase {
             "",
             "",
         ]
-        let linesWithoutLeadingWhitespace = [
+        let linesWithoutLeadingWhitespace: [Substring] = [
             "",
             "",
         ]
@@ -1466,7 +1466,7 @@ class SymbolTests: XCTestCase {
             "   ",
             "  ",
         ]
-        let linesWithoutLeadingWhitespace = [
+        let linesWithoutLeadingWhitespace: [Substring] = [
             "   ",
             "  ",
         ]
@@ -1476,7 +1476,7 @@ class SymbolTests: XCTestCase {
 
     func testWithoutLeadingWhitespaceEmpty() {
         let lines = [String]()
-        let linesWithoutLeadingWhitespace = [String]()
+        let linesWithoutLeadingWhitespace = [Substring]()
 
         XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
     }
