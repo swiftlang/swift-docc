@@ -2142,8 +2142,8 @@ public class DocumentationContext {
         }
 
         // Sort the articles by their titles to ensure a deterministic order
-        let sortedArticles = articlesToAutoCurate.sorted { a, b in
-            a.topicGraphNode.title.lowercased() < b.topicGraphNode.title.lowercased()
+        let sortedArticles = articlesToAutoCurate.sorted {
+            $0.topicGraphNode.title.lowercased() < $1.topicGraphNode.title.lowercased()
         }
 
         let articleReferences = sortedArticles.map(\.topicGraphNode.reference)
