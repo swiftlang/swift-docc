@@ -2126,7 +2126,7 @@ public class DocumentationContext {
     ///   - otherArticles: Non-root articles to curate.
     ///   - rootNode: The node that will serve as the source of any topic graph edges created by this method.
     /// - Throws: If looking up a `DocumentationNode` for the root module reference fails.
-    /// - Returns: An array of resolved references to the articles that were automatically curated.
+    /// - Returns: An array of resolved references to the articles that were automatically curated, sorted by their titles.
     private func autoCurateArticles(_ otherArticles: DocumentationContext.Articles, startingFrom rootNode: TopicGraph.Node) throws -> [ResolvedTopicReference] {
         let articlesToAutoCurate = otherArticles.filter { article in
             let reference = article.topicGraphNode.reference
@@ -2140,8 +2140,14 @@ public class DocumentationContext {
             topicGraph.addEdge(from: rootNode, to: article.topicGraphNode)
             uncuratedArticles.removeValue(forKey: article.topicGraphNode.reference)
         }
+
+        // Sort the articles by their titles to ensure a deterministic order
+        let sortedArticles = articlesToAutoCurate.sorted {
+            $0.topicGraphNode.title.lowercased() < $1.topicGraphNode.title.lowercased()
+        }
+
+        let articleReferences = sortedArticles.map(\.topicGraphNode.reference)
         
-        let articleReferences = articlesToAutoCurate.map(\.topicGraphNode.reference)
         let automaticTaskGroup = AutomaticTaskGroupSection(
             title: "Articles",
             references: articleReferences,
