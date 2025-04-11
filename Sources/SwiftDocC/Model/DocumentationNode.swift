@@ -868,10 +868,8 @@ extension [String] {
 
         // Optimization for the common case: If any of the lines do not start
         // with whitespace, return the original lines.
-        for line in self {
-            if let firstChar = line.first, !firstChar.isWhitespace {
-                return self
-            }
+        if contains(where: { $0.first?.isWhitespace == false }) {
+            return self
         }
 
         /// - Count the leading whitespace characters in the given string.
