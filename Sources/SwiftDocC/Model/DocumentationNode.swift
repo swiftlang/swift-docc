@@ -861,9 +861,10 @@ extension [String] {
     /// - Returns: An array of strings with the minimum leading whitespace removed.
     func linesWithoutLeadingWhitespace() -> [Substring] {
 
-        // Optimization for the common case: If any of the lines do not start
-        // with whitespace, return the original lines.
-        if contains(where: { $0.first?.isWhitespace == false }) {
+        // Optimization for the common case: If any of the lines does not start
+        // with whitespace, or if there are no lines, then return the original lines
+        // as substrings.
+        if isEmpty || contains(where: { $0.first?.isWhitespace == false }) {
             return self.map{ .init($0) }
         }
 
