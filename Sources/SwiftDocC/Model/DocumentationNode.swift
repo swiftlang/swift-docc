@@ -858,7 +858,7 @@ extension [String] {
     /// Strip the minimum leading whitespace from all the strings in this array, as follows:
     /// - Find the line with least amount of leading whitespace. Ignore blank lines during this search.
     /// - Remove that number of whitespace chars from all the lines (including blank lines).
-    /// - Returns: An array of strings with the minimum leading whitespace removed.
+    /// - Returns: An array of substrings of the original lines with the minimum leading whitespace removed.
     func linesWithoutLeadingWhitespace() -> [Substring] {
 
         // Optimization for the common case: If any of the lines does not start
@@ -879,12 +879,13 @@ extension [String] {
 
         // Find the minimum count of leading whitespace. If there are no
         // leading whitespace counts (if all the lines were blank) then return
-        // the original lines.
+        // the original lines as substrings.
         guard let minimumWhitespaceCount = self.compactMap(leadingWhitespaceCount).min() else {
             return self.map{ .init($0) }
         }
 
-        // Drop the leading whitespace from all the lines.
+        // Drop the leading whitespace from all the lines and return the
+        // modified lines as substrings of the original lines.
         return self.map { $0.dropFirst(minimumWhitespaceCount) }
     }
 }
