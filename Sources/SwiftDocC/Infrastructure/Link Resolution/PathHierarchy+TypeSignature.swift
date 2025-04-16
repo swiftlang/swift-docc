@@ -129,6 +129,9 @@ extension PathHierarchy {
                     // Accumulate all of the identifier tokens' spelling.
                     accumulated.append(contentsOf: fragment.spelling.utf8)
                     
+                case .keyword where fragment.spelling == "Any":
+                    accumulated.append(contentsOf: fragment.spelling.utf8)
+                    
                 case .text: // In Swift, we're only want some `text` tokens characters in the type disambiguation.
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
