@@ -799,7 +799,7 @@ private extension SymbolGraph.Relationship.Kind {
     /// Whether or not this relationship kind forms a hierarchical relationship between the source and the target.
     var formsHierarchy: Bool {
         switch self {
-        case .memberOf, .optionalMemberOf, .requirementOf, .optionalRequirementOf, .extensionTo, .declaredIn:
+        case .memberOf, .optionalMemberOf, .requirementOf, .optionalRequirementOf, .extensionTo, .inContextOf, .declaredIn:
             return true
         default:
             return false
