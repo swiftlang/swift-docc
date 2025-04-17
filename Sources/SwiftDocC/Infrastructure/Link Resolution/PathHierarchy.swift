@@ -311,7 +311,7 @@ struct PathHierarchy {
         assert(
             allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }), """
             Every node should either have a parent node or be a root node. \
-            This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())
+            This wasn't true for \(allNodes.filter({ $0.value[0].parent == nil && roots[$0.key] == nil }).map(\.key).sorted())
             """
         )
         
@@ -320,7 +320,7 @@ struct PathHierarchy {
                 Array(sequence(first: node, next: \.parent)).last!.symbol!.kind.identifier == .module })
             }), """
             Every node should reach a root node by following its parents up. \
-            This wasn't true for \(allNodes.filter({ $0.value.allSatisfy({ Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier == .module }) }).map(\.key).sorted())
+            This wasn't true for \(allNodes.filter({ $0.value.allSatisfy({ Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier != .module }) }).map(\.key).sorted())
             """
         )
         
@@ -366,7 +366,7 @@ struct PathHierarchy {
         assert(
             lookup.allSatisfy({ $0.value.parent != nil || roots[$0.value.name] != nil }), """
             Every node should either have a parent node or be a root node. \
-            This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())
+            This wasn't true for \(allNodes.filter({ $0.value[0].parent == nil && roots[$0.key] == nil }).map(\.key).sorted())
             """
         )
         
@@ -389,7 +389,7 @@ struct PathHierarchy {
         assert(
             lookup.values.allSatisfy({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }), """
             Every node's findable parent should exist in the lookup. \
-            This wasn't true for \(lookup.values.filter({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }).map(\.symbol!.identifier.precise).sorted())
+            This wasn't true for \(lookup.values.filter({ $0.parent?.identifier != nil && lookup[$0.parent!.identifier] == nil }).map(\.symbol!.identifier.precise).sorted())
             """
         )
         
