@@ -232,7 +232,7 @@ struct PathHierarchy {
                         return original
                     }
                 }(node.symbol!)[...].dropLast()
-                while !components.isEmpty, let child = try? parent.children[components.first!]?.find(nil) {
+                while !components.isEmpty, let child = parent.children[components.first!]?.singleMatch() {
                     parent = child
                     components = components.dropFirst()
                 }
