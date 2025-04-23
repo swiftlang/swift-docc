@@ -330,7 +330,7 @@ public struct ConvertAction: AsyncAction {
         } catch {
             if emitDigest {
                 let problem = Problem(description: (error as? (any DescribedError))?.errorDescription ?? error.localizedDescription, source: nil)
-                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems + [problem])
+                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + [problem])
                 try moveOutput(from: temporaryFolder, to: targetDirectory)
             }
             throw error

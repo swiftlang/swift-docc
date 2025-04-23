@@ -212,7 +212,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             if let rootURL {
                 throw Error.doesNotContainBundle(url: rootURL)
             } else {
-                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems)
+                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
                 throw GeneratedDataProvider.Error.notEnoughDataToGenerateBundle(options: bundleDiscoveryOptions, underlyingError: nil)
             }
         }
@@ -232,7 +232,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         guard !context.problems.containsErrors else {
             if emitDigest {
-                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems)
+                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
             return (analysisProblems: context.problems, conversionProblems: [])
         }
@@ -367,7 +367,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         if emitDigest {
             do {
-                try (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: context.problems + conversionProblems)
+                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + conversionProblems)
             } catch {
                 recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
             }
