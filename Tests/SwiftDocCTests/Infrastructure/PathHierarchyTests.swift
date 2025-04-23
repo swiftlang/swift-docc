@@ -2191,6 +2191,78 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("Inner/InnerClass/something()", in: tree, asSymbolID: "s:5Inner0A5ClassC5OuterE9somethingyyF")
     }
     
+    func testExtensionSymbolsWithSameNameAsExtendedModule() throws {
+        // ---- ExtendedModule
+        // public struct SomeStruct {
+        //     public struct SomeNestedStruct {}
+        // }
+        //
+        // ---- ModuleName
+        // public import ExtendedModule
+        //
+        // // Shadow the ExtendedModule module with a local type
+        // public enum ExtendedModule {}
+        //
+        // // Extend the nested type from the extended module
+        // public extension SomeStruct.SomeNestedStruct {
+        //     func doSomething() {}
+        // }
+        
+        let extensionMixin = SymbolGraph.Symbol.Swift.Extension(extendedModule: "ExtendedModule", typeKind: .struct, constraints: [])
+        
+        let extensionSymbolID      = "s:e:s:14ExtendedModule10SomeStructV0c6NestedD0V0B4NameE11doSomethingyyF"
+        let extendedMethodSymbolID =     "s:14ExtendedModule10SomeStructV0c6NestedD0V0B4NameE11doSomethingyyF"
+        
+        let catalog = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbol(id: "s:10ModuleName08ExtendedA0O", kind: .enum, pathComponents: ["ExtendedModule"])
+                ])
+            ),
+            
+            JSONFile(name: "ModuleName@ExtendedModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    // The 'SomeNestedStruct' extension
+                    makeSymbol(id: extensionSymbolID, kind: .extension, pathComponents: ["SomeStruct", "SomeNestedStruct"], otherMixins: [extensionMixin]),
+                    // The 'doSomething()' method added in the extension
+                    makeSymbol(id: extendedMethodSymbolID, kind: .method, pathComponents: ["SomeStruct", "SomeNestedStruct", "doSomething()"], otherMixins: [extensionMixin]),
+                ],
+                relationships: [
+                    // 'doSomething()' is a member of the extension
+                    .init(source: extendedMethodSymbolID, target: extensionSymbolID, kind: .memberOf, targetFallback: "ExtendedModule.SomeStruct.SomeNestedStruct"),
+                    // The extension extends the external 'SomeNestedStruct' symbol
+                    .init(source: extensionSymbolID, target: "s:14ExtendedModule10SomeStructV0c6NestedD0V", kind: .extensionTo, targetFallback: "ExtendedModule.SomeStruct.SomeNestedStruct"),
+                ])
+            ),
+        ])
+        
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[extendedMethodSymbolID], "/ModuleName/ExtendedModule/SomeStruct/SomeNestedStruct/doSomething()")
+        
+        try assertPathCollision("ModuleName/ExtendedModule", in: tree, collisions: [
+            ("s:m:s:e:\(extensionSymbolID)", "-module.extension"),
+            ("s:10ModuleName08ExtendedA0O", "-enum"),
+        ])
+        // If the first path component is ambiguous, it should have the same error as if that was a later path component.
+        try assertPathCollision("ExtendedModule", in: tree, collisions: [
+            ("s:m:s:e:\(extensionSymbolID)", "-module.extension"),
+            ("s:10ModuleName08ExtendedA0O", "-enum"),
+        ])
+        
+        try assertFindsPath("ExtendedModule-enum", in: tree, asSymbolID: "s:10ModuleName08ExtendedA0O")
+        try assertFindsPath("ExtendedModule-module.extension", in: tree, asSymbolID: "s:m:s:e:\(extensionSymbolID)")
+        
+        // The "Inner" struct doesn't have "InnerStruct" or "InnerClass" descendants so the path is not ambiguous.
+        try assertFindsPath("ExtendedModule/SomeStruct", in: tree, asSymbolID: "s:e:\(extensionSymbolID)")
+        try assertFindsPath("ExtendedModule/SomeStruct/SomeNestedStruct", in: tree, asSymbolID: extensionSymbolID)
+        try assertFindsPath("ExtendedModule/SomeStruct/SomeNestedStruct/doSomething()", in: tree, asSymbolID: extendedMethodSymbolID)
+    }
+    
     func testContinuesSearchingIfNonSymbolMatchesSymbolLink() throws {
         let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
