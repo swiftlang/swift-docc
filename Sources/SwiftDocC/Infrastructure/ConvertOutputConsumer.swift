@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,6 +16,7 @@ import Foundation
 /// or store them in memory.
 public protocol ConvertOutputConsumer {
     /// Consumes an array of problems that were generated during a conversion.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func consume(problems: [Problem]) throws
     
     /// Consumes a render node that was generated during a conversion.
@@ -57,4 +58,50 @@ public extension ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
+}
+
+// Default implementation so that conforming types don't need to implement deprecated API.
+public extension ConvertOutputConsumer {
+    func consume(problems: [Problem]) throws {}
+}
+
+// A package-internal protocol that callers can cast to when they need to call `_consume(problems:)` for backwards compatibility (until `consume(problems:)` is removed).
+package protocol _DeprecatedConsumeProblemsAccess {
+    func _consume(problems: [Problem]) throws
+}
+
+// Because `ConvertOutputConsumer` is a public protocol, it can't conform to `_DeprecatedConsumeProblemsAccess`.
+// Also, it would both be a public change and a breaking change to add a non-deprecated `_consume(problems:)` to `ConvertOutputConsumer` directly.
+//
+// To work around, this while still allowing callers to call `_consume(problems:)` without deprecation warnings, we wrap the consumer in a generic box (`_Deprecated`).
+// This box can conform to `_DeprecatedConsumeProblemsAccess`, so the caller can cast the box to avoid the deprecation warning:
+//
+//     (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: ...)
+package struct _Deprecated<Consumer: ConvertOutputConsumer>: _DeprecatedConsumeProblemsAccess {
+    private let consumer: Consumer
+    package init(_ consumer: Consumer) {
+        self.consumer = consumer
+    }
+    
+    // This needs to be deprecated to be able to call `consume(problems:)` without a deprecation warning.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+    package func _consume(problems: [Problem]) throws {
+        var problems = problems
+        
+        if !problems.isEmpty {
+            problems.insert(
+                Problem(diagnostic: Diagnostic(
+                    severity: .warning,
+                    identifier: "org.swift.docc.DeprecatedDiagnosticsDigets",
+                    summary: """
+                    The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. \
+                    Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.
+                    """)
+                ),
+                at: 0
+            )
+        }
+        
+        try consumer.consume(problems: problems)
+    }
 }
