@@ -10,7 +10,7 @@
 
 #if canImport(WebKit)
 public import WebKit
-public import Foundation
+import Foundation
 
 public class DocumentationSchemeHandler: NSObject {
     
