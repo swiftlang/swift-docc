@@ -37,9 +37,11 @@ extension PathHierarchy.FileRepresentation {
         }
         
         let nodes = [Node](unsafeUninitializedCapacity: lookup.count) { buffer, initializedCount in
-            for node in lookup.values {
+            for (identifier, node) in lookup {
+                assert(identifier == node.identifier, "Every node lookup should match a node with that identifier.")
+                
                 buffer.initializeElement(
-                    at: identifierMap[node.identifier]!,
+                    at: identifierMap[identifier]!,
                     to: Node(
                         name: node.name,
                         rawSpecialBehavior: node.specialBehaviors.rawValue,
