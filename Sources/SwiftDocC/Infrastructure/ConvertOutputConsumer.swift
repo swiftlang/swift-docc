@@ -65,16 +65,25 @@ public extension ConvertOutputConsumer {
     func consume(problems: [Problem]) throws {}
 }
 
+// A package-internal protocol that callers can cast to when they need to call `_consume(problems:)` for backwards compatibility (until `consume(problems:)` is removed).
 package protocol _DeprecatedConsumeProblemsAccess {
     func _consume(problems: [Problem]) throws
 }
 
+// Because `ConvertOutputConsumer` is a public protocol, it can't conform to `_DeprecatedConsumeProblemsAccess`.
+// Also, it would both be a public change and a breaking change to add a non-deprecated `_consume(problems:)` to `ConvertOutputConsumer` directly.
+//
+// To work around, this while still allowing callers to call `_consume(problems:)` without deprecation warnings, we wrap the consumer in a generic box (`_Deprecated`).
+// This box can conform to `_DeprecatedConsumeProblemsAccess`, so the caller can cast the box to avoid the deprecation warning:
+//
+//     (_Deprecated(outputConsumer) as _DeprecatedConsumeProblemsAccess)._consume(problems: ...)
 package struct _Deprecated<Consumer: ConvertOutputConsumer>: _DeprecatedConsumeProblemsAccess {
     private let consumer: Consumer
     package init(_ consumer: Consumer) {
         self.consumer = consumer
     }
     
+    // This needs to be deprecated to be able to call `consume(problems:)` without a deprecation warning.
     @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     package func _consume(problems: [Problem]) throws {
         var problems = problems
