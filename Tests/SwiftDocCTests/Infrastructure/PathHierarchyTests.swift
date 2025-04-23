@@ -1408,6 +1408,19 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
         ]))
         
+        // Any
+        XCTAssertEqual("Any", functionSignatureParameterTypeName([
+            .init(kind: .keyword, spelling: "Any", preciseIdentifier: nil),
+        ]))
+        
+        // Array<Any>
+        XCTAssertEqual("[Any]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "Any", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
         // some Sequence<Int>
         XCTAssertEqual("Sequence<Int>", functionSignatureParameterTypeName([
             .init(kind: .keyword, spelling: "some", preciseIdentifier: nil),
@@ -1773,7 +1786,7 @@ class PathHierarchyTests: XCTestCase {
                     .init(name: "someName", externalName: nil, declarationFragments: [
                         .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
                         .init(kind: .text, spelling: ": ((", preciseIdentifier: nil),
-                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .keyword, spelling: "Any", preciseIdentifier: nil),
                         .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
                         .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
                         .init(kind: .text, spelling: "), ", preciseIdentifier: nil),
@@ -1789,10 +1802,10 @@ class PathHierarchyTests: XCTestCase {
                     .init(kind: .text, spelling: "?)", preciseIdentifier: nil),
                 ])
             )
-            XCTAssertEqual(tupleArgument?.parameterTypeNames, ["((Int,String),Date)"])
+            XCTAssertEqual(tupleArgument?.parameterTypeNames, ["((Any,String),Date)"])
             XCTAssertEqual(tupleArgument?.returnTypeNames, ["[Int]", "String?"])
             
-             // func doSomething() -> ((Double, Double) -> Double, [Int: (Int, Int)], (Bool, Bool), String?)
+            // func doSomething() -> ((Double, Double) -> Double, [Int: (Int, Int)], (Bool, Any), String?)
             let bigTupleReturnType = functionSignatureTypeNames(.init(
                 parameters: [],
                 returns: [
@@ -1811,7 +1824,7 @@ class PathHierarchyTests: XCTestCase {
                     .init(kind: .text, spelling: ")], (", preciseIdentifier: nil),
                     .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Si"),
                     .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
-                    .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Si"),
+                    .init(kind: .keyword, spelling: "Any", preciseIdentifier: nil),
                     .init(kind: .text, spelling: "), ", preciseIdentifier: nil),
                     .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
                     .init(kind: .text, spelling: "<", preciseIdentifier: nil),
@@ -1820,7 +1833,7 @@ class PathHierarchyTests: XCTestCase {
                 ])
             )
             XCTAssertEqual(bigTupleReturnType?.parameterTypeNames, [])
-            XCTAssertEqual(bigTupleReturnType?.returnTypeNames, ["(Double,Double)->Double", "[Int:(Int,Int)]", "(Bool,Bool)", "String?"])
+            XCTAssertEqual(bigTupleReturnType?.returnTypeNames, ["(Double,Double)->Double", "[Int:(Int,Int)]", "(Bool,Any)", "String?"])
             
             // func doSomething(with someName: [Int?: String??])
             let dictionaryWithOptionalsArgument = functionSignatureTypeNames(.init(
@@ -1916,6 +1929,112 @@ class PathHierarchyTests: XCTestCase {
             )
             XCTAssertEqual(complicatedClosureArgument?.parameterTypeNames, ["(Int?,Double,(String,Value))->((Int)->Value)"])
         }
+    }
+    
+    func testParameterDisambiguationWithAnyType() throws {
+        // Create two overloads with different parameter types
+        let parameterTypes: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+            // Any (swift)
+            .init(kind: .keyword, spelling: "Any", preciseIdentifier: nil),
+            // AnyObject (swift)
+            .init(kind: .typeIdentifier, spelling: "AnyObject", preciseIdentifier: "s:s9AnyObjecta"),
+        ]
+        
+        let catalog = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: parameterTypes.map { parameterTypeFragment in
+                makeSymbol(id: "some-function-id-\(parameterTypeFragment.spelling)", kind: .func, pathComponents: ["doSomething(with:)"], signature: .init(
+                    parameters: [
+                        .init(name: "something", externalName: "with", declarationFragments: [
+                            .init(kind: .identifier, spelling: "something", preciseIdentifier: nil),
+                            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                            parameterTypeFragment
+                        ], children: [])
+                    ],
+                    returns: [
+                        .init(kind: .text, spelling: "()", preciseIdentifier: nil) // 'Void' in text representation
+                    ]
+                ))
+            })),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        
+        XCTAssertEqual(paths["some-function-id-Any"],       "/ModuleName/doSomething(with:)-(Any)")
+        XCTAssertEqual(paths["some-function-id-AnyObject"], "/ModuleName/doSomething(with:)-(AnyObject)")
+        
+        try assertPathCollision("doSomething(with:)", in: tree, collisions: [
+            ("some-function-id-Any",       "-(Any)"),
+            ("some-function-id-AnyObject", "-(AnyObject)"),
+        ])
+        
+        try assertPathRaisesErrorMessage("doSomething(with:)", in: tree, context: context, expectedErrorMessage: "'doSomething(with:)' is ambiguous at '/ModuleName'") { error in
+            XCTAssertEqual(error.solutions.count, 2)
+            
+            // These test symbols don't have full declarations. A real solution would display enough information to distinguish these.
+            XCTAssertEqual(error.solutions.dropFirst(0).first, .init(summary: "Insert '-(Any)' for \n'doSomething(with:)'" , replacements: [("-(Any)", 18, 18)]))
+            XCTAssertEqual(error.solutions.dropFirst(1).first, .init(summary: "Insert '-(AnyObject)' for \n'doSomething(with:)'" /* the test symbols don't have full declarations */, replacements: [("-(AnyObject)", 18, 18)]))
+        }
+        
+        try assertFindsPath("doSomething(with:)-(Any)", in: tree, asSymbolID: "some-function-id-Any")
+        try assertFindsPath("doSomething(with:)-(Any)->()", in: tree, asSymbolID: "some-function-id-Any")
+        try assertFindsPath("doSomething(with:)-5gdco", in: tree, asSymbolID: "some-function-id-Any")
+        
+        try assertFindsPath("doSomething(with:)-(AnyObject)", in: tree, asSymbolID: "some-function-id-AnyObject")
+        try assertFindsPath("doSomething(with:)-(AnyObject)->()", in: tree, asSymbolID: "some-function-id-AnyObject")
+        try assertFindsPath("doSomething(with:)-9kd0v", in: tree, asSymbolID: "some-function-id-AnyObject")
+    }
+    
+    func testReturnDisambiguationWithAnyType() throws {
+        // Create two overloads with different return types
+        let returnTypes: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+            // Any (swift)
+            .init(kind: .keyword, spelling: "Any", preciseIdentifier: nil),
+            // AnyObject (swift)
+            .init(kind: .typeIdentifier, spelling: "AnyObject", preciseIdentifier: "s:s9AnyObjecta"),
+        ]
+        
+        let catalog = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: returnTypes.map { parameterTypeFragment in
+                makeSymbol(id: "some-function-id-\(parameterTypeFragment.spelling)", kind: .func, pathComponents: ["doSomething()"], signature: .init(
+                    parameters: [],
+                    returns: [parameterTypeFragment]
+                ))
+            })),
+        ])
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        
+        XCTAssertEqual(paths["some-function-id-Any"],       "/ModuleName/doSomething()->Any")
+        XCTAssertEqual(paths["some-function-id-AnyObject"], "/ModuleName/doSomething()->AnyObject")
+        
+        try assertPathCollision("doSomething()", in: tree, collisions: [
+            ("some-function-id-Any",       "->Any"),
+            ("some-function-id-AnyObject", "->AnyObject"),
+        ])
+        
+        try assertPathRaisesErrorMessage("doSomething()", in: tree, context: context, expectedErrorMessage: "'doSomething()' is ambiguous at '/ModuleName'") { error in
+            XCTAssertEqual(error.solutions.count, 2)
+            
+            // These test symbols don't have full declarations. A real solution would display enough information to distinguish these.
+            XCTAssertEqual(error.solutions.dropFirst(0).first, .init(summary: "Insert '->Any' for \n'doSomething()'" , replacements: [("->Any", 13, 13)]))
+            XCTAssertEqual(error.solutions.dropFirst(1).first, .init(summary: "Insert '->AnyObject' for \n'doSomething()'" /* the test symbols don't have full declarations */, replacements: [("->AnyObject", 13, 13)]))
+        }
+        
+        try assertFindsPath("doSomething()->Any", in: tree, asSymbolID: "some-function-id-Any")
+        try assertFindsPath("doSomething()-()->Any", in: tree, asSymbolID: "some-function-id-Any")
+        try assertFindsPath("doSomething()-5gdco", in: tree, asSymbolID: "some-function-id-Any")
+        
+        try assertFindsPath("doSomething()->AnyObject", in: tree, asSymbolID: "some-function-id-AnyObject")
+        try assertFindsPath("doSomething()-()->AnyObject", in: tree, asSymbolID: "some-function-id-AnyObject")
+        try assertFindsPath("doSomething()-9kd0v", in: tree, asSymbolID: "some-function-id-AnyObject")
     }
     
     func testOverloadGroupSymbolsResolveLinksWithoutHash() throws {
@@ -2070,6 +2189,78 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("Inner/InnerClass", in: tree, asSymbolID: "s:e:s:5Inner0A5ClassC5OuterE9somethingyyF")
         try assertFindsPath("Inner/InnerStruct/something()", in: tree, asSymbolID: "s:5Inner0A6StructV5OuterE9somethingyyF")
         try assertFindsPath("Inner/InnerClass/something()", in: tree, asSymbolID: "s:5Inner0A5ClassC5OuterE9somethingyyF")
+    }
+    
+    func testExtensionSymbolsWithSameNameAsExtendedModule() throws {
+        // ---- ExtendedModule
+        // public struct SomeStruct {
+        //     public struct SomeNestedStruct {}
+        // }
+        //
+        // ---- ModuleName
+        // public import ExtendedModule
+        //
+        // // Shadow the ExtendedModule module with a local type
+        // public enum ExtendedModule {}
+        //
+        // // Extend the nested type from the extended module
+        // public extension SomeStruct.SomeNestedStruct {
+        //     func doSomething() {}
+        // }
+        
+        let extensionMixin = SymbolGraph.Symbol.Swift.Extension(extendedModule: "ExtendedModule", typeKind: .struct, constraints: [])
+        
+        let extensionSymbolID      = "s:e:s:14ExtendedModule10SomeStructV0c6NestedD0V0B4NameE11doSomethingyyF"
+        let extendedMethodSymbolID =     "s:14ExtendedModule10SomeStructV0c6NestedD0V0B4NameE11doSomethingyyF"
+        
+        let catalog = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbol(id: "s:10ModuleName08ExtendedA0O", kind: .enum, pathComponents: ["ExtendedModule"])
+                ])
+            ),
+            
+            JSONFile(name: "ModuleName@ExtendedModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    // The 'SomeNestedStruct' extension
+                    makeSymbol(id: extensionSymbolID, kind: .extension, pathComponents: ["SomeStruct", "SomeNestedStruct"], otherMixins: [extensionMixin]),
+                    // The 'doSomething()' method added in the extension
+                    makeSymbol(id: extendedMethodSymbolID, kind: .method, pathComponents: ["SomeStruct", "SomeNestedStruct", "doSomething()"], otherMixins: [extensionMixin]),
+                ],
+                relationships: [
+                    // 'doSomething()' is a member of the extension
+                    .init(source: extendedMethodSymbolID, target: extensionSymbolID, kind: .memberOf, targetFallback: "ExtendedModule.SomeStruct.SomeNestedStruct"),
+                    // The extension extends the external 'SomeNestedStruct' symbol
+                    .init(source: extensionSymbolID, target: "s:14ExtendedModule10SomeStructV0c6NestedD0V", kind: .extensionTo, targetFallback: "ExtendedModule.SomeStruct.SomeNestedStruct"),
+                ])
+            ),
+        ])
+        
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[extendedMethodSymbolID], "/ModuleName/ExtendedModule/SomeStruct/SomeNestedStruct/doSomething()")
+        
+        try assertPathCollision("ModuleName/ExtendedModule", in: tree, collisions: [
+            ("s:m:s:e:\(extensionSymbolID)", "-module.extension"),
+            ("s:10ModuleName08ExtendedA0O", "-enum"),
+        ])
+        // If the first path component is ambiguous, it should have the same error as if that was a later path component.
+        try assertPathCollision("ExtendedModule", in: tree, collisions: [
+            ("s:m:s:e:\(extensionSymbolID)", "-module.extension"),
+            ("s:10ModuleName08ExtendedA0O", "-enum"),
+        ])
+        
+        try assertFindsPath("ExtendedModule-enum", in: tree, asSymbolID: "s:10ModuleName08ExtendedA0O")
+        try assertFindsPath("ExtendedModule-module.extension", in: tree, asSymbolID: "s:m:s:e:\(extensionSymbolID)")
+        
+        // The "Inner" struct doesn't have "InnerStruct" or "InnerClass" descendants so the path is not ambiguous.
+        try assertFindsPath("ExtendedModule/SomeStruct", in: tree, asSymbolID: "s:e:\(extensionSymbolID)")
+        try assertFindsPath("ExtendedModule/SomeStruct/SomeNestedStruct", in: tree, asSymbolID: extensionSymbolID)
+        try assertFindsPath("ExtendedModule/SomeStruct/SomeNestedStruct/doSomething()", in: tree, asSymbolID: extendedMethodSymbolID)
     }
     
     func testContinuesSearchingIfNonSymbolMatchesSymbolLink() throws {
