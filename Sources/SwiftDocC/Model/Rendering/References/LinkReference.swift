@@ -46,7 +46,7 @@ public struct LinkReference: RenderReference, Equatable {
         case type, identifier, title, titleInlineContent, url
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
         identifier = try values.decode(RenderReferenceIdentifier.self, forKey: .identifier)
@@ -67,7 +67,7 @@ public struct LinkReference: RenderReference, Equatable {
         url = urlPath
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(type, forKey: .type)

@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// The in-memory representation of an article.
 ///
@@ -18,7 +18,7 @@ import Markdown
 /// article's abstract, and following paragraphs up to the next heading is considered the article's discussion.
 public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected, AutomaticTaskGroupsProviding {
     /// The markup that makes up this article's content.
-    let markup: Markup?
+    let markup: (any Markup)?
     /// An optional container for metadata that's unrelated to the article's content.
     private(set) var metadata: Metadata?
     /// An optional container for options that are unrelated to the article's content.
@@ -32,7 +32,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     ///   - markup: The markup that makes up this article's content.
     ///   - metadata: An optional container for metadata that's unrelated to the article's content.
     ///   - redirects: An optional list of previously known locations for this article.
-    init(markup: Markup?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options]) {
+    init(markup: (any Markup)?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options]) {
         let markupModel = markup.map { DocumentationMarkup(markup: $0) }
 
         self.markup = markup
@@ -94,10 +94,9 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     /// - Parameters:
     ///   - markup: The markup that makes up this article's content.
     ///   - source: The location of the file that this article's content comes from.
-    ///   - bundle: The documentation bundle that the article belongs to.
-    ///   - context: The documentation context that the article belongs to.
+    ///   - bundle: The documentation bundle that the source file belongs to.
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
-    public convenience init?(from markup: Markup, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
             let range = markup.child(at: 0)?.range ?? SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title")
@@ -120,13 +119,13 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             return nil
         }
         
-        var remainder: [Markup]
+        var remainder: [any Markup]
         var redirects: [Redirect]
         (redirects, remainder) = markup.children.categorize { child -> Redirect? in
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Redirect(from: childDirective, source: source, for: bundle, problems: &problems)
         }
         
         var optionalMetadata = DirectiveParser()
@@ -136,7 +135,6 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 parentType: Article.self,
                 source: source,
                 bundle: bundle,
-                context: context,
                 problems: &problems
             )
 
@@ -155,7 +153,6 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 from: childDirective,
                 source: source,
                 for: bundle,
-                in: context,
                 problems: &problems
             )
         }
@@ -200,7 +197,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         
         let relevantCategorizedOptions = allCategorizedOptions.compactMapValues(\.first)
         
-        let isDocumentationExtension = title.child(at: 0) is AnyLink
+        let isDocumentationExtension = title.child(at: 0) is (any AnyLink)
         if !isDocumentationExtension, let metadata = optionalMetadata, let displayName = metadata.displayName {
             let diagnosticSummary = """
             A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.

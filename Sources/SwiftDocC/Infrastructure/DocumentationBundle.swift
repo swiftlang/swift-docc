@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A collection of the build inputs for a unit of documentation.
 ///
@@ -76,10 +76,6 @@ public struct DocumentationBundle {
     public var version: String? {
         info.version
     }
-    
-    /// Code listings extracted from the documented modules' source, indexed by their identifier.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-    public var attributedCodeListings: [String: AttributedCodeListing] = [:]
     
     /// Symbol graph JSON input files for the module that's represented by this unit of documentation.
     ///
@@ -149,22 +145,6 @@ public struct DocumentationBundle {
         self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
         self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
-    }
-    
-    @available(*, deprecated, renamed: "init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)", message: "Use 'init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)' instead. This deprecated API will be removed after 6.1 is released")
-    public init(
-        info: Info,
-        baseURL: URL = URL(string: "/")!,
-        attributedCodeListings: [String: AttributedCodeListing] = [:],
-        symbolGraphURLs: [URL],
-        markupURLs: [URL],
-        miscResourceURLs: [URL],
-        customHeader: URL? = nil,
-        customFooter: URL? = nil,
-        themeSettings: URL? = nil
-    ) {
-        self.init(info: info, baseURL: baseURL, symbolGraphURLs: symbolGraphURLs, markupURLs: markupURLs, miscResourceURLs: miscResourceURLs, customHeader: customHeader, customFooter: customFooter, themeSettings: themeSettings)
-        self.attributedCodeListings = attributedCodeListings
     }
     
     public private(set) var rootReference: ResolvedTopicReference

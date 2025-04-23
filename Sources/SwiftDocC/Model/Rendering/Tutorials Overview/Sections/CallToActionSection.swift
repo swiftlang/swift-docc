@@ -45,7 +45,7 @@ public struct CallToActionSection: RenderSection, Equatable {
         self.featuredEyebrow = featuredEyebrow
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         title = try container.decode(String.self, forKey: .title)
         media = try container.decodeIfPresent(RenderReferenceIdentifier.self, forKey: .media)

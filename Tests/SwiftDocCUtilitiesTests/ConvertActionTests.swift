@@ -1574,7 +1574,7 @@ class ConvertActionTests: XCTestCase {
             expectedCoverageInfoCount: Int,
             expectedCoverageFileExist: Bool,
             coverageOptions: DocumentationCoverageOptions,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) async throws {
             let fileSystem = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1804,7 +1804,7 @@ class ConvertActionTests: XCTestCase {
             }
         }
         
-        func convertTestBundle(batchSize: Int, emitDigest: Bool, targetURL: URL, testDataProvider: FileManagerProtocol) async throws -> ActionResult {
+        func convertTestBundle(batchSize: Int, emitDigest: Bool, targetURL: URL, testDataProvider: any FileManagerProtocol) async throws -> ActionResult {
             // Run the create ConvertAction
             var configuration = DocumentationContext.Configuration()
             configuration.externalDocumentationConfiguration.sources["com.example.test"] = TestReferenceResolver()
@@ -2992,7 +2992,7 @@ class ConvertActionTests: XCTestCase {
     
     // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
     func testConvertWithNoTechnologyRoot() async throws {
-        func problemsFromConverting(_ catalogContent: [File]) async throws -> [Problem] {
+        func problemsFromConverting(_ catalogContent: [any File]) async throws -> [Problem] {
             let catalog = Folder(name: "unit-test.docc", content: catalogContent)
             let testDataProvider = try TestFileSystem(folders: [catalog, Folder.emptyHTMLTemplateDirectory])
             let engine = DiagnosticEngine()
@@ -3204,7 +3204,7 @@ private extension LinkDestinationSummary {
         availableLanguages: Set<SourceLanguage>,
         platforms: [PlatformAvailability]?,
         topicImages: [TopicImage]?,
-        references: [RenderReference]?,
+        references: [any RenderReference]?,
         redirects: [URL]?
     ) {
         self.init(
@@ -3251,7 +3251,7 @@ extension File {
 extension Folder {
     /// Recreates a disk-based directory as a `Folder`.
     static func createFromDisk(url: URL) throws -> Folder {
-        var content = [File]()
+        var content = [any File]()
         if let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]) {
             for case let fileURL as URL in enumerator {
                 if FileManager.default.fileExists(atPath: fileURL.path), fileURL.hasDirectoryPath {

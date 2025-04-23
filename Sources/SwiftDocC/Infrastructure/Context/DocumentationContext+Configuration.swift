@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import SymbolKit
 
 extension DocumentationContext {
@@ -57,7 +57,7 @@ extension DocumentationContext {
             /// > Setting a fallback reference resolver makes accesses to the context non-thread-safe.
             /// > This is because the fallback resolver can run during both local link resolution and during rendering, which both happen concurrently for each page.
             /// > In practice this shouldn't matter because the convert service only builds documentation for one page.
-            var fallbackResolver: ConvertServiceFallbackResolver?
+            var fallbackResolver: (any ConvertServiceFallbackResolver)?
             
             /// A closure that modifies each symbol graph before the context registers the symbol graph's information.
             var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
@@ -76,9 +76,9 @@ extension DocumentationContext {
         /// A collection of configuration related to external sources of documentation.
         public struct ExternalDocumentationConfiguration {
             /// The lookup of external documentation sources by their bundle identifiers.
-            public var sources: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:]
+            public var sources: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:]
             /// A type that resolves all symbols that are referenced in symbol graph files but can't be found in any of the locally available symbol graph files.
-            public var globalSymbolResolver: GlobalExternalSymbolResolver?
+            public var globalSymbolResolver: (any GlobalExternalSymbolResolver)?
             /// A list of URLs to documentation archives that the local documentation depends on.
             @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it.
             public var dependencyArchives: [URL] = []

@@ -9,17 +9,17 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A section that contains deprecation information.
 public struct DeprecatedSection: Section {
     public static var title: String? {
         return "Deprecated"
     }
-    public var content: [Markup]
+    public var content: [any Markup]
     
     /// Creates a new deprecation section with the given markup content.
-    public init(content: [Markup]) {
+    public init(content: [any Markup]) {
         self.content = content
     }
     

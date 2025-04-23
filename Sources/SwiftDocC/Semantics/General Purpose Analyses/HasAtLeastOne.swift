@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 extension Semantic.Analyses {
     /**
@@ -21,12 +21,16 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
+        @available(*, deprecated, renamed: "analyze(_:children:source:for:problems:)", message: "Use 'analyze(_:children:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released")
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
+            analyze(directive, children: children, source: source, for: bundle, problems: &problems)
+        }
+        
         public func analyze(
             _ directive: BlockDirective,
-            children: some Sequence<Markup>,
+            children: some Sequence<any Markup>,
             source: URL?,
             for bundle: DocumentationBundle,
-            in context: DocumentationContext,
             problems: inout [Problem]
         ) -> ([Child], remainder: MarkupContainer) {
             Semantic.Analyses.extractAtLeastOne(
@@ -35,7 +39,6 @@ extension Semantic.Analyses {
                 children: children,
                 source: source,
                 for: bundle,
-                in: context,
                 severityIfNotFound: severityIfNotFound,
                 problems: &problems
             ) as! ([Child], MarkupContainer)
@@ -43,15 +46,14 @@ extension Semantic.Analyses {
     }
     
     static func extractAtLeastOne(
-        childType: DirectiveConvertible.Type,
+        childType: any DirectiveConvertible.Type,
         parentDirective: BlockDirective,
-        children: some Sequence<Markup>,
+        children: some Sequence<any Markup>,
         source: URL?,
         for bundle: DocumentationBundle,
-        in context: DocumentationContext,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         problems: inout [Problem]
-    ) -> ([DirectiveConvertible], remainder: MarkupContainer) {
+    ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {
         let (matches, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
                 childType.canConvertDirective(childDirective)
@@ -78,12 +80,11 @@ extension Semantic.Analyses {
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
         }
         
-        let converted = matches.compactMap { childDirective -> DirectiveConvertible? in
+        let converted = matches.compactMap { childDirective -> (any DirectiveConvertible)? in
             return childType.init(
                 from: childDirective,
                 source: source,
                 for: bundle,
-                in: context,
                 problems: &problems
             )
         }

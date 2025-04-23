@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,12 +19,12 @@ class TutorialArticleTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(2, problems.count)
             XCTAssertEqual([
@@ -56,12 +56,12 @@ class TutorialArticleTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(2, problems.count)
             article.map { article in
@@ -106,12 +106,12 @@ TutorialArticle @1:1-13:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(4, problems.count)
             article.map { article in
@@ -155,12 +155,12 @@ TutorialArticle @1:1-23:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(0, problems.count)
             article.map { article in
@@ -265,12 +265,12 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(3, problems.count)
             let arbitraryMarkupProblem = problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.Stack.UnexpectedContent" })
@@ -361,12 +361,12 @@ TutorialArticle @1:1-81:2
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-            let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
             
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-                let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+                let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
                 XCTAssertNotNil(article)
                 XCTAssertEqual(0, problems.count)
                 article.map { article in

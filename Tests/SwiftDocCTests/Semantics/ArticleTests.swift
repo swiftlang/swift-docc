@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,9 +22,9 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
@@ -44,9 +44,9 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
@@ -73,9 +73,9 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
@@ -97,9 +97,9 @@ class ArticleTests: XCTestCase {
         # This is my article
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
@@ -115,9 +115,9 @@ class ArticleTests: XCTestCase {
         - This is not an abstract.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
@@ -133,9 +133,9 @@ class ArticleTests: XCTestCase {
          This is my article
          """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
 
         XCTAssertNil(article)
         XCTAssertEqual(problems.count, 1)
@@ -153,9 +153,9 @@ class ArticleTests: XCTestCase {
          
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
 
         XCTAssertNil(article)
         XCTAssertEqual(problems.count, 1)
@@ -185,9 +185,9 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssertEqual(
             problems.map(\.diagnostic.identifier),
@@ -222,9 +222,9 @@ class ArticleTests: XCTestCase {
         Adding @DisplayName to an article will result in a warning.
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives])
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         
         XCTAssertEqual(problems.map(\.diagnostic.summary), [
             "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading."

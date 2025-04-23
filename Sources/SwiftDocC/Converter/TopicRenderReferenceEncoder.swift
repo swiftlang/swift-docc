@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A thread-safe cache for encoded render references.
 public typealias RenderReferenceCache = Synchronized<[String: (reference: Data, overrides: [VariantOverride])]>
@@ -23,7 +23,7 @@ enum TopicRenderReferenceEncoder {
     ///   instance to avoid encoding the same reference objects repeatedly.
     static func addRenderReferences(
         to renderNodeData: inout Data,
-        references: [String: RenderReference],
+        references: [String: any RenderReference],
         encodeAccumulatedVariantOverrides: Bool = false,
         encoder: JSONEncoder,
         renderReferenceCache referenceCache: RenderReferenceCache

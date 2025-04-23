@@ -843,6 +843,209 @@ class MergeActionTests: XCTestCase {
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
     }
     
+    func testMergingArchivesWithPageImages() async throws {
+        let fileSystem = try TestFileSystem(folders: [])
+        
+        let baseOutputDir = URL(fileURLWithPath: "/path/to/some-output-dir")
+        try fileSystem.createDirectory(at: baseOutputDir, withIntermediateDirectories: true)
+        
+        func convertCatalog(named name: String, file: StaticString = #filePath, line: UInt = #line) throws -> URL {
+            let catalog = Folder(name: "\(name).docc", content: [
+                TextFile(name: "\(name).md", utf8Content: """
+                # My root
+                
+                A root page with a custom "card" page icon in the "\(name.lowercased())" project that links to <doc:Article#Some-heading>
+                
+                @Metadata {
+                  @PageImage(purpose: card, source: \(name.lowercased())-card)
+                }
+                """),
+                
+                DataFile(name: "\(name.lowercased())-card.png", data: Data()),
+                
+                TextFile(name: "Article.md", utf8Content: """
+                # Some article
+                
+                An article in the "\(name.lowercased())" project.
+                
+                ## Some heading
+                """),
+            ])
+            
+            let catalogDir = URL(fileURLWithPath: "/path/to/inputs/\(catalog.name)")
+            try fileSystem.createDirectory(at: catalogDir, withIntermediateDirectories: true)
+            try fileSystem.addFolder(catalog, basePath: catalogDir.deletingLastPathComponent())
+            
+            let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+                .inputsAndDataProvider(startingPoint: catalogDir, options: .init())
+            XCTAssertEqual(bundle.miscResourceURLs.map(\.lastPathComponent), [
+                "\(name.lowercased())-card.png",
+            ])
+            
+            let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: .init())
+
+            XCTAssert(
+                context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.SummaryContainsLink" }.isEmpty,
+                "Unexpected problems: \(context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.SummaryContainsLink" }.map(\.diagnostic.summary).joined(separator: "\n"))",
+                file: file, line: line
+            )
+            
+            let outputPath = baseOutputDir.appendingPathComponent("\(name).doccarchive", isDirectory: true)
+            
+            let realTempURL = try createTemporaryDirectory() // The navigator builder only support real file systems
+            let indexer = try ConvertAction.Indexer(outputURL: realTempURL, bundleID: bundle.id)
+            
+            let outputConsumer = ConvertFileWritingConsumer(targetFolder: outputPath, bundleRootFolder: catalogDir, fileManager: fileSystem, context: context, indexer: indexer, transformForStaticHostingIndexHTML: nil, bundleID: bundle.id)
+            
+            let convertProblems = try ConvertActionConverter.convert(bundle: bundle, context: context, outputConsumer: outputConsumer, sourceRepository: nil, emitDigest: false, documentationCoverageOptions: .noCoverage)
+            XCTAssert(convertProblems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)
+            
+            let navigatorProblems = indexer.finalize(emitJSON: true, emitLMDB: false)
+            XCTAssert(navigatorProblems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)
+            
+            // Move the file from the real file system to the test file system
+            let outputIndexDir = outputPath.appendingPathComponent("index")
+            try fileSystem.createDirectory(at: outputIndexDir, withIntermediateDirectories: false)
+            try fileSystem.createFile(
+                at: outputIndexDir.appendingPathComponent("index.json"),
+                contents: try Data(contentsOf: realTempURL.appendingPathComponent("index/index.json"))
+            )
+            
+            XCTAssertEqual(fileSystem.dump(subHierarchyFrom: outputPath.path), """
+            \(name).doccarchive/
+            ├─ data/
+            │  ╰─ documentation/
+            │     ├─ \(name.lowercased()).json
+            │     ╰─ \(name.lowercased())/
+            │        ╰─ article.json
+            ├─ downloads/
+            │  ╰─ \(name)
+            ├─ images/
+            │  ╰─ \(name)/
+            │     ╰─ \(name.lowercased())-card.png
+            ├─ index/
+            │  ╰─ index.json
+            ├─ metadata.json
+            ╰─ videos/
+               ╰─ \(name)
+            """, file: file, line: line)
+            
+            return outputPath
+        }
+        
+        let firstArchiveDir  = try convertCatalog(named: "First")
+        let secondArchiveDir = try convertCatalog(named: "Second")
+        
+        let combinedArchiveDir = URL(fileURLWithPath: "/Output.doccarchive")
+        let action = MergeAction(
+            archives: [
+              firstArchiveDir,
+              secondArchiveDir,
+            ],
+            landingPageInfo: testLandingPageInfo,
+            outputURL: combinedArchiveDir,
+            fileManager: fileSystem
+        )
+        
+        _ = try await action.perform(logHandle: .none)
+        
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: combinedArchiveDir.path), """
+        Output.doccarchive/
+        ├─ data/
+        │  ├─ documentation.json
+        │  ├─ documentation/
+        │  │  ├─ first.json
+        │  │  ├─ first/
+        │  │  │  ╰─ article.json
+        │  │  ├─ second.json
+        │  │  ╰─ second/
+        │  │     ╰─ article.json
+        │  ╰─ tutorials/
+        ├─ downloads/
+        │  ├─ First/
+        │  ╰─ Second/
+        ├─ images/
+        │  ├─ First/
+        │  │  ╰─ first-card.png
+        │  ╰─ Second/
+        │     ╰─ second-card.png
+        ├─ index/
+        │  ╰─ index.json
+        ├─ metadata.json
+        ╰─ videos/
+           ├─ First/
+           ╰─ Second/
+        """)
+        
+        let rootPageData = try fileSystem.contents(of: combinedArchiveDir.appendingPathComponent("data/documentation.json"))
+        let rootPage = try JSONDecoder().decode(RenderNode.self, from: rootPageData)
+        
+        XCTAssertEqual(rootPage.references.keys.sorted(), [
+            "First/first-card.png",
+            "Second/second-card.png",
+            "doc://First/documentation/First",
+            "doc://First/documentation/First/Article#Some-heading",
+            "doc://Second/documentation/Second",
+            "doc://Second/documentation/Second/Article#Some-heading",
+        ])
+        
+        let firstCardRelativeURL = try XCTUnwrap(URL(string: "/images/First/first-card.png"))
+        XCTAssertEqual(
+            rootPage.references["First/first-card.png"] as? ImageReference,
+            ImageReference(
+                identifier: RenderReferenceIdentifier("First/first-card.png"),
+                imageAsset: DataAsset(
+                    variants: [
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): firstCardRelativeURL
+                    ],
+                    metadata: [
+                        firstCardRelativeURL: DataAsset.Metadata(svgID: nil)
+                    ],
+                    context: .display
+                )
+            )
+        )
+        
+        let secondCardRelativeURL = try XCTUnwrap(URL(string: "/images/Second/second-card.png"))
+        XCTAssertEqual(
+            rootPage.references["Second/second-card.png"] as? ImageReference,
+            ImageReference(
+                identifier: RenderReferenceIdentifier("Second/second-card.png"),
+                imageAsset: DataAsset(
+                    variants: [
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): secondCardRelativeURL
+                    ],
+                    metadata: [
+                        secondCardRelativeURL: DataAsset.Metadata(svgID: nil)
+                    ],
+                    context: .display
+                )
+            )
+        )
+        
+        XCTAssertEqual(
+            rootPage.references["doc://First/documentation/First/Article#Some-heading"] as? TopicRenderReference,
+            TopicRenderReference(
+                identifier: RenderReferenceIdentifier("doc://First/documentation/First/Article#Some-heading"),
+                title: "Some heading",
+                abstract: [],
+                url: "/documentation/first/article#Some-heading",
+                kind: .section
+            )
+        )
+        
+        XCTAssertEqual(
+            rootPage.references["doc://Second/documentation/Second/Article#Some-heading"] as? TopicRenderReference,
+            TopicRenderReference(
+                identifier: RenderReferenceIdentifier("doc://Second/documentation/Second/Article#Some-heading"),
+                title: "Some heading",
+                abstract: [],
+                url: "/documentation/second/article#Some-heading",
+                kind: .section
+            )
+        )
+    }
+    
     // MARK: Test helpers
     
     func testMakeArchive() throws {
@@ -995,7 +1198,7 @@ class MergeActionTests: XCTestCase {
     ) -> Folder {
         let identifier = "com.example.\(name.lowercased())"
         
-        var content: [File] = [
+        var content: [any File] = [
             // Template files
             Folder(name: "css", content: [
                 TextFile(name: "something.css", utf8Content: ""),
@@ -1010,7 +1213,7 @@ class MergeActionTests: XCTestCase {
         ]
         
         // Content
-        var dataContent: [File] = []
+        var dataContent: [any File] = []
         if !documentationPages.isEmpty {
             if supportsStaticHosting {
                 content += [

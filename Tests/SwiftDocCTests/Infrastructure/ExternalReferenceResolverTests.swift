@@ -1203,7 +1203,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(externalLinks.count, 4, "Did not resolve the 4 expected external links.")
     }
 
-    func exampleDocumentation(copying bundleName: String, documentationExtension: TextFile, path: String, file: StaticString = #file, line: UInt = #line) throws -> Symbol {
+    func exampleDocumentation(copying bundleName: String, documentationExtension: TextFile, path: String, file: StaticString = #filePath, line: UInt = #line) throws -> Symbol {
         let externalResolver = TestExternalReferenceResolver()
         let (_, bundle, context) = try testBundleAndContext(
             copying: bundleName,
@@ -1280,7 +1280,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     // Create some example documentation using the symbol graph file located under
     // Tests/SwiftDocCTests/Test Bundles/HTTPRequests.docc, and the following
     // documentation extension markup.
-    func exampleRESTDocumentation(file: StaticString = #file, line: UInt = #line) throws -> Symbol {
+    func exampleRESTDocumentation(file: StaticString = #filePath, line: UInt = #line) throws -> Symbol {
         let documentationExtension = TextFile(
             name: "GetArtist.md",
             utf8Content: """

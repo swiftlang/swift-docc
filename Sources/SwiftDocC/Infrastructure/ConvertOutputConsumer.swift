@@ -33,7 +33,7 @@ public protocol ConvertOutputConsumer {
     func consume(indexingRecords: [IndexingRecord]) throws
     
     /// Consumes the assets and their variants that were registered during a conversion.
-    func consume(assets: [RenderReferenceType: [RenderReference]]) throws
+    func consume(assets: [RenderReferenceType: [any RenderReference]]) throws
     
     /// Consumes benchmarks collected during a conversion.
     func consume(benchmarks: Benchmark) throws

@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive that specifies a custom deprecation summary message to an already deprecated symbol.
 ///

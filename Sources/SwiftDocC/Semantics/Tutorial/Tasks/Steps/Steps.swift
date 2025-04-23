@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// Wraps a series of ``Step``s in a tutorial task section.
 public final class Steps: Semantic, DirectiveConvertible {
@@ -34,7 +34,7 @@ public final class Steps: Semantic, DirectiveConvertible {
         self.content = content
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == Steps.directiveName)
         
         _ = Semantic.Analyses.HasOnlyKnownArguments<Steps>(severityIfFound: .warning, allowedArguments: [])
@@ -46,7 +46,7 @@ public final class Steps: Semantic, DirectiveConvertible {
         let stepsContent: [Semantic] = directive.children.compactMap { child -> Semantic? in
             if let directive = child as? BlockDirective,
                 directive.name == Step.directiveName {
-                return Step(from: directive, source: source, for: bundle, in: context, problems: &problems)
+                return Step(from: directive, source: source, for: bundle, problems: &problems)
             } else {
                 return MarkupContainer(child)
             }

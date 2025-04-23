@@ -95,7 +95,7 @@ class AutomaticCurationTests: XCTestCase {
         containsAutomaticTopicSectionFor kind: SymbolGraph.Symbol.KindIdentifier,
         context: DocumentationContext,
         bundle: DocumentationBundle,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift))
@@ -771,7 +771,7 @@ class AutomaticCurationTests: XCTestCase {
 
         func assertAutomaticCuration(
             variants: Set<DocumentationDataVariantsTrait>,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
             let topics = try AutomaticCuration.topics(
@@ -1265,4 +1265,110 @@ class AutomaticCurationTests: XCTestCase {
              XCTAssertFalse(renderNode.topicSections.first?.generated ?? false)
          }
      }
+
+     func testAutomaticallyCuratedArticlesAreSortedByTitle() throws {
+        // Test bundle with articles where file names and titles are in different orders
+        let catalog = Folder(name: "TestBundle.docc", content: [
+            JSONFile(name: "TestModule.symbols.json", content: makeSymbolGraph(moduleName: "TestModule")),
+            
+            TextFile(name: "C-Article.md", utf8Content: """
+            # A Article
+            """),
+            
+            TextFile(name: "B-Article.md", utf8Content: """
+            # B Article
+            """),
+            
+            TextFile(name: "A-Article.md", utf8Content: """
+            # C Article
+            """),
+        ])
+        
+        // Load the bundle
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        // Get the module and its automatic curation groups
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let moduleNode = try XCTUnwrap(context.entity(with: moduleReference))
+        let symbol = try XCTUnwrap(moduleNode.semantic as? Symbol)
+        let articlesGroup = try XCTUnwrap(
+            symbol.automaticTaskGroups.first(where: { $0.title == "Articles" }),
+            "Expected 'Articles' automatic task group"
+        )
+        
+        // Get the titles of the articles in the order they appear in the automatic curation
+        let titles = articlesGroup.references.compactMap { 
+            context.topicGraph.nodes[$0]?.title
+        }
+        
+        // Verify we have 3 articles in title order (A, B, C)—file order does not matter
+        XCTAssertEqual(titles, ["A Article", "B Article", "C Article"], 
+                      "Articles should be sorted by title, not by file name")
+    }
+
+    // autoCuratedArticles are sorted by title in a case-insensitive manner
+    // this test verifies that the sorting is correct even when the file names have different cases
+    func testAutomaticallyCuratedArticlesAreSortedByTitleDifferentCases() throws {
+
+        // In the catalog, the articles are named with the same letter, different cases,
+        // and other articles are added as well
+        let catalog = Folder(name: "TestBundle.docc", content: [
+            JSONFile(name: "TestModule.symbols.json", content: makeSymbolGraph(moduleName: "TestModule")),
+
+            TextFile(name: "C-article.md", utf8Content: """
+            # C Article
+            """),
+
+            TextFile(name: "c-article.md", utf8Content: """
+            # c Article2
+            """),
+
+            TextFile(name: "A-article.md", utf8Content: """
+            # A Article
+            """),
+
+            TextFile(name: "a-article.md", utf8Content: """
+            # a Article2
+            """),
+
+            TextFile(name: "B-article.md", utf8Content: """
+            # B Article
+            """),
+
+            TextFile(name: "b-article.md", utf8Content: """
+            # b Article2
+            """),
+
+            TextFile(name: "k-article.md", utf8Content: """
+            # k Article
+            """),
+            
+
+            TextFile(name: "random-article.md", utf8Content: """
+            # Z Article
+            """),
+        ])
+
+        // Load the bundle
+        let (_, context) = try loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        // Get the module and its automatic curation groups
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let moduleNode = try XCTUnwrap(context.entity(with: moduleReference))
+        let symbol = try XCTUnwrap(moduleNode.semantic as? Symbol)
+        let articlesGroup = try XCTUnwrap(
+            symbol.automaticTaskGroups.first(where: { $0.title == "Articles" }),
+            "Expected 'Articles' automatic task group"
+        )
+
+        let titles = articlesGroup.references.compactMap { 
+            context.topicGraph.nodes[$0]?.title
+        }
+
+        // Verify that the articles are sorted by title, not by file name
+        XCTAssertEqual(titles, ["A Article", "a Article2", "B Article", "b Article2", "C Article", "c Article2", "k Article", "Z Article"], 
+                      "Articles should be sorted by title, not by file name")
+    }
 }

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /**
  A markup checker.
@@ -280,7 +280,7 @@ public struct CompositeChecker: Checker {
         }
     }
     
-    public mutating func visit(_ markup: Markup) -> () {
+    public mutating func visit(_ markup: any Markup) -> () {
         for i in checkers.indices {
             checkers[i].visit(markup)
         }

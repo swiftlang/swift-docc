@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
  A diagnostic note is a simple string message that should appear somewhere in a document.

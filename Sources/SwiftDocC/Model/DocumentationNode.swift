@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,8 +9,8 @@
 */
 
 import Foundation
-import Markdown
-import SymbolKit
+public import Markdown
+public import SymbolKit
 
 /// A documentation node holds all the information about a documentation entity's content.
 ///
@@ -48,7 +48,7 @@ public struct DocumentationNode {
     ///
     /// After the ``semantic`` object is created, consulting this property is likely incorrect because
     /// it does not include information such as resolved links.
-    public var markup: Markup
+    public var markup: any Markup
     
     /// The parsed documentation structure that's described by the documentation content of this documentation node.
     public var semantic: Semantic!
@@ -83,7 +83,7 @@ public struct DocumentationNode {
         }
 
         let source: Source
-        let markup: Markup
+        let markup: any Markup
     }
 
     /// Where the documentation for the current node came from: source code or documentation extension.
@@ -167,7 +167,7 @@ public struct DocumentationNode {
     ///   - semantic: The parsed documentation structure that's described by the documentation content.
     ///   - platformNames: The names of the platforms for which the node is available.
     ///   - isVirtual: `true` if the node represents a virtual element that doesn't represent a rendered page of documentation, `false` otherwise.
-    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
+    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: any Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
         self.reference = reference
         self.kind = kind
         self.sourceLanguage = sourceLanguage
@@ -332,8 +332,7 @@ public struct DocumentationNode {
     mutating func initializeSymbolContent(
         documentationExtension: Article?,
         engine: DiagnosticEngine,
-        bundle: DocumentationBundle,
-        context: DocumentationContext
+        bundle: DocumentationBundle
     ) {
         precondition(unifiedSymbol != nil && symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
         
@@ -341,7 +340,6 @@ public struct DocumentationNode {
             documentedSymbol: unifiedSymbol?.documentedSymbol,
             documentationExtension: documentationExtension,
             bundle: bundle,
-            context: context,
             engine: engine
         )
         
@@ -503,14 +501,13 @@ public struct DocumentationNode {
         documentedSymbol: SymbolGraph.Symbol?,
         documentationExtension: Article?,
         bundle: DocumentationBundle? = nil,
-        context: DocumentationContext? = nil,
         engine: DiagnosticEngine
     ) -> (
-        markup: Markup,
+        markup: any Markup,
         docChunks: [DocumentationChunk],
         metadata: Metadata?
     ) {
-        let markup: Markup
+        let markup: any Markup
         var documentationChunks: [DocumentationChunk]
         
         var metadata: Metadata?
@@ -526,7 +523,10 @@ public struct DocumentationNode {
                 DocumentationChunk(source: .documentationExtension, markup: documentationExtensionMarkup)
             ]
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
-            let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
+            let docCommentString = docComment.lines
+                                             .map(\.text)
+                                             .linesWithoutLeadingWhitespace()
+                                             .joined(separator: "\n")
 
             let docCommentLocation: SymbolGraph.Symbol.Location? = {
                 if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
@@ -543,7 +543,7 @@ public struct DocumentationNode {
 
             var problems = [Problem]()
             
-            if let bundle, let context {
+            if let bundle {
                 metadata = DirectiveParser()
                     .parseSingleDirective(
                         Metadata.self,
@@ -551,7 +551,6 @@ public struct DocumentationNode {
                         parentType: Symbol.self,
                         source: docCommentLocation?.url,
                         bundle: bundle,
-                        context: context,
                         problems: &problems
                     )
                 
@@ -621,7 +620,7 @@ public struct DocumentationNode {
             if let documentationExtensionMarkup = documentationExtension?.markup {
                 // An `Article` always starts with a level 1 heading (and return `nil` if that's not the first child).
                 // For documentation extension files, this heading is a link to the symbol—which isn't part of the content—so it is ignored.
-                let documentationExtensionChildren = documentationExtensionMarkup.children.dropFirst().compactMap { $0 as? BlockMarkup }
+                let documentationExtensionChildren = documentationExtensionMarkup.children.dropFirst().compactMap { $0 as? (any BlockMarkup) }
                 
                 documentationChunks.append(DocumentationChunk(source: .documentationExtension, markup: documentationExtensionMarkup))
                 markup = Document(Array(docCommentMarkup.blockChildren) + documentationExtensionChildren)
@@ -851,5 +850,42 @@ private let directivesSupportedInDocumentationComments = [
 private extension BlockDirective {
     var isSupportedInDocumentationComment: Bool {
         directivesSupportedInDocumentationComments.contains(name)
+    }
+}
+
+extension [String] {
+
+    /// Strip the minimum leading whitespace from all the strings in this array, as follows:
+    /// - Find the line with least amount of leading whitespace. Ignore blank lines during this search.
+    /// - Remove that number of whitespace chars from all the lines (including blank lines).
+    /// - Returns: An array of substrings of the original lines with the minimum leading whitespace removed.
+    func linesWithoutLeadingWhitespace() -> [Substring] {
+
+        // Optimization for the common case: If any of the lines does not start
+        // with whitespace, or if there are no lines, then return the original lines
+        // as substrings.
+        if isEmpty || contains(where: { $0.first?.isWhitespace == false }) {
+            return self.map{ .init($0) }
+        }
+
+        /// - Count the leading whitespace characters in the given string.
+        /// - Returns: The count of leading whitespace characters, if the string is not blank,
+        ///     or `nil` if the string is empty or blank (contains only whitespace)
+        func leadingWhitespaceCount(_ line: String) -> Int? {
+            let count = line.prefix(while: \.isWhitespace).count
+            guard count < line.count else { return nil }
+            return count
+        }
+
+        // Find the minimum count of leading whitespace. If there are no
+        // leading whitespace counts (if all the lines were blank) then return
+        // the original lines as substrings.
+        guard let minimumWhitespaceCount = self.compactMap(leadingWhitespaceCount).min() else {
+            return self.map{ .init($0) }
+        }
+
+        // Drop the leading whitespace from all the lines and return the
+        // modified lines as substrings of the original lines.
+        return self.map { $0.dropFirst(minimumWhitespaceCount) }
     }
 }

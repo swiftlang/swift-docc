@@ -241,7 +241,7 @@ struct ReferenceResolver: SemanticVisitor {
         return MarkupContainer(newElements)
     }
     
-    mutating func visitMarkup(_ markup: Markup) -> Markup {
+    mutating func visitMarkup(_ markup: any Markup) -> any Markup {
         // Wrap in a markup container and the first child of the result.
         return (visitMarkupContainer(MarkupContainer(markup)) as! MarkupContainer).elements.first!
     }
@@ -274,7 +274,7 @@ struct ReferenceResolver: SemanticVisitor {
     
     mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> Semantic {
         let newContent = visit(contentAndMedia.content) as! MarkupContainer
-        let newMedia = contentAndMedia.media.map { visit($0) } as! Media?
+        let newMedia = contentAndMedia.media.map { visit($0) } as! (any Media)?
         return ContentAndMedia(originalMarkup: contentAndMedia.originalMarkup, title: contentAndMedia.title, layout: contentAndMedia.layout, eyebrow: contentAndMedia.eyebrow, content: newContent, media: newMedia, mediaPosition: contentAndMedia.mediaPosition)
     }
     

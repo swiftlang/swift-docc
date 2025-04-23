@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A reference to a resource that can be downloaded.
 public struct DownloadReference: RenderReference, URLReference, Equatable {
@@ -69,7 +69,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         case checksum
     }
 
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.type = try container.decode(RenderReferenceType.self, forKey: .type)
         self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
@@ -78,7 +78,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         self.checksum = try container.decodeIfPresent(String.self, forKey: .checksum)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)

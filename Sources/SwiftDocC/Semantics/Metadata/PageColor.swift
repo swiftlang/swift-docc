@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive that specifies an accent color for a given documentation page.
 ///

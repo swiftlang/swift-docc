@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,7 +18,7 @@ import Foundation
 public class FileSystemRenderNodeProvider: RenderNodeProvider {
     
     /// The internal `FileSystemProvider` reference.
-    private let dataProvider: FileSystemProvider
+    private let dataProvider: any FileSystemProvider
     
     /// The list of problems the provider encountered during the process.
     private var problems = [Problem]()
@@ -29,7 +29,7 @@ public class FileSystemRenderNodeProvider: RenderNodeProvider {
     /**
      Initialize an instance to provide `RenderNode` instances from a give `FileSystemProvider`.
      */
-    public init(fileSystemProvider: FileSystemProvider) {
+    public init(fileSystemProvider: any FileSystemProvider) {
         dataProvider = fileSystemProvider
         
         // Insert the first node in the queue
@@ -71,15 +71,5 @@ public class FileSystemRenderNodeProvider: RenderNodeProvider {
     /// - Returns: An array with the problems encountered during the filesystem read of render nodes.
     public func getProblems() -> [Problem] {
         return problems
-    }
-    
-}
-
-extension RenderNode {
-    /// Returns the NavigatorIndex.PageType indicating the type of the page.
-    @_disfavoredOverload
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-    public func navigatorPageType() -> NavigatorIndex.PageType {
-        return (self as any NavigatorIndexableRenderNodeRepresentation).navigatorPageType()
     }
 }
