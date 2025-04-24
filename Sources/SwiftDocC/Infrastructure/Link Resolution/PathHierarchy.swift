@@ -154,15 +154,16 @@ struct PathHierarchy {
                         // If the node we have for the child has an existing parent that doesn't
                         // match the parent from this symbol graph, we need to clone the child to
                         // ensure that the hierarchy remains consistent.
-                        let clonedSourceNode = Node(cloning: sourceNode, children: [:])
+                        let clonedSourceNode = Node(
+                            cloning: sourceNode,
+                            symbol: graph.symbols[relationship.source],
+                            children: [:],
+                            languages: [language!]
+                        )
 
-                        // Because we're creating a new node to represent this language's counterpart symbol,
-                        // clean up the languages sets for the original and clone node.
+                        // The original node no longer represents this symbol graph's language,
+                        // so remove that data from there.
                         sourceNode.languages.remove(language!)
-                        clonedSourceNode.languages = .init([language!])
-
-                        // Also make sure that the symbol data is updated with this graph's symbol.
-                        clonedSourceNode.symbol = graph.symbols[relationship.source]
 
                         // Make sure that the clone's children can all line up with symbols from this symbol graph.
                         for (childName, children) in sourceNode.children {
@@ -179,6 +180,7 @@ struct PathHierarchy {
                             }
                         }
 
+                        // Track the cloned node in the lists of nodes.
                         nodes[relationship.source] = clonedSourceNode
                         if let existingNodes = allNodes[relationship.source] {
                             clonedSourceNode.counterpart = existingNodes.first
@@ -188,6 +190,7 @@ struct PathHierarchy {
                         }
                         allNodes[relationship.source, default: []].append(clonedSourceNode)
 
+                        // Finally, add the cloned node as a child of its parent.
                         targetNode.add(symbolChild: clonedSourceNode)
                     }
                     topLevelCandidates.removeValue(forKey: relationship.source)
@@ -577,13 +580,15 @@ extension PathHierarchy {
         /// Initializes a node with a new identifier but the data from an existing node.
         fileprivate init(
             cloning source: Node,
-            children: [String: DisambiguationContainer]? = nil
+            symbol: SymbolGraph.Symbol?? = nil,
+            children: [String: DisambiguationContainer]? = nil,
+            languages: Set<SourceLanguage>? = nil
         ) {
-            self.symbol = source.symbol
+            self.symbol = symbol ?? source.symbol
             self.name = source.name
             self.children = children ?? source.children
             self.specialBehaviors = source.specialBehaviors
-            self.languages = source.languages
+            self.languages = languages ?? source.languages
         }
 
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
