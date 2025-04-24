@@ -45,6 +45,7 @@ class SymbolAvailabilityTests: XCTestCase {
     private func renderNodeAvailability(
         defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
         symbolGraphOperatingSystemPlatformName: String,
+        symbolGraphEnvironmentName: String? = nil,
         symbols: [SymbolGraph.Symbol],
         symbolName: String
     ) throws -> [AvailabilityRenderItem] {
@@ -56,7 +57,7 @@ class SymbolAvailabilityTests: XCTestCase {
                 ]),
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
-                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: symbolGraphOperatingSystemPlatformName), environment: nil),
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: symbolGraphOperatingSystemPlatformName), environment: symbolGraphEnvironmentName),
                     symbols: symbols,
                     relationships: []
                 )),
@@ -71,7 +72,7 @@ class SymbolAvailabilityTests: XCTestCase {
     
     func testSymbolGraphSymbolWithoutDeprecatedVersionAndIntroducedVersion() throws {
 
-        let availability = try renderNodeAvailability(
+        var availability = try renderNodeAvailability(
             defaultAvailability: [],
             symbolGraphOperatingSystemPlatformName: "ios",
             symbols: [
@@ -90,6 +91,34 @@ class SymbolAvailabilityTests: XCTestCase {
             "iOS <nil> - 1.2.3",
             "iPadOS <nil> - 1.2.3",
             "Mac Catalyst <nil> - 1.2.3",
+        ])
+        
+        availability = try renderNodeAvailability(
+            defaultAvailability: [
+                DefaultAvailability.ModuleAvailability(platformName: PlatformName(operatingSystemName: "iOS"), platformVersion: "1.2.3")
+            ],
+            symbolGraphOperatingSystemPlatformName: "ios",
+            symbolGraphEnvironmentName: "macabi",
+            symbols: [
+                makeSymbol(
+                    id: "platform-1-symbol",
+                    kind: .class,
+                    pathComponents: ["SymbolName"],
+                    availability: [
+                        makeAvailabilityItem(domainName: "iOS", deprecated: SymbolGraph.SemanticVersion(string: "1.2.3")),
+                        makeAvailabilityItem(domainName: "visionOS", deprecated: SymbolGraph.SemanticVersion(string: "1.0.0"))
+                    ]
+                )
+            ],
+            symbolName: "SymbolName"
+        )
+        
+        XCTAssertEqual(availability.map { "\($0.name ?? "<nil>") \($0.introduced ?? "<nil>") - \($0.deprecated ?? "<nil>")" }, [
+            // The default availability for iOS shouldnt be copied to visionOS.
+            "iOS 1.2.3 - 1.2.3",
+            "iPadOS 1.2.3 - <nil>",
+            "Mac Catalyst 1.2.3 - 1.2.3",
+            "visionOS <nil> - 1.0",
         ])
     }
     

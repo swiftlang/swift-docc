@@ -317,9 +317,10 @@ struct SymbolGraphLoader {
             
                 // Fill introduced versions when missing.
                 availability.availability = availability.availability.map {
-                    $0.fillingMissingIntroducedVersion(
+                    let availabilityPlatformName = $0.domain.map { PlatformName(operatingSystemName: $0.rawValue) } ?? platformName
+                    return $0.fillingMissingIntroducedVersion(
                         from: defaultAvailabilityVersionByPlatform,
-                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
+                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[availabilityPlatformName]?.rawValue
                     )
                 }
                 // Add the module availability information to each of the symbols availability mixin.
