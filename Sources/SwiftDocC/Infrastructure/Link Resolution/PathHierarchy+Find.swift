@@ -447,19 +447,26 @@ extension PathHierarchy.DisambiguationContainer {
         case lookupCollision([(node: PathHierarchy.Node, disambiguation: String)])
     }
     
-    /// Attempts to find a value in the disambiguation tree based on partial disambiguation information.
+    /// Attempts to find the only element in the disambiguation container without using any disambiguation information.
+    ///
+    /// - Returns: The only element in the container or `nil` if the container has more than one element.
+    func singleMatch() -> PathHierarchy.Node? {
+        if storage.count <= 1 {
+            return storage.first?.node
+        } else {
+            return storage.singleMatch({ !$0.node.isDisfavoredInLinkCollisions })?.node
+        }
+    }
+    
+    /// Attempts to find a value in the disambiguation container based on partial disambiguation information.
     ///
     /// There are 3 possible results:
     ///  - No match is found; indicated by a `nil` return value.
     ///  - Exactly one match is found; indicated by a non-nil return value.
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
     func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws -> PathHierarchy.Node? {
-        if disambiguation == nil {
-            if storage.count <= 1 {
-                return storage.first?.node
-            } else if let favoredMatch = storage.singleMatch({ !$0.node.isDisfavoredInLinkCollisions }) {
-                return favoredMatch.node
-            }
+        if disambiguation == nil, let match = singleMatch() {
+            return match
         }
         
         switch disambiguation {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,6 +50,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         self.assetPrefixComponent = bundleID?.rawValue.split(separator: "/").joined(separator: "-")
     }
     
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func consume(problems: [Problem]) throws {
         let diagnostics = problems.map { problem in
             Digest.Diagnostic(diagnostic: problem.diagnostic, rootURL: bundleRootFolder)
@@ -245,6 +246,7 @@ enum Digest {
         let downloads: [DownloadReference]
     }
     
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     struct Diagnostic: Codable {
         struct Location: Codable {
             let line: Int
@@ -263,6 +265,7 @@ enum Digest {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 private extension Digest.Diagnostic {
     init(diagnostic: Diagnostic, rootURL: URL?) {
         self.start = (diagnostic.range?.lowerBound).map { Location(line: $0.line, column: $0.column) }
