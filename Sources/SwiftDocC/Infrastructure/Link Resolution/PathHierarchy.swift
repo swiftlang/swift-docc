@@ -148,9 +148,9 @@ struct PathHierarchy {
                 // would require that we redundantly create multiple nodes for the same symbol in many common cases and then merge them. To avoid doing that, we instead check
                 // the source symbol's path components to find the correct target symbol by matching its name.
                 if let targetNode = nodes[relationship.target], targetNode.name == expectedContainerName {
-                    if sourceNode.parent == nil || sourceNode.parent === targetNode {
+                    if sourceNode.parent == nil {
                         targetNode.add(symbolChild: sourceNode)
-                    } else {
+                    } else if sourceNode.parent !== targetNode {
                         // If the node we have for the child has an existing parent that doesn't
                         // match the parent from this symbol graph, we need to clone the child to
                         // ensure that the hierarchy remains consistent.
