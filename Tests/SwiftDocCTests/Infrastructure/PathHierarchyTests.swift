@@ -2820,7 +2820,85 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName")
         XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/memberName") // The Swift spelling is preferred
     }
-    
+
+    func testLanguageRepresentationsWithDifferentParentKinds() throws {
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+
+        let containerID = "some-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            Folder(name: "clang", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .union, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: memberID, language: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                    ],
+                    relationships: [
+                        .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                    ]
+                )),
+            ]),
+
+            Folder(name: "swift", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                    ],
+                    relationships: [
+                        .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                    ]
+                )),
+            ])
+        ])
+
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        let resolvedSwiftContainerID = try tree.find(path: "/ModuleName/ContainerName-struct", onlyFindSymbols: true)
+        let resolvedSwiftContainer = try XCTUnwrap(tree.lookup[resolvedSwiftContainerID])
+        XCTAssertEqual(resolvedSwiftContainer.name, "ContainerName")
+        XCTAssertEqual(resolvedSwiftContainer.symbol?.identifier.precise, containerID)
+        XCTAssertEqual(resolvedSwiftContainer.symbol?.kind.identifier, .struct)
+        XCTAssertEqual(resolvedSwiftContainer.languages, [.swift])
+
+        let resolvedObjcContainerID = try tree.find(path: "/ModuleName/ContainerName-union", onlyFindSymbols: true)
+        let resolvedObjcContainer = try XCTUnwrap(tree.lookup[resolvedObjcContainerID])
+        XCTAssertEqual(resolvedObjcContainer.name, "ContainerName")
+        XCTAssertEqual(resolvedObjcContainer.symbol?.identifier.precise, containerID)
+        XCTAssertEqual(resolvedObjcContainer.symbol?.kind.identifier, .union)
+        XCTAssertEqual(resolvedObjcContainer.languages, [.objectiveC])
+
+        let resolvedContainerID = try tree.find(path: "/ModuleName/ContainerName", onlyFindSymbols: true)
+        XCTAssertEqual(resolvedContainerID, resolvedSwiftContainerID)
+
+        let resolvedSwiftMemberID = try tree.find(path: "/ModuleName/ContainerName-struct/MemberName", onlyFindSymbols: true)
+        let resolvedSwiftMember = try XCTUnwrap(tree.lookup[resolvedSwiftMemberID])
+        XCTAssertEqual(resolvedSwiftMember.name, "MemberName")
+        XCTAssertEqual(resolvedSwiftMember.parent?.identifier, resolvedSwiftContainerID)
+        XCTAssertEqual(resolvedSwiftMember.symbol?.identifier.precise, memberID)
+        XCTAssertEqual(resolvedSwiftMember.symbol?.kind.identifier, .property)
+        XCTAssertEqual(resolvedSwiftMember.languages, [.swift])
+
+        let resolvedObjcMemberID = try tree.find(path: "/ModuleName/ContainerName-union/MemberName", onlyFindSymbols: true)
+        let resolvedObjcMember = try XCTUnwrap(tree.lookup[resolvedObjcMemberID])
+        XCTAssertEqual(resolvedObjcMember.name, "MemberName")
+        XCTAssertEqual(resolvedObjcMember.parent?.identifier, resolvedObjcContainerID)
+        XCTAssertEqual(resolvedObjcMember.symbol?.identifier.precise, memberID)
+        XCTAssertEqual(resolvedObjcMember.symbol?.kind.identifier, .property)
+        XCTAssertEqual(resolvedObjcMember.languages, [.objectiveC])
+
+        let resolvedMemberID = try tree.find(path: "/ModuleName/ContainerName/MemberName", onlyFindSymbols: true)
+        XCTAssertEqual(resolvedMemberID, resolvedSwiftMemberID)
+
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName")
+        XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/MemberName")
+    }
+
     func testMixedLanguageSymbolAndItsExtendingModuleWithDifferentContainerNames() throws {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
