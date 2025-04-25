@@ -148,7 +148,51 @@ struct PathHierarchy {
                 // would require that we redundantly create multiple nodes for the same symbol in many common cases and then merge them. To avoid doing that, we instead check
                 // the source symbol's path components to find the correct target symbol by matching its name.
                 if let targetNode = nodes[relationship.target], targetNode.name == expectedContainerName {
-                    targetNode.add(symbolChild: sourceNode)
+                    if sourceNode.parent == nil {
+                        targetNode.add(symbolChild: sourceNode)
+                    } else if sourceNode.parent !== targetNode {
+                        // If the node we have for the child has an existing parent that doesn't
+                        // match the parent from this symbol graph, we need to clone the child to
+                        // ensure that the hierarchy remains consistent.
+                        let clonedSourceNode = Node(
+                            cloning: sourceNode,
+                            symbol: graph.symbols[relationship.source],
+                            children: [:],
+                            languages: [language!]
+                        )
+
+                        // The original node no longer represents this symbol graph's language,
+                        // so remove that data from there.
+                        sourceNode.languages.remove(language!)
+
+                        // Make sure that the clone's children can all line up with symbols from this symbol graph.
+                        for (childName, children) in sourceNode.children {
+                            for child in children.storage {
+                                guard let childSymbol = child.node.symbol else {
+                                    // We shouldn't come across any non-symbol nodes here,
+                                    // but assume they can work as child of both variants.
+                                    clonedSourceNode.add(child: child.node, kind: child.kind, hash: child.hash)
+                                    continue
+                                }
+                                if nodes[childSymbol.identifier.precise] === child.node {
+                                    clonedSourceNode.add(symbolChild: child.node)
+                                }
+                            }
+                        }
+
+                        // Track the cloned node in the lists of nodes.
+                        nodes[relationship.source] = clonedSourceNode
+                        if let existingNodes = allNodes[relationship.source] {
+                            clonedSourceNode.counterpart = existingNodes.first
+                            for other in existingNodes {
+                                other.counterpart = clonedSourceNode
+                            }
+                        }
+                        allNodes[relationship.source, default: []].append(clonedSourceNode)
+
+                        // Finally, add the cloned node as a child of its parent.
+                        targetNode.add(symbolChild: clonedSourceNode)
+                    }
                     topLevelCandidates.removeValue(forKey: relationship.source)
                 } else if var targetNodes = allNodes[relationship.target] {
                     // If the source was added in an extension symbol graph file, then its target won't be found in the same symbol graph file (in `nodes`).
@@ -532,7 +576,21 @@ extension PathHierarchy {
             self.children = [:]
             self.specialBehaviors = []
         }
-        
+
+        /// Initializes a node with a new identifier but the data from an existing node.
+        fileprivate init(
+            cloning source: Node,
+            symbol: SymbolGraph.Symbol?? = nil,
+            children: [String: DisambiguationContainer]? = nil,
+            languages: Set<SourceLanguage>? = nil
+        ) {
+            self.symbol = symbol ?? source.symbol
+            self.name = source.name
+            self.children = children ?? source.children
+            self.specialBehaviors = source.specialBehaviors
+            self.languages = languages ?? source.languages
+        }
+
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
         fileprivate func add(symbolChild: Node) {
             precondition(symbolChild.symbol != nil)
@@ -558,6 +616,8 @@ extension PathHierarchy {
                 )
                 return
             }
+
+            assert(child.parent == nil, "Nodes that already have a parent should not be added to a different parent.")
             // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
             children[child.name, default: .init()].add(child, kind: kind, hash: hash, parameterTypes: parameterTypes, returnTypes: returnTypes)
