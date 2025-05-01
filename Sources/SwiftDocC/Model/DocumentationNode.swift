@@ -855,7 +855,9 @@ private extension BlockDirective {
 
 extension [String] {
 
-    /// Strip the minimum leading whitespace from all the strings in this array, as follows:
+    /// Strips the minimum leading whitespace from all the strings in the array.
+    ///
+    /// The method does the following:
     /// - Find the line with least amount of leading whitespace. Ignore blank lines during this search.
     /// - Remove that number of whitespace chars from all the lines (including blank lines).
     /// - Returns: An array of substrings of the original lines with the minimum leading whitespace removed.
