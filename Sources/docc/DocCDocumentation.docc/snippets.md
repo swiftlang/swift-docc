@@ -4,13 +4,12 @@ Create and include code snippets to illustrate and provide examples of how to us
 
 ## Overview
 
-...tbd...
-- Describe the problem and summarize the developer action.
-- Explain why the problem is relevant and provide context for the task. Don't simply repeat the abstract; expand on it.
-- Keep the Overview to one or two paragraphs.
-- For very short articles that consist of just a couple of paragraphs, all of the content can be in the Overview.
+DocC supports code listings in your code, as described in <doc:formatting-your-documentation-content>.
+However, the content in a code listing isn't compiled or verified to work.
 
-...tbd...
+Swift Package Manager looks for, and builds, any code included in the `Snippets` directory for your package.
+DocC supports referencing all, or parts, of those files to present as code listings.
+This allows you to verify that code examples, referenced in your documentation, continue to compile as you evolve you app or library.
 
 ### Create a code snippet
 
