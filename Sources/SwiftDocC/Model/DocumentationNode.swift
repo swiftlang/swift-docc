@@ -523,7 +523,10 @@ public struct DocumentationNode {
                 DocumentationChunk(source: .documentationExtension, markup: documentationExtensionMarkup)
             ]
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
-            let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
+            let docCommentString = docComment.lines
+                                             .map(\.text)
+                                             .linesWithoutLeadingWhitespace()
+                                             .joined(separator: "\n")
 
             let docCommentLocation: SymbolGraph.Symbol.Location? = {
                 if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
@@ -847,5 +850,44 @@ private let directivesSupportedInDocumentationComments = [
 private extension BlockDirective {
     var isSupportedInDocumentationComment: Bool {
         directivesSupportedInDocumentationComments.contains(name)
+    }
+}
+
+extension [String] {
+
+    /// Strips the minimum leading whitespace from all the strings in the array.
+    ///
+    /// The method does the following:
+    /// - Find the line with least amount of leading whitespace. Ignore blank lines during this search.
+    /// - Remove that number of whitespace chars from all the lines (including blank lines).
+    /// - Returns: An array of substrings of the original lines with the minimum leading whitespace removed.
+    func linesWithoutLeadingWhitespace() -> [Substring] {
+
+        // Optimization for the common case: If any of the lines does not start
+        // with whitespace, or if there are no lines, then return the original lines
+        // as substrings.
+        if isEmpty || contains(where: { $0.first?.isWhitespace == false }) {
+            return self.map{ .init($0) }
+        }
+
+        /// - Count the leading whitespace characters in the given string.
+        /// - Returns: The count of leading whitespace characters, if the string is not blank,
+        ///     or `nil` if the string is empty or blank (contains only whitespace)
+        func leadingWhitespaceCount(_ line: String) -> Int? {
+            let count = line.prefix(while: \.isWhitespace).count
+            guard count < line.count else { return nil }
+            return count
+        }
+
+        // Find the minimum count of leading whitespace. If there are no
+        // leading whitespace counts (if all the lines were blank) then return
+        // the original lines as substrings.
+        guard let minimumWhitespaceCount = self.compactMap(leadingWhitespaceCount).min() else {
+            return self.map{ .init($0) }
+        }
+
+        // Drop the leading whitespace from all the lines and return the
+        // modified lines as substrings of the original lines.
+        return self.map { $0.dropFirst(minimumWhitespaceCount) }
     }
 }
