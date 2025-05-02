@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -317,9 +317,10 @@ struct SymbolGraphLoader {
             
                 // Fill introduced versions when missing.
                 availability.availability = availability.availability.map {
-                    $0.fillingMissingIntroducedVersion(
+                    let availabilityPlatformName = $0.domain.map { PlatformName(operatingSystemName: $0.rawValue) } ?? platformName
+                    return $0.fillingMissingIntroducedVersion(
                         from: defaultAvailabilityVersionByPlatform,
-                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
+                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[availabilityPlatformName]?.rawValue
                     )
                 }
                 // Add the module availability information to each of the symbols availability mixin.
