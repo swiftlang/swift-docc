@@ -65,7 +65,8 @@ struct PathHierarchy {
     ) {
         var roots: [String: Node] = [:]
         var allNodes: [String: [Node]] = [:]
-        
+        var sparseNodes: [[String]: Node] = [:]
+
         let symbolGraphs = loader.symbolGraphs
             .map { url, graph in
                 // Only compute the source language for each symbol graph once.
@@ -126,7 +127,11 @@ struct PathHierarchy {
                         node.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
                     }
                     nodes[id] = node
-                    
+
+                    if let existingSparseNode = sparseNodes.removeValue(forKey: symbol.pathComponents) {
+                        node.merge(with: existingSparseNode)
+                    }
+
                     if let existing = allNodes[id] {
                         node.counterpart = existing.first
                         for other in existing {
@@ -281,8 +286,13 @@ struct PathHierarchy {
                     components = components.dropFirst()
                 }
                 for component in components {
+                    func pathComponents(_ node: Node) -> [String] {
+                        // iterate through the parents, drop the module node,
+                        // then reverse it so it's in symbol graph order and pull out the name
+                        sequence(first: node, next: \.parent).dropLast().reversed().compactMap(\.name)
+                    }
                     assert(
-                        parent.children[components.first!] == nil,
+                        parent.children[component] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
                     guard knownDisambiguatedPathComponents != nil else {
@@ -291,6 +301,7 @@ struct PathHierarchy {
                         nodeWithoutSymbol.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
                         parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
                         parent = nodeWithoutSymbol
+                        sparseNodes[pathComponents(nodeWithoutSymbol)] = nodeWithoutSymbol
                         continue
                     }
                     // If the path hierarchy was passed a lookup of "known disambiguation" path components", then it's possible that each path component could contain disambiguation that needs to be parsed.
@@ -307,6 +318,7 @@ struct PathHierarchy {
                         parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
                     }
                     parent = nodeWithoutSymbol
+                    sparseNodes[pathComponents(nodeWithoutSymbol)] = nodeWithoutSymbol
                 }
                 parent.add(symbolChild: node)
             }
@@ -627,7 +639,7 @@ extension PathHierarchy {
         
         /// Combines this node with another node.
         func merge(with other: Node) {
-            assert(self.parent?.symbol?.identifier.precise == other.parent?.symbol?.identifier.precise)
+            assert(self.parent == nil || self.parent?.symbol?.identifier.precise == other.parent?.symbol?.identifier.precise)
             self.children = self.children.merging(other.children, uniquingKeysWith: { $0.merge(with: $1) })
             
             for (_, tree) in self.children {
