@@ -140,4 +140,3 @@ DocC will attempt to reference symbols from within these comments just like any 
 You can reference symbols from your API, which DocC converts into hyperlinks to that symbol when displaying the content.
 
 <!-- Copyright (c) 2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
-
