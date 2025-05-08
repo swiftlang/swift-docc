@@ -5306,6 +5306,8 @@ let expected = """
 
             XCTAssertEqual(problem.diagnostic.summary, "'SymbolName-\(symbolKindID.identifier)' is ambiguous at '/ModuleName'")
 
+            XCTAssertEqual(problem.possibleSolutions.count, 4)
+
             for solution in problem.possibleSolutions {
                 XCTAssertEqual(solution.replacements.count, 1)
                 let replacement = try XCTUnwrap(solution.replacements.first)
