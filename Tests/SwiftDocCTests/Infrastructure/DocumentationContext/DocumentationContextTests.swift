@@ -5270,51 +5270,52 @@ let expected = """
     func testContextDiagnosesInsufficientDisambiguationWithCorrectRange() throws {
         // This test deliberately does not turn on the overloads feature
         // to ensure the symbol link below does not accidentally resolve correctly.
-        let symbolKindID = SymbolGraph.Symbol.KindIdentifier.allCases.first { !$0.isOverloadableKind }!
-        // Generate a 4 symbols with the same name for every non overloadable symbol kind
-        let symbols: [SymbolGraph.Symbol] = [
-            makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
-            makeSymbol(id: "second-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
-            makeSymbol(id: "third-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
-            makeSymbol(id: "fourth-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
-        ]
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+            // Generate a 4 symbols with the same name for every non overloadable symbol kind
+            let symbols: [SymbolGraph.Symbol] = [
+                makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "second-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "third-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "fourth-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
+            ]
 
-        let catalog =
-            Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                    moduleName: "ModuleName",
-                    symbols: symbols
-                )),
+            let catalog =
+                Folder(name: "unit-test.docc", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: symbols
+                    )),
 
-                TextFile(name: "ModuleName.md", utf8Content: """
-                # ``ModuleName``
+                    TextFile(name: "ModuleName.md", utf8Content: """
+                    # ``ModuleName``
 
-                This is a test file for ModuleName.
+                    This is a test file for ModuleName.
 
-                ## Topics
+                    ## Topics
 
-                - ``SymbolName-\(symbolKindID.identifier)``
-                """)
-            ])
+                    - ``SymbolName-\(symbolKindID.identifier)``
+                    """)
+                ])
 
-        let (_, context) = try loadBundle(catalog: catalog)
+            let (_, context) = try loadBundle(catalog: catalog)
 
-        let problems = context.problems.sorted(by: \.diagnostic.summary)
-        XCTAssertEqual(problems.count, 1)
+            let problems = context.problems.sorted(by: \.diagnostic.summary)
+            XCTAssertEqual(problems.count, 1)
 
-        let problem = try XCTUnwrap(problems.first)
+            let problem = try XCTUnwrap(problems.first)
 
-        XCTAssertEqual(problem.diagnostic.summary, "'SymbolName-\(symbolKindID.identifier)' is ambiguous at '/ModuleName'")
+            XCTAssertEqual(problem.diagnostic.summary, "'SymbolName-\(symbolKindID.identifier)' is ambiguous at '/ModuleName'")
 
-        for solution in problem.possibleSolutions {
-            XCTAssertEqual(solution.replacements.count, 1)
-            let replacement = try XCTUnwrap(solution.replacements.first)
+            for solution in problem.possibleSolutions {
+                XCTAssertEqual(solution.replacements.count, 1)
+                let replacement = try XCTUnwrap(solution.replacements.first)
 
-            XCTAssertEqual(replacement.range.lowerBound, .init(line: 7, column: 15, source: nil))
-            XCTAssertEqual(
-                replacement.range.upperBound,
-                .init(line: 7, column: 16 + symbolKindID.identifier.count, source: nil)
-            )
+                XCTAssertEqual(replacement.range.lowerBound, .init(line: 7, column: 15, source: nil))
+                XCTAssertEqual(
+                    replacement.range.upperBound,
+                    .init(line: 7, column: 16 + symbolKindID.identifier.count, source: nil)
+                )
+            }
         }
     }
 
