@@ -65,6 +65,7 @@ struct PathHierarchy {
     ) {
         var roots: [String: Node] = [:]
         var allNodes: [String: [Node]] = [:]
+        // FIXME: These should not be tracked. Move sparse node creation to after all symbol graphs are loaded.
         var sparseNodes: [[String]: Node] = [:]
 
         let symbolGraphs = loader.symbolGraphs
