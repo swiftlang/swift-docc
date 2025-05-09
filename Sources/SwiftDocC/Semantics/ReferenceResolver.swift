@@ -44,6 +44,12 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
     let diagnosticRange: SourceRange?
     if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange {
         rangeAdjustment.offsetWithRange(referenceSourceRange)
+        assert(rangeAdjustment.lowerBound.column >= 0, """
+            Unresolved topic reference range adjustment created range with negative column.
+            Source: \(source?.absoluteString ?? "nil")
+            Range: \(rangeAdjustment.lowerBound.description):\(rangeAdjustment.upperBound.description)
+            Summary: \(errorInfo.message)
+            """)
         diagnosticRange = rangeAdjustment
     } else {
         diagnosticRange = referenceSourceRange
