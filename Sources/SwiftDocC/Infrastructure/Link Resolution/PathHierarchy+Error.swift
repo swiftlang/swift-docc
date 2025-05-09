@@ -223,13 +223,27 @@ extension PathHierarchy.Error {
             
         case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):
             let nextPathComponent = remaining.first!
-            let (pathPrefix, _, solutions) = makeCollisionSolutions(from: collisions, nextPathComponent: nextPathComponent, partialResultPrefix: partialResult.pathPrefix)
-            
+            let (pathPrefix, foundDisambiguation, solutions) = makeCollisionSolutions(
+                from: collisions,
+                nextPathComponent: nextPathComponent,
+                partialResultPrefix: partialResult.pathPrefix)
+
+            let rangeAdjustment: SourceRange
+            if !foundDisambiguation.isEmpty {
+                rangeAdjustment = .makeRelativeRange(
+                    startColumn: pathPrefix.count - foundDisambiguation.count,
+                    length: foundDisambiguation.count)
+            } else {
+                rangeAdjustment = .makeRelativeRange(
+                    startColumn: pathPrefix.count - nextPathComponent.full.count,
+                    length: nextPathComponent.full.count)
+            }
+
             return TopicReferenceResolutionErrorInfo("""
                 \(nextPathComponent.full.singleQuoted) is ambiguous at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
-                rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count - nextPathComponent.full.count, length: nextPathComponent.full.count)
+                rangeAdjustment: rangeAdjustment
             )
         }
     }
