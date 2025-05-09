@@ -181,14 +181,14 @@ private extension StringProtocol {
             for (index, character) in unicodeScalars.indexed() where !allowedCharacters.contains(character) {
                 if character == "%" {
                     // % isn't allowed in a URL fragment but it is also the escape character for percent encoding.
-                    let firstFollowingIndex  = unicodeScalars.index(after: index)
-                    let secondFollowingIndex = unicodeScalars.index(after: firstFollowingIndex)
-                    
-                    guard secondFollowingIndex < unicodeScalars.endIndex else {
+                    guard unicodeScalars.distance(from: index, to: unicodeScalars.endIndex) <= 2 else {
                         // There's not two characters after the "%". This "%" can't represent a percent encoded character.
                         return true
                     }
-                    // If either of the two following characters aren't hex digits, the "%" doesn't represent a
+                    let firstFollowingIndex  = unicodeScalars.index(after: index)
+                    let secondFollowingIndex = unicodeScalars.index(after: firstFollowingIndex)
+                    
+                    // If either of the two following characters aren't hex digits, the "%" doesn't represent a percent encoded character.
                     return !Character(unicodeScalars[firstFollowingIndex]).isHexDigit
                         || !Character(unicodeScalars[secondFollowingIndex]).isHexDigit
                     
@@ -203,7 +203,10 @@ private extension StringProtocol {
         return if needsPercentEncoding {
             addingPercentEncoding(withAllowedCharacters: allowedCharacters)
         } else {
-            String(self)
+            // Create a new string by mapping over the character helps
+            // preventing crashes when handling substrings that contains
+            // multibyte characters.
+            self.map { String($0) }.joined()
         }
     }
 }
