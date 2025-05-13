@@ -359,6 +359,10 @@ struct RenderContentCompiler: MarkupVisitor {
         return renderableDirective.render(blockDirective, with: &self)
     }
 
+    mutating func visitDoxygenAbstract(_ doxygenAbstract: DoxygenAbstract) -> [any RenderContent] {
+        doxygenAbstract.children.flatMap { self.visit($0)}
+    }
+
     mutating func visitDoxygenDiscussion(_ doxygenDiscussion: DoxygenDiscussion) -> [any RenderContent] {
         doxygenDiscussion.children.flatMap { self.visit($0) }
     }
