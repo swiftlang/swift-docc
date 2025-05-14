@@ -5266,7 +5266,165 @@ let expected = """
             }
         }
     }
-    
+
+    func testContextDiagnosesInsufficientDisambiguationWithCorrectRange() throws {
+        // This test deliberately does not turn on the overloads feature
+        // to ensure the symbol link below does not accidentally resolve correctly.
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+            // Generate a 4 symbols with the same name for every non overloadable symbol kind
+            let symbols: [SymbolGraph.Symbol] = [
+                makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "second-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "third-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "fourth-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
+            ]
+
+            let catalog =
+                Folder(name: "unit-test.docc", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: symbols
+                    )),
+
+                    TextFile(name: "ModuleName.md", utf8Content: """
+                    # ``ModuleName``
+
+                    This is a test file for ModuleName.
+
+                    ## Topics
+
+                    - ``SymbolName-\(symbolKindID.identifier)``
+                    """)
+                ])
+
+            let (_, context) = try loadBundle(catalog: catalog)
+
+            let problems = context.problems.sorted(by: \.diagnostic.summary)
+            XCTAssertEqual(problems.count, 1)
+
+            let problem = try XCTUnwrap(problems.first)
+
+            XCTAssertEqual(problem.diagnostic.summary, "'SymbolName-\(symbolKindID.identifier)' is ambiguous at '/ModuleName'")
+
+            XCTAssertEqual(problem.possibleSolutions.count, 4)
+
+            for solution in problem.possibleSolutions {
+                XCTAssertEqual(solution.replacements.count, 1)
+                let replacement = try XCTUnwrap(solution.replacements.first)
+
+                XCTAssertEqual(replacement.range.lowerBound, .init(line: 7, column: 15, source: nil))
+                XCTAssertEqual(
+                    replacement.range.upperBound,
+                    .init(line: 7, column: 16 + symbolKindID.identifier.count, source: nil)
+                )
+            }
+        }
+    }
+
+    func testContextDiagnosesIncorrectDisambiguationWithCorrectRange() throws {
+        // This test deliberately does not turn on the overloads feature
+        // to ensure the symbol link below does not accidentally resolve correctly.
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+            // Generate a 4 symbols with the same name for every non overloadable symbol kind
+            let symbols: [SymbolGraph.Symbol] = [
+                makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "second-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "third-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "fourth-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
+            ]
+
+            let catalog =
+                Folder(name: "unit-test.docc", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: symbols
+                    )),
+
+                    TextFile(name: "ModuleName.md", utf8Content: """
+                    # ``ModuleName``
+
+                    This is a test file for ModuleName.
+
+                    ## Topics
+
+                    - ``SymbolName-abc123``
+                    """)
+                ])
+
+            let (_, context) = try loadBundle(catalog: catalog)
+
+            let problems = context.problems.sorted(by: \.diagnostic.summary)
+            XCTAssertEqual(problems.count, 1)
+
+            let problem = try XCTUnwrap(problems.first)
+
+            XCTAssertEqual(problem.diagnostic.summary, "'abc123' isn't a disambiguation for 'SymbolName' at '/ModuleName'")
+
+            XCTAssertEqual(problem.possibleSolutions.count, 4)
+
+            for solution in problem.possibleSolutions {
+                XCTAssertEqual(solution.replacements.count, 1)
+                let replacement = try XCTUnwrap(solution.replacements.first)
+
+                // "Replace '-abc123' with '-(hash)'" where 'abc123' is at 7:15-7:22
+                XCTAssertEqual(replacement.range.lowerBound, .init(line: 7, column: 15, source: nil))
+                XCTAssertEqual(replacement.range.upperBound, .init(line: 7, column: 22, source: nil))
+            }
+        }
+    }
+
+    func testContextDiagnosesIncorrectSymbolNameWithCorrectRange() throws {
+        // This test deliberately does not turn on the overloads feature
+        // to ensure the symbol link below does not accidentally resolve correctly.
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+            // Generate a 4 symbols with the same name for every non overloadable symbol kind
+            let symbols: [SymbolGraph.Symbol] = [
+                makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "second-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "third-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
+                makeSymbol(id: "fourth-\(symbolKindID.identifier)-id", kind: symbolKindID, pathComponents: ["SymbolName"]),
+            ]
+
+            let catalog =
+                Folder(name: "unit-test.docc", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: symbols
+                    )),
+
+                    TextFile(name: "ModuleName.md", utf8Content: """
+                    # ``ModuleName``
+
+                    This is a test file for ModuleName.
+
+                    ## Topics
+
+                    - ``Symbol``
+                    """)
+                ])
+
+            let (_, context) = try loadBundle(catalog: catalog)
+
+            let problems = context.problems.sorted(by: \.diagnostic.summary)
+            XCTAssertEqual(problems.count, 1)
+
+            let problem = try XCTUnwrap(problems.first)
+
+            XCTAssertEqual(problem.diagnostic.summary, "'Symbol' doesn't exist at '/ModuleName'")
+
+            XCTAssertEqual(problem.possibleSolutions.count, 1)
+            let solution = try XCTUnwrap(problem.possibleSolutions.first)
+
+            XCTAssertEqual(solution.summary, "Replace 'Symbol' with 'SymbolName'")
+
+            XCTAssertEqual(solution.replacements.count, 1)
+            let replacement = try XCTUnwrap(solution.replacements.first)
+
+            XCTAssertEqual(replacement.range.lowerBound, .init(line: 7, column: 5, source: nil))
+            XCTAssertEqual(replacement.range.upperBound, .init(line: 7, column: 11, source: nil))
+        }
+    }
+
     func testResolveExternalLinkFromTechnologyRoot() throws {
         enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
         
