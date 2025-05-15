@@ -996,14 +996,13 @@ class MergeActionTests: XCTestCase {
         Output.doccarchive/
         ├─ data/
         │  ├─ documentation.json
-        │  ├─ documentation/
-        │  │  ├─ first.json
-        │  │  ├─ first/
-        │  │  │  ╰─ article.json
-        │  │  ├─ second.json
-        │  │  ╰─ second/
-        │  │     ╰─ article.json
-        │  ╰─ tutorials/
+        │  ╰─ documentation/
+        │     ├─ first.json
+        │     ├─ first/
+        │     │  ╰─ article.json
+        │     ├─ second.json
+        │     ╰─ second/
+        │        ╰─ article.json
         ├─ downloads/
         │  ├─ First/
         │  ╰─ Second/
