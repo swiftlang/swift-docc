@@ -659,7 +659,50 @@ class MergeActionTests: XCTestCase {
             "doc://org.swift.test/documentation/second.json",
         ])
     }
-    
+
+    func testSingleReferenceOnlyArchiveMerging() async throws {
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "First",
+                    documentationPages: [
+                        "First",
+                        "First/SomeClass",
+                        "First/SomeClass/someProperty",
+                        "First/SomeClass/someFunction(:_)",
+                    ],
+                    tutorialPages: []
+                ),
+            ]
+        )
+
+        let logStorage = LogHandle.LogStorage()
+        let action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+            ],
+            landingPageInfo: testLandingPageInfo,
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+
+        _ = try await action.perform(logHandle: .memory(logStorage))
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title].compactMap({ $0 }) + $0.identifiers }, [
+            // No title
+            "doc://org.swift.test/documentation/first.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+        ])
+    }
+
     func testErrorWhenArchivesContainOverlappingData() async throws {
         let fileSystem = try TestFileSystem(
             folders: [
