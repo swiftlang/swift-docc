@@ -169,7 +169,7 @@ struct PathHierarchy {
                         sourceNode.languages.remove(language!)
 
                         // Make sure that the clone's children can all line up with symbols from this symbol graph.
-                        for (childName, children) in sourceNode.children {
+                        for children in sourceNode.children.values {
                             for child in children.storage {
                                 guard let childSymbol = child.node.symbol else {
                                     // We shouldn't come across any non-symbol nodes here,
