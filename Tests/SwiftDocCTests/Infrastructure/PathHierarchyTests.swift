@@ -2827,32 +2827,38 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
 
+        // Repeat the same symbols in both languages for many platforms.
+        let platforms = (1...10).map {
+            let name = "Platform\($0)"
+            return (name: name, availability: [makeAvailabilityItem(domainName: name)])
+        }
+        
         let catalog = Folder(name: "unit-test.docc", content: [
-            Folder(name: "clang", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+            Folder(name: "clang", content: platforms.map { platform in
+                JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(id: containerID, language: .objectiveC, kind: .union, pathComponents: ["ContainerName"]),
-                        makeSymbol(id: memberID, language: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .union, pathComponents: ["ContainerName"], availability: platform.availability),
+                        makeSymbol(id: memberID, language: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"], availability: platform.availability),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                    ]
-                )),
-            ]),
+                    ],
+                ))
+            }),
 
-            Folder(name: "swift", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+            Folder(name: "swift", content: platforms.map { platform in
+                JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
-                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"], availability: platform.availability),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"], availability: platform.availability),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
                     ]
-                )),
-            ])
+                ))
+            })
         ])
 
         let (_, context) = try loadBundle(catalog: catalog)

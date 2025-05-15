@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -115,7 +115,10 @@ struct PathHierarchy {
                     || ($0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier)
                 }) {
                     nodes[id] = existingNode
-                    existingNode.languages.insert(language!) // If we have symbols in this graph we have a language as well
+                    if existingNode.counterpart?.languages.contains(language!) != true {
+                        // Unless this symbol is already split into language counterparts, add the languages to this node.
+                        existingNode.languages.insert(language!)
+                    }
                 } else {
                     assert(!symbol.pathComponents.isEmpty, "A symbol should have at least its own name in its path components.")
 
@@ -150,7 +153,7 @@ struct PathHierarchy {
                 if let targetNode = nodes[relationship.target], targetNode.name == expectedContainerName {
                     if sourceNode.parent == nil {
                         targetNode.add(symbolChild: sourceNode)
-                    } else if sourceNode.parent !== targetNode {
+                    } else if sourceNode.parent !== targetNode && sourceNode.counterpart?.parent !== targetNode {
                         // If the node we have for the child has an existing parent that doesn't
                         // match the parent from this symbol graph, we need to clone the child to
                         // ensure that the hierarchy remains consistent.
@@ -411,6 +414,13 @@ struct PathHierarchy {
             lookup.allSatisfy({ $0.value.parent != nil || roots[$0.value.name] != nil }), """
             Every node should either have a parent node or be a root node. \
             This wasn't true for \(allNodes.filter({ $0.value[0].parent == nil && roots[$0.key] == nil }).map(\.key).sorted())
+            """
+        )
+        
+        assert(
+            lookup.values.allSatisfy({ $0.counterpart == nil || lookup[$0.counterpart!.identifier] != nil }), """
+            Every counterpart node should exist in the hierarchy. \
+            This wasn't true for \(lookup.values.filter({ $0.counterpart != nil && lookup[$0.counterpart!.identifier] == nil }).map(\.symbol!.identifier.precise).sorted())
             """
         )
         
