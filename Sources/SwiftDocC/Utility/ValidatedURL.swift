@@ -179,23 +179,29 @@ private extension StringProtocol {
     func addingPercentEncodingIfNeeded(withAllowedCharacters allowedCharacters: CharacterSet) -> String? {
         var needsPercentEncoding: Bool {
             for (index, character) in unicodeScalars.indexed() where !allowedCharacters.contains(character) {
+                // Check if the character "%" represents a percent encoded URL.
+                // Any other disallowed character is an indication that this substring needs percent encoding.
                 if character == "%" {
                     // % isn't allowed in a URL fragment but it is also the escape character for percent encoding.
-                    let firstFollowingIndex  = unicodeScalars.index(after: index)
-                    let secondFollowingIndex = unicodeScalars.index(after: firstFollowingIndex)
-                    
-                    guard secondFollowingIndex < unicodeScalars.endIndex else {
+                    guard self.distance(from: index, to: self.endIndex) >= 2 else {
                         // There's not two characters after the "%". This "%" can't represent a percent encoded character.
                         return true
                     }
-                    // If either of the two following characters aren't hex digits, the "%" doesn't represent a
-                    return !Character(unicodeScalars[firstFollowingIndex]).isHexDigit
-                        || !Character(unicodeScalars[secondFollowingIndex]).isHexDigit
+                    let firstFollowingIndex  = self.index(after: index)
+                    let secondFollowingIndex = self.index(after: firstFollowingIndex)
                     
-                } else {
-                    // Any other disallowed character is an indication that this substring needs percent encoding.
-                    return true
+                    // Check if the next two characthers represent a percent encoded
+                    // URL.
+                    // If either of the two following characters aren't hex digits,
+                    // the "%" doesn't represent a percent encoded character.
+                    if Character(unicodeScalars[firstFollowingIndex]).isHexDigit,
+                       Character(unicodeScalars[secondFollowingIndex]).isHexDigit
+                    {
+                        // Later characters in the string might require percentage encoding.
+                        continue
+                    }
                 }
+                return true
             }
             return false
         }
