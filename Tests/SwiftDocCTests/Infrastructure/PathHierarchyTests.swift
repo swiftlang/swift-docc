@@ -3152,6 +3152,54 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MainModule/TopLevelProtocol/InnerStruct/extensionMember(_:)", in: tree, asSymbolID: "extensionMember2")
     }
     
+    func testMissingRequiredMemberOfSymbolGraphRelationshipInOneLanguageAcrossManyPlatforms() throws {
+        // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
+        
+        // If the symbol graph files define container and member symbols without the required memberOf relationships we still try to match them up.
+        
+        let containerID = "some-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+
+        // Repeat the same symbols in both languages for many platforms.
+        let platforms = (1...10).map {
+            let name = "Platform\($0)"
+            return (name: name, availability: [makeAvailabilityItem(domainName: name)])
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            Folder(name: "swift", content: platforms.map { platform in
+                JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"], availability: platform.availability),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "memberName"], availability: platform.availability),
+                    ],
+                    relationships: [/* the memberOf relationship is missing */],
+                ))
+            })
+        ])
+
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        let container = try tree.findNode(path: "/ModuleName/ContainerName-struct", onlyFindSymbols: true)
+        XCTAssertEqual(container.languages, [.swift])
+        
+        try assertFindsPath("/ModuleName/ContainerName", in: tree, asSymbolID: containerID)
+
+        let member = try tree.findNode(path: "/ModuleName/ContainerName/memberName", onlyFindSymbols: true)
+        XCTAssertEqual(member.languages, [.swift])
+
+        XCTAssertEqual(member.parent?.identifier, container.identifier)
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName")
+        XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/memberName")
+        
+        try assertFindsPath("/ModuleName/ContainerName/memberName", in: tree, asSymbolID: memberID)
+        try assertFindsPath("/ModuleName/ContainerName", in: tree, asSymbolID: containerID)
+    }
+    
     func testMissingReferencedContainerSymbolOnSomePlatforms() throws {
         // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
         
