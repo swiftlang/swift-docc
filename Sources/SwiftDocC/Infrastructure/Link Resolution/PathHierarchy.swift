@@ -367,7 +367,7 @@ struct PathHierarchy {
                 Array(sequence(first: node, next: \.parent)).last!.symbol!.kind.identifier == .module })
             }), """
             Every node should reach a root node by following its parents up. \
-            This wasn't true for \(allNodes.filter({ $0.value.allSatisfy({ Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier != .module }) }).map(\.key).sorted())
+            This wasn't true for \(allNodes.filter({ $0.value.contains(where: { Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier != .module }) }).map(\.key).sorted())
             """
         )
         
