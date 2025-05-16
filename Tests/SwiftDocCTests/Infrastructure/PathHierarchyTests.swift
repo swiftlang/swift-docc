@@ -4051,7 +4051,54 @@ class PathHierarchyTests: XCTestCase {
             XCTFail("Unexpected error \(error)")
         }
     }
-    
+
+    func testMissingParentInSomeSymbolGraphs() throws {
+        let parentID = "some-parent"
+        let childID = "some-child"
+        let relationships: [SymbolGraph.Relationship] = [
+            .init(source: childID, target: parentID, kind: .memberOf, targetFallback: nil)
+        ]
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName-Platform1.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbol(
+                        id: childID,
+                        kind: .func,
+                        pathComponents: ["SomeParent", "SomeChild"],
+                        availability: [makeAvailabilityItem(domainName: "Platform1")]
+                    )
+                ],
+                relationships: relationships
+            )),
+            JSONFile(name: "ModuleName-Platform2.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbol(
+                        id: childID,
+                        kind: .func,
+                        pathComponents: ["SomeParent", "SomeChild"],
+                        availability: [makeAvailabilityItem(domainName: "Platform2")]
+                    ),
+                    makeSymbol(
+                        id: parentID,
+                        kind: .class,
+                        pathComponents: ["SomeParent"],
+                        availability: [makeAvailabilityItem(domainName: "Platform2")]
+                    )
+                ],
+                relationships: relationships
+            ))
+        ])
+
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        try assertFindsPath("/ModuleName/SomeParent/SomeChild", in: tree, asSymbolID: childID)
+        try assertFindsPath("/ModuleName/SomeParent", in: tree, asSymbolID: parentID)
+    }
+
     // MARK: Test helpers
 
     private func assertFindsPath(_ path: String, in tree: PathHierarchy, asSymbolID symbolID: String, file: StaticString = #filePath, line: UInt = #line) throws {
