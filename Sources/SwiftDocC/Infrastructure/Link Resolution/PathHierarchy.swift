@@ -74,7 +74,11 @@ struct PathHierarchy {
             .sorted(by: { lhs, rhs in
                 return !lhs.url.lastPathComponent.contains("@")
             })
-        
+                
+        // To try to handle certain invalid symbol graph files gracefully, we track symbols that don't have a place in the hierarchy so that we can look for a place for those symbols.
+        // Because this is a last resort, we only want to do this processing after all the symbol graphs have already been processed.
+        var identifiersForSymbolsOutsideOfHierarchyByModule: [String: Set<String>] = [:]
+
         for (url, graph, language) in symbolGraphs {
             let moduleName = graph.module.name
             let moduleNode: Node
@@ -262,7 +266,15 @@ struct PathHierarchy {
             assertAllNodes(in: topLevelCandidates.values.filter { $0.symbol!.pathComponents.count > 1 }, satisfy: { $0.parent == nil },
                            "Top-level candidates shouldn't already exist in the hierarchy.")
             
-            for node in topLevelCandidates.values where node.symbol!.pathComponents.count > 1 && node.parent == nil {
+            for (symbolID, node) in topLevelCandidates where node.symbol!.pathComponents.count > 1 && node.parent == nil {
+                identifiersForSymbolsOutsideOfHierarchyByModule[moduleNode.symbol!.identifier.precise, default: []].insert(symbolID)
+            }
+        }
+        
+        for (moduleID, symbolIDs) in identifiersForSymbolsOutsideOfHierarchyByModule {
+            let moduleNode = roots[moduleID]!
+            for id in symbolIDs {
+            for node in allNodes[id] ?? [] where node.parent == nil {
                 var parent = moduleNode
                 var components = { (symbol: SymbolGraph.Symbol) -> [String] in
                     let original = symbol.pathComponents
@@ -284,6 +296,8 @@ struct PathHierarchy {
                         parent.children[components.first!] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
+                    print("Creating sparse node for \(components.first! )")
+                    
                     guard knownDisambiguatedPathComponents != nil else {
                         // If the path hierarchy wasn't passed any "known disambiguated path components" then the sparse/placeholder nodes won't contain any disambiguation.
                         let nodeWithoutSymbol = Node(name: component)
@@ -309,6 +323,7 @@ struct PathHierarchy {
                 }
                 parent.add(symbolChild: node)
             }
+        }
         }
 
         // Overload group don't exist in the individual symbol graphs.

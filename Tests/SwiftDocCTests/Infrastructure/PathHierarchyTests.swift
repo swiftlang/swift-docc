@@ -3152,6 +3152,48 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MainModule/TopLevelProtocol/InnerStruct/extensionMember(_:)", in: tree, asSymbolID: "extensionMember2")
     }
     
+    func testMissingReferencedContainerSymbolOnSomePlatforms() throws {
+        // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
+        
+        // If some platforms are missing the local container symbol from a `memberOf` relationship, but other platforms with the same relationship define that symbol,
+        // we use the symbols from the platforms that define the symbol and the relationship.
+        // The symbol with a `memberOf` relationship to a missing local symbol is not valid but together there's sufficient information to handle it gracefully.
+        
+        // Define many platforms, some with the referenced local container symbol and some _without_ the referenced local container symbol.
+        let platforms = (1...10).map {
+            let name = "Platform\($0)"
+            return (name: name, availability: [makeAvailabilityItem(domainName: name)], withoutRequiredContainerSymbol: $0.isMultiple(of: 2))
+        }
+        
+        let containerID = "some-container-id"
+        let memberID = "some-member-id"
+        
+        let catalog = Folder(name: "unit-test.docc", content: platforms.map { platform in
+            var symbols = [
+                makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
+                makeSymbol(id: memberID, kind: .func, pathComponents: ["ContainerName", "memberName"]),
+            ]
+            if platform.withoutRequiredContainerSymbol {
+                // This is not valid because this symbol graph defines a `memberOf` relationship to this symbol in the same module.
+                symbols.remove(at: 0)
+            }
+            
+            return JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: symbols,
+                relationships: [
+                    .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                ]
+            ))
+        })
+        
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        try assertFindsPath("/ModuleName/ContainerName/memberName", in: tree, asSymbolID: memberID)
+        try assertFindsPath("/ModuleName/ContainerName", in: tree, asSymbolID: containerID)
+    }
+    
     func testLinksToCxxOperators() throws {
         let (_, context) = try testBundleAndContext(named: "CxxOperators")
         let tree = context.linkResolver.localResolver.pathHierarchy
