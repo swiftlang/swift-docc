@@ -259,12 +259,8 @@ struct PathHierarchy {
                 moduleNode.add(symbolChild: topLevelNode)
             }
             
-            assert(
-                topLevelCandidates.values.filter({ $0.symbol!.pathComponents.count > 1 }).allSatisfy({ $0.parent == nil }), """
-                Top-level candidates shouldn't already exist in the hierarchy. \
-                This wasn't true for \(topLevelCandidates.filter({ $0.value.symbol!.pathComponents.count > 1 && $0.value.parent != nil }).map(\.key).sorted())
-                """
-            )
+            assertAllNodes(in: topLevelCandidates.values.filter { $0.symbol!.pathComponents.count > 1 }, satisfy: { $0.parent == nil },
+                           "Top-level candidates shouldn't already exist in the hierarchy.")
             
             for node in topLevelCandidates.values where node.symbol!.pathComponents.count > 1 && node.parent == nil {
                 var parent = moduleNode
@@ -355,21 +351,11 @@ struct PathHierarchy {
             }
         }
 
-        assert(
-            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }), """
-            Every node should either have a parent node or be a root node. \
-            This wasn't true for \(allNodes.filter({ $0.value[0].parent == nil && roots[$0.key] == nil }).map(\.key).sorted())
-            """
-        )
+        assertAllNodes(in: allNodes, satisfy: { $0.parent != nil || roots[$0.symbol!.identifier.precise] != nil },
+                       "Every node should either have a parent node or be a root node.")
         
-        assert(
-            allNodes.values.allSatisfy({ nodesWithSameUSR in nodesWithSameUSR.allSatisfy({ node in
-                Array(sequence(first: node, next: \.parent)).last!.symbol!.kind.identifier == .module })
-            }), """
-            Every node should reach a root node by following its parents up. \
-            This wasn't true for \(allNodes.filter({ $0.value.contains(where: { Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier != .module }) }).map(\.key).sorted())
-            """
-        )
+        assertAllNodes(in: allNodes, satisfy: { Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier == .module },
+                       "Every node should reach a root node by following its parents up.")
         
         allNodes.removeAll()
         
@@ -410,19 +396,11 @@ struct PathHierarchy {
             descend(module)
         }
         
-        assert(
-            lookup.allSatisfy({ $0.value.parent != nil || roots[$0.value.name] != nil }), """
-            Every node should either have a parent node or be a root node. \
-            This wasn't true for \(allNodes.filter({ $0.value[0].parent == nil && roots[$0.key] == nil }).map(\.key).sorted())
-            """
-        )
+        assertAllNodes(in: lookup.values, satisfy: { $0.parent != nil || roots[$0.name] != nil },
+                       "Every node should either have a parent node or be a root node.")
         
-        assert(
-            lookup.values.allSatisfy({ $0.counterpart == nil || lookup[$0.counterpart!.identifier] != nil }), """
-            Every counterpart node should exist in the hierarchy. \
-            This wasn't true for \(lookup.values.filter({ $0.counterpart != nil && lookup[$0.counterpart!.identifier] == nil }).map(\.symbol!.identifier.precise).sorted())
-            """
-        )
+        assertAllNodes(in: lookup.values, satisfy: { $0.counterpart == nil || lookup[$0.counterpart!.identifier] != nil },
+                       "Every counterpart node should exist in the hierarchy.")
         
         func newNode(_ name: String) -> Node {
             let id = ResolvedIdentifier()
@@ -440,12 +418,8 @@ struct PathHierarchy {
             "Every node lookup should match a node with that identifier."
         )
         
-        assert(
-            lookup.values.allSatisfy({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }), """
-            Every node's findable parent should exist in the lookup. \
-            This wasn't true for \(lookup.values.filter({ $0.parent?.identifier != nil && lookup[$0.parent!.identifier] == nil }).map(\.symbol!.identifier.precise).sorted())
-            """
-        )
+        assertAllNodes(in: lookup.values, satisfy: { $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil },
+                       "Every node's findable parent should exist in the lookup.")
         
         self.modules = Array(roots.values)
         self.lookup = lookup
@@ -893,4 +867,36 @@ extension LinkCompletionTools {
         node.identifier = id
         return (node, id)
     }
+}
+
+// MARK: Assertion
+
+private func assertAllNodes(
+    in collection: @autoclosure () -> some Sequence<PathHierarchy.Node>,
+    satisfy condition: (PathHierarchy.Node) -> Bool,
+    _ message: @autoclosure () -> String,
+    file: StaticString = #file,
+    line: UInt = #line
+) {
+    assert(
+        collection().allSatisfy(condition),
+        "\(message()) This wasn't true for \(collection().filter { !condition($0) }.map(\.symbol!.identifier.precise).sorted())",
+        file: file,
+        line: line
+    )
+}
+
+private func assertAllNodes(
+    in collectionsByStringKey: @autoclosure () -> [String: some Collection<PathHierarchy.Node>],
+    satisfy condition: (PathHierarchy.Node) -> Bool,
+    _ message: @autoclosure () -> String,
+    file: StaticString = #file,
+    line: UInt = #line
+) {
+    assert(
+        collectionsByStringKey().values.allSatisfy { $0.allSatisfy(condition) },
+        "\(message()) This wasn't true for \(collectionsByStringKey().filter { $0.value.contains(where: { !condition($0)}) }.map(\.key).sorted())",
+        file: file,
+        line: line
+    )
 }
