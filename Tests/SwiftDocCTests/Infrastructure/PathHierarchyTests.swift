@@ -2843,7 +2843,7 @@ class PathHierarchyTests: XCTestCase {
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
-                    ],
+                    ]
                 ))
             }),
 
@@ -3174,7 +3174,7 @@ class PathHierarchyTests: XCTestCase {
                         makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"], availability: platform.availability),
                         makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "memberName"], availability: platform.availability),
                     ],
-                    relationships: [/* the memberOf relationship is missing */],
+                    relationships: [/* the memberOf relationship is missing */]
                 ))
             })
         ])
