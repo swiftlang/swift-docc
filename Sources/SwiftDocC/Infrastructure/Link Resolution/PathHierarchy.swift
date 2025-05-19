@@ -319,7 +319,6 @@ struct PathHierarchy {
                         parent.children[components.first!] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
-                    print("Creating sparse node for \(components.first! )")
                     
                     guard knownDisambiguatedPathComponents != nil else {
                         // If the path hierarchy wasn't passed any "known disambiguated path components" then the sparse/placeholder nodes won't contain any disambiguation.
