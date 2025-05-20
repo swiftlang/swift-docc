@@ -32,7 +32,14 @@ struct ArticleSymbolMentions {
         // Mentions are sorted on demand based on the number of mentions.
         // This could change in the future.
         return mentions[symbol, default: [:]].sorted {
-            $0.value > $1.value
+            // If a pair of articles have the same number of mentions, sort
+            // them alphabetically.
+            if $0.value == $1.value {
+                return $0.key.description < $1.key.description
+            }
+
+            // Otherwise, sort articles with more mentions first.
+            return $0.value > $1.value
         }
         .map { $0.key }
     }
