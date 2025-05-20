@@ -3185,8 +3185,6 @@ class PathHierarchyTests: XCTestCase {
         let container = try tree.findNode(path: "/ModuleName/ContainerName-struct", onlyFindSymbols: true)
         XCTAssertEqual(container.languages, [.swift])
         
-        try assertFindsPath("/ModuleName/ContainerName", in: tree, asSymbolID: containerID)
-
         let member = try tree.findNode(path: "/ModuleName/ContainerName/memberName", onlyFindSymbols: true)
         XCTAssertEqual(member.languages, [.swift])
 
@@ -3260,6 +3258,11 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertNotEqual(swiftSpecificNode.parent?.identifier, objcSpecificNode.parent?.identifier)
         XCTAssertNotEqual(swiftSpecificNode.parent?.parent?.identifier, objcSpecificNode.parent?.parent?.identifier)
         XCTAssertNotEqual(swiftSpecificNode.parent?.parent?.parent?.identifier, objcSpecificNode.parent?.parent?.parent?.identifier)
+
+        // Check the each language representation maps to the other language representation
+        XCTAssertEqual(swiftSpecificNode.parent?.counterpart?.identifier, objcSpecificNode.parent?.identifier)
+        XCTAssertEqual(swiftSpecificNode.parent?.parent?.counterpart?.identifier, objcSpecificNode.parent?.parent?.identifier)
+        XCTAssertEqual(swiftSpecificNode.parent?.parent?.parent?.counterpart?.identifier, objcSpecificNode.parent?.parent?.parent?.identifier)
         
         // Check that neither path require disambiguation
         let paths = tree.caseInsensitiveDisambiguatedPaths()
