@@ -2827,32 +2827,38 @@ class PathHierarchyTests: XCTestCase {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
 
+        // Repeat the same symbols in both languages for many platforms.
+        let platforms = (1...10).map {
+            let name = "Platform\($0)"
+            return (name: name, availability: [makeAvailabilityItem(domainName: name)])
+        }
+        
         let catalog = Folder(name: "unit-test.docc", content: [
-            Folder(name: "clang", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+            Folder(name: "clang", content: platforms.map { platform in
+                JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(id: containerID, language: .objectiveC, kind: .union, pathComponents: ["ContainerName"]),
-                        makeSymbol(id: memberID, language: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .union, pathComponents: ["ContainerName"], availability: platform.availability),
+                        makeSymbol(id: memberID, language: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"], availability: platform.availability),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
                     ]
-                )),
-            ]),
+                ))
+            }),
 
-            Folder(name: "swift", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+            Folder(name: "swift", content: platforms.map { platform in
+                JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
-                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"], availability: platform.availability),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"], availability: platform.availability),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
                     ]
-                )),
-            ])
+                ))
+            })
         ])
 
         let (_, context) = try loadBundle(catalog: catalog)
@@ -3144,6 +3150,182 @@ class PathHierarchyTests: XCTestCase {
         
         try assertFindsPath("/MainModule/TopLevelProtocol/extensionMember(_:)", in: tree, asSymbolID: "extensionMember1")
         try assertFindsPath("/MainModule/TopLevelProtocol/InnerStruct/extensionMember(_:)", in: tree, asSymbolID: "extensionMember2")
+    }
+    
+    func testMissingRequiredMemberOfSymbolGraphRelationshipInOneLanguageAcrossManyPlatforms() throws {
+        // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
+        
+        // If the symbol graph files define container and member symbols without the required memberOf relationships we still try to match them up.
+        
+        let containerID = "some-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+
+        // Repeat the same symbols in both languages for many platforms.
+        let platforms = (1...10).map {
+            let name = "Platform\($0)"
+            return (name: name, availability: [makeAvailabilityItem(domainName: name)])
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            Folder(name: "swift", content: platforms.map { platform in
+                JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"], availability: platform.availability),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "memberName"], availability: platform.availability),
+                    ],
+                    relationships: [/* the memberOf relationship is missing */]
+                ))
+            })
+        ])
+
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        let container = try tree.findNode(path: "/ModuleName/ContainerName-struct", onlyFindSymbols: true)
+        XCTAssertEqual(container.languages, [.swift])
+        
+        let member = try tree.findNode(path: "/ModuleName/ContainerName/memberName", onlyFindSymbols: true)
+        XCTAssertEqual(member.languages, [.swift])
+
+        XCTAssertEqual(member.parent?.identifier, container.identifier)
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName")
+        XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/memberName")
+        
+        try assertFindsPath("/ModuleName/ContainerName/memberName", in: tree, asSymbolID: memberID)
+        try assertFindsPath("/ModuleName/ContainerName", in: tree, asSymbolID: containerID)
+    }
+    
+    func testInvalidSymbolGraphWithNoMemberOfRelationshipsDesptiteDeepHierarchyAcrossManyPlatforms() throws {
+        // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
+        
+        // If the symbol graph files define a deep hierarchy, with the same symbol names but different symbol kinds across different, we try to match them up by language.
+        
+        // Repeat the same symbols in both languages for many platforms.
+        let platforms = (1...10).map {
+            let name = "Platform\($0)"
+            return (name: name, availability: [makeAvailabilityItem(domainName: name)])
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            Folder(name: "clang", content: platforms.map { platform in
+                return JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: "some-outer-container-id",  language: .objectiveC, kind: .class, pathComponents: ["OuterContainerName"]),
+                        makeSymbol(id: "some-middle-container-id", language: .objectiveC, kind: .class, pathComponents: ["OuterContainerName", "MiddleContainerName"]),
+                        makeSymbol(id: "some-inner-container-id",  language: .objectiveC, kind: .class, pathComponents: ["OuterContainerName", "MiddleContainerName", "InnerContainerName"]),
+                        makeSymbol(id: "some-objc-specific-member-id", language: .objectiveC, kind: .property, pathComponents: ["OuterContainerName", "MiddleContainerName", "InnerContainerName", "objcSpecificMember"]),
+                    ],
+                    relationships: [/* all required memberOf relationships all missing */]
+                ))
+            }),
+            
+            Folder(name: "swift", content: platforms.map { platform in
+                return JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: "some-outer-container-id",  kind: .struct, pathComponents: ["OuterContainerName"]),
+                        makeSymbol(id: "some-middle-container-id", kind: .struct, pathComponents: ["OuterContainerName", "MiddleContainerName"]),
+                        makeSymbol(id: "some-inner-container-id",  kind: .struct, pathComponents: ["OuterContainerName", "MiddleContainerName", "InnerContainerName"]),
+                        makeSymbol(id: "some-swift-specific-member-id", kind: .method, pathComponents: ["OuterContainerName", "MiddleContainerName", "InnerContainerName", "swiftSpecificMember()"]),
+                    ],
+                    relationships: [/* all required memberOf relationships all missing */]
+                ))
+            })
+        ])
+        
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let swiftSpecificNode = try tree.findNode(path: "/ModuleName/OuterContainerName-struct/MiddleContainerName-struct/InnerContainerName-struct/swiftSpecificMember()", onlyFindSymbols: true, parent: nil)
+        XCTAssertEqual(swiftSpecificNode.symbol?.identifier.precise, "some-swift-specific-member-id")
+        // Trace up and check that each node is represented by a symbol
+        XCTAssertEqual(swiftSpecificNode.parent?.symbol?.identifier.precise, "some-inner-container-id")
+        XCTAssertEqual(swiftSpecificNode.parent?.parent?.symbol?.identifier.precise, "some-middle-container-id")
+        XCTAssertEqual(swiftSpecificNode.parent?.parent?.parent?.symbol?.identifier.precise, "some-outer-container-id")
+        
+        let objcSpecificNode = try tree.findNode(path: "/ModuleName/OuterContainerName-class/MiddleContainerName-class/InnerContainerName-class/objcSpecificMember", onlyFindSymbols: true, parent: nil)
+        XCTAssertEqual(objcSpecificNode.symbol?.identifier.precise, "some-objc-specific-member-id")
+        // Trace up and check that each node is represented by a symbol
+        XCTAssertEqual(objcSpecificNode.parent?.symbol?.identifier.precise, "some-inner-container-id")
+        XCTAssertEqual(objcSpecificNode.parent?.parent?.symbol?.identifier.precise, "some-middle-container-id")
+        XCTAssertEqual(objcSpecificNode.parent?.parent?.parent?.symbol?.identifier.precise, "some-outer-container-id")
+        
+        // Check that each language has different nodes
+        XCTAssertNotEqual(swiftSpecificNode.parent?.identifier, objcSpecificNode.parent?.identifier)
+        XCTAssertNotEqual(swiftSpecificNode.parent?.parent?.identifier, objcSpecificNode.parent?.parent?.identifier)
+        XCTAssertNotEqual(swiftSpecificNode.parent?.parent?.parent?.identifier, objcSpecificNode.parent?.parent?.parent?.identifier)
+
+        // Check the each language representation maps to the other language representation
+        XCTAssertEqual(swiftSpecificNode.parent?.counterpart?.identifier, objcSpecificNode.parent?.identifier)
+        XCTAssertEqual(swiftSpecificNode.parent?.parent?.counterpart?.identifier, objcSpecificNode.parent?.parent?.identifier)
+        XCTAssertEqual(swiftSpecificNode.parent?.parent?.parent?.counterpart?.identifier, objcSpecificNode.parent?.parent?.parent?.identifier)
+        
+        // Check that neither path require disambiguation
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        
+        XCTAssertEqual(paths["some-outer-container-id"], "/ModuleName/OuterContainerName")
+        XCTAssertEqual(paths["some-middle-container-id"], "/ModuleName/OuterContainerName/MiddleContainerName")
+        XCTAssertEqual(paths["some-inner-container-id"], "/ModuleName/OuterContainerName/MiddleContainerName/InnerContainerName")
+        XCTAssertEqual(paths["some-swift-specific-member-id"], "/ModuleName/OuterContainerName/MiddleContainerName/InnerContainerName/swiftSpecificMember()")
+        XCTAssertEqual(paths["some-objc-specific-member-id"], "/ModuleName/OuterContainerName/MiddleContainerName/InnerContainerName/objcSpecificMember")
+        
+        // Check that the hierarchy doesn't contain any sparse nodes
+        var remaining = tree.modules[...]
+        XCTAssertFalse(remaining.isEmpty)
+        
+        while let node = remaining.popFirst() {
+            XCTAssertNotNil(node.symbol, "Unexpected sparse node named '\(node.name)' in hierarchy")
+            
+            for container in node.children.values {
+                remaining.append(contentsOf: container.storage.map(\.node))
+            }
+        }
+    }
+    
+    func testMissingReferencedContainerSymbolOnSomePlatforms() throws {
+        // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
+        
+        // If some platforms are missing the local container symbol from a `memberOf` relationship, but other platforms with the same relationship define that symbol,
+        // we use the symbols from the platforms that define the symbol and the relationship.
+        // The symbol with a `memberOf` relationship to a missing local symbol is not valid but together there's sufficient information to handle it gracefully.
+        
+        // Define many platforms, some with the referenced local container symbol and some _without_ the referenced local container symbol.
+        let platforms = (1...10).map {
+            let name = "Platform\($0)"
+            return (name: name, availability: [makeAvailabilityItem(domainName: name)], withoutRequiredContainerSymbol: $0.isMultiple(of: 2))
+        }
+        
+        let containerID = "some-container-id"
+        let memberID = "some-member-id"
+        
+        let catalog = Folder(name: "unit-test.docc", content: platforms.map { platform in
+            var symbols = [
+                makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
+                makeSymbol(id: memberID, kind: .func, pathComponents: ["ContainerName", "memberName"]),
+            ]
+            if platform.withoutRequiredContainerSymbol {
+                // This is not valid because this symbol graph defines a `memberOf` relationship to this symbol in the same module.
+                symbols.remove(at: 0)
+            }
+            
+            return JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: symbols,
+                relationships: [
+                    .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                ]
+            ))
+        })
+        
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        try assertFindsPath("/ModuleName/ContainerName/memberName", in: tree, asSymbolID: memberID)
+        try assertFindsPath("/ModuleName/ContainerName", in: tree, asSymbolID: containerID)
     }
     
     func testLinksToCxxOperators() throws {
