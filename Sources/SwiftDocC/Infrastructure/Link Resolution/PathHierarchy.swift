@@ -299,12 +299,13 @@ struct PathHierarchy {
                     // FIXME:
                     // This code path is both expected (when `knownDisambiguatedPathComponents` is non-nil) and unexpected (when the symbol graph is missing data or contains extra relationships).
                     // It would be good to restructure this code to better distinguish what's supported behavior and what's a best-effort attempt at gracefully handle invalid symbol graphs.
-                    if let existing = parent.children[components.first!] {
-                        //
+                    if let existing = parent.children[component] {
+                        // This code tries to repair incomplete symbol graph files by guessing that the symbol with the most overlapping languages is the intended container.
+                        // Valid symbol graph files we should never end up here.
                         var bestLanguageMatch: (node: Node, count: Int)?
                         for element in existing.storage {
                             let numberOfMatchingLanguages = node.languages.intersection(element.node.languages).count
-                            if numberOfMatchingLanguages < (bestLanguageMatch?.count ?? .max) {
+                            if (bestLanguageMatch?.count ?? .min) < numberOfMatchingLanguages {
                                 bestLanguageMatch = (node: element.node, count: numberOfMatchingLanguages)
                             }
                         }
@@ -316,7 +317,7 @@ struct PathHierarchy {
                     }
                     
                     assert(
-                        parent.children[components.first!] == nil,
+                        parent.children[component] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
                     
