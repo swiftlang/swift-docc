@@ -81,6 +81,14 @@ class ValidatedURLTests: XCTestCase {
     }
     
     func testQueryIsPartOfPathForAuthoredLinks() throws {
+        
+        func validate(linkText: String, expectedPath: String, expectedFragment: String? = nil,file: StaticString = #filePath, line: UInt = #line) throws {
+            let validated = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
+            XCTAssertNil(validated.components.queryItems, "Authored documentation links don't include query items", file: file, line: line)
+            XCTAssertEqual(validated.components.path, expectedPath, file: file, line: line)
+            XCTAssertEqual(validated.components.fragment, expectedFragment, file: file, line: line)
+        }
+        
         // Test return type disambiguation
         for linkText in [
             "SymbolName/memberName()->Int?",
@@ -91,14 +99,8 @@ class ValidatedURLTests: XCTestCase {
                 ? "/SymbolName/memberName()->Int?"
                 :  "SymbolName/memberName()->Int?"
             
-            let validated = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
-            XCTAssertNil(validated.components.queryItems, "Authored documentation links don't include query items")
-            XCTAssertEqual(validated.components.path, expectedPath)
-            
-            let validatedWithHeading = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText + "#Heading-Name"), "Failed to parse '\(linkText)#Heading-Name' as authored link")
-            XCTAssertNil(validatedWithHeading.components.queryItems, "Authored documentation links don't include query items")
-            XCTAssertEqual(validatedWithHeading.components.path, expectedPath)
-            XCTAssertEqual(validatedWithHeading.components.fragment, "Heading-Name")
+            try validate(linkText: linkText, expectedPath: expectedPath)
+            try validate(linkText: linkText + "#Heading-Name", expectedPath: expectedPath, expectedFragment: "Heading-Name")
         }
         
         // Test parameter type disambiguation
@@ -111,15 +113,29 @@ class ValidatedURLTests: XCTestCase {
                 ? "/SymbolName/memberName(with:and:)-(Int?,_)"
                 :  "SymbolName/memberName(with:and:)-(Int?,_)"
             
-            let validated = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
-            XCTAssertNil(validated.components.queryItems, "Authored documentation links don't include query items")
-            XCTAssertEqual(validated.components.path, expectedPath)
-            
-            let validatedWithHeading = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText + "#Heading-Name"), "Failed to parse '\(linkText)#Heading-Name' as authored link")
-            XCTAssertNil(validatedWithHeading.components.queryItems, "Authored documentation links don't include query items")
-            XCTAssertEqual(validatedWithHeading.components.path, expectedPath)
-            XCTAssertEqual(validatedWithHeading.components.fragment, "Heading-Name")
+            try validate(linkText: linkText, expectedPath: expectedPath)
+            try validate(linkText: linkText + "#Heading-Name", expectedPath: expectedPath, expectedFragment: "Heading-Name")
         }
+        
+        // Test parameter with percent encoding
+        var linkText = "doc://com.example.test/docc=Whats%20New&version=DocC&Title=[Update]"
+        var expectedPath = "/docc=Whats%20New&version=DocC&Title=[Update]"
+        try validate(linkText: linkText, expectedPath: expectedPath)
+        
+        // Test parameter with percent encoding at the end of the URL
+        linkText = "doc://com.example.test/docc=Whats%20New&version=DocC&Title=[Update]%20"
+        expectedPath = "/docc=Whats%20New&version=DocC&Title=[Update]%20"
+        try validate(linkText: linkText, expectedPath: expectedPath)
+        
+        // Test parameter without percent encoding
+        linkText = "doc://com.example.test/docc=WhatsNew&version=DocC&Title=[Update]"
+        expectedPath = "/docc=WhatsNew&version=DocC&Title=[Update]"
+        try validate(linkText: linkText, expectedPath: expectedPath)
+        
+        // Test parameter with special characters
+        linkText = "doc://com.example.test/テスト"
+        expectedPath = "/テスト"
+        try validate(linkText: linkText, expectedPath: expectedPath)
     }
     
     func testEscapedFragment() throws {
