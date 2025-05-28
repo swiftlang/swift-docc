@@ -112,12 +112,15 @@ struct PathHierarchy {
             var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
-                if let existingNode = allNodes[id]?.first(where: {
-                    // If both identifiers are in the same language, they are the same symbol.
-                    $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
-                    // If both have the same path components and kind, their differences don't matter for link resolution purposes.
-                    || ($0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier)
-                }) {
+                if let possibleNodes = allNodes[id],
+                   let existingNode = possibleNodes.first(where: {
+                       // If both identifiers are in the same language, they are the same symbol.
+                       $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
+                   }) ?? possibleNodes.first(where: {
+                       // Otherwise, if both have the same path components and kind, their differences don't matter for link resolution purposes.
+                       $0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier
+                   })
+                {
                     nodes[id] = existingNode
                     if existingNode.counterpart?.languages.contains(language!) != true {
                         // Unless this symbol is already split into language counterparts, add the languages to this node.
@@ -171,6 +174,12 @@ struct PathHierarchy {
                         // The original node no longer represents this symbol graph's language,
                         // so remove that data from there.
                         sourceNode.languages.remove(language!)
+                        
+                        assert(!sourceNode.languages.isEmpty, """
+                            Cloned '\(relationship.source)' for '\(language!.id)' when it was already the only language it was available for.
+                            Old parent languages: \(sourceNode.parent! /*verified non-nil in if-statement above*/.languages.sorted().map(\.id).joined(separator: ","))
+                            New parent languages: \(targetNode.languages.sorted().map(\.id).joined(separator: ","))
+                            """)
 
                         // Make sure that the clone's children can all line up with symbols from this symbol graph.
                         for children in sourceNode.children.values {
