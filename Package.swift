@@ -53,6 +53,7 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "SwiftDocCTestUtilities"),
+                .product(name: "_OpenAPIGeneratorCore", package: "swift-openapi-generator")
             ],
             resources: [
                 .copy("Test Resources"),
@@ -140,6 +141,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/swiftlang/swift-docc-symbolkit.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.2.0"),
+        .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.8.0"),
     ]
 } else {
     // Building in the Swift.org CI system, so rely on local versions of dependencies.
