@@ -1,0 +1,199 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Specification of the Swift-DocC Index.json file.",
+        "version": "0.1.2",
+        "title": "RenderIndex"
+    },
+    "paths": {},
+    "components": {
+        "schemas": {
+            "RenderIndex": {
+                "type": "object",
+                "required": [
+                    "identifier",
+                    "interfaceLanguages",
+                ],
+                "properties": {
+                    "schemaVersion": {
+                        "$ref": "#/components/schemas/SchemaVersion"
+                    },
+                    "interfaceLanguages": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/Node"
+                            }
+                        }
+                    },
+                    "references": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/ImageRenderReference"
+                        }
+                    },
+                    "includedArchiveIdentifiers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Node": {
+                "type": "object",
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "article",
+                            "associatedtype",
+                            "buildSetting",
+                            "case",
+                            "collection",
+                            "class",
+                            "container",
+                            "dictionarySymbol",
+                            "enum",
+                            "extension",
+                            "func",
+                            "groupMarker",
+                            "httpRequest",
+                            "init",
+                            "languageGroup",
+                            "learn",
+                            "macro",
+                            "method",
+                            "module",
+                            "op",
+                            "overview",
+                            "project",
+                            "property",
+                            "propertyListKey",
+                            "propertyListKeyReference",
+                            "protocol",
+                            "resources",
+                            "root",
+                            "sampleCode",
+                            "section",
+                            "struct",
+                            "subscript",
+                            "symbol",
+                            "typealias",
+                            "union",
+                            "var"
+                        ]
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "deprecated": {
+                        "type": "boolean",
+                        "default": "false"
+                    },
+                    "external": {
+                        "type": "boolean",
+                        "default": "false"
+                    },
+                    "beta": {
+                        "type": "boolean",
+                        "default": "false"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
+                    },
+                    "children": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Node"
+                        }
+                    }
+                }
+            },
+            "SchemaVersion": {
+                "type": "object",
+                "required": [
+                    "major",
+                    "minor",
+                    "patch"
+                ],
+                "properties": {
+                    "major": {
+                        "type": "integer"
+                    },
+                    "minor": {
+                        "type": "integer"
+                    },
+                    "patch": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "ImageRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "variants"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["image"]
+                    },
+                    "alt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariant"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariant": {
+                "type": "object",
+                "required": [
+                    "url",
+                    "traits"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "svgID": {
+                        "type": "string",
+                        "description": "The ID attribute for the image that should be rendered in the SVG file represented by this variant."
+                    },
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariantTrait"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariantTrait": {
+                "type": "string",
+                "enum": ["1x", "2x", "3x", "light", "dark"]
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}
