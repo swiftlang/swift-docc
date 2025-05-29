@@ -3371,7 +3371,7 @@ class PathHierarchyTests: XCTestCase {
                     moduleName: "ModuleName",
                     symbols: [
                         makeSymbol(id: outerContainerID, language: .swift, kind: .struct,   pathComponents: ["Outer"], availability: platform.availability),
-                        makeSymbol(id: innerContainerID, language: .swift, kind: .struct,   pathComponents: ["Outer", "__Unnamed_struct_inner"], availability: platform.availability),
+                        makeSymbol(id: innerContainerID, language: .swift, kind: .property, pathComponents: ["Outer", "inner"], availability: platform.availability),
                         // The `member` property is missing due to rdar://152157610
                     ],
                     relationships: [
@@ -3386,8 +3386,16 @@ class PathHierarchyTests: XCTestCase {
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         XCTAssertEqual(paths[outerContainerID], "/ModuleName/Outer")
-        XCTAssertEqual(paths[innerContainerID], "/ModuleName/Outer/__Unnamed_struct_inner") // FIXME: If the Swift name starts with "__" we should prefer the C/Objective-C name
-        XCTAssertEqual(paths[memberID],         "/ModuleName/Outer/inner/member") // This member symbol is only available in C/Objective-C, so it uses that container name
+        XCTAssertEqual(paths[innerContainerID], "/ModuleName/Outer/inner")
+        XCTAssertEqual(paths[memberID],         "/ModuleName/Outer/inner/member")
+
+        try assertFindsPath("/ModuleName/Outer-union", in: tree, asSymbolID: outerContainerID)
+        try assertFindsPath("/ModuleName/Outer-union/inner", in: tree, asSymbolID: innerContainerID)
+        try assertFindsPath("/ModuleName/Outer-union/inner/member", in: tree, asSymbolID: memberID)
+
+        try assertFindsPath("/ModuleName/Outer-struct", in: tree, asSymbolID: outerContainerID)
+        try assertFindsPath("/ModuleName/Outer-struct/inner", in: tree, asSymbolID: innerContainerID)
+        try assertPathNotFound("/ModuleName/Outer-struct/inner/member", in: tree)
     }
     
     func testLinksToCxxOperators() throws {
