@@ -164,47 +164,52 @@ struct PathHierarchy {
                         // If the node we have for the child has an existing parent that doesn't
                         // match the parent from this symbol graph, we need to clone the child to
                         // ensure that the hierarchy remains consistent.
-                        let clonedSourceNode = Node(
-                            cloning: sourceNode,
-                            symbol: graph.symbols[relationship.source],
-                            children: [:],
-                            languages: [language!]
-                        )
 
                         // The original node no longer represents this symbol graph's language,
                         // so remove that data from there.
                         sourceNode.languages.remove(language!)
-                        
+
                         assert(!sourceNode.languages.isEmpty, """
                             Cloned '\(relationship.source)' for '\(language!.id)' when it was already the only language it was available for.
                             Old parent languages: \(sourceNode.parent! /*verified non-nil in if-statement above*/.languages.sorted().map(\.id).joined(separator: ","))
                             New parent languages: \(targetNode.languages.sorted().map(\.id).joined(separator: ","))
                             """)
 
-                        // Make sure that the clone's children can all line up with symbols from this symbol graph.
-                        for children in sourceNode.children.values {
-                            for child in children.storage {
-                                guard let childSymbol = child.node.symbol else {
-                                    // We shouldn't come across any non-symbol nodes here,
-                                    // but assume they can work as child of both variants.
-                                    clonedSourceNode.add(child: child.node, kind: child.kind, hash: child.hash)
-                                    continue
+                        let clonedSourceNode = Node(
+                            recursivelyCloning: sourceNode,
+                            symbol: graph.symbols[relationship.source],
+                            languages: [language!],
+                            shouldCloneChild: { childNode in
+                                if let childSymbol = childNode.symbol {
+                                    if !graph.symbols.keys.contains(childSymbol.identifier.precise) {
+                                        return .skip
+                                    } else if sourceNode.languages.isDisjoint(with: childNode.languages) {
+                                        return .transplant
+                                    } else {
+                                        return .clone
+                                    }
+                                } else {
+                                    // We shouldn't be running into any non-symbol children here,
+                                    // but in this case we should assume that it can exist in both trees.
+                                    return .clone
                                 }
-                                if nodes[childSymbol.identifier.precise] === child.node {
-                                    clonedSourceNode.add(symbolChild: child.node)
-                                }
-                            }
-                        }
+                            },
+                            nodeCloned: { newNode in
+                                if let newSymbol = newNode.symbol {
+                                    nodes[newSymbol.identifier.precise] = newNode
 
-                        // Track the cloned node in the lists of nodes.
-                        nodes[relationship.source] = clonedSourceNode
-                        if let existingNodes = allNodes[relationship.source] {
-                            clonedSourceNode.counterpart = existingNodes.first
-                            for other in existingNodes {
-                                other.counterpart = clonedSourceNode
+                                    // Track the cloned node in the lists of nodes.
+                                    if let existingNodes = allNodes[newSymbol.identifier.precise] {
+                                        newNode.counterpart = existingNodes.first
+                                        for other in existingNodes {
+                                            other.counterpart = newNode
+                                        }
+                                    }
+
+                                    allNodes[newSymbol.identifier.precise, default: []].append(newNode)
+                                }
                             }
-                        }
-                        allNodes[relationship.source, default: []].append(clonedSourceNode)
+                        )
 
                         // Finally, add the cloned node as a child of its parent.
                         targetNode.add(symbolChild: clonedSourceNode)
@@ -621,6 +626,50 @@ extension PathHierarchy {
             self.languages = languages ?? source.languages
         }
 
+        fileprivate enum CloneAction {
+            case clone
+            case transplant
+            case skip
+        }
+
+        convenience fileprivate init(
+            recursivelyCloning source: Node,
+            symbol: SymbolGraph.Symbol?? = nil,
+            languages: Set<SourceLanguage>? = nil,
+            shouldCloneChild: (Node) -> CloneAction,
+            nodeCloned: (Node) -> Void
+        ) {
+            self.init(
+                cloning: source,
+                symbol: symbol,
+                children: [:],
+                languages: languages)
+
+            for container in source.children.values {
+                for childElement in container.storage {
+                    switch shouldCloneChild(childElement.node) {
+                    case .clone:
+                        let newChild = Node(
+                            recursivelyCloning: childElement.node,
+                            shouldCloneChild: shouldCloneChild,
+                            nodeCloned: nodeCloned)
+                        self.add(
+                            child: newChild,
+                            kind: childElement.kind,
+                            hash: childElement.hash,
+                            parameterTypes: childElement.parameterTypes,
+                            returnTypes: childElement.returnTypes)
+                    case .transplant:
+                        childElement.node.transplant(to: self)
+                    case .skip:
+                        break
+                    }
+                }
+            }
+
+            nodeCloned(self)
+        }
+
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
         fileprivate func add(symbolChild: Node) {
             precondition(symbolChild.symbol != nil)
@@ -669,6 +718,32 @@ extension PathHierarchy {
             if let otherSymbol = other.symbol {
                 languages.insert(SourceLanguage(id: otherSymbol.identifier.interfaceLanguage))
             }
+        }
+
+        private func remove(child: Node) -> DisambiguationContainer.Element? {
+            assert(children.keys.contains(child.name), "Attempt to remove a child node that doesn't exist: \(child.name)")
+            child.parent = nil
+            let childElement = children[child.name]?.remove(child: child)
+            if childElement != nil && children[child.name]!.storage.isEmpty {
+                children.removeValue(forKey: child.name)
+            }
+            return childElement
+        }
+
+        private func transplant(child: Node, to newParent: Node) {
+            guard let childElement = remove(child: child) else { return }
+            newParent.add(
+                child: child,
+                kind: childElement.kind,
+                hash: childElement.hash,
+                parameterTypes: childElement.parameterTypes,
+                returnTypes: childElement.returnTypes
+            )
+        }
+
+        fileprivate func transplant(to newParent: Node) {
+            assert(self.parent != nil, "Attempted to transplant a node that does not have a parent: \(self.name)")
+            self.parent?.transplant(child: self, to: newParent)
         }
     }
 }
@@ -793,6 +868,16 @@ extension PathHierarchy.DisambiguationContainer {
             }
         }
         return .init(storage: newStorage)
+    }
+
+    mutating func remove(child: PathHierarchy.Node) -> Element? {
+        guard let childElement = storage.first(where: { $0.node === child }) else {
+            assertionFailure("Attempted to remove a child from a container that does not contain it: \(child.name)")
+            return nil
+        }
+
+        self.storage.removeAll(where: { $0.node === child })
+        return childElement
     }
 }
 
