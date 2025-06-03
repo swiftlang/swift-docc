@@ -3788,12 +3788,12 @@ class PathHierarchyTests: XCTestCase {
                     symbols: [
                         makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(with:)"], signature: makeSignature(
                             // GenericName
-                            first: .typeIdentifier("GenericName", precise: someGenericTypeID),
+                            first: .typeIdentifier("GenericName", precise: someGenericTypeID)
                         )),
                         
                         makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(with:)"], signature: makeSignature(
                             // GenericName.Type
-                            first: .typeIdentifier("GenericName", precise: someGenericTypeID), ".Type",
+                            first: .typeIdentifier("GenericName", precise: someGenericTypeID), ".Type"
                         )),
                     ]
                 ))
