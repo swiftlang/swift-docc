@@ -136,6 +136,11 @@ extension PathHierarchy {
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
                     let utf8Spelling = fragment.spelling.utf8
+                    guard !utf8Spelling.elementsEqual(".Type".utf8) else {
+                        // Once exception to that is "Name.Type" which is different from just "Name" (and we don't want a trailing ".")
+                        accumulated.append(contentsOf: utf8Spelling)
+                        continue
+                    }
                     for index in utf8Spelling.indices {
                         let char = utf8Spelling[index]
                         switch char {
