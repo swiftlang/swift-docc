@@ -3732,7 +3732,7 @@ class PathHierarchyTests: XCTestCase {
         let voidType       = DeclToken.typeIdentifier("Void",   precise: "s:s4Voida")
         
         func makeParameter(_ name: String, decl: [DeclToken]) -> SymbolGraph.Symbol.FunctionSignature.FunctionParameter {
-            .init(name: name,  externalName: nil, declarationFragments: makeFragments([.internalParameter(name),  .text("")] + decl),  children: [])
+            .init(name: name,  externalName: nil, declarationFragments: makeFragments([.internalParameter(name), .text(" ")] + decl), children: [])
         }
         
         func makeSignature(first: DeclToken..., second: DeclToken..., third: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
