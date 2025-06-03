@@ -3328,6 +3328,73 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/ModuleName/ContainerName", in: tree, asSymbolID: containerID)
     }
     
+    func testMinimalTypeDisambiguationForClosureParameterWithVoidReturnType() throws {
+        // Create a `doSomething(with:and:)` function with a `String` parameter (same in every overload) and a `(TYPE)->()` closure parameter.
+        func makeSymbolOverload(closureParameterType: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> SymbolGraph.Symbol {
+            makeSymbol(
+                id: "some-function-overload-\(closureParameterType.spelling.lowercased())",
+                kind: .method,
+                pathComponents: ["doSomething(with:and:)"],
+                signature: .init(
+                    parameters: [
+                        .init(name: "first", externalName: "with", declarationFragments: [
+                            .init(kind: .externalParameter, spelling: "with", preciseIdentifier: nil),
+                            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                            .init(kind: .internalParameter, spelling: "first", preciseIdentifier: nil),
+                            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS")
+                        ], children: []),
+                        
+                        .init(name: "second", externalName: "and", declarationFragments: [
+                            .init(kind: .externalParameter, spelling: "and", preciseIdentifier: nil),
+                            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                            .init(kind: .internalParameter, spelling: "second", preciseIdentifier: nil),
+                            .init(kind: .text, spelling: " (", preciseIdentifier: nil),
+                            closureParameterType,
+                            .init(kind: .text, spelling: ") -> ()", preciseIdentifier: nil),
+                        ], children: [])
+                    ],
+                    returns: [.init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")]
+                )
+            )
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbolOverload(closureParameterType: .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si")),    // (String, (Int)->()) -> Void
+                    makeSymbolOverload(closureParameterType: .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd")), // (String, (Double)->()) -> Void
+                    makeSymbolOverload(closureParameterType: .init(kind: .typeIdentifier, spelling: "Float", preciseIdentifier: "s:Sf")),  // (String, (Float)->()) -> Void
+                ],
+                relationships: []
+            ))
+        ])
+        
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let link = "/ModuleName/doSomething(with:and:)"
+        try assertPathRaisesErrorMessage(link, in: tree, context: context, expectedErrorMessage: "'doSomething(with:and:)' is ambiguous at '/ModuleName'") { errorInfo in
+            XCTAssertEqual(errorInfo.solutions.count, 3, "There should be one suggestion per overload")
+            for solution in errorInfo.solutions {
+                // Apply the suggested replacements for each solution and verify that _that_ link resolves to a single symbol.
+                var linkWithSuggestion = link
+                XCTAssertFalse(solution.replacements.isEmpty, "Diagnostics about ambiguous links should have some replacements for each solution.")
+                for (replacementText, start, end) in solution.replacements {
+                    let range = linkWithSuggestion.index(linkWithSuggestion.startIndex, offsetBy: start) ..< linkWithSuggestion.index(linkWithSuggestion.startIndex, offsetBy: end)
+                    linkWithSuggestion.replaceSubrange(range, with: replacementText)
+                }
+                
+                XCTAssertNotNil(try? tree.findSymbol(path: linkWithSuggestion), """
+                Failed to resolve \(linkWithSuggestion) after applying replacements \(solution.replacements.map { "'\($0.0)'@\($0.start)-\($0.end)" }.joined(separator: ",")) to '\(link)'.
+                
+                The replacement that DocC suggests in its warnings should unambiguously refer to a single symbol match.
+                """)
+            }
+        }
+    }
+    
     func testMissingMemberOfAnonymousStructInsideUnion() throws {
         let outerContainerID = "some-outer-container-symbol-id"
         let innerContainerID = "some-inner-container-symbol-id"
@@ -3769,6 +3836,56 @@ class PathHierarchyTests: XCTestCase {
                 (symbolID: "function-overload-1", disambiguation: "->(String,_,_)"),        //   String  _       _
                 (symbolID: "function-overload-2", disambiguation: "->(_,[Bool],_)"),        //   _       [Bool]  _
                 (symbolID: "function-overload-3", disambiguation: "->(_,_,(Float)->Void)"), //   _       _       (Float)->Void
+            ])
+        }
+        
+        // Each overload has a unique closure parameter with a "()" literal closure return type
+        do {
+            func makeSignature(first: DeclToken..., second: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
+                .init(
+                    parameters: [
+                        .init(name: "first",  externalName: nil, declarationFragments: makeFragments(first),  children: []),
+                        .init(name: "second", externalName: nil, declarationFragments: makeFragments(second), children: [])
+                    ],
+                    returns: makeFragments([voidType])
+                )
+            }
+            
+            //  String   (Int)->()
+            //  String   (Double)->()
+            //  String   (Float)->()
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        //  String   (Int)->Void
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(first:second:)"], signature: makeSignature(
+                            first: stringType,              // String
+                            second: "(", intType, ") -> ()" // (Int)->()
+                        )),
+                        
+                        //  String   (Double)->Void
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(first:second:)"], signature: makeSignature(
+                            first: stringType,                 // String
+                            second: "(", doubleType, ") -> ()" // (Double)->()
+                        )),
+                        
+                        //  String   (Float)->Void
+                        makeSymbol(id: "function-overload-3", kind: .func, pathComponents: ["doSomething(first:second:)"], signature: makeSignature(
+                            first: stringType,                // String
+                            second: "(", floatType, ") -> ()" // (Double)->()
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(first:second:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(_,(Int)->())"),    //  _     (Int)->()
+                (symbolID: "function-overload-2", disambiguation: "-(_,(Double)->())"), //  _     (Double)->()
+                (symbolID: "function-overload-3", disambiguation: "-(_,(Float)->())"),  //  _     (Float)->()
             ])
         }
         
