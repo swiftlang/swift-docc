@@ -112,12 +112,15 @@ struct PathHierarchy {
             var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
-                if let existingNode = allNodes[id]?.first(where: {
-                    // If both identifiers are in the same language, they are the same symbol.
-                    $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
-                    // If both have the same path components and kind, their differences don't matter for link resolution purposes.
-                    || ($0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier)
-                }) {
+                if let possibleNodes = allNodes[id],
+                   let existingNode = possibleNodes.first(where: {
+                       // If both identifiers are in the same language, they are the same symbol.
+                       $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
+                   }) ?? possibleNodes.first(where: {
+                       // Otherwise, if both have the same path components and kind, their differences don't matter for link resolution purposes.
+                       $0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier
+                   })
+                {
                     nodes[id] = existingNode
                     if existingNode.counterpart?.languages.contains(language!) != true {
                         // Unless this symbol is already split into language counterparts, add the languages to this node.
@@ -158,46 +161,17 @@ struct PathHierarchy {
                     if sourceNode.parent == nil {
                         targetNode.add(symbolChild: sourceNode)
                     } else if sourceNode.parent !== targetNode && sourceNode.counterpart?.parent !== targetNode {
-                        // If the node we have for the child has an existing parent that doesn't
-                        // match the parent from this symbol graph, we need to clone the child to
-                        // ensure that the hierarchy remains consistent.
-                        let clonedSourceNode = Node(
-                            cloning: sourceNode,
-                            symbol: graph.symbols[relationship.source],
-                            children: [:],
-                            languages: [language!]
+                        // If the source node already exist in a different location in the hierarchy we need to split it into separate nodes for each language representation.
+                        // This ensures that each node has a single parent, so that the hierarchy can be unambiguously walked upwards to expand the "scope" of a search.
+                        let clonedSourceNode = sourceNode.deepClone(
+                            separating: language!,
+                            keeping: sourceNode.languages.subtracting([language!]),
+                            symbolsByUSR: graph.symbols,
+                            didCloneNode: { newNode, newSymbol in
+                                nodes[newSymbol.identifier.precise] = newNode
+                                allNodes[newSymbol.identifier.precise, default: []].append(newNode)
+                            }
                         )
-
-                        // The original node no longer represents this symbol graph's language,
-                        // so remove that data from there.
-                        sourceNode.languages.remove(language!)
-
-                        // Make sure that the clone's children can all line up with symbols from this symbol graph.
-                        for children in sourceNode.children.values {
-                            for child in children.storage {
-                                guard let childSymbol = child.node.symbol else {
-                                    // We shouldn't come across any non-symbol nodes here,
-                                    // but assume they can work as child of both variants.
-                                    clonedSourceNode.add(child: child.node, kind: child.kind, hash: child.hash)
-                                    continue
-                                }
-                                if nodes[childSymbol.identifier.precise] === child.node {
-                                    clonedSourceNode.add(symbolChild: child.node)
-                                }
-                            }
-                        }
-
-                        // Track the cloned node in the lists of nodes.
-                        nodes[relationship.source] = clonedSourceNode
-                        if let existingNodes = allNodes[relationship.source] {
-                            clonedSourceNode.counterpart = existingNodes.first
-                            for other in existingNodes {
-                                other.counterpart = clonedSourceNode
-                            }
-                        }
-                        allNodes[relationship.source, default: []].append(clonedSourceNode)
-
-                        // Finally, add the cloned node as a child of its parent.
                         targetNode.add(symbolChild: clonedSourceNode)
                     }
                     topLevelCandidates.removeValue(forKey: relationship.source)
@@ -597,19 +571,81 @@ extension PathHierarchy {
             self.children = [:]
             self.specialBehaviors = []
         }
-
-        /// Initializes a node with a new identifier but the data from an existing node.
-        fileprivate init(
-            cloning source: Node,
-            symbol: SymbolGraph.Symbol?? = nil,
-            children: [String: DisambiguationContainer]? = nil,
-            languages: Set<SourceLanguage>? = nil
-        ) {
-            self.symbol = symbol ?? source.symbol
-            self.name = source.name
-            self.children = children ?? source.children
-            self.specialBehaviors = source.specialBehaviors
-            self.languages = languages ?? source.languages
+        
+        fileprivate func deepClone(
+            separating separatedLanguage: SourceLanguage,
+            keeping otherLanguages: Set<SourceLanguage>,
+            symbolsByUSR: borrowing [String: SymbolGraph.Symbol],
+            didCloneNode: (Node, SymbolGraph.Symbol) -> Void
+        ) -> Node {
+            assert(!otherLanguages.contains(separatedLanguage), "The caller should have already removed '\(separatedLanguage.id)' from '\(languages.sorted().map(\.id).joined(separator: ", "))'")
+            
+            let clone: Node
+            if let currentSymbol = symbol {
+                // If a representation of the symbol exist in the current local symbol graph, prefer that for more correct disambiguation information.
+                let symbol = symbolsByUSR[currentSymbol.identifier.precise] ?? currentSymbol
+                clone = Node(symbol: symbol, name: name)
+                didCloneNode(clone, symbol)
+            } else {
+                assertionFailure("Unexpectedly cloned a non-symbol node '\(name)' into separate language representations ('\(separatedLanguage.id)' vs '\(otherLanguages.sorted().map(\.id).joined(separator: ", "))').")
+                clone = Node(name: name)
+            }
+            // Update languages and counterparts
+            clone.languages = [separatedLanguage]
+            languages.remove(separatedLanguage)
+            assert(!languages.isEmpty, """
+                Unexpectedly cloned '\(symbol?.identifier.precise ?? "non-symbol named \(name)")' for '\(separatedLanguage.id)' when it was already the only language it was available for.
+                """)
+            
+            clone.counterpart = self
+            self.counterpart = clone
+            
+            // Assign all the children to either the original, the clone, or both.
+            let originalChildren = children
+            children.removeAll(keepingCapacity: true)
+            
+            func addOrMove(_ node: Node, to containerNode: Node) {
+                if node.symbol != nil {
+                    containerNode.add(symbolChild: node)
+                } else {
+                    containerNode.add(child: node, kind: nil, hash: nil)
+                }
+                assert(!containerNode.languages.isDisjoint(with: node.languages), """
+                    Unexpectedly added a node to a container without any overlapping languages.
+                    Child node languages:  \(node.languages.sorted().map(\.id).joined(separator: ", "))
+                    Parent node languages: \(node.languages.sorted().map(\.id).joined(separator: ", "))
+                    """)
+            }
+            
+            for elements in originalChildren.values {
+                for element in elements.storage {
+                    let node = element.node
+                    node.parent = nil // Remove the association with the original container. This node will be added to either the original (again) or to the clone.
+                    let nodeLanguages = node.languages
+                    
+                    switch (nodeLanguages.contains(separatedLanguage), !nodeLanguages.isDisjoint(with: languages)) {
+                        case (true, false):
+                            // This node only exist for the separated language, so it only belongs in the clone. No recursive copying needed.
+                            addOrMove(node, to: clone)
+                            
+                        case (false, true):
+                            // This node doesn't exist for the separated language, so it only belongs in the original. No recursive copying needed.
+                            addOrMove(node, to: self)
+                            
+                        case (true, true):
+                            // This node needs to have deep copies for both the original and the clone.
+                            let innerClone = node.deepClone(separating: separatedLanguage, keeping: otherLanguages, symbolsByUSR: symbolsByUSR, didCloneNode: didCloneNode)
+                            addOrMove(node, to: self)
+                            addOrMove(innerClone, to: clone)
+                            
+                        case (false, false):
+                            assertionFailure("Node \(node.name) (\(node.languages.sorted().map(\.id).joined(separator: ","))) doesn't belong in either '\(separatedLanguage.id)' or '\(otherLanguages.sorted().map(\.id).joined(separator: ", "))'.")
+                            continue
+                    }
+                }
+            }
+            
+            return clone
         }
 
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
