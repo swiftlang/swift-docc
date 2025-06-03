@@ -3328,6 +3328,76 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/ModuleName/ContainerName", in: tree, asSymbolID: containerID)
     }
     
+    func testMissingMemberOfAnonymousStructInsideUnion() throws {
+        let outerContainerID = "some-outer-container-symbol-id"
+        let innerContainerID = "some-inner-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+
+        // Repeat the same symbols in both languages for many platforms.
+        let platforms = (1...10).map {
+            let name = "Platform\($0)"
+            return (name: name, availability: [makeAvailabilityItem(domainName: name)])
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            // union Outer {
+            //     struct {
+            //         uint32_t member;
+            //     } inner;
+            // };
+            Folder(name: "clang", content: platforms.map { platform in
+                JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: outerContainerID, language: .objectiveC, kind: .union,    pathComponents: ["Outer"], availability: platform.availability),
+                        makeSymbol(id: innerContainerID, language: .objectiveC, kind: .property, pathComponents: ["Outer", "inner"], availability: platform.availability),
+                        makeSymbol(id: memberID,         language: .objectiveC, kind: .property, pathComponents: ["Outer", "inner", "member"], availability: platform.availability),
+                    ],
+                    relationships: [
+                        .init(source: memberID,         target: innerContainerID, kind: .memberOf, targetFallback: nil),
+                        .init(source: innerContainerID, target: outerContainerID, kind: .memberOf, targetFallback: nil),
+                    ]
+                ))
+            }),
+            
+            // struct Outer {
+            //     struct __Unnamed_struct_inner {
+            //         var member: UInt32          // <-- This symbol is missing due to rdar://152157610
+            //     }
+            //     var inner: Outer.__Unnamed_struct_inner
+            // }
+            Folder(name: "swift", content: platforms.map { platform in
+                JSONFile(name: "ModuleName-\(platform.name).symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: outerContainerID, language: .swift, kind: .struct,   pathComponents: ["Outer"], availability: platform.availability),
+                        makeSymbol(id: innerContainerID, language: .swift, kind: .property, pathComponents: ["Outer", "inner"], availability: platform.availability),
+                        // The `member` property is missing due to rdar://152157610
+                    ],
+                    relationships: [
+                        .init(source: innerContainerID, target: outerContainerID, kind: .memberOf, targetFallback: nil),
+                    ]
+                ))
+            })
+        ])
+
+        let (_, context) = try loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[outerContainerID], "/ModuleName/Outer")
+        XCTAssertEqual(paths[innerContainerID], "/ModuleName/Outer/inner")
+        XCTAssertEqual(paths[memberID],         "/ModuleName/Outer/inner/member")
+
+        try assertFindsPath("/ModuleName/Outer-union", in: tree, asSymbolID: outerContainerID)
+        try assertFindsPath("/ModuleName/Outer-union/inner", in: tree, asSymbolID: innerContainerID)
+        try assertFindsPath("/ModuleName/Outer-union/inner/member", in: tree, asSymbolID: memberID)
+
+        try assertFindsPath("/ModuleName/Outer-struct", in: tree, asSymbolID: outerContainerID)
+        try assertFindsPath("/ModuleName/Outer-struct/inner", in: tree, asSymbolID: innerContainerID)
+        try assertPathNotFound("/ModuleName/Outer-struct/inner/member", in: tree)
+    }
+    
     func testLinksToCxxOperators() throws {
         let (_, context) = try testBundleAndContext(named: "CxxOperators")
         let tree = context.linkResolver.localResolver.pathHierarchy
