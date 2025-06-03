@@ -4431,8 +4431,8 @@ class PathHierarchyTests: XCTestCase {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
         } catch PathHierarchy.Error.unknownName {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
-        } catch PathHierarchy.Error.unknownDisambiguation {
-            XCTFail("Symbol for \(path.singleQuoted) not found in tree. Unknown disambiguation.", file: file, line: line)
+        } catch PathHierarchy.Error.unknownDisambiguation(_, _, let candidates) {
+            XCTFail("Symbol for \(path.singleQuoted) not found in tree. Unknown disambiguation. Suggested disambiguations: \(candidates.map(\.disambiguation.singleQuoted).sorted().joined(separator: ", "))", file: file, line: line)
         } catch PathHierarchy.Error.lookupCollision(_, _, let collisions) {
             let symbols = collisions.map { $0.node.symbol! }
             XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.names.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
