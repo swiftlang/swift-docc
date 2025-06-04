@@ -30,7 +30,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testCrawl() throws {
         let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context, bundle: bundle)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
 
         var symbolsWithCustomCuration = [ResolvedTopicReference]()
@@ -219,7 +219,7 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
         }
         
-        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        let crawler = DocumentationCurator(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
@@ -361,7 +361,7 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
         }
         
-        let _ = DocumentationCurator.init(in: context, bundle: bundle)
+        let _ = DocumentationCurator(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
@@ -378,7 +378,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testSymbolLinkResolving() throws {
         let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        let crawler = DocumentationCurator(in: context, bundle: bundle)
         
         // Resolve top-level symbol in module parent
         do {
@@ -431,7 +431,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testLinkResolving() throws {
         let (sourceRoot, bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context, bundle: bundle)
         
         // Resolve and curate an article in module root (absolute link)
         do {
@@ -524,7 +524,7 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: root.appendingPathComponent("documentation").appendingPathComponent("api-collection.md"), atomically: true, encoding: .utf8)
         }
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context, bundle: bundle)
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift)
         
         try crawler.crawlChildren(of: reference, prepareForCuration: {_ in }) { (_, _) in }
