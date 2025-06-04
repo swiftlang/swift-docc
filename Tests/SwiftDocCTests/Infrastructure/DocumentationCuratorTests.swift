@@ -334,7 +334,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
         
     func testModuleUnderAncestorOfTechnologyRoot() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+        let (_, _, context) = try testBundleAndContext(copying: "SourceLocations") { url in
             try """
             # Root with ancestor curating a module
             
@@ -361,7 +361,6 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
         }
         
-        let _ = DocumentationCurator(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
