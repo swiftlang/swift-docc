@@ -11,8 +11,8 @@
             "RenderIndex": {
                 "type": "object",
                 "required": [
-                    "schemaVersion",
-                    "interfaceLanguages"
+                    "identifier",
+                    "interfaceLanguages",
                 ],
                 "properties": {
                     "schemaVersion": {
