@@ -1,5 +1,9 @@
 # Adding Code Snippets to your Content
 
+@Metadata {
+    @Available("Swift", introduced: "5.7")
+ }
+
 Create and include code snippets to illustrate and provide examples of how to use your API.
 
 ## Overview
@@ -10,6 +14,31 @@ However, the content in a code listing isn't compiled or verified to work.
 Swift Package Manager looks for, and builds, any code included in the `Snippets` directory for your package.
 DocC supports referencing all, or parts, of those files to present as code listings.
 This allows you to verify that code examples, referenced in your documentation, continue to compile as you evolve you app or library.
+
+### Add the Swift DocC plugin
+
+To generate or preview documentation with snippets, add [swift-docc-plugin](https://github.com/apple/swift-docc-plugin) as a dependency to your package.
+
+For example, use the command:
+
+```bash
+swift package add-dependency https://github.com/apple/swift-docc-plugin --from 1.1.0
+```
+
+Or edit your `Package.swift` to add the dependency:
+
+```
+let package = Package(
+    // name, platforms, products, etc.
+    dependencies: [
+        // other dependencies
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.1.0"),
+    ],
+    targets: [
+        // targets
+    ]
+)
+```
 
 ### Create a code snippet
 
@@ -72,16 +101,17 @@ print("Hidden")
 print("Shown")
 ```
 
-Hide segments of your snippet for things like license footers, test code, or unique setup code.
-Generally, it is mostly useful for things that you wouldn't want the reader to take with them as a starting point.
+Hide segments of your snippet for content such as license footers, test code, or unique setup code.
+Generally, it is useful for things that you wouldn't want the reader to use as a starting point.
 
 ### Preview your content
 
 Use the [swift-docc-plugin](https://github.com/swiftlang/swift-docc-plugin) to preview content that includes snippets.
-To run the preview, use the following command from a terminal:
+To run the preview, use the following command from a terminal. 
+Replace `YourTarget` with a target from your package to preview:
 
 ```bash
-swift package --disable-sandbox preview-documentation 
+swift package --disable-sandbox preview-documentation --target YourTarget
 ```
 
 ### Slice up your snippet to break it up in your content.
