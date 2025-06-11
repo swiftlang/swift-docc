@@ -131,8 +131,8 @@ public enum LinkCompletionTools {
                 node,
                 kind: symbol.kind,
                 hash: symbol.symbolIDHash,
-                parameterTypes: symbol.parameterTypes,
-                returnTypes: symbol.returnTypes
+                parameterTypes: symbol.parameterTypes?.map { $0.withoutWhitespace() },
+                returnTypes: symbol.returnTypes?.map { $0.withoutWhitespace() }
             )
         }
         
@@ -234,5 +234,11 @@ private extension PathHierarchy.PathComponent.Disambiguation {
         case .none, ._nonFrozenEnum_useDefaultCase:
             return nil
         }
+    }
+}
+
+private extension String {
+    func withoutWhitespace() -> String {
+        filter { !$0.isWhitespace }
     }
 }
