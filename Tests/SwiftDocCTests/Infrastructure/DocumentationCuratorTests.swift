@@ -201,6 +201,90 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual(curationProblem.possibleSolutions.map(\.summary), ["Remove '- <doc:First>'"])
     }
     
+    func testCurationInUncuratedAPICollection() throws {
+        // Everything should behave the same when an API Collection is automatically curated as when it is explicitly curated
+        for shouldCurateAPICollection in [true, false] {
+            let assertionMessageDescription = "when the API collection is \(shouldCurateAPICollection ? "explicitly curated" : "auto-curated as an article under the module")."
+            
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
+                ])),
+                
+                TextFile(name: "ModuleName.md", utf8Content: """
+                # ``ModuleName``
+                
+                \(shouldCurateAPICollection ? "## Topics\n\n### Explicit curation\n\n- <doc:API-Collection>" : "")
+                """),
+                
+                TextFile(name: "API-Collection.md", utf8Content: """
+                # Some API collection
+                
+                Curate the only symbol
+                
+                ## Topics
+                    
+                - ``SomeClass``
+                - ``NotFound``
+                """),
+            ])
+            let (bundle, context) = try loadBundle(catalog: catalog)
+            XCTAssertEqual(
+                context.problems.map(\.diagnostic.summary),
+                [
+                    // There should only be a single problem about the unresolvable link in the API collection.
+                    "'NotFound' doesn't exist at '/unit-test/API-Collection'"
+                ],
+                "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n")) \(assertionMessageDescription)"
+            )
+            
+            // Verify that the topic graph paths to the symbol (although not used for its breadcrumbs) doesn't have the automatic edge anymore.
+            let symbolReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }))
+            XCTAssertEqual(
+                context.finitePaths(to: symbolReference).map { $0.map(\.path) },
+                [
+                    // The automatic default `["/documentation/ModuleName"]` curation _shouldn't_ be here.
+                    
+                    // The authored curation in the uncurated API collection
+                    ["/documentation/ModuleName", "/documentation/unit-test/API-Collection"],
+                ],
+                "Unexpected 'paths' to the symbol page \(assertionMessageDescription)"
+            )
+            
+            // Verify that the symbol page shouldn't auto-curate in its canonical location.
+            let symbolTopicNode = try XCTUnwrap(context.topicGraph.nodeWithReference(symbolReference))
+            XCTAssertFalse(symbolTopicNode.shouldAutoCurateInCanonicalLocation, "Symbol node is unexpectedly configured to auto-curate \(assertionMessageDescription)")
+            
+            // Verify that the topic graph doesn't have the automatic edge anymore.
+            XCTAssertEqual(context.dumpGraph(), """
+                 doc://unit-test/documentation/ModuleName
+                 ╰ doc://unit-test/documentation/unit-test/API-Collection
+                   ╰ doc://unit-test/documentation/ModuleName/SomeClass
+                
+                """,
+                "Unexpected topic graph \(assertionMessageDescription)"
+            )
+            
+            // Verify that the rendered top-level page doesn't have an automatic "Classes" topic section anymore.
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+            let rootRenderNode = converter.convert(try context.entity(with: moduleReference))
+            
+            XCTAssertEqual(
+                rootRenderNode.topicSections.map(\.title),
+                [shouldCurateAPICollection ? "Explicit curation" : "Articles"],
+                "Unexpected rendered topic sections on the module page \(assertionMessageDescription)"
+            )
+            XCTAssertEqual(
+                rootRenderNode.topicSections.map(\.identifiers),
+                [
+                    ["doc://unit-test/documentation/unit-test/API-Collection"],
+                ],
+                "Unexpected rendered topic sections on the module page \(assertionMessageDescription)"
+            )
+        }
+    }
+    
     func testModuleUnderTechnologyRoot() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
             try """
