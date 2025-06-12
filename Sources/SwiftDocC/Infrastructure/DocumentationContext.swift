@@ -2428,18 +2428,17 @@ public class DocumentationContext {
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
         allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), bundle: bundle, initial: allCuratedReferences)
-
-        // Remove curation paths that have been created automatically above
-        // but we've found manual curation for in the second crawl pass.
-        removeUnneededAutomaticCuration(automaticallyCurated)
         
         // Automatically curate articles that haven't been manually curated
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, startingFrom: rootNode)
-            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.id)
-            resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
+            allCuratedReferences = try crawlSymbolCuration(in: articleReferences, bundle: bundle, initial: allCuratedReferences)
         }
+        
+        // Remove curation paths that have been created automatically above
+        // but we've found manual curation for in the second crawl pass.
+        removeUnneededAutomaticCuration(automaticallyCurated)
 
         // Remove any empty "Extended Symbol" pages whose children have been curated elsewhere.
         for module in rootModules {
