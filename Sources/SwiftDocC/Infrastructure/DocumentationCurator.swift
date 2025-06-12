@@ -101,7 +101,7 @@ struct DocumentationCurator {
             case 0,1:
                 return NodeURLGenerator.Path.article(bundleName: bundle.displayName, articleName: path).stringValue
             case 2:
-                return NodeURLGenerator.Path.documentationFolder + path
+                return "\(NodeURLGenerator.Path.documentationFolder)/\(path)"
             default:
                 return path.prependingLeadingSlash
             }
