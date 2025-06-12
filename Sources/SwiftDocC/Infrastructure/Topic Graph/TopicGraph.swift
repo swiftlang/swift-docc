@@ -330,7 +330,7 @@ struct TopicGraph {
         }
         
         var result = ""
-        result.append("\(decorator) \(node[keyPath: keyPath])\r\n")
+        result.append("\(decorator) \(node[keyPath: keyPath])\n")
         if let childEdges = edges[node.reference]?.sorted(by: { $0.path < $1.path }) {
             for (index, childRef) in childEdges.enumerated() {
                 var decorator = decorator
