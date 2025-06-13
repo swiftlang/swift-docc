@@ -102,10 +102,22 @@ The `path` argument has three parts:
 
 3. The name of your snippet file without the `.swift` extension
 
-In the example package above, the `YourProject.md` file could reference `example-snippet.swift` like this:
+In the example package above, the `YourProject.md` file might contain this markdown:
 
 ```markdown
+# ``YourProject``
+
+Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
+
+## Overview
+
+Add one or more paragraphs that introduce your content overview.
+
+This paragraph appears before the snippet.
+
 @Snippet(path: "YourProject/Snippets/example-snippet")
+
+This paragraph appears after the snippet.
 ```
 
 Without any additional annotations in your snippet, Docc includes the entirety of your code example as the snippet.
