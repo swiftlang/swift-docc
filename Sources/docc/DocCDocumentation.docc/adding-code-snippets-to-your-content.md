@@ -44,7 +44,24 @@ let package = Package(
 
 Swift Package Manager expects to find your code examples in the directory `Snippets` at the top of your project, parallel to the file `Package.swift` and the directory `Sources`. 
 At the root of your project, create the directory `Snippets`.
-Within the Snippets directory, create a file with your code snippet.
+Within the `Snippets` directory, create a file with your code snippet.
+
+Your Swift package directory structure should resemble this:
+
+```
+YourProject
+  ├─ Package.swift
+  ├─ Snippets/
+  │  ├─ example-snippet.swift
+  ├─ Sources/
+  │  ├─ YourProject.docc/
+  │  │ ├─ YourProject.md
+  │  ├─ main.swift
+etc...
+```
+
+> Note: Unlike `Snippets`, your Swift package's documentation catalog should be located as a subdirectory of `Sources`, where all of your other Swift source code files are located. For example, see `YourProject.docc` above.
+
 
 The following example illustrates a code example in the file `Snippets/example-snippet.swift`:
 
@@ -84,6 +101,12 @@ The `path` argument has three parts:
 2. The directory path to the snippet file, starting with "Snippets".
 
 3. The name of your snippet file without the `.swift` extension
+
+In the example package above, the `YourProject.md` file could reference `example-snippet.swift` like this:
+
+```markdown
+@Snippet(path: "YourProject/Snippets/example-snippet")
+```
 
 Without any additional annotations in your snippet, Docc includes the entirety of your code example as the snippet.
 To prevent parts of your snippet file from being rendered in documentation, add comments in your code in the format `// snippet.hide` and `// snippet.show` on new lines, surrounding the content you want to hide.
@@ -165,7 +188,7 @@ Extending the earlier snippet example, the slice `setup` would be referenced wit
 
 ### Documenting the code in your snippet
 
-DocC parses contiguous comments within your the code of a snippet as markdown to annotate your code when embedded in documentation.
+DocC parses contiguous comments within the code of a snippet as markdown to annotate your code when embedded in documentation.
 DocC will attempt to reference symbols from within these comments just like any other documentation content.
 You can reference symbols from your API, which DocC converts into hyperlinks to that symbol when displaying the content.
 
