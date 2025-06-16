@@ -360,8 +360,7 @@
                 "type": "object",
                 "required": [
                     "kind",
-                    "tiles",
-                    "content"
+                    "tiles"
                 ],
                 "properties": {
                     "kind": {
@@ -526,8 +525,7 @@
                     "kind",
                     "content",
                     "media",
-                    "mediaPosition",
-                    "layout"
+                    "mediaPosition"
                 ],
                 "properties": {
                     "kind": {
@@ -1795,7 +1793,7 @@
                 "type": "object",
                 "required": [
                     "type",
-                    "identifier"
+                    "reference"
                 ],
                 "properties": {
                     "type": {
@@ -1956,7 +1954,7 @@
                 "type": "object",
                 "required": [
                     "reference",
-                    "kind"
+                    "sections"
                 ],
                 "properties": {
                     "reference": {
@@ -2499,7 +2497,6 @@
             },
             "MentionsRenderSection": {
                 "required": [
-                    "kind",
                     "mentions"
                 ],
                 "type": "object",
