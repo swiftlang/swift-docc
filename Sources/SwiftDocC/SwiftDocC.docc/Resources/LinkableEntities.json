@@ -543,7 +543,7 @@
                 "type": "object",
                 "required": [
                     "type",
-                    "identifier"
+                    "reference"
                 ],
                 "properties": {
                     "type": {
