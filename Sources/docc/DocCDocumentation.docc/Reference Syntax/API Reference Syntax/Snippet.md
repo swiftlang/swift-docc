@@ -6,10 +6,6 @@ Embeds a code example from the project's code snippets.
 @Snippet(path: "my-package/Snippets/example-snippet", slice: "setup")
 ```
 
-- Parameters:
-    - path: A reference to the location of a code example.
-    - slice: The name of a section within the code example that you annotate with comments in the snippet. **(optional)**
-
 Place the `Snippet` directive to embed a code example from the project's snippet directory. The path to the snippet is identified with three parts:
 
 1. The package name as defined in `Package.swift`

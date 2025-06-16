@@ -2,17 +2,20 @@
 
 @Metadata {
     @Available("Swift", introduced: "5.7")
+    @TitleHeading("Article")
  }
 
 Create and include code snippets to illustrate and provide examples of how to use your API.
 
 ## Overview
 
+
 DocC supports code listings in your code, as described in <doc:formatting-your-documentation-content>.
-However, the content in a code listing isn't compiled or verified to work.
+In addition to code listings written directly in the markup, Swift Package Manager and DocC supports compiler verified code examples called "snippets".
 
 Swift Package Manager looks for, and builds, any code included in the `Snippets` directory for your package.
 DocC supports referencing all, or parts, of those files to present as code listings.
+In addition to snippets presenting your code examples, you can run snippets directly on the command line.
 This allows you to verify that code examples, referenced in your documentation, continue to compile as you evolve you app or library.
 
 ### Add the Swift DocC plugin
@@ -50,13 +53,12 @@ Your Swift package directory structure should resemble this:
 
 ```
 YourProject
-  ├─ Package.swift
-  ├─ Snippets/
-  │  ├─ example-snippet.swift
-  ├─ Sources/
-  │  ├─ YourProject.docc/
-  │  │ ├─ YourProject.md
-  │  ├─ main.swift
+  ├── Package.swift
+  ├── Snippets
+  │   └── example-snippet.swift
+  ├── Sources
+  │   └── YourProject
+  │       └── YourProject.swift
 etc...
 ```
 
@@ -71,15 +73,14 @@ import Foundation
 print("Hello")
 ```
 
-Within your snippet, you can import your local module, as well as any module that your package depends on.
+Your snippets can import targets defined in your local package, as well as products from its direct dependencies.
+Each snippet is its own unit and can't access code from other snippet files.
 
 Every time you build your project, the Swift Package Manager compiles any code snippets, and then fails if the build if they are unable to compile.
 
 ### Run the snippet
 
-Each code example file you create becomes it's own module.
-The name of the code example file you create is the name of the module that Swift creates.
-Use the `swift run` command in a terminal to compile and run the module to verify it compiles does what you expect.
+You and consumers of your library can run your snippets from the command line using `swift run snippet-name` where "snippet-name" corresponds to a file name in your Snippets directory without the ".swift" file extension.
 
 Run the earlier code example file named `example-snippet.swift` using the following command:
 
@@ -87,9 +88,9 @@ Run the earlier code example file named `example-snippet.swift` using the follow
 swift run example-snippet
 ```
 
-### Reference the snippet
+### Embed the snippet
 
-To reference your snippet in an article or within the symbol reference pages, use the `@Snippet` directive.
+To embed your snippet in an article or within the symbol reference pages, use the `@Snippet` directive.
 ```markdown
 @Snippet(path: "my-package/Snippets/example-snippet")
 ```
@@ -120,8 +121,7 @@ This paragraph appears before the snippet.
 This paragraph appears after the snippet.
 ```
 
-Without any additional annotations in your snippet, Docc includes the entirety of your code example as the snippet.
-To prevent parts of your snippet file from being rendered in documentation, add comments in your code in the format `// snippet.hide` and `// snippet.show` on new lines, surrounding the content you want to hide.
+If your snippet code requires setup — like imports or variable definitions — that distract from the snippet's main focus, you can add `// snippet.hide` and `// snippet.show` lines in the snippet code to exclude the lines in between from displaying in your documentation.
 These comments act as a toggle to hide or show content from the snippet.
 
 ```swift
