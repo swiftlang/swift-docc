@@ -13,7 +13,7 @@ public import Markdown
 import SymbolKit
 
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
-    public static let introducedVersion = "5.6"
+    public static let introducedVersion = "5.7"
     public let originalMarkup: BlockDirective
     
     /// The path components of a symbol link that would be used to resolve a reference to a snippet,
