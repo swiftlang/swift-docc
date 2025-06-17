@@ -5253,7 +5253,7 @@
           "domain" : "Swift-DocC",
           "introduced" : {
             "major" : 5,
-            "minor" : 6,
+            "minor" : 7,
             "patch" : 0
           }
         }
@@ -5310,6 +5310,57 @@
       ],
       "docComment" : {
         "lines" : [
+          {
+            "text" : "Embeds a code example from the project's code snippets."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Snippet(path: \"my-package\/Snippets\/example-snippet\", slice: \"setup\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Place the `Snippet` directive to embed a code example from the project's snippet directory."
+          },
+          {
+            "text" : "The path that references the snippet is identified with three parts:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "1. The package name as defined in `Package.swift`"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "2. The directory path to the snippet file, starting with \"Snippets\"."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "3. The name of your snippet file without the `.swift` extension"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If the snippet had slices annotated within it, an individual slice of the snippet can be referenced with the `slice` option."
+          },
+          {
+            "text" : "Without the option defined, the directive embeds the entire snippet."
+          },
           {
             "text" : "- Parameters:"
           },
