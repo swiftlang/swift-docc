@@ -3889,6 +3889,42 @@ class PathHierarchyTests: XCTestCase {
             ])
         }
         
+        // The second overload refers to the metatype of the parameter
+        do {
+            func makeSignature(first: DeclToken...) -> SymbolGraph.Symbol.FunctionSignature {
+                .init(
+                    parameters: [.init(name: "first",  externalName: "with", declarationFragments: makeFragments(first),  children: []),],
+                    returns: makeFragments([voidType])
+                )
+            }
+            
+            let someGenericTypeID = "some-generic-type-id"
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        makeSymbol(id: "function-overload-1", kind: .func, pathComponents: ["doSomething(with:)"], signature: makeSignature(
+                            // GenericName
+                            first: .typeIdentifier("GenericName", precise: someGenericTypeID)
+                        )),
+                        
+                        makeSymbol(id: "function-overload-2", kind: .func, pathComponents: ["doSomething(with:)"], signature: makeSignature(
+                            // GenericName.Type
+                            first: .typeIdentifier("GenericName", precise: someGenericTypeID), ".Type"
+                        )),
+                    ]
+                ))
+            ])
+            
+            let (_, context) = try loadBundle(catalog: catalog)
+            let tree = context.linkResolver.localResolver.pathHierarchy
+            
+            try assertPathCollision("ModuleName/doSomething(with:)", in: tree, collisions: [
+                (symbolID: "function-overload-1", disambiguation: "-(GenericName)"),      //  GenericName
+                (symbolID: "function-overload-2", disambiguation: "-(GenericName.Type)"), //  GenericName.Type
+            ])
+        }
+        
         // Second overload requires combination of two non-unique types to disambiguate
         do {
             //  String   Set<Int>  (Double)->Void
