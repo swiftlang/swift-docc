@@ -237,4 +237,25 @@ class LinkCompletionToolsTests: XCTestCase {
             "->_",        // The only overload that returns something
         ])
     }
+    
+    func testRemovesWhitespaceFromTypeSignatureDisambiguation() {
+        let overloads = [
+            // The caller included whitespace in these closure type spellings but the DocC disambiguation won't include this whitespace.
+            (parameters: ["(Int) -> Int"],  returns: []), // ((Int)  -> Int)  -> Void
+            (parameters: ["(Bool) -> ()"], returns: []),  // ((Bool) -> () )  -> Void
+        ].map {
+            LinkCompletionTools.SymbolInformation(
+                kind: "func",
+                symbolIDHash: "\($0)".stableHashString,
+                parameterTypes: $0.parameters,
+                returnTypes: $0.returns
+            )
+        }
+        
+        XCTAssertEqual(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: overloads), [
+            // Both parameters require the only parameter type as disambiguation. The suggested disambiguation shouldn't contain extra whitespace.
+            "-((Int)->Int)",
+            "-((Bool)->())",
+        ])
+    }
 }
