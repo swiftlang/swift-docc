@@ -12,6 +12,27 @@ import Foundation
 public import Markdown
 import SymbolKit
 
+// NOTE: If you update the DocC content, remember to run
+// `swift run generate-symbol-graph` to regenerate the DocC
+// symbol content for the DocC Documentation.
+
+/// Embeds a code example from the project's code snippets.
+///
+/// ```markdown
+/// @Snippet(path: "my-package/Snippets/example-snippet", slice: "setup")
+/// ```
+///
+/// Place the `Snippet` directive to embed a code example from the project's snippet directory.
+/// The path that references the snippet is identified with three parts:
+///
+/// 1. The package name as defined in `Package.swift`
+///
+/// 2. The directory path to the snippet file, starting with "Snippets".
+///
+/// 3. The name of your snippet file without the `.swift` extension
+///
+/// If the snippet had slices annotated within it, an individual slice of the snippet can be referenced with the `slice` option.
+/// Without the option defined, the directive embeds the entire snippet.
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.7"
     public let originalMarkup: BlockDirective
