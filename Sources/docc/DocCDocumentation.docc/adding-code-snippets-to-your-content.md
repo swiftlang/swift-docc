@@ -62,8 +62,8 @@ YourProject
 etc...
 ```
 
-> Note: Unlike `Snippets`, your Swift package's documentation catalog should be located as a subdirectory of `Sources`, where all of your other Swift source code files are located. For example, see `YourProject.docc` above.
-
+> Note: Snippets are a package-wide resource, and package manager compiles each snippet into its own module.
+> As such, the `Snippets` directory is separate from documentation catalogs, located with each target's source files.
 
 The following example illustrates a code example in the file `Snippets/example-snippet.swift`:
 

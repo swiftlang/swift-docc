@@ -12,10 +12,6 @@ import Foundation
 public import Markdown
 import SymbolKit
 
-// NOTE: If you update the DocC content, remember to run
-// `swift run generate-symbol-graph` to regenerate the DocC
-// symbol content for the DocC Documentation.
-
 /// Embeds a code example from the project's code snippets.
 ///
 /// ```markdown
