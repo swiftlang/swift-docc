@@ -316,7 +316,7 @@ private extension ContiguousArray<UTF8.CodeUnit>.SubSequence {
                 // If we find "," in one level of parenthesis, we've found a tuple.
                 return .tuple
             case closeAngle where depth == 0 && index > startIndex && self[index - 1] == hyphen:
-                // If we find "," in outside of any level of parenthesis, we've found a closure.
+                // If we find "->" outside any parentheses, we've found a closure.
                 return .closure
             default:
                 continue
