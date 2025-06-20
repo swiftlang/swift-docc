@@ -5253,6 +5253,213 @@
           "domain" : "Swift-DocC",
           "introduced" : {
             "major" : 5,
+            "minor" : 7,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Snippet"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "path"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "slice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "Embeds a code example from the project's code snippets."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Snippet(path: \"my-package\/Snippets\/example-snippet\", slice: \"setup\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Place the `Snippet` directive to embed a code example from the project's snippet directory."
+          },
+          {
+            "text" : "The path that references the snippet is identified with three parts:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "1. The package name as defined in `Package.swift`"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "2. The directory path to the snippet file, starting with \"Snippets\"."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "3. The name of your snippet file without the `.swift` extension"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If the snippet had slices annotated within it, an individual slice of the snippet can be referenced with the `slice` option."
+          },
+          {
+            "text" : "Without the option defined, the directive embeds the entire snippet."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - path: The path components of a symbol link that would be used to resolve a reference to a snippet,"
+          },
+          {
+            "text" : "     only occurring as a block directive argument."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - slice: An optional named range to limit the lines shown."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Snippet"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Snippet",
+            "spelling" : "Snippet"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Snippet"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "path"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "slice"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Snippet"
+      },
+      "pathComponents" : [
+        "Snippet"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
             "minor" : 5,
             "patch" : 0
           }
