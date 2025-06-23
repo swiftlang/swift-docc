@@ -62,8 +62,7 @@ YourProject
 etc...
 ```
 
-> Note: Snippets are a package-wide resource, and package manager compiles each snippet into its own module.
-> As such, the `Snippets` directory is separate from documentation catalogs, located with each target's source files.
+> Note: Snippets are a package-wide resource located in a "Snippets" directory next to the package's "Sources" and "Tests" directories.
 
 The following example illustrates a code example in the file `Snippets/example-snippet.swift`:
 
