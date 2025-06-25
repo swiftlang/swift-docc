@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,8 +27,8 @@ class DocumentationCuratorTests: XCTestCase {
         }
     }
     
-    func testCrawl() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testCrawl() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
@@ -74,8 +74,8 @@ class DocumentationCuratorTests: XCTestCase {
         )
     }
     
-    func testCrawlDiagnostics() throws {
-        let (tempCatalogURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+    func testCrawlDiagnostics() async throws {
+        let (tempCatalogURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = url.appendingPathComponent("documentation/myfunction.md")
             
             try """
@@ -136,8 +136,8 @@ class DocumentationCuratorTests: XCTestCase {
             """)
     }
     
-    func testCyclicCurationDiagnostic() throws {
-        let (_, context) = try loadBundle(catalog:
+    func testCyclicCurationDiagnostic() async throws {
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 // A number of articles with this cyclic curation:
                 //
@@ -201,7 +201,7 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual(curationProblem.possibleSolutions.map(\.summary), ["Remove '- <doc:First>'"])
     }
     
-    func testCurationInUncuratedAPICollection() throws {
+    func testCurationInUncuratedAPICollection() async throws {
         // Everything should behave the same when an API Collection is automatically curated as when it is explicitly curated
         for shouldCurateAPICollection in [true, false] {
             let assertionMessageDescription = "when the API collection is \(shouldCurateAPICollection ? "explicitly curated" : "auto-curated as an article under the module")."
@@ -228,7 +228,7 @@ class DocumentationCuratorTests: XCTestCase {
                 - ``NotFound``
                 """),
             ])
-            let (bundle, context) = try loadBundle(catalog: catalog)
+            let (bundle, context) = try await loadBundle(catalog: catalog)
             XCTAssertEqual(
                 context.problems.map(\.diagnostic.summary),
                 [
@@ -285,8 +285,8 @@ class DocumentationCuratorTests: XCTestCase {
         }
     }
     
-    func testModuleUnderTechnologyRoot() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+    func testModuleUnderTechnologyRoot() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "SourceLocations") { url in
             try """
             # Root curating a module
 
@@ -319,8 +319,8 @@ class DocumentationCuratorTests: XCTestCase {
             
     }
         
-    func testModuleUnderAncestorOfTechnologyRoot() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+    func testModuleUnderAncestorOfTechnologyRoot() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "SourceLocations") { url in
             try """
             # Root with ancestor curating a module
             
@@ -361,8 +361,8 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual(root.path, "/documentation/Root")
     }
 
-    func testSymbolLinkResolving() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testSymbolLinkResolving() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         let crawler = DocumentationCurator.init(in: context, bundle: bundle)
         
@@ -414,8 +414,8 @@ class DocumentationCuratorTests: XCTestCase {
         }
     }
     
-    func testLinkResolving() throws {
-        let (sourceRoot, bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testLinkResolving() async throws {
+        let (sourceRoot, bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var crawler = DocumentationCurator.init(in: context, bundle: bundle)
         
@@ -469,8 +469,8 @@ class DocumentationCuratorTests: XCTestCase {
         }
     }
     
-    func testGroupLinkValidation() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
+    func testGroupLinkValidation() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
             // Create a sidecar with invalid group links
             try! """
             # ``SideKit``
@@ -563,8 +563,8 @@ class DocumentationCuratorTests: XCTestCase {
     ///      +-- SecondLevelNesting (Manually curated)
     ///        +-- MyArticle ( <--- This should be crawled even if we've mixed manual and automatic curation)
     /// ```
-    func testMixedManualAndAutomaticCuration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
+    func testMixedManualAndAutomaticCuration() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
         
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
@@ -599,8 +599,8 @@ class DocumentationCuratorTests: XCTestCase {
     
     /// In case a symbol has automatically curated children and is manually curated multiple times,
     /// the hierarchy should be created as it's authored. rdar://75453839
-    func testMultipleManualCurationIsPreserved() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
+    func testMultipleManualCurationIsPreserved() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
         
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
         

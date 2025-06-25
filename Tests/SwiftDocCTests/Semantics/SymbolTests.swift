@@ -16,8 +16,8 @@ import SwiftDocCTestUtilities
 
 class SymbolTests: XCTestCase {
     
-    func testDocCommentWithoutArticle() throws {
-        let (withoutArticle, problems) = try makeDocumentationNodeSymbol(
+    func testDocCommentWithoutArticle() async throws {
+        let (withoutArticle, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -43,9 +43,9 @@ class SymbolTests: XCTestCase {
         XCTAssertNil(withoutArticle.topics)
     }
     
-    func testOverridingInSourceDocumentationWithEmptyArticle() throws {
+    func testOverridingInSourceDocumentationWithEmptyArticle() async throws {
         // The article heading—which should always be the symbol link header—is not considered part of the article's content
-        let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+        let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -75,8 +75,8 @@ class SymbolTests: XCTestCase {
                      "The article did override the topics section.")
     }
     
-     func testOverridingInSourceDocumentationWithDetailedArticle() throws {
-        let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+    func testOverridingInSourceDocumentationWithDetailedArticle() async throws {
+        let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -138,9 +138,9 @@ class SymbolTests: XCTestCase {
         }
     }
     
-    func testAppendingInSourceDocumentationWithArticle() throws {
+    func testAppendingInSourceDocumentationWithArticle() async throws {
         // The article heading—which should always be the symbol link header—is not considered part of the article's content
-        let (withEmptyArticleOverride, problems) = try makeDocumentationNodeSymbol(
+        let (withEmptyArticleOverride, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -169,13 +169,13 @@ class SymbolTests: XCTestCase {
         XCTAssertNil(withEmptyArticleOverride.topics)
     }
         
-    func testAppendingArticleToInSourceDocumentation() throws {
+    func testAppendingArticleToInSourceDocumentation() async throws {
         // When no DocumentationExtension behavior is specified, the default behavior is "append to doc comment".
         let withAndWithoutAppendConfiguration = ["", "@Metadata { \n @DocumentationExtension(mergeBehavior: append) \n }"]
         
         // Append curation to doc comment
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -221,7 +221,7 @@ class SymbolTests: XCTestCase {
 
         // Append overview and curation to doc comment
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -274,7 +274,7 @@ class SymbolTests: XCTestCase {
 
         // Append overview and curation to doc comment
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -327,7 +327,7 @@ class SymbolTests: XCTestCase {
 
         // Append with only abstract in doc comment
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
                     """,
@@ -381,7 +381,7 @@ class SymbolTests: XCTestCase {
 
         // Append by extending overview and adding parameters
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -421,7 +421,7 @@ class SymbolTests: XCTestCase {
 
         // Append by extending the overview (with parameters in the doc comment)
         for metadata in withAndWithoutAppendConfiguration {
-            let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+            let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
                 docComment: """
                     A cool API to call.
 
@@ -460,8 +460,8 @@ class SymbolTests: XCTestCase {
         }
     }
     
-    func testRedirectFromArticle() throws {
-        let (withRedirectInArticle, problems) = try makeDocumentationNodeSymbol(
+    func testRedirectFromArticle() async throws {
+        let (withRedirectInArticle, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -477,8 +477,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(withRedirectInArticle.redirects?.map { $0.oldPath.absoluteString }, ["some/previous/path/to/this/symbol"])
     }
     
-    func testWarningWhenDocCommentContainsUnsupportedDirective() throws {
-        let (withRedirectInArticle, problems) = try makeDocumentationNodeSymbol(
+    func testWarningWhenDocCommentContainsUnsupportedDirective() async throws {
+        let (withRedirectInArticle, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -496,8 +496,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.column, 1)
     }
 
-    func testNoWarningWhenDocCommentContainsDirective() throws {
-        let (_, problems) = try makeDocumentationNodeSymbol(
+    func testNoWarningWhenDocCommentContainsDirective() async throws {
+        let (_, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -510,7 +510,7 @@ class SymbolTests: XCTestCase {
         XCTAssertTrue(problems.isEmpty)
     }
     
-    func testNoWarningWhenDocCommentContainsDoxygen() throws {
+    func testNoWarningWhenDocCommentContainsDoxygen() async throws {
         let tempURL = try createTemporaryDirectory()
         
         let bundleURL = try Folder(name: "Inheritance.docc", content: [
@@ -520,18 +520,18 @@ class SymbolTests: XCTestCase {
                 subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
-        let (_, _, context) = try loadBundle(from: bundleURL)
+        let (_, _, context) = try await loadBundle(from: bundleURL)
         let problems = context.diagnosticEngine.problems
         XCTAssertEqual(problems.count, 0)
     }
 
-    func testParseDoxygen() throws {
+    func testParseDoxygen() async throws {
         let deckKitSymbolGraph = Bundle.module.url(
             forResource: "DeckKit-Objective-C",
             withExtension: "symbols.json",
             subdirectory: "Test Resources"
         )!
-        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: deckKitSymbolGraph, to: url.appendingPathComponent("DeckKit.symbols.json"))
         }
         let symbol = try XCTUnwrap(context.documentationCache["c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:"]?.semantic as? Symbol)
@@ -548,8 +548,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(symbol.returnsSection?.content.map({ $0.format() }), ["A new card with the given configuration."])
     }
 
-    func testUnresolvedReferenceWarningsInDocumentationExtension() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+    func testUnresolvedReferenceWarningsInDocumentationExtension() async throws {
+        let (url, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let myKitDocumentationExtensionComment = """
             # ``MyKit/MyClass``
 
@@ -940,7 +940,7 @@ class SymbolTests: XCTestCase {
         """)
     }
     
-    func testUnresolvedReferenceWarningsInDocComment() throws {
+    func testUnresolvedReferenceWarningsInDocComment() async throws {
         let docComment = """
         A cool API to call.
 
@@ -959,7 +959,7 @@ class SymbolTests: XCTestCase {
         - <doc://com.test.external/ExternalPage>
         """
         
-        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
 
@@ -1036,8 +1036,8 @@ class SymbolTests: XCTestCase {
         XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "No external resolver registered for 'com.test.external'." }))
     }
     
-    func testTopicSectionInDocComment() throws {
-        let (withArticleOverride, problems) = try makeDocumentationNodeSymbol(
+    func testTopicSectionInDocComment() async throws {
+        let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                 This is an abstract.
 
@@ -1111,8 +1111,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(engine.problems.count, 0)
     }
 
-    func testAddingConstraintsToSymbol() throws {
-        let (withoutArticle, _) = try makeDocumentationNodeSymbol(
+    func testAddingConstraintsToSymbol() async throws {
+        let (withoutArticle, _) = try await makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
 
@@ -1199,8 +1199,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(1, withoutArticle.declarationVariants[trait]!.count)
     }
     
-    func testParsesMetadataDirectiveFromDocComment() throws {
-        let (node, problems) = try makeDocumentationNodeForSymbol(
+    func testParsesMetadataDirectiveFromDocComment() async throws {
+        let (node, problems) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1218,8 +1218,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(availability.introduced.description, "1.2.3")
     }
     
-    func testEmitsWarningsInMetadataDirectives() throws {
-        let (_, problems) = try makeDocumentationNodeForSymbol(
+    func testEmitsWarningsInMetadataDirectives() async throws {
+        let (_, problems) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1239,8 +1239,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(diagnostic.range?.lowerBound.column, 1)
     }
     
-    func testEmitsWarningForDuplicateMetadata() throws {
-        let (node, problems) = try makeDocumentationNodeForSymbol(
+    func testEmitsWarningForDuplicateMetadata() async throws {
+        let (node, problems) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1270,8 +1270,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(availability.platform, .other("Platform from documentation extension"))
     }
     
-    func testEmitsWarningsForInvalidMetadataChildrenInDocumentationComments() throws {
-        let (_, problems) = try makeDocumentationNodeForSymbol(
+    func testEmitsWarningsForInvalidMetadataChildrenInDocumentationComments() async throws {
+        let (_, problems) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1313,8 +1313,8 @@ class SymbolTests: XCTestCase {
         )
     }
     
-    func testParsesDeprecationSummaryDirectiveFromDocComment() throws {
-        let (node, problems) = try makeDocumentationNodeForSymbol(
+    func testParsesDeprecationSummaryDirectiveFromDocComment() async throws {
+        let (node, problems) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1339,8 +1339,8 @@ class SymbolTests: XCTestCase {
         )
     }
     
-    func testAllowsCommentDirectiveInDocComment() throws {
-        let (_, problems) = try makeDocumentationNodeForSymbol(
+    func testAllowsCommentDirectiveInDocComment() async throws {
+        let (_, problems) = try await makeDocumentationNodeForSymbol(
             docComment: """
                 The symbol's abstract.
 
@@ -1481,8 +1481,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(lines.linesWithoutLeadingWhitespace(), linesWithoutLeadingWhitespace)
     }
 
-    func testLeadingWhitespaceInDocComment() throws {
-        let (semanticWithLeadingWhitespace, problems) = try makeDocumentationNodeSymbol(
+    func testLeadingWhitespaceInDocComment() async throws {
+        let (semanticWithLeadingWhitespace, problems) = try await makeDocumentationNodeSymbol(
             docComment: """
                     This is an abstract.
                      
@@ -1513,9 +1513,9 @@ class SymbolTests: XCTestCase {
         diagnosticEngineFilterLevel: DiagnosticSeverity = .warning,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (DocumentationNode, [Problem]) {
+    ) async throws -> (DocumentationNode, [Problem]) {
         let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             
             let newDocComment = self.makeLineList(
@@ -1575,8 +1575,8 @@ class SymbolTests: XCTestCase {
         articleContent: String?,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (Symbol, [Problem]) {
-        let (node, problems) = try makeDocumentationNodeForSymbol(
+    ) async throws -> (Symbol, [Problem]) {
+        let (node, problems) = try await makeDocumentationNodeForSymbol(
             docComment: docComment,
             articleContent: articleContent,
             file: file,

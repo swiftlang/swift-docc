@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -86,8 +86,8 @@ class ArticleSymbolMentionsTests: XCTestCase {
         }
     }
 
-    func testSymbolLinkCollectorEnabled() throws {
-        let (bundle, context) = try createMentionedInTestBundle()
+    func testSymbolLinkCollectorEnabled() async throws {
+        let (bundle, context) = try await createMentionedInTestBundle()
 
         // The test bundle currently only has one article with symbol mentions
         // in the abstract/discussion.
@@ -108,7 +108,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertEqual(mentioningArticle, gottenArticle)
     }
 
-    func testSymbolLinkCollectorDisabled() throws {
+    func testSymbolLinkCollectorDisabled() async throws {
         let currentFeatureFlags = FeatureFlags.current
         addTeardownBlock {
             FeatureFlags.current = currentFeatureFlags
@@ -116,7 +116,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
         FeatureFlags.current.isMentionedInEnabled = false
         
         
-        let (bundle, context) = try createMentionedInTestBundle()
+        let (bundle, context) = try await createMentionedInTestBundle()
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 
         let mentionedSymbol = ResolvedTopicReference(

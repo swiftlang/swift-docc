@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class ChapterTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @Chapter
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(chapter)
@@ -31,7 +31,7 @@ class ChapterTests: XCTestCase {
         XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
     }
     
-    func testMultipleMedia() throws {
+    func testMultipleMedia() async throws {
         let chapterName = "Chapter 1"
         let source = """
 @Chapter(name: "\(chapterName)") {
@@ -42,7 +42,7 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertEqual(1, problems.count)
@@ -61,7 +61,7 @@ class ChapterTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let chapterName = "Chapter 1"
         let source = """
 @Chapter(name: "\(chapterName)") {
@@ -71,7 +71,7 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
@@ -82,8 +82,8 @@ class ChapterTests: XCTestCase {
         }
     }
     
-    func testDuplicateTutorialReferences() throws {
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testDuplicateTutorialReferences() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         /*
          The test bundle contains the duplicate tutorial references in TestOverview:

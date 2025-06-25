@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,8 +18,8 @@ fileprivate let jsonEncoder = JSONEncoder()
 
 class ConstraintsRenderSectionTests: XCTestCase {
     
-    func testSingleConstraint() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+    func testSingleConstraint() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -48,8 +48,8 @@ class ConstraintsRenderSectionTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Label is Text.")
     }
 
-    func testSingleRedundantConstraint() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+    func testSingleRedundantConstraint() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -77,8 +77,8 @@ class ConstraintsRenderSectionTests: XCTestCase {
         XCTAssertNil(renderNode.metadata.conformance)
     }
 
-    func testSingleRedundantConstraintForLeaves() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+    func testSingleRedundantConstraintForLeaves() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -106,8 +106,8 @@ class ConstraintsRenderSectionTests: XCTestCase {
         XCTAssertNil(renderNode.metadata.conformance)
     }
 
-    func testPreservesNonRedundantConstraints() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+    func testPreservesNonRedundantConstraints() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -136,8 +136,8 @@ class ConstraintsRenderSectionTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element is MyClass.")
     }
 
-    func testGroups2Constraints() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+    func testGroups2Constraints() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -166,8 +166,8 @@ class ConstraintsRenderSectionTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol and Equatable.")
     }
 
-    func testGroups3Constraints() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+    func testGroups3Constraints() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -197,8 +197,8 @@ class ConstraintsRenderSectionTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol, Equatable, and Hashable.")
     }
 
-    func testRenderReferences() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+    func testRenderReferences() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -235,8 +235,8 @@ class ConstraintsRenderSectionTests: XCTestCase {
         XCTAssertEqual(renderReference.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol and Equatable.")
     }
 
-    func testRenderReferencesWithNestedTypeInSelf() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+    func testRenderReferencesWithNestedTypeInSelf() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))

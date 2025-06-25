@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class StackTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Stack"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -34,7 +34,7 @@ class StackTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
         @Stack {
           @ContentAndMedia {
@@ -48,7 +48,7 @@ class StackTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -59,7 +59,7 @@ class StackTests: XCTestCase {
         }
     }
 
-    func testTooManyChildren() throws {
+    func testTooManyChildren() async throws {
         var source = "@Stack {"
         for _ in 0...Stack.childrenLimit {
             source += """
@@ -78,7 +78,7 @@ class StackTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()

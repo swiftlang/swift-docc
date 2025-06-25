@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,8 +50,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     
     private let swiftSelector = UnifiedSymbolGraph.Selector(interfaceLanguage: "swift", platform: nil)
     
-    func testImplementsRelationship() throws {
-        let (bundle, context) = try testBundleAndContext()
+    func testImplementsRelationship() async throws {
+        let (bundle, context) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -64,8 +64,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertFalse((documentationCache["B"]!.semantic as! Symbol).defaultImplementations.implementations.isEmpty)
     }
 
-    func testConformsRelationship() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testConformsRelationship() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -93,8 +93,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertEqual(conforming.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/A")
     }
 
-    func testInheritanceRelationship() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testInheritanceRelationship() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -122,8 +122,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertEqual(inherited.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/A")
     }
     
-    func testInheritanceRelationshipFromOtherFramework() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testInheritanceRelationshipFromOtherFramework() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -159,8 +159,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         }), "Could not fallback for parent in inherits from relationship")
     }
     
-    func testRequirementRelationship() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testRequirementRelationship() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -173,8 +173,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertTrue((documentationCache["A"]!.semantic as! Symbol).isRequired)
     }
     
-    func testOptionalRequirementRelationship() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testOptionalRequirementRelationship() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         

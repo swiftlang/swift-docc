@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,8 +13,8 @@ import XCTest
 @testable import SwiftDocC
 
 class DocumentationContextConverterTests: XCTestCase {
-    func testRenderNodesAreIdentical() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testRenderNodesAreIdentical() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         // We'll use this to convert nodes ad-hoc
         let perNodeConverter = DocumentationNodeConverter(bundle: bundle, context: context)
@@ -40,8 +40,8 @@ class DocumentationContextConverterTests: XCTestCase {
         }
     }
     
-    func testSymbolLocationsAreOnlyIncludedWhenRequested() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testSymbolLocationsAreOnlyIncludedWhenRequested() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
@@ -70,8 +70,8 @@ class DocumentationContextConverterTests: XCTestCase {
         }
     }
     
-    func testSymbolAccessLevelsAreOnlyIncludedWhenRequested() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testSymbolAccessLevelsAreOnlyIncludedWhenRequested() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
