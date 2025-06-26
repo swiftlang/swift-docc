@@ -9,7 +9,7 @@
 */
 
 import XCTest
-@testable import SwiftDocC
+@testable @preconcurrency import SwiftDocC
 import Markdown
 import SwiftDocCTestUtilities
 import SymbolKit
