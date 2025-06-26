@@ -197,12 +197,6 @@ Extending the earlier snippet example, the slice `setup` would be referenced wit
 @Snippet(path: "my-package/Snippets/example-snippet", slice: "setup")
 ```
 
-### Documenting the code in your snippet
-
-DocC parses contiguous comments within the code of a snippet as markdown to annotate your code when embedded in documentation.
-DocC will attempt to reference symbols from within these comments just like any other documentation content.
-You can reference symbols from your API, which DocC converts into hyperlinks to that symbol when displaying the content.
-
 ## Topics
 
 ### Directives
