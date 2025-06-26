@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -105,7 +105,7 @@ class SymbolReferenceTests: XCTestCase {
         }
     }
 
-    func testCreatesUniquePathsForOverloadSymbols() throws {
+    func testCreatesUniquePathsForOverloadSymbols() async throws {
         let testCatalog = Folder(name: "TestCreatesUniquePathsForOverloadSymbols.docc", content: [
             InfoPlist(displayName: "TestCreatesUniquePathsForOverloadSymbols", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
@@ -198,7 +198,7 @@ class SymbolReferenceTests: XCTestCase {
             ]),
         ])
         
-        let (_, context) = try loadBundle(catalog: testCatalog)
+        let (_, context) = try await loadBundle(catalog: testCatalog)
         
         // The overloads are sorted and all dupes get a hash suffix.
         XCTAssertEqual(

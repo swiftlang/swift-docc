@@ -13,20 +13,20 @@ import XCTest
 import Markdown
 
 class ContentAndMediaTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @ContentAndMedia {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
         XCTAssertEqual(0, problems.count)
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
 @ContentAndMedia {
    
@@ -37,7 +37,7 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
@@ -47,7 +47,7 @@ class ContentAndMediaTests: XCTestCase {
         }
     }
     
-    func testTrailingMiddleMediaPosition() throws {
+    func testTrailingMiddleMediaPosition() async throws {
         let source = """
 @ContentAndMedia {
    
@@ -58,7 +58,7 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
@@ -68,7 +68,7 @@ class ContentAndMediaTests: XCTestCase {
         }
     }
     
-    func testTrailingMediaPosition() throws {
+    func testTrailingMediaPosition() async throws {
         let source = """
 @ContentAndMedia {
    
@@ -81,7 +81,7 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)
@@ -91,7 +91,7 @@ class ContentAndMediaTests: XCTestCase {
         }
     }
 
-    func testDeprecatedArguments() throws {
+    func testDeprecatedArguments() async throws {
         let source = """
 @ContentAndMedia(layout: horizontal, eyebrow: eyebrow, title: title) {
 
@@ -102,7 +102,7 @@ class ContentAndMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(contentAndMedia)

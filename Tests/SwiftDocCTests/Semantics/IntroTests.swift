@@ -13,11 +13,11 @@ import XCTest
 import Markdown
 
 class IntroTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Intro"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(intro)
@@ -26,7 +26,7 @@ class IntroTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.HasArgument.title", problems[0].diagnostic.identifier)
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let videoPath = "/path/to/video"
         let imagePath = "/path/to/image"
         let posterPath = "/path/to/poster"
@@ -42,7 +42,7 @@ class IntroTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(intro)
@@ -56,7 +56,7 @@ class IntroTests: XCTestCase {
         }
     }
     
-    func testIncorrectArgumentLabel() throws {
+    func testIncorrectArgumentLabel() async throws {
         let source = """
         @Intro(titleText: "Title") {
           Here is a paragraph.
@@ -68,7 +68,7 @@ class IntroTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(intro)

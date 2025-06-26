@@ -13,11 +13,11 @@ import XCTest
 import Markdown
 
 class ResourcesTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@\(Resources.directiveName)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(resources)
@@ -33,7 +33,7 @@ class ResourcesTests: XCTestCase {
         XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
 @\(Resources.directiveName) {
    Find the tools and a comprehensive set of resources for creating AR experiences on iOS.
@@ -67,7 +67,7 @@ class ResourcesTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(resources)
@@ -92,7 +92,7 @@ Resources @1:1-29:2
         }
     }
 
-    func testMissingLinksWarning() throws {
+    func testMissingLinksWarning() async throws {
         let source = """
 @\(Resources.directiveName) {
    Find the tools and a comprehensive set of resources for creating AR experiences on iOS.
@@ -120,7 +120,7 @@ Resources @1:1-29:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(resources)

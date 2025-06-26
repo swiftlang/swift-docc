@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -37,9 +37,9 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     var testBundle: DocumentationBundle!
     var context: DocumentationContext!
     
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        (testBundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    override func setUp() async throws {
+        try await super.setUp()
+        (testBundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
     }
     
     override func tearDown() {

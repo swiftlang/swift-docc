@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,8 +15,8 @@ import XCTest
 import Markdown
 
 class OptionsTests: XCTestCase {
-    func testDefaultOptions() throws {
-        let (problems, options) = try parseDirective(Options.self) {
+    func testDefaultOptions() async throws {
+        let (problems, options) = try await parseDirective(Options.self) {
             """
             @Options {
             
@@ -33,9 +33,9 @@ class OptionsTests: XCTestCase {
         XCTAssertEqual(unwrappedOptions.scope, .local)
     }
     
-    func testOptionsParameters() throws {
+    func testOptionsParameters() async throws {
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options(scope: global) {
                 
@@ -48,7 +48,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options(scope: local) {
                 
@@ -61,7 +61,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options(scope: global, random: foo) {
                 
@@ -79,9 +79,9 @@ class OptionsTests: XCTestCase {
         }
     }
     
-    func testAutomaticSeeAlso() throws {
+    func testAutomaticSeeAlso() async throws {
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticSeeAlso(disabled)
@@ -94,7 +94,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticSeeAlso(enabled)
@@ -107,7 +107,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticSeeAlso(foo)
@@ -128,9 +128,9 @@ class OptionsTests: XCTestCase {
         }
     }
     
-    func testTopicsVisualStyle() throws {
+    func testTopicsVisualStyle() async throws {
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @TopicsVisualStyle(detailedGrid)
@@ -143,7 +143,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @TopicsVisualStyle(compactGrid)
@@ -156,7 +156,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @TopicsVisualStyle(list)
@@ -169,7 +169,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @TopicsVisualStyle(hidden)
@@ -182,7 +182,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticSeeAlso(foo)
@@ -203,9 +203,9 @@ class OptionsTests: XCTestCase {
         }
     }
     
-    func testAutomaticTitleHeading() throws {
+    func testAutomaticTitleHeading() async throws {
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticTitleHeading(disabled)
@@ -218,7 +218,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticTitleHeading(enabled)
@@ -231,7 +231,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticTitleHeading(foo)
@@ -252,8 +252,8 @@ class OptionsTests: XCTestCase {
         }
     }
     
-    func testMixOfOptions() throws {
-        let (problems, options) = try parseDirective(Options.self) {
+    func testMixOfOptions() async throws {
+        let (problems, options) = try await parseDirective(Options.self) {
             """
             @Options {
                 @AutomaticTitleHeading(enabled)
@@ -271,8 +271,8 @@ class OptionsTests: XCTestCase {
         XCTAssertEqual(options?.automaticArticleSubheadingEnabled, true)
     }
     
-    func testUnsupportedChild() throws {
-        let (problems, options) = try parseDirective(Options.self) {
+    func testUnsupportedChild() async throws {
+        let (problems, options) = try await parseDirective(Options.self) {
             """
             @Options {
                 @AutomaticTitleHeading(enabled)
@@ -295,9 +295,9 @@ class OptionsTests: XCTestCase {
         )
     }
     
-    func testAutomaticArticleSubheading() throws {
+    func testAutomaticArticleSubheading() async throws {
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                 }
@@ -310,7 +310,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticArticleSubheading(randomArgument)
@@ -324,7 +324,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticArticleSubheading(disabled)
@@ -338,7 +338,7 @@ class OptionsTests: XCTestCase {
         }
         
         do {
-            let (problems, options) = try parseDirective(Options.self) {
+            let (problems, options) = try await parseDirective(Options.self) {
                 """
                 @Options {
                     @AutomaticArticleSubheading(enabled)

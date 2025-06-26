@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,22 +12,22 @@ import XCTest
 @testable import SwiftDocC
 
 class DocumentationContext_MixedLanguageSourceLanguagesTests: XCTestCase {
-    func testArticleAvailableSourceLanguagesIsSwiftInSwiftModule() throws {
-        try assertArticleAvailableSourceLanguages(
+    func testArticleAvailableSourceLanguagesIsSwiftInSwiftModule() async throws {
+        try await assertArticleAvailableSourceLanguages(
             moduleAvailableLanguages: [.swift],
             expectedArticleDefaultLanguage: .swift
         )
     }
     
-    func testArticleAvailableSourceLanguagesIsMixedLanguageInMixedLanguageModule() throws {
-        try assertArticleAvailableSourceLanguages(
+    func testArticleAvailableSourceLanguagesIsMixedLanguageInMixedLanguageModule() async throws {
+        try await assertArticleAvailableSourceLanguages(
             moduleAvailableLanguages: [.swift, .objectiveC],
             expectedArticleDefaultLanguage: .swift
         )
     }
     
-    func testArticleAvailableSourceLanguagesIsObjectiveCInObjectiveCModule() throws {
-        try assertArticleAvailableSourceLanguages(
+    func testArticleAvailableSourceLanguagesIsObjectiveCInObjectiveCModule() async throws {
+        try await assertArticleAvailableSourceLanguages(
             moduleAvailableLanguages: [.objectiveC],
             expectedArticleDefaultLanguage: .objectiveC
         )
@@ -38,13 +38,13 @@ class DocumentationContext_MixedLanguageSourceLanguagesTests: XCTestCase {
         expectedArticleDefaultLanguage: SourceLanguage,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws {
+    ) async throws {
         precondition(
             moduleAvailableLanguages.allSatisfy { [.swift, .objectiveC].contains($0) },
             "moduleAvailableLanguages can only contain Swift and Objective-C as languages."
         )
         
-        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # MyArticle
             

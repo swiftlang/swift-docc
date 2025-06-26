@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,26 +12,28 @@ import XCTest
 @testable import SwiftDocC
 
 class TopicAnchorHashTests: XCTestCase {
-    func testAnchorSectionsHash() throws {
-        let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testAnchorSectionsHash() async throws {
+        func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
+            let (_, context) = try await self.testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicAnchorHash(context: context), benchmarkLog: testBenchmark)
-            return testBenchmark.metrics[0].result
+            
+            return try Self.extractChecksumHash(from: testBenchmark)
         }
-        .compactMap { value -> String? in
-            guard case MetricValue.checksum(let hash)? = value else { return nil }
-            return hash
-        }
+
+        let expectedHash = try await computeTopicHash()
         
         // Verify the produced topic graph hash is repeatedly the same
-        XCTAssertTrue(hashes.allSatisfy({ $0 == hashes.first }))
+        for _ in 0 ..< 10 {
+            let hash = try await computeTopicHash()
+            XCTAssertEqual(hash, expectedHash)
+        }
     }
     
-    func testTopicAnchorsChangedHash() throws {
+    func testTopicAnchorsChangedHash() async throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         do {
             let testBenchmark = Benchmark()
@@ -70,4 +72,17 @@ class TopicAnchorHashTests: XCTestCase {
         XCTAssertNotEqual(initialHash, modifiedHash)
     }
 
+    static func extractChecksumHash(
+        from benchmark: Benchmark,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> String {
+        let hash: String? = switch benchmark.metrics[0].result {
+            case .checksum(let hash):
+                hash
+            default:
+                nil
+        }
+        return try XCTUnwrap(hash, file: file, line: line)
+    }
 }

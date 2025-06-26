@@ -225,8 +225,8 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         }
     }
     
-    func testCompileSymbolGraphAndValidateLinks() throws {
-        let (_, _, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testCompileSymbolGraphAndValidateLinks() async throws {
+        let (_, _, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let expectedDescriptions = [
             // doc://org.swift.docc.example/documentation/FillIntroduced:
             """
@@ -533,8 +533,8 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         }
     }
     
-    func testCompileOverloadedSymbolGraphAndValidateLinks() throws {
-        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
+    func testCompileOverloadedSymbolGraphAndValidateLinks() async throws {
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols")
         
         let expectedDescriptions = [
             // doc://com.shapes.ShapeKit/documentation/ShapeKit:
@@ -853,8 +853,8 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         }
     }
     
-    func testLinkComponentStringConversion() throws {
-        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
+    func testLinkComponentStringConversion() async throws {
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols")
         
         let bundlePathComponents = context.documentationCache.allReferences
             .flatMap(\.pathComponents)

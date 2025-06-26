@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class AssessmentsTests: XCTestCase {
-    func testEmptyAndLonely() throws {
+    func testEmptyAndLonely() async throws {
         let source = "@Assessments"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()

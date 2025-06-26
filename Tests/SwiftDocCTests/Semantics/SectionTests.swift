@@ -15,11 +15,11 @@ import XCTest
 import Markdown
 
 class TutorialSectionTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Section"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let section = TutorialSection(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(section)

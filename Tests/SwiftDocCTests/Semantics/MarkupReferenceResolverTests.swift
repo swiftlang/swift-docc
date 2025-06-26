@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,8 +13,8 @@ import XCTest
 import Markdown
 
 class MarkupReferenceResolverTests: XCTestCase {
-    func testArbitraryReferenceInComment() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testArbitraryReferenceInComment() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let source = """
         @Comment {
             ``hello`` and ``world`` are 2 arbitrary symbol links.
@@ -28,8 +28,8 @@ class MarkupReferenceResolverTests: XCTestCase {
         XCTAssertEqual(0, resolver.problems.count)
     }
 
-    func testDuplicatedDiagnosticForExtensionFile() throws {
-        let (_, context) = try testBundleAndContext(named: "ExtensionArticleBundle")
+    func testDuplicatedDiagnosticForExtensionFile() async throws {
+        let (_, context) = try await testBundleAndContext(named: "ExtensionArticleBundle")
         // Before #733, symbols with documentation extension files emitted duplicated problems:
         // - one with a source location in the in-source documentation comment
         // - one with a source location in the documentation extension file.

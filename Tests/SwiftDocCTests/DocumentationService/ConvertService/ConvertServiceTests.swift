@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1487,14 +1487,14 @@ class ConvertServiceTests: XCTestCase {
         )
     }
     
-    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithUncuratedArticles() throws {
+    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithUncuratedArticles() async throws {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
+        let (testBundleURL, _, _) = try await testBundleAndContext(
             copying: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "sidekit.symbols.json",
@@ -1616,14 +1616,14 @@ class ConvertServiceTests: XCTestCase {
         #endif
     }
     
-    func testNoRenderReferencesToNonLinkableNodes() throws {
+    func testNoRenderReferencesToNonLinkableNodes() async throws {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
+        let (testBundleURL, _, _) = try await testBundleAndContext(
             copying: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "mykit-iOS.symbols.json",
@@ -1658,14 +1658,14 @@ class ConvertServiceTests: XCTestCase {
         #endif
     }
     
-    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithCuratedArticles() throws {
+    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithCuratedArticles() async throws {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
+        let (testBundleURL, _, _) = try await testBundleAndContext(
             // Use a bundle that contains only articles, one of which is declared as the TechnologyRoot and curates the
             // other articles.
             copying: "BundleWithTechnologyRoot"

@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class TutorialReferenceTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @TutorialReference
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(tutorialReference)
@@ -30,14 +30,14 @@ class TutorialReferenceTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let tutorialLink = "doc:MyTutorial"
         let source = """
 @TutorialReference(tutorial: "\(tutorialLink)")
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(tutorialReference)
@@ -50,14 +50,14 @@ class TutorialReferenceTests: XCTestCase {
         XCTAssertTrue(problems.isEmpty)
     }
     
-    func testMissingPath() throws {
+    func testMissingPath() async throws {
         let tutorialLink = "doc:"
         let source = """
         @TutorialReference(tutorial: "\(tutorialLink)")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let tutorialReference = TutorialReference(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(tutorialReference)

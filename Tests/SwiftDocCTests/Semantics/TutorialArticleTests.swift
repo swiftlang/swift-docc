@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class TutorialArticleTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Article"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -35,7 +35,7 @@ class TutorialArticleTests: XCTestCase {
         }
     }
     
-    func testSimpleNoIntro() throws {
+    func testSimpleNoIntro() async throws {
         let source = """
 @Article {
    ## The first section
@@ -56,7 +56,7 @@ class TutorialArticleTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -75,7 +75,7 @@ TutorialArticle @1:1-13:2
     }
     
     /// Tests that we parse correctly and emit proper warnings when the author provides non-sequential headers.
-    func testHeaderMix() throws {
+    func testHeaderMix() async throws {
         let source = """
 @Article {
    ## The first section
@@ -106,7 +106,7 @@ TutorialArticle @1:1-13:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -124,7 +124,7 @@ TutorialArticle @1:1-23:2
         }
     }
     
-    func testIntroAndContent() throws {
+    func testIntroAndContent() async throws {
         let source = """
 @Article(time: 20) {
 
@@ -155,7 +155,7 @@ TutorialArticle @1:1-23:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -176,7 +176,7 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
         }
     }
     
-    func testLayouts() throws {
+    func testLayouts() async throws {
         let source = """
 @Article {
 
@@ -265,7 +265,7 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -311,7 +311,7 @@ TutorialArticle @1:1-81:2
         }
     }
     
-    func testAssessment() throws {
+    func testAssessment() async throws {
             let source = """
 @Article(time: 20) {
    @Intro(title: "Basic Augmented Reality App") {
@@ -361,7 +361,7 @@ TutorialArticle @1:1-81:2
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
             
             directive.map { directive in
                 var problems = [Problem]()
@@ -393,12 +393,12 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
             }
         }
 
-    func testAnalyzeNode() throws {
+    func testAnalyzeNode() async throws {
         let title = "unreferenced-tutorial"
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -412,12 +412,12 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         XCTAssertTrue(source.isFileURL)
     }
 
-    func testAnalyzeExternalNode() throws {
+    func testAnalyzeExternalNode() async throws {
         let title = "unreferenced-tutorial"
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -430,14 +430,14 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         XCTAssertNil(problem.diagnostic.source)
     }
 
-    func testAnalyzeFragmentNode() throws {
+    func testAnalyzeFragmentNode() async throws {
         let title = "unreferenced-tutorial"
         let url = URL(fileURLWithPath: "/path/to/\(title)")
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -451,7 +451,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
     }
 
     /// Verify that a `TutorialArticle` only recognizes chapter, volume, or tutorial table-of-contents nodes as valid parents.
-    func testAnalyzeForValidParent() throws {
+    func testAnalyzeForValidParent() async throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
             let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
@@ -459,7 +459,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         let tutorialArticleNode = node(withTitle: "tutorial-article", ofKind: .tutorialArticle)
 

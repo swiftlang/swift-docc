@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,8 +14,8 @@ import Markdown
 @testable import SwiftDocC
 
 class DocumentationContentRendererTests: XCTestCase {
-    func testReplacesTypeIdentifierSubHeadingFragmentWithIdentifierForSwift() throws {
-        let subHeadingFragments = try makeDocumentationContentRenderer()
+    func testReplacesTypeIdentifierSubHeadingFragmentWithIdentifierForSwift() async throws {
+        let subHeadingFragments = try await makeDocumentationContentRenderer()
             .subHeadingFragments(for: nodeWithSubheadingAndNavigatorVariants)
         
         XCTAssertEqual(
@@ -45,8 +45,8 @@ class DocumentationContentRendererTests: XCTestCase {
         )
     }
     
-    func testDoesNotReplaceSubHeadingFragmentsForOtherLanguagesThanSwift() throws {
-        let subHeadingFragments = try makeDocumentationContentRenderer()
+    func testDoesNotReplaceSubHeadingFragmentsForOtherLanguagesThanSwift() async throws {
+        let subHeadingFragments = try await makeDocumentationContentRenderer()
             .subHeadingFragments(for: nodeWithSubheadingAndNavigatorVariants)
         
         guard case .replace(let fragments) = subHeadingFragments.variants.first?.patch.first else {
@@ -73,8 +73,8 @@ class DocumentationContentRendererTests: XCTestCase {
         )
     }
     
-    func testReplacesTypeIdentifierNavigatorFragmentWithIdentifierForSwift() throws {
-        let navigatorFragments = try makeDocumentationContentRenderer()
+    func testReplacesTypeIdentifierNavigatorFragmentWithIdentifierForSwift() async throws {
+        let navigatorFragments = try await makeDocumentationContentRenderer()
             .navigatorFragments(for: nodeWithSubheadingAndNavigatorVariants)
         
         XCTAssertEqual(
@@ -104,8 +104,8 @@ class DocumentationContentRendererTests: XCTestCase {
         )
     }
     
-    func testDoesNotReplacesNavigatorFragmentsForOtherLanguagesThanSwift() throws {
-        let navigatorFragments = try makeDocumentationContentRenderer()
+    func testDoesNotReplacesNavigatorFragmentsForOtherLanguagesThanSwift() async throws {
+        let navigatorFragments = try await makeDocumentationContentRenderer()
             .navigatorFragments(for: nodeWithSubheadingAndNavigatorVariants)
         
         guard case .replace(let fragments) = navigatorFragments.variants.first?.patch.first else {
@@ -138,8 +138,8 @@ private extension DocumentationDataVariantsTrait {
 }
 
 private extension DocumentationContentRendererTests {
-    func makeDocumentationContentRenderer() throws -> DocumentationContentRenderer {
-        let (bundle, context) = try testBundleAndContext()
+    func makeDocumentationContentRenderer() async throws -> DocumentationContentRenderer {
+        let (bundle, context) = try await testBundleAndContext()
         return DocumentationContentRenderer(documentationContext: context, bundle: bundle)
     }
     

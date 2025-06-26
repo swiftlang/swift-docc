@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,9 +15,9 @@ import XCTest
 import Markdown
 
 class LinksTests: XCTestCase {
-    func testMissingBasicRequirements() throws {
+    func testMissingBasicRequirements() async throws {
         do {
-            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links(visualStyle: compactGrid)
                 """
@@ -34,7 +34,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links {
                     - <doc:MyArticle>
@@ -55,9 +55,9 @@ class LinksTests: XCTestCase {
         }
     }
     
-    func testInvalidBodyContent() throws {
+    func testInvalidBodyContent() async throws {
         do {
-            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links(visualStyle: compactGrid) {
                     This is a paragraph of text in 'Links' directive.
@@ -82,7 +82,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links(visualStyle: compactGrid) {
                     This is a paragraph of text in 'Links' directive.
@@ -116,7 +116,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links(visualStyle: compactGrid) {
                     - <doc:MyArticle> Link with some trailing content.
@@ -147,9 +147,9 @@ class LinksTests: XCTestCase {
         }
     }
     
-    func testLinkResolution() throws {
+    func testLinkResolution() async throws {
         do {
-            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
                 """
                 @Links(visualStyle: compactGrid) {
                     - <doc:MyArticle>
@@ -185,7 +185,7 @@ class LinksTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, links) = try parseDirective(Links.self, in: "LegacyBundle_DoNotUseInNewTests") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "LegacyBundle_DoNotUseInNewTests") {
                 """
                 @Links(visualStyle: compactGrid) {
                     - ``MyKit/MyClass``
