@@ -90,9 +90,22 @@ struct DocumentationCurator {
         }
         
         // Try extracting an article from the cache
-        let articleFilename = unresolved.topicURL.components.path.components(separatedBy: "/").last!
-        let sourceArticlePath = NodeURLGenerator.Path.article(bundleName: bundle.displayName, articleName: articleFilename).stringValue
-        
+        let sourceArticlePath: String = {
+            let path = unresolved.topicURL.components.path.removingLeadingSlash
+            
+            // The article path can either be written as
+            // - "ArticleName"
+            // - "CatalogName/ArticleName"
+            // - "documentation/CatalogName/ArticleName"
+            switch path.components(separatedBy: "/").count {
+            case 0,1:
+                return NodeURLGenerator.Path.article(bundleName: bundle.displayName, articleName: path).stringValue
+            case 2:
+                return "\(NodeURLGenerator.Path.documentationFolder)/\(path)"
+            default:
+                return path.prependingLeadingSlash
+            }
+        }()
         let reference = ResolvedTopicReference(
             bundleID: resolved.bundleID,
             path: sourceArticlePath,
@@ -115,6 +128,7 @@ struct DocumentationCurator {
         context.topicGraph.addNode(curatedNode)
         
         // Move the article from the article cache to the documentation
+        let articleFilename = reference.url.pathComponents.last!
         context.linkResolver.localResolver.addArticle(filename: articleFilename, reference: reference, anchorSections: documentationNode.anchorSections)
         
         context.documentationCache[reference] = documentationNode
