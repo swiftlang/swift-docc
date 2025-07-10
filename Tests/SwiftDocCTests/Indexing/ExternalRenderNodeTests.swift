@@ -108,4 +108,49 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(externalRenderNodes[3].role, "symbol")
         XCTAssertEqual(externalRenderNodes[3].externalIdentifier.identifier, "doc://com.test.external/path/to/external/swiftSymbol")
     }
+    
+    func testExternalRenderNodeVariantRepresentation() throws {
+        let renderReferenceIdentifier = RenderReferenceIdentifier(forExternalLink: "doc://com.test.external/path/to/external/symbol")
+        
+        // Variants for the title
+        let swiftTitle = "Swift Symbol"
+        let occTitle = "Occ Symbol"
+        
+        // Variants for the navigator title
+        let navigatorTitle: [DeclarationRenderSection.Token] = [.init(text: "symbol", kind: .identifier)]
+        let occNavigatorTitle: [DeclarationRenderSection.Token] = [.init(text: "occ_symbol", kind: .identifier)]
+        
+        // Variants for the fragments
+        let fragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "symbol", kind: .identifier)]
+        let occFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
+        
+        let externalEntity = LinkResolver.ExternalEntity(
+            topicRenderReference: .init(
+                identifier: renderReferenceIdentifier,
+                titleVariants: .init(defaultValue: swiftTitle, objectiveCValue: occTitle),
+                abstractVariants: .init(defaultValue: []),
+                url: "/example/path/to/external/symbol",
+                kind: .symbol,
+                fragmentsVariants: .init(defaultValue: fragments, objectiveCValue: occFragments),
+                navigatorTitleVariants: .init(defaultValue: navigatorTitle, objectiveCValue: occNavigatorTitle)
+            ),
+            renderReferenceDependencies: .init(),
+            sourceLanguages: [SourceLanguage(name: "swift"), SourceLanguage(name: "objc")])
+        let externalRenderNode = ExternalRenderNode(
+            externalEntity: externalEntity,
+            bundleIdentifier: "com.test.external"
+        )
+        
+        let swiftNavigatorExternalRenderNode = try XCTUnwrap(
+            NavigatorExternalRenderNode(renderNode: externalRenderNode)
+        )
+        XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.title, swiftTitle)
+        XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.navigatorTitle, navigatorTitle)
+        
+        let objcNavigatorExternalRenderNode = try XCTUnwrap(
+            NavigatorExternalRenderNode(renderNode: externalRenderNode, trait: .interfaceLanguage("objc"))
+        )
+        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, occTitle)
+        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.navigatorTitle, occNavigatorTitle)
+    }
 }

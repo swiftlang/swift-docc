@@ -83,3 +83,66 @@ package struct ExternalRenderNode {
         }
     }
 }
+
+/// A language specific representation of an external render node value for building a navigator index.
+struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
+    var identifier: ResolvedTopicReference
+    var externalIdentifier: RenderReferenceIdentifier
+    var kind: RenderNode.Kind
+    var metadata: ExternalRenderNodeMetadataRepresentation
+    
+    // Values that don't affect how the node is rendered in the sidebar.
+    // These are needed to conform to the navigator indexable protocol.
+    var references: [String : any RenderReference] = [:]
+    var sections: [any RenderSection] = []
+    var topicSections: [TaskGroupRenderSection] = []
+    var defaultImplementationsSections: [TaskGroupRenderSection] = []
+    
+    init(renderNode: ExternalRenderNode, trait: RenderNode.Variant.Trait? = nil) {
+        // Compute the source language of the node based on the trait to know which variant to apply.
+        let traitLanguage = if case .interfaceLanguage(let id) = trait {
+            SourceLanguage(id: id)
+        } else {
+            renderNode.identifier.sourceLanguage
+        }
+        let traits = trait.map { [$0] } ?? []
+
+        self.identifier = renderNode.identifier.withSourceLanguages(Set(arrayLiteral: traitLanguage))
+        self.kind = renderNode.kind
+        self.externalIdentifier = renderNode.externalIdentifier
+        
+        self.metadata = ExternalRenderNodeMetadataRepresentation(
+            title: renderNode.titleVariants.value(for: traits),
+            navigatorTitle: renderNode.navigatorTitleVariants.value(for: traits),
+            externalID: renderNode.externalIdentifier.identifier,
+            role: renderNode.role,
+            symbolKind: renderNode.symbolKind?.identifier,
+            images: renderNode.images
+        )
+    }
+}
+
+/// A language specific representation of a render metadata value for building an external navigator index.
+struct ExternalRenderNodeMetadataRepresentation: NavigatorIndexableRenderMetadataRepresentation {
+    var title: String?
+    var navigatorTitle: [DeclarationRenderSection.Token]?
+    var externalID: String?
+    var role: String?
+    var symbolKind: String?
+    var images: [TopicImage]
+
+    // Values that we have insufficient information to derive.
+    // These are needed to conform to the navigator indexable metadata protocol.
+    //
+    // The fragments that we get as part of the external link are the full declaration fragments.
+    // These are too verbose for the navigator, so instead of using them, we rely on the title, navigator title and symbol kind instead.
+    //
+    // The role heading is used to identify Property Lists.
+    // The value being missing is used for computing the final navigator title.
+    //
+    // The platforms are used for generating the availability index,
+    // but doesn't affect how the node is rendered in the sidebar.
+    var fragments: [DeclarationRenderSection.Token]? = nil
+    var roleHeading: String? = nil
+    var platforms: [AvailabilityRenderItem]? = nil
+}
