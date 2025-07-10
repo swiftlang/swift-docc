@@ -204,8 +204,10 @@ class ExternalRenderNodeTests: XCTestCase {
         let occExternalNodes = renderIndex.interfaceLanguages["occ"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
         XCTAssertEqual(swiftExternalNodes.count, 2)
         XCTAssertEqual(occExternalNodes.count, 2)
-        XCTAssertEqual(swiftExternalNodes.map { $0.title }, ["SwiftArticle", "SwiftSymbol"])
-        XCTAssertEqual(occExternalNodes.map { $0.title }, ["ObjCArticle", "ObjCSymbol"])
+        XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle", "SwiftSymbol"])
+        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCArticle", "ObjCSymbol"])
+        XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
+        XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
     }
     
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() throws {
@@ -262,7 +264,9 @@ class ExternalRenderNodeTests: XCTestCase {
         let occExternalNodes = renderIndex.interfaceLanguages["occ"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
         XCTAssertEqual(swiftExternalNodes.count, 1)
         XCTAssertEqual(occExternalNodes.count, 1)
-        XCTAssertEqual(swiftExternalNodes.map { $0.title }, ["SwiftArticle"])
-        XCTAssertEqual(occExternalNodes.map { $0.title }, ["ObjCSymbol"])
+        XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle"])
+        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCSymbol"])
+        XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
+        XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
     }
 }
