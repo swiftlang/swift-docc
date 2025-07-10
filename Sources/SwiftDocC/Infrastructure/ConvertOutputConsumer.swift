@@ -105,3 +105,12 @@ package struct _Deprecated<Consumer: ConvertOutputConsumer>: _DeprecatedConsumeP
         try consumer.consume(problems: problems)
     }
 }
+
+/// A consumer for nodes generated from external references.
+///
+/// Types that conform to this protocol manage what to do with external references, for example index them.
+package protocol ExternalNodeConsumer {
+    /// Consumes a external render node that was generated during a conversion.
+    /// > Warning: This method might be called concurrently.
+    func consume(externalRenderNode: ExternalRenderNode) throws
+}

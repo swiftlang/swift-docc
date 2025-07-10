@@ -11,7 +11,7 @@
 import Foundation
 import SwiftDocC
 
-struct ConvertFileWritingConsumer: ConvertOutputConsumer {
+struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     var targetFolder: URL
     var bundleRootFolder: URL?
     var fileManager: any FileManagerProtocol
@@ -66,6 +66,11 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         
         // Index the node, if indexing is enabled.
         indexer?.index(renderNode)
+    }
+    
+    func consume(externalRenderNode: ExternalRenderNode) throws {
+        // Index the external node, if indexing is enabled.
+        indexer?.index(externalRenderNode)
     }
     
     func consume(assetsInBundle bundle: DocumentationBundle) throws {

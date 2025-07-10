@@ -34,7 +34,7 @@ package enum ConvertActionConverter {
     package static func convert(
         bundle: DocumentationBundle,
         context: DocumentationContext,
-        outputConsumer: some ConvertOutputConsumer,
+        outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
@@ -103,6 +103,15 @@ package enum ConvertActionConverter {
         
         let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
         let resultsGroup = DispatchGroup()
+        
+        // Consume external links and add them into the sidebar.
+        for externalLink in context.externalCache {
+            // Here we're associating the external node with the **current** bundle's bundle ID.
+            // This is needed because nodes are only considered children if the parent and child's bundle ID match.
+            // Otherwise, the node will be considered as a separate root node and displayed separately.
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+            try outputConsumer.consume(externalRenderNode: externalRenderNode)
+        }
         
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
