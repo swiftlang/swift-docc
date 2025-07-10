@@ -49,6 +49,11 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
     
     var icon: RenderReferenceIdentifier? = nil
     
+    /// Whether the item has originated from an external reference.
+    ///
+    /// Used for determining whether stray navigation items should remain part of the final navigator.
+    var isExternal: Bool = false
+    
     /**
      Initialize a `NavigatorItem` with the given data.
      
@@ -61,7 +66,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - path: The path to load the content.
         - icon: A reference to a custom image for this navigator item.
      */
-    init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, path: String, icon: RenderReferenceIdentifier? = nil) {
+    init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, path: String, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false) {
         self.pageType = pageType
         self.languageID = languageID
         self.title = title
@@ -69,6 +74,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         self.availabilityID = availabilityID
         self.path = path
         self.icon = icon
+        self.isExternal = isExternal
     }
     
     /**
@@ -82,13 +88,14 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - availabilityID:  The identifier of the availability information of the page.
         - icon: A reference to a custom image for this navigator item.
      */
-    public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil) {
+    public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false) {
         self.pageType = pageType
         self.languageID = languageID
         self.title = title
         self.platformMask = platformMask
         self.availabilityID = availabilityID
         self.icon = icon
+        self.isExternal = isExternal
     }
     
     // MARK: - Serialization and Deserialization

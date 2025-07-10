@@ -206,5 +206,63 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(occExternalNodes.count, 2)
         XCTAssertEqual(swiftExternalNodes.map { $0.title }, ["SwiftArticle", "SwiftSymbol"])
         XCTAssertEqual(occExternalNodes.map { $0.title }, ["ObjCArticle", "ObjCSymbol"])
-    }    
+    }
+    
+    func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() throws {
+        let externalResolver = generateExternalResover()
+        
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "MixedLanguageFramework",
+            externalResolvers: [externalResolver.bundleID: externalResolver]
+        ) { url in
+            let mixedLanguageFrameworkExtension = """
+                # ``MixedLanguageFramework``
+                
+                This symbol has a Swift and Objective-C variant.
+                
+                It also has an external reference which is not curated in the Topics section:
+                <doc://com.test.external/path/to/external/objCArticle>
+                <doc://com.test.external/path/to/external/swiftSymbol>
+                
+                ## Topics
+                
+                ### External Reference
+                
+                - <doc://com.test.external/path/to/external/swiftArticle>
+                - <doc://com.test.external/path/to/external/objCSymbol>
+                """
+            try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
+        }
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        builder.setup()
+        for externalLink in context.externalCache {
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+            try builder.index(renderNode: externalRenderNode)
+        }
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+        }
+        builder.finalize()
+        let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+
+        
+        // Verify that there are no uncurated external links at the top level
+        let swiftTopLevelExternalNodes = renderIndex.interfaceLanguages["swift"]?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
+        let occTopLevelExternalNodes = renderIndex.interfaceLanguages["occ"]?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
+        XCTAssertEqual(swiftTopLevelExternalNodes.count, 0)
+        XCTAssertEqual(occTopLevelExternalNodes.count, 0)
+
+        // Verify that the curated external links are part of the index.
+        let swiftExternalNodes = renderIndex.interfaceLanguages["swift"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
+        let occExternalNodes = renderIndex.interfaceLanguages["occ"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
+        XCTAssertEqual(swiftExternalNodes.count, 1)
+        XCTAssertEqual(occExternalNodes.count, 1)
+        XCTAssertEqual(swiftExternalNodes.map { $0.title }, ["SwiftArticle"])
+        XCTAssertEqual(occExternalNodes.map { $0.title }, ["ObjCSymbol"])
+    }
 }
