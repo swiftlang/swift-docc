@@ -62,6 +62,22 @@ extension ConvertAction {
             })
         }
         
+        /// Indexes the given external render node and collects any encountered problems.
+        /// - Parameter renderNode: A ``ExternalRenderNode`` value.
+        func index(_ renderNode: ExternalRenderNode) {
+            // Synchronously index the render node.
+            indexBuilder.sync({
+                do {
+                    try $0.index(renderNode: renderNode)
+                    nodeCount += 1
+                } catch {
+                    self.problems.append(error.problem(source: renderNode.identifier.url,
+                                                  severity: .warning,
+                                                  summaryPrefix: "External render node indexing process failed"))
+                }
+            })
+        }
+        
         /// Finalizes the index and writes it on disk.
         /// - Returns: Returns a list of problems if any were encountered during indexing.
         func finalize(emitJSON: Bool, emitLMDB: Bool) -> [Problem] {

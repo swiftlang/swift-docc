@@ -630,6 +630,28 @@ extension NavigatorIndex {
             }
         }
         
+        /// Index a single render `ExternalRenderNode`.
+        /// - Parameter renderNode: The render node to be indexed.
+        package func index(renderNode: ExternalRenderNode, ignoringLanguage: Bool = false) throws {
+            let navigatorRenderNode = NavigatorExternalRenderNode(renderNode: renderNode)
+            _ = try index(navigatorRenderNode, traits: nil)
+            guard renderNode.identifier.sourceLanguage != .objectiveC else {
+                return
+            }
+            // Check if the render node has an Objective-C representation
+            guard let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first(where: { trait in
+                switch trait {
+                case .interfaceLanguage(let language):
+                    return InterfaceLanguage.from(string: language) == .objc
+                }
+            }) else {
+                return
+            }
+            // If this external render node has a variant, we create a "view" into its Objective-C specific data and index that.
+            let objVariantView = NavigatorExternalRenderNode(renderNode: renderNode, trait: objCVariantTrait)
+            _ = try index(objVariantView, traits: [objCVariantTrait])
+        }
+        
         /// Index a single render `RenderNode`.
         /// - Parameter renderNode: The render node to be indexed.
         /// - Parameter ignoringLanguage: Whether language variants should be ignored when indexing this render node.
