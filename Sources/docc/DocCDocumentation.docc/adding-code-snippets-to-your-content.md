@@ -102,6 +102,7 @@ The `path` argument has three parts:
 
 3. The name of your snippet file without the `.swift` extension
 
+A snippet reference displays as a block between other paragraphs.
 In the example package above, the `YourProject.md` file might contain this markdown:
 
 ```markdown
@@ -113,11 +114,7 @@ Add a single sentence or sentence fragment, which DocC uses as the page’s abst
 
 Add one or more paragraphs that introduce your content overview.
 
-This paragraph appears before the snippet.
-
 @Snippet(path: "YourProject/Snippets/example-snippet")
-
-This paragraph appears after the snippet.
 ```
 
 If your snippet code requires setup — like imports or variable definitions — that distract from the snippet's main focus, you can add `// snippet.hide` and `// snippet.show` lines in the snippet code to exclude the lines in between from displaying in your documentation.
