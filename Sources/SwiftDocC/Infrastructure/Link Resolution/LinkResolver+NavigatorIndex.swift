@@ -77,6 +77,13 @@ package struct ExternalRenderNode {
             RenderNode.Variant(traits: [.interfaceLanguage($0.id)], paths: [externalEntity.topicRenderReference.url])
         }
     }
+    
+    /// A value that indicates whether this symbol is built for a beta platform
+    ///
+    /// This value is `false` if the referenced page is not a symbol.
+    var isBeta: Bool {
+        externalEntity.topicRenderReference.isBeta
+    }
 }
 
 /// A language specific representation of an external render node value for building a navigator index.
@@ -110,7 +117,8 @@ struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
             externalID: renderNode.externalIdentifier.identifier,
             role: renderNode.role,
             symbolKind: renderNode.symbolKind?.identifier,
-            images: renderNode.images
+            images: renderNode.images,
+            isBeta: renderNode.isBeta
         )
     }
 }
@@ -123,6 +131,7 @@ struct ExternalRenderNodeMetadataRepresentation: NavigatorIndexableRenderMetadat
     var role: String?
     var symbolKind: String?
     var images: [TopicImage]
+    var isBeta: Bool
 
     // Values that we have insufficient information to derive.
     // These are needed to conform to the navigator indexable metadata protocol.
