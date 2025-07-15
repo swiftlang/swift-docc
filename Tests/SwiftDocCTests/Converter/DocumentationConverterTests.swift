@@ -17,7 +17,8 @@ import XCTest
 @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 class DocumentationConverterTests: XCTestCase {
     /// An empty implementation of `ConvertOutputConsumer` that purposefully does nothing.
-    struct EmptyConvertOutputConsumer: ConvertOutputConsumer {
+    struct EmptyConvertOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
+        // Conformance to ConvertOutputConsumer
         func consume(renderNode: RenderNode) throws { }
         func consume(problems: [Problem]) throws { }
         func consume(assetsInBundle bundle: DocumentationBundle) throws {}
@@ -26,6 +27,9 @@ class DocumentationConverterTests: XCTestCase {
         func consume(assets: [RenderReferenceType: [any RenderReference]]) throws {}
         func consume(benchmarks: Benchmark) throws {}
         func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {}
+
+        // Conformance to ExternalNodeConsumer
+        func consume(externalRenderNode: SwiftDocC.ExternalRenderNode) throws { }
     }
 
     func testThrowsErrorOnConvertingNoBundles() throws {
