@@ -138,6 +138,66 @@ Root
         XCTAssertEqual(item, fromData)
     }
     
+    func testNavigatorEquality() {
+        // Test for equal
+        var item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true, isBeta: true)
+        var item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true, isBeta: true)
+        XCTAssertEqual(item1, item2)
+
+        // Tests for not equal
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isBeta: true)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isBeta: false)
+        XCTAssertNotEqual(item1, item2)
+
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: false)
+        XCTAssertNotEqual(item1, item2)
+        
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 2, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        XCTAssertNotEqual(item1, item2)
+
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 1, languageID: 5, title: "My Title", platformMask: 256, availabilityID: 1024)
+        XCTAssertNotEqual(item1, item2)
+        
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Other Title", platformMask: 256, availabilityID: 1024)
+        XCTAssertNotEqual(item1, item2)
+        
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 257, availabilityID: 1024)
+        XCTAssertNotEqual(item1, item2)
+
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1025)
+        XCTAssertNotEqual(item1, item2)
+    }
+    
+    func testNavigatorItemRawDumpWithExtraProperties() {
+        let item = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true, isBeta: true)
+        let data = item.rawValue
+        let fromData = NavigatorItem(rawValue: data)
+        XCTAssertEqual(item, fromData)
+    }
+    
+    func testNavigatorItemRawDumpBackwardCompatibility() {
+        let item = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        var data = Data()
+        data.append(packedDataFromValue(item.pageType))
+        data.append(packedDataFromValue(item.languageID))
+        data.append(packedDataFromValue(item.platformMask))
+        data.append(packedDataFromValue(item.availabilityID))
+        data.append(packedDataFromValue(UInt64(item.title.utf8.count)))
+        data.append(packedDataFromValue(UInt64(item.path.utf8.count)))
+        data.append(Data(item.title.utf8))
+        data.append(Data(item.path.utf8))
+        // Note: NOT adding isBeta and isExternal flags to simulate when they were not supported
+
+        let fromData = NavigatorItem(rawValue: data)
+        XCTAssertEqual(item, fromData)
+    }
+    
     func testObjCLanguage() {
         let root = generateLargeTree()
         var objcFiltered: Node?
