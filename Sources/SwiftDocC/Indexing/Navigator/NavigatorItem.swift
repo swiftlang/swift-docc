@@ -49,6 +49,11 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
     
     var icon: RenderReferenceIdentifier? = nil
     
+    /// A value that indicates whether this item is built for a beta platform.
+    ///
+    /// This value is `false` if the referenced item is not a symbol.
+    var isBeta: Bool = false
+    
     /// Whether the item has originated from an external reference.
     ///
     /// Used for determining whether stray navigation items should remain part of the final navigator.
@@ -66,7 +71,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - path: The path to load the content.
         - icon: A reference to a custom image for this navigator item.
      */
-    init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, path: String, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false) {
+    init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, path: String, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false, isBeta: Bool = false) {
         self.pageType = pageType
         self.languageID = languageID
         self.title = title
@@ -75,6 +80,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         self.path = path
         self.icon = icon
         self.isExternal = isExternal
+        self.isBeta = isBeta
     }
     
     /**
@@ -87,8 +93,10 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - platformMask: The mask indicating for which platform the page is available.
         - availabilityID:  The identifier of the availability information of the page.
         - icon: A reference to a custom image for this navigator item.
+        - isExternal: A flag indicating whether the navigator item belongs to an external documentation archive.
+        - isBeta: A flag indicating whether the navigator item is in beta.
      */
-    public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false) {
+    public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false, isBeta: Bool = false) {
         self.pageType = pageType
         self.languageID = languageID
         self.title = title
@@ -96,6 +104,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         self.availabilityID = availabilityID
         self.icon = icon
         self.isExternal = isExternal
+        self.isBeta = isBeta
     }
     
     // MARK: - Serialization and Deserialization
