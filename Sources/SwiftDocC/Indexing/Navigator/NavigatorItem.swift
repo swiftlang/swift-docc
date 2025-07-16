@@ -146,8 +146,27 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         
         let pathData = data[cursor..<cursor + Int(pathLength)]
         self.path = String(data: pathData, encoding: .utf8)!
+        cursor += Int(pathLength)
         
-        assert(cursor+Int(pathLength) == data.count)
+        // isBeta and isExternal should be encoded because they are relevant when creating a RenderIndex node.
+        // Without proper serialization, these indicators would be lost when navigator indexes are loaded from disk.
+        
+        length = MemoryLayout<UInt8>.stride
+        // To ensure backwards compatibility, handle both when `isBeta` has been encoded and when it hasn't
+        if cursor < data.count {
+            let betaValue: UInt8 = unpackedValueFromData(data[cursor..<cursor + length])
+            cursor += length
+            self.isBeta = betaValue != 0
+        }
+
+        // To ensure backwards compatibility, handle both when `isExternal` has been encoded and when it hasn't
+        if cursor < data.count {
+            let externalValue: UInt8 = unpackedValueFromData(data[cursor..<cursor + length])
+            cursor += length
+            self.isExternal = externalValue != 0
+        }
+
+        assert(cursor == data.count)
     }
 
     /// Returns the `Data` representation of the current `NavigatorItem` instance.
@@ -164,6 +183,9 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         data.append(Data(title.utf8))
         data.append(Data(path.utf8))
         
+        data.append(packedDataFromValue(isBeta ? UInt8(1) : UInt8(0)))
+        data.append(packedDataFromValue(isExternal ? UInt8(1) : UInt8(0)))
+        
         return data
     }
     
@@ -176,7 +198,9 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
             languageID: \(languageID),
             title: \(title),
             platformMask: \(platformMask),
-            availabilityID: \(availabilityID)
+            availabilityID: \(availabilityID),
+            isBeta: \(isBeta),
+            isExternal: \(isExternal)
         }
         """
     }
