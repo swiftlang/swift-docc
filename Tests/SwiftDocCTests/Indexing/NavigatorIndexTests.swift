@@ -2037,6 +2037,61 @@ Root
         )
     }
 
+    func testNavigatorIndexCapturesBetaStatus() async throws {
+        // Set up configuration with beta platforms
+        let platformMetadata = [
+            "macOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
+            "watchOS": PlatformVersion(VersionTriplet(2, 0, 0), beta: true),
+            "tvOS": PlatformVersion(VersionTriplet(3, 0, 0), beta: true),
+            "iOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+            "Mac Catalyst": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+            "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+        ]
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = platformMetadata
+        
+        let (_, bundle, context) = try await testBundleAndContext(named: "AvailabilityBetaBundle", configuration: configuration)
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true)
+        builder.setup()
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+        }
+        builder.finalize()
+        let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+        
+        // Find nodes that should have beta status
+        let swiftNodes = renderIndex.interfaceLanguages["swift"] ?? []
+        let betaNodes = findNodesWithBetaStatus(in: swiftNodes, isBeta: true)
+        let nonBetaNodes = findNodesWithBetaStatus(in: swiftNodes, isBeta: false)
+
+        // Verify that beta status was captured in the render index
+        XCTAssertEqual(betaNodes.map(\.title), ["MyClass"])
+        XCTAssert(betaNodes.allSatisfy(\.isBeta))  // Sanity check
+        XCTAssertEqual(nonBetaNodes.map(\.title).sorted(), ["Classes", "MyOtherClass", "MyThirdClass"])
+        XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false }) // Sanity check
+    }
+    
+    private func findNodesWithBetaStatus(in nodes: [RenderIndex.Node], isBeta: Bool) -> [RenderIndex.Node] {
+        var betaNodes: [RenderIndex.Node] = []
+        
+        for node in nodes {
+            if node.isBeta == isBeta {
+                betaNodes.append(node)
+            }
+            
+            if let children = node.children {
+                betaNodes.append(contentsOf: findNodesWithBetaStatus(in: children, isBeta: isBeta))
+            }
+        }
+        
+        return betaNodes
+    }
+
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) async throws -> NavigatorIndex {
         let (bundle, context) = try await testBundleAndContext(named: testBundleName)
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)

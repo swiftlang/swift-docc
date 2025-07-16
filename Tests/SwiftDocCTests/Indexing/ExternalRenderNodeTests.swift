@@ -218,6 +218,10 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCArticle", "ObjCSymbol"])
         XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
         XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
+        XCTAssert(swiftExternalNodes.first { $0.title == "SwiftArticle" }?.isBeta == false)
+        XCTAssert(swiftExternalNodes.first { $0.title == "SwiftSymbol" }?.isBeta == true)
+        XCTAssert(occExternalNodes.first { $0.title == "ObjCArticle" }?.isBeta == true)
+        XCTAssert(occExternalNodes.first { $0.title == "ObjCSymbol" }?.isBeta == false)
     }
     
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
