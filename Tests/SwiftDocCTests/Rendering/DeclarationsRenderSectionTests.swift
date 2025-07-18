@@ -322,6 +322,56 @@ class DeclarationsRenderSectionTests: XCTestCase {
         }
     }
 
+    func testInconsistentHighlightDiff() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "FancierOverloads",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "FancierOverloads", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile),
+        ])
+
+        let (bundle, context) = try loadBundle(catalog: catalog)
+
+        // The symbol graph contains two overloaded methods with modified declarations.
+        // The overloaded declarations have two legitimate solutions for their longest common subsequence:
+        // one that ends in a close-parenthesis, and one that ends in a space.
+        // This can create inconsistencies when run many times.
+        // Ensure that the overload difference highlighting is consistent for these declarations.
+
+        // init(_ content: MyClass) throws
+        // init(_ content: some ConvertibleToMyClass)
+
+        func assertDeclarations(for referencePath: String, file: StaticString = #filePath, line: UInt = #line) throws {
+            let reference = ResolvedTopicReference(
+                bundleID: bundle.id,
+                path: referencePath,
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol, file: file, line: line)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode, file: file, line: line)
+            let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first, file: file, line: line)
+            XCTAssertEqual(declarationsSection.declarations.count, 1, file: file, line: line)
+            let declarations = try XCTUnwrap(declarationsSection.declarations.first, file: file, line: line)
+
+            XCTAssertEqual(declarationsAndHighlights(for: declarations), [
+                "init(_ content: MyClass) throws",
+                "                ~~~~~~~~ ~~~~~~",
+                "init(_ content: some ConvertibleToMyClass)",
+                "                ~~~~ ~~~~~~~~~~~~~~~~~~~~~",
+            ], file: file, line: line)
+        }
+
+        try assertDeclarations(for: "/documentation/FancierOverloads/doSomething(with:)")
+        try assertDeclarations(for: "/documentation/FancierOverloads/doSomething(with:)-vjl7")
+    }
+
     func testDontHighlightWhenOverloadsAreDisabled() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "FancyOverloads",
@@ -402,4 +452,13 @@ func declarationAndHighlights(for tokens: [DeclarationRenderSection.Token]) -> [
         tokens.map({ $0.text }).joined(),
         tokens.map({ String(repeating: $0.highlight == .changed ? "~" : " ", count: $0.text.count) }).joined()
     ]
+}
+
+func declarationsAndHighlights(for section: DeclarationRenderSection) -> [String] {
+    guard let otherDeclarations = section.otherDeclarations else {
+        return []
+    }
+    var declarations = otherDeclarations.declarations.map(\.tokens)
+    declarations.insert(section.tokens, at: otherDeclarations.displayIndex)
+    return declarations.flatMap(declarationAndHighlights(for:))
 }
