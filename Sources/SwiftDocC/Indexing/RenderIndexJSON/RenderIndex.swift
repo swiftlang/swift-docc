@@ -92,6 +92,7 @@ public struct RenderIndex: Codable, Equatable {
                 pageType: .framework,
                 isDeprecated: false,
                 isExternal: false,
+                isBeta: false,
                 children: nodes,
                 icon: nil
             )
@@ -245,6 +246,7 @@ extension RenderIndex {
             pageType: NavigatorIndex.PageType?,
             isDeprecated: Bool,
             isExternal: Bool,
+            isBeta: Bool,
             children: [Node],
             icon: RenderReferenceIdentifier?
         ) {
@@ -253,10 +255,8 @@ extension RenderIndex {
             
             self.isDeprecated = isDeprecated
             self.isExternal = isExternal
-            
-            // Currently Swift-DocC doesn't support marking a node as beta in the navigation index
-            // so we default to `false` here.
-            self.isBeta = false
+            self.isBeta = isBeta
+
             self.icon = icon
             
             guard let pageType else {
@@ -327,6 +327,7 @@ extension RenderIndex.Node {
             pageType: NavigatorIndex.PageType(rawValue: node.item.pageType),
             isDeprecated: isDeprecated,
             isExternal: node.item.isExternal,
+            isBeta: node.item.isBeta,
             children: node.children.map {
                 RenderIndex.Node.fromNavigatorTreeNode($0, in: navigatorIndex, with: builder)
             },

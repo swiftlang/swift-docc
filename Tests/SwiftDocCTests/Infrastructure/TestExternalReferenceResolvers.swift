@@ -29,6 +29,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
         var language = SourceLanguage.swift
         var declarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
         var topicImages: [(TopicImage, alt: String)]? = nil
+        var platforms: [AvailabilityRenderItem]? = nil
     }
     
     // When more tests use this we may find that there's a better way to describe this (for example by separating
@@ -105,6 +106,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
                 fragments: entityInfo.declarationFragments?.declarationFragments.map { fragment in
                     return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
                 },
+                isBeta: entityInfo.platforms?.allSatisfy({$0.isBeta == true}) ?? false,
                 images: entityInfo.topicImages?.map(\.0) ?? []
             ),
             renderReferenceDependencies: dependencies,

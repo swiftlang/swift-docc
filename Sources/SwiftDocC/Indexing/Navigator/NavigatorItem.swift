@@ -49,6 +49,11 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
     
     var icon: RenderReferenceIdentifier? = nil
     
+    /// A value that indicates whether this item is built for a beta platform.
+    ///
+    /// This value is `false` if the referenced item is not a symbol.
+    var isBeta: Bool = false
+    
     /// Whether the item has originated from an external reference.
     ///
     /// Used for determining whether stray navigation items should remain part of the final navigator.
@@ -66,7 +71,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - path: The path to load the content.
         - icon: A reference to a custom image for this navigator item.
      */
-    init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, path: String, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false) {
+    init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, path: String, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false, isBeta: Bool = false) {
         self.pageType = pageType
         self.languageID = languageID
         self.title = title
@@ -75,6 +80,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         self.path = path
         self.icon = icon
         self.isExternal = isExternal
+        self.isBeta = isBeta
     }
     
     /**
@@ -87,8 +93,10 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - platformMask: The mask indicating for which platform the page is available.
         - availabilityID:  The identifier of the availability information of the page.
         - icon: A reference to a custom image for this navigator item.
+        - isExternal: A flag indicating whether the navigator item belongs to an external documentation archive.
+        - isBeta: A flag indicating whether the navigator item is in beta.
      */
-    public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false) {
+    public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false, isBeta: Bool = false) {
         self.pageType = pageType
         self.languageID = languageID
         self.title = title
@@ -96,6 +104,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         self.availabilityID = availabilityID
         self.icon = icon
         self.isExternal = isExternal
+        self.isBeta = isBeta
     }
     
     // MARK: - Serialization and Deserialization
@@ -137,8 +146,27 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         
         let pathData = data[cursor..<cursor + Int(pathLength)]
         self.path = String(data: pathData, encoding: .utf8)!
+        cursor += Int(pathLength)
         
-        assert(cursor+Int(pathLength) == data.count)
+        // isBeta and isExternal should be encoded because they are relevant when creating a RenderIndex node.
+        // Without proper serialization, these indicators would be lost when navigator indexes are loaded from disk.
+        
+        length = MemoryLayout<UInt8>.stride
+        // To ensure backwards compatibility, handle both when `isBeta` has been encoded and when it hasn't
+        if cursor < data.count {
+            let betaValue: UInt8 = unpackedValueFromData(data[cursor..<cursor + length])
+            cursor += length
+            self.isBeta = betaValue != 0
+        }
+
+        // To ensure backwards compatibility, handle both when `isExternal` has been encoded and when it hasn't
+        if cursor < data.count {
+            let externalValue: UInt8 = unpackedValueFromData(data[cursor..<cursor + length])
+            cursor += length
+            self.isExternal = externalValue != 0
+        }
+
+        assert(cursor == data.count)
     }
 
     /// Returns the `Data` representation of the current `NavigatorItem` instance.
@@ -155,7 +183,36 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         data.append(Data(title.utf8))
         data.append(Data(path.utf8))
         
+        data.append(packedDataFromValue(isBeta ? UInt8(1) : UInt8(0)))
+        data.append(packedDataFromValue(isExternal ? UInt8(1) : UInt8(0)))
+        
         return data
+    }
+    
+    // MARK: - Equatable
+    // Needed because a Swift class's synthesized Equatable conformance doesn't take into account properties which have default values as part of the designated initializer.
+    
+    public static func == (lhs: NavigatorItem, rhs: NavigatorItem) -> Bool {
+        return lhs.pageType == rhs.pageType &&
+            lhs.languageID == rhs.languageID &&
+            lhs.title == rhs.title &&
+            lhs.platformMask == rhs.platformMask &&
+            lhs.availabilityID == rhs.availabilityID &&
+            lhs.isBeta == rhs.isBeta &&
+            lhs.isExternal == rhs.isExternal
+    }
+
+    // MARK: - Hashable
+    // Needed because a Swift class's synthesized Hashable conformance doesn't take into account properties which have default values as part of the designated initializer.
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(pageType)
+        hasher.combine(languageID)
+        hasher.combine(title)
+        hasher.combine(platformMask)
+        hasher.combine(availabilityID)
+        hasher.combine(isBeta)
+        hasher.combine(isExternal)
     }
     
     // MARK: - Description
@@ -167,7 +224,9 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
             languageID: \(languageID),
             title: \(title),
             platformMask: \(platformMask),
-            availabilityID: \(availabilityID)
+            availabilityID: \(availabilityID),
+            isBeta: \(isBeta),
+            isExternal: \(isExternal)
         }
         """
     }
