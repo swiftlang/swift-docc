@@ -15,7 +15,7 @@ import Markdown
 class HasOnlySequentialHeadingsTests: XCTestCase {
     private let containerDirective = BlockDirective(name: "TestContainer")
     
-    func testNoHeadings() throws {
+    func testNoHeadings() async throws {
         let source = """
 asdf
 
@@ -27,7 +27,7 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
@@ -35,7 +35,7 @@ some more *stuff*
         XCTAssertTrue(problems.isEmpty)
     }
     
-    func testValidHeadings() throws {
+    func testValidHeadings() async throws {
         let source = """
 ## H2
 ### H3
@@ -50,7 +50,7 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
@@ -58,14 +58,14 @@ some more *stuff*
         XCTAssertTrue(problems.isEmpty)
     }
     
-    func testHeadingLevelTooLow() throws {
+    func testHeadingLevelTooLow() async throws {
         let source = """
 # H1
 # H1
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
@@ -77,7 +77,7 @@ some more *stuff*
                        ])
     }
     
-    func testHeadingSkipsLevel() throws {
+    func testHeadingSkipsLevel() async throws {
             let source = """
 ## H2
 #### H4
@@ -86,7 +86,7 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)

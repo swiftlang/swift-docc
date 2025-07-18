@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -57,8 +57,8 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testResolveExternalReference() throws {
-        let (_, bundle, context) = try testBundleAndContext(
+    func testResolveExternalReference() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(
             copying: "LegacyBundle_DoNotUseInNewTests",
             externalResolvers: ["com.external.testbundle" : TestExternalReferenceResolver()]
         ) { url in
@@ -86,7 +86,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     // Asserts that an external reference from a source language not locally included
     // in the current DocC catalog is still included in any rendered topic groups that
     // manually curate it. (94406023)
-    func testExternalReferenceInOtherLanguageIsIncludedInTopicGroup() throws {
+    func testExternalReferenceInOtherLanguageIsIncludedInTopicGroup() async throws {
         let externalResolver = TestExternalReferenceResolver()
         externalResolver.bundleID = "com.test.external"
         externalResolver.expectedReferencePath = "/path/to/external/api"
@@ -96,7 +96,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         // Set the language of the externally resolved entity to 'data'.
         externalResolver.resolvedEntityLanguage = .data
         
-        let (_, bundle, context) = try testBundleAndContext(
+        let (_, bundle, context) = try await testBundleAndContext(
             copying: "LegacyBundle_DoNotUseInNewTests",
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
@@ -156,9 +156,9 @@ class ExternalReferenceResolverTests: XCTestCase {
     // This test verifies the behavior of a deprecated functionality (changing external documentation sources after registering the documentation)
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {
+    func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() async throws {
         let workspace = DocumentationWorkspace()
-        let bundle = try testBundle(named: "LegacyBundle_DoNotUseInNewTests")
+        let bundle = try await testBundle(named: "LegacyBundle_DoNotUseInNewTests")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
@@ -219,15 +219,15 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testLoadEntityForExternalReference() throws {
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : TestExternalReferenceResolver()])
+    func testLoadEntityForExternalReference() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : TestExternalReferenceResolver()])
         let identifier = ResolvedTopicReference(bundleID: "com.external.testbundle", path: "/externally/resolved/path", sourceLanguage: .swift)
         
         XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleID: "some.other.bundle", path: identifier.path, sourceLanguage: .swift)))
         XCTAssertThrowsError(try context.entity(with: identifier))
     }
     
-    func testRenderReferenceHasSymbolKind() throws {
+    func testRenderReferenceHasSymbolKind() async throws {
         let fixtures: [(DocumentationNode.Kind, RenderNode.Kind)] = [
             (.class, .symbol),
             (.structure, .symbol),
@@ -251,7 +251,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             externalResolver.resolvedEntityTitle = "ClassName"
             externalResolver.resolvedEntityKind = resolvedEntityKind
             
-            let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver])
+            let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver])
             
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
             let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
@@ -281,7 +281,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testReferenceFromRenderedPageHasFragments() throws {
+    func testReferenceFromRenderedPageHasFragments() async throws {
         let externalResolver = TestExternalReferenceResolver()
         externalResolver.bundleID = "com.test.external"
         externalResolver.expectedReferencePath = "/path/to/external/symbol"
@@ -293,7 +293,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             .init(kind: .identifier, spelling: "ClassName", preciseIdentifier: nil),
         ])
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -328,7 +328,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         ])
     }
     
-    func testExternalReferenceWithDifferentResolvedPath() throws {
+    func testExternalReferenceWithDifferentResolvedPath() async throws {
         let externalResolver = TestExternalReferenceResolver()
         externalResolver.bundleID = "com.test.external"
         // Return a different path for this resolved reference
@@ -350,7 +350,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
-        let (bundle, context) = try loadBundle(catalog: tempFolder, configuration: configuration)
+        let (bundle, context) = try await loadBundle(catalog: tempFolder, configuration: configuration)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/article", sourceLanguage: .swift))
@@ -378,14 +378,14 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testSampleCodeReferenceHasSampleCodeRole() throws {
+    func testSampleCodeReferenceHasSampleCodeRole() async throws {
         let externalResolver = TestExternalReferenceResolver()
         externalResolver.bundleID = "com.test.external"
         externalResolver.expectedReferencePath = "/path/to/external/sample"
         externalResolver.resolvedEntityTitle = "Name of Sample"
         externalResolver.resolvedEntityKind = .sampleCode
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -417,7 +417,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(sampleRenderReference.role, RenderMetadata.Role.sampleCode.rawValue)
     }
     
-    func testExternalTopicWithTopicImage() throws {
+    func testExternalTopicWithTopicImage() async throws {
         let externalResolver = TestMultiResultExternalReferenceResolver()
         externalResolver.bundleID = "com.test.external"
         
@@ -473,7 +473,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             ),
         ]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # SomeSample
 
@@ -585,7 +585,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     // Tests that external references are included in task groups, rdar://72119391
-    func testResolveExternalReferenceInTaskGroups() throws {
+    func testResolveExternalReferenceInTaskGroups() async throws {
         let resolver = TestMultiResultExternalReferenceResolver()
         resolver.entitiesToReturn = [
             "/article": .success(.init(referencePath: "/externally/resolved/path/to/article")),
@@ -595,7 +595,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             "/externally/resolved/path/to/article2": .success(.init(referencePath: "/externally/resolved/path/to/article2")),
         ]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [
             "com.external.testbundle" : resolver
         ]) { url in
             // Add external links to the MyKit Topics.
@@ -625,9 +625,9 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     // Tests that external references are resolved in tutorial content
-    func testResolveExternalReferenceInTutorials() throws {
+    func testResolveExternalReferenceInTutorials() async throws {
         let resolver = TestExternalReferenceResolver()
-        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.bundle": resolver, "com.external.testbundle": resolver], configureBundle: { (bundleURL) in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.bundle": resolver, "com.external.testbundle": resolver], configureBundle: { (bundleURL) in
             // Replace TestTutorial.tutorial with a copy that includes a bunch of external links
             try FileManager.default.removeItem(at: bundleURL.appendingPathComponent("TestTutorial.tutorial"))
             try FileManager.default.copyItem(
@@ -671,7 +671,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     // Tests that external references are included in task groups, rdar://72119391
-    func testExternalResolverIsNotPassedReferencesItDidNotResolve() throws {
+    func testExternalResolverIsNotPassedReferencesItDidNotResolve() async throws {
         final class CallCountingReferenceResolver: ExternalDocumentationSource {
             var referencesAskedToResolve: Set<TopicReference> = []
             
@@ -716,7 +716,7 @@ class ExternalReferenceResolverTests: XCTestCase {
 
         // Copy the test bundle and add external links to the MyKit See Also.
         // We're using a See Also group, because external links aren't rendered in Topics groups.
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : resolver]) { url in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : resolver]) { url in
             try """
             # ``MyKit``
             MyKit module root symbol <doc://com.external.testbundle/not-resolvable-2>
@@ -793,7 +793,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     /// Tests that the external resolving handles correctly fragments in URLs.
-    func testExternalReferenceWithFragment() throws {
+    func testExternalReferenceWithFragment() async throws {
         // Configure an external resolver
         let resolver = TestExternalReferenceResolver()
         
@@ -802,7 +802,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         resolver.expectedFragment = "67890"
         
         // Prepare a test bundle
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : resolver], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : resolver], externalSymbolResolver: nil, configureBundle: { url in
             // Add external link with fragment
             let myClassMDURL = url.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
             try String(contentsOf: myClassMDURL)
@@ -829,7 +829,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(linkReference.absoluteString, "doc://com.external.testbundle/externally/resolved/path#67890")
     }
     
-    func testExternalArticlesAreIncludedInAllVariantsTopicsSection() throws {
+    func testExternalArticlesAreIncludedInAllVariantsTopicsSection() async throws {
         let externalResolver = TestMultiResultExternalReferenceResolver()
         externalResolver.bundleID = "com.test.external"
         
@@ -869,7 +869,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             )
         )
         
-        let (_, bundle, context) = try testBundleAndContext(
+        let (_, bundle, context) = try await testBundleAndContext(
             copying: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
@@ -921,7 +921,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertFalse(objCTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
     }
     
-    func testDeprecationSummaryWithExternalLink() throws {
+    func testDeprecationSummaryWithExternalLink() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
@@ -963,7 +963,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
-        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
         
@@ -986,7 +986,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testExternalLinkInGeneratedSeeAlso() throws {
+    func testExternalLinkInGeneratedSeeAlso() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Root
@@ -1020,7 +1020,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
-        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -1067,7 +1067,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testExternalLinkInAuthoredSeeAlso() throws {
+    func testExternalLinkInAuthoredSeeAlso() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Root
@@ -1088,7 +1088,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
-        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -1107,7 +1107,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         ])
     }
 
-    func testParametersWithExternalLink() throws {
+    func testParametersWithExternalLink() async throws {
 
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.swift.symbols.json", content: makeSymbolGraph(
@@ -1174,7 +1174,7 @@ class ExternalReferenceResolverTests: XCTestCase {
 
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
-        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
 
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
 
@@ -1203,9 +1203,9 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(externalLinks.count, 4, "Did not resolve the 4 expected external links.")
     }
 
-    func exampleDocumentation(copying bundleName: String, documentationExtension: TextFile, path: String, file: StaticString = #filePath, line: UInt = #line) throws -> Symbol {
+    func exampleDocumentation(copying bundleName: String, documentationExtension: TextFile, path: String, file: StaticString = #filePath, line: UInt = #line) async throws -> Symbol {
         let externalResolver = TestExternalReferenceResolver()
-        let (_, bundle, context) = try testBundleAndContext(
+        let (_, bundle, context) = try await testBundleAndContext(
             copying: bundleName,
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
@@ -1228,7 +1228,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         return symbol
     }
 
-    func testDictionaryKeysWithExternalLink() throws {
+    func testDictionaryKeysWithExternalLink() async throws {
 
         // Create some example documentation using the symbol graph file located under
         // Tests/SwiftDocCTests/Test Bundles/DictionaryData.docc, and the following
@@ -1248,7 +1248,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                       - monthOfBirth: 1
                       - genre: Classic Rock
                     """)
-        let symbol = try exampleDocumentation(
+        let symbol = try await exampleDocumentation(
             copying: "DictionaryData",
             documentationExtension: documentationExtension,
             path: "/documentation/DictionaryData/Artist"
@@ -1280,7 +1280,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     // Create some example documentation using the symbol graph file located under
     // Tests/SwiftDocCTests/Test Bundles/HTTPRequests.docc, and the following
     // documentation extension markup.
-    func exampleRESTDocumentation(file: StaticString = #filePath, line: UInt = #line) throws -> Symbol {
+    func exampleRESTDocumentation(file: StaticString = #filePath, line: UInt = #line) async throws -> Symbol {
         let documentationExtension = TextFile(
             name: "GetArtist.md",
             utf8Content: """
@@ -1307,7 +1307,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                         - 204: Another response with a link: <doc://com.external.testbundle/something>.
                         - 887: Bad value.
                     """)
-        return try exampleDocumentation(
+        return try await exampleDocumentation(
             copying: "HTTPRequests",
             documentationExtension: documentationExtension,
             path: "/documentation/HTTPRequests/Get_Artist",
@@ -1317,11 +1317,11 @@ class ExternalReferenceResolverTests: XCTestCase {
 
     }
 
-    func testHTTPParametersWithExternalLink() throws {
+    func testHTTPParametersWithExternalLink() async throws {
 
         // Get the variant of the example symbol that has no interface language, meaning it was
         // generated by the markup above.
-        let symbol = try exampleRESTDocumentation()
+        let symbol = try await exampleRESTDocumentation()
         let section = try XCTUnwrap(symbol.httpParametersSection)
         XCTAssertEqual(section.parameters.count, 3)
 
@@ -1343,11 +1343,11 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(externalLinkCount, 2, "Did not resolve the 2 expected external links.")
     }
 
-    func testHTTPBodyWithExternalLink() throws {
+    func testHTTPBodyWithExternalLink() async throws {
 
         // Get the variant of the example symbol that has no interface language, meaning it was
         // generated by the markup above.
-        let symbol = try exampleRESTDocumentation()
+        let symbol = try await exampleRESTDocumentation()
         let section = try XCTUnwrap(symbol.httpBodySection)
 
         // Check that the two keys with external links in the markup above were found
@@ -1356,11 +1356,11 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(value, "Simple body with a link: <doc://com.external.testbundle/externally/resolved/path>.")
     }
 
-    func testHTTPBodyParametersWithExternalLink() throws {
+    func testHTTPBodyParametersWithExternalLink() async throws {
 
         // Get the variant of the example symbol that has no interface language, meaning it was
         // generated by the markup above.
-        let symbol = try exampleRESTDocumentation()
+        let symbol = try await exampleRESTDocumentation()
         let section = try XCTUnwrap(symbol.httpBodySection)
         XCTAssertEqual(section.body.parameters.count, 3)
 
@@ -1383,11 +1383,11 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
 
 
-    func testHTTPResponsesWithExternalLink() throws {
+    func testHTTPResponsesWithExternalLink() async throws {
 
         // Get the variant of the example symbol that has no interface language, meaning it was
         // generated by the markup above.
-        let symbol = try exampleRESTDocumentation()
+        let symbol = try await exampleRESTDocumentation()
         let section = try XCTUnwrap(symbol.httpResponsesSection)
         XCTAssertEqual(section.responses.count, 3)
 
@@ -1409,7 +1409,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(externalLinkCount, 2, "Did not resolve the 2 expected external links.")
     }
 
-    func testPossibleValuesWithExternalLink() throws {
+    func testPossibleValuesWithExternalLink() async throws {
 
         // Create some example documentation using the symbol graph file located under
         // Tests/SwiftDocCTests/Test Bundles/DictionaryData.docc, and the following
@@ -1427,7 +1427,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                       - Classic Rock: Something about classic rock with a link: <doc://com.external.testbundle/something/related/to/this/allowed/value>.
                       - Folk: Something about folk music with a link: <doc://com.external.testbundle/something/related/to/this/allowed/value>.
                     """)
-        let symbol = try exampleDocumentation(
+        let symbol = try await exampleDocumentation(
             copying: "DictionaryData",
             documentationExtension: documentationExtension,
             path: "/documentation/DictionaryData/Genre"

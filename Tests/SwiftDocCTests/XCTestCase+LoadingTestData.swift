@@ -24,7 +24,7 @@ extension XCTestCase {
         fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
         configuration: DocumentationContext.Configuration = .init()
-    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    ) async throws -> (URL, DocumentationBundle, DocumentationContext) {
         var configuration = configuration
         configuration.externalDocumentationConfiguration.sources = externalResolvers
         configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
@@ -34,7 +34,7 @@ extension XCTestCase {
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
             .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
 
-        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         return (catalogURL, bundle, context)
     }
     
@@ -51,13 +51,13 @@ extension XCTestCase {
         otherFileSystemDirectories: [Folder] = [],
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: DocumentationContext.Configuration = .init()
-    ) throws -> (DocumentationBundle, DocumentationContext) {
+    ) async throws -> (DocumentationBundle, DocumentationContext) {
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
         
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
-        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         return (bundle, context)
     }
     
@@ -77,7 +77,7 @@ extension XCTestCase {
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
         configuration: DocumentationContext.Configuration = .init(),
         configureBundle: ((URL) throws -> Void)? = nil
-    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    ) async throws -> (URL, DocumentationBundle, DocumentationContext) {
         let sourceURL = try testCatalogURL(named: name)
         
         let sourceExists = FileManager.default.fileExists(atPath: sourceURL.path)
@@ -96,7 +96,7 @@ extension XCTestCase {
         // Do any additional setup to the custom bundle - adding, modifying files, etc
         try configureBundle?(bundleURL)
         
-        return try loadBundle(
+        return try await loadBundle(
             from: bundleURL,
             externalResolvers: externalResolvers,
             externalSymbolResolver: externalSymbolResolver,
@@ -111,25 +111,25 @@ extension XCTestCase {
         externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
         fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
         configuration: DocumentationContext.Configuration = .init()
-    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    ) async throws -> (URL, DocumentationBundle, DocumentationContext) {
         let catalogURL = try testCatalogURL(named: name)
-        return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
+        return try await loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
     }
     
-    func testBundleAndContext(named name: String, externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
-        let (_, bundle, context) = try testBundleAndContext(named: name, externalResolvers: externalResolvers)
+    func testBundleAndContext(named name: String, externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:]) async throws -> (DocumentationBundle, DocumentationContext) {
+        let (_, bundle, context) = try await testBundleAndContext(named: name, externalResolvers: externalResolvers)
         return (bundle, context)
     }
     
-    func renderNode(atPath path: String, fromTestBundleNamed testBundleName: String) throws -> RenderNode {
-        let (bundle, context) = try testBundleAndContext(named: testBundleName)
+    func renderNode(atPath path: String, fromTestBundleNamed testBundleName: String) async throws -> RenderNode {
+        let (bundle, context) = try await testBundleAndContext(named: testBundleName)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         return try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
     }
     
-    func testBundle(named name: String) throws -> DocumentationBundle {
-        let (bundle, _) = try testBundleAndContext(named: name)
+    func testBundle(named name: String) async throws -> DocumentationBundle {
+        let (bundle, _) = try await testBundleAndContext(named: name)
         return bundle
     }
     
@@ -140,7 +140,7 @@ extension XCTestCase {
         return try inputProvider.makeInputs(contentOf: catalogURL, options: .init())
     }
     
-    func testBundleAndContext() throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
+    func testBundleAndContext() async throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
@@ -152,7 +152,7 @@ extension XCTestCase {
             miscResourceURLs: []
         )
         
-        let context = try DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []))
+        let context = try await DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []))
         return (bundle, context)
     }
     
@@ -161,8 +161,8 @@ extension XCTestCase {
         content: () -> String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (problemIdentifiers: [String], directive: Directive?) {
-        let (bundle, _) = try testBundleAndContext()
+    ) async throws -> (problemIdentifiers: [String], directive: Directive?) {
+        let (bundle, _) = try await testBundleAndContext()
         
         let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
         let document = Document(parsing: content(), source: source, options: .parseBlockDirectives)
@@ -193,13 +193,13 @@ extension XCTestCase {
         content: () -> String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (
+    ) async throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
         directive: Directive?,
         collectedReferences: [String : any RenderReference]
     ) {
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
     }
     
@@ -209,8 +209,8 @@ extension XCTestCase {
         content: () -> String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
-        let (renderedContent, problems, directive, _) = try parseDirective(
+    ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
+        let (renderedContent, problems, directive, _) = try await parseDirective(
             directive,
             in: bundleName,
             content: content,
@@ -227,7 +227,7 @@ extension XCTestCase {
         content: () -> String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (
+    ) async throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
         directive: Directive?,
@@ -237,9 +237,9 @@ extension XCTestCase {
         let context: DocumentationContext
         
         if let bundleName {
-            (bundle, context) = try testBundleAndContext(named: bundleName)
+            (bundle, context) = try await testBundleAndContext(named: bundleName)
         } else {
-            (bundle, context) = try testBundleAndContext()
+            (bundle, context) = try await testBundleAndContext()
         }
         return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
     }

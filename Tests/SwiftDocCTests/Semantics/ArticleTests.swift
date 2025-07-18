@@ -13,7 +13,7 @@ import XCTest
 import Markdown
 
 class ArticleTests: XCTestCase {
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
         # This is my article
 
@@ -22,7 +22,7 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
@@ -33,7 +33,7 @@ class ArticleTests: XCTestCase {
         XCTAssertEqual((article?.discussion?.content ?? []).map { $0.detachedFromParent.format() }.joined(separator: "\n"), "Here’s an overview.")
     }
     
-    func testWithExplicitOverviewHeading() throws {
+    func testWithExplicitOverviewHeading() async throws {
         let source = """
         # This is my article
 
@@ -44,7 +44,7 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
@@ -62,7 +62,7 @@ class ArticleTests: XCTestCase {
         }
     }
     
-    func testWithExplicitCustomHeading() throws {
+    func testWithExplicitCustomHeading() async throws {
         let source = """
         # This is my article
 
@@ -73,7 +73,7 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
@@ -92,12 +92,12 @@ class ArticleTests: XCTestCase {
         }
     }
     
-    func testOnlyTitleArticle() throws {
+    func testOnlyTitleArticle() async throws {
         let source = """
         # This is my article
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
@@ -108,14 +108,14 @@ class ArticleTests: XCTestCase {
         XCTAssertNil(article?.discussion)
     }
     
-    func testNoAbstract() throws {
+    func testNoAbstract() async throws {
         let source = """
         # This is my article
 
         - This is not an abstract.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
@@ -126,14 +126,14 @@ class ArticleTests: XCTestCase {
         XCTAssertEqual((article?.discussion?.content ?? []).map { $0.detachedFromParent.format() }.joined(separator: "\n"), "- This is not an abstract.")
     }
     
-    func testSolutionForTitleMissingIndentation() throws {
+    func testSolutionForTitleMissingIndentation() async throws {
         let source = """
          My article
 
          This is my article
          """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
 
@@ -148,12 +148,12 @@ class ArticleTests: XCTestCase {
         XCTAssertEqual(replacement.replacement, "# My article")
     }
 
-    func testSolutionForEmptyArticle() throws {
+    func testSolutionForEmptyArticle() async throws {
         let source = """
          
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
 
@@ -168,7 +168,7 @@ class ArticleTests: XCTestCase {
         XCTAssertEqual(replacement.replacement, "# <#Title#>")
     }
     
-    func testArticleWithDuplicateOptions() throws {
+    func testArticleWithDuplicateOptions() async throws {
         let source = """
         # Article
         
@@ -185,7 +185,7 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article)
@@ -209,7 +209,7 @@ class ArticleTests: XCTestCase {
         XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoEnabled, false)
     }
     
-    func testDisplayNameDirectiveIsRemoved() throws {
+    func testDisplayNameDirectiveIsRemoved() async throws {
         let source = """
         # Root
         
@@ -222,7 +222,7 @@ class ArticleTests: XCTestCase {
         Adding @DisplayName to an article will result in a warning.
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         

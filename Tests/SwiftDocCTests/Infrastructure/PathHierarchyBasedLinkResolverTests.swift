@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,10 +13,10 @@ import XCTest
 
 class PathHierarchyBasedLinkResolverTests: XCTestCase {
     
-    func testOverloadedSymbolsWithOverloadGroups() throws {
+    func testOverloadedSymbolsWithOverloadGroups() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
         // Returns nil for all non-overload groups

@@ -15,8 +15,8 @@ import XCTest
 import Markdown
 
 class SnippetTests: XCTestCase {
-    func testNoPath() throws {
-        let (bundle, _) = try testBundleAndContext(named: "Snippets")
+    func testNoPath() async throws {
+        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet()
         """
@@ -29,8 +29,8 @@ class SnippetTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.HasArgument.path", problems[0].diagnostic.identifier)
     }
 
-    func testHasInnerContent() throws {
-        let (bundle, _) = try testBundleAndContext(named: "Snippets")
+    func testHasInnerContent() async throws {
+        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet(path: "path/to/snippet") {
             This content shouldn't be here.
@@ -45,8 +45,8 @@ class SnippetTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.Snippet.NoInnerContentAllowed", problems[0].diagnostic.identifier)
     }
 
-    func testLinkResolves() throws {
-        let (bundle, _) = try testBundleAndContext(named: "Snippets")
+    func testLinkResolves() async throws {
+        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet(path: "Test/Snippets/MySnippet")
         """
@@ -59,8 +59,8 @@ class SnippetTests: XCTestCase {
         XCTAssertTrue(problems.isEmpty)
     }
     
-    func testUnresolvedSnippetPathDiagnostic() throws {
-        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+    func testUnresolvedSnippetPathDiagnostic() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet(path: "Test/Snippets/DoesntExist")
         """
@@ -73,8 +73,8 @@ class SnippetTests: XCTestCase {
         }
     }
     
-    func testSliceResolves() throws {
-        let (bundle, _) = try testBundleAndContext(named: "Snippets")
+    func testSliceResolves() async throws {
+        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet(path: "Test/Snippets/MySnippet", slice: "foo")
         """

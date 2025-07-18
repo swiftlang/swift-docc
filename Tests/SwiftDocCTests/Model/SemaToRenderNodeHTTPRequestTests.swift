@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,8 +14,8 @@ import SymbolKit
 import XCTest
 
 class SemaToRenderNodeHTTPRequestTests: XCTestCase {
-    func testBaseRenderNodeFromHTTPRequest() throws {
-        let (_, context) = try testBundleAndContext(named: "HTTPRequests")
+    func testBaseRenderNodeFromHTTPRequest() async throws {
+        let (_, context) = try await testBundleAndContext(named: "HTTPRequests")
         
         let expectedPageUSRsAndLanguages: [String : Set<SourceLanguage>] = [
             // Get Artist endpoint - ``Get_Artist``:
@@ -77,8 +77,8 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         }
     }
 
-    func testFrameworkRenderNodeHasExpectedContent() throws {
-        let outputConsumer = try renderNodeConsumer(for: "HTTPRequests")
+    func testFrameworkRenderNodeHasExpectedContent() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "HTTPRequests")
         let frameworkRenderNode = try outputConsumer.renderNode(
             withIdentifier: "HTTPRequests"
         )
@@ -144,8 +144,8 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         )
     }
     
-    func testRestGetRequestRenderNodeHasExpectedContent() throws {
-        let outputConsumer = try renderNodeConsumer(for: "HTTPRequests")
+    func testRestGetRequestRenderNodeHasExpectedContent() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "HTTPRequests")
         let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:get:v1/artists/{}")
         
         assertExpectedContent(
@@ -229,8 +229,8 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         }
     }
     
-    func testRestPostRequestRenderNodeHasExpectedContent() throws {
-        let outputConsumer = try renderNodeConsumer(for: "HTTPRequests")
+    func testRestPostRequestRenderNodeHasExpectedContent() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "HTTPRequests")
         let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:post:v1/artists")
         
         assertExpectedContent(

@@ -88,8 +88,8 @@ extension XCTestCase {
         for bundleName: String,
         sourceRepository: SourceRepository? = nil,
         configureBundle: ((URL) throws -> Void)? = nil
-    ) throws -> TestRenderNodeOutputConsumer {
-        let (_, bundle, context) = try testBundleAndContext(
+    ) async throws -> TestRenderNodeOutputConsumer {
+        let (_, bundle, context) = try await testBundleAndContext(
             copying: bundleName,
             configureBundle: configureBundle
         )

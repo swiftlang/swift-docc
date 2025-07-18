@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,7 +25,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
     }
     
     // MARK: - Thematic Break Markdown Variants
-    func testThematicBreakVariants() throws {
+    func testThematicBreakVariants() async throws {
         let source = """
 
         ---
@@ -38,7 +38,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 3)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         
         var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
@@ -52,7 +52,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         XCTAssertEqual(expectedContent, renderContent)
     }
     
-    func testThematicBreakVariantsWithSpaces() throws {
+    func testThematicBreakVariantsWithSpaces() async throws {
         let source = """
 
         - - -
@@ -65,7 +65,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 3)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         
         var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
@@ -79,7 +79,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         XCTAssertEqual(expectedContent, renderContent)
     }
     
-    func testThematicBreakMoreThanThreeCharacters() throws {
+    func testThematicBreakMoreThanThreeCharacters() async throws {
         let source = """
 
         ----
@@ -95,7 +95,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 6)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         
         var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         

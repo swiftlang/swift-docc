@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class JustificationTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Justification"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -34,7 +34,7 @@ class JustificationTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
 @Justification(reaction: "Correct!") {
    Here is some content.
@@ -44,7 +44,7 @@ class JustificationTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()

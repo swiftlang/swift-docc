@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,7 +23,9 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
     var testBundleWithLanguageDefault: DocumentationBundle!
     var testBundleWithoutLanguageDefault: DocumentationBundle!
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        try await super.setUp()
+        
         func renderSection(for bundle: DocumentationBundle, in context: DocumentationContext) throws -> ContentRenderSection {
             let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
 
@@ -34,7 +36,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
             return renderNode.primaryContentSections.first! as! ContentRenderSection
         }
 
-        let (_, bundleWithLanguageDefault, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+        let (_, bundleWithLanguageDefault, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         testBundleWithLanguageDefault = bundleWithLanguageDefault
 

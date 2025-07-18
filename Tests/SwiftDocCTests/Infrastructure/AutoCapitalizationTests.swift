@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -42,7 +42,7 @@ class AutoCapitalizationTests: XCTestCase {
     
     // MARK: End-to-end integration tests
     
-    func testParametersCapitalization() throws {
+    func testParametersCapitalization() async throws {
         let symbolGraph = makeSymbolGraph(
             docComment: """
             Some symbol description.
@@ -60,7 +60,7 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
@@ -88,7 +88,7 @@ class AutoCapitalizationTests: XCTestCase {
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("a`nother invalid capitalization")]))]])
     }
     
-    func testIndividualParametersCapitalization() throws {
+    func testIndividualParametersCapitalization() async throws {
         let symbolGraph = makeSymbolGraph(
             docComment: """
             Some symbol description.
@@ -105,7 +105,7 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
@@ -133,7 +133,7 @@ class AutoCapitalizationTests: XCTestCase {
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("a`nother invalid capitalization")]))]])
     }
     
-    func testReturnsCapitalization() throws {
+    func testReturnsCapitalization() async throws {
         let symbolGraph = makeSymbolGraph(
             docComment: """
             Some symbol description.
@@ -146,7 +146,7 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         

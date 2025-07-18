@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,11 +16,11 @@ import Foundation
 class ConvertActionIndexerTests: XCTestCase {
     
     // Tests the standalone indexer
-    func testConvertActionIndexer() throws {
+    func testConvertActionIndexer() async throws {
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
             .inputsAndDataProvider(startingPoint: testCatalogURL(named: "LegacyBundle_DoNotUseInNewTests"), options: .init())
         
-        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)
+        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider)
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         // Add /documentation/MyKit to the index, verify the tree dump

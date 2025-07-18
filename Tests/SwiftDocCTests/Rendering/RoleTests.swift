@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,8 +24,8 @@ class RoleTests: XCTestCase {
         "/documentation/SideKit/SideClass/init()": "symbol",
     ]
     
-    func testNodeRoles() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+    func testNodeRoles() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         // Compile docs and verify contents
         for (path, expectedRole) in expectedRoles {
@@ -42,8 +42,8 @@ class RoleTests: XCTestCase {
         }
     }
     
-    func testDocumentationRenderReferenceRoles() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+    func testDocumentationRenderReferenceRoles() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
@@ -55,8 +55,8 @@ class RoleTests: XCTestCase {
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/Test-Bundle/article2"] as? TopicRenderReference)?.role, "collectionGroup")
     }
 
-    func testTutorialsRenderReferenceRoles() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+    func testTutorialsRenderReferenceRoles() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
         let node = try context.entity(with: identifier)

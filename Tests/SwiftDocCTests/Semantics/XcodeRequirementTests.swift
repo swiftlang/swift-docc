@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class XcodeRequirementTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@XcodeRequirement"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -38,7 +38,7 @@ class XcodeRequirementTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let title = "Xcode 10.2 Beta 3"
         let destination = "https://www.example.com/download"
         let source = """
@@ -48,7 +48,7 @@ class XcodeRequirementTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()

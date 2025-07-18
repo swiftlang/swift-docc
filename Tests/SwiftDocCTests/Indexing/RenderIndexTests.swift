@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import SwiftDocCTestUtilities
 @testable import SwiftDocC
 
 final class RenderIndexTests: XCTestCase {
-    func testTestBundleRenderIndexGeneration() throws {
+    func testTestBundleRenderIndexGeneration() async throws {
         let expectedIndexURL = try XCTUnwrap(
             Bundle.module.url(
                 forResource: "TestBundle-RenderIndex",
@@ -22,16 +22,14 @@ final class RenderIndexTests: XCTestCase {
                 subdirectory: "Test Resources"
             )
         )
-        
-        try XCTAssertEqual(
-            generatedRenderIndex(for: "LegacyBundle_DoNotUseInNewTests", with: "org.swift.docc.example"),
-            RenderIndex.fromURL(expectedIndexURL)
-        )
+        let renderIndex = try await generatedRenderIndex(for: "LegacyBundle_DoNotUseInNewTests", with: "org.swift.docc.example")
+        try XCTAssertEqual(renderIndex, RenderIndex.fromURL(expectedIndexURL))
     }
     
-    func testRenderIndexGenerationForBundleWithTechnologyRoot() throws {
+    func testRenderIndexGenerationForBundleWithTechnologyRoot() async throws {
+        let renderIndex = try await generatedRenderIndex(for: "BundleWithTechnologyRoot", with: "org.swift.docc.example")
         try XCTAssertEqual(
-            generatedRenderIndex(for: "BundleWithTechnologyRoot", with: "org.swift.docc.example"),
+            renderIndex,
             RenderIndex.fromString(#"""
                 {
                   "interfaceLanguages": {
@@ -62,8 +60,8 @@ final class RenderIndexTests: XCTestCase {
         )
     }
     
-    func testRenderIndexGenerationForMixedLanguageFramework() throws {
-        let renderIndex = try generatedRenderIndex(for: "MixedLanguageFramework", with: "org.swift.MixedLanguageFramework")
+    func testRenderIndexGenerationForMixedLanguageFramework() async throws {
+        let renderIndex = try await generatedRenderIndex(for: "MixedLanguageFramework", with: "org.swift.MixedLanguageFramework")
 
         XCTAssertEqual(
             renderIndex,
@@ -629,7 +627,7 @@ final class RenderIndexTests: XCTestCase {
         try assertRoundTripCoding(renderIndexFromJSON)
     }
     
-    func testRenderIndexGenerationWithDeprecatedSymbol() throws {
+    func testRenderIndexGenerationWithDeprecatedSymbol() async throws {
         let swiftWithDeprecatedSymbolGraphFile = Bundle.module.url(
                 forResource: "Deprecated",
                 withExtension: "symbols.json",
@@ -650,7 +648,7 @@ final class RenderIndexTests: XCTestCase {
         )
         try bundle.write(to: bundleDirectory)
 
-        let (_, loadedBundle, context) = try loadBundle(from: bundleDirectory)
+        let (_, loadedBundle, context) = try await loadBundle(from: bundleDirectory)
 
         XCTAssertEqual(
             try generatedRenderIndex(for: loadedBundle, withIdentifier: "com.test.example", withContext: context),
@@ -682,9 +680,10 @@ final class RenderIndexTests: XCTestCase {
             """#))
     }
     
-    func testRenderIndexGenerationWithCustomIcon() throws {
+    func testRenderIndexGenerationWithCustomIcon() async throws {
+        let renderIndex = try await generatedRenderIndex(for: "BookLikeContent", with: "org.swift.docc.Book")
         try XCTAssertEqual(
-            generatedRenderIndex(for: "BookLikeContent", with: "org.swift.docc.Book"),
+            renderIndex,
             RenderIndex.fromString(#"""
                 {
                   "interfaceLanguages" : {
@@ -737,8 +736,8 @@ final class RenderIndexTests: XCTestCase {
         )
     }
     
-    func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) throws -> RenderIndex {
-        let (bundle, context) = try testBundleAndContext(named: testBundleName)
+    func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) async throws -> RenderIndex {
+        let (bundle, context) = try await testBundleAndContext(named: testBundleName)
         return try generatedRenderIndex(for: bundle, withIdentifier: bundleIdentifier, withContext: context)
     }
     

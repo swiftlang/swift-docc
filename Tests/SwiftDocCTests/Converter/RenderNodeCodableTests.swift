@@ -169,8 +169,8 @@ class RenderNodeCodableTests: XCTestCase {
         XCTAssertEqual(renderNode.topicSectionsStyle, .list)
     }
     
-    func testEncodeRenderNodeWithCustomTopicSectionStyle() throws {
-        let (bundle, context) = try testBundleAndContext()
+    func testEncodeRenderNodeWithCustomTopicSectionStyle() async throws {
+        let (bundle, context) = try await testBundleAndContext()
         var problems = [Problem]()
         
         let source = """

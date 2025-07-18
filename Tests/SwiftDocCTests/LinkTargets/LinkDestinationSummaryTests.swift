@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -93,8 +93,8 @@ class ExternalLinkableTests: XCTestCase {
         InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
     ])
     
-    func testSummaryOfTutorialPage() throws {
-        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
+    func testSummaryOfTutorialPage() async throws {
+        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
@@ -150,8 +150,8 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(summaries, decoded)
     }
 
-    func testSymbolSummaries() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testSymbolSummaries() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
@@ -312,8 +312,8 @@ class ExternalLinkableTests: XCTestCase {
         }
     }
     
-    func testTopicImageReferences() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+    func testTopicImageReferences() async throws {
+        let (url, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = """
             # ``MyKit/MyClass/myFunction()``
 
@@ -430,8 +430,8 @@ class ExternalLinkableTests: XCTestCase {
         }
     }
     
-    func testVariantSummaries() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+    func testVariantSummaries() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         // Check a symbol that's represented as a class in both Swift and Objective-C
@@ -647,7 +647,7 @@ class ExternalLinkableTests: XCTestCase {
     }
 
     /// Ensure that the task group link summary for overload group pages doesn't overwrite any manual curation.
-    func testOverloadSymbolsWithManualCuration() throws {
+    func testOverloadSymbolsWithManualCuration() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
         let symbolGraph = SymbolGraph.init(
@@ -723,7 +723,7 @@ class ExternalLinkableTests: XCTestCase {
             JSONFile(name: "MyModule.symbols.json", content: symbolGraph),
             InfoPlist(displayName: "MyModule", identifier: "com.example.mymodule")
         ])
-        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
+        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
