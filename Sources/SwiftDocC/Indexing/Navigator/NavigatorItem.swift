@@ -93,6 +93,8 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - platformMask: The mask indicating for which platform the page is available.
         - availabilityID:  The identifier of the availability information of the page.
         - icon: A reference to a custom image for this navigator item.
+        - isExternal: A flag indicating whether the navigator item belongs to an external documentation archive.
+        - isBeta: A flag indicating whether the navigator item is in beta.
      */
     public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil, isExternal: Bool = false, isBeta: Bool = false) {
         self.pageType = pageType
