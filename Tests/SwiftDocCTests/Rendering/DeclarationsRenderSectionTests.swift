@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import SwiftDocCTestUtilities
+import SymbolKit
 
 class DeclarationsRenderSectionTests: XCTestCase {
     func testDecodingTokens() throws {
@@ -325,34 +326,67 @@ class DeclarationsRenderSectionTests: XCTestCase {
     func testInconsistentHighlightDiff() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let symbolGraphFile = Bundle.module.url(
-            forResource: "FancierOverloads",
-            withExtension: "symbols.json",
-            subdirectory: "Test Resources"
-        )!
+        // Generate a symbol graph with many overload groups that share declarations.
+        // The overloaded declarations have two legitimate solutions for their longest common subsequence:
+        // one that ends in a close-parenthesis, and one that ends in a space.
+        // By alternating the order in which these declarations appear,
+        // the computed difference highlighting can differ
+        // unless the declarations are sorted prior to the calculation.
+        // Ensure that the overload difference highlighting is consistent for these declarations.
+
+        // init(_ content: MyClass) throws
+        let declaration1: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "content", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "MyClass", preciseIdentifier: "s:MyClass"),
+            .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "throws", preciseIdentifier: nil),
+        ])
+
+        // init(_ content: some ConvertibleToMyClass)
+        let declaration2: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "content", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "some", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "ConvertibleToMyClass", preciseIdentifier: "s:ConvertibleToMyClass"),
+            .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+        ])
+        let overloadsCount = 10
+        let symbols = (0...overloadsCount).flatMap({ index in
+            let reverseDeclarations = index % 2 != 0
+            return [
+                makeSymbol(
+                    id: "overload-\(index)-1",
+                    kind: .func,
+                    pathComponents: ["overload-\(index)"],
+                    otherMixins: [reverseDeclarations ? declaration2 : declaration1]),
+                makeSymbol(
+                    id: "overload-\(index)-2",
+                    kind: .func,
+                    pathComponents: ["overload-\(index)"],
+                    otherMixins: [reverseDeclarations ? declaration1 : declaration2]),
+            ]
+        })
+        let symbolGraph = makeSymbolGraph(moduleName: "FancierOverloads", symbols: symbols)
 
         let catalog = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "FancierOverloads", identifier: "com.test.example"),
-            CopyOfFile(original: symbolGraphFile),
+            JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
         ])
 
         let (bundle, context) = try loadBundle(catalog: catalog)
 
-        // The symbol graph contains two overloaded methods with modified declarations.
-        // The overloaded declarations have two legitimate solutions for their longest common subsequence:
-        // one that ends in a close-parenthesis, and one that ends in a space.
-        // This can create inconsistencies when run many times.
-        // Ensure that the overload difference highlighting is consistent for these declarations.
-
-        // init(_ content: MyClass) throws
-        // init(_ content: some ConvertibleToMyClass)
-
-        func assertDeclarations(for referencePath: String, file: StaticString = #filePath, line: UInt = #line) throws {
-            let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
-                path: referencePath,
-                sourceLanguage: .swift
-            )
+        func assertDeclarations(for USR: String, file: StaticString = #filePath, line: UInt = #line) throws {
+            let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: USR), file: file, line: line)
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol, file: file, line: line)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode, file: file, line: line)
@@ -368,8 +402,10 @@ class DeclarationsRenderSectionTests: XCTestCase {
             ], file: file, line: line)
         }
 
-        try assertDeclarations(for: "/documentation/FancierOverloads/doSomething(with:)")
-        try assertDeclarations(for: "/documentation/FancierOverloads/doSomething(with:)-vjl7")
+        for i in 0...overloadsCount {
+            try assertDeclarations(for: "overload-\(i)-1")
+            try assertDeclarations(for: "overload-\(i)-2")
+        }
     }
 
     func testDontHighlightWhenOverloadsAreDisabled() throws {
