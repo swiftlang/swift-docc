@@ -674,6 +674,7 @@ public struct DocumentationNode {
         case .union: return .union
         case .`var`: return .globalVariable
         case .module: return .module
+        case .extension: return .extension
         case .extendedModule: return .extendedModule
         case .extendedStructure: return .extendedStructure
         case .extendedClass: return .extendedClass
@@ -681,6 +682,55 @@ public struct DocumentationNode {
         case .extendedProtocol: return .extendedProtocol
         case .unknownExtendedType: return .unknownExtendedType
         default: return .unknown
+        }
+    }
+    
+    /// Returns a symbol kind for the given documentation node.
+    /// - Parameter symbol: A documentation node kind.
+    /// - Returns: A symbol graph symbol.
+    static func symbolKind(for kind: Kind) -> SymbolGraph.Symbol.KindIdentifier? {
+        switch kind {
+        case .associatedType: return .`associatedtype`
+        case .class: return .`class`
+        case .deinitializer: return .`deinit`
+        case .dictionary, .object: return .dictionary
+        case .dictionaryKey: return .dictionaryKey
+        case .enumeration: return .`enum`
+        case .enumerationCase: return .`case`
+        case .function: return .`func`
+        case .httpRequest: return .httpRequest
+        case .httpParameter: return .httpParameter
+        case .httpBody: return .httpBody
+        case .httpResponse: return .httpResponse
+        case .operator: return .`operator`
+        case .initializer: return .`init`
+        case .instanceVariable: return .ivar
+        case .macro: return .macro
+        case .instanceMethod: return .`method`
+        case .namespace: return .namespace
+        case .instanceProperty: return .`property`
+        case .protocol: return .`protocol`
+        case .snippet: return .snippet
+        case .structure: return .`struct`
+        case .instanceSubscript: return .`subscript`
+        case .typeMethod: return .`typeMethod`
+        case .typeProperty, .typeConstant: return .`typeProperty`
+        case .typeSubscript: return .`typeSubscript`
+        case .typeAlias, .typeDef: return .`typealias`
+        case .union: return .union
+        case .globalVariable, .localVariable: return .`var`
+        case .module: return .module
+        case .extension: return .extension
+        case .extendedModule: return .extendedModule
+        case .extendedStructure: return .extendedStructure
+        case .extendedClass: return .extendedClass
+        case .extendedEnumeration: return .extendedEnumeration
+        case .extendedProtocol: return .extendedProtocol
+        case .unknownExtendedType: return .unknownExtendedType
+        default:
+            // For non-symbol kinds (like .article, .tutorial, etc.),
+            // return nil since these don't have corresponding SymbolGraph.Symbol.KindIdentifier values
+            return nil
         }
     }
     

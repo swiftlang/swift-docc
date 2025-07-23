@@ -108,7 +108,8 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
                 images: entityInfo.topicImages?.map(\.0) ?? []
             ),
             renderReferenceDependencies: dependencies,
-            sourceLanguages: [entityInfo.language]
+            sourceLanguages: [entityInfo.language],
+            documentationKind: entityInfo.kind
         )
     }
 }
