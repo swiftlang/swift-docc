@@ -160,6 +160,81 @@ class DeclarationsRenderSectionTests: XCTestCase {
         XCTAssert(declarationsSection.declarations.allSatisfy({ $0.platforms == [.iOS, .macOS] }))
     }
 
+    func testPlatformSpecificDeclarations() throws {
+        // init(_ content: MyClass) throws
+        let declaration1: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "content", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "MyClass", preciseIdentifier: "s:MyClass"),
+            .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "throws", preciseIdentifier: nil),
+        ])
+
+        // init(_ content: OtherClass) throws
+        let declaration2: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "content", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "OtherClass", preciseIdentifier: "s:OtherClass"),
+            .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "throws", preciseIdentifier: nil),
+        ])
+        let symbol1 = makeSymbol(
+            id: "myInit",
+            kind: .func,
+            pathComponents: ["myInit"],
+            otherMixins: [declaration1])
+        let symbol2 = makeSymbol(
+            id: "myInit",
+            kind: .func,
+            pathComponents: ["myInit"],
+            otherMixins: [declaration2])
+        let symbolGraph1 = makeSymbolGraph(moduleName: "PlatformSpecificDeclarations", platform: .init(operatingSystem: .init(name: "macos")), symbols: [symbol1])
+        let symbolGraph2 = makeSymbolGraph(moduleName: "PlatformSpecificDeclarations", platform: .init(operatingSystem: .init(name: "ios")), symbols: [symbol2])
+
+        func runAssertions(forwards: Bool) throws {
+            // Toggling the order of platforms here doesn't necessarily _enforce_ a
+            // nondeterminism failure in a unit-test environment, but it does make it
+            // much more likely. Make sure that the order of the platform-specific
+            // declarations is consistent between runs.
+            let catalog = Folder(name: "unit-test.docc", content: [
+                InfoPlist(displayName: "PlatformSpecificDeclarations", identifier: "com.test.example"),
+                JSONFile(name: "symbols\(forwards ? "1" : "2").symbols.json", content: symbolGraph1),
+                JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: symbolGraph2),
+            ])
+
+            let (bundle, context) = try loadBundle(catalog: catalog)
+
+            let reference = ResolvedTopicReference(
+                bundleID: bundle.id,
+                path: "/documentation/PlatformSpecificDeclarations/myInit",
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+            let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+            XCTAssertEqual(declarationsSection.declarations.count, 2)
+
+            XCTAssertEqual(declarationsSection.declarations[0].platforms, [.iOS])
+            XCTAssertEqual(declarationsSection.declarations[0].tokens.map(\.text).joined(),
+                           "init(_ content: OtherClass) throws")
+            XCTAssertEqual(declarationsSection.declarations[1].platforms, [.macOS])
+            XCTAssertEqual(declarationsSection.declarations[1].tokens.map(\.text).joined(),
+                           "init(_ content: MyClass) throws")
+        }
+
+        try runAssertions(forwards: true)
+        try runAssertions(forwards: false)
+    }
+
     func testHighlightDiff() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 

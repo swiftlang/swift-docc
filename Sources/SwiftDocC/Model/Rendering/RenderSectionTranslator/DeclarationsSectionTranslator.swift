@@ -187,13 +187,15 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return declarations
             }
 
-            func sortPlatformNames(_ platforms: [PlatformName?]) -> [PlatformName?] {
-                platforms.sorted { (lhs, rhs) -> Bool in
-                    guard let lhsValue = lhs, let rhsValue = rhs else {
-                        return lhs == nil
-                    }
-                    return lhsValue.rawValue < rhsValue.rawValue
+            func comparePlatformNames(_ lhs: PlatformName?, _ rhs: PlatformName?) -> Bool {
+                guard let lhsValue = lhs, let rhsValue = rhs else {
+                    return lhs == nil
                 }
+                return lhsValue.rawValue < rhsValue.rawValue
+            }
+
+            func sortPlatformNames(_ platforms: [PlatformName?]) -> [PlatformName?] {
+                platforms.sorted(by: comparePlatformNames(_:_:))
             }
 
             var declarations: [DeclarationRenderSection] = []
@@ -263,6 +265,15 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         )
                     }
                 }
+            }
+
+            declarations.sort { (lhs, rhs) -> Bool in
+                // We only need to compare the first platform in each list against the
+                // first platform in any other list, so pull them out here
+                guard let lhsPlatform = lhs.platforms.first, let rhsPlatform = rhs.platforms.first else {
+                    return lhs.platforms.isEmpty
+                }
+                return comparePlatformNames(lhsPlatform, rhsPlatform)
             }
 
             return DeclarationsRenderSection(declarations: declarations)
