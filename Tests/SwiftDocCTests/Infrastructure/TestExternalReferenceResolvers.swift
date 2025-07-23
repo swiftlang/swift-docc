@@ -92,6 +92,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             title: entityInfo.title,
             availableLanguages: [entityInfo.language],
             platforms: entityInfo.platforms,
+            declarationFragments: entityInfo.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
             topicImages: entityInfo.topicImages?.map(\.0),
             references: entityInfo.topicImages?.map { topicImage, altText in
                 ImageReference(identifier: topicImage.identifier, altText: altText, imageAsset: assetsToReturn[topicImage.identifier.identifier] ?? .init())

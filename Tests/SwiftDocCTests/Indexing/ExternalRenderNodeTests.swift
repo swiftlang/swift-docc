@@ -41,6 +41,11 @@ class ExternalRenderNodeTests: XCTestCase {
                 title: "SwiftSymbol",
                 kind: .class,
                 language: .swift,
+                declarationFragments: .init(declarationFragments: [
+                    .init(kind: .keyword, spelling: "class", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                    .init(kind: .identifier, spelling: "SwiftSymbol", preciseIdentifier: nil)
+                ]),
                 platforms: [.init(name: "iOS", introduced: nil, isBeta: true)]
             )
         )
@@ -50,6 +55,13 @@ class ExternalRenderNodeTests: XCTestCase {
                 title: "ObjCSymbol",
                 kind: .function,
                 language: .objectiveC,
+                declarationFragments: .init(declarationFragments: [
+                    .init(kind: .text, spelling: "- ", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+                    .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil)
+                ]),
                 platforms: [.init(name: "macOS", introduced: nil, isBeta: false)]
             )
         )
@@ -152,12 +164,14 @@ class ExternalRenderNodeTests: XCTestCase {
         )
         XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.title, swiftTitle)
         XCTAssertFalse(swiftNavigatorExternalRenderNode.metadata.isBeta)
-
+        XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.fragments, swiftFragments)
+        
         let objcNavigatorExternalRenderNode = try XCTUnwrap(
             NavigatorExternalRenderNode(renderNode: externalRenderNode, trait: .interfaceLanguage(SourceLanguage.objectiveC.id))
         )
         XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, objcTitle)
         XCTAssertFalse(objcNavigatorExternalRenderNode.metadata.isBeta)
+        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.fragments, objcFragments)
     }
 
     func testNavigatorWithExternalNodes() async throws {
@@ -218,19 +232,38 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.count(where: \.isExternal), 0)
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.count(where: \.isExternal), 0)
 
+        
+        func externalNodes(by language: SourceLanguage) -> [RenderIndex.Node]? {
+            renderIndex.interfaceLanguages[language.id]?.first?.children?.filter(\.isExternal)
+        }
+        
         // Verify that the curated external links are part of the index.
-        let swiftExternalNodes = (renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
-        let objcExternalNodes  = (renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
+        let swiftExternalNodes = try XCTUnwrap(externalNodes(by: .swift))
         XCTAssertEqual(swiftExternalNodes.count, 2)
+
+        let objcExternalNodes = try XCTUnwrap(externalNodes(by: .objectiveC))
         XCTAssertEqual(objcExternalNodes.count, 2)
-        XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle", "SwiftSymbol"])
-        XCTAssertEqual(objcExternalNodes.map(\.title),  ["ObjCArticle",  "ObjCSymbol"])
-        XCTAssert(swiftExternalNodes.first?.isBeta == false)
-        XCTAssert(swiftExternalNodes.last?.isBeta == true)
-        XCTAssert(objcExternalNodes.first?.isBeta == true)
-        XCTAssert(objcExternalNodes.last?.isBeta == false)
-        XCTAssertEqual(swiftExternalNodes.map(\.type), ["article", "class"])
-        XCTAssertEqual(objcExternalNodes.map(\.type), ["article", "func"])
+
+        let swiftArticleExternalNode = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/swiftarticle" }))
+        let swiftSymbolExternalNode = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/swiftsymbol" }))
+        let objcArticleExternalNode = try XCTUnwrap(objcExternalNodes.first(where: { $0.path == "/path/to/external/objcarticle" }))
+        let objcSymbolExternalNode = try XCTUnwrap(objcExternalNodes.first(where: { $0.path == "/path/to/external/objcsymbol" }))
+
+        XCTAssertEqual(swiftArticleExternalNode.title, "SwiftArticle")
+        XCTAssertEqual(swiftArticleExternalNode.isBeta, false)
+        XCTAssertEqual(swiftArticleExternalNode.type, "article")
+
+        XCTAssertEqual(swiftSymbolExternalNode.title, "SwiftSymbol")  // Classes don't use declaration fragments in their navigator title
+        XCTAssertEqual(swiftSymbolExternalNode.isBeta, true)
+        XCTAssertEqual(swiftSymbolExternalNode.type, "class")
+
+        XCTAssertEqual(objcArticleExternalNode.title, "ObjCArticle")
+        XCTAssertEqual(objcArticleExternalNode.isBeta, true)
+        XCTAssertEqual(objcArticleExternalNode.type, "article")
+
+        XCTAssertEqual(objcSymbolExternalNode.title, "- (void) ObjCSymbol")
+        XCTAssertEqual(objcSymbolExternalNode.isBeta, false)
+        XCTAssertEqual(objcSymbolExternalNode.type, "func")
     }
     
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
@@ -299,7 +332,7 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(swiftExternalNodes.count, 1)
         XCTAssertEqual(objcExternalNodes.count, 1)
         XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle"])
-        XCTAssertEqual(objcExternalNodes.map(\.title), ["ObjCSymbol"])
+        XCTAssertEqual(objcExternalNodes.map(\.title), ["- (void) ObjCSymbol"])
         XCTAssertEqual(swiftExternalNodes.map(\.type), ["article"])
         XCTAssertEqual(objcExternalNodes.map(\.type), ["func"])
     }
