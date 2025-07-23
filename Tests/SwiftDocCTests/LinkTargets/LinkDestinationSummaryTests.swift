@@ -296,8 +296,6 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "globalFunction", kind: .identifier, identifier: nil),
                 .init(text: "(", kind: .text, identifier: nil),
-                .init(text: "_", kind: .identifier, identifier: nil),
-                .init(text: ": ", kind: .text, identifier: nil),
                 .init(text: "Data", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:10Foundation4DataV"),
                 .init(text: ", ", kind: .text, identifier: nil),
                 .init(text: "considering", kind: .identifier, identifier: nil),
@@ -530,10 +528,6 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "myStringFunction", kind: .identifier, identifier: nil),
                 .init(text: "(", kind: .text, identifier: nil),
-                .init(text: "_", kind: .externalParam, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "string", kind: .internalParam, identifier: nil),
-                .init(text: ": ", kind: .text, identifier: nil),
                 .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:SS"),
                 .init(text: ") ", kind: .text, identifier: nil),
                 .init(text: "throws", kind: .keyword, identifier: nil),
@@ -551,17 +545,8 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(variant.title, "myStringFunction:error:")
             XCTAssertEqual(variant.fullName, "+ (NSString *) myStringFunction: (NSString *)string error: (NSError **)error;")
             XCTAssertEqual(variant.declarationFragments, [
-                .init(text: "+ (", kind: .text, identifier: nil),
-                .init(text: "NSString", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "c:objc(cs)NSString"),
-                .init(text: " *) ", kind: .text, identifier: nil),
-                .init(text: "myStringFunction", kind: .identifier, identifier: nil),
-                .init(text: ": (", kind: .text, identifier: nil),
-                .init(text: "NSString", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "c:objc(cs)NSString"),
-                .init(text: " *)string ", kind: .text, identifier: nil),
-                .init(text: "error", kind: .identifier, identifier: nil),
-                .init(text: ": (", kind: .text, identifier: nil),
-                .init(text: "NSError", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "c:objc(cs)NSError"),
-                .init(text: " **)error;", kind: .text, identifier: nil)
+                .init(text: "+ ", kind: .text, identifier: nil),
+                .init(text: "myStringFunction:error:", kind: .identifier, identifier: nil)
             ])
             
             // Check variant content that is the same as the summarized element

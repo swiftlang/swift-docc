@@ -367,45 +367,12 @@
         ],
         "subHeading" : [
           {
-            "kind" : "keyword",
-            "spelling" : "typedef"
-          },
-          {
             "kind" : "text",
-            "spelling" : " "
-          },
-          {
-            "kind" : "keyword",
-            "spelling" : "enum"
-          },
-          {
-            "kind" : "text",
-            "spelling" : " "
+            "spelling" : "+ "
           },
           {
             "kind" : "identifier",
-            "spelling" : "Foo"
-          },
-          {
-            "kind" : "text",
-            "spelling" : " : "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "NSString",
-            "preciseIdentifier": "c:@T@NSInteger"
-          },
-          {
-            "kind": "text",
-            "spelling": " {\n    ...\n} "
-          },
-          {
-            "kind": "identifier",
-            "spelling": "Foo"
-          },
-          {
-            "kind": "text",
-            "spelling": ";"
+            "spelling" : "myStringFunction:error:"
           }
         ]
       },
@@ -485,7 +452,7 @@
             "text" : "This is the foo's description."
           }
         ]
-      },
+      }
     },
     {
       "accessLevel" : "public",
@@ -570,7 +537,7 @@
           {
             "kind" : "typeIdentifier",
             "spelling" : "NSString",
-            "preciseIdentifier": "c:@T@NSInteger",
+            "preciseIdentifier": "c:@T@NSInteger"
           },
           {
             "kind": "text",
@@ -630,7 +597,7 @@
             "kind" : "identifier",
             "spelling" : "first"
           }
-        ],
+        ]
       },
       "pathComponents" : [
         "Foo",
@@ -677,7 +644,7 @@
             "kind" : "identifier",
             "spelling" : "fourth"
           }
-        ],
+        ]
       },
       "pathComponents" : [
         "Foo",
@@ -724,7 +691,7 @@
             "kind" : "identifier",
             "spelling" : "second"
           }
-        ],
+        ]
       },
       "pathComponents" : [
         "Foo",
@@ -771,7 +738,7 @@
             "kind" : "identifier",
             "spelling" : "third"
           }
-        ],
+        ]
       },
       "pathComponents" : [
         "Foo",

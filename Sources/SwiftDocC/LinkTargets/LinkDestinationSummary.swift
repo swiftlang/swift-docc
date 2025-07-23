@@ -140,7 +140,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     
     /// The rendered fragments of a symbol's declaration.
     public typealias DeclarationFragments = [DeclarationRenderSection.Token]
-    /// The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
+    /// The abbreviated fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
     public let declarationFragments: DeclarationFragments?
     
     /// Any previous URLs for this element.
@@ -201,7 +201,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// If the summarized element has a full name but the variant doesn't, this property will be `Optional.some(nil)`.
         public let fullName: VariantValue<String?>
         
-        /// The declaration of the variant or `nil` if the declaration is the same as the summarized element.
+        /// The abbreviated declaration of the variant or `nil` if the declaration is the same as the summarized element.
         ///
         /// If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let declarationFragments: VariantValue<DeclarationFragments?>
@@ -224,7 +224,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///   - taskGroups: The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///   - usr: The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///   - fullName: The full name of this symbol, derived from its full declaration fragments, or `nil` if the precise symbol identifier is the same as the summarized element.
-        ///   - declarationFragments: The declaration of the variant or `nil` if the declaration is the same as the summarized element.
+        ///   - declarationFragments: The abbreviated declaration of the variant or `nil` if the declaration is the same as the summarized element.
         public init(
             traits: [RenderNode.Variant.Trait],
             kind: VariantValue<DocumentationNode.Kind> = nil,
@@ -295,7 +295,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - taskGroups: The reference URLs of the summarized element's children, grouped by their task groups.
     ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     ///   - fullName: The full name of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
-    ///   - declarationFragments: The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
+    ///   - declarationFragments: The abbreviated fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
     ///   - redirects: Any previous URLs for this element, or `nil` if this element has no previous URLs.
     ///   - topicImages: Images that are used to represent the summarized element, or `nil` if this element has no topic images.
     ///   - references: References used in the content of the summarized element, or `nil` if this element has no references to other content.
@@ -483,16 +483,21 @@ extension LinkDestinationSummary {
         let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstract)
         let usr = symbol.externalIDVariants[summaryTrait] ?? symbol.externalID
         let fullName = symbol.fullName(for: summaryTrait)
-        let declaration = (symbol.declarationVariants[summaryTrait] ?? symbol.declaration).renderDeclarationTokens()
         let language = documentationNode.sourceLanguage
-        
+        // Use the abbreviated declaration fragments instead of the full declaration fragments.
+        // These have been derived from the symbol's subheading declaration fragments as part of rendering.
+        // We only want an abbreviated version of the declaration in the link summary (for display in Topic sections, the navigator, etc.).
+        // Otherwise, the declaration would be too verbose.
+        //
+        // However if no abbreviated declaration fragments are available, use the full declaration fragments instead.
+        // In this case, they are assumed to be the same.
+        let declaration = renderNode.metadata.fragmentsVariants.value(for: language) ?? (symbol.declarationVariants[summaryTrait] ?? symbol.declaration).renderDeclarationTokens()
+
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
             // Skip the variant for the summarized elements source language.
             guard let interfaceLanguage = trait.interfaceLanguage, interfaceLanguage != documentationNode.sourceLanguage.id else {
                 return nil
             }
-            
-            let declarationVariant = symbol.declarationVariants[trait]?.renderDeclarationTokens()
             
             let abstractVariant: Variant.VariantValue<Abstract?> = symbol.abstractVariants[trait].map { renderSymbolAbstract($0) }
             
@@ -502,6 +507,15 @@ extension LinkDestinationSummary {
             
             let fullNameVariant = symbol.fullName(for: trait)
             let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(interfaceLanguage)]
+            
+            // Use the abbreviated declaration fragments instead of the full declaration fragments.
+            // These have been derived from the symbol's subheading declaration fragments as part of rendering.
+            // We only want an abbreviated version of the declaration in the link summary (for display in Topic sections, the navigator, etc.).
+            // Otherwise, the declaration would be too verbose.
+            //
+            // However if no abbreviated declaration fragments are available, use the full declaration fragments instead.
+            // In this case, they are assumed to be the same.
+            let declarationVariant = renderNode.metadata.fragmentsVariants.value(for: variantTraits) ?? symbol.declarationVariants[trait]?.renderDeclarationTokens()
             return Variant(
                 traits: variantTraits,
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
