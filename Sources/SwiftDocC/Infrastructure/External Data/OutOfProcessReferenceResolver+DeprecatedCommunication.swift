@@ -162,6 +162,8 @@ extension OutOfProcessReferenceResolver {
         /// Information about the platforms and their versions where the resolved node is available, if any.
         public let platforms: [PlatformAvailability]?
         /// Information about the resolved declaration fragments, if any.
+        ///
+        /// This is expected to be an abbreviated declaration for the symbol.
         public let declarationFragments: DeclarationFragments?
         
         // We use the real types here because they're Codable and don't have public member-wise initializers.
@@ -205,7 +207,7 @@ extension OutOfProcessReferenceResolver {
         ///   - language: The resolved language.
         ///   - availableLanguages: The languages where the resolved node is available.
         ///   - platforms: The platforms and their versions where the resolved node is available, if any.
-        ///   - declarationFragments: The resolved declaration fragments, if any.
+        ///   - declarationFragments: The resolved declaration fragments, if any. This is expected to be an abbreviated declaration for the symbol.
         ///   - topicImages: Images that are used to represent the summarized element.
         ///   - references: References used in the content of the summarized element.
         ///   - variants: The variants of content for this resolver information.
@@ -259,6 +261,8 @@ extension OutOfProcessReferenceResolver {
             public let language: VariantValue<SourceLanguage>
             /// The declaration fragments of the variant or `nil` if the declaration is the same as the resolved information.
             ///
+            /// This is expected to be an abbreviated declaration for the symbol.
+            ///
             /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
             public let declarationFragments: VariantValue<DeclarationFragments?>
             
@@ -271,7 +275,7 @@ extension OutOfProcessReferenceResolver {
             ///   - title: The resolved title
             ///   - abstract: The resolved (plain text) abstract.
             ///   - language: The resolved language.
-            ///   - declarationFragments: The resolved declaration fragments, if any.
+            ///   - declarationFragments: The resolved declaration fragments, if any. This is expected to be an abbreviated declaration for the symbol.
             public init(
                 traits: [RenderNode.Variant.Trait],
                 kind: VariantValue<DocumentationNode.Kind> = nil,
