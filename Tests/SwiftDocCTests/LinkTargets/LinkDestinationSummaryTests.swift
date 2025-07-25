@@ -189,6 +189,11 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "MyClass", kind: .identifier, identifier: nil),
             ])
+            XCTAssertEqual(summary.subHeadingDeclarationFragments, [
+                .init(text: "class", kind: .keyword, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "MyClass", kind: .identifier, identifier: nil),
+            ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -230,6 +235,13 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " : ", kind: .text, identifier: nil),
                 .init(text: "Hashable", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "p:hPP"),
             ])
+            XCTAssertEqual(summary.subHeadingDeclarationFragments, [
+                .init(text: "protocol", kind: .keyword, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "MyProtocol", kind: .identifier, identifier: nil),
+                .init(text: " : ", kind: .text, identifier: nil),
+                .init(text: "Hashable", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "p:hPP"),
+            ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -265,6 +277,7 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: "...", kind: .text, identifier: nil),
                 .init(text: ")", kind: .text, identifier: nil)
             ])
+            XCTAssertNil(summary.subHeadingDeclarationFragments)
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -296,6 +309,18 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: "(", kind: .text, identifier: nil),
                 .init(text: "_", kind: .identifier, identifier: nil),
                 .init(text: ": ", kind: .text, identifier: nil),
+                .init(text: "Data", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:10Foundation4DataV"),
+                .init(text: ", ", kind: .text, identifier: nil),
+                .init(text: "considering", kind: .identifier, identifier: nil),
+                .init(text: ": ", kind: .text, identifier: nil),
+                .init(text: "Int", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:Si"),
+                .init(text: ")", kind: .text, identifier: nil)
+            ])
+            XCTAssertEqual(summary.subHeadingDeclarationFragments, [
+                .init(text: "func", kind: .keyword, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "globalFunction", kind: .identifier, identifier: nil),
+                .init(text: "(", kind: .text, identifier: nil),
                 .init(text: "Data", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:10Foundation4DataV"),
                 .init(text: ", ", kind: .text, identifier: nil),
                 .init(text: "considering", kind: .identifier, identifier: nil),

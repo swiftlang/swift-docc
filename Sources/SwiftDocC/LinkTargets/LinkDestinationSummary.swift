@@ -139,7 +139,12 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public typealias DeclarationFragments = [DeclarationRenderSection.Token]
     /// The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
     public let declarationFragments: DeclarationFragments?
-    
+
+    /// The abbreviated fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
+    ///
+    /// They are used for displaying in contexts where the full declaration fragments would be too verbose, like in the Topics section or the navigation index.
+    public let subHeadingDeclarationFragments: DeclarationFragments?
+
     /// Any previous URLs for this element.
     ///
     /// A web server can use this list of URLs to redirect to the current URL.
@@ -197,7 +202,13 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///
         /// If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let declarationFragments: VariantValue<DeclarationFragments?>
-        
+
+        /// The abbreviated declaration of the variant or `nil` if the declaration is the same as the summarized element.
+        ///
+        /// They are used for displaying in contexts where the full declaration fragments would be too verbose, like in the Topics section or the navigation index.
+        /// If the summarized element has an abbreviated declaration but the variant doesn't, this property will be `Optional.some(nil)`.
+        public let subHeadingDeclarationFragments: VariantValue<DeclarationFragments?>
+
         /// Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
         ///
         /// If the summarized element has an image but the variant doesn't, this property will be `Optional.some(nil)`.
@@ -215,6 +226,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///   - taskGroups: The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///   - usr: The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///   - declarationFragments: The declaration of the variant or `nil` if the declaration is the same as the summarized element.
+        ///   - subHeadingDeclarationFragments: The abbreviated declaration of the variant or `nil` if the declaration is the same as the summarized element.
         ///   - topicImages: Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
         public init(
             traits: [RenderNode.Variant.Trait],
@@ -226,6 +238,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
             taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
             usr: VariantValue<String?> = nil,
             declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
+            subHeadingDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
             topicImages: VariantValue<[TopicImage]?> = nil
         ) {
             self.traits = traits
@@ -237,6 +250,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
             self.taskGroups = taskGroups
             self.usr = usr
             self.declarationFragments = declarationFragments
+            self.subHeadingDeclarationFragments = subHeadingDeclarationFragments
             self.topicImages = topicImages
         }
     }
@@ -258,6 +272,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - taskGroups: The reference URLs of the summarized element's children, grouped by their task groups.
     ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     ///   - declarationFragments: The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
+    ///   - subHeadingDeclarationFragments: The abbreviated fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
     ///   - redirects: Any previous URLs for this element, or `nil` if this element has no previous URLs.
     ///   - topicImages: Images that are used to represent the summarized element, or `nil` if this element has no topic images.
     ///   - references: References used in the content of the summarized element, or `nil` if this element has no references to other content.
@@ -273,6 +288,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         taskGroups: [LinkDestinationSummary.TaskGroup]? = nil,
         usr: String? = nil,
         declarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        subHeadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
         redirects: [URL]? = nil,
         topicImages: [TopicImage]? = nil,
         references: [any RenderReference]? = nil,
@@ -289,6 +305,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.taskGroups = taskGroups
         self.usr = usr
         self.declarationFragments = declarationFragments
+        self.subHeadingDeclarationFragments = subHeadingDeclarationFragments
         self.redirects = redirects
         self.topicImages = topicImages
         self.references = references
@@ -444,7 +461,11 @@ extension LinkDestinationSummary {
         let usr = symbol.externalIDVariants[summaryTrait] ?? symbol.externalID
         let declaration = (symbol.declarationVariants[summaryTrait] ?? symbol.declaration).renderDeclarationTokens()
         let language = documentationNode.sourceLanguage
-        
+        // Use the render metadata declaration fragments as the subheading declaration fragments.
+        // These have been derived from the symbol's original subheading declaration fragments as part of the rendering step.
+        // They are an abbreviated version of the declaration for display in Topic sections, the navigator, etc..
+        let subHeadingDeclaration = renderNode.metadata.fragmentsVariants.value(for: language)
+
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
             // Skip the variant for the summarized elements source language.
             guard let interfaceLanguage = trait.interfaceLanguage, interfaceLanguage != documentationNode.sourceLanguage.id else {
@@ -460,6 +481,11 @@ extension LinkDestinationSummary {
             }
             
             let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(interfaceLanguage)]
+            
+            // Use the render metadata declaration fragments as the subheading declaration fragments.
+            // These have been derived from the symbol's original subheading declaration fragments as part of the rendering step.
+            // They are an abbreviated version of the declaration for display in Topic sections, the navigator, etc..
+            let subHeadingDeclarationVariant = renderNode.metadata.fragmentsVariants.value(for: variantTraits)
             return Variant(
                 traits: variantTraits,
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
@@ -470,6 +496,7 @@ extension LinkDestinationSummary {
                 taskGroups: nilIfEqual(main: taskGroups, variant: taskGroupVariants[variantTraits]),
                 usr: nil, // The symbol variant uses the same USR
                 declarationFragments: nilIfEqual(main: declaration, variant: declarationVariant),
+                subHeadingDeclarationFragments: nilIfEqual(main: subHeadingDeclaration, variant: subHeadingDeclarationVariant),
                 topicImages: nil // The symbol variant doesn't currently have their own images
             )
         }
@@ -490,6 +517,7 @@ extension LinkDestinationSummary {
             taskGroups: taskGroups,
             usr: usr,
             declarationFragments: declaration,
+            subHeadingDeclarationFragments: subHeadingDeclaration,
             redirects: redirects,
             topicImages: topicImages.nilIfEmpty,
             references: references.nilIfEmpty,
@@ -574,6 +602,7 @@ extension LinkDestinationSummary {
         case kind, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, topicImages, references, variants
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
+        case subHeadingDeclarationFragments = "subheadingFragments"
     }
     
     public func encode(to encoder: any Encoder) throws {
@@ -589,6 +618,7 @@ extension LinkDestinationSummary {
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
+        try container.encodeIfPresent(subHeadingDeclarationFragments, forKey: .subHeadingDeclarationFragments)
         try container.encodeIfPresent(redirects, forKey: .redirects)
         try container.encodeIfPresent(topicImages, forKey: .topicImages)
         try container.encodeIfPresent(references?.map { CodableRenderReference($0) }, forKey: .references)
@@ -626,6 +656,7 @@ extension LinkDestinationSummary {
         taskGroups = try container.decodeIfPresent([TaskGroup].self, forKey: .taskGroups)
         usr = try container.decodeIfPresent(String.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .declarationFragments)
+        subHeadingDeclarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .subHeadingDeclarationFragments)
         redirects = try container.decodeIfPresent([URL].self, forKey: .redirects)
         topicImages = try container.decodeIfPresent([TopicImage].self, forKey: .topicImages)
         references = try container.decodeIfPresent([CodableRenderReference].self, forKey: .references).map { decodedReferences in
@@ -641,6 +672,7 @@ extension LinkDestinationSummary.Variant {
         case traits, kind, title, abstract, language, usr, taskGroups, topicImages
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
+        case subHeadingDeclarationFragments = "subheadingFragments"
     }
     
     public func encode(to encoder: any Encoder) throws {
@@ -653,6 +685,7 @@ extension LinkDestinationSummary.Variant {
         try container.encodeIfPresent(language?.id, forKey: .language)
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
+        try container.encodeIfPresent(subHeadingDeclarationFragments, forKey: .subHeadingDeclarationFragments)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
         try container.encodeIfPresent(topicImages, forKey: .topicImages)
     }
@@ -692,6 +725,8 @@ extension LinkDestinationSummary.Variant {
         abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
         usr = try container.decodeIfPresent(String?.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
+        subHeadingDeclarationFragments = try container
+            .decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .subHeadingDeclarationFragments)
         taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup]?.self, forKey: .taskGroups)
         topicImages = try container.decodeIfPresent([TopicImage]?.self, forKey: .topicImages)
     }
