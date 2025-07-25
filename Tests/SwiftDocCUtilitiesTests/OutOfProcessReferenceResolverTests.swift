@@ -70,6 +70,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             declarationFragments: .init(declarationFragments: [
                 .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)
             ]),
+            subHeadingDeclarationFragments: .init(declarationFragments: [
+                .init(kind: .text, spelling: "subheading declaration fragment", preciseIdentifier: nil)
+            ]),
             topicImages: nil,
             references: nil,
             variants: [
@@ -82,6 +85,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                     language: .init(name: "Language Name 2", id: "com.test.another-language.id"),
                     declarationFragments: .init(declarationFragments: [
                         .init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)
+                    ]),
+                    subHeadingDeclarationFragments: .init(declarationFragments: [
+                        .init(kind: .text, spelling: "variant subheading declaration fragment", preciseIdentifier: nil)
                     ])
                 )
             ]
@@ -120,7 +126,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
         XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
         
-        XCTAssertEqual(entity.topicRenderReference.fragments, [.init(text: "declaration fragment", kind: .text, preciseIdentifier: nil)])
+        XCTAssertEqual(entity.topicRenderReference.fragments, [.init(text: "subheading declaration fragment", kind: .text, preciseIdentifier: nil)])
 
         let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
         XCTAssertEqual(entity.topicRenderReference.titleVariants.value(for: variantTraits), "Resolved Variant Title")
@@ -129,7 +135,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         let fragmentVariant = try XCTUnwrap(entity.topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
         XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
         if case .replace(let variantFragment) = fragmentVariant.patch.first {
-            XCTAssertEqual(variantFragment, [.init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)])
+            XCTAssertEqual(variantFragment, [.init(text: "variant subheading declaration fragment", kind: .text, preciseIdentifier: nil)])
         } else {
             XCTFail("Unexpected fragments variant patch")
         }
@@ -226,6 +232,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             declarationFragments: .init(declarationFragments: [
                 .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)
             ]),
+            subHeadingDeclarationFragments: .init(declarationFragments: [
+                .init(kind: .text, spelling: "subheading declaration fragment", preciseIdentifier: nil)
+            ]),
             topicImages: [
                 TopicImage(
                     type: .card,
@@ -260,6 +269,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                     language: .init(name: "Language Name 2", id: "com.test.another-language.id"),
                     declarationFragments: .init(declarationFragments: [
                         .init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)
+                    ]),
+                    subHeadingDeclarationFragments: .init(declarationFragments: [
+                        .init(kind: .text, spelling: "variant subheading declaration fragment", preciseIdentifier: nil)
                     ])
                 )
             ]
@@ -288,7 +300,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
         XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
         
-        XCTAssertEqual(entity.topicRenderReference.fragments, [.init(text: "declaration fragment", kind: .text, preciseIdentifier: nil)])
+        XCTAssertEqual(entity.topicRenderReference.fragments, [.init(text: "subheading declaration fragment", kind: .text, preciseIdentifier: nil)])
         
         let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
         XCTAssertEqual(entity.topicRenderReference.titleVariants.value(for: variantTraits), "Resolved Variant Title")
@@ -297,7 +309,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         let fragmentVariant = try XCTUnwrap(entity.topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
         XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
         if case .replace(let variantFragment) = fragmentVariant.patch.first {
-            XCTAssertEqual(variantFragment, [.init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)])
+            XCTAssertEqual(variantFragment, [.init(text: "variant subheading declaration fragment", kind: .text, preciseIdentifier: nil)])
         } else {
            XCTFail("Unexpected fragments variant patch")
         }

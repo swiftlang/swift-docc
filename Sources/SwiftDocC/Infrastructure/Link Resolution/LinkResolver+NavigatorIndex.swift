@@ -117,7 +117,8 @@ struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
             externalID: renderNode.externalIdentifier.identifier,
             role: renderNode.role,
             symbolKind: renderNode.symbolKind?.identifier,
-            images: renderNode.images
+            images: renderNode.images,
+            fragments: renderNode.fragmentsVariants.value(for: traits)
         )
     }
 }
@@ -130,19 +131,16 @@ struct ExternalRenderNodeMetadataRepresentation: NavigatorIndexableRenderMetadat
     var role: String?
     var symbolKind: String?
     var images: [TopicImage]
+    var fragments: [DeclarationRenderSection.Token]?
 
     // Values that we have insufficient information to derive.
     // These are needed to conform to the navigator indexable metadata protocol.
-    //
-    // The fragments that we get as part of the external link are the full declaration fragments.
-    // These are too verbose for the navigator, so instead of using them, we rely on the title, navigator title and symbol kind instead.
     //
     // The role heading is used to identify Property Lists.
     // The value being missing is used for computing the final navigator title.
     //
     // The platforms are used for generating the availability index,
     // but doesn't affect how the node is rendered in the sidebar.
-    var fragments: [DeclarationRenderSection.Token]? = nil
     var roleHeading: String? = nil
     var platforms: [AvailabilityRenderItem]? = nil
 }
