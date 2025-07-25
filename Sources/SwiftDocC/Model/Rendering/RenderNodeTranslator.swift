@@ -1257,13 +1257,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     if availability.obsoletedVersion != nil {
                         return nil
                     }
-                    guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
-                          let currentPlatform = context.configuration.externalMetadata.currentPlatforms?[name.displayName]
-                    else {
+                    // Filter out this availability item if it has a missing or invalid domain.
+                    guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }) else {
+                        return nil
+                    }
+                    guard let currentPlatform = context.configuration.externalMetadata.currentPlatforms?[name.displayName] else {
                         // No current platform provided by the context
                         return AvailabilityRenderItem(availability, current: nil)
                     }
-                    
                     return AvailabilityRenderItem(availability, current: currentPlatform)
                 }
                 .filter { $0.unconditionallyUnavailable != true }
