@@ -13,7 +13,7 @@ import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
 
 class ExternalRenderNodeTests: XCTestCase {
-    func generateExternalResover() -> TestMultiResultExternalReferenceResolver {
+    func generateExternalResolver() -> TestMultiResultExternalReferenceResolver {
         let externalResolver = TestMultiResultExternalReferenceResolver()
         externalResolver.bundleID = "com.test.external"
         externalResolver.entitiesToReturn["/path/to/external/swiftArticle"] = .success(
@@ -37,7 +37,12 @@ class ExternalRenderNodeTests: XCTestCase {
                 referencePath: "/path/to/external/swiftSymbol",
                 title: "SwiftSymbol",
                 kind: .class,
-                language: .swift
+                language: .swift,
+                declarationFragments: .init(declarationFragments: [
+                    .init(kind: .keyword, spelling: "class", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                    .init(kind: .identifier, spelling: "SwiftSymbol", preciseIdentifier: nil)
+                ])
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/objCSymbol"] = .success(
@@ -45,7 +50,11 @@ class ExternalRenderNodeTests: XCTestCase {
                 referencePath: "/path/to/external/objCSymbol",
                 title: "ObjCSymbol",
                 kind: .function,
-                language: .objectiveC
+                language: .objectiveC,
+                declarationFragments: .init(declarationFragments: [
+                    .init(kind: .text, spelling: "- ", preciseIdentifier: nil),
+                    .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil),
+                ])
             )
         )
         return externalResolver
@@ -53,7 +62,7 @@ class ExternalRenderNodeTests: XCTestCase {
         
     func testExternalRenderNode() throws {
         
-        let externalResolver = generateExternalResover()
+        let externalResolver = generateExternalResolver()
         let (_, bundle, context) = try testBundleAndContext(
             copying: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
@@ -146,16 +155,18 @@ class ExternalRenderNodeTests: XCTestCase {
         )
         XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.title, swiftTitle)
         XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.navigatorTitle, navigatorTitle)
+        XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.fragments, fragments)
         
         let objcNavigatorExternalRenderNode = try XCTUnwrap(
             NavigatorExternalRenderNode(renderNode: externalRenderNode, trait: .interfaceLanguage("objc"))
         )
         XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, occTitle)
         XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.navigatorTitle, occNavigatorTitle)
+        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.fragments, occFragments)
     }
     
     func testNavigatorWithExternalNodes() throws {
-        let externalResolver = generateExternalResover()
+        let externalResolver = generateExternalResolver()
         let (_, bundle, context) = try testBundleAndContext(
             copying: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
@@ -204,14 +215,14 @@ class ExternalRenderNodeTests: XCTestCase {
         let occExternalNodes = renderIndex.interfaceLanguages["occ"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
         XCTAssertEqual(swiftExternalNodes.count, 2)
         XCTAssertEqual(occExternalNodes.count, 2)
-        XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle", "SwiftSymbol"])
-        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCArticle", "ObjCSymbol"])
+        XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle", "class SwiftSymbol"])
+        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCArticle", "- ObjCSymbol"])
         XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
         XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
     }
     
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() throws {
-        let externalResolver = generateExternalResover()
+        let externalResolver = generateExternalResolver()
         
         let (_, bundle, context) = try testBundleAndContext(
             copying: "MixedLanguageFramework",
@@ -265,7 +276,7 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(swiftExternalNodes.count, 1)
         XCTAssertEqual(occExternalNodes.count, 1)
         XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle"])
-        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCSymbol"])
+        XCTAssertEqual(occExternalNodes.map(\.title), ["- ObjCSymbol"])
         XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
         XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
     }
