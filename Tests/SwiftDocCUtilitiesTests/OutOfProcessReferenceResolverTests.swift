@@ -88,7 +88,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                     ]),
                     subHeadingDeclarationFragments: .init(declarationFragments: [
                         .init(kind: .text, spelling: "variant subheading declaration fragment", preciseIdentifier: nil)
-                    ]),
+                    ])
                 )
             ]
         )
