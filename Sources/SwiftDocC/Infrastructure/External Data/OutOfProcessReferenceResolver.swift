@@ -166,7 +166,8 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             url: resolvedInformation.url.path,
             kind: kind,
             role: role,
-            fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
+            fragments: resolvedInformation.subHeadingDeclarationFragments?.declarationFragments
+                .map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
             isBeta: resolvedInformation.isBeta,
             isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
             images: resolvedInformation.topicImages ?? []
@@ -182,7 +183,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
                     .init(traits: variant.traits, patch: [.replace(value: [.text(abstract)])])
                 )
             }
-            if let declarationFragments = variant.declarationFragments {
+            if let declarationFragments = variant.subHeadingDeclarationFragments {
                 renderReference.fragmentsVariants.variants.append(
                     .init(traits: variant.traits, patch: [.replace(value: declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) })])
                 )
@@ -577,7 +578,11 @@ extension OutOfProcessReferenceResolver {
         public let platforms: [PlatformAvailability]?
         /// Information about the resolved declaration fragments, if any.
         public let declarationFragments: DeclarationFragments?
-        
+        /// Information about the resolved abbreviated declaration fragments, if any.
+        ///
+        /// They are used for displaying in contexts where the full declaration fragments would be too verbose, like in the Topics section or the navigation index.
+        public let subHeadingDeclarationFragments: DeclarationFragments?
+
         // We use the real types here because they're Codable and don't have public member-wise initializers.
         
         /// Platform availability for a resolved symbol reference.
@@ -620,6 +625,7 @@ extension OutOfProcessReferenceResolver {
         ///   - availableLanguages: The languages where the resolved node is available.
         ///   - platforms: The platforms and their versions where the resolved node is available, if any.
         ///   - declarationFragments: The resolved declaration fragments, if any.
+        ///   - subHeadingDeclarationFragments: The abbreviated resolved declaration fragments, if any.
         ///   - topicImages: Images that are used to represent the summarized element.
         ///   - references: References used in the content of the summarized element.
         ///   - variants: The variants of content for this resolver information.
@@ -632,6 +638,7 @@ extension OutOfProcessReferenceResolver {
             availableLanguages: Set<SourceLanguage>,
             platforms: [PlatformAvailability]? = nil,
             declarationFragments: DeclarationFragments? = nil,
+            subHeadingDeclarationFragments: DeclarationFragments? = nil,
             topicImages: [TopicImage]? = nil,
             references: [any RenderReference]? = nil,
             variants: [Variant]? = nil
@@ -644,6 +651,7 @@ extension OutOfProcessReferenceResolver {
             self.availableLanguages = availableLanguages
             self.platforms = platforms
             self.declarationFragments = declarationFragments
+            self.subHeadingDeclarationFragments = subHeadingDeclarationFragments
             self.topicImages = topicImages
             self.references = references
             self.variants = variants
@@ -675,7 +683,12 @@ extension OutOfProcessReferenceResolver {
             ///
             /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
             public let declarationFragments: VariantValue<DeclarationFragments?>
-            
+            /// The abbreviated declaration fragments of the variant or `nil` if the declaration is the same as the resolved information.
+            ///
+            /// They are used for displaying in contexts where the full declaration fragments would be too verbose, like in the Topics section or the navigation index.
+            /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
+            public let subHeadingDeclarationFragments: VariantValue<DeclarationFragments?>
+
             /// Creates a new resolved information variant with the values that are different from the resolved information values.
             ///
             /// - Parameters:
@@ -686,6 +699,7 @@ extension OutOfProcessReferenceResolver {
             ///   - abstract: The resolved (plain text) abstract.
             ///   - language: The resolved language.
             ///   - declarationFragments: The resolved declaration fragments, if any.
+            ///   - subHeadingDeclarationFragments: The resolved abbreviated declaration fragments, if any.
             public init(
                 traits: [RenderNode.Variant.Trait],
                 kind: VariantValue<DocumentationNode.Kind> = nil,
@@ -693,7 +707,8 @@ extension OutOfProcessReferenceResolver {
                 title: VariantValue<String> = nil,
                 abstract: VariantValue<String> = nil,
                 language: VariantValue<SourceLanguage> = nil,
-                declarationFragments: VariantValue<DeclarationFragments?> = nil
+                declarationFragments: VariantValue<DeclarationFragments?> = nil,
+                subHeadingDeclarationFragments: VariantValue<DeclarationFragments?> = nil
             ) {
                 self.traits = traits
                 self.kind = kind
@@ -702,6 +717,7 @@ extension OutOfProcessReferenceResolver {
                 self.abstract = abstract
                 self.language = language
                 self.declarationFragments = declarationFragments
+                self.subHeadingDeclarationFragments = subHeadingDeclarationFragments
             }
         }
     }
@@ -717,6 +733,7 @@ extension OutOfProcessReferenceResolver.ResolvedInformation {
         case availableLanguages
         case platforms
         case declarationFragments
+        case subHeadingDeclarationFragments
         case topicImages
         case references
         case variants
@@ -733,6 +750,8 @@ extension OutOfProcessReferenceResolver.ResolvedInformation {
         availableLanguages = try container.decode(Set<SourceLanguage>.self, forKey: .availableLanguages)
         platforms = try container.decodeIfPresent([OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability].self, forKey: .platforms)
         declarationFragments = try container.decodeIfPresent(OutOfProcessReferenceResolver.ResolvedInformation.DeclarationFragments.self, forKey: .declarationFragments)
+        subHeadingDeclarationFragments = try container
+            .decodeIfPresent(OutOfProcessReferenceResolver.ResolvedInformation.DeclarationFragments.self, forKey: .subHeadingDeclarationFragments)
         topicImages = try container.decodeIfPresent([TopicImage].self, forKey: .topicImages)
         references = try container.decodeIfPresent([CodableRenderReference].self, forKey: .references).map { decodedReferences in
             decodedReferences.map(\.reference)
@@ -752,6 +771,7 @@ extension OutOfProcessReferenceResolver.ResolvedInformation {
         try container.encode(self.availableLanguages, forKey: .availableLanguages)
         try container.encodeIfPresent(self.platforms, forKey: .platforms)
         try container.encodeIfPresent(self.declarationFragments, forKey: .declarationFragments)
+        try container.encodeIfPresent(self.subHeadingDeclarationFragments, forKey: .subHeadingDeclarationFragments)
         try container.encodeIfPresent(self.topicImages, forKey: .topicImages)
         try container.encodeIfPresent(references?.map { CodableRenderReference($0) }, forKey: .references)
         try container.encodeIfPresent(self.variants, forKey: .variants)
