@@ -93,11 +93,21 @@ extension UnifiedSymbolGraph.Symbol {
     
     /// Returns the primary symbol selector to use as documentation source.
     var documentedSymbolSelector: UnifiedSymbolGraph.Selector? {
-        // We'll prioritize the first documented 'swift' symbol, if we have
-        // one.
-        return docComment.keys.first { selector in
-            return selector.interfaceLanguage == "swift"
-        } ?? docComment.keys.first
+        // Prioritize the longest doc comment with a "swift" selector,
+        // if there is one.
+        return docComment.min(by: { lhs, rhs in
+            if (lhs.key.interfaceLanguage == "swift") != (rhs.key.interfaceLanguage == "swift") {
+                // sort swift selectors before non-swift ones
+                return lhs.key.interfaceLanguage == "swift"
+            } else if lhs.value.lines.totalCount == rhs.value.lines.totalCount {
+                // if the comments are the same length, just sort them lexicographically
+                return lhs.value.lines.fullText < rhs.value.lines.fullText
+            } else {
+                // otherwise, sort by the length of the doc comment,
+                // so that `min` returns the longest comment
+                return lhs.value.lines.totalCount > rhs.value.lines.totalCount
+            }
+        })?.key
     }
 
     func identifier(forLanguage interfaceLanguage: String) -> SymbolGraph.Symbol.Identifier {
@@ -113,5 +123,17 @@ extension UnifiedSymbolGraph.Symbol {
         } else {
             return identifier(forLanguage: "swift")
         }
+    }
+}
+
+extension [SymbolGraph.LineList.Line] {
+    fileprivate var totalCount: Int {
+        return reduce(into: 0) { result, line in
+            result += line.text.count
+        }
+    }
+
+    fileprivate var fullText: String {
+        map(\.text).joined(separator: "\n")
     }
 }
