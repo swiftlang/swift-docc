@@ -124,12 +124,14 @@ public enum RenderBlockContent: Equatable {
         public var code: [String]
         /// Additional metadata for this code block.
         public var metadata: RenderContentMetadata?
+        public var copyToClipboard: Bool = false
 
         /// Make a new `CodeListing` with the given data.
-        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?) {
+        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool) {
             self.syntax = syntax
             self.code = code
             self.metadata = metadata
+            self.copyToClipboard = copyToClipboard
         }
     }
 
@@ -697,7 +699,7 @@ extension RenderBlockContent.Table: Codable {
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
         case type
-        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start
+        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start, copyToClipboard
         case request, response
         case header, rows
         case numberOfColumns, columns
@@ -722,7 +724,8 @@ extension RenderBlockContent: Codable {
             self = try .codeListing(.init(
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
-                metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
+                metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata),
+                copyToClipboard: container.decode(Bool.self, forKey: .copyToClipboard)
             ))
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
