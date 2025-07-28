@@ -99,9 +99,16 @@ extension UnifiedSymbolGraph.Symbol {
             if (lhs.key.interfaceLanguage == "swift") != (rhs.key.interfaceLanguage == "swift") {
                 // sort swift selectors before non-swift ones
                 return lhs.key.interfaceLanguage == "swift"
-            } else if lhs.value.lines.totalCount == rhs.value.lines.totalCount {
+            }
+
+            // if the comments are equal, bail early without iterating them again
+            guard lhs.value != rhs.value else {
+                return false
+            }
+
+            if lhs.value.lines.totalCount == rhs.value.lines.totalCount {
                 // if the comments are the same length, just sort them lexicographically
-                return lhs.value.lines.fullText < rhs.value.lines.fullText
+                return lhs.value.lines.isLexicographicallyBefore(rhs.value.lines)
             } else {
                 // otherwise, sort by the length of the doc comment,
                 // so that `min` returns the longest comment
@@ -135,5 +142,9 @@ extension [SymbolGraph.LineList.Line] {
 
     fileprivate var fullText: String {
         map(\.text).joined(separator: "\n")
+    }
+
+    fileprivate func isLexicographicallyBefore(_ other: Self) -> Bool {
+        self.lexicographicallyPrecedes(other) { $0.text < $1.text }
     }
 }
