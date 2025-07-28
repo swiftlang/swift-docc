@@ -805,6 +805,9 @@
                     },
                     "metadata": {
                         "$ref": "#/components/schemas/RenderContentMetadata"
+                    },
+                    "copyToClipboard": {
+                        "type": "boolean"
                     }
                 }
             },

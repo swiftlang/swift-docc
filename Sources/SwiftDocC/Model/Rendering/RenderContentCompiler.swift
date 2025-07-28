@@ -47,7 +47,41 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [any RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
+
+        if FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled {
+
+            func parseLanguageString(_ input: String?) -> (lang: String? , tokens: [RenderBlockContent.CodeListing.OptionName]) {
+                guard let input else { return (lang: nil, tokens: []) }
+                let parts = input
+                    .split(separator: ",")
+                    .map { $0.trimmingCharacters(in: .whitespaces) }
+                var lang: String? = nil
+                var options: [RenderBlockContent.CodeListing.OptionName] = []
+
+                for part in parts {
+                    if let opt = RenderBlockContent.CodeListing.OptionName(caseInsensitive: part) {
+                        options.append(opt)
+                    } else if lang == nil {
+                        lang = String(part)
+                    }
+                }
+                return (lang, options)
+            }
+
+            let options = parseLanguageString(codeBlock.language)
+
+            let listing = RenderBlockContent.CodeListing(
+                syntax: options.lang ?? bundle.info.defaultCodeListingLanguage,
+                code: codeBlock.code.splitByNewlines,
+                metadata: nil,
+                copyToClipboard: !options.tokens.contains(.nocopy)
+            )
+
+            return [RenderBlockContent.codeListing(listing)]
+
+        } else {
+            return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: false))]
+        }
     }
     
     mutating func visitHeading(_ heading: Heading) -> [any RenderContent] {
