@@ -18,19 +18,19 @@ class ExternalRenderNodeTests: XCTestCase {
         externalResolver.bundleID = "com.test.external"
         externalResolver.entitiesToReturn["/path/to/external/swiftArticle"] = .success(
             .init(
-                    referencePath: "/path/to/external/swiftArticle",
-                    title: "SwiftArticle",
-                    kind: .article,
-                    language: .swift
-                )
+                referencePath: "/path/to/external/swiftArticle",
+                title: "SwiftArticle",
+                kind: .article,
+                language: .swift
+            )
         )
         externalResolver.entitiesToReturn["/path/to/external/objCArticle"] = .success(
             .init(
-                    referencePath: "/path/to/external/objCArticle",
-                    title: "ObjCArticle",
-                    kind: .article,
-                    language: .objectiveC
-                )
+                referencePath: "/path/to/external/objCArticle",
+                title: "ObjCArticle",
+                kind: .article,
+                language: .objectiveC
+            )
         )
         externalResolver.entitiesToReturn["/path/to/external/swiftSymbol"] = .success(
             .init(
