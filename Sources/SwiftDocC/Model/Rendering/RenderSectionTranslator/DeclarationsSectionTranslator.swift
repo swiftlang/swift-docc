@@ -44,13 +44,17 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
     /// Fetch the common fragments for the given references, or compute it if necessary.
     func commonFragments(
         for mainDeclaration: OverloadDeclaration,
-        overloadDeclarations: [OverloadDeclaration]
+        overloadDeclarations: [OverloadDeclaration],
+        mainDeclarationIndex: Int
     ) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
         if let fragments = commonFragments(for: mainDeclaration.reference) {
             return fragments
         }
 
-        let preProcessedDeclarations = [mainDeclaration.declaration] + overloadDeclarations.map(\.declaration)
+        var preProcessedDeclarations = overloadDeclarations.map(\.declaration)
+        // Insert the main declaration according to the display index so the ordering is consistent
+        // between overloaded symbols
+        preProcessedDeclarations.insert(mainDeclaration.declaration, at: mainDeclarationIndex)
 
         // Collect the "common fragments" so we can highlight the ones that are different
         // in each declaration
@@ -183,13 +187,15 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return declarations
             }
 
-            func sortPlatformNames(_ platforms: [PlatformName?]) -> [PlatformName?] {
-                platforms.sorted { (lhs, rhs) -> Bool in
-                    guard let lhsValue = lhs, let rhsValue = rhs else {
-                        return lhs == nil
-                    }
-                    return lhsValue.rawValue < rhsValue.rawValue
+            func comparePlatformNames(_ lhs: PlatformName?, _ rhs: PlatformName?) -> Bool {
+                guard let lhsValue = lhs, let rhsValue = rhs else {
+                    return lhs == nil
                 }
+                return lhsValue.rawValue < rhsValue.rawValue
+            }
+
+            func sortPlatformNames(_ platforms: [PlatformName?]) -> [PlatformName?] {
+                platforms.sorted(by: comparePlatformNames(_:_:))
             }
 
             var declarations: [DeclarationRenderSection] = []
@@ -216,7 +222,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     // in each declaration
                     let commonFragments = commonFragments(
                         for: (mainDeclaration, renderNode.identifier, nil),
-                        overloadDeclarations: processedOverloadDeclarations)
+                        overloadDeclarations: processedOverloadDeclarations,
+                        mainDeclarationIndex: overloads.displayIndex
+                    )
 
                     renderedTokens = translateDeclaration(
                         mainDeclaration,
@@ -257,6 +265,15 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         )
                     }
                 }
+            }
+
+            declarations.sort { (lhs, rhs) -> Bool in
+                // We only need to compare the first platform in each list against the
+                // first platform in any other list, so pull them out here
+                guard let lhsPlatform = lhs.platforms.first, let rhsPlatform = rhs.platforms.first else {
+                    return lhs.platforms.isEmpty
+                }
+                return comparePlatformNames(lhsPlatform, rhsPlatform)
             }
 
             return DeclarationsRenderSection(declarations: declarations)

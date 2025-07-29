@@ -147,7 +147,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             configureSymbol: { symbol in
                 symbol.availabilityVariants[.swift] = SymbolGraph.Symbol.Availability(availability: [
                     SymbolGraph.Symbol.Availability.AvailabilityItem(
-                        domain: nil,
+                        domain: .init(rawValue: "iOS"),
                         introducedVersion: SymbolGraph.SemanticVersion(string: "1.0"),
                         deprecatedVersion: nil,
                         obsoletedVersion: nil,
@@ -161,7 +161,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 
                 symbol.availabilityVariants[.objectiveC] = SymbolGraph.Symbol.Availability(availability: [
                     SymbolGraph.Symbol.Availability.AvailabilityItem(
-                        domain: nil,
+                        domain: .init(rawValue: "iOS"),
                         introducedVersion: SymbolGraph.SemanticVersion(string: "2.0"),
                         deprecatedVersion: nil,
                         obsoletedVersion: nil,

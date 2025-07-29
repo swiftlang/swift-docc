@@ -346,7 +346,13 @@ struct SymbolGraphRelationshipsBuilder {
             assertionFailure(AssertionMessages.sourceNotFound(edge))
             return
         }
-        requiredSymbol.isRequired = required
+        // If both requirementOf and optionalRequirementOf relationships exist
+        // for the same symbol, let the optional relationship take precedence.
+        // Optional protocol requirements sometimes appear with both relationships,
+        // but non-optional requirements do not.
+        if !required || requiredSymbol.isRequiredVariants.isEmpty {
+            requiredSymbol.isRequired = required
+        }
     }
     
     /// Sets a node in the context as an inherited symbol.

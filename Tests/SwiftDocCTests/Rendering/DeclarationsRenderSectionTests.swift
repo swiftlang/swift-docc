@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import SwiftDocCTestUtilities
+import SymbolKit
 
 class DeclarationsRenderSectionTests: XCTestCase {
     func testDecodingTokens() throws {
@@ -157,6 +158,81 @@ class DeclarationsRenderSectionTests: XCTestCase {
 
         XCTAssertEqual(declarationsSection.declarations.count, 2)
         XCTAssert(declarationsSection.declarations.allSatisfy({ $0.platforms == [.iOS, .macOS] }))
+    }
+
+    func testPlatformSpecificDeclarations() async throws {
+        // init(_ content: MyClass) throws
+        let declaration1: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "content", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "MyClass", preciseIdentifier: "s:MyClass"),
+            .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "throws", preciseIdentifier: nil),
+        ])
+
+        // init(_ content: OtherClass) throws
+        let declaration2: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "content", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "OtherClass", preciseIdentifier: "s:OtherClass"),
+            .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "throws", preciseIdentifier: nil),
+        ])
+        let symbol1 = makeSymbol(
+            id: "myInit",
+            kind: .func,
+            pathComponents: ["myInit"],
+            otherMixins: [declaration1])
+        let symbol2 = makeSymbol(
+            id: "myInit",
+            kind: .func,
+            pathComponents: ["myInit"],
+            otherMixins: [declaration2])
+        let symbolGraph1 = makeSymbolGraph(moduleName: "PlatformSpecificDeclarations", platform: .init(operatingSystem: .init(name: "macos")), symbols: [symbol1])
+        let symbolGraph2 = makeSymbolGraph(moduleName: "PlatformSpecificDeclarations", platform: .init(operatingSystem: .init(name: "ios")), symbols: [symbol2])
+
+        func runAssertions(forwards: Bool) async throws {
+            // Toggling the order of platforms here doesn't necessarily _enforce_ a
+            // nondeterminism failure in a unit-test environment, but it does make it
+            // much more likely. Make sure that the order of the platform-specific
+            // declarations is consistent between runs.
+            let catalog = Folder(name: "unit-test.docc", content: [
+                InfoPlist(displayName: "PlatformSpecificDeclarations", identifier: "com.test.example"),
+                JSONFile(name: "symbols\(forwards ? "1" : "2").symbols.json", content: symbolGraph1),
+                JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: symbolGraph2),
+            ])
+
+            let (bundle, context) = try await loadBundle(catalog: catalog)
+
+            let reference = ResolvedTopicReference(
+                bundleID: bundle.id,
+                path: "/documentation/PlatformSpecificDeclarations/myInit",
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+            let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+            XCTAssertEqual(declarationsSection.declarations.count, 2)
+
+            XCTAssertEqual(declarationsSection.declarations[0].platforms, [.iOS])
+            XCTAssertEqual(declarationsSection.declarations[0].tokens.map(\.text).joined(),
+                           "init(_ content: OtherClass) throws")
+            XCTAssertEqual(declarationsSection.declarations[1].platforms, [.macOS])
+            XCTAssertEqual(declarationsSection.declarations[1].tokens.map(\.text).joined(),
+                           "init(_ content: MyClass) throws")
+        }
+
+        try await runAssertions(forwards: true)
+        try await runAssertions(forwards: false)
     }
 
     func testHighlightDiff() async throws {
@@ -322,6 +398,91 @@ class DeclarationsRenderSectionTests: XCTestCase {
         }
     }
 
+    func testInconsistentHighlightDiff() async throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        // Generate a symbol graph with many overload groups that share declarations.
+        // The overloaded declarations have two legitimate solutions for their longest common subsequence:
+        // one that ends in a close-parenthesis, and one that ends in a space.
+        // By alternating the order in which these declarations appear,
+        // the computed difference highlighting can differ
+        // unless the declarations are sorted prior to the calculation.
+        // Ensure that the overload difference highlighting is consistent for these declarations.
+
+        // init(_ content: MyClass) throws
+        let declaration1: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "content", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "MyClass", preciseIdentifier: "s:MyClass"),
+            .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "throws", preciseIdentifier: nil),
+        ])
+
+        // init(_ content: some ConvertibleToMyClass)
+        let declaration2: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "content", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .keyword, spelling: "some", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "ConvertibleToMyClass", preciseIdentifier: "s:ConvertibleToMyClass"),
+            .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+        ])
+        let overloadsCount = 10
+        let symbols = (0...overloadsCount).flatMap({ index in
+            let reverseDeclarations = index % 2 != 0
+            return [
+                makeSymbol(
+                    id: "overload-\(index)-1",
+                    kind: .func,
+                    pathComponents: ["overload-\(index)"],
+                    otherMixins: [reverseDeclarations ? declaration2 : declaration1]),
+                makeSymbol(
+                    id: "overload-\(index)-2",
+                    kind: .func,
+                    pathComponents: ["overload-\(index)"],
+                    otherMixins: [reverseDeclarations ? declaration1 : declaration2]),
+            ]
+        })
+        let symbolGraph = makeSymbolGraph(moduleName: "FancierOverloads", symbols: symbols)
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "FancierOverloads", identifier: "com.test.example"),
+            JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
+        ])
+
+        let (bundle, context) = try await loadBundle(catalog: catalog)
+
+        func assertDeclarations(for USR: String, file: StaticString = #filePath, line: UInt = #line) throws {
+            let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: USR), file: file, line: line)
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol, file: file, line: line)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode, file: file, line: line)
+            let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first, file: file, line: line)
+            XCTAssertEqual(declarationsSection.declarations.count, 1, file: file, line: line)
+            let declarations = try XCTUnwrap(declarationsSection.declarations.first, file: file, line: line)
+
+            XCTAssertEqual(declarationsAndHighlights(for: declarations), [
+                "init(_ content: MyClass) throws",
+                "                ~~~~~~~~ ~~~~~~",
+                "init(_ content: some ConvertibleToMyClass)",
+                "                ~~~~ ~~~~~~~~~~~~~~~~~~~~~",
+            ], file: file, line: line)
+        }
+
+        for i in 0...overloadsCount {
+            try assertDeclarations(for: "overload-\(i)-1")
+            try assertDeclarations(for: "overload-\(i)-2")
+        }
+    }
+
     func testDontHighlightWhenOverloadsAreDisabled() async throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "FancyOverloads",
@@ -402,4 +563,13 @@ func declarationAndHighlights(for tokens: [DeclarationRenderSection.Token]) -> [
         tokens.map({ $0.text }).joined(),
         tokens.map({ String(repeating: $0.highlight == .changed ? "~" : " ", count: $0.text.count) }).joined()
     ]
+}
+
+private func declarationsAndHighlights(for section: DeclarationRenderSection) -> [String] {
+    guard let otherDeclarations = section.otherDeclarations else {
+        return []
+    }
+    var declarations = otherDeclarations.declarations.map(\.tokens)
+    declarations.insert(section.tokens, at: otherDeclarations.displayIndex)
+    return declarations.flatMap(declarationAndHighlights(for:))
 }

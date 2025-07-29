@@ -186,4 +186,36 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         // Test default implementation was added
         XCTAssertFalse((documentationCache["A"]!.semantic as! Symbol).isRequired)
     }
+
+    func testRequiredAndOptionalRequirementRelationships() async throws {
+        do {
+            let (bundle, _) = try await testBundleAndContext()
+            var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
+            let engine = DiagnosticEngine()
+
+            let edge = createSymbols(documentationCache: &documentationCache, bundle: bundle, sourceType: .init(parsedIdentifier: .method, displayName: "Method"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
+
+            // Adding the "required" relationship before the "optional" one
+            SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, localCache: documentationCache, engine: engine)
+            SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, localCache: documentationCache, engine: engine)
+
+            // Make sure that the "optional" relationship wins
+            XCTAssertFalse((documentationCache["A"]!.semantic as! Symbol).isRequired)
+        }
+
+        do {
+            let (bundle, _) = try await testBundleAndContext()
+            var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
+            let engine = DiagnosticEngine()
+
+            let edge = createSymbols(documentationCache: &documentationCache, bundle: bundle, sourceType: .init(parsedIdentifier: .method, displayName: "Method"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
+
+            // Adding the "optional" relationship before the "required" one
+            SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, localCache: documentationCache, engine: engine)
+            SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, localCache: documentationCache, engine: engine)
+
+            // Make sure that the "optional" relationship still wins
+            XCTAssertFalse((documentationCache["A"]!.semantic as! Symbol).isRequired)
+        }
+    }
 }

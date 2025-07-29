@@ -70,7 +70,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
     }
 }
 
-private class TestOutputConsumer: ConvertOutputConsumer {
+private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     var problems: [Problem] = []
     
     func consume(problems: [Problem]) throws {
@@ -87,4 +87,5 @@ private class TestOutputConsumer: ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws { }
     func consume(buildMetadata: BuildMetadata) throws { }
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
+    func consume(externalRenderNode: ExternalRenderNode) throws { }
 }

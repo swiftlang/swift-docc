@@ -630,6 +630,28 @@ extension NavigatorIndex {
             }
         }
         
+        /// Index a single render `ExternalRenderNode`.
+        /// - Parameter renderNode: The render node to be indexed.
+        package func index(renderNode: ExternalRenderNode, ignoringLanguage: Bool = false) throws {
+            let navigatorRenderNode = NavigatorExternalRenderNode(renderNode: renderNode)
+            _ = try index(navigatorRenderNode, traits: nil, isExternal: true)
+            guard renderNode.identifier.sourceLanguage != .objectiveC else {
+                return
+            }
+            // Check if the render node has an Objective-C representation
+            guard let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first(where: { trait in
+                switch trait {
+                case .interfaceLanguage(let language):
+                    return InterfaceLanguage.from(string: language) == .objc
+                }
+            }) else {
+                return
+            }
+            // If this external render node has a variant, we create a "view" into its Objective-C specific data and index that.
+            let objVariantView = NavigatorExternalRenderNode(renderNode: renderNode, trait: objCVariantTrait)
+            _ = try index(objVariantView, traits: [objCVariantTrait], isExternal: true)
+        }
+        
         /// Index a single render `RenderNode`.
         /// - Parameter renderNode: The render node to be indexed.
         /// - Parameter ignoringLanguage: Whether language variants should be ignored when indexing this render node.
@@ -684,7 +706,7 @@ extension NavigatorIndex {
         }
         
         // The private index implementation which indexes a given render node representation
-        private func index(_ renderNode: any NavigatorIndexableRenderNodeRepresentation, traits: [RenderNode.Variant.Trait]?) throws -> InterfaceLanguage? {
+        private func index(_ renderNode: any NavigatorIndexableRenderNodeRepresentation, traits: [RenderNode.Variant.Trait]?, isExternal external: Bool = false) throws -> InterfaceLanguage? {
             guard let navigatorIndex else {
                 throw Error.navigatorIndexIsNil
             }
@@ -781,7 +803,8 @@ extension NavigatorIndex {
                 title: title,
                 platformMask: platformID,
                 availabilityID: UInt64(availabilityID),
-                icon: renderNode.icon
+                icon: renderNode.icon,
+                isExternal: external
             )
             navigationItem.path = identifierPath
             
@@ -812,7 +835,8 @@ extension NavigatorIndex {
                         languageID: language.mask,
                         title: title,
                         platformMask: platformID,
-                        availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities)
+                        availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities),
+                        isExternal: external
                     )
                     
                     groupItem.path = identifier.path + "#" + fragment
@@ -976,7 +1000,8 @@ extension NavigatorIndex {
                 // curation, then they should not be in the navigator. In addition, treat unknown
                 // page types as symbol nodes on the assumption that an unknown page type is a
                 // symbol kind added in a future version of Swift-DocC.
-                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false {
+                // Finally, don't add external references to the root; if they are not referenced within the navigation tree, they should be dropped altogether.
+                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false , !node.item.isExternal {
 
                     // If an uncurated page has been curated in another language, don't add it to the top-level.
                     if curatedReferences.contains(where: { curatedNodeID in
