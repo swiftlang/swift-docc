@@ -13,7 +13,7 @@ import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
 
 class ExternalRenderNodeTests: XCTestCase {
-    func generateExternalResover() -> TestMultiResultExternalReferenceResolver {
+    private func generateExternalResolver() -> TestMultiResultExternalReferenceResolver {
         let externalResolver = TestMultiResultExternalReferenceResolver()
         externalResolver.bundleID = "com.test.external"
         externalResolver.entitiesToReturn["/path/to/external/swiftArticle"] = .success(
@@ -53,7 +53,7 @@ class ExternalRenderNodeTests: XCTestCase {
         
     func testExternalRenderNode() async throws {
         
-        let externalResolver = generateExternalResover()
+        let externalResolver = generateExternalResolver()
         let (_, bundle, context) = try await testBundleAndContext(
             copying: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
@@ -155,7 +155,7 @@ class ExternalRenderNodeTests: XCTestCase {
     }
     
     func testNavigatorWithExternalNodes() async throws {
-        let externalResolver = generateExternalResover()
+        let externalResolver = generateExternalResolver()
         let (_, bundle, context) = try await testBundleAndContext(
             copying: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
@@ -211,7 +211,7 @@ class ExternalRenderNodeTests: XCTestCase {
     }
     
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
-        let externalResolver = generateExternalResover()
+        let externalResolver = generateExternalResolver()
         
         let (_, bundle, context) = try await testBundleAndContext(
             copying: "MixedLanguageFramework",
