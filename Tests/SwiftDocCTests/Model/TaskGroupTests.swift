@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -66,10 +66,6 @@ class SectionExtractionTests: XCTestCase {
                 """
             XCTAssertEqual(2, Document(parsing: markupSource, options: []).indexToNextHeading(from: 2, level: 2))
         }
-    }
-    
-    private func testNode(with document: Document) -> DocumentationNode {
-        return DocumentationNode(reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift), kind: .article, sourceLanguage: .swift, name: .conceptual(title: "Title"), markup: document, semantic: Semantic())
     }
     
     func testSection() {
