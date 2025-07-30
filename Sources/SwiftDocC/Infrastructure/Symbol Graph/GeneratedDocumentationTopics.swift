@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,8 +27,6 @@ enum GeneratedDocumentationTopics {
             struct APICollection {
                 /// The title of the collection.
                 var title: String
-                /// A reference to the parent of the collection.
-                let parentReference: ResolvedTopicReference
                 /// A list of topic references for the collection.
                 var identifiers = [ResolvedTopicReference]()
             }
@@ -39,8 +37,7 @@ enum GeneratedDocumentationTopics {
         ///   - childReference: The inherited symbol reference.
         ///   - reference: The parent type reference.
         ///   - originDisplayName: The origin display name as provided by the symbol graph.
-        ///   - extendedModuleName: Extended module name.
-        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?, extendedModuleName: String) throws {
+        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?) throws {
             let fromType: String
             let typeSimpleName: String
             if let originSymbol, originSymbol.pathComponents.count > 1 {
@@ -89,7 +86,7 @@ enum GeneratedDocumentationTopics {
             
             // Create a new default implementations provider, if needed.
             if !implementingTypes[reference]!.inheritedFromTypeName.keys.contains(fromType) {
-                implementingTypes[reference]!.inheritedFromTypeName[fromType] = Collections.APICollection(title: "\(typeSimpleName) Implementations", parentReference: reference)
+                implementingTypes[reference]!.inheritedFromTypeName[fromType] = Collections.APICollection(title: "\(typeSimpleName) Implementations")
             }
             
             // Add the default implementation.
@@ -247,13 +244,13 @@ enum GeneratedDocumentationTopics {
                let child = context.documentationCache[relationship.source],
                // Get the child symbol
                let childSymbol = child.symbol,
-               // Get the swift extension data
-               let extends = childSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self]
+               // Check that there is Swift extension information
+               childSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self] != nil
             {
                 let originSymbol = context.documentationCache[origin.identifier]?.symbol
                 
                 // Add the inherited symbol to the index.
-                try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol, extendedModuleName: extends.extendedModule)
+                try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol)
             }
         }
         
