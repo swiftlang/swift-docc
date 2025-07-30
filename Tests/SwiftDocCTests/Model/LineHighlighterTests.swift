@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -47,9 +47,9 @@ class LineHighlighterTests: XCTestCase {
         ])
     }
     
-    func highlights(tutorialFile: TextFile, codeFiles: [TextFile]) throws -> [LineHighlighter.Result] {
+    func highlights(tutorialFile: TextFile, codeFiles: [TextFile]) async throws -> [LineHighlighter.Result] {
         let catalog = Self.makeCatalog(tutorial: tutorialFile, codeFiles: codeFiles)
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         let tutorialReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Line-Highlighter-Tests/Tutorial", fragment: nil, sourceLanguage: .swift)
         let tutorial = try context.entity(with: tutorialReference).semantic as! Tutorial
@@ -57,7 +57,7 @@ class LineHighlighterTests: XCTestCase {
         return LineHighlighter(context: context, tutorialSection: section, tutorialReference: tutorialReference).highlights
     }
     
-    func testNoSteps() throws {
+    func testNoSteps() async throws {
         let tutorialFile = TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(time: 20, projectFiles: nothing.zip) {
                @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
@@ -70,10 +70,11 @@ class LineHighlighterTests: XCTestCase {
                @Assessments
             }
             """)
-        XCTAssertTrue(try highlights(tutorialFile: tutorialFile, codeFiles: []).isEmpty)
+        let highlights = try await highlights(tutorialFile: tutorialFile, codeFiles: [])
+        XCTAssertTrue(highlights.isEmpty)
     }
 
-    func testOneStep() throws {
+    func testOneStep() async throws {
         let tutorialFile = TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(title: "No Steps", time: 20, projectFiles: nothing.zip) {
                @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
@@ -92,7 +93,7 @@ class LineHighlighterTests: XCTestCase {
             @Assessments
             """)
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}")
-        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code1])
+        let results = try await highlights(tutorialFile: tutorialFile, codeFiles: [code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
             XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), result.file)
@@ -100,7 +101,7 @@ class LineHighlighterTests: XCTestCase {
         }
     }
     
-    func testOneStepWithPrevious() throws {
+    func testOneStepWithPrevious() async throws {
         let tutorialFile = TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(title: "No Steps", time: 20, projectFiles: nothing.zip) {
                @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
@@ -121,7 +122,7 @@ class LineHighlighterTests: XCTestCase {
             """)
         let code0 = TextFile(name: "code0.swift", utf8Content: "func foo() {}")
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
+        let results = try await highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
             XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), result.file)
@@ -134,7 +135,7 @@ class LineHighlighterTests: XCTestCase {
         }
     }
     
-    func testNameMismatch() throws {
+    func testNameMismatch() async throws {
         let tutorialFile = TextFile(name: "Tutorial.tutorial", utf8Content: """
         @Tutorial(title: "No Steps", time: 20, projectFiles: nothing.zip) {
           @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
@@ -160,7 +161,7 @@ class LineHighlighterTests: XCTestCase {
         
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}")
         let code2 = TextFile(name: "code2.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
+        let results = try await highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
         XCTAssertEqual(2, results.count)
         
         XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), results[0].file)
@@ -170,7 +171,7 @@ class LineHighlighterTests: XCTestCase {
         XCTAssertTrue(results[1].highlights.isEmpty)
     }
     
-    func testResetDiffAtStart() throws {
+    func testResetDiffAtStart() async throws {
         let tutorialFile = TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(title: "No Steps", time: 20, projectFiles: nothing.zip) {
                @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
@@ -190,7 +191,7 @@ class LineHighlighterTests: XCTestCase {
             """)
         let code0 = TextFile(name: "code0.swift", utf8Content: "func foo() {}")
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
+        let results = try await highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
             XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), result.file)
@@ -198,7 +199,7 @@ class LineHighlighterTests: XCTestCase {
         }
     }
     
-    func testResetDiff() throws {
+    func testResetDiff() async throws {
         let tutorialFile = TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(title: "No Steps", time: 20, projectFiles: nothing.zip) {
                @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
@@ -222,7 +223,7 @@ class LineHighlighterTests: XCTestCase {
             """)
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}")
         let code2 = TextFile(name: "code2.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
+        let results = try await highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
         
         XCTAssertEqual(2, results.count)
         
@@ -233,7 +234,7 @@ class LineHighlighterTests: XCTestCase {
         XCTAssertTrue(results[1].highlights.isEmpty)
     }
     
-    func testPreviousOverride() throws {
+    func testPreviousOverride() async throws {
         let tutorialFile = TextFile(name: "Tutorial.tutorial", utf8Content: """
             @Tutorial(title: "No Steps", time: 20, projectFiles: nothing.zip) {
                @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
@@ -261,7 +262,7 @@ class LineHighlighterTests: XCTestCase {
         let code0 = TextFile(name: "code0.swift", utf8Content: "")
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}")
         let code2 = TextFile(name: "code2.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1, code2])
+        let results = try await highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1, code2])
         
         XCTAssertEqual(2, results.count)
         

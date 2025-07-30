@@ -323,7 +323,7 @@ public class DocumentationContext {
         dataProvider: any DataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
-    ) throws {
+    ) async throws {
         self.bundle = bundle
         self.dataProvider = .new(dataProvider)
         self.diagnosticEngine = diagnosticEngine

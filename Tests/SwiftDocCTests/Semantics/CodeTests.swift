@@ -15,11 +15,11 @@ import XCTest
 import Markdown
 
 class CodeTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Code"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let code = Code(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(code)

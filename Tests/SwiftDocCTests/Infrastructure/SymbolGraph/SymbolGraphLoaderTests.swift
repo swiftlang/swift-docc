@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -146,9 +146,9 @@ class SymbolGraphLoaderTests: XCTestCase {
     }
     
     /// Tests if we detect correctly a Mac Catalyst graph
-    func testLoadingiOSAndCatalystGraphs() throws {
-        func testBundleCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) throws -> (URL, DocumentationBundle, DocumentationContext) {
-            return try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: { bundleURL in
+    func testLoadingiOSAndCatalystGraphs() async throws {
+        func testBundleCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) async throws -> (URL, DocumentationBundle, DocumentationContext) {
+            return try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: { bundleURL in
                 // Create an iOS symbol graph file
                 let iOSGraphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
                 let renamediOSGraphURL = bundleURL.appendingPathComponent(iOSSymbolGraphName)
@@ -177,7 +177,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         do {
             // We rename the iOS graph file to contain a "@" which makes it being loaded after main symbol graphs
             // to simulate the loading order we want to test.
-            let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
+            let (_, _, context) = try await testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
 
             guard let availability = (context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
@@ -197,7 +197,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         do {
             // We rename the Mac Catalyst graph file to contain a "@" which makes it being loaded after main symbol graphs
             // to simulate the loading order we want to test.
-            let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
+            let (_, _, context) = try await testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
             
             guard let availability = (context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
@@ -213,8 +213,8 @@ class SymbolGraphLoaderTests: XCTestCase {
     }
     
     // Tests if main and bystanders graphs are loaded
-    func testLoadingModuleBystanderExtensions() throws {
-        let (_, bundle, _) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
+    func testLoadingModuleBystanderExtensions() async throws {
+        let (_, bundle, _) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
@@ -381,7 +381,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         )
     }
 
-    func testDefaulAvailabilityWhenMissingSGFs() throws {
+    func testDefaulAvailabilityWhenMissingSGFs() async throws {
         // Symbol from SGF
         let symbol = """
         {
@@ -453,7 +453,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        var (_, _, context) = try loadBundle(from: targetURL)
+        var (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -478,7 +478,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         """
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        (_, _, context) = try loadBundle(from: targetURL)
+        (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -519,7 +519,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         """
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        (_, _, context) = try loadBundle(from: targetURL)
+        (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -531,7 +531,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertTrue(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion == SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
     }
     
-    func testFallbackAvailabilityVersion() throws {
+    func testFallbackAvailabilityVersion() async throws {
         // Symbol from SG
         let symbol = """
         {
@@ -582,7 +582,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let symbolGraphURL = targetURL.appendingPathComponent("MyModule.symbols.json")
         try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -595,7 +595,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
     }
     
-    func testFallbackPlatformsDontOverrideSourceAvailability() throws {
+    func testFallbackPlatformsDontOverrideSourceAvailability() async throws {
         // Symbol from SG
         let symbolGraphStringiOS = makeSymbolGraphString(
             moduleName: "MyModule",
@@ -687,7 +687,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         try symbolGraphStringiOS.write(to: targetURL.appendingPathComponent("MyModule-ios.symbols.json"), atomically: true, encoding: .utf8)
         try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -702,7 +702,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         
     }
     
-    func testDefaultAvailabilityDontOverrideSourceAvailability() throws {
+    func testDefaultAvailabilityDontOverrideSourceAvailability() async throws {
         // Symbol from SGF
         let iosSymbolGraphString = makeSymbolGraphString(
             moduleName: "MyModule",
@@ -824,7 +824,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -838,7 +838,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
     }
     
-    func testDefaultAvailabilityFillSourceAvailability() throws {
+    func testDefaultAvailabilityFillSourceAvailability() async throws {
         // Symbol from SGF
         let symbol = """
         {
@@ -921,7 +921,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -933,7 +933,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 7, minor: 0, patch: 0))
     }
     
-    func testUnconditionallyunavailablePlatforms() throws {
+    func testUnconditionallyunavailablePlatforms() async throws {
         // Create an empty bundle
         let targetURL = try createTemporaryDirectory(named: "test.docc")
         // Symbol from SGF
@@ -1050,7 +1050,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        var (_, _, context) = try loadBundle(from: targetURL)
+        var (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1070,7 +1070,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             platform: """
             """
         ).write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
-        (_, _, context) = try loadBundle(from: targetURL)
+        (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1084,7 +1084,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
     }
     
-    func testSymbolUnavailablePerPlatform() throws {
+    func testSymbolUnavailablePerPlatform() async throws {
         // Create an empty bundle
         let targetURL = try createTemporaryDirectory(named: "test.docc")
         // Symbol from SGF
@@ -1192,7 +1192,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             """
         ).write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        var (_, _, context) = try loadBundle(from: targetURL)
+        var (_, _, context) = try await loadBundle(from: targetURL)
         guard let availabilityFoo = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1245,7 +1245,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         // Create info list
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
-        (_, _, context) = try loadBundle(from: targetURL)
+        (_, _, context) = try await loadBundle(from: targetURL)
         guard let availabilityFoo = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1262,7 +1262,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertNotNil(availabilityBar.first(where: { $0.domain?.rawValue == "macCatalyst" }))
     }
     
-    func testDefaultModuleAvailability() throws {
+    func testDefaultModuleAvailability() async throws {
         // Create an empty bundle
         let targetURL = try createTemporaryDirectory(named: "test.docc")
         // Symbol from SGF
@@ -1319,7 +1319,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         """
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
-        let (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1328,7 +1328,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
     }
     
-    func testCanonicalPlatformNameUniformity() throws {
+    func testCanonicalPlatformNameUniformity() async throws {
         
         let testBundle = Folder(name: "TestBundle.docc", content: [
             TextFile(name: "Info.plist", utf8Content: """
@@ -1444,7 +1444,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         ])
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
-        let (_, _, context) = try loadBundle(from: bundleURL)
+        let (_, _, context) = try await loadBundle(from: bundleURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1456,7 +1456,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertTrue(availability.filter({ $0.domain?.rawValue == "maccatalyst" }).count == 0)
     }
     
-    func testFallbackOverrideDefaultAvailability() throws {
+    func testFallbackOverrideDefaultAvailability() async throws {
         // Symbol from SG
         let symbolGraphStringiOS = makeSymbolGraphString(
             moduleName: "MyModule",
@@ -1568,14 +1568,14 @@ class SymbolGraphLoaderTests: XCTestCase {
         try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         try infoPlist.write(to: targetURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try await loadBundle(from: targetURL)
         let availability = try XCTUnwrap((context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability)
         // Verify we fallback to iOS even if there's default availability for the Catalyst platform.
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
     }
     
-    func testDefaultAvailabilityWhenMissingFallbackPlatform() throws {
+    func testDefaultAvailabilityWhenMissingFallbackPlatform() async throws {
         // Symbol from SG
         let symbolGraphStringCatalyst = makeSymbolGraphString(
             moduleName: "MyModule",
@@ -1641,7 +1641,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         try infoPlist.write(to: targetURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1653,7 +1653,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     }
     
     
-    func testDefaultAvailabilityWhenSymbolIsNotAvailableForThatPlatform() throws {
+    func testDefaultAvailabilityWhenSymbolIsNotAvailableForThatPlatform() async throws {
         // Symbol from SGF
         let symbolTVOS = """
         {
@@ -1769,7 +1769,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try await loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@Bar"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@Bar'")
             return

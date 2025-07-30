@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,9 +17,9 @@ import SwiftDocCTestUtilities
 
 class PropertyListPossibleValuesSectionTests: XCTestCase {
     
-    func testPossibleValuesDiagnostics() throws {
+    func testPossibleValuesDiagnostics() async throws {
         // Check that a problem is emitted when extra possible values are documented.
-        var (url, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+        var (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -44,7 +44,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         }
         
         // Check that no problems are emitted if no extra possible values are documented.
-        (url, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+        (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -61,7 +61,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         }
         
         // Check that a problem is emitted with possible solutions.
-        (url, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+        (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -81,8 +81,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         }
     }
     
-    func testAbsenceOfPossibleValues() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
+    func testAbsenceOfPossibleValues() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "DictionaryData")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
@@ -90,8 +90,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         XCTAssertNil(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
     }
     
-    func testUndocumentedPossibleValues() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
+    func testUndocumentedPossibleValues() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "DictionaryData")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let possibleValuesSection = try XCTUnwrap(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
@@ -101,8 +101,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         XCTAssertEqual(possibleValues.map { $0.name }, ["January", "February", "March"])
     }
     
-    func testDocumentedPossibleValuesMatchSymbolGraphPossibleValues() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testDocumentedPossibleValuesMatchSymbolGraphPossibleValues() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -125,8 +125,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         XCTAssertEqual(possibleValues.map { $0.value }, ["January", "February", "March"])
     }
     
-    func testDocumentedPossibleValues() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testDocumentedPossibleValues() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -149,8 +149,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         XCTAssertEqual(documentedPossibleValue.contents.count , 1)
     }
     
-    func testUnresolvedLinkWarnings() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testUnresolvedLinkWarnings() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -171,8 +171,8 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         XCTAssertTrue(problemDiagnosticsSummary.contains("\'NotFoundSymbol\' doesn\'t exist at \'/DictionaryData/Month\'"))
     }
     
-    func testResolvedLins() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+    func testResolvedLins() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             

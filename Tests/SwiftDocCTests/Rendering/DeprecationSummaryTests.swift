@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,8 +30,8 @@ class DeprecationSummaryTests: XCTestCase {
     
     /// This test verifies that a symbol's deprecation summary comes from its sidecar doc
     /// and it's preferred over the original deprecation note in the code docs.
-    func testAuthoredDeprecatedSummary() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testAuthoredDeprecatedSummary() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
         
         // Compile docs and verify contents
@@ -43,8 +43,8 @@ class DeprecationSummaryTests: XCTestCase {
     }
 
     /// Test for a warning when symbol is not deprecated
-    func testIncorrectlyAuthoredDeprecatedSummary() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+    func testIncorrectlyAuthoredDeprecatedSummary() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
             // Add a sidecar file with wrong deprecated summary
             try """
             # ``SideKit/SideClass``
@@ -79,8 +79,8 @@ class DeprecationSummaryTests: XCTestCase {
     /// This test verifies that a symbol's deprecation summary comes from its documentation extension file
     /// and it's preferred over the original deprecation note in the code docs.
     /// (r69719494)
-    func testAuthoredDeprecatedSummaryAsSoleItemInFile() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testAuthoredDeprecatedSummaryAsSoleItemInFile() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
                 bundleID: bundle.id,
@@ -111,8 +111,8 @@ class DeprecationSummaryTests: XCTestCase {
         ])
     }
     
-    func testSymbolDeprecatedSummary() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testSymbolDeprecatedSummary() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
                 bundleID: bundle.id,
@@ -133,8 +133,8 @@ class DeprecationSummaryTests: XCTestCase {
         ])
     }
   
-  func testDeprecationOverride() throws {
-      let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testDeprecationOverride() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
       let node = try context.entity(
           with: ResolvedTopicReference(
             bundleID: bundle.id,
@@ -162,8 +162,8 @@ class DeprecationSummaryTests: XCTestCase {
     ])
   }
     
-    func testDeprecationSummaryInDiscussionSection() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testDeprecationSummaryInDiscussionSection() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
                 bundleID: bundle.id,
@@ -191,8 +191,8 @@ class DeprecationSummaryTests: XCTestCase {
         ])
     }
     
-    func testDeprecationSummaryWithMultiLineCommentSymbol() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testDeprecationSummaryWithMultiLineCommentSymbol() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
                 bundleID: bundle.id,

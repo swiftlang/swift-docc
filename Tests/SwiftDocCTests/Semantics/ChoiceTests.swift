@@ -14,13 +14,13 @@ import Markdown
 import SwiftDocCTestUtilities
 
 class ChoiceTests: XCTestCase {
-    func testInvalidEmpty() throws {
+    func testInvalidEmpty() async throws {
         let source = "@Choice"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -35,7 +35,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidMissingContent() throws {
+    func testInvalidMissingContent() async throws {
         let source = """
 @Choice(isCorrect: true) {
    @Justification {
@@ -47,7 +47,7 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -60,7 +60,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidMissingJustification() throws {
+    func testInvalidMissingJustification() async throws {
         let source = """
 @Choice(isCorrect: true) {
    This is some content.
@@ -70,7 +70,7 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -84,7 +84,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidMissingIsCorrect() throws {
+    func testInvalidMissingIsCorrect() async throws {
         let source = """
 @Choice {
    This is some content.
@@ -96,7 +96,7 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -110,7 +110,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidIsCorrect() throws {
+    func testInvalidIsCorrect() async throws {
         let source = """
 @Choice(isCorrect: blah) {
    This is some content.
@@ -122,7 +122,7 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -139,7 +139,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testValidParagraph() throws {
+    func testValidParagraph() async throws {
         let source = """
 @Choice(isCorrect: true) {
    This is some content.
@@ -152,7 +152,7 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -172,7 +172,7 @@ Choice @1:1-6:2 isCorrect: true
         }
     }
     
-    func testValidCode() throws {
+    func testValidCode() async throws {
         let source = """
 @Choice(isCorrect: true) {
    ```swift
@@ -188,7 +188,7 @@ Choice @1:1-6:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
@@ -208,7 +208,7 @@ Choice @1:1-9:2 isCorrect: true
         }
     }
     
-    func testValidImage() throws {
+    func testValidImage() async throws {
         let source = """
 @Choice(isCorrect: true) {
    @Image(source: blah.png, alt: blah)
@@ -222,7 +222,7 @@ Choice @1:1-9:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+        let (bundle, _) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
             InfoPlist(identifier: "org.swift.docc.example"),
             DataFile(name: "blah.png", data: Data()),
         ]))
