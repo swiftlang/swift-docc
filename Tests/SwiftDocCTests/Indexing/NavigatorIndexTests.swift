@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -396,8 +396,8 @@ Root
         XCTAssertNotNil(builder.navigatorIndex)
     }
     
-    func testNavigatorIndexGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testNavigatorIndexGeneration() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -455,7 +455,7 @@ Root
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
     }
     
-    func testNavigatorIndexGenerationWithCyclicCuration() throws {
+    func testNavigatorIndexGenerationWithCyclicCuration() async throws {
         // This is a documentation hierarchy where every page exist in more than one place in the navigator,
         // through a mix of automatic and manual curation, with a cycle between the two "leaf" nodes:
         //
@@ -586,7 +586,7 @@ Root
             """),
         ])
         
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -633,8 +633,8 @@ Root
         """)
     }
     
-    func testNavigatorWithDifferentSwiftAndObjectiveCHierarchies() throws {
-        let (_, bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+    func testNavigatorWithDifferentSwiftAndObjectiveCHierarchies() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(named: "GeometricalShapes")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -831,8 +831,8 @@ Root
         try FileManager.default.removeItem(at: targetURL)
     }
 
-    func testDoesNotCurateUncuratedPagesInLanguageThatAreCuratedInAnotherLanguage() throws {
-        let navigatorIndex = try generatedNavigatorIndex(for: "MixedLanguageFramework", bundleIdentifier: "org.swift.mixedlanguageframework")
+    func testDoesNotCurateUncuratedPagesInLanguageThatAreCuratedInAnotherLanguage() async throws {
+        let navigatorIndex = try await generatedNavigatorIndex(for: "MixedLanguageFramework", bundleIdentifier: "org.swift.mixedlanguageframework")
 
         XCTAssertEqual(
             navigatorIndex.navigatorTree.root.children
@@ -864,8 +864,8 @@ Root
         )
     }
     
-    func testMultiCuratesChildrenOfMultiCuratedPages() throws {
-        let navigatorIndex = try generatedNavigatorIndex(for: "MultiCuratedSubtree", bundleIdentifier: "org.swift.MultiCuratedSubtree")
+    func testMultiCuratesChildrenOfMultiCuratedPages() async throws {
+        let navigatorIndex = try await generatedNavigatorIndex(for: "MultiCuratedSubtree", bundleIdentifier: "org.swift.MultiCuratedSubtree")
         
         XCTAssertEqual(
             navigatorIndex.navigatorTree.root.dumpTree(),
@@ -894,8 +894,8 @@ Root
         )
     }
     
-    func testNavigatorIndexUsingPageTitleGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testNavigatorIndexUsingPageTitleGeneration() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -943,8 +943,8 @@ Root
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexPageTitleGeneration"))
     }
     
-    func testNavigatorIndexGenerationNoPaths() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testNavigatorIndexGenerationNoPaths() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         var results = Set<String>()
         
@@ -1000,8 +1000,8 @@ Root
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
     }
     
-    func testNavigatorIndexGenerationWithLanguageGrouping() throws {
-        let navigatorIndex = try generatedNavigatorIndex(for: "LegacyBundle_DoNotUseInNewTests", bundleIdentifier: testBundleIdentifier)
+    func testNavigatorIndexGenerationWithLanguageGrouping() async throws {
+        let navigatorIndex = try await generatedNavigatorIndex(for: "LegacyBundle_DoNotUseInNewTests", bundleIdentifier: testBundleIdentifier)
         
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
@@ -1020,8 +1020,8 @@ Root
     }
 
     
-    func testNavigatorIndexGenerationWithCuratedFragment() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testNavigatorIndexGenerationWithCuratedFragment() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
@@ -1083,8 +1083,8 @@ Root
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
     }
     
-    func testNavigatorIndexAvailabilityGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testNavigatorIndexAvailabilityGeneration() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1187,8 +1187,8 @@ Root
         XCTAssertNil(availabilityDB.get(type: String.self, forKey: "content"))
     }
     
-    func testCustomIconsInNavigator() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BookLikeContent") // This content has a @PageImage with the "icon" purpose
+    func testCustomIconsInNavigator() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BookLikeContent") // This content has a @PageImage with the "icon" purpose
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1213,8 +1213,8 @@ Root
         ])
     }
     
-    func testNavigatorIndexDifferentHasherGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testNavigatorIndexDifferentHasherGeneration() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -1662,8 +1662,8 @@ Root
         #endif
     }
     
-    func testNavigatorIndexAsReadOnlyFile() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testNavigatorIndexAsReadOnlyFile() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         let targetURL = try createTemporaryDirectory()
@@ -1902,8 +1902,8 @@ Root
         )
     }
     
-    func testAnonymousTopicGroups() throws {
-        let navigatorIndex = try generatedNavigatorIndex(
+    func testAnonymousTopicGroups() async throws {
+        let navigatorIndex = try await generatedNavigatorIndex(
             for: "AnonymousTopicGroups",
             bundleIdentifier: "org.swift.docc.example"
         )
@@ -1923,10 +1923,10 @@ Root
         )
     }
 
-    func testNavigatorDoesNotContainOverloads() throws {
+    func testNavigatorDoesNotContainOverloads() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let navigatorIndex = try generatedNavigatorIndex(
+        let navigatorIndex = try await generatedNavigatorIndex(
             for: "OverloadedSymbols",
             bundleIdentifier: "com.shapes.ShapeKit")
 
@@ -1977,8 +1977,8 @@ Root
         )
     }
 
-    func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) throws -> NavigatorIndex {
-        let (bundle, context) = try testBundleAndContext(named: testBundleName)
+    func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) async throws -> NavigatorIndex {
+        let (bundle, context) = try await testBundleAndContext(named: testBundleName)
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
 
@@ -2004,7 +2004,7 @@ Root
                 expectation.fulfill()
             }
         }
-        wait(for: [expectation], timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
 
         return navigatorIndex
     }

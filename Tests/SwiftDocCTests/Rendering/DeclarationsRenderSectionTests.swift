@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -133,8 +133,8 @@ class DeclarationsRenderSectionTests: XCTestCase {
         try assertRoundTripCoding(value)
     }
 
-    func testAlternateDeclarations() throws {
-        let (bundle, context) = try testBundleAndContext(named: "AlternateDeclarations")
+    func testAlternateDeclarations() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "AlternateDeclarations")
         let reference = ResolvedTopicReference(
             bundleID: bundle.id,
             path: "/documentation/AlternateDeclarations/MyClass/present(completion:)",
@@ -160,7 +160,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         XCTAssert(declarationsSection.declarations.allSatisfy({ $0.platforms == [.iOS, .macOS] }))
     }
 
-    func testPlatformSpecificDeclarations() throws {
+    func testPlatformSpecificDeclarations() async throws {
         // init(_ content: MyClass) throws
         let declaration1: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
             .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
@@ -199,7 +199,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         let symbolGraph1 = makeSymbolGraph(moduleName: "PlatformSpecificDeclarations", platform: .init(operatingSystem: .init(name: "macos")), symbols: [symbol1])
         let symbolGraph2 = makeSymbolGraph(moduleName: "PlatformSpecificDeclarations", platform: .init(operatingSystem: .init(name: "ios")), symbols: [symbol2])
 
-        func runAssertions(forwards: Bool) throws {
+        func runAssertions(forwards: Bool) async throws {
             // Toggling the order of platforms here doesn't necessarily _enforce_ a
             // nondeterminism failure in a unit-test environment, but it does make it
             // much more likely. Make sure that the order of the platform-specific
@@ -210,7 +210,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: symbolGraph2),
             ])
 
-            let (bundle, context) = try loadBundle(catalog: catalog)
+            let (bundle, context) = try await loadBundle(catalog: catalog)
 
             let reference = ResolvedTopicReference(
                 bundleID: bundle.id,
@@ -231,11 +231,11 @@ class DeclarationsRenderSectionTests: XCTestCase {
                            "init(_ content: MyClass) throws")
         }
 
-        try runAssertions(forwards: true)
-        try runAssertions(forwards: false)
+        try await runAssertions(forwards: true)
+        try await runAssertions(forwards: false)
     }
 
-    func testHighlightDiff() throws {
+    func testHighlightDiff() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
         let symbolGraphFile = Bundle.module.url(
@@ -249,7 +249,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
 
         // Make sure that type decorators like arrays, dictionaries, and optionals are correctly highlighted.
         do {
@@ -398,7 +398,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         }
     }
 
-    func testInconsistentHighlightDiff() throws {
+    func testInconsistentHighlightDiff() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
         // Generate a symbol graph with many overload groups that share declarations.
@@ -458,7 +458,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
         ])
 
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
 
         func assertDeclarations(for USR: String, file: StaticString = #filePath, line: UInt = #line) throws {
             let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: USR), file: file, line: line)
@@ -483,7 +483,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         }
     }
 
-    func testDontHighlightWhenOverloadsAreDisabled() throws {
+    func testDontHighlightWhenOverloadsAreDisabled() async throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "FancyOverloads",
             withExtension: "symbols.json",
@@ -495,7 +495,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
 
         for hash in ["7eht8", "8p1lo", "858ja"] {
             let reference = ResolvedTopicReference(
@@ -514,7 +514,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         }
     }
 
-    func testOverloadConformanceDataIsSavedWithDeclarations() throws {
+    func testOverloadConformanceDataIsSavedWithDeclarations() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
         let symbolGraphFile = Bundle.module.url(
@@ -528,7 +528,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
 
         // MyClass<T>
         // - myFunc() where T: Equatable
@@ -565,7 +565,7 @@ func declarationAndHighlights(for tokens: [DeclarationRenderSection.Token]) -> [
     ]
 }
 
-func declarationsAndHighlights(for section: DeclarationRenderSection) -> [String] {
+private func declarationsAndHighlights(for section: DeclarationRenderSection) -> [String] {
     guard let otherDeclarations = section.otherDeclarations else {
         return []
     }

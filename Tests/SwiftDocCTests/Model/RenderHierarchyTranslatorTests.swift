@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,8 +12,8 @@
 import XCTest
 
 class RenderHierarchyTranslatorTests: XCTestCase {
-    func test() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func test() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let technologyReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
         var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
@@ -87,9 +87,9 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         XCTAssertEqual(assessments.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Check-Your-Understanding")
     }
     
-    func testMultiplePaths() throws {
+    func testMultiplePaths() async throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
             ## Topics
@@ -128,8 +128,8 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         ])
     }
     
-    func testLanguageSpecificHierarchies() throws {
-        let (bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+    func testLanguageSpecificHierarchies() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "GeometricalShapes")
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
         // An inner function to assert the rendered hierarchy values for a given reference

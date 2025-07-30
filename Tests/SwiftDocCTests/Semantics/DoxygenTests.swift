@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ import SwiftDocCTestUtilities
 @testable import SymbolKit
 
 class DoxygenTests: XCTestCase {
-    func testDoxygenDiscussionAndNote() throws {
+    func testDoxygenDiscussionAndNote() async throws {
         let documentationLines: [SymbolGraph.LineList.Line] = """
             This is an abstract.
             @abstract This is description with abstract.
@@ -88,7 +88,7 @@ class DoxygenTests: XCTestCase {
                 )),
             ])
 
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
 
         // Verify the expected content in the in-memory model

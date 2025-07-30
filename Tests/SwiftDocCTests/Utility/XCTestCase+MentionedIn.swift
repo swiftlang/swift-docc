@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ import SymbolKit
 
 extension XCTestCase {
     /// Creates a test bundle for testing "Mentioned In" features.
-    func createMentionedInTestBundle() throws -> (DocumentationBundle, DocumentationContext) {
+    func createMentionedInTestBundle() async throws -> (DocumentationBundle, DocumentationContext) {
         let catalog = Folder(name: "MentionedIn.docc", content: [
             JSONFile(name: "MentionedIn.symbols.json", content: makeSymbolGraph(
                 moduleName: "MentionedIn",
@@ -72,7 +72,7 @@ extension XCTestCase {
                  """),
         ])
 
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         return (bundle, context)
     }
 }

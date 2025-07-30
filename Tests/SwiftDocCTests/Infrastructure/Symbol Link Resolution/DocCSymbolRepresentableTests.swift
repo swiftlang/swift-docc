@@ -19,8 +19,8 @@ import SymbolKit
 // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
 @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 class DocCSymbolRepresentableTests: XCTestCase {
-    func testDisambiguatedByType() throws {
-        try performOverloadSymbolDisambiguationTest(
+    func testDisambiguatedByType() async throws {
+        try await performOverloadSymbolDisambiguationTest(
             correctLink: """
             doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-swift.property
             """,
@@ -34,8 +34,8 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
     }
     
-    func testOverloadedByCaseInsensitivity() throws {
-        try performOverloadSymbolDisambiguationTest(
+    func testOverloadedByCaseInsensitivity() async throws {
+        try await performOverloadSymbolDisambiguationTest(
             correctLink: """
             doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct/ThirdTestMemberName-5vyx9
             """,
@@ -48,8 +48,8 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
     }
     
-    func testProtocolMemberWithUSRHash() throws {
-        try performOverloadSymbolDisambiguationTest(
+    func testProtocolMemberWithUSRHash() async throws {
+        try await performOverloadSymbolDisambiguationTest(
             correctLink: """
             doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx
             """,
@@ -62,8 +62,8 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
     }
     
-    func testFunctionWithKindIdentifierAndUSRHash() throws {
-        try performOverloadSymbolDisambiguationTest(
+    func testFunctionWithKindIdentifierAndUSRHash() async throws {
+        try await performOverloadSymbolDisambiguationTest(
             correctLink: """
             doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s
             """,
@@ -77,8 +77,8 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
     }
     
-    func testSymbolWithNoDisambiguation() throws {
-        try performOverloadSymbolDisambiguationTest(
+    func testSymbolWithNoDisambiguation() async throws {
+        try await performOverloadSymbolDisambiguationTest(
             correctLink: """
             doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/firstMember
             """,
@@ -93,8 +93,8 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
     }
     
-    func testAmbiguousProtocolMember() throws {
-        try performOverloadSymbolDisambiguationTest(
+    func testAmbiguousProtocolMember() async throws {
+        try await performOverloadSymbolDisambiguationTest(
             correctLink: """
             doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/firstMember
             """,
@@ -114,9 +114,9 @@ class DocCSymbolRepresentableTests: XCTestCase {
         incorrectLinks: [String],
         symbolTitle: String,
         expectedNumberOfAmbiguousSymbols: Int
-    ) throws {
+    ) async throws {
         // Build a bundle with an unusual number of overloaded symbols
-        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols")
         
         // Collect the overloaded symbols nodes from the built bundle
         let ambiguousSymbols = context.documentationCache
@@ -169,8 +169,8 @@ class DocCSymbolRepresentableTests: XCTestCase {
         }
     }
     
-    func testLinkComponentInitialization() throws {
-        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
+    func testLinkComponentInitialization() async throws {
+        let (_, _, context) = try await testBundleAndContext(named: "OverloadedSymbols")
         
         var count = 0
         for (reference, documentationNode) in context.documentationCache {

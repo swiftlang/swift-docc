@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,7 +50,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
                 additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectory)
             )
         )
-        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)
+        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider)
 
         let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: outputURL)
         let curation = try writer.generateDefaultCurationContents(fromSymbol: startingPointSymbolLink, depthLimit: depthLimit)

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,8 +14,8 @@ import SymbolKit
 import SwiftDocCTestUtilities
 
 class DocumentationContext_RootPageTests: XCTestCase {
-    func testArticleOnlyCatalogWithExplicitTechnologyRoot() throws {
-        let (_, context) = try loadBundle(catalog:
+    func testArticleOnlyCatalogWithExplicitTechnologyRoot() async throws {
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
                 TextFile(name: "ReleaseNotes.md", utf8Content: """
@@ -50,8 +50,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
                        ["/documentation/TestBundle/ReleaseNotes-1.2"])
     }
 
-    func testWarnsAboutExtensionFileTechnologyRoot() throws {
-        let (_, context) = try loadBundle(catalog:
+    func testWarnsAboutExtensionFileTechnologyRoot() async throws {
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
                 TextFile(name: "ReleaseNotes.md", utf8Content: """
@@ -84,8 +84,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
         XCTAssertEqual(solution.replacements.first?.range.upperBound.line, 3)
     }
     
-    func testSingleArticleWithoutTechnologyRootDirective() throws {
-        let (_, context) = try loadBundle(catalog:
+    func testSingleArticleWithoutTechnologyRootDirective() async throws {
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "Article.md", utf8Content: """
                 # My article
@@ -101,8 +101,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
         XCTAssertEqual(context.problems.count, 0)
     }
     
-    func testMultipleArticlesWithoutTechnologyRootDirective() throws {
-        let (_, context) = try loadBundle(catalog:
+    func testMultipleArticlesWithoutTechnologyRootDirective() async throws {
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "First.md", utf8Content: """
                 # My first article
@@ -135,8 +135,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
         XCTAssertEqual(context.problems.count, 0)
     }
     
-    func testMultipleArticlesWithoutTechnologyRootDirectiveWithOneMatchingTheCatalogName() throws {
-        let (_, context) = try loadBundle(catalog:
+    func testMultipleArticlesWithoutTechnologyRootDirectiveWithOneMatchingTheCatalogName() async throws {
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "Something.md", utf8Content: """
                 # Some article

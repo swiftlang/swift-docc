@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class StepTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @Step
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertEqual([
@@ -32,7 +32,7 @@ class StepTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
 @Step {
    This is the step's content.
@@ -46,7 +46,7 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
@@ -83,7 +83,7 @@ Step @1:1-9:2
         }
     }
     
-    func testExtraneousContent() throws {
+    func testExtraneousContent() async throws {
         let source = """
 @Step {
    This is the step's content.
@@ -104,7 +104,7 @@ Step @1:1-9:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertEqual(2, problems.count)

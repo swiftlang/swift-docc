@@ -14,7 +14,7 @@ import Markdown
 
 class TileTests: XCTestCase {
     
-    func testComplex() throws {
+    func testComplex() async throws {
         let directiveNamesAndTitles = [
             (Tile.DirectiveNames.documentation, Tile.Semantics.Title.documentation),
             (Tile.DirectiveNames.sampleCode, Tile.Semantics.Title.sampleCode),
@@ -26,7 +26,7 @@ class TileTests: XCTestCase {
                 let source = "@\(directiveName)"
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
-                let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+                let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
                 var problems = [Problem]()
                 let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
                 XCTAssertNotNil(tile)
@@ -49,7 +49,7 @@ class TileTests: XCTestCase {
 """
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
-                let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+                let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
                 var problems = [Problem]()
                 let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
                 XCTAssertNotNil(tile)
@@ -62,7 +62,7 @@ class TileTests: XCTestCase {
         }
     }
     
-    func testGeneric() throws {
+    func testGeneric() async throws {
         let directiveNamesAndTitles = [
             (Tile.DirectiveNames.downloads, Tile.Semantics.Title.downloads),
             (Tile.DirectiveNames.videos, Tile.Semantics.Title.videos),
@@ -75,7 +75,7 @@ class TileTests: XCTestCase {
                 let source = "@\(directiveName)"
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
-                let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+                let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
                 var problems = [Problem]()
                 let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
                 XCTAssertNotNil(tile)
@@ -97,7 +97,7 @@ class TileTests: XCTestCase {
 """
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
-                let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+                let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
                 var problems = [Problem]()
                 let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
                 XCTAssertNotNil(tile)
@@ -110,7 +110,7 @@ class TileTests: XCTestCase {
         }
     }
     
-    func testDestination() throws {
+    func testDestination() async throws {
         do {
             let destination = URL(string: "https://www.example.com/documentation/technology")!
             let source = """
@@ -120,7 +120,7 @@ class TileTests: XCTestCase {
     """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+            let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
             var problems = [Problem]()
             let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
             // Destination is set.
@@ -136,7 +136,7 @@ class TileTests: XCTestCase {
     """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+            let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
             var problems = [Problem]()
             let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
             // Destination is nil.
@@ -145,11 +145,11 @@ class TileTests: XCTestCase {
         }
     }
     
-    func testUnknownTile() throws {
+    func testUnknownTile() async throws {
         let source = "@UnknownTile"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(tile)

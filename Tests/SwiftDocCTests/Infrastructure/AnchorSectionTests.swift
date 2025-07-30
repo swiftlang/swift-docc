@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,8 +16,8 @@ import Markdown
 
 class AnchorSectionTests: XCTestCase {
         
-    func testResolvingArticleSubsections() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testResolvingArticleSubsections() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
@@ -74,8 +74,8 @@ class AnchorSectionTests: XCTestCase {
         XCTAssertEqual(sectionReference.url, "/documentation/technologyx/article#Article-Sub-Section")
     }
 
-    func testResolvingSymbolSubsections() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testResolvingSymbolSubsections() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
@@ -132,8 +132,8 @@ class AnchorSectionTests: XCTestCase {
         XCTAssertEqual(sectionReference.url, "/documentation/coolframework/coolclass#Symbol-Sub-Section")
     }
 
-    func testResolvingRootPageSubsections() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testResolvingRootPageSubsections() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
@@ -190,8 +190,8 @@ class AnchorSectionTests: XCTestCase {
         XCTAssertEqual(sectionReference.url, "/documentation/coolframework#Module-Sub-Section")
     }
     
-    func testWarnsWhenCuratingSections() throws {
-        let (_, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    func testWarnsWhenCuratingSections() async throws {
+        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         // The module page has 3 section links in a Topics group,
         // the context should contain the three warnings about those links
