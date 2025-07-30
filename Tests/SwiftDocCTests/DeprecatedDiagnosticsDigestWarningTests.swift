@@ -13,6 +13,7 @@ import SwiftDocC
 import SwiftDocCTestUtilities
 import XCTest
 
+// THIS SHOULD BE REMOVED, RIGHT?!
 class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
     func testNoDeprecationWarningWhenThereAreNoOtherWarnings() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [

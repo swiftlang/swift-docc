@@ -120,6 +120,3 @@ public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abst
         return visitor.visitTutorialTableOfContents(self)
     }
 }
-
-@available(*, deprecated, renamed: "TutorialTableOfContents", message: "Use 'TutorialTableOfContents' instead. This deprecated API will be removed after 6.2 is released")
-public typealias Technology = TutorialTableOfContents

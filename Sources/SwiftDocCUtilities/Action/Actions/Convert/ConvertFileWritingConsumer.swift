@@ -84,7 +84,6 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
             }
         }
 
-        // TODO: Supporting a single bundle for the moment.
         let bundleID = bundle.id
         assert(bundleID.rawValue == self.assetPrefixComponent, "Unexpectedly encoding assets for a bundle other than the one this output consumer was created for.")
         

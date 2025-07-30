@@ -1756,7 +1756,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let downloadReference: DownloadReference
             do {
                 let downloadURL = resolvedAssets.variants.first!.value
-                let downloadData = try context.contentsOfURL(downloadURL, in: bundle)
+                let downloadData = try context.dataProvider.contents(of: downloadURL)
                 downloadReference = DownloadReference(identifier: mediaReference,
                     renderURL: downloadURL,
                     checksum: Checksum.sha512(of: downloadData))

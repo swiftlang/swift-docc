@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -311,7 +311,8 @@ public extension DocumentationNode {
         renderNode: RenderNode,
         includeTaskGroups: Bool = true
     ) -> [LinkDestinationSummary] {
-        guard let bundle = context.bundle, bundle.id == reference.bundleID else {
+        let bundle = context.bundle
+        guard bundle.id == reference.bundleID else {
             // Don't return anything for external references that don't have a bundle in the context.
             return []
         }
@@ -330,7 +331,6 @@ public extension DocumentationNode {
         let taskGroups: [LinkDestinationSummary.TaskGroup]?
         if includeTaskGroups {
             switch kind {
-            case ._technologyOverview: fallthrough // This case is deprecated and will be removed after 6.2 is released.
             case .tutorial, .tutorialArticle, .tutorialTableOfContents, .chapter, .volume, .onPageLandmark:
                 taskGroups = [.init(title: nil, identifiers: context.children(of: reference).map { $0.reference.absoluteString })]
             default:

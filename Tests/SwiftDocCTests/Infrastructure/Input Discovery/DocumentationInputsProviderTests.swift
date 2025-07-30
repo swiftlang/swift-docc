@@ -15,8 +15,6 @@ import SwiftDocCTestUtilities
 class DocumentationInputsProviderTests: XCTestCase {
     
     // After 6.2 we can update this test to verify that the input provider discovers the same inputs regardless of FileManagerProtocol
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This test uses `LocalFileSystemDataProvider` as a `DocumentationWorkspaceDataProvider` which is deprecated and will be removed after 6.2 is released")
     func testDiscoversSameFilesAsPreviousImplementation() throws {
         let folderHierarchy = Folder(name: "one", content: [
             Folder(name: "two", content: [
@@ -78,7 +76,6 @@ class DocumentationInputsProviderTests: XCTestCase {
             tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")
         ])
         
-        let foundPrevImplBundle = try XCTUnwrap(LocalFileSystemDataProvider(rootURL: tempDirectory.appendingPathComponent("/one/two")).bundles(options: options).first)
         let (foundRealBundle, _) = try XCTUnwrap(realProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
 
         let (foundTestBundle, _) = try XCTUnwrap(testProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/one/two"), options: .init(
@@ -90,7 +87,6 @@ class DocumentationInputsProviderTests: XCTestCase {
         ))
 
         for (bundle, relativeBase) in [
-            (foundPrevImplBundle, tempDirectory.appendingPathComponent("/one/two/three")),
             (foundRealBundle,     tempDirectory.appendingPathComponent("/one/two/three")),
             (foundTestBundle,     URL(fileURLWithPath: "/one/two/three")),
         ] {
@@ -99,7 +95,7 @@ class DocumentationInputsProviderTests: XCTestCase {
             }
             
             XCTAssertEqual(bundle.displayName, "CustomDisplayName")
-            XCTAssertEqual(bundle.identifier, "com.example.test")
+            XCTAssertEqual(bundle.id, "com.example.test")
             XCTAssertEqual(bundle.markupURLs.map(relativePathString).sorted(), [
                 "Found.docc/CCC.md",
                 "Found.docc/Inner/DDD.md",

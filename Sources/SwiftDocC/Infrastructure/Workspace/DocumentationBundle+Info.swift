@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,17 +18,8 @@ extension DocumentationBundle {
         /// The display name of the bundle.
         public var displayName: String
         
-        @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
-        public var identifier: String {
-            id.rawValue
-        }
-        
         /// The unique identifier of the bundle.
         public var id: DocumentationBundle.Identifier
-        
-        /// The version of the bundle.
-        @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-        public var version: String?
         
         /// The default language identifier for code listings in the bundle.
         public var defaultCodeListingLanguage: String?
@@ -106,23 +97,6 @@ extension DocumentationBundle {
                 defaultModuleKind: defaultModuleKind,
                 defaultAvailability: defaultAvailability,
                 featureFlags: nil
-            )
-        }
-        
-        @available(*, deprecated, renamed: "init(displayName:id:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)", message: "Use 'Info.init(displayName:id:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)' instead. This deprecated API will be removed after 6.2 is released")
-        public init(
-            displayName: String,
-            identifier: String,
-            defaultCodeListingLanguage: String?,
-            defaultAvailability: DefaultAvailability?,
-            defaultModuleKind: String?
-        ) {
-            self.init(
-                displayName: displayName,
-                id: .init(rawValue: identifier),
-                defaultCodeListingLanguage: defaultCodeListingLanguage,
-                defaultAvailability: defaultAvailability,
-                defaultModuleKind: defaultModuleKind
             )
         }
         
@@ -330,26 +304,6 @@ extension BundleDiscoveryOptions {
             additionalSymbolGraphFiles: additionalSymbolGraphFiles
         )
     }
-
-    @available(*, deprecated, renamed: "init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)", message: "Use 'init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init(
-        fallbackDisplayName: String? = nil,
-        fallbackIdentifier: String? = nil,
-        fallbackVersion: String?,
-        fallbackDefaultCodeListingLanguage: String? = nil,
-        fallbackDefaultModuleKind: String? = nil,
-        fallbackDefaultAvailability: DefaultAvailability? = nil,
-        additionalSymbolGraphFiles: [URL] = []
-    ) {
-        self.init(
-            fallbackDisplayName: fallbackDisplayName,
-            fallbackIdentifier: fallbackIdentifier,
-            fallbackDefaultCodeListingLanguage: fallbackDefaultCodeListingLanguage,
-            fallbackDefaultModuleKind: fallbackDefaultModuleKind,
-            fallbackDefaultAvailability: fallbackDefaultAvailability,
-            additionalSymbolGraphFiles:additionalSymbolGraphFiles
-        )
-    }
 }
 
 private extension CodingUserInfoKey {
@@ -357,24 +311,4 @@ private extension CodingUserInfoKey {
     static let bundleDiscoveryOptions = CodingUserInfoKey(rawValue: "bundleDiscoveryOptions")!
     /// A user info key to store derived display name in the decoder.
     static let derivedDisplayName = CodingUserInfoKey(rawValue: "derivedDisplayName")!
-}
-
-extension DocumentationBundle.Info {
-    @available(*, deprecated, renamed: "init(displayName:identifier:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)", message: "Use 'init(displayName:identifier:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init(
-        displayName: String,
-        identifier: String,
-        version: String?,
-        defaultCodeListingLanguage: String?,
-        defaultAvailability: DefaultAvailability?,
-        defaultModuleKind: String?
-    ) {
-        self.init(
-            displayName: displayName,
-            identifier: identifier,
-            defaultCodeListingLanguage: defaultCodeListingLanguage,
-            defaultAvailability: defaultAvailability,
-            defaultModuleKind: defaultModuleKind
-        )
-    }
 }
