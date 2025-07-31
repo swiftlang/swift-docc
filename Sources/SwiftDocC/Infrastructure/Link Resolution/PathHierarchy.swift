@@ -718,23 +718,6 @@ extension PathHierarchy {
     }
 }
 
-// MARK: Removing nodes
-
-extension PathHierarchy {
-    // When unregistering a documentation bundle from a context, entries for that bundle should no longer be findable.
-    // The below implementation marks nodes as "not findable" while leaving them in the hierarchy so that they can be
-    // traversed.
-    // This would be problematic if it happened repeatedly but in practice the path hierarchy will only be in this state
-    // after unregistering a data provider until a new data provider is registered.
-    
-    /// Removes a node from the path hierarchy so that it can no longer be found.
-    /// - Parameter id: The unique identifier for the node.
-    mutating func removeNodeWithID(_ id: ResolvedIdentifier) {
-        // Remove the node from the lookup and unset its identifier
-        lookup.removeValue(forKey: id)!.identifier = nil
-    }
-}
-
 // MARK: Disambiguation container
 
 extension PathHierarchy {

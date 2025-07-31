@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -55,8 +55,6 @@ public struct NodeURLGenerator {
         case documentationCuration(parentPath: String, articleName: String)
         case article(bundleName: String, articleName: String)
         case tutorialTableOfContents(name: String)
-        @available(*, deprecated, renamed: "tutorialTableOfContents(name:)", message: "Use 'tutorialTableOfContents(name:)' instead. This deprecated API will be removed after 6.2 is released")
-        case technology(technologyName: String)
         case tutorial(bundleName: String, tutorialName: String)
         
         /// A URL safe path under the given root path.
@@ -94,8 +92,7 @@ public struct NodeURLGenerator {
                         isDirectory: false
                     )
                     .path
-            case .technology(let name),
-                 .tutorialTableOfContents(let name):
+            case .tutorialTableOfContents(let name):
                 // Format: "/tutorials/Name"
                 return Self.tutorialsFolderURL
                     .appendingPathComponent(

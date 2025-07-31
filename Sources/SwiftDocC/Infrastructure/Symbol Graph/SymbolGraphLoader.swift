@@ -19,23 +19,22 @@ struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
-    // FIXME: After 6.2, when we no longer have `DocumentationContextDataProvider` we can simply this code to not use a closure to read data.
-    private var dataLoader: (URL, DocumentationBundle) throws -> Data
-    private var bundle: DocumentationBundle
-    private var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
+    private let dataProvider: any DataProvider
+    private let bundle: DocumentationBundle
+    private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
     
     /// Creates a new symbol graph loader
     /// - Parameters:
     ///   - bundle: The documentation bundle from which to load symbol graphs.
-    ///   - dataLoader: A closure that the loader uses to read symbol graph data.
+    ///   - dataProvider: A provider that the loader uses to read symbol graph data.
     ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
         bundle: DocumentationBundle,
-        dataLoader: @escaping (URL, DocumentationBundle) throws -> Data,
+        dataProvider: any DataProvider,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
-        self.dataLoader = dataLoader
+        self.dataProvider = dataProvider
         self.symbolGraphTransformer = symbolGraphTransformer
     }
 
@@ -61,13 +60,13 @@ struct SymbolGraphLoader {
         var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
         var loadError: (any Error)?
 
-        let loadGraphAtURL: (URL) -> Void = { [dataLoader, bundle] symbolGraphURL in
+        let loadGraphAtURL: (URL) -> Void = { [dataProvider] symbolGraphURL in
             // Bail out in case a symbol graph has already errored
             guard loadingLock.sync({ loadError == nil }) else { return }
             
             do {
                 // Load and decode a single symbol graph file
-                let data = try dataLoader(symbolGraphURL, bundle)
+                let data = try dataProvider.contents(of: symbolGraphURL)
 
                 var symbolGraph: SymbolGraph
                 

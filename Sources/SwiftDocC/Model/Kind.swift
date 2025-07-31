@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -203,9 +203,6 @@ extension DocumentationNode.Kind {
         .extendedModule, .extendedStructure, .extendedClass, .extendedEnumeration, .extendedProtocol, .unknownExtendedType,
         // Other
         .keyword, .restAPI, .tag, .propertyList, .object
-        
-        // Deprecated, to be removed after 6.2 is released.
-        , _technologyOverview,
     ]
 
     /// Returns whether this symbol kind is a synthetic "Extended Symbol" symbol kind.
@@ -217,13 +214,4 @@ extension DocumentationNode.Kind {
             return false
         }
     }
-}
-
-extension DocumentationNode.Kind {
-    @available(*, deprecated, renamed: "tutorialTableOfContents", message: "Use 'tutorialTableOfContents' This deprecated API will be removed after 6.2 is released")
-    public static var technology: Self { tutorialTableOfContents }
-    
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    public static var technologyOverview: Self { _technologyOverview }
-    static let _technologyOverview = DocumentationNode.Kind(name: "Technology (Overview)", id: "org.swift.docc.kind.technology.overview", isSymbol: false)
 }
