@@ -13,6 +13,9 @@ import PackageDescription
 
 let package = Package(
     name: "update-license-for-modified-files",
+    platforms: [
+        .macOS(.v13)
+    ],
     targets: [
         .executableTarget(
             name: "update-license-for-modified-files"

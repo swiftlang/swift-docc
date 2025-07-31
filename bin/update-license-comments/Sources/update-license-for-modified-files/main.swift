@@ -66,29 +66,27 @@ let modifiedFiles = try findModifiedFiles(in: repoURL, strategy: diffStrategy)
 
 // Update the years in the license comment where necessary
 
-let licenseRegex = try NSRegularExpression(
-    //                                An optional lower range of years for the license comment (including the hyphen)
-    //                                │            The upper range of years for the license comment
-    //                                │            │                The markdown files don't have a "." but the Swift files do
-    //                                │            │                 │                  The markdown files capitalize the P but the Swift files don't
-    //                                │            │                 │                  │
-    //                          ╭─────┴──────╮╭────┴─────╮          ╭┴─╮               ╭┴─╮
-    pattern: "Copyright \\(c\\) (20[0-9]{2}-)?(20[0-9]{2}) Apple Inc\\.? and the Swift [Pp]roject authors"
-)
+//                                        An optional lower range of years for the license comment (including the hyphen)
+//                                        │            The upper range of years for the license comment
+//                                        │            │                The markdown files don't have a "." but the Swift files do
+//                                        │            │                 │                 The markdown files capitalize the P but the Swift files don't
+//                                        │            │                 │                 │
+//                                  ╭─────┴──────╮╭────┴─────╮          ╭┴╮               ╭┴─╮
+let licenseRegex = /Copyright \(c\) (20[0-9]{2}-)?(20[0-9]{2}) Apple Inc\.? and the Swift [Pp]roject authors/
+
 let currentYear = Calendar.current.component(.year, from: .now)
 
 for file in modifiedFiles {
     guard var content = try? String(contentsOf: file, encoding: .utf8),
-          let licenseMatch = licenseRegex.firstMatch(in: content, options: [], range: NSRange(content.startIndex..<content.endIndex, in: content))
+          let licenseMatch = try? licenseRegex.firstMatch(in: content)
     else {
         // Didn't encounter a license comment in this file, do nothing
         continue
     }
-    
-    guard let upperYearRange = Range(licenseMatch.range(at: 2 /* the second year */), in: content),
-          let upperYear = Int(content[upperYearRange])
-    else {
-        print("Couldn't find license year in \((content as NSString).substring(with: licenseMatch.range))")
+
+    let upperYearSubstring = licenseMatch.2
+    guard let upperYear = Int(upperYearSubstring) else {
+        print("Couldn't find license year in \(content[licenseMatch.range])")
         continue
     }
     
@@ -97,12 +95,12 @@ for file in modifiedFiles {
         continue
     }
     
-    if licenseMatch.range(at: 1 /* the optional first year */).location == NSNotFound {
+    if licenseMatch.1 == nil {
         // The existing license comment only contains a single year. Add the new year after
-        content.insert(contentsOf: "-\(currentYear)", at: upperYearRange.upperBound)
+        content.insert(contentsOf: "-\(currentYear)", at: upperYearSubstring.endIndex)
     } else {
         // The existing license comment contains both a start year and an end year. Update the second year.
-        content.replaceSubrange(upperYearRange, with: "\(currentYear)")
+        content.replaceSubrange(upperYearSubstring.startIndex ..< upperYearSubstring.endIndex, with: "\(currentYear)")
     }
     try content.write(to: file, atomically: true, encoding: .utf8)
 }
