@@ -725,7 +725,7 @@ extension RenderBlockContent: Codable {
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata),
-                copyToClipboard: container.decode(Bool.self, forKey: .copyToClipboard)
+                copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? false
             ))
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
@@ -829,6 +829,7 @@ extension RenderBlockContent: Codable {
             try container.encode(l.syntax, forKey: .syntax)
             try container.encode(l.code, forKey: .code)
             try container.encodeIfPresent(l.metadata, forKey: .metadata)
+            try container.encode(l.copyToClipboard, forKey: .copyToClipboard)
         case .heading(let h):
             try container.encode(h.level, forKey: .level)
             try container.encode(h.text, forKey: .text)
