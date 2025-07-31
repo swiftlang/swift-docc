@@ -66,14 +66,14 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
         let deprecationWarning = try XCTUnwrap(outputConsumer.problems.first?.diagnostic)
         
         XCTAssertEqual(deprecationWarning.identifier, "org.swift.docc.DeprecatedDiagnosticsDigets")
-        XCTAssertEqual(deprecationWarning.summary, "The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.")
+        XCTAssertEqual(deprecationWarning.summary, "The 'diagnostics.json' digest file is deprecated and will be removed after 6.3 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.")
     }
 }
 
 private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     var problems: [Problem] = []
     
-    func consume(problems: [Problem]) throws {
+    func _deprecated_consume(problems: [Problem]) throws {
         self.problems.append(contentsOf: problems)
     }
     
