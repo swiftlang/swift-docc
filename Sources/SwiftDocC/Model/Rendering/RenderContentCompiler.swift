@@ -47,7 +47,34 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [any RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: false))]
+        struct ParsedOptions {
+            var lang: String?
+            var copy = false
+        }
+
+        func parseLanguageString(_ input: String?) -> ParsedOptions {
+            guard let input else { return ParsedOptions() }
+
+            let parts = input
+                    .split(separator: ",")
+                    .map { $0.trimmingCharacters(in: .whitespaces) }
+
+            var options = ParsedOptions()
+
+            for part in parts {
+                let lower = part.lowercased()
+                if lower == "copy" {
+                    options.copy = true
+                } else if options.lang == nil {
+                    options.lang = part
+                }
+            }
+            return options
+        }
+
+        let options = parseLanguageString(codeBlock.language)
+
+        return [RenderBlockContent.codeListing(.init(syntax: options.lang ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: options.copy))]
     }
     
     mutating func visitHeading(_ heading: Heading) -> [any RenderContent] {
