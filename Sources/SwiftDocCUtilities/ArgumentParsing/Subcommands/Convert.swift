@@ -512,9 +512,10 @@ extension Docc {
             var enableMentionedIn = true
             
             // This flag only exist to allow developers to pass the previous '--enable-experimental-...' flag without errors.
+            // The last release to support this spelling was 6.2.
             @Flag(name: .customLong("enable-experimental-mentioned-in"), help: .hidden)
-            @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-            var enableExperimentalMentionedIn = false
+            @available(*, deprecated, message: "This flag is unused and only exist for backwards compatibility")
+            var _unusedExperimentalMentionedInFlagForBackwardsCompatibility = false
 
             @Flag(
                 name: .customLong("parameters-and-returns-validation"),
