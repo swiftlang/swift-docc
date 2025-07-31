@@ -49,7 +49,19 @@ switch arguments.first {
 
 // Find which files are modified
 
-let repoURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+let repoURL: URL = {
+    let url = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent() // main.swift
+        .deletingLastPathComponent() // update-license-for-modified-files
+        .deletingLastPathComponent() // Sources
+        .deletingLastPathComponent() // update-license-comments
+        .deletingLastPathComponent() // bin
+    guard FileManager.default.fileExists(atPath: url.appendingPathComponent("Package.swift").path) else {
+        fatalError("The path to the Swift-DocC source root has changed. This should only happen if the 'update-license-comments' sources have moved relative to the Swift-DocC repo.")
+    }
+    return url
+}()
+
 let modifiedFiles = try findModifiedFiles(in: repoURL, strategy: diffStrategy)
 
 // Update the years in the license comment where necessary
