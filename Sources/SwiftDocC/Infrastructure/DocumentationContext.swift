@@ -2023,7 +2023,7 @@ public class DocumentationContext {
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             symbolGraphLoader = SymbolGraphLoader(
                 bundle: bundle,
-                dataLoader: { url, _ in try self.dataProvider.contents(of: url) },
+                dataProvider: dataProvider,
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
             )
             
