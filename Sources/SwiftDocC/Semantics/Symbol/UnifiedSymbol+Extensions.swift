@@ -106,13 +106,16 @@ extension UnifiedSymbolGraph.Symbol {
                 return false
             }
 
-            if lhs.value.lines.totalCount == rhs.value.lines.totalCount {
+            let lhsLength = lhs.value.lines.totalCount
+            let rhsLength = rhs.value.lines.totalCount
+
+            if lhsLength == rhsLength {
                 // if the comments are the same length, just sort them lexicographically
                 return lhs.value.lines.isLexicographicallyBefore(rhs.value.lines)
             } else {
                 // otherwise, sort by the length of the doc comment,
                 // so that `min` returns the longest comment
-                return lhs.value.lines.totalCount > rhs.value.lines.totalCount
+                return lhsLength > rhsLength
             }
         })?.key
     }
@@ -138,10 +141,6 @@ extension [SymbolGraph.LineList.Line] {
         return reduce(into: 0) { result, line in
             result += line.text.count
         }
-    }
-
-    fileprivate var fullText: String {
-        map(\.text).joined(separator: "\n")
     }
 
     fileprivate func isLexicographicallyBefore(_ other: Self) -> Bool {
