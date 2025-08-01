@@ -1095,7 +1095,7 @@ class DocumentationContextTests: XCTestCase {
                     ])
             ])
 
-        func runAssertions(forwards: Bool) async throws {
+        for forwards in [true, false] {
             let catalog = Folder(name: "unit-test.docc", content: [
                 InfoPlist(displayName: "TestProject", identifier: "com.test.example"),
                 JSONFile(name: "symbols\(forwards ? "1" : "2").symbols.json", content:macOSSymbolGraph),
@@ -1115,9 +1115,6 @@ class DocumentationContextTests: XCTestCase {
                 abstract.paragraph.plainText,
                 "This is a longer comment that should be shown instead.")
         }
-
-        try await runAssertions(forwards: true)
-        try await runAssertions(forwards: false)
     }
 
     func testLoadsConflictingDocCommentsOfSameLength() async throws {
@@ -1158,7 +1155,7 @@ class DocumentationContextTests: XCTestCase {
                     ])
             ])
 
-        func runAssertions(forwards: Bool) async throws {
+        for forwards in [true, false] {
             let catalog = Folder(name: "unit-test.docc", content: [
                 InfoPlist(displayName: "TestProject", identifier: "com.test.example"),
                 JSONFile(name: "symbols\(forwards ? "1" : "2").symbols.json", content:macOSSymbolGraph),
@@ -1178,9 +1175,6 @@ class DocumentationContextTests: XCTestCase {
                 abstract.paragraph.plainText,
                 "Comment A.")
         }
-
-        try await runAssertions(forwards: true)
-        try await runAssertions(forwards: false)
     }
 
     func testMergesMultipleSymbolDeclarations() async throws {
