@@ -1056,7 +1056,127 @@ class DocumentationContextTests: XCTestCase {
                        └─ Text "Return value"
                        """)
     }
-    
+
+    func testLoadsConflictingDocComments() async throws {
+        let macOSSymbolGraph = makeSymbolGraph(
+            moduleName: "TestProject",
+            platform: .init(operatingSystem: .init(name: "macOS")),
+            symbols: [
+                makeSymbol(
+                    id: "TestSymbol",
+                    kind: .func,
+                    pathComponents: ["TestSymbol"],
+                    docComment: "This is a comment.",
+                    otherMixins: [
+                        SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                            .init(
+                                kind: .text,
+                                spelling: "TestSymbol Mac",
+                                preciseIdentifier: nil)
+                        ])
+                    ])
+            ])
+        let iOSSymbolGraph = makeSymbolGraph(
+            moduleName: "TestProject",
+            platform: .init(operatingSystem: .init(name: "iOS")),
+            symbols: [
+                makeSymbol(
+                    id: "TestSymbol",
+                    kind: .func,
+                    pathComponents: ["TestSymbol"],
+                    docComment: "This is a longer comment that should be shown instead.",
+                    otherMixins: [
+                        SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                            .init(
+                                kind: .text,
+                                spelling: "TestSymbol iOS",
+                                preciseIdentifier: nil)
+                        ])
+                    ])
+            ])
+
+        for forwards in [true, false] {
+            let catalog = Folder(name: "unit-test.docc", content: [
+                InfoPlist(displayName: "TestProject", identifier: "com.test.example"),
+                JSONFile(name: "symbols\(forwards ? "1" : "2").symbols.json", content:macOSSymbolGraph),
+                JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: iOSSymbolGraph),
+            ])
+
+            let (bundle, context) = try await loadBundle(catalog: catalog)
+
+            let reference = ResolvedTopicReference(
+                bundleID: bundle.id,
+                path: "/documentation/TestProject/TestSymbol",
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            let abstract = try XCTUnwrap(symbol.abstractSection)
+            XCTAssertEqual(
+                abstract.paragraph.plainText,
+                "This is a longer comment that should be shown instead.")
+        }
+    }
+
+    func testLoadsConflictingDocCommentsOfSameLength() async throws {
+        let macOSSymbolGraph = makeSymbolGraph(
+            moduleName: "TestProject",
+            platform: .init(operatingSystem: .init(name: "macOS")),
+            symbols: [
+                makeSymbol(
+                    id: "TestSymbol",
+                    kind: .func,
+                    pathComponents: ["TestSymbol"],
+                    docComment: "Comment A.",
+                    otherMixins: [
+                        SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                            .init(
+                                kind: .text,
+                                spelling: "TestSymbol Mac",
+                                preciseIdentifier: nil)
+                        ])
+                    ])
+            ])
+        let iOSSymbolGraph = makeSymbolGraph(
+            moduleName: "TestProject",
+            platform: .init(operatingSystem: .init(name: "iOS")),
+            symbols: [
+                makeSymbol(
+                    id: "TestSymbol",
+                    kind: .func,
+                    pathComponents: ["TestSymbol"],
+                    docComment: "Comment B.",
+                    otherMixins: [
+                        SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                            .init(
+                                kind: .text,
+                                spelling: "TestSymbol iOS",
+                                preciseIdentifier: nil)
+                        ])
+                    ])
+            ])
+
+        for forwards in [true, false] {
+            let catalog = Folder(name: "unit-test.docc", content: [
+                InfoPlist(displayName: "TestProject", identifier: "com.test.example"),
+                JSONFile(name: "symbols\(forwards ? "1" : "2").symbols.json", content:macOSSymbolGraph),
+                JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: iOSSymbolGraph),
+            ])
+
+            let (bundle, context) = try await loadBundle(catalog: catalog)
+
+            let reference = ResolvedTopicReference(
+                bundleID: bundle.id,
+                path: "/documentation/TestProject/TestSymbol",
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            let abstract = try XCTUnwrap(symbol.abstractSection)
+            XCTAssertEqual(
+                abstract.paragraph.plainText,
+                "Comment A.")
+        }
+    }
+
     func testMergesMultipleSymbolDeclarations() async throws {
         let graphContentiOS = try String(contentsOf: Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
