@@ -19,6 +19,7 @@ class DoxygenTests: XCTestCase {
     func testDoxygenDiscussionAndNote() throws {
         let documentationLines: [SymbolGraph.LineList.Line] = """
             This is an abstract.
+            @abstract This is description with abstract.
 
             @discussion This is a discussion linking to ``AnotherClass`` and ``AnotherClass/prop``.
 
@@ -96,6 +97,7 @@ class DoxygenTests: XCTestCase {
 
         XCTAssertEqual(symbol.abstract?.format(), "This is an abstract.")
         XCTAssertEqual(symbol.discussion?.content.map { $0.format() }, [
+            #"\abstract This is description with abstract."#,
             #"\discussion This is a discussion linking to ``doc://unit-test/documentation/ModuleName/AnotherClass`` and ``doc://unit-test/documentation/ModuleName/AnotherClass/prop``."#,
             #"\note This is a note linking to ``doc://unit-test/documentation/ModuleName/Class3`` and ``Class3/prop2``."#
         ])
@@ -108,10 +110,10 @@ class DoxygenTests: XCTestCase {
         XCTAssertEqual(renderNode.primaryContentSections.count, 1)
 
         let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
-        XCTAssertEqual(overviewSection.content.count, 3)
+        XCTAssertEqual(overviewSection.content.count, 4)
         XCTAssertEqual(overviewSection.content, [
             .heading(.init(level: 2, text: "Overview", anchor: "overview")),
-
+            .paragraph(.init(inlineContent: [.text("This is description with abstract.")])),
             .paragraph(.init(inlineContent: [
                 .text("This is a discussion linking to "),
                 .reference(
