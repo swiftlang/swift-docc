@@ -224,8 +224,8 @@ class RenderContentCompilerTests: XCTestCase {
         }
     }
 
-    func testCopyToClipboard() throws {
-        let (bundle, context) = try testBundleAndContext()
+    func testCopyToClipboard() async throws {
+        let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
