@@ -243,7 +243,8 @@ public struct ConvertService: DocumentationService {
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
                 
-                guard let bundle = context.bundle, bundle.id == topicReference.bundleID else { return nil }
+                let bundle = context.bundle
+                guard bundle.id == topicReference.bundleID else { return nil }
                 let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
@@ -291,5 +292,13 @@ private extension SymbolGraph.LineList.Line {
                 )
             }
         )
+    }
+}
+
+private extension DocumentationNode {
+    func meetsExpandedDocumentationRequirements(_ requirements: ConvertRequest.ExpandedDocumentationRequirements) -> Bool {
+        guard let symbol else { return false }
+        
+        return requirements.accessControlLevels.contains(symbol.accessLevel.rawValue) && (!symbol.names.title.starts(with: "_") || requirements.canBeUnderscored)
     }
 }

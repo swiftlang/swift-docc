@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -51,11 +51,6 @@ public import SymbolKit
 public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalExternalSymbolResolver {
     private let externalLinkResolvingClient: any ExternalLinkResolving
     
-    @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
-    public var bundleIdentifier: String {
-        bundleID.rawValue
-    }
-    
     /// The bundle identifier for the reference resolver in the other process.
     public let bundleID: DocumentationBundle.Identifier
     
@@ -84,13 +79,6 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         
         self.bundleID = .init(rawValue: decodedBundleIdentifier)
         self.externalLinkResolvingClient = longRunningProcess
-    }
-
-    @available(*, deprecated, renamed: "init(bundleID:server:convertRequestIdentifier:)", message: "Use 'init(bundleID:server:convertRequestIdentifier:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init(bundleIdentifier: String, server: DocumentationServer, convertRequestIdentifier: String?) throws {
-        self.bundleID = .init(rawValue: bundleIdentifier)
-        self.externalLinkResolvingClient = LongRunningService(
-            server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
     
     /// Creates a new reference resolver that interacts with a documentation service.
