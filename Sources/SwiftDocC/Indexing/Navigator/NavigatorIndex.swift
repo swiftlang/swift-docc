@@ -230,12 +230,12 @@ public class NavigatorIndex {
     }
     
     /**
-     Initialize an `NavigatorIndex` from a given path with an empty tree.
+     Initialize a `NavigatorIndex` from a given path with an empty tree.
      
      - Parameter url: The URL pointing to the path from which the index should be read.
      - Parameter bundleIdentifier: The name of the bundle the index is referring to.
      
-     - Note: Don't exposed this initializer as it's used **ONLY** for building an index.
+     - Note: Don't expose this initializer as it's used **ONLY** for building an index.
      */
     fileprivate init(withEmptyTree url: URL, bundleIdentifier: String) throws {
         self.url = url
@@ -465,6 +465,17 @@ extension NavigatorIndex {
             self.path = path
             self.fragment = fragment
             self.languageIdentifier = languageIdentifier
+        }
+        
+        /// Compare an identifier with another one, ignoring the identifier language.
+        ///
+        /// Used when curating cross-language references in multi-language frameworks.
+        ///
+        /// - Parameter other: The other identifier to compare with.
+        func isEquivalentIgnoringLanguage(to other: Identifier) -> Bool {
+            return self.bundleIdentifier == other.bundleIdentifier &&
+                   self.path == other.path &&
+                   self.fragment == other.fragment
         }
     }
     
@@ -916,7 +927,7 @@ extension NavigatorIndex {
         ///   - emitJSONRepresentation: Whether or not a JSON representation of the index should
         ///     be written to disk.
         ///
-        ///     Defaults to `false`.
+        ///     Defaults to `true`.
         ///
         ///   - emitLMDBRepresentation: Whether or not an LMDB representation of the index should
         ///     written to disk.
@@ -949,14 +960,28 @@ extension NavigatorIndex {
                     let (nodeID, parent) = nodesMultiCurated[index]
                     let placeholders = identifierToChildren[nodeID]!
                     for reference in placeholders {
-                        if let child = identifierToNode[reference] {
+                        var child = identifierToNode[reference]
+                        var childReference = reference
+                        
+                        // If no child node exists in this language, try to find one across all available languages.
+                        if child == nil {
+                            if let match = identifierToNode.first(where: { (identifier, node) in
+                                identifier.isEquivalentIgnoringLanguage(to: reference) &&
+                                PageType(rawValue: node.item.pageType)?.isSymbolKind == true
+                            }) {
+                                childReference = match.key
+                                child = match.value
+                            }
+                        }
+                        
+                        if let child = child {
                             parent.add(child: child)
-                            pendingUncuratedReferences.remove(reference)
-                            if !multiCurated.keys.contains(reference) && reference.fragment == nil {
+                            pendingUncuratedReferences.remove(childReference)
+                            if !multiCurated.keys.contains(childReference) && childReference.fragment == nil {
                                 // As the children of a multi-curated node is itself curated multiple times
                                 // we need to process it as well, ignoring items with fragments as those are sections.
-                                nodesMultiCuratedChildren.append((reference, child))
-                                multiCurated[reference] = child
+                                nodesMultiCuratedChildren.append((childReference, child))
+                                multiCurated[childReference] = child
                             }
                         }
                     }
@@ -970,10 +995,24 @@ extension NavigatorIndex {
             for (nodeIdentifier, placeholders) in identifierToChildren {
                 for reference in placeholders {
                     let parent = identifierToNode[nodeIdentifier]!
-                    if let child = identifierToNode[reference] {
-                        let needsCopy = multiCurated[reference] != nil
+                    var child = identifierToNode[reference]
+                    var childReference = reference
+                    
+                    // If no child node exists in this language, try to find one across all available languages.
+                    if child == nil {
+                        if let match = identifierToNode.first(where: { (identifier, node) in
+                            identifier.isEquivalentIgnoringLanguage(to: reference) &&
+                            PageType(rawValue: node.item.pageType)?.isSymbolKind == true
+                        }) {
+                            childReference = match.key
+                            child = match.value
+                        }
+                    }
+                    
+                    if let child = child {
+                        let needsCopy = multiCurated[childReference] != nil
                         parent.add(child: (needsCopy) ? child.copy() : child)
-                        pendingUncuratedReferences.remove(reference)
+                        pendingUncuratedReferences.remove(childReference)
                     }
                 }
             }
@@ -1005,10 +1044,7 @@ extension NavigatorIndex {
 
                     // If an uncurated page has been curated in another language, don't add it to the top-level.
                     if curatedReferences.contains(where: { curatedNodeID in
-                        // Compare all the identifier's properties for equality, except for its language.
-                        curatedNodeID.bundleIdentifier == nodeID.bundleIdentifier
-                            && curatedNodeID.path == nodeID.path
-                            && curatedNodeID.fragment == nodeID.fragment
+                        curatedNodeID.isEquivalentIgnoringLanguage(to: nodeID)
                     }) {
                         continue
                     }
