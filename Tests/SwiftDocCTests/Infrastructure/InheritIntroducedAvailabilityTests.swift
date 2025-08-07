@@ -34,16 +34,14 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     typealias Domain = SymbolGraph.Symbol.Availability.Domain
     typealias Version = SymbolGraph.SemanticVersion
     
-    var testBundle: DocumentationBundle!
     var context: DocumentationContext!
     
     override func setUp() async throws {
         try await super.setUp()
-        (testBundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
     }
     
     override func tearDown() {
-        testBundle = nil
         context = nil
         super.tearDown()
     }
