@@ -65,7 +65,7 @@ public struct DefaultImplementationsSection {
                 
                 return ImplementationsGroup(
                     heading: "\(groupName)Implementations",
-                    references: grouped[name]!.map { $0.reference }
+                    references: grouped[name]!.map { $0.reference }.sorted(by: \.description)
                 )
             }
     }
