@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-@_spi(LinkCompletion) @testable import SwiftDocC
+@testable import SwiftDocC
 
 class LinkCompletionToolsTests: XCTestCase {
     func testParsingLinkStrings() {
