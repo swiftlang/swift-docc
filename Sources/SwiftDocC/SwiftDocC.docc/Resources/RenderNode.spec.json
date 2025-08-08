@@ -808,6 +808,15 @@
                     },
                     "copyToClipboard": {
                         "type": "boolean"
+                    },
+                    "wrap": {
+                        "type": "integer"
+                    },
+                    "highlight": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
                     }
                 }
             },
