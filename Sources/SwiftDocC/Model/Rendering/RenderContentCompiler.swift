@@ -59,10 +59,20 @@ struct RenderContentCompiler: MarkupVisitor {
                 var options: [RenderBlockContent.CodeListing.OptionName] = []
 
                 for part in parts {
-                    if let opt = RenderBlockContent.CodeListing.OptionName(caseInsensitive: part) {
-                        options.append(opt)
-                    } else if lang == nil {
-                        lang = String(part)
+                    if let eq = part.firstIndex(of: "=") {
+                        let name = part[..<eq].trimmingCharacters(in: .whitespaces)
+                        let _ = part[part.index(after: eq)...]
+                        if let opt = RenderBlockContent.CodeListing.OptionName(caseInsensitive: name) {
+                            options.append(opt)
+                        } else if lang == nil {
+                            lang = String(part)
+                        }
+                    } else {
+                        if let opt = RenderBlockContent.CodeListing.OptionName(caseInsensitive: part) {
+                            options.append(opt)
+                        } else if lang == nil {
+                            lang = String(part)
+                        }
                     }
                 }
                 return (lang, options)
@@ -74,13 +84,27 @@ struct RenderContentCompiler: MarkupVisitor {
                 syntax: lang ?? bundle.info.defaultCodeListingLanguage,
                 code: codeBlock.code.splitByNewlines,
                 metadata: nil,
-                copyToClipboard: !options.tokens.contains(.nocopy)
+                copyToClipboard: !options.tokens.contains(.nocopy),
+                wrap: 0,
+                highlight: [Int]()
             )
+
+            // apply code block options
+            for option in options.tokens {
+                switch option {
+                case .nocopy:
+                    listing.copyToClipboard = false
+                case .wrap:
+                    listing.wrap = 0 //placeholder
+                case .highlight:
+                    listing.highlight = [Int]() //placeholder
+                }
+            }
 
             return [RenderBlockContent.codeListing(listing)]
 
         } else {
-            return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: false))]
+            return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: false, wrap: 0, highlight: [Int]()))]
         }
     }
     
