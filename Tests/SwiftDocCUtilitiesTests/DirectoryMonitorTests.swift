@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -91,7 +91,7 @@ class DirectoryMonitorTests: XCTestCase {
     /// - Warning: Please do not overuse this method as it takes 10s of wait time and can potentially slow down running the test suite.
     private func monitorNoUpdates(url: URL, testBlock: @escaping () throws -> Void, file: StaticString = #filePath, line: UInt = #line) throws {
         let monitor = try DirectoryMonitor(root: url) { rootURL, url in
-            XCTFail("Did produce file update event for a hidden file")
+            XCTFail("Did produce file update event for a hidden file", file: file, line: line)
         }
         
         try monitor.start()
