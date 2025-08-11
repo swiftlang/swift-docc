@@ -181,6 +181,7 @@ have one or more aliases.
 | shell       | console, shellsession                                  |
 | swift       |                                                        |
 | xml         | html, xhtml, rss, atom, xjb, xsd, xsl, plist, wsf, svg |
+| yaml        | yml                                                    |
 
 ### Add Bulleted, Numbered, and Term Lists
 
