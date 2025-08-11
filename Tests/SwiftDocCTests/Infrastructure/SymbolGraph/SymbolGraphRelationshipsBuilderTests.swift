@@ -64,6 +64,50 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertFalse((documentationCache["B"]!.semantic as! Symbol).defaultImplementations.implementations.isEmpty)
     }
 
+    func testMultipleImplementsRelationships() async throws {
+        let (bundle, context) = try await testBundleAndContext()
+        var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
+        let engine = DiagnosticEngine()
+
+        let identifierA = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
+        let identifierB = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
+        let identifierC = SymbolGraph.Symbol.Identifier(precise: "C", interfaceLanguage: SourceLanguage.swift.id)
+
+        let symbolRefA = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/A", sourceLanguage: .swift)
+        let symbolRefB = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/B", sourceLanguage: .swift)
+        let symbolRefC = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/C", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName", sourceLanguage: .swift)
+
+        let symbolA = SymbolGraph.Symbol(identifier: identifierA, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
+        let symbolB = SymbolGraph.Symbol(identifier: identifierB, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
+        let symbolC = SymbolGraph.Symbol(identifier: identifierC, names: SymbolGraph.Symbol.Names(title: "C", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "C"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
+
+        documentationCache.add(
+            DocumentationNode(reference: symbolRefA, symbol: symbolA, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            reference: symbolRefA,
+            symbolID: "A"
+        )
+        documentationCache.add(
+            DocumentationNode(reference: symbolRefB, symbol: symbolB, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            reference: symbolRefB,
+            symbolID: "B"
+        )
+        documentationCache.add(
+            DocumentationNode(reference: symbolRefC, symbol: symbolC, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            reference: symbolRefC,
+            symbolID: "C"
+        )
+        XCTAssert(engine.problems.isEmpty)
+
+        let edge1 = SymbolGraph.Relationship(source: identifierB.precise, target: identifierA.precise, kind: .defaultImplementationOf, targetFallback: nil)
+        let edge2 = SymbolGraph.Relationship(source: identifierC.precise, target: identifierA.precise, kind: .defaultImplementationOf, targetFallback: nil)
+
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge1, selector: swiftSelector, in: bundle, context: context, localCache: documentationCache, engine: engine)
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge2, selector: swiftSelector, in: bundle, context: context, localCache: documentationCache, engine: engine)
+
+        XCTAssertEqual((documentationCache["A"]!.semantic as! Symbol).defaultImplementations.groups.first?.references.map(\.url?.lastPathComponent), ["B", "C"])
+    }
+
     func testConformsRelationship() async throws {
         let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
