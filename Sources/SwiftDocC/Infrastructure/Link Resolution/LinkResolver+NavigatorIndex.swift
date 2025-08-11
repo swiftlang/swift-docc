@@ -61,11 +61,6 @@ package struct ExternalRenderNode {
         externalEntity.topicRenderReference.navigatorTitleVariants
     }
     
-    /// The variants of the abbreviated declaration of the symbol to display in links.
-    var fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> {
-        externalEntity.topicRenderReference.fragmentsVariants
-    }
-    
     /// Author provided images that represent this page.
     var images: [TopicImage] {
         externalEntity.topicRenderReference.images
@@ -87,7 +82,6 @@ package struct ExternalRenderNode {
 /// A language specific representation of an external render node value for building a navigator index.
 struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
     var identifier: ResolvedTopicReference
-    var externalIdentifier: RenderReferenceIdentifier
     var kind: RenderNode.Kind
     var metadata: ExternalRenderNodeMetadataRepresentation
     
@@ -109,7 +103,6 @@ struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
 
         self.identifier = renderNode.identifier.withSourceLanguages(Set(arrayLiteral: traitLanguage))
         self.kind = renderNode.kind
-        self.externalIdentifier = renderNode.externalIdentifier
         
         self.metadata = ExternalRenderNodeMetadataRepresentation(
             title: renderNode.titleVariants.value(for: traits),

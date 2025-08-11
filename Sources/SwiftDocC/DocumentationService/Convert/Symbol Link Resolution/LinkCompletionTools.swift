@@ -21,7 +21,6 @@ public import SymbolKit
 /// - Third, determine the minimal unique disambiguation for each completion suggestion using ``suggestedDisambiguation(forCollidingSymbols:)``
 ///
 /// > Tip: You can use ``SymbolInformation/hash(uniqueSymbolID:)`` to compute the hashed symbol identifiers needed for steps 2 and 3 above.
-@_spi(LinkCompletion)  // LinkCompletionTools isn't stable API yet
 public enum LinkCompletionTools {
     
     // MARK: Parsing
