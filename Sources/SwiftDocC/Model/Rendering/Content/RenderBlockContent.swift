@@ -124,7 +124,7 @@ public enum RenderBlockContent: Equatable {
         public var code: [String]
         /// Additional metadata for this code block.
         public var metadata: RenderContentMetadata?
-        public var copyToClipboard: Bool = false
+        public var copyToClipboard: Bool = true
 
         /// Make a new `CodeListing` with the given data.
         public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool) {
@@ -725,7 +725,7 @@ extension RenderBlockContent: Codable {
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata),
-                copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? false
+                copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? true
             ))
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
