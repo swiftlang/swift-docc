@@ -475,7 +475,13 @@ extension Docc {
         struct FeatureFlagOptions: ParsableArguments {
             @Flag(help: "Allows for custom templates, like `header.html`.")
             var experimentalEnableCustomTemplates = false
-            
+
+            @Flag(
+                name: .customLong("enable-experimental-code-block"),
+                help: "Annotate code blocks with additional metadata to support copy-to-clipboard, highlighting, and wrapping on code blocks."
+            )
+            var enableExperimentalCodeBlock = false
+
             @Flag(help: .hidden)
             var enableExperimentalDeviceFrameSupport = false
             
@@ -556,6 +562,14 @@ extension Docc {
             get { featureFlags.experimentalEnableCustomTemplates }
             set { featureFlags.experimentalEnableCustomTemplates = newValue }
             
+        }
+
+        /// A user-provided value that is true if the user enables experimental support for code block annotation.
+        ///
+        /// Defaults to false.
+        public var enableExperimentalCodeBlock: Bool {
+            get { featureFlags.enableExperimentalCodeBlock }
+            set { featureFlags.enableExperimentalCodeBlock = newValue}
         }
 
         /// A user-provided value that is true if the user enables experimental support for device frames.

@@ -13,7 +13,10 @@ public struct FeatureFlags: Codable {
     /// The current feature flags that Swift-DocC uses to conditionally enable
     /// (usually experimental) behavior in Swift-DocC.
     public static var current = FeatureFlags()
-    
+
+    /// Whether or not experimental annotation of code blocks is enabled.
+    public var isExperimentalCodeBlockEnabled = false
+
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
 

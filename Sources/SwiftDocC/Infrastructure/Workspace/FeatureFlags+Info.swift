@@ -37,11 +37,20 @@ extension DocumentationBundle.Info {
             self.unknownFeatureFlags = []
         }
 
+        /// This feature flag corresponds to ``FeatureFlags/isExperimentalCodeBlockEnabled``.
+        public var experimentalCodeBlock: Bool?
+
+        public init(experimentalCodeBlock: Bool? = nil) {
+            self.experimentalCodeBlock = experimentalCodeBlock
+            self.unknownFeatureFlags = []
+        }
+
         /// A list of decoded feature flag keys that didn't match a known feature flag.
         public let unknownFeatureFlags: [String]
 
         enum CodingKeys: String, CodingKey, CaseIterable {
             case experimentalOverloadedSymbolPresentation = "ExperimentalOverloadedSymbolPresentation"
+            case experimentalCodeBlock = "ExperimentalCodeBlock"
         }
 
         struct AnyCodingKeys: CodingKey {
@@ -66,6 +75,9 @@ extension DocumentationBundle.Info {
                     switch codingKey {
                     case .experimentalOverloadedSymbolPresentation:
                         self.experimentalOverloadedSymbolPresentation = try values.decode(Bool.self, forKey: flagName)
+
+                    case .experimentalCodeBlock:
+                        self.experimentalCodeBlock = try values.decode(Bool.self, forKey: flagName)
                     }
                 } else {
                     unknownFeatureFlags.append(flagName.stringValue)
@@ -79,6 +91,7 @@ extension DocumentationBundle.Info {
             var container = encoder.container(keyedBy: CodingKeys.self)
 
             try container.encode(experimentalOverloadedSymbolPresentation, forKey: .experimentalOverloadedSymbolPresentation)
+            try container.encode(experimentalCodeBlock, forKey: .experimentalCodeBlock)
         }
     }
 }

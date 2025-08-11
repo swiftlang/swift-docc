@@ -721,12 +721,16 @@ extension RenderBlockContent: Codable {
             }
             self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))
         case .codeListing:
+            var copy = false
+            if FeatureFlags.current.isExperimentalCodeBlockEnabled {
+                copy = true
+            }
             self = try .codeListing(.init(
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata),
-                copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? true
-            ))
+                copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? copy
+                ))
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
         case .orderedList:

@@ -54,7 +54,7 @@ class RenderContentMetadataTests: XCTestCase {
             RenderInlineContent.text("Content"),
         ])
         
-        let code = RenderBlockContent.codeListing(.init(syntax: nil, code: [], metadata: metadata, copyToClipboard: true))
+        let code = RenderBlockContent.codeListing(.init(syntax: nil, code: [], metadata: metadata, copyToClipboard: false))
         let data = try JSONEncoder().encode(code)
         let roundtrip = try JSONDecoder().decode(RenderBlockContent.self, from: data)
         
