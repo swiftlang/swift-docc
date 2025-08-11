@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,8 +15,8 @@ import SwiftDocCTestUtilities
 import XCTest
 
 class SemaToRenderNodeMixedLanguageTests: XCTestCase {
-    func testBaseRenderNodeFromMixedLanguageFramework() throws {
-        let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+    func testBaseRenderNodeFromMixedLanguageFramework() async throws {
+        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
         
         for (_, documentationNode) in context.documentationCache where documentationNode.kind.isSymbol {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
@@ -78,8 +78,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         }
     }
 
-    func assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: String) throws {
-        let outputConsumer = try renderNodeConsumer(
+    func assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: String) async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFramework",
             configureBundle: { bundleURL in
                 // Update the clang symbol graph with the Objective-C identifier given in variantInterfaceLanguage.
@@ -198,20 +198,20 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
 
-    func testOutputsMultiLanguageRenderNodesWithOccIdentifier() throws {
-        try assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "occ")
+    func testOutputsMultiLanguageRenderNodesWithOccIdentifier() async throws {
+        try await assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "occ")
     }
 
-    func testOutputsMultiLanguageRenderNodesWithObjectiveCIdentifier() throws {
-        try assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "objective-c")
+    func testOutputsMultiLanguageRenderNodesWithObjectiveCIdentifier() async throws {
+        try await assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "objective-c")
     }
 
-    func testOutputsMultiLanguageRenderNodesWithCIdentifier() throws {
-        try assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "c")
+    func testOutputsMultiLanguageRenderNodesWithCIdentifier() async throws {
+        try await assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "c")
     }
 
-    func testFrameworkRenderNodeHasExpectedContentAcrossLanguages() throws {
-        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
+    func testFrameworkRenderNodeHasExpectedContentAcrossLanguages() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
         let mixedLanguageFrameworkRenderNode = try outputConsumer.renderNode(
             withIdentifier: "MixedLanguageFramework"
         )
@@ -347,8 +347,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testObjectiveCAuthoredRenderNodeHasExpectedContentAcrossLanguages() throws {
-        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
+    func testObjectiveCAuthoredRenderNodeHasExpectedContentAcrossLanguages() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
         let fooRenderNode = try outputConsumer.renderNode(withIdentifier: "c:@E@Foo")
         
         assertExpectedContent(
@@ -448,8 +448,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testSymbolLinkWorkInMultipleLanguages() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+    func testSymbolLinkWorkInMultipleLanguages() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # ``MixedLanguageFramework/Bar``
             
@@ -501,8 +501,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         ], "Both spellings of the symbol link should resolve to the canonical reference.")
     }
     
-    func testArticleInMixedLanguageFramework() throws {
-        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework") { url in
+    func testArticleInMixedLanguageFramework() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework") { url in
             try """
             # MyArticle
             
@@ -564,8 +564,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testAPICollectionInMixedLanguageFramework() throws {
-        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
+    func testAPICollectionInMixedLanguageFramework() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
         
         let articleRenderNode = try outputConsumer.renderNode(withTitle: "APICollection")
         
@@ -629,8 +629,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testGeneratedImplementationsCollectionIsCuratedInAllAvailableLanguages() throws {
-        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
+    func testGeneratedImplementationsCollectionIsCuratedInAllAvailableLanguages() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
         
         let protocolRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageClassConformingToProtocol")
         
@@ -653,8 +653,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testGeneratedImplementationsCollectionDoesNotCurateInAllUnavailableLanguages() throws {
-        let outputConsumer = try renderNodeConsumer(
+    func testGeneratedImplementationsCollectionDoesNotCurateInAllUnavailableLanguages() async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFramework",
             configureBundle: { bundleURL in
                 // Update the clang symbol graph to remove the protocol method requirement, so that it's effectively
@@ -696,8 +696,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
 
-    func testAutomaticSeeAlsoOnlyShowsAPIsAvailableInParentsLanguageForSymbol() throws {
-        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
+    func testAutomaticSeeAlsoOnlyShowsAPIsAvailableInParentsLanguageForSymbol() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "MixedLanguageFramework")
         
         // Swift-only symbol.
         XCTAssertEqual(
@@ -766,8 +766,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testMultiLanguageChildOfSingleParentSymbolIsCuratedInMultiLanguage() throws {
-        let outputConsumer = try renderNodeConsumer(
+    func testMultiLanguageChildOfSingleParentSymbolIsCuratedInMultiLanguage() async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFrameworkSingleLanguageParent"
         )
         
@@ -793,8 +793,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testMultiLanguageSymbolWithLanguageSpecificRelationships() throws {
-        let outputConsumer = try renderNodeConsumer(
+    func testMultiLanguageSymbolWithLanguageSpecificRelationships() async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFrameworkWithLanguageSpecificRelationships"
         )
         
@@ -821,8 +821,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testMultiLanguageSymbolWithLanguageSpecificProtocolRequirements() throws {
-        let outputConsumer = try renderNodeConsumer(
+    func testMultiLanguageSymbolWithLanguageSpecificProtocolRequirements() async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFrameworkWithLanguageSpecificRelationships"
         )
         
@@ -841,8 +841,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssert(objectiveCSymbol.relationshipSections.isEmpty)
     }
     
-    func testArticlesWithSupportedLanguagesDirective() throws {
-        let outputConsumer = try renderNodeConsumer(
+    func testArticlesWithSupportedLanguagesDirective() async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFrameworkWithArticlesUsingSupportedLanguages"
         )
         
@@ -879,8 +879,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testArticlesAreIncludedInAllVariantsTopicsSection() throws {
-        let outputConsumer = try renderNodeConsumer(
+    func testArticlesAreIncludedInAllVariantsTopicsSection() async throws {
+        let outputConsumer = try await renderNodeConsumer(
             for: "MixedLanguageFramework",
             configureBundle: { bundleURL in
                 try """
@@ -961,8 +961,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssertFalse(objCTopicIDs.contains("doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct"))
     }
 
-    func testAutomaticSeeAlsoSectionElementLimit() throws {
-        let (bundle, context) = try loadBundle(catalog:
+    func testAutomaticSeeAlsoSectionElementLimit() async throws {
+        let (bundle, context) = try await loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: (1...50).map {
                     makeSymbol(id: "symbol-id-\($0)", kind: .class, pathComponents: ["SymbolName\($0)"])

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,8 +15,8 @@ import XCTest
 import Markdown
 
 class TabNavigatorTests: XCTestCase {
-    func testNoTabs() throws {
-        let (renderBlockContent, problems, tabNavigator) = try parseDirective(TabNavigator.self) {
+    func testNoTabs() async throws {
+        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator
             """
@@ -36,8 +36,8 @@ class TabNavigatorTests: XCTestCase {
         )
     }
     
-    func testEmptyTab() throws {
-        let (renderBlockContent, problems, tabNavigator) = try parseDirective(TabNavigator.self) {
+    func testEmptyTab() async throws {
+        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator {
                 @Tab("hiya") {
@@ -63,8 +63,8 @@ class TabNavigatorTests: XCTestCase {
         
     }
     
-    func testInvalidParametersAndContent() throws {
-        let (renderBlockContent, problems, tabNavigator) = try parseDirective(TabNavigator.self) {
+    func testInvalidParametersAndContent() async throws {
+        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator(tabs: 3) {
                 @Tab("hi") {
@@ -127,8 +127,8 @@ class TabNavigatorTests: XCTestCase {
         )
     }
     
-    func testNestedStructuredMarkup() throws {
-        let (renderBlockContent, problems, tabNavigator) = try parseDirective(TabNavigator.self) {
+    func testNestedStructuredMarkup() async throws {
+        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator {
                 @Tab("hi") {

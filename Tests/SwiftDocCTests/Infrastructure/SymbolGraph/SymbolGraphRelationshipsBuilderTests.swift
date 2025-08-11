@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,8 +50,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     
     private let swiftSelector = UnifiedSymbolGraph.Selector(interfaceLanguage: "swift", platform: nil)
     
-    func testImplementsRelationship() throws {
-        let (bundle, context) = try testBundleAndContext()
+    func testImplementsRelationship() async throws {
+        let (bundle, context) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -64,8 +64,52 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertFalse((documentationCache["B"]!.semantic as! Symbol).defaultImplementations.implementations.isEmpty)
     }
 
-    func testConformsRelationship() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testMultipleImplementsRelationships() async throws {
+        let (bundle, context) = try await testBundleAndContext()
+        var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
+        let engine = DiagnosticEngine()
+
+        let identifierA = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
+        let identifierB = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
+        let identifierC = SymbolGraph.Symbol.Identifier(precise: "C", interfaceLanguage: SourceLanguage.swift.id)
+
+        let symbolRefA = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/A", sourceLanguage: .swift)
+        let symbolRefB = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/B", sourceLanguage: .swift)
+        let symbolRefC = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/C", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName", sourceLanguage: .swift)
+
+        let symbolA = SymbolGraph.Symbol(identifier: identifierA, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
+        let symbolB = SymbolGraph.Symbol(identifier: identifierB, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
+        let symbolC = SymbolGraph.Symbol(identifier: identifierC, names: SymbolGraph.Symbol.Names(title: "C", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "C"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
+
+        documentationCache.add(
+            DocumentationNode(reference: symbolRefA, symbol: symbolA, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            reference: symbolRefA,
+            symbolID: "A"
+        )
+        documentationCache.add(
+            DocumentationNode(reference: symbolRefB, symbol: symbolB, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            reference: symbolRefB,
+            symbolID: "B"
+        )
+        documentationCache.add(
+            DocumentationNode(reference: symbolRefC, symbol: symbolC, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            reference: symbolRefC,
+            symbolID: "C"
+        )
+        XCTAssert(engine.problems.isEmpty)
+
+        let edge1 = SymbolGraph.Relationship(source: identifierB.precise, target: identifierA.precise, kind: .defaultImplementationOf, targetFallback: nil)
+        let edge2 = SymbolGraph.Relationship(source: identifierC.precise, target: identifierA.precise, kind: .defaultImplementationOf, targetFallback: nil)
+
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge1, selector: swiftSelector, in: bundle, context: context, localCache: documentationCache, engine: engine)
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge2, selector: swiftSelector, in: bundle, context: context, localCache: documentationCache, engine: engine)
+
+        XCTAssertEqual((documentationCache["A"]!.semantic as! Symbol).defaultImplementations.groups.first?.references.map(\.url?.lastPathComponent), ["B", "C"])
+    }
+
+    func testConformsRelationship() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -93,8 +137,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertEqual(conforming.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/A")
     }
 
-    func testInheritanceRelationship() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testInheritanceRelationship() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -122,8 +166,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertEqual(inherited.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/A")
     }
     
-    func testInheritanceRelationshipFromOtherFramework() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testInheritanceRelationshipFromOtherFramework() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -159,8 +203,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         }), "Could not fallback for parent in inherits from relationship")
     }
     
-    func testRequirementRelationship() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testRequirementRelationship() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -173,8 +217,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertTrue((documentationCache["A"]!.semantic as! Symbol).isRequired)
     }
     
-    func testOptionalRequirementRelationship() throws {
-        let (bundle, _) = try testBundleAndContext()
+    func testOptionalRequirementRelationship() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -187,9 +231,9 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertFalse((documentationCache["A"]!.semantic as! Symbol).isRequired)
     }
 
-    func testRequiredAndOptionalRequirementRelationships() throws {
+    func testRequiredAndOptionalRequirementRelationships() async throws {
         do {
-            let (bundle, _) = try testBundleAndContext()
+            let (bundle, _) = try await testBundleAndContext()
             var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
             let engine = DiagnosticEngine()
 
@@ -204,7 +248,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         }
 
         do {
-            let (bundle, _) = try testBundleAndContext()
+            let (bundle, _) = try await testBundleAndContext()
             var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
             let engine = DiagnosticEngine()
 

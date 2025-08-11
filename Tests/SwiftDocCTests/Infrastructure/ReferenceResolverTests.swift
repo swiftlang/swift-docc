@@ -14,7 +14,7 @@ import Markdown
 import SymbolKit
 
 class ReferenceResolverTests: XCTestCase {
-    func testResolvesMediaForIntro() throws {
+    func testResolvesMediaForIntro() async throws {
         let source = """
 @Intro(
        title: x) {
@@ -24,7 +24,7 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         var problems = [Problem]()
         let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)!
         
@@ -33,7 +33,7 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(resolver.problems.count, 1)
     }
     
-    func testResolvesMediaForContentAndMedia() throws {
+    func testResolvesMediaForContentAndMedia() async throws {
         let source = """
 @ContentAndMedia {
    Blah blah.
@@ -43,7 +43,7 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         var problems = [Problem]()
         let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)!
         
@@ -52,7 +52,7 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(resolver.problems.count, 1)
     }
 
-    func testResolvesExternalLinks() throws {
+    func testResolvesExternalLinks() async throws {
         let source = """
     @Intro(title: "Technology X") {
        Info at: <https://www.wikipedia.org>.
@@ -60,7 +60,7 @@ class ReferenceResolverTests: XCTestCase {
     """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         var problems = [Problem]()
         let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)!
         
@@ -77,8 +77,8 @@ class ReferenceResolverTests: XCTestCase {
     }
     
     // Tests all reference syntax formats to a child symbol
-    func testReferencesToChildFromFramework() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testReferencesToChildFromFramework() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -110,8 +110,8 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     // Test relative paths to non-child symbol
-    func testReferencesToGrandChildFromFramework() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testReferencesToGrandChildFromFramework() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -136,8 +136,8 @@ class ReferenceResolverTests: XCTestCase {
     }
     
     // Test references to a sibling symbol
-    func testReferencesToSiblingFromFramework() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testReferencesToSiblingFromFramework() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -162,8 +162,8 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     // Test references to symbols in root paths
-    func testReferencesToTutorial() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testReferencesToTutorial() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -188,8 +188,8 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     // Test references to technology pages
-    func testReferencesToTechnologyPages() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testReferencesToTechnologyPages() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -213,8 +213,8 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     // Test external references
-    func testExternalReferencesConsiderBundleIdentifier() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testExternalReferencesConsiderBundleIdentifier() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -306,7 +306,7 @@ class ReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testRegisteredButUncuratedArticles() throws {
+    func testRegisteredButUncuratedArticles() async throws {
         var referencingArticleURL: URL!
         var uncuratedArticleFile: URL!
         
@@ -321,7 +321,7 @@ class ReferenceResolverTests: XCTestCase {
         """
         
         // TestBundle has more than one module, so automatic registration and curation won't happen
-        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             referencingArticleURL = root.appendingPathComponent("article.md")
             try source.write(to: referencingArticleURL, atomically: true, encoding: .utf8)
             
@@ -345,8 +345,8 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(referencingFileDiagnostics.filter({ $0.identifier == "org.swift.docc.unresolvedTopicReference" }).count, 1)
     }
     
-    func testRelativeReferencesToExtensionSymbols() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
+    func testRelativeReferencesToExtensionSymbols() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
             // We don't want the external target to be part of the archive as that is not
             // officially supported yet.
             try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))
@@ -406,8 +406,8 @@ class ReferenceResolverTests: XCTestCase {
         }
     }
 
-    func testCuratedExtensionRemovesEmptyPage() throws {
-        let (bundle, context) = try testBundleAndContext(named: "ModuleWithSingleExtension")
+    func testCuratedExtensionRemovesEmptyPage() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "ModuleWithSingleExtension")
 
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -424,8 +424,8 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
     }
 
-    func testCuratedExtensionWithDanglingReference() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+    func testCuratedExtensionWithDanglingReference() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
             let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
             try FileManager.default.removeItem(at: topLevelArticle)
 
@@ -464,8 +464,8 @@ class ReferenceResolverTests: XCTestCase {
         ])
     }
 
-    func testCuratedExtensionWithDanglingReferenceToFragment() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+    func testCuratedExtensionWithDanglingReferenceToFragment() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
             let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
             try FileManager.default.removeItem(at: topLevelArticle)
 
@@ -492,8 +492,8 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
 
-    func testCuratedExtensionWithDocumentationExtension() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+    func testCuratedExtensionWithDocumentationExtension() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
             let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
             try FileManager.default.removeItem(at: topLevelArticle)
 
@@ -521,8 +521,8 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssert(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
 
-    func testCuratedExtensionWithAdditionalConformance() throws {
-        let (bundle, context) = try testBundleAndContext(named: "ModuleWithConformanceAndExtension")
+    func testCuratedExtensionWithAdditionalConformance() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "ModuleWithConformanceAndExtension")
 
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithConformanceAndExtension/MyProtocol", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -537,8 +537,8 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssert(renderReference is UnresolvedRenderReference)
     }
 
-    func testExtensionWithEmptyDeclarationFragments() throws {
-        let (bundle, context) = try testBundleAndContext(named: "ModuleWithEmptyDeclarationFragments")
+    func testExtensionWithEmptyDeclarationFragments() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "ModuleWithEmptyDeclarationFragments")
 
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithEmptyDeclarationFragments", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -549,7 +549,7 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(renderNode.topicSections.count, 0)
     }
     
-    func testUnresolvedTutorialReferenceIsWarning() throws {
+    func testUnresolvedTutorialReferenceIsWarning() async throws {
         let source = """
 @Chapter(name: "SwiftUI Essentials") {
 
@@ -560,7 +560,7 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         var problems = [Problem]()
 
         let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: bundle, problems: &problems))
@@ -571,7 +571,7 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(resolver.problems.filter({ $0.diagnostic.severity == .warning }).count, 1)
     }
     
-    func testResolvesArticleContent() throws {
+    func testResolvesArticleContent() async throws {
         let source = """
         # An Article
         
@@ -580,7 +580,7 @@ class ReferenceResolverTests: XCTestCase {
         Discussion link to ``SideKit``.
         """
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:]))
         
@@ -611,8 +611,8 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertTrue(foundSymbolDiscussionLink)
     }
     
-    func testForwardsSymbolPropertiesThatAreUnmodifiedDuringLinkResolution() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testForwardsSymbolPropertiesThatAreUnmodifiedDuringLinkResolution() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var resolver = ReferenceResolver(context: context, bundle: bundle)
         
@@ -736,7 +736,7 @@ class ReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testEmitsDiagnosticsForEachDocumentationChunk() throws {
+    func testEmitsDiagnosticsForEachDocumentationChunk() async throws {
         let moduleReference = ResolvedTopicReference(bundleID: "com.example.test", path: "/documentation/ModuleName", sourceLanguage: .swift)
         let reference = ResolvedTopicReference(bundleID: "com.example.test", path: "/documentation/ModuleName/Something", sourceLanguage: .swift)
         
@@ -768,7 +768,7 @@ class ReferenceResolverTests: XCTestCase {
             mixins: [:]
         )
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, context) = try await testBundleAndContext()
         
         let documentationExtensionContent = """
         # ``Something``

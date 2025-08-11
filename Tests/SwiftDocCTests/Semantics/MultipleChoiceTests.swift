@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class MultipleChoiceTests: XCTestCase {
-    func testInvalidEmpty() throws {
+    func testInvalidEmpty() async throws {
         let source = "@MultipleChoice"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -34,7 +34,7 @@ class MultipleChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidTooFewChoices() throws {
+    func testInvalidTooFewChoices() async throws {
         let source = """
 @MultipleChoice {
   What is your favorite color?
@@ -53,7 +53,7 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         try directive.map { directive in
             var problems = [Problem]()
@@ -70,7 +70,7 @@ class MultipleChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidCodeAndImage() throws {
+    func testInvalidCodeAndImage() async throws {
         let source = """
 @MultipleChoice {
   Question 1
@@ -101,7 +101,7 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -133,7 +133,7 @@ MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
 
     }
     
-    func testValidNoCodeOrMedia() throws {
+    func testValidNoCodeOrMedia() async throws {
         let source = """
 @MultipleChoice {
   Question 1
@@ -158,7 +158,7 @@ MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -185,7 +185,7 @@ MultipleChoice @1:1-18:2 title: 'SwiftDocC.MarkupContainer'
         }
     }
     
-    func testValidCode() throws {
+    func testValidCode() async throws {
         let source = """
 @MultipleChoice {
   Question 1
@@ -214,7 +214,7 @@ MultipleChoice @1:1-18:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         directive.map { directive in
             var problems = [Problem]()
@@ -246,7 +246,7 @@ MultipleChoice @1:1-22:2 title: 'SwiftDocC.MarkupContainer'
 
     }
     
-    func testMultipleCorrectAnswers() throws {
+    func testMultipleCorrectAnswers() async throws {
         let source = """
 @MultipleChoice {
   Question 1
@@ -274,7 +274,7 @@ MultipleChoice @1:1-22:2 title: 'SwiftDocC.MarkupContainer'
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
         
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var problems = [Problem]()
         XCTAssertEqual(MultipleChoice.directiveName, directive.name)

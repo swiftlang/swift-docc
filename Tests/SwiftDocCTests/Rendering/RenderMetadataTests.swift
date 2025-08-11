@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -69,11 +69,11 @@ class RenderMetadataTests: XCTestCase {
         XCTAssertEqual(metadata.symbolKind, "plum")
     }
 
-    func testAllPagesHaveTitleMetadata() throws {
+    func testAllPagesHaveTitleMetadata() async throws {
         var typesOfPages = [Tutorial.self, TutorialTableOfContents.self, Article.self, TutorialArticle.self, Symbol.self]
         
         for bundleName in ["LegacyBundle_DoNotUseInNewTests"] {
-            let (bundle, context) = try testBundleAndContext(named: bundleName)
+            let (bundle, context) = try await testBundleAndContext(named: bundleName)
             
             let renderContext = RenderContext(documentationContext: context, bundle: bundle)
             let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -92,8 +92,8 @@ class RenderMetadataTests: XCTestCase {
     
     /// Test that a bystanders symbol graph is loaded, symbols are merged into the main module
     /// and the bystanders are included in the render node metadata.
-    func testRendersBystandersFromSymbolGraph() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
+    func testRendersBystandersFromSymbolGraph() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
@@ -116,8 +116,8 @@ class RenderMetadataTests: XCTestCase {
 
     /// Test that when a bystanders symbol graph is loaded that extends a different module, that
     /// those symbols correctly report the modules when rendered.
-    func testRendersBystanderExtensionsFromSymbolGraph() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
+    func testRendersBystanderExtensionsFromSymbolGraph() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let baseSymbolGraphURL = Bundle.module.url(
                 forResource: "BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: baseSymbolGraphURL, to: url.appendingPathComponent("BaseKit.symbols.json"))
@@ -141,8 +141,8 @@ class RenderMetadataTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["BaseKit"])
     }
 
-    func testRendersExtensionSymbolsWithBystanderModules() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
+    func testRendersExtensionSymbolsWithBystanderModules() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
             // We don't want the external target to be part of the archive as that is not
             // officially supported yet.
             try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))

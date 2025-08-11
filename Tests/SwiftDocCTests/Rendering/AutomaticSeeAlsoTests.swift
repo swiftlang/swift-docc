@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,8 +17,8 @@ class AutomaticSeeAlsoTests: XCTestCase {
     
     /// Test that a symbol with no authored See Also and with no curated siblings
     /// does not have a See Also section.
-    func testNoSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testNoSeeAlso() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -40,8 +40,8 @@ class AutomaticSeeAlsoTests: XCTestCase {
 
     /// Test that a symbol with authored See Also and with no curated siblings
     /// does include an authored See Also section
-    func testAuthoredSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testAuthoredSeeAlso() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -76,8 +76,8 @@ class AutomaticSeeAlsoTests: XCTestCase {
 
     /// Test that a symbol with authored See Also and with curated siblings
     /// does include both in See Also with authored section first
-    func testAuthoredAndAutomaticSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testAuthoredAndAutomaticSeeAlso() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -137,8 +137,8 @@ class AutomaticSeeAlsoTests: XCTestCase {
     
     // Duplicate of the `testAuthoredAndAutomaticSeeAlso()` test above
     // but with automatic see also creation disabled
-    func testAuthoredSeeAlsoWithDisabledAutomaticSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testAuthoredSeeAlsoWithDisabledAutomaticSeeAlso() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -200,8 +200,8 @@ class AutomaticSeeAlsoTests: XCTestCase {
     
     // Duplicate of the `testAuthoredAndAutomaticSeeAlso()` test above
     // but with automatic see also creation globally disabled
-    func testAuthoredSeeAlsoWithGloballyDisabledAutomaticSeeAlso() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+    func testAuthoredSeeAlsoWithGloballyDisabledAutomaticSeeAlso() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -257,7 +257,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         }
     }
 
-    func testSeeAlsoWithSymbolAndTutorial() throws {
+    func testSeeAlsoWithSymbolAndTutorial() async throws {
         let exampleDocumentation = Folder(name: "MyKit.docc", content: [
            CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!),
             
@@ -283,7 +283,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
 
-        let (_, bundle, context) = try loadBundle(from: bundleURL)
+        let (_, bundle, context) = try await loadBundle(from: bundleURL)
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "MyKit", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))

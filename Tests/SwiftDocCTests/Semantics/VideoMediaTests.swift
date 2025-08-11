@@ -14,13 +14,13 @@ import Markdown
 import SwiftDocCTestUtilities
 
 class VideoMediaTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @Video
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(video)
@@ -31,7 +31,7 @@ class VideoMediaTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let videoSource = "/path/to/video"
         let poster = "/path/to/poster"
         let source = """
@@ -39,7 +39,7 @@ class VideoMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(video)
@@ -50,7 +50,7 @@ class VideoMediaTests: XCTestCase {
         }
     }
 
-    func testSpacesInSourceAndPoster() throws {
+    func testSpacesInSourceAndPoster() async throws {
         for videoSource in ["my image.mov", "my%20image.mov"] {
             let poster = videoSource.replacingOccurrences(of: ".mov", with: ".png")
             let source = """
@@ -58,7 +58,7 @@ class VideoMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, _) = try testBundleAndContext()
+            let (bundle, _) = try await testBundleAndContext()
             var problems = [Problem]()
             let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(video)
@@ -70,14 +70,14 @@ class VideoMediaTests: XCTestCase {
         }
     }
     
-    func testIncorrectArgumentLabels() throws {
+    func testIncorrectArgumentLabels() async throws {
         let source = """
         @Video(sourceURL: "/video/path", posterURL: "/poster/path")
         """
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(video)
@@ -100,10 +100,10 @@ class VideoMediaTests: XCTestCase {
         DataFile(name: "introvideo~dark.mp4", data: Data()),
     ])
     
-    func testRenderVideoDirectiveInReferenceMarkup() throws {
+    func testRenderVideoDirectiveInReferenceMarkup() async throws {
         
         do {
-            let (renderedContent, problems, video, _) = try parseDirective(VideoMedia.self, catalog: catalog) {
+            let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "introvideo")
                 """
@@ -125,7 +125,7 @@ class VideoMediaTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, video, _) = try parseDirective(VideoMedia.self, catalog: catalog) {
+            let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "unknown-video")
                 """
@@ -139,7 +139,7 @@ class VideoMediaTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, video, _) = try parseDirective(VideoMedia.self, catalog: catalog) {
+            let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
                 """
                 @Video(source: "introvideo", poster: "unknown-poster")
                 """
@@ -161,8 +161,8 @@ class VideoMediaTests: XCTestCase {
         }
     }
     
-    func testRenderVideoDirectiveWithCaption() throws {
-        let (renderedContent, problems, video, _) = try parseDirective(VideoMedia.self, catalog: catalog) {
+    func testRenderVideoDirectiveWithCaption() async throws {
+        let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo") {
                 This is my caption.
@@ -185,8 +185,8 @@ class VideoMediaTests: XCTestCase {
         )
     }
     
-    func testRenderVideoDirectiveWithCaptionAndPosterImage() throws {
-        let (renderedContent, problems, video, references) = try parseDirective(VideoMedia.self, catalog: catalog) {
+    func testRenderVideoDirectiveWithCaptionAndPosterImage() async throws {
+        let (renderedContent, problems, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo", alt: "An introductory video", poster: "introposter") {
                 This is my caption.
@@ -217,8 +217,8 @@ class VideoMediaTests: XCTestCase {
         XCTAssertTrue(references.keys.contains("introposter"))
     }
     
-    func testVideoMediaDiagnosesDeviceFrameByDefault() throws {
-        let (renderedContent, problems, video, _) = try parseDirective(VideoMedia.self, catalog: catalog) {
+    func testVideoMediaDiagnosesDeviceFrameByDefault() async throws {
+        let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo", deviceFrame: watch)
             """
@@ -239,10 +239,10 @@ class VideoMediaTests: XCTestCase {
         )
     }
     
-    func testRenderVideoDirectiveWithDeviceFrame() throws {
+    func testRenderVideoDirectiveWithDeviceFrame() async throws {
         enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
         
-        let (renderedContent, problems, video, _) = try parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo", deviceFrame: watch)
             """
@@ -263,10 +263,10 @@ class VideoMediaTests: XCTestCase {
         )
     }
     
-    func testRenderVideoDirectiveWithCaptionAndDeviceFrame() throws {
+    func testRenderVideoDirectiveWithCaptionAndDeviceFrame() async throws {
         enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
         
-        let (renderedContent, problems, video, references) = try parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, problems, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introvideo", alt: "An introductory video", poster: "introposter", deviceFrame: laptop) {
                 This is my caption.
@@ -297,11 +297,11 @@ class VideoMediaTests: XCTestCase {
         XCTAssertTrue(references.keys.contains("introposter"))
     }
     
-    func testVideoDirectiveDoesNotResolveImageMedia() throws {
+    func testVideoDirectiveDoesNotResolveImageMedia() async throws {
         // The rest of the test in this file will fail if 'introposter' and 'introvideo'
         // do not exist. We just reverse them here to make sure the reference resolving is
         // media-type specific.
-        let (renderedContent, problems, video, _) = try parseDirective(VideoMedia.self, catalog: catalog) {
+        let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
             @Video(source: "introposter", poster: "introvideo")
             """
@@ -320,13 +320,13 @@ class VideoMediaTests: XCTestCase {
         XCTAssertEqual(renderedContent, [])
     }
     
-    func testVideoDirectiveWithAltText() throws {
+    func testVideoDirectiveWithAltText() async throws {
         let source = """
         @Video(source: "introvideo", alt: "A short video of a sloth jumping down from a branch and smiling.")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try loadBundle(
+        let (bundle, context) = try await loadBundle(
             catalog: Folder(name: "unit-test.docc", content: [
                 DataFile(name: "introvideo.mov", data: Data())
             ])

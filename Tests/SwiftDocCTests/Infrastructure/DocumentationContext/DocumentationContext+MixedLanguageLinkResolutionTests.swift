@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,8 +13,8 @@ import XCTest
 
 class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
     
-    func testResolvingLinksWhenSymbolHasSameNameInBothLanguages() throws {
-         let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkComplexLinks") { url in
+    func testResolvingLinksWhenSymbolHasSameNameInBothLanguages() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFrameworkComplexLinks") { url in
              let swiftSymbolGraph = url.appendingPathComponent("symbol-graph/swift/ObjCLinks.symbols.json")
              try String(contentsOf: swiftSymbolGraph)
                  .replacingOccurrences(of: "FooSwift", with: "FooObjC")

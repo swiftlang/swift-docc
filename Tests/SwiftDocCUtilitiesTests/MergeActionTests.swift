@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -849,7 +849,7 @@ class MergeActionTests: XCTestCase {
         let baseOutputDir = URL(fileURLWithPath: "/path/to/some-output-dir")
         try fileSystem.createDirectory(at: baseOutputDir, withIntermediateDirectories: true)
         
-        func convertCatalog(named name: String, file: StaticString = #filePath, line: UInt = #line) throws -> URL {
+        func convertCatalog(named name: String, file: StaticString = #filePath, line: UInt = #line) async throws -> URL {
             let catalog = Folder(name: "\(name).docc", content: [
                 TextFile(name: "\(name).md", utf8Content: """
                 # My root
@@ -882,7 +882,7 @@ class MergeActionTests: XCTestCase {
                 "\(name.lowercased())-card.png",
             ])
             
-            let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: .init())
+            let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: .init())
 
             XCTAssert(
                 context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.SummaryContainsLink" }.isEmpty,
@@ -933,8 +933,8 @@ class MergeActionTests: XCTestCase {
             return outputPath
         }
         
-        let firstArchiveDir  = try convertCatalog(named: "First")
-        let secondArchiveDir = try convertCatalog(named: "Second")
+        let firstArchiveDir  = try await convertCatalog(named: "First")
+        let secondArchiveDir = try await convertCatalog(named: "Second")
         
         let combinedArchiveDir = URL(fileURLWithPath: "/Output.doccarchive")
         let action = MergeAction(

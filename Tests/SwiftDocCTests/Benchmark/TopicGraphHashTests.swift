@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,27 +12,28 @@ import XCTest
 @testable import SwiftDocC
 
 class TopicGraphHashTests: XCTestCase {
-    func testTopicGraphSameHash() throws {
-        let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testTopicGraphSameHash() async throws {
+        func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
+            let (_, context) = try await self.testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
-            return testBenchmark.metrics[0].result
+            
+            return try TopicAnchorHashTests.extractChecksumHash(from: testBenchmark)
         }
-        .compactMap { value -> String? in
-            guard let value,
-                case MetricValue.checksum(let hash) = value else { return nil }
-            return hash
-        }
+
+        let expectedHash = try await computeTopicHash()
         
         // Verify the produced topic graph hash is repeatedly the same
-        XCTAssertTrue(hashes.allSatisfy({ $0 == hashes.first }))
+        for _ in 0 ..< 10 {
+            let hash = try await computeTopicHash()
+            XCTAssertEqual(hash, expectedHash)
+        }
     }
     
-    func testTopicGraphChangedHash() throws {
+    func testTopicGraphChangedHash() async throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         do {
             let testBenchmark = Benchmark()
@@ -78,7 +79,7 @@ class TopicGraphHashTests: XCTestCase {
     
     /// Verify that we safely produce the topic graph hash when external symbols
     /// participate in the documentation hierarchy. rdar://76419740
-    func testProducesTopicGraphHashWhenResolvedExternalReferencesInTaskGroups() throws {
+    func testProducesTopicGraphHashWhenResolvedExternalReferencesInTaskGroups() async throws {
         let resolver = TestMultiResultExternalReferenceResolver()
         resolver.entitiesToReturn = [
             "/article": .success(.init(referencePath: "/externally/resolved/path/to/article")),
@@ -88,7 +89,7 @@ class TopicGraphHashTests: XCTestCase {
             "/externally/resolved/path/to/article2": .success(.init(referencePath: "/externally/resolved/path/to/article2")),
         ]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [
             "com.external.testbundle" : resolver
         ]) { url in
             // Add external links to the MyKit Topics.
