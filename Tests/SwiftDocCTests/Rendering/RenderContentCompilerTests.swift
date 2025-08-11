@@ -225,6 +225,8 @@ class RenderContentCompilerTests: XCTestCase {
     }
 
     func testCopyToClipboard() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+
         let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
@@ -247,6 +249,8 @@ class RenderContentCompilerTests: XCTestCase {
     }
 
     func testNoCopyToClipboard() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+
         let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
