@@ -68,10 +68,10 @@ struct RenderContentCompiler: MarkupVisitor {
                 return (lang, options)
             }
 
-            let options = parseLanguageString(codeBlock.language)
+            let (lang, options) = parseLanguageString(codeBlock.language)
 
             let listing = RenderBlockContent.CodeListing(
-                syntax: options.lang ?? bundle.info.defaultCodeListingLanguage,
+                syntax: lang ?? bundle.info.defaultCodeListingLanguage,
                 code: codeBlock.code.splitByNewlines,
                 metadata: nil,
                 copyToClipboard: !options.tokens.contains(.nocopy)

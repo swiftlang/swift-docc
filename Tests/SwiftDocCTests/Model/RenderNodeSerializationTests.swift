@@ -44,7 +44,7 @@ class RenderNodeSerializationTests: XCTestCase {
                     .strong(inlineContent: [.text("Project > Run")]),
                     .text(" menu item, or the following code:"),
                 ])),
-                .codeListing(.init(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil, copyToClipboard: true)),
+                .codeListing(.init(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil, copyToClipboard: false)),
             ]))
         ]
         
@@ -71,16 +71,16 @@ class RenderNodeSerializationTests: XCTestCase {
         let assessment1 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(.init(inlineContent: [.text("Lorem ipsum dolor sit amet?")]))],
                                                                      content: nil,
                                                                      choices: [
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["override func viewDidLoad() {", "super.viewDidLoad()", "}"], metadata: nil, copyToClipboard: true))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "That's right!"),
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, copyToClipboard: true))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Not quite."),
+            .init(content: [.codeListing(.init(syntax: "swift", code: ["override func viewDidLoad() {", "super.viewDidLoad()", "}"], metadata: nil, copyToClipboard: false))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "That's right!"),
+            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, copyToClipboard: false))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Not quite."),
             .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: nil),
         ])
         
         let assessment2 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(.init(inlineContent: [.text("Duis aute irure dolor in reprehenderit?")]))],
                                                                      content: [.paragraph(.init(inlineContent: [.text("What is the airspeed velocity of an unladen swallow?")]))],
                                                                      choices: [
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["super.viewWillAppear()"], metadata: nil, copyToClipboard: true))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Correct."),
-            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, copyToClipboard: true))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Yep."),
+            .init(content: [.codeListing(.init(syntax: "swift", code: ["super.viewWillAppear()"], metadata: nil, copyToClipboard: false))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Correct."),
+            .init(content: [.codeListing(.init(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil, copyToClipboard: false))], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Yep."),
             .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Close!"),
         ])
         
