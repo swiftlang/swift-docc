@@ -2453,7 +2453,6 @@ public class DocumentationContext {
             }
         }
     }
-    
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
     
