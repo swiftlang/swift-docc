@@ -93,11 +93,31 @@ extension UnifiedSymbolGraph.Symbol {
     
     /// Returns the primary symbol selector to use as documentation source.
     var documentedSymbolSelector: UnifiedSymbolGraph.Selector? {
-        // We'll prioritize the first documented 'swift' symbol, if we have
-        // one.
-        return docComment.keys.first { selector in
-            return selector.interfaceLanguage == "swift"
-        } ?? docComment.keys.first
+        // Prioritize the longest doc comment with a "swift" selector,
+        // if there is one.
+        return docComment.min(by: { lhs, rhs in
+            if (lhs.key.interfaceLanguage == "swift") != (rhs.key.interfaceLanguage == "swift") {
+                // sort swift selectors before non-swift ones
+                return lhs.key.interfaceLanguage == "swift"
+            }
+
+            // if the comments are equal, bail early without iterating them again
+            guard lhs.value != rhs.value else {
+                return false
+            }
+
+            let lhsLength = lhs.value.lines.totalCount
+            let rhsLength = rhs.value.lines.totalCount
+
+            if lhsLength == rhsLength {
+                // if the comments are the same length, just sort them lexicographically
+                return lhs.value.lines.isLexicographicallyBefore(rhs.value.lines)
+            } else {
+                // otherwise, sort by the length of the doc comment,
+                // so that `min` returns the longest comment
+                return lhsLength > rhsLength
+            }
+        })?.key
     }
 
     func identifier(forLanguage interfaceLanguage: String) -> SymbolGraph.Symbol.Identifier {
@@ -113,5 +133,17 @@ extension UnifiedSymbolGraph.Symbol {
         } else {
             return identifier(forLanguage: "swift")
         }
+    }
+}
+
+extension [SymbolGraph.LineList.Line] {
+    fileprivate var totalCount: Int {
+        return reduce(into: 0) { result, line in
+            result += line.text.count
+        }
+    }
+
+    fileprivate func isLexicographicallyBefore(_ other: Self) -> Bool {
+        self.lexicographicallyPrecedes(other) { $0.text < $1.text }
     }
 }
