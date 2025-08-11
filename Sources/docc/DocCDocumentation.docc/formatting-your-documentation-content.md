@@ -145,10 +145,17 @@ documentation.
 
 #### Formatting Code Listings
 
-You can add a copy-to-clipboard button to a code listing by including the copy
-option after the name of the programming language for the code listing:
+A copy-to-clipboard button is added to code listings by default behind the
+feature flag `--enable-experimental-code-block`.
+This renders a copy button in the top-right cotner of the code listing in
+generated documentation. When clicked, it copies the contents of the code
+block to the clipboard.
 
-```swift, copy
+If you don't want a code block to have a copy-to-clipboard button, you can
+include the `nocopy` option after the name of the programming language to
+disable it for that code listing:
+
+```swift, nocopy
 struct Sightseeing: Activity {
     func perform(with sloth: inout Sloth) -> Speed {
         sloth.energyLevel -= 10
@@ -156,10 +163,6 @@ struct Sightseeing: Activity {
     }
 }
 ```
-
-This renders a copy button in the top-right cotner of the code listing in
-generated documentation. When clicked, it copies the contents of the code
-block to the clipboard.
 
 DocC uses the programming language you specify to apply the correct syntax 
 color formatting. For the example above, DocC generates the following:
