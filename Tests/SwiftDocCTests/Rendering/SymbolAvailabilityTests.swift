@@ -16,32 +16,6 @@ import SwiftDocCTestUtilities
 
 class SymbolAvailabilityTests: XCTestCase {
     
-    private func symbolAvailability(
-            defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
-            symbolGraphOperatingSystemPlatformName: String,
-            symbols: [SymbolGraph.Symbol],
-            symbolName: String
-    ) async throws -> [SymbolGraph.Symbol.Availability.AvailabilityItem] {
-            let catalog = Folder(
-                name: "unit-test.docc",
-                content: [
-                    InfoPlist(defaultAvailability: [
-                        "ModuleName": defaultAvailability
-                    ]),
-                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                        moduleName: "ModuleName",
-                        platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: symbolGraphOperatingSystemPlatformName), environment: nil),
-                        symbols: symbols,
-                        relationships: []
-                    )),
-                ]
-            )
-            let (_, context) = try await loadBundle(catalog: catalog)
-            let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
-            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            return try XCTUnwrap(symbol.availability?.availability)
-    }
-    
     private func renderNodeAvailability(
         defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
         symbolGraphOperatingSystemPlatformName: String,
