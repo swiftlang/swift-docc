@@ -34,6 +34,7 @@ internal struct InvalidCodeBlockOption: Checker {
         let info = codeBlock.language?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         guard !info.isEmpty else { return }
 
+        // TODO this will also fail on parsing highlight values with commas inside the array
         let tokens = info
             .split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespaces) }
