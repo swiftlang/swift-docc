@@ -24,7 +24,7 @@ let a = 1
         var checker = InvalidCodeBlockOption(sourceFile: nil)
         checker.visit(document)
         XCTAssertTrue(checker.problems.isEmpty)
-        XCTAssertEqual(RenderBlockContent.CodeListing.knownOptions, ["nocopy"])
+        XCTAssertEqual(RenderBlockContent.CodeListing.knownOptions, ["highlight", "nocopy", "wrap"])
     }
 
     func testOption() {

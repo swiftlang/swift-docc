@@ -50,32 +50,44 @@ struct RenderContentCompiler: MarkupVisitor {
 
         if FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled {
 
-            func parseLanguageString(_ input: String?) -> (lang: String? , tokens: [RenderBlockContent.CodeListing.OptionName]) {
+            func parseLanguageString(_ input: String?) -> (lang: String? , tokens: [(RenderBlockContent.CodeListing.OptionName, Substring?)]) {
                 guard let input else { return (lang: nil, tokens: []) }
+                // TODO this fails on parsing highlight values with commas inside the array
                 let parts = input
                     .split(separator: ",")
                     .map { $0.trimmingCharacters(in: .whitespaces) }
                 var lang: String? = nil
-                var options: [RenderBlockContent.CodeListing.OptionName] = []
+                var options: [(RenderBlockContent.CodeListing.OptionName, Substring?)] = []
 
                 for part in parts {
                     if let eq = part.firstIndex(of: "=") {
                         let name = part[..<eq].trimmingCharacters(in: .whitespaces)
-                        let _ = part[part.index(after: eq)...]
-                        if let opt = RenderBlockContent.CodeListing.OptionName(caseInsensitive: name) {
-                            options.append(opt)
+                        let value = part[part.index(after: eq)...]
+                        if let option = RenderBlockContent.CodeListing.OptionName(caseInsensitive: name) {
+                            options.append((option, value))
                         } else if lang == nil {
                             lang = String(part)
                         }
                     } else {
-                        if let opt = RenderBlockContent.CodeListing.OptionName(caseInsensitive: part) {
-                            options.append(opt)
+                        if let option = RenderBlockContent.CodeListing.OptionName(caseInsensitive: part) {
+                            options.append((option, nil))
                         } else if lang == nil {
                             lang = String(part)
                         }
                     }
                 }
                 return (lang, options)
+            }
+
+            func parseHighlight(_ value: Substring?) -> [Int]? {
+                guard var s = value.map(String.init) else { return nil }
+                s = s.trimmingCharacters(in: .whitespaces)
+                if s.hasPrefix("[") && s.hasSuffix("]") {
+                    s.removeFirst()
+                    s.removeLast()
+                }
+                let ints = s.split(separator: ",").compactMap{ Int($0.trimmingCharacters(in: .whitespaces)) }
+                return ints.isEmpty ? nil : ints
             }
 
             let (lang, options) = parseLanguageString(codeBlock.language)
@@ -90,14 +102,18 @@ struct RenderContentCompiler: MarkupVisitor {
             )
 
             // apply code block options
-            for option in options.tokens {
+            for (option, value) in options.tokens {
                 switch option {
                 case .nocopy:
                     listing.copyToClipboard = false
                 case .wrap:
-                    listing.wrap = 0 //placeholder
+                    if let value, let intValue = Int(value) {
+                        listing.wrap = intValue
+                    } else {
+                        listing.wrap = 0
+                    }
                 case .highlight:
-                    listing.highlight = [Int]() //placeholder
+                    listing.highlight = parseHighlight(value) ?? []
                 }
             }
 

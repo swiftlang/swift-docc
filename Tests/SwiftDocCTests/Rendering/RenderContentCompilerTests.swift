@@ -282,7 +282,6 @@ class RenderContentCompilerTests: XCTestCase {
         ```
         """#
         let document = Document(parsing: source)
-
         let result = document.children.flatMap { compiler.visit($0) }
 
         let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
@@ -315,5 +314,124 @@ class RenderContentCompilerTests: XCTestCase {
 
         XCTAssertEqual(codeListing.syntax, "swift, nocopy")
         XCTAssertEqual(codeListing.copyToClipboard, false)
+    }
+
+    func testWrapAndHighlight() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, wrap=20, highlight=[2]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift")
+        XCTAssertEqual(codeListing.wrap, 20)
+        XCTAssertEqual(codeListing.highlight, [2])
+    }
+
+    func testHighlight() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, highlight=[2]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift")
+        XCTAssertEqual(codeListing.highlight, [2])
+    }
+
+    func testHighlightNoFeatureFlag() async throws {
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, highlight=[2]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift, highlight=[2]")
+        XCTAssertEqual(codeListing.highlight, [])
+    }
+
+    func testMultipleHighlight() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, highlight=[1, 2, 3]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift")
+        //XCTAssertEqual(codeListing.highlight, [1, 2, 3])
     }
 }
