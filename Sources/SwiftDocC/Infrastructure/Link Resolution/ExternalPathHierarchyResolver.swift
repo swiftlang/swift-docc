@@ -109,7 +109,8 @@ final class ExternalPathHierarchyResolver {
         return .init(
             topicRenderReference: resolvedInformation.topicRenderReference(),
             renderReferenceDependencies: dependencies,
-            sourceLanguages: resolvedInformation.availableLanguages
+            sourceLanguages: resolvedInformation.availableLanguages,
+            documentationKind: resolvedInformation.kind
         )
     }
     

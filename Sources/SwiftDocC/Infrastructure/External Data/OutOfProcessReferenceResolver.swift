@@ -194,7 +194,12 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             imageReferences: (resolvedInformation.references ?? []).compactMap { $0 as? ImageReference }
         )
         
-        return LinkResolver.ExternalEntity(topicRenderReference: renderReference, renderReferenceDependencies: dependencies, sourceLanguages: resolvedInformation.availableLanguages)
+        return LinkResolver.ExternalEntity(
+            topicRenderReference: renderReference,
+            renderReferenceDependencies: dependencies,
+            sourceLanguages: resolvedInformation.availableLanguages,
+            documentationKind: resolvedInformation.kind
+        )
     }
     
     // MARK: Implementation

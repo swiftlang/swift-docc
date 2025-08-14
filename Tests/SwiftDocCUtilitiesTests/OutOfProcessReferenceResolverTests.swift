@@ -133,6 +133,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         } else {
             XCTFail("Unexpected fragments variant patch")
         }
+        
+        XCTAssertEqual(entity.documentationKind, .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true))
     }
     
     func testResolvingTopicLinkProcess() throws {
