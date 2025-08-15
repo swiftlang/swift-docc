@@ -143,27 +143,6 @@ add a new line and terminate the code listing by adding another three backticks:
 instead of tabs so that DocC preserves the indentation when compiling your 
 documentation.
 
-#### Formatting Code Listings
-
-A copy-to-clipboard button is added to code listings by default behind the
-feature flag `--enable-experimental-code-block`.
-This renders a copy button in the top-right cotner of the code listing in
-generated documentation. When clicked, it copies the contents of the code
-block to the clipboard.
-
-If you don't want a code block to have a copy-to-clipboard button, you can
-include the `nocopy` option after the name of the programming language to
-disable it for that code listing:
-
-```swift, nocopy
-struct Sightseeing: Activity {
-    func perform(with sloth: inout Sloth) -> Speed {
-        sloth.energyLevel -= 10
-        return .slow
-    }
-}
-```
-
 DocC uses the programming language you specify to apply the correct syntax 
 color formatting. For the example above, DocC generates the following:
 
