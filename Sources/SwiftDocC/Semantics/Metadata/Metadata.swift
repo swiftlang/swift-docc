@@ -223,8 +223,29 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
             .map { (type(of: $0).directiveName, $0.originalMarkup.range) }
         
         problems.append(
-            contentsOf: namesAndRanges.map { (name, range) in
-                Problem(
+            contentsOf: namesAndRanges.compactMap { (name, range) in
+                guard let range = range else {
+                    // If we don't have a range, we can't provide a solution, so just create a problem without solutions
+                    return Problem(
+                        diagnostic: Diagnostic(
+                            source: symbolSource,
+                            severity: .warning,
+                            range: range,
+                            identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
+                            summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
+                            explanation: "Specify this configuration in a documentation extension file"
+                        )
+                    )
+                }
+                
+                let solution = Solution(
+                    summary: "Remove invalid \(name.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+                
+                return Problem(
                     diagnostic: Diagnostic(
                         source: symbolSource,
                         severity: .warning,
@@ -232,9 +253,8 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                         identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
                         summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
                         explanation: "Specify this configuration in a documentation extension file"
-                        
-                        // TODO: It would be nice to offer a solution here that removes the directive for you (#1111, rdar://140846407)
-                    )
+                    ),
+                    possibleSolutions: [solution]
                 )
             }
         )
