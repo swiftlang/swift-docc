@@ -478,7 +478,7 @@ extension Docc {
 
             @Flag(
                 name: .customLong("enable-experimental-code-block"),
-                help: "Annotate code blocks with additional metadata to support copy-to-clipboard, highlighting, and wrapping on code blocks."
+                help: "Support copy-to-clipboard for code blocks."
             )
             var enableExperimentalCodeBlock = false
 
