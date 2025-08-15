@@ -169,4 +169,175 @@ class DocumentationContext_RootPageTests: XCTestCase {
         
         XCTAssertEqual(context.problems.count, 0)
     }
+    
+    func testWarnsAboutMultipleTechnologyRootDirectives() async throws {
+        let (_, context) = try await loadBundle(catalog:
+            Folder(name: "multiple-roots.docc", content: [
+                TextFile(name: "FirstRoot.md", utf8Content: """
+                # First Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                This is the first root page.
+                """),
+                
+                TextFile(name: "SecondRoot.md", utf8Content: """
+                # Second Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                This is the second root page.
+                """),
+                
+                TextFile(name: "ThirdRoot.md", utf8Content: """
+                # Third Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                This is the third root page.
+                """),
+                
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            ])
+        )
+        
+        // Verify that we emit warnings for multiple TechnologyRoot directives
+        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots" }
+        XCTAssertEqual(multipleRootsProblems.count, 3, "Should emit warnings for all three TechnologyRoot directives")
+        
+        // Verify the warnings are associated with the correct files
+        let problemSources = multipleRootsProblems.compactMap { $0.diagnostic.source?.lastPathComponent }.sorted()
+        XCTAssertEqual(problemSources, ["FirstRoot.md", "SecondRoot.md", "ThirdRoot.md"])
+        
+        // Verify each warning has a solution to remove the TechnologyRoot directive
+        for problem in multipleRootsProblems {
+            XCTAssertEqual(problem.possibleSolutions.count, 1)
+            let solution = problem.possibleSolutions.first!
+            XCTAssertEqual(solution.summary, "Remove the 'TechnologyRoot' directive")
+            XCTAssertEqual(solution.replacements.count, 1)
+        }
+    }
+    
+    func testWarnsAboutMultipleMainModules() async throws {
+        // Create a bundle with multiple symbol graphs for different modules
+        let (_, context) = try await loadBundle(catalog:
+            Folder(name: "multiple-modules.docc", content: [
+                // First module symbol graph
+                TextFile(name: "ModuleA.symbols.json", utf8Content: """
+                {
+                  "metadata": {
+                    "formatVersion": {
+                      "major": 1,
+                      "minor": 0,
+                      "patch": 0
+                    },
+                    "generator": "unit-test"
+                  },
+                  "module": {
+                    "name": "ModuleA",
+                    "platform": {
+                      "architecture": "x86_64",
+                      "vendor": "apple",
+                      "operatingSystem": {
+                        "name": "macosx",
+                        "minimumVersion": {
+                          "major": 10,
+                          "minor": 15
+                        }
+                      },
+                      "environment": null
+                    }
+                  },
+                  "symbols": [
+                    {
+                      "identifier": {
+                        "precise": "ModuleA",
+                        "interfaceLanguage": "swift"
+                      },
+                      "names": {
+                        "title": "ModuleA",
+                        "navigator": null,
+                        "subHeading": null,
+                        "prose": null
+                      },
+                      "pathComponents": ["ModuleA"],
+                      "docComment": null,
+                      "accessLevel": "public",
+                      "kind": {
+                        "identifier": "module",
+                        "displayName": "Module"
+                      },
+                      "mixins": {}
+                    }
+                  ],
+                  "relationships": []
+                }
+                """),
+                
+                // Second module symbol graph
+                TextFile(name: "ModuleB.symbols.json", utf8Content: """
+                {
+                  "metadata": {
+                    "formatVersion": {
+                      "major": 1,
+                      "minor": 0,
+                      "patch": 0
+                    },
+                    "generator": "unit-test"
+                  },
+                  "module": {
+                    "name": "ModuleB",
+                    "platform": {
+                      "architecture": "x86_64",
+                      "vendor": "apple",
+                      "operatingSystem": {
+                        "name": "macosx",
+                        "minimumVersion": {
+                          "major": 10,
+                          "minor": 15
+                        }
+                      },
+                      "environment": null
+                    }
+                  },
+                  "symbols": [
+                    {
+                      "identifier": {
+                        "precise": "ModuleB",
+                        "interfaceLanguage": "swift"
+                      },
+                      "names": {
+                        "title": "ModuleB",
+                        "navigator": null,
+                        "subHeading": null,
+                        "prose": null
+                      },
+                      "pathComponents": ["ModuleB"],
+                      "docComment": null,
+                      "accessLevel": "public",
+                      "kind": {
+                        "identifier": "module",
+                        "displayName": "Module"
+                      },
+                      "mixins": {}
+                    }
+                  ],
+                  "relationships": []
+                }
+                """),
+                
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            ])
+        )
+        
+        // Verify that we emit a warning for multiple main modules
+        let multipleModulesProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules" }))
+        XCTAssertEqual(multipleModulesProblem.diagnostic.severity, .warning)
+        XCTAssertTrue(multipleModulesProblem.diagnostic.summary.contains("more than one main module"))
+        XCTAssertTrue(multipleModulesProblem.diagnostic.explanation?.contains("ModuleA, ModuleB") == true)
+        
+        // Verify the warning doesn't have a source location since it's about the overall input structure
+        XCTAssertNil(multipleModulesProblem.diagnostic.source)
+        XCTAssertNil(multipleModulesProblem.diagnostic.range)
+    }
 }
