@@ -75,11 +75,6 @@ extension Semantic.Analyses {
                 }
             }
         }
-        
-        @available(*, deprecated, renamed: "analyze(_:children:source:problems:)", message: "Use 'analyze(_:children:source:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) {
-            analyze(directive, children: children, source: source, problems: &problems)
-        }
     }
 }
 

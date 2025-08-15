@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,42 +10,6 @@
 
 public import Foundation
 
-/// A type that vends bundles and responds to requests for data.
-@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-public protocol DocumentationWorkspaceDataProvider {
-    /// A string that uniquely identifies this data provider.
-    ///
-    /// Unless your implementation needs a stable identifier to associate with an external system, it's reasonable to
-    /// use `UUID().uuidString` for the provider's identifier.
-    var identifier: String { get }
-
-    /// Returns the data backing one of the files that this data provider provides.
-    ///
-    /// Your implementation can expect to only receive URLs that it provides. It's acceptable to assert if you receive
-    /// a URL that wasn't provided by your data provider, because this indicates a bug in the ``DocumentationWorkspace``.
-    ///
-    /// - Parameter url: The URL of a file to return the backing data for.
-    func contentsOfURL(_ url: URL) throws -> Data
-    
-    /// Returns the documentation bundles that your data provider provides.
-    ///
-    /// - Parameter options: Configuration that controls how the provider discovers documentation bundles.
-    ///
-    /// If your data provider also conforms to ``FileSystemProvider``, there is a default implementation of this method
-    /// that traverses the ``FileSystemProvider/fileSystem`` to find all documentation bundles in it.
-    func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle]
-}
-
-@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-public extension DocumentationWorkspaceDataProvider {
-    /// Returns the documentation bundles that your data provider provides; discovered with the default options.
-    ///
-    /// If your data provider also conforms to ``FileSystemProvider``, there is a default implementation of this method
-    /// that traverses the ``FileSystemProvider/fileSystem`` to find all documentation bundles in it.
-    func bundles() throws -> [DocumentationBundle] {
-        return try bundles(options: BundleDiscoveryOptions())
-    }
-}
 
 /// Options to configure the discovery of documentation bundles
 public struct BundleDiscoveryOptions {
