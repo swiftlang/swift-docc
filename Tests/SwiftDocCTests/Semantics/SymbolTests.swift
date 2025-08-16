@@ -1388,15 +1388,11 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(solution.replacements.count, 1)
         
         let replacement = try XCTUnwrap(solution.replacements.first)
-        XCTAssertEqual(replacement.replacement, "")
-        XCTAssertNotNil(replacement.range)
+        XCTAssertEqual(replacement.replacement, "", "Replacement should be empty string to remove the directive")
+        XCTAssertNotNil(replacement.range, "Replacement should have a valid range")
         
         // Verify that the replacement range covers the expected content
-        // The replacement range should match the problem's diagnostic range
-        XCTAssertEqual(replacement.range, problem.diagnostic.range, "Replacement range should match the problem's diagnostic range")
-        
-        // The replacement should remove the entire @DisplayName directive
-        // This would effectively remove the line "@DisplayName("Invalid Display Name")"
+        XCTAssertEqual(replacement.range, problem.diagnostic.range, "Replacement range should match the problem's diagnostic range to ensure it removes the entire @DisplayName directive")
     }
 
     // MARK: - Leading Whitespace in Doc Comments
