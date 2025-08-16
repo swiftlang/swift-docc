@@ -1391,6 +1391,10 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(replacement.replacement, "")
         XCTAssertNotNil(replacement.range)
         
+        // Verify that the replacement range covers the expected content
+        // The replacement range should match the problem's diagnostic range
+        XCTAssertEqual(replacement.range, problem.diagnostic.range, "Replacement range should match the problem's diagnostic range")
+        
         // The replacement should remove the entire @DisplayName directive
         // This would effectively remove the line "@DisplayName("Invalid Display Name")"
     }
