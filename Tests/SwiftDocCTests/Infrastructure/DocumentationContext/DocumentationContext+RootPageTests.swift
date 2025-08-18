@@ -257,6 +257,12 @@ class DocumentationContext_RootPageTests: XCTestCase {
             let solution = try XCTUnwrap(problem.possibleSolutions.first)
             XCTAssertEqual(solution.summary, "Remove the 'TechnologyRoot' directive")
             XCTAssertEqual(solution.replacements.count, 1)
+            
+            // Verify that diagnostic notes point to the symbol graph file
+            XCTAssertEqual(problem.diagnostic.notes.count, 1, "Should have a note pointing to the symbol graph file")
+            let note = try XCTUnwrap(problem.diagnostic.notes.first)
+            XCTAssertTrue(note.source.lastPathComponent.hasSuffix(".symbols.json"), "Note should point to a symbol graph file")
+            XCTAssertTrue(note.message.contains("Symbol graph file"), "Note should mention symbol graph file")
         }
     }
     

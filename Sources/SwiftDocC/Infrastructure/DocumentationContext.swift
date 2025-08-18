@@ -2433,6 +2433,17 @@ public class DocumentationContext {
         // This is an unsupported setup that creates multiple roots in the documentation hierarchy
         if !rootModules.isEmpty && !rootPageArticles.isEmpty {
             let problems = rootPageArticles.map { rootPageArticle -> Problem in
+                // Create notes pointing to symbol graph files that are causing the multiple roots issue
+                let symbolGraphNotes: [DiagnosticNote] = bundle.symbolGraphURLs.map { symbolGraphURL in
+                    let fileName = symbolGraphURL.lastPathComponent
+                    let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
+                    return DiagnosticNote(
+                        source: symbolGraphURL,
+                        range: zeroRange,
+                        message: "Symbol graph file '\(fileName)' creates a module root"
+                    )
+                }
+                
                 let diagnostic = Diagnostic(
                     source: rootPageArticle.source,
                     severity: .warning,
@@ -2442,7 +2453,8 @@ public class DocumentationContext {
                     explanation: """
                     When documentation contains symbols (from symbol graph files), @TechnologyRoot directives create an unsupported setup with multiple roots in the documentation hierarchy.
                     Remove the @TechnologyRoot directive so that this page is treated as an article under the module.
-                    """
+                    """,
+                    notes: symbolGraphNotes
                 )
                 
                 guard let range = rootPageArticle.value.metadata?.technologyRoot?.originalMarkup.range else {
