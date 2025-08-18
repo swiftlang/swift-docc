@@ -196,8 +196,6 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 }
                 This is the third root page.
                 """),
-                
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
         )
         
