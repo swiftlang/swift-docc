@@ -212,7 +212,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
         // Verify each warning has a solution to remove the TechnologyRoot directive
         for problem in multipleRootsProblems {
             XCTAssertEqual(problem.possibleSolutions.count, 1)
-            let solution = problem.possibleSolutions.first!
+            let solution = try XCTUnwrap(problem.possibleSolutions.first)
             XCTAssertEqual(solution.summary, "Remove the 'TechnologyRoot' directive")
             XCTAssertEqual(solution.replacements.count, 1)
         }
