@@ -271,6 +271,7 @@ public class DocumentationContext {
             MissingAbstract(sourceFile: source).any(),
             NonOverviewHeadingChecker(sourceFile: source).any(),
             SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
+            InvalidCodeBlockOption(sourceFile: source).any(),
         ])
         checker.visit(document)
         diagnosticEngine.emit(checker.problems)
