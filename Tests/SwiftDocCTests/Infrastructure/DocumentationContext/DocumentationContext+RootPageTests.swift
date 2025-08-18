@@ -218,6 +218,50 @@ class DocumentationContext_RootPageTests: XCTestCase {
         }
     }
     
+    func testWarnsAboutSymbolsWithTechnologyRootPages() async throws {
+        // Test the third case: documentation contains symbols (has a module) and also has @TechnologyRoot pages
+        let (_, context) = try await loadBundle(catalog:
+            Folder(name: "symbols-with-root.docc", content: [
+                // Symbol graph with a module
+                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(moduleName: "MyModule")),
+                
+                // Article with @TechnologyRoot directive
+                TextFile(name: "GettingStarted.md", utf8Content: """
+                # Getting Started
+                @Metadata {
+                   @TechnologyRoot
+                }
+                Learn how to use MyModule.
+                """),
+                
+                // Another article with @TechnologyRoot directive
+                TextFile(name: "Overview.md", utf8Content: """
+                # Overview
+                @Metadata {
+                   @TechnologyRoot
+                }
+                Overview of the technology.
+                """),
+            ])
+        )
+        
+        // Verify that we emit warnings for @TechnologyRoot directives when symbols are present
+        let symbolsWithRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssertEqual(symbolsWithRootProblems.count, 2, "Should emit warnings for both @TechnologyRoot directives when symbols are present")
+        
+        // Verify the warnings are associated with the correct files
+        let problemSources = symbolsWithRootProblems.compactMap { $0.diagnostic.source?.lastPathComponent }.sorted()
+        XCTAssertEqual(problemSources, ["GettingStarted.md", "Overview.md"])
+        
+        // Verify each warning has a solution to remove the TechnologyRoot directive
+        for problem in symbolsWithRootProblems {
+            XCTAssertEqual(problem.possibleSolutions.count, 1)
+            let solution = try XCTUnwrap(problem.possibleSolutions.first)
+            XCTAssertEqual(solution.summary, "Remove the 'TechnologyRoot' directive")
+            XCTAssertEqual(solution.replacements.count, 1)
+        }
+    }
+    
     func testWarnsAboutMultipleMainModules() async throws {
         // Create a bundle with multiple symbol graphs for different modules
         let (_, context) = try await loadBundle(catalog:

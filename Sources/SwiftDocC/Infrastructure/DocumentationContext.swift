@@ -2429,6 +2429,39 @@ public class DocumentationContext {
             return node.reference
         }
         
+        // Warn when the documentation contains both symbols (modules) and @TechnologyRoot pages
+        // This is an unsupported setup that creates multiple roots in the documentation hierarchy
+        if !rootModules.isEmpty && !rootPageArticles.isEmpty {
+            let problems = rootPageArticles.map { rootPageArticle -> Problem in
+                let diagnostic = Diagnostic(
+                    source: rootPageArticle.source,
+                    severity: .warning,
+                    range: rootPageArticle.value.metadata?.technologyRoot?.originalMarkup.range,
+                    identifier: "org.swift.docc.TechnologyRootWithSymbols",
+                    summary: "Documentation contains both symbols and articles with @TechnologyRoot directives",
+                    explanation: """
+                    When documentation contains symbols (from symbol graph files), @TechnologyRoot directives create an unsupported setup with multiple roots in the documentation hierarchy.
+                    Remove the @TechnologyRoot directive so that this page is treated as an article under the module.
+                    """
+                )
+                
+                guard let range = rootPageArticle.value.metadata?.technologyRoot?.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+                
+                let solution = Solution(
+                    summary: "Remove the \(TechnologyRoot.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            }
+            
+            diagnosticEngine.emit(problems)
+        }
+        
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
         if configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot || rootNodeForAutomaticCuration != nil {
