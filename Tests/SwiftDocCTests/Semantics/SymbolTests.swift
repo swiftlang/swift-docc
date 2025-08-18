@@ -25,10 +25,10 @@ class SymbolTests: XCTestCase {
                   - name: A parameter
                 - Returns: Return value
                 """,
-            articleContent: nil
+            extensionFileContent: nil
         )
         
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         
         XCTAssertEqual(withoutArticle.abstract?.format(), "A cool API to call.")
         XCTAssertEqual((withoutArticle.discussion?.content ?? []).map { $0.format() }.joined(), "")
@@ -53,20 +53,18 @@ class SymbolTests: XCTestCase {
                   - name: A parameter
                 - Returns: Return value
                 """,
-            articleContent: """
-                # Leading heading is ignored
-                
+            extensionFileContent: """
                 @Metadata {
                    @DocumentationExtension(mergeBehavior: override)
                 }
                 """
         )
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         
         XCTAssertNil(withArticleOverride.abstract,
-                       "The article overrides—and removes—the abstract from the in-source documenation")
+                       "The article overrides—and removes—the abstract from the in-source documentation")
         XCTAssertNil(withArticleOverride.discussion,
-                       "The article overries the discussion.")
+                       "The article overrides the discussion.")
         XCTAssertNil(withArticleOverride.parametersSection?.parameters,
                      "The article overrides—and removes—the parameter section from the in-source documentation.")
         XCTAssertEqual((withArticleOverride.returnsSection?.content ?? []).map { $0.format() }.joined(), "",
@@ -84,9 +82,7 @@ class SymbolTests: XCTestCase {
                   - name: A parameter
                 - Returns: Return value
                 """,
-            articleContent: """
-                # This is my article
-
+            extensionFileContent: """
                 @Metadata {
                    @DocumentationExtension(mergeBehavior: override)
                 }
@@ -106,15 +102,18 @@ class SymbolTests: XCTestCase {
 
                 ### Name of a topic
 
-                - ``MyKit``
-                - ``MyKit/MyClass``
+                - ``ModuleName``
+                - ``ModuleName/SomeClass``
 
                 """
         )
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.map(\.diagnostic.summary), [
+            "Organizing the module 'ModuleName' under 'ModuleName/SomeClass/someMethod(name:)' isn't allowed",
+            "Organizing 'ModuleName/SomeClass' under 'ModuleName/SomeClass/someMethod(name:)' forms a cycle",
+        ])
         
         XCTAssertEqual(withArticleOverride.abstract?.plainText, "This is an abstract.",
-                       "The article overrides the abstract from the in-source documenation")
+                       "The article overrides the abstract from the in-source documentation")
         XCTAssertEqual((withArticleOverride.discussion?.content ?? []).filter({ markup -> Bool in
             return !(markup.isEmpty) && !(markup is BlockDirective)
         }).map { $0.format().trimmingLines() }, ["This is a multi-paragraph overview.", "It continues here."],
@@ -128,7 +127,7 @@ class SymbolTests: XCTestCase {
         }
         
         XCTAssertEqual((withArticleOverride.returnsSection?.content ?? []).map { $0.format() }, ["Return value is explained here."],
-                       "The article overries—and removes—the return section from the in-source documentation.")
+                       "The article overrides—and removes—the return section from the in-source documentation.")
         
         if let topicContent = withArticleOverride.topics?.content, let heading = topicContent.first as? Heading, let topics = topicContent.last as? UnorderedList {
             XCTAssertEqual(heading.plainText, "Name of a topic")
@@ -148,11 +147,9 @@ class SymbolTests: XCTestCase {
                   - name: A parameter
                 - Returns: Return value
                 """,
-            articleContent: """
-                # Leading heading is ignored
-                """
+            extensionFileContent: "", // just the H1 symbol link and no other content
         )
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         
         XCTAssertEqual(withEmptyArticleOverride.abstract?.format(), "A cool API to call.")
         XCTAssertEqual((withEmptyArticleOverride.discussion?.content.filter({ markup -> Bool in
@@ -173,6 +170,22 @@ class SymbolTests: XCTestCase {
         // When no DocumentationExtension behavior is specified, the default behavior is "append to doc comment".
         let withAndWithoutAppendConfiguration = ["", "@Metadata { \n @DocumentationExtension(mergeBehavior: append) \n }"]
         
+        func verifyExtensionProblem(_ problems: [Problem], forMetadata metadata: String, file: StaticString = #filePath, line: UInt = #line) {
+            XCTAssertEqual(
+                !metadata.isEmpty,
+                problems.map(\.diagnostic.summary).contains("'DocumentationExtension' doesn't change default configuration and has no effect"),
+                "When there is a \"append\" extension configuration, there should be a warning about it.",
+                file: file, line: line
+            )
+        }
+        func verifyProblems(_ problems: [Problem], forMetadata metadata: String, file: StaticString = #filePath, line: UInt = #line) {
+            verifyExtensionProblem(problems, forMetadata: metadata, file: file, line: line)
+            XCTAssertEqual(problems.suffix(2).map(\.diagnostic.summary), [
+                "Organizing the module 'ModuleName' under 'ModuleName/SomeClass/someMethod(name:)' isn't allowed",
+                "Organizing 'ModuleName/SomeClass' under 'ModuleName/SomeClass/someMethod(name:)' forms a cycle",
+            ], file: file, line: line)
+        }
+        
         // Append curation to doc comment
         for metadata in withAndWithoutAppendConfiguration {
             let (withArticleOverride, problems) = try await makeDocumentationNodeSymbol(
@@ -183,21 +196,18 @@ class SymbolTests: XCTestCase {
                       - name: A parameter
                     - Returns: Return value
                     """,
-                articleContent: """
-                    # This is my article
-
+                extensionFileContent: """
                     \(metadata)
 
                     ## Topics
 
                     ### Name of a topic
 
-                    - ``MyKit``
-                    - ``MyKit/MyClass``
-
+                    - ``ModuleName``
+                    - ``ModuleName/SomeClass``
                     """
             )
-            XCTAssert(problems.isEmpty)
+            verifyProblems(problems, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
             XCTAssertEqual((withArticleOverride.discussion?.content.filter({ markup -> Bool in
@@ -229,9 +239,7 @@ class SymbolTests: XCTestCase {
                       - name: A parameter
                     - Returns: Return value
                     """,
-                articleContent: """
-                    # This is my article
-
+                extensionFileContent: """
                     \(metadata)
 
                     This is a multi-paragraph overview.
@@ -242,19 +250,18 @@ class SymbolTests: XCTestCase {
 
                     ### Name of a topic
 
-                    - ``MyKit``
-                    - ``MyKit/MyClass``
-
+                    - ``ModuleName``
+                    - ``ModuleName/SomeClass``
                     """
             )
-            XCTAssert(problems.isEmpty)
+            verifyProblems(problems, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
 
             XCTAssertEqual((withArticleOverride.discussion?.content.filter({ markup -> Bool in
                 return !(markup.isEmpty) && !(markup is BlockDirective)
             }) ?? []).map { $0.format().trimmingLines() }, ["This is a multi-paragraph overview.", "It continues here."],
-                           "The article overries—and adds—a discussion.")
+                           "The article overrides—and adds—a discussion.")
 
             if let parameter = withArticleOverride.parametersSection?.parameters.first, withArticleOverride.parametersSection?.parameters.count == 1 {
                 XCTAssertEqual(parameter.name, "name")
@@ -282,9 +289,7 @@ class SymbolTests: XCTestCase {
                       - name: A parameter
                     - Returns: Return value
                     """,
-                articleContent: """
-                    # This is my article
-
+                extensionFileContent: """
                     \(metadata)
 
                     This is a multi-paragraph overview.
@@ -295,19 +300,18 @@ class SymbolTests: XCTestCase {
 
                     ### Name of a topic
 
-                    - ``MyKit``
-                    - ``MyKit/MyClass``
-
+                    - ``ModuleName``
+                    - ``ModuleName/SomeClass``
                     """
             )
-            XCTAssert(problems.isEmpty)
+            verifyProblems(problems, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
 
             XCTAssertEqual((withArticleOverride.discussion?.content.filter({ markup -> Bool in
                 return !(markup.isEmpty) && !(markup is BlockDirective)
             }) ?? []).map { $0.format().trimmingLines() }, ["This is a multi-paragraph overview.", "It continues here."],
-                           "The article overries—and adds—a discussion.")
+                           "The article overrides—and adds—a discussion.")
 
             if let parameter = withArticleOverride.parametersSection?.parameters.first, withArticleOverride.parametersSection?.parameters.count == 1 {
                 XCTAssertEqual(parameter.name, "name")
@@ -331,9 +335,7 @@ class SymbolTests: XCTestCase {
                 docComment: """
                     A cool API to call.
                     """,
-                articleContent: """
-                    # This is my article
-
+                extensionFileContent: """
                     \(metadata)
 
                     This is a multi-paragraph overview.
@@ -349,19 +351,18 @@ class SymbolTests: XCTestCase {
 
                     ### Name of a topic
 
-                    - ``MyKit``
-                    - ``MyKit/MyClass``
-
+                    - ``ModuleName``
+                    - ``ModuleName/SomeClass``
                     """
             )
-            XCTAssert(problems.isEmpty)
+            verifyProblems(problems, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
 
             XCTAssertEqual((withArticleOverride.discussion?.content.filter({ markup -> Bool in
                 return !(markup.isEmpty) && !(markup is BlockDirective)
             }) ?? []).map { $0.format().trimmingLines() }, ["This is a multi-paragraph overview.", "It continues here."],
-                           "The article overries—and adds—a discussion.")
+                           "The article overrides—and adds—a discussion.")
 
             if let parameter = withArticleOverride.parametersSection?.parameters.first, withArticleOverride.parametersSection?.parameters.count == 1 {
                 XCTAssertEqual(parameter.name, "name")
@@ -387,9 +388,7 @@ class SymbolTests: XCTestCase {
 
                     The overview stats in the doc comment.
                     """,
-                articleContent: """
-                    # This is my article
-
+                extensionFileContent: """
                     \(metadata)
 
                     And continues here in the article.
@@ -399,14 +398,14 @@ class SymbolTests: XCTestCase {
                     - Returns: Return value
                     """
             )
-            XCTAssert(problems.isEmpty)
+            verifyExtensionProblem(problems, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
 
             XCTAssertEqual((withArticleOverride.discussion?.content.filter({ markup -> Bool in
                 return !(markup.isEmpty) && !(markup is BlockDirective)
             }) ?? []).map { $0.format().trimmingLines() }, ["The overview stats in the doc comment.", "And continues here in the article."],
-                           "The article overries—and adds—a discussion.")
+                           "The article overrides—and adds—a discussion.")
 
             if let parameter = withArticleOverride.parametersSection?.parameters.first, withArticleOverride.parametersSection?.parameters.count == 1 {
                 XCTAssertEqual(parameter.name, "name")
@@ -431,22 +430,20 @@ class SymbolTests: XCTestCase {
                       - name: A parameter
                     - Returns: Return value
                     """,
-                articleContent: """
-                    # This is my article
-
+                extensionFileContent: """
                     \(metadata)
 
                     This continues the overview from the doc comment.
                     """
             )
-            XCTAssert(problems.isEmpty)
+            verifyExtensionProblem(problems, forMetadata: metadata)
             
             XCTAssertEqual(withArticleOverride.abstract?.format(), "A cool API to call.")
             
             XCTAssertEqual((withArticleOverride.discussion?.content.filter({ markup -> Bool in
                 return !(markup.isEmpty) && !(markup is BlockDirective)
             }) ?? []).map { $0.format().trimmingLines() }, ["The overview starts in the doc comment.", "This continues the overview from the doc comment."],
-                           "The article overries—and adds—a discussion.")
+                           "The article overrides—and adds—a discussion.")
             
             if let parameter = withArticleOverride.parametersSection?.parameters.first, withArticleOverride.parametersSection?.parameters.count == 1 {
                 XCTAssertEqual(parameter.name, "name")
@@ -466,13 +463,11 @@ class SymbolTests: XCTestCase {
                 A cool API to call.
 
                 """,
-            articleContent: """
-                # This is my article
-
+            extensionFileContent: """
                 @Redirected(from: "some/previous/path/to/this/symbol")
                 """
         )
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         
         XCTAssertEqual(withRedirectInArticle.redirects?.map { $0.oldPath.absoluteString }, ["some/previous/path/to/this/symbol"])
     }
@@ -484,16 +479,14 @@ class SymbolTests: XCTestCase {
 
                 @Redirected(from: "some/previous/path/to/this/symbol")
                 """,
-            articleContent: """
-                # This is my article
-                """
+            extensionFileContent: nil
         )
         XCTAssertFalse(problems.isEmpty)
         XCTAssertEqual(withRedirectInArticle.redirects, nil)
 
         XCTAssertEqual(problems.first?.diagnostic.identifier, "org.swift.docc.UnsupportedDocCommentDirective")
-        XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.line, 3)
-        XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.column, 1)
+        XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.line, 14)
+        XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.column, 18)
     }
 
     func testNoWarningWhenDocCommentContainsDirective() async throws {
@@ -503,11 +496,9 @@ class SymbolTests: XCTestCase {
 
                 @Snippet(from: "Snippets/Snippets/MySnippet")
                 """,
-            articleContent: """
-                # This is my article
-                """
+            extensionFileContent: nil
         )
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
     }
     
     func testNoWarningWhenDocCommentContainsDoxygen() async throws {
@@ -1054,17 +1045,20 @@ class SymbolTests: XCTestCase {
 
                 ### Name of a topic
 
-                - ``MyKit``
-                - ``MyKit/MyClass``
+                - ``ModuleName``
+                - ``ModuleName/SomeClass``
                 """,
-            articleContent: nil
+            extensionFileContent: nil
         )
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.map(\.diagnostic.summary), [
+            "Organizing the module 'ModuleName' under 'ModuleName/SomeClass/someMethod(name:)' isn't allowed",
+            "Organizing 'ModuleName/SomeClass' under 'ModuleName/SomeClass/someMethod(name:)' forms a cycle",
+        ])
         
         XCTAssertEqual(withArticleOverride.abstract?.format(), "This is an abstract.",
-                       "The article overrides the abstract from the in-source documenation")
+                       "The article overrides the abstract from the in-source documentation")
         XCTAssertEqual((withArticleOverride.discussion?.content ?? []).map { $0.detachedFromParent.format() }, ["This is a multi-paragraph overview.", "It continues here."],
-                       "The article overries—and adds—a discussion.")
+                       "The article overrides—and adds—a discussion.")
         
         if let parameter = withArticleOverride.parametersSection?.parameters.first, withArticleOverride.parametersSection?.parameters.count == 1 {
             XCTAssertEqual(parameter.name, "name")
@@ -1074,7 +1068,7 @@ class SymbolTests: XCTestCase {
         }
         
         XCTAssertEqual((withArticleOverride.returnsSection?.content ?? []).map { $0.format() }, ["Return value is explained here."],
-                       "The article overries—and removes—the return section from the in-source documentation.")
+                       "The article overrides—and removes—the return section from the in-source documentation.")
         
         if let topicContent = withArticleOverride.topics?.content, let heading = topicContent.first as? Heading, let topics = topicContent.last as? UnorderedList {
             XCTAssertEqual(heading.detachedFromParent.format(), "### Name of a topic")
@@ -1085,7 +1079,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testCreatesSourceURLFromLocationMixin() throws {
-        let identifer = SymbolGraph.Symbol.Identifier(precise: "s:5MyKit0A5ClassC10myFunctionyyF", interfaceLanguage: "swift")
+        let identifier = SymbolGraph.Symbol.Identifier(precise: "s:5MyKit0A5ClassC10myFunctionyyF", interfaceLanguage: "swift")
         let names = SymbolGraph.Symbol.Names(title: "", navigator: nil, subHeading: nil, prose: nil)
         let pathComponents = ["path", "to", "my file.swift"]
         let range = SymbolGraph.LineList.SourceRange(
@@ -1095,7 +1089,7 @@ class SymbolTests: XCTestCase {
         let line = SymbolGraph.LineList.Line(text: "@Image this is a known directive", range: range)
         let docComment = SymbolGraph.LineList([line])
         let symbol = SymbolGraph.Symbol(
-            identifier: identifer,
+            identifier: identifier,
             names: names,
             pathComponents: pathComponents,
             docComment: docComment,
@@ -1112,17 +1106,31 @@ class SymbolTests: XCTestCase {
     }
 
     func testAddingConstraintsToSymbol() async throws {
-        let (withoutArticle, _) = try await makeDocumentationNodeSymbol(
-            docComment: """
+        let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+            var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
+            
+            let newDocComment = self.makeLineList(
+                docComment: """
                 A cool API to call.
 
                 - Parameters:
                   - name: A parameter
                 - Returns: Return value
                 """,
-            articleContent: nil
-        )
+                moduleName: nil,
+                startOffset: .init(line: 0, character: 0),
+                url: URL(string: "file:///tmp/File.swift")!
+            )
+            
+            // The `guard` statement` below will handle the `nil` case by failing the test and
+            graph.symbols[myFunctionUSR]?.docComment = newDocComment
+            
+            let newGraphData = try JSONEncoder().encode(graph)
+            try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
+        }
 
+        let withoutArticle = try XCTUnwrap(context.documentationCache[myFunctionUSR]?.semantic as? Symbol)
         // The original symbol has 3 generic constraints:
         // {
         //   "extendedModule": "MyKit",
@@ -1208,10 +1216,10 @@ class SymbolTests: XCTestCase {
                   @Available(customOS, introduced: 1.2.3)
                 }
                 """,
-            articleContent: nil
+            extensionFileContent: nil
         )
         
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         
         let availability = try XCTUnwrap(node.metadata?.availability.first)
         XCTAssertEqual(availability.platform, .other("customOS"))
@@ -1225,8 +1233,8 @@ class SymbolTests: XCTestCase {
 
                 @Metadata
                 """,
-            docCommentLineOffset: 12,
-            articleContent: nil,
+            docCommentLineStart: 12,
+            extensionFileContent: nil,
             diagnosticEngineFilterLevel: .information
         )
         
@@ -1234,9 +1242,9 @@ class SymbolTests: XCTestCase {
         
         let diagnostic = try XCTUnwrap(problems.first).diagnostic
         XCTAssertEqual(diagnostic.identifier, "org.swift.docc.Metadata.NoConfiguration")
-        XCTAssertEqual(diagnostic.source?.absoluteString, "file:///tmp/File.swift")
+        XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
         XCTAssertEqual(diagnostic.range?.lowerBound.line, 15)
-        XCTAssertEqual(diagnostic.range?.lowerBound.column, 1)
+        XCTAssertEqual(diagnostic.range?.lowerBound.column, 18)
     }
     
     func testEmitsWarningForDuplicateMetadata() async throws {
@@ -1248,10 +1256,8 @@ class SymbolTests: XCTestCase {
                   @Available("Platform from doc comment", introduced: 1.2.3)
                 }
                 """,
-            docCommentLineOffset: 12,
-            articleContent: """
-            # Title
-            
+            docCommentLineStart: 12,
+            extensionFileContent: """
             @Metadata {
               @Available("Platform from documentation extension", introduced: 1.2.3)
             }
@@ -1262,9 +1268,9 @@ class SymbolTests: XCTestCase {
         
         let diagnostic = try XCTUnwrap(problems.first).diagnostic
         XCTAssertEqual(diagnostic.identifier, "org.swift.docc.DuplicateMetadata")
-        XCTAssertEqual(diagnostic.source?.absoluteString, "file:///tmp/File.swift")
+        XCTAssertEqual(diagnostic.source?.path, "/Users/username/path/to/SomeFile.swift")
         XCTAssertEqual(diagnostic.range?.lowerBound.line, 15)
-        XCTAssertEqual(diagnostic.range?.lowerBound.column, 1)
+        XCTAssertEqual(diagnostic.range?.lowerBound.column, 18)
         
         let availability = try XCTUnwrap(node.metadata?.availability.first)
         XCTAssertEqual(availability.platform, .other("Platform from documentation extension"))
@@ -1293,7 +1299,7 @@ class SymbolTests: XCTestCase {
                   @Redirected(from: "old/path/to/this/page")
                 }
                 """,
-            articleContent: nil
+            extensionFileContent: nil
         )
         
         XCTAssertEqual(
@@ -1309,6 +1315,8 @@ class SymbolTests: XCTestCase {
                 "org.swift.docc.Metadata.InvalidPageColorInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidTitleHeadingInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidRedirectedInDocumentationComment",
+                
+                "org.swift.docc.unresolvedResource", // For the "test" asset that doesn't exist.
             ]
         )
     }
@@ -1322,10 +1330,10 @@ class SymbolTests: XCTestCase {
                   This is the deprecation summary.
                 }
                 """,
-            articleContent: nil
+            extensionFileContent: nil
         )
         
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         
         XCTAssertEqual(
             (node.semantic as? Symbol)?
@@ -1346,10 +1354,10 @@ class SymbolTests: XCTestCase {
 
                 @Comment(This is a comment)
                 """,
-            articleContent: nil
+            extensionFileContent: nil
         )
         
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
     }
 
     // MARK: - Leading Whitespace in Doc Comments
@@ -1490,9 +1498,9 @@ class SymbolTests: XCTestCase {
                      
                     It continues here.
                 """,
-            articleContent: nil
+            extensionFileContent: nil
         )
-        XCTAssert(problems.isEmpty)
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         XCTAssertEqual(semanticWithLeadingWhitespace.abstract?.format(), "This is an abstract.")
         let lines = semanticWithLeadingWhitespace.discussion?.content.map{ $0.format() } ?? []
         let expectedDiscussion = """
@@ -1506,79 +1514,78 @@ class SymbolTests: XCTestCase {
 
     // MARK: - Helpers
     
-    func makeDocumentationNodeForSymbol(
+    private func makeDocumentationNodeForSymbol(
         docComment: String,
-        docCommentLineOffset: Int = 0,
-        articleContent: String?,
+        docCommentLineStart: Int = 11, // an arbitrary non-zero start line
+        extensionFileContent: String?,
         diagnosticEngineFilterLevel: DiagnosticSeverity = .warning,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> (DocumentationNode, [Problem]) {
-        let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
-            var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
-            
-            let newDocComment = self.makeLineList(
-                docComment: docComment,
-                moduleName: nil,
-                startOffset: .init(
-                    line: docCommentLineOffset,
-                    character: 0
-                ),
-                url: URL(string: "file:///tmp/File.swift")!
+        let classUSR  = "some-class-id"
+        let methodUSR = "some-method-id"
+        var catalogContent: [any File] = [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    makeSymbol(id: classUSR, kind: .class, pathComponents: ["SomeClass"]),
+                    
+                    makeSymbol(
+                        id: methodUSR,
+                        kind: .method,
+                        pathComponents: ["SomeClass", "someMethod(name:)"],
+                        docComment: docComment,
+                        location: (
+                            position: .init(line: docCommentLineStart, character: 17), // an arbitrary non-zero start column/character
+                            url: URL(fileURLWithPath: "/Users/username/path/to/SomeFile.swift")
+                        ),
+                        signature: .init(
+                            parameters: [
+                                .init(name: "name", externalName: nil, declarationFragments: [
+                                    .init(kind: .internalParameter, spelling: "name",   preciseIdentifier: nil),
+                                    .init(kind: .text,              spelling: " ",      preciseIdentifier: nil),
+                                    .init(kind: .typeIdentifier,    spelling: "String", preciseIdentifier: "s:SS")
+                                ], children: [])
+                            ],
+                            returns: [
+                                .init(kind: .typeIdentifier, spelling: "ReturnValue", preciseIdentifier: "return-value-id")
+                            ]
+                        ),
+                        
+                    )
+                ],
+                relationships: [
+                    .init(source: methodUSR, target: classUSR, kind: .memberOf, targetFallback: nil)
+                ]
+            ))
+        ]
+        if let extensionFileContent {
+            catalogContent.append(
+                TextFile(name: "Extension.md", utf8Content: """
+                # ``SomeClass/someMethod(name:)``
+                
+                \(extensionFileContent)
+                """)
             )
-            
-            // The `guard` statement` below will handle the `nil` case by failing the test and
-            graph.symbols[myFunctionUSR]?.docComment = newDocComment
-            
-            let newGraphData = try JSONEncoder().encode(graph)
-            try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
         }
         
-        guard let original = context.documentationCache[myFunctionUSR],
-              let unifiedSymbol = original.unifiedSymbol,
-              let symbolSemantic = original.semantic as? Symbol
-        else {
-            XCTFail("Couldn't find the expected symbol", file: (file), line: line)
-            enum TestHelperError: Error { case missingExpectedMyFuctionSymbol }
-            throw TestHelperError.missingExpectedMyFuctionSymbol
-        }
+        let diagnosticEngine = DiagnosticEngine(filterLevel: diagnosticEngineFilterLevel)
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: catalogContent), diagnosticEngine: diagnosticEngine)
         
-        let article: Article? = articleContent.flatMap {
-            let document = Document(parsing: $0, options: .parseBlockDirectives)
-            var problems = [Problem]()
-            let article = Article(from: document, source: nil, for: bundle, problems: &problems)
-            XCTAssertNotNil(article, "The sidecar Article couldn't be created.", file: (file), line: line)
-            return article
-        }
+        let node = try XCTUnwrap(context.documentationCache[methodUSR], file: file, line: line)
         
-        let engine = DiagnosticEngine(filterLevel: diagnosticEngineFilterLevel)
-        
-        var node = DocumentationNode(
-            reference: original.reference,
-            unifiedSymbol: unifiedSymbol,
-            moduleData: unifiedSymbol.modules.first!.value,
-            moduleReference: symbolSemantic.moduleReference
-        )
-        
-        node.initializeSymbolContent(
-            documentationExtension: article,
-            engine: engine,
-            bundle: bundle
-        )
-        
-        return (node, engine.problems)
+        return (node, context.problems)
     }
     
-    func makeDocumentationNodeSymbol(
+    private func makeDocumentationNodeSymbol(
         docComment: String,
-        articleContent: String?,
+        extensionFileContent: String?,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> (Symbol, [Problem]) {
         let (node, problems) = try await makeDocumentationNodeForSymbol(
             docComment: docComment,
-            articleContent: articleContent,
+            extensionFileContent: extensionFileContent,
             file: file,
             line: line
         )
