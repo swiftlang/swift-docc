@@ -147,7 +147,7 @@ class SymbolTests: XCTestCase {
                   - name: A parameter
                 - Returns: Return value
                 """,
-            extensionFileContent: "", // just the H1 symbol link and no other content
+            extensionFileContent: "" // just the H1 symbol link and no other content
         )
         XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         
@@ -1319,6 +1319,19 @@ class SymbolTests: XCTestCase {
                 "org.swift.docc.unresolvedResource", // For the "test" asset that doesn't exist.
             ]
         )
+        
+        // Verify that each problem has exactly one solution to remove the directive
+        for problem in problems where problem.diagnostic.identifier.hasPrefix("org.swift.docc.Metadata.") {
+            XCTAssertEqual(problem.possibleSolutions.count, 1, "Each invalid metadata directive should have exactly one solution")
+            
+            let solution = try XCTUnwrap(problem.possibleSolutions.first)
+            XCTAssertTrue(solution.summary.hasPrefix("Remove invalid"), "Solution summary should start with 'Remove invalid'")
+            XCTAssertEqual(solution.replacements.count, 1, "Solution should have exactly one replacement")
+            
+            let replacement = try XCTUnwrap(solution.replacements.first)
+            XCTAssertEqual(replacement.replacement, "", "Replacement should be empty string to remove the directive")
+            XCTAssertNotNil(replacement.range, "Replacement should have a valid range")
+        }
     }
     
     func testParsesDeprecationSummaryDirectiveFromDocComment() async throws {
@@ -1358,6 +1371,36 @@ class SymbolTests: XCTestCase {
         )
         
         XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+    }
+
+    func testSolutionForInvalidMetadataDirectiveRemovesDirective() async throws {
+        let (_, problems) = try await makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Metadata {
+                  @DisplayName("Invalid Display Name")
+                }
+                """,
+            extensionFileContent: nil
+        )
+        
+        XCTAssertEqual(problems.count, 1)
+        let problem = try XCTUnwrap(problems.first)
+        
+        XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.Metadata.InvalidDisplayNameInDocumentationComment")
+        XCTAssertEqual(problem.possibleSolutions.count, 1)
+        
+        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(solution.summary, "Remove invalid 'DisplayName' directive")
+        XCTAssertEqual(solution.replacements.count, 1)
+        
+        let replacement = try XCTUnwrap(solution.replacements.first)
+        XCTAssertEqual(replacement.replacement, "", "Replacement should be empty string to remove the directive")
+        XCTAssertNotNil(replacement.range, "Replacement should have a valid range")
+        
+        // Verify that the replacement range covers the expected content
+        XCTAssertEqual(replacement.range, problem.diagnostic.range, "Replacement range should match the problem's diagnostic range to ensure it removes the entire @DisplayName directive")
     }
 
     // MARK: - Leading Whitespace in Doc Comments
@@ -1550,8 +1593,7 @@ class SymbolTests: XCTestCase {
                             returns: [
                                 .init(kind: .typeIdentifier, spelling: "ReturnValue", preciseIdentifier: "return-value-id")
                             ]
-                        ),
-                        
+                        )
                     )
                 ],
                 relationships: [
