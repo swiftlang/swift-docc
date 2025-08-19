@@ -61,7 +61,7 @@ func directiveUSR(_ directiveName: String) -> String {
 // The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
 //
 // This conformance it only relevant to the `generate-symbol-graph` script.
-extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.ExpressibleByStringInterpolation {
+extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.ExpressibleByStringInterpolation, Swift.ExpressibleByUnicodeScalarLiteral, Swift.ExpressibleByExtendedGraphemeClusterLiteral, Swift.ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(kind: .text, spelling: value, preciseIdentifier: nil)
     }
@@ -79,7 +79,7 @@ extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.Expr
 // The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
 //
 // This conformance it only relevant to the `generate-symbol-graph` script. 
-extension SymbolKit.SymbolGraph.LineList.Line: Swift.ExpressibleByStringInterpolation {
+extension SymbolKit.SymbolGraph.LineList.Line: Swift.ExpressibleByStringInterpolation, Swift.ExpressibleByUnicodeScalarLiteral, Swift.ExpressibleByExtendedGraphemeClusterLiteral, Swift.ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(text: value, range: nil)
     }
