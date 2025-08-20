@@ -49,9 +49,15 @@ public struct InvalidCodeBlockOption: Checker {
             let matches = NearMiss.bestMatches(for: knownOptions, against: token)
 
             if !matches.isEmpty {
-                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(token) in code block. Did you mean \(matches)?", explanation: nil)
+                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(token.singleQuoted) in code block.")
+                let possibleSolutions = matches.map { candidate in
+                    Solution(
+                        summary: "Replace \(token.singleQuoted) with \(candidate.singleQuoted).",
+                        replacements: []
+                    )
+                }
                 // FIXME: figure out the position of 'token' and provide solutions
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: possibleSolutions))
             }
         }
     }
