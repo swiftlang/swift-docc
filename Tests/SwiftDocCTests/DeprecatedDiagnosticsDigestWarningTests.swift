@@ -14,7 +14,7 @@ import SwiftDocCTestUtilities
 import XCTest
 
 class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
-    func testNoDeprecationWarningWhenThereAreNoOtherWarnings() throws {
+    func testNoDeprecationWarningWhenThereAreNoOtherWarnings() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Root
@@ -22,7 +22,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             An empty root page
             """)
         ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         let outputConsumer = TestOutputConsumer()
         
@@ -38,7 +38,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
         XCTAssert(outputConsumer.problems.isEmpty, "Unexpected problems: \(outputConsumer.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
     }
     
-    func testDeprecationWarningWhenThereAreOtherWarnings() throws {
+    func testDeprecationWarningWhenThereAreOtherWarnings() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Root
@@ -48,7 +48,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             This link will result in a warning: ``NotFound``.
             """)
         ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         let outputConsumer = TestOutputConsumer()
         
@@ -70,7 +70,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
     }
 }
 
-private class TestOutputConsumer: ConvertOutputConsumer {
+private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     var problems: [Problem] = []
     
     func consume(problems: [Problem]) throws {
@@ -87,4 +87,5 @@ private class TestOutputConsumer: ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws { }
     func consume(buildMetadata: BuildMetadata) throws { }
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
+    func consume(externalRenderNode: ExternalRenderNode) throws { }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,8 +15,8 @@ import XCTest
 import Markdown
 
 class SmallTests: XCTestCase {
-    func testNoContent() throws {
-        let (renderBlockContent, problems, small) = try parseDirective(Small.self) {
+    func testNoContent() async throws {
+        let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
             """
             @Small
             """
@@ -32,9 +32,9 @@ class SmallTests: XCTestCase {
         XCTAssertEqual(renderBlockContent, [])
     }
     
-    func testHasContent() throws {
+    func testHasContent() async throws {
         do {
-            let (renderBlockContent, problems, small) = try parseDirective(Small.self) {
+            let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my copyright text.
@@ -56,7 +56,7 @@ class SmallTests: XCTestCase {
         }
         
         do {
-            let (renderBlockContent, problems, small) = try parseDirective(Small.self) {
+            let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my copyright text.
@@ -85,7 +85,7 @@ class SmallTests: XCTestCase {
         }
         
         do {
-            let (renderBlockContent, problems, small) = try parseDirective(Small.self) {
+            let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my *formatted* `copyright` **text**.
@@ -115,9 +115,9 @@ class SmallTests: XCTestCase {
         }
     }
     
-    func testEmitsWarningWhenContainsStructuredMarkup() throws {
+    func testEmitsWarningWhenContainsStructuredMarkup() async throws {
         do {
-            let (renderBlockContent, problems, small) = try parseDirective(Small.self) {
+            let (renderBlockContent, problems, small) = try await parseDirective(Small.self) {
                 """
                 @Small {
                     This is my copyright text.
@@ -143,9 +143,9 @@ class SmallTests: XCTestCase {
         }
     }
     
-    func testSmallInsideOfColumn() throws {
+    func testSmallInsideOfColumn() async throws {
         do {
-            let (renderBlockContent, problems, row) = try parseDirective(Row.self) {
+            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
                 """
                 @Row {
                     @Column {

@@ -188,33 +188,7 @@ struct SymbolGraphLoader {
     }
     
     // Alias to declutter code
-    typealias AvailabilityItem = SymbolGraph.Symbol.Availability.AvailabilityItem
-    
-    /// Cache default availability items as we create them on demand.
-    private var cachedAvailabilityItems = [DefaultAvailability.ModuleAvailability: AvailabilityItem]()
-    
-    /// Returns a symbol graph availability item, given a module availability.
-    /// - returns: An availability item, or `nil` if the input data is invalid.
-    private func availabilityItem(for defaultAvailability: DefaultAvailability.ModuleAvailability) -> AvailabilityItem? {
-        if let cached = cachedAvailabilityItems[defaultAvailability] {
-            return cached
-        }
-        return AvailabilityItem(defaultAvailability)
-    }
-    
-    private func loadSymbolGraph(at url: URL) throws -> (SymbolGraph, isMainSymbolGraph: Bool) {
-        // This is a private method, the `url` key is known to exist
-        var symbolGraph = symbolGraphs[url]!
-        let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: url)
-        
-        if !isMainSymbolGraph && symbolGraph.module.bystanders == nil {
-            // If this is an extending another module, change the module name to match the extended module.
-            // This makes the symbols in this graph have a path that starts with the extended module's name.
-            symbolGraph.module.name = moduleName
-        }
-
-        return (symbolGraph, isMainSymbolGraph)
-    }
+    private typealias AvailabilityItem = SymbolGraph.Symbol.Availability.AvailabilityItem
     
     /// Adds the missing fallback and default availability information to the unified symbol graph
     /// in case it didn't exists in the loaded symbol graphs.

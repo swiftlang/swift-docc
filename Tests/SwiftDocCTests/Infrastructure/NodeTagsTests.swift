@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,7 +13,7 @@ import XCTest
 import SwiftDocCTestUtilities
 
 class NodeTagsTests: XCTestCase {
-    func testSPIMetadata() throws {
+    func testSPIMetadata() async throws {
         let spiSGURL = Bundle.module.url(
             forResource: "SPI.symbols", withExtension: "json", subdirectory: "Test Resources")!
         
@@ -24,7 +24,7 @@ class NodeTagsTests: XCTestCase {
         let tempURL = try createTemporaryDirectory().appendingPathComponent("unit-tests.docc")
         try bundleFolder.write(to: tempURL)
         
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (_, bundle, context) = try await loadBundle(from: tempURL)
         
         // Verify that `Test` is marked as SPI.
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)

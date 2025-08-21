@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,8 +14,8 @@ import SymbolKit
 import XCTest
 
 class SemaToRenderNodeDictionaryDataTests: XCTestCase {
-    func testBaseRenderNodeFromDictionaryData() throws {
-        let (_, context) = try testBundleAndContext(named: "DictionaryData")
+    func testBaseRenderNodeFromDictionaryData() async throws {
+        let (_, context) = try await testBundleAndContext(named: "DictionaryData")
         
         let expectedPageUSRsAndLangs: [String : Set<SourceLanguage>] = [
             // Artist dictionary - ``Artist``:
@@ -75,8 +75,8 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         }
     }
 
-    func testFrameworkRenderNodeHasExpectedContent() throws {
-        let outputConsumer = try renderNodeConsumer(for: "DictionaryData")
+    func testFrameworkRenderNodeHasExpectedContent() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "DictionaryData")
         let frameworkRenderNode = try outputConsumer.renderNode(
             withIdentifier: "DictionaryData"
         )
@@ -152,8 +152,8 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         )
     }
     
-    func testDictionaryRenderNodeHasExpectedContent() throws {
-        let outputConsumer = try renderNodeConsumer(for: "DictionaryData")
+    func testDictionaryRenderNodeHasExpectedContent() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "DictionaryData")
         let artistRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Artist")
         
         assertExpectedContent(
@@ -245,8 +245,8 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         XCTAssert((nameProperty.attributes ?? []).isEmpty)
     }
     
-    func testTypeRenderNodeHasExpectedContent() throws {
-        let outputConsumer = try renderNodeConsumer(for: "DictionaryData")
+    func testTypeRenderNodeHasExpectedContent() async throws {
+        let outputConsumer = try await renderNodeConsumer(for: "DictionaryData")
         let genreRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Genre")
         
         let type1 = DeclarationRenderSection.Token(fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .text, spelling: "string", preciseIdentifier: nil), identifier: nil)

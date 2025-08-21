@@ -86,7 +86,15 @@ public struct RenderIndex: Codable, Equatable {
     /// - Parameter named: The name of the new root node
     public mutating func insertRoot(named: String) {
         for (languageID, nodes) in interfaceLanguages {
-            let root = Node(title: named, path: "/documentation", pageType: .framework, isDeprecated: false, children: nodes, icon: nil)
+            let root = Node(
+                title: named,
+                path: "/documentation",
+                pageType: .framework,
+                isDeprecated: false,
+                isExternal: false,
+                children: nodes,
+                icon: nil
+            )
             interfaceLanguages[languageID] = [root]
         }
     }
@@ -236,6 +244,7 @@ extension RenderIndex {
             path: String,
             pageType: NavigatorIndex.PageType?,
             isDeprecated: Bool,
+            isExternal: Bool,
             children: [Node],
             icon: RenderReferenceIdentifier?
         ) {
@@ -243,11 +252,10 @@ extension RenderIndex {
             self.children = children.isEmpty ? nil : children
             
             self.isDeprecated = isDeprecated
+            self.isExternal = isExternal
             
-            // Currently Swift-DocC doesn't support resolving links to external DocC archives
+            // Currently Swift-DocC doesn't support marking a node as beta in the navigation index
             // so we default to `false` here.
-            self.isExternal = false
-            
             self.isBeta = false
             self.icon = icon
             
@@ -318,6 +326,7 @@ extension RenderIndex.Node {
             path: node.item.path,
             pageType: NavigatorIndex.PageType(rawValue: node.item.pageType),
             isDeprecated: isDeprecated,
+            isExternal: node.item.isExternal,
             children: node.children.map {
                 RenderIndex.Node.fromNavigatorTreeNode($0, in: navigatorIndex, with: builder)
             },

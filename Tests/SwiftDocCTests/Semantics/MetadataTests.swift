@@ -15,11 +15,11 @@ import XCTest
 import Markdown
 
 class MetadataTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@Metadata"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata, "Even if a Metadata directive is empty we can create it")
@@ -29,11 +29,11 @@ class MetadataTests: XCTestCase {
         XCTAssertNotNil(problems.first?.possibleSolutions.first)
     }
     
-    func testUnexpectedArgument() throws {
+    func testUnexpectedArgument() async throws {
         let source = "@Metadata(argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a metadata value")
@@ -42,7 +42,7 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", problems.last?.diagnostic.identifier)
     }
     
-    func testUnexpectedDirective() throws {
+    func testUnexpectedDirective() async throws {
         let source = """
         @Metadata {
            @Image
@@ -50,7 +50,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a Metadata value")
@@ -61,7 +61,7 @@ class MetadataTests: XCTestCase {
 
     }
     
-    func testExtraContent() throws {
+    func testExtraContent() async throws {
         let source = """
         @Metadata {
            Some text
@@ -69,7 +69,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a Metadata value")
@@ -80,7 +80,7 @@ class MetadataTests: XCTestCase {
     
     // MARK: - Supported metadata directives
     
-    func testDocumentationExtensionSupport() throws {
+    func testDocumentationExtensionSupport() async throws {
         let source = """
         @Metadata {
            @DocumentationExtension(mergeBehavior: override)
@@ -88,7 +88,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -96,7 +96,7 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(metadata?.documentationOptions?.behavior, .override)
     }
     
-    func testRepeatDocumentationExtension() throws {
+    func testRepeatDocumentationExtension() async throws {
         let source = """
         @Metadata {
            @DocumentationExtension(mergeBehavior: append)
@@ -105,7 +105,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -117,7 +117,7 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(metadata?.documentationOptions?.behavior, .append)
     }
     
-    func testDisplayNameSupport() throws {
+    func testDisplayNameSupport() async throws {
         let source = """
         @Metadata {
            @DisplayName("Custom Name")
@@ -125,7 +125,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -134,7 +134,7 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(metadata?.displayName?.name, "Custom Name")
     }
 
-    func testTitleHeadingSupport() throws {
+    func testTitleHeadingSupport() async throws {
         let source = """
         @Metadata {
            @TitleHeading("Custom Heading")
@@ -142,7 +142,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -151,7 +151,7 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(metadata?.titleHeading?.heading, "Custom Heading")
     }
     
-    func testCustomMetadataSupport() throws {
+    func testCustomMetadataSupport() async throws {
         let source = """
         @Metadata {
            @CustomMetadata(key: "country", value: "Belgium")
@@ -160,7 +160,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -168,7 +168,7 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(problems.count, 0)
     }
 
-    func testRedirectSupport() throws {
+    func testRedirectSupport() async throws {
         let source = """
         @Metadata {
            @Redirected(from: "some/other/path")
@@ -176,7 +176,7 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(metadata)
@@ -186,7 +186,7 @@ class MetadataTests: XCTestCase {
 
     // MARK: - Metadata Support
     
-    func testArticleSupportsMetadata() throws {
+    func testArticleSupportsMetadata() async throws {
         let source = """
         # Plain article
         
@@ -197,7 +197,7 @@ class MetadataTests: XCTestCase {
         The abstract of this article
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child.")
@@ -208,7 +208,7 @@ class MetadataTests: XCTestCase {
         XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
     }
     
-    func testSymbolArticleSupportsMetadataDisplayName() throws {
+    func testSymbolArticleSupportsMetadataDisplayName() async throws {
         let source = """
         # ``SomeSymbol``
         
@@ -219,7 +219,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
@@ -232,7 +232,7 @@ class MetadataTests: XCTestCase {
         XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
     }
     
-    func testArticleDoesNotSupportsMetadataDisplayName() throws {
+    func testArticleDoesNotSupportsMetadataDisplayName() async throws {
         let source = """
         # Article title
         
@@ -243,7 +243,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
@@ -268,7 +268,7 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(solution.replacements.last?.replacement, "# Custom Name")
     }
 
-    func testArticleSupportsMetadataTitleHeading() throws {
+    func testArticleSupportsMetadataTitleHeading() async throws {
         let source = """
         # Article title
         
@@ -279,7 +279,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a TitleHeading child.")
@@ -293,7 +293,7 @@ class MetadataTests: XCTestCase {
         XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
     }
     
-    func testDuplicateMetadata() throws {
+    func testDuplicateMetadata() async throws {
         let source = """
         # Article title
         
@@ -307,7 +307,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
@@ -323,8 +323,8 @@ class MetadataTests: XCTestCase {
         )
     }
     
-    func testPageImageSupport() throws {
-        let (problems, metadata) = try parseMetadataFromSource(
+    func testPageImageSupport() async throws {
+        let (problems, metadata) = try await parseMetadataFromSource(
             """
             # Article title
             
@@ -353,8 +353,8 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(slothImage?.alt, "A sloth on a branch.")
     }
     
-    func testDuplicatePageImage() throws {
-        let (problems, _) = try parseMetadataFromSource(
+    func testDuplicatePageImage() async throws {
+        let (problems, _) = try await parseMetadataFromSource(
             """
             # Article title
             
@@ -376,9 +376,9 @@ class MetadataTests: XCTestCase {
         )
     }
     
-    func testPageColorSupport() throws {
+    func testPageColorSupport() async throws {
         do {
-            let (problems, metadata) = try parseMetadataFromSource(
+            let (problems, metadata) = try await parseMetadataFromSource(
             """
             # Article title
             
@@ -395,7 +395,7 @@ class MetadataTests: XCTestCase {
         }
         
         do {
-            let (problems, metadata) = try parseMetadataFromSource(
+            let (problems, metadata) = try await parseMetadataFromSource(
             """
             # Article title
             
@@ -416,9 +416,9 @@ class MetadataTests: XCTestCase {
         _ source: String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) throws -> (problems: [String], metadata: Metadata) {
+    ) async throws -> (problems: [String], metadata: Metadata) {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, problems: &problems)

@@ -93,7 +93,7 @@
             "text" : "such as the `@objc` and `@_objcImplementation` attributes in Swift,"
           },
           {
-            "text" : "or the `NS_SWIFT_NAME` macro in Objective C."
+            "text" : "or the `NS_SWIFT_NAME` macro in Objective-C."
           },
           {
             "text" : ""

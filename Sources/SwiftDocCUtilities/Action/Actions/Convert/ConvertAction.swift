@@ -288,9 +288,9 @@ public struct ConvertAction: AsyncAction {
 
         let indexer = try Indexer(outputURL: temporaryFolder, bundleID: bundle.id)
 
-        let context = try signposter.withIntervalSignpost("Register", id: signposter.makeSignpostID()) {
-            try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
-        }
+        let registerInterval = signposter.beginInterval("Register", id: signposter.makeSignpostID())
+        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        signposter.endInterval("Register", registerInterval)
         
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,

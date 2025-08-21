@@ -16,39 +16,13 @@ import SwiftDocCTestUtilities
 
 class SymbolAvailabilityTests: XCTestCase {
     
-    private func symbolAvailability(
-            defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
-            symbolGraphOperatingSystemPlatformName: String,
-            symbols: [SymbolGraph.Symbol],
-            symbolName: String
-    ) throws -> [SymbolGraph.Symbol.Availability.AvailabilityItem] {
-            let catalog = Folder(
-                name: "unit-test.docc",
-                content: [
-                    InfoPlist(defaultAvailability: [
-                        "ModuleName": defaultAvailability
-                    ]),
-                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                        moduleName: "ModuleName",
-                        platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: symbolGraphOperatingSystemPlatformName), environment: nil),
-                        symbols: symbols,
-                        relationships: []
-                    )),
-                ]
-            )
-            let (_, context) = try loadBundle(catalog: catalog)
-            let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
-            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            return try XCTUnwrap(symbol.availability?.availability)
-    }
-    
     private func renderNodeAvailability(
         defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
         symbolGraphOperatingSystemPlatformName: String,
         symbolGraphEnvironmentName: String? = nil,
         symbols: [SymbolGraph.Symbol],
         symbolName: String
-    ) throws -> [AvailabilityRenderItem] {
+    ) async throws -> [AvailabilityRenderItem] {
         let catalog = Folder(
             name: "unit-test.docc",
             content: [
@@ -63,16 +37,16 @@ class SymbolAvailabilityTests: XCTestCase {
                 )),
             ]
         )
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: reference.path, sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         return try XCTUnwrap((translator.visit(node.semantic as! Symbol) as! RenderNode).metadata.platformsVariants.defaultValue)
     }
     
-    func testSymbolGraphSymbolWithoutDeprecatedVersionAndIntroducedVersion() throws {
+    func testSymbolGraphSymbolWithoutDeprecatedVersionAndIntroducedVersion() async throws {
 
-        var availability = try renderNodeAvailability(
+        var availability = try await renderNodeAvailability(
             defaultAvailability: [],
             symbolGraphOperatingSystemPlatformName: "ios",
             symbols: [
@@ -93,7 +67,7 @@ class SymbolAvailabilityTests: XCTestCase {
             "Mac Catalyst <nil> - 1.2.3",
         ])
         
-        availability = try renderNodeAvailability(
+        availability = try await renderNodeAvailability(
             defaultAvailability: [
                 DefaultAvailability.ModuleAvailability(platformName: PlatformName(operatingSystemName: "iOS"), platformVersion: "1.2.3")
             ],
@@ -122,9 +96,9 @@ class SymbolAvailabilityTests: XCTestCase {
         ])
     }
     
-    func testSymbolGraphSymbolWithObsoleteVersion() throws {
+    func testSymbolGraphSymbolWithObsoleteVersion() async throws {
 
-        let availability = try renderNodeAvailability(
+        let availability = try await renderNodeAvailability(
             defaultAvailability: [],
             symbolGraphOperatingSystemPlatformName: "ios",
             symbols: [

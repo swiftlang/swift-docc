@@ -12,7 +12,7 @@ import Foundation
 @testable import SwiftDocC
 import XCTest
 
-class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
+class TestRenderNodeOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     var renderNodes = Synchronized<[RenderNode]>([])
     
     func consume(renderNode: RenderNode) throws {
@@ -30,6 +30,7 @@ class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws { }
     func consume(buildMetadata: BuildMetadata) throws { }
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
+    func consume(externalRenderNode: ExternalRenderNode) throws { }
 }
 
 extension TestRenderNodeOutputConsumer {
@@ -87,8 +88,8 @@ extension XCTestCase {
         for bundleName: String,
         sourceRepository: SourceRepository? = nil,
         configureBundle: ((URL) throws -> Void)? = nil
-    ) throws -> TestRenderNodeOutputConsumer {
-        let (_, bundle, context) = try testBundleAndContext(
+    ) async throws -> TestRenderNodeOutputConsumer {
+        let (_, bundle, context) = try await testBundleAndContext(
             copying: bundleName,
             configureBundle: configureBundle
         )

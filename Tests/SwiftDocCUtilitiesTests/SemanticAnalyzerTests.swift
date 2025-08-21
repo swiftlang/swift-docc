@@ -54,14 +54,14 @@ class SemanticAnalyzerTests: XCTestCase {
         InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
     ])
     
-    func testDoNotCrashOnInvalidContent() throws {
-        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
+    func testDoNotCrashOnInvalidContent() async throws {
+        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
         
         XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/Oops", sourceLanguage: .swift)))
     }
     
-    func testWarningsAboutDirectiveSupport() throws {
-        func problemsConvertingTestContent(withFileExtension fileExtension: String) throws -> (unsupportedTopLevelChildProblems: [Problem], missingTopLevelChildProblems: [Problem]) {
+    func testWarningsAboutDirectiveSupport() async throws {
+        func problemsConvertingTestContent(withFileExtension fileExtension: String) async throws -> (unsupportedTopLevelChildProblems: [Problem], missingTopLevelChildProblems: [Problem]) {
             let catalogHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
                 TextFile(name: "FileWithDirective.\(fileExtension)", utf8Content: """
                 @Article
@@ -73,7 +73,7 @@ class SemanticAnalyzerTests: XCTestCase {
                 """),
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
-            let (_, context) = try loadBundle(catalog: catalogHierarchy)
+            let (_, context) = try await loadBundle(catalog: catalogHierarchy)
             
             return (
                 context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unsupportedTopLevelChild" }),
@@ -82,7 +82,7 @@ class SemanticAnalyzerTests: XCTestCase {
         }
         
         do {
-            let problems = try problemsConvertingTestContent(withFileExtension: "md")
+            let problems = try await problemsConvertingTestContent(withFileExtension: "md")
             
             XCTAssertEqual(problems.missingTopLevelChildProblems.count, 0)
             XCTAssertEqual(problems.unsupportedTopLevelChildProblems.count, 1)
@@ -95,7 +95,7 @@ class SemanticAnalyzerTests: XCTestCase {
         }
         
         do {
-            let problems = try problemsConvertingTestContent(withFileExtension: "tutorial")
+            let problems = try await problemsConvertingTestContent(withFileExtension: "tutorial")
             
             XCTAssertEqual(problems.missingTopLevelChildProblems.count, 1)
             XCTAssertEqual(problems.unsupportedTopLevelChildProblems.count, 0)
@@ -109,8 +109,8 @@ class SemanticAnalyzerTests: XCTestCase {
         }
     }
     
-    func testDoesNotWarnOnEmptyTutorials() throws {
-        let (bundle, _) = try loadBundle(catalog: catalogHierarchy)
+    func testDoesNotWarnOnEmptyTutorials() async throws {
+        let (bundle, _) = try await loadBundle(catalog: catalogHierarchy)
         
         let document = Document(parsing: "", options: .parseBlockDirectives)
         var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), bundle: bundle)

@@ -9,6 +9,7 @@
 */
 
 import Foundation
+public import SymbolKit
 
 /// A collection of API for link completion.
 ///
@@ -20,7 +21,6 @@ import Foundation
 /// - Third, determine the minimal unique disambiguation for each completion suggestion using ``suggestedDisambiguation(forCollidingSymbols:)``
 ///
 /// > Tip: You can use ``SymbolInformation/hash(uniqueSymbolID:)`` to compute the hashed symbol identifiers needed for steps 2 and 3 above.
-@_spi(LinkCompletion)  // LinkCompletionTools isn't stable API yet
 public enum LinkCompletionTools {
     
     // MARK: Parsing
@@ -183,6 +183,15 @@ public enum LinkCompletionTools {
             self.symbolIDHash = symbolIDHash
             self.parameterTypes = parameterTypes
             self.returnTypes = returnTypes
+        }
+
+        public init(symbol: SymbolGraph.Symbol) {
+            self.kind = symbol.kind.identifier.identifier
+            self.symbolIDHash = Self.hash(uniqueSymbolID: symbol.identifier.precise)
+            if let signature = PathHierarchy.functionSignatureTypeNames(for: symbol) {
+                self.parameterTypes = signature.parameterTypeNames
+                self.returnTypes = signature.returnTypeNames
+            }
         }
         
         /// Creates a hashed representation of a symbol's unique identifier.
