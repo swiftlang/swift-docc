@@ -138,6 +138,18 @@ public enum RenderBlockContent: Equatable {
             Set(OptionName.allCases.map(\.rawValue))
         }
 
+        public enum OptionName: String, CaseIterable {
+            case nocopy
+
+            init?<S: StringProtocol>(caseInsensitive raw: S) {
+                self.init(rawValue: raw.lowercased())
+            }
+        }
+
+        public static var knownOptions: Set<String> {
+            Set(OptionName.allCases.map(\.rawValue))
+        }
+
         /// Make a new `CodeListing` with the given data.
         public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled) {
             self.syntax = syntax
