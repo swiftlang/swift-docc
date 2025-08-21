@@ -18,9 +18,8 @@ public import Markdown
 public struct InvalidCodeBlockOption: Checker {
     public var problems = [Problem]()
 
-    // FIXME: populate this from the parse options
     /// Parsing options for code blocks
-    private let knownOptions = ["nocopy"]
+    private let knownOptions = RenderBlockContent.CodeListing.knownOptions
 
     private var sourceFile: URL?
 
@@ -56,7 +55,6 @@ public struct InvalidCodeBlockOption: Checker {
                         replacements: []
                     )
                 }
-                // FIXME: figure out the position of 'token' and provide solutions
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: possibleSolutions))
             }
         }
