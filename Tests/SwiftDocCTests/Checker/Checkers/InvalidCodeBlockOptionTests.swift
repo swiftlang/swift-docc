@@ -14,6 +14,19 @@ import Markdown
 
 class InvalidCodeBlockOptionTests: XCTestCase {
 
+    func testNoOptions() {
+        let markupSource = """
+```
+let a = 1
+```
+"""
+        let document = Document(parsing: markupSource, options: [])
+        var checker = InvalidCodeBlockOption(sourceFile: nil)
+        checker.visit(document)
+        XCTAssertTrue(checker.problems.isEmpty)
+        XCTAssertEqual(RenderBlockContent.CodeListing.knownOptions, ["nocopy"])
+    }
+
     func testOption() {
         let markupSource = """
 ```nocopy
