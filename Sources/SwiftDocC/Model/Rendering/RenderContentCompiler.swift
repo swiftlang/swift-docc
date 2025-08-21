@@ -50,34 +50,42 @@ struct RenderContentCompiler: MarkupVisitor {
 
         if FeatureFlags.current.isExperimentalCodeBlockEnabled {
 
-            struct ParsedOptions {
-                var lang: String?
-                var nocopy = false
-            }
-
-            func parseLanguageString(_ input: String?) -> ParsedOptions {
-                guard let input else { return ParsedOptions() }
-
+            func parseLanguageString(_ input: String?) -> (lang: String? , tokens: [RenderBlockContent.CodeListing.OptionName]) {
+                guard let input else { return (lang: nil, tokens: []) }
                 let parts = input
                     .split(separator: ",")
                     .map { $0.trimmingCharacters(in: .whitespaces) }
-
-                var options = ParsedOptions()
+                var lang: String? = nil
+                var options: [RenderBlockContent.CodeListing.OptionName] = []
 
                 for part in parts {
-                    let lower = part.lowercased()
-                    if lower == "nocopy" {
-                        options.nocopy = true
-                    } else if options.lang == nil {
-                        options.lang = part
+                    if let opt = RenderBlockContent.CodeListing.OptionName(caseInsensitive: part) {
+                        options.append(opt)
+                    } else if lang == nil {
+                        lang = String(part)
                     }
                 }
-                return options
+                return (lang, options)
             }
 
             let options = parseLanguageString(codeBlock.language)
 
-            return [RenderBlockContent.codeListing(.init(syntax: options.lang ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: !options.nocopy))]
+            var listing = RenderBlockContent.CodeListing(
+                syntax: options.lang ?? bundle.info.defaultCodeListingLanguage,
+                code: codeBlock.code.splitByNewlines,
+                metadata: nil,
+                copyToClipboard: true // default value
+            )
+
+            // apply code block options
+            for option in options.tokens {
+                switch option {
+                case .nocopy:
+                    listing.copyToClipboard = false
+                }
+            }
+
+            return [RenderBlockContent.codeListing(listing)]
 
         } else {
             return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: false))]
