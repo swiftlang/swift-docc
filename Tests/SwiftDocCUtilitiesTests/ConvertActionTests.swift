@@ -609,7 +609,7 @@ class ConvertActionTests: XCTestCase {
                     start: nil,
                     source: nil,
                     severity: .warning,
-                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
+                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.3 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
                     explanation: nil,
                     notes: []
                 ),
@@ -672,7 +672,7 @@ class ConvertActionTests: XCTestCase {
                     start: nil,
                     source: nil,
                     severity: .warning,
-                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
+                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.3 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
                     explanation: nil,
                     notes: []
                 ),
@@ -764,7 +764,7 @@ class ConvertActionTests: XCTestCase {
                     start: nil,
                     source: nil,
                     severity: .warning,
-                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
+                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.3 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
                     explanation: nil,
                     notes: []
                 ),

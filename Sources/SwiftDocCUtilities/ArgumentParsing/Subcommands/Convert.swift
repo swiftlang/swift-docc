@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -512,9 +512,10 @@ extension Docc {
             var enableMentionedIn = true
             
             // This flag only exist to allow developers to pass the previous '--enable-experimental-...' flag without errors.
+            // The last release to support this spelling was 6.2.
             @Flag(name: .customLong("enable-experimental-mentioned-in"), help: .hidden)
-            @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-            var enableExperimentalMentionedIn = false
+            @available(*, deprecated, message: "This flag is unused and only exist for backwards compatibility")
+            var _unusedExperimentalMentionedInFlagForBackwardsCompatibility = false
 
             @Flag(
                 name: .customLong("parameters-and-returns-validation"),
@@ -608,11 +609,6 @@ extension Docc {
         public var enableMentionedIn: Bool {
             get { featureFlags.enableMentionedIn }
             set { featureFlags.enableMentionedIn = newValue }
-        }
-        @available(*, deprecated, renamed: "enableMentionedIn", message: "Use 'enableMentionedIn' instead. This deprecated API will be removed after 6.2 is released")
-        public var enableExperimentalMentionedIn: Bool {
-            get { enableMentionedIn }
-            set { enableMentionedIn = newValue }
         }
         
         /// A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.

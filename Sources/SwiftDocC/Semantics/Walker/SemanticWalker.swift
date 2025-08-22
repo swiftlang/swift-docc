@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,8 +50,6 @@ extension SemanticWalker {
     mutating func visitTile(_ tile: Tile) { descendIntoChildren(of: tile) }
     /// Visits a comment node.
     mutating func visitComment(_ comment: Comment) { descendIntoChildren(of: comment) }
-    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released.
-    mutating func visitTechnology(_ technology: TutorialTableOfContents) { descendIntoChildren(of: technology) }
     /// Visits a tutorials table-of-contents page.
     mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) { descendIntoChildren(of: tutorialTableOfContents) }
     /// Visits an image node.

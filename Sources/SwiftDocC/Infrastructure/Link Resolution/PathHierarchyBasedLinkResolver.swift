@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,19 +22,6 @@ final class PathHierarchyBasedLinkResolver {
     /// Initializes a link resolver with a given path hierarchy.
     init(pathHierarchy: PathHierarchy) {
         self.pathHierarchy = pathHierarchy
-    }
-    
-    /// Remove all matches from a given documentation bundle from the link resolver.
-    func unregisterBundle(identifier: DocumentationBundle.Identifier) {
-        var newMap = BidirectionalMap<ResolvedIdentifier, ResolvedTopicReference>()
-        for (id, reference) in resolvedReferenceMap {
-            if reference.bundleID == identifier {
-                pathHierarchy.removeNodeWithID(id)
-            } else {
-                newMap[id] = reference
-            }
-        }
-        resolvedReferenceMap = newMap
     }
     
     /// Creates a path string---that can be used to find documentation in the path hierarchy---from an unresolved topic reference,

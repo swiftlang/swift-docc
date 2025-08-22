@@ -35,11 +35,6 @@ extension Semantic.Analyses {
             self.startingFromLevel = startingFromLevel
         }
         
-        @available(*, deprecated, renamed: "analyze(_:children:source:for:problems:)", message: "Use 'analyze(_:children:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released") 
-        @discardableResult public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> [Heading] {
-            analyze(directive, children: children, source: source, for: bundle, problems: &problems)
-        }
-        
         /// Returns all valid headings.
         @discardableResult public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, problems: inout [Problem]) -> [Heading] {
             var currentHeadingLevel = startingFromLevel

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -146,11 +146,6 @@ struct SemanticTreeDumper: SemanticWalker {
             description = "(\(markupContainer.elements.count) elements)"
         }
         dump(markupContainer, customDescription: description)
-    }
-
-    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released
-    mutating func visitTechnology(_ technology: TutorialTableOfContents) {
-        visitTutorialTableOfContents(technology)
     }
 
     mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> () {
