@@ -68,6 +68,14 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         indexer?.index(renderNode)
     }
     
+    func consume(page: XMLNode, for reference: ResolvedTopicReference) throws {
+        let htmlString = page.xmlString//(options: .nodePrettyPrint)
+        
+        let url = targetFolder.appendingPathComponent(reference.path)
+        try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+        try htmlString.write(to: url.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
+    }
+    
     func consume(externalRenderNode: ExternalRenderNode) throws {
         // Index the external node, if indexing is enabled.
         indexer?.index(externalRenderNode)

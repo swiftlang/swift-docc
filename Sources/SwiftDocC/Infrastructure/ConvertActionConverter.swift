@@ -122,8 +122,19 @@ package enum ConvertActionConverter {
             // Wrap JSON encoding in an autorelease pool to avoid retaining the autoreleased ObjC objects returned by `JSONSerialization`
             autoreleasepool {
                 do {
+                    // FIXME: This needs a feature flag instead of being hard-coded like this
+                    var renderer = HTMLRenderer(reference: identifier, context: context, renderContext: renderContext)
+                    
                     let entity = try context.entity(with: identifier)
-
+                    if let symbol = entity.semantic as? Symbol {
+                        let html = renderer.renderSymbol(symbol)
+                        try outputConsumer.consume(page: html, for: identifier)
+                    } else if let article = entity.semantic as? Article {
+                        let html = renderer.renderArticle(article)
+                        try outputConsumer.consume(page: html, for: identifier)
+                    }
+                    return
+                    
                     guard let renderNode = converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
                         return

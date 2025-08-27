@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A consumer for output produced by a documentation conversion.
 ///
@@ -22,6 +22,9 @@ public protocol ConvertOutputConsumer {
     /// Consumes a render node that was generated during a conversion.
     /// > Warning: This method might be called concurrently.
     func consume(renderNode: RenderNode) throws
+    
+    // FIXME: I don't know if the same consumer should handle both kinds of output
+    func consume(page: XMLNode, for reference: ResolvedTopicReference) throws
     
     /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
     func consume(assetsInBundle bundle: DocumentationBundle) throws
@@ -58,6 +61,7 @@ public extension ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
+    func consume(page: XMLNode, for reference: ResolvedTopicReference) throws {}
 }
 
 // Default implementation so that conforming types don't need to implement deprecated API.
