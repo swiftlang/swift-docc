@@ -894,6 +894,32 @@ Root
         )
     }
     
+    /// Test the curation of a symbol in a page where the page language is different from the symbol language.
+    /// This occurs in multi-language frameworks when a symbol in one language is referenced in another, e.g.
+    /// a Swift-only symbol includes a link to an Objective-C only symbol.
+    func testCurateSymbolsInPageWithNoCommonLanguage() async throws {
+        let navigatorIndex = try await generatedNavigatorIndex(
+            for: "MixedLanguageFrameworkSingleLanguageCuration",
+            bundleIdentifier: "org.swift.mixedlanguageframework"
+        )
+
+        XCTAssertEqual(
+            navigatorIndex.navigatorTree.root.children
+                .first { $0.item.title == "Swift" }?
+                .children
+                .first { $0.item.title == "MixedLanguageFramework" }?
+                .children
+                .first { $0.item.title == "SwiftOnlyStruct2" }?
+                .children
+                .contains { $0.item.title == "ObjectiveCOnlyClass" },
+            true,
+            """
+            Expected the Objective-C-only node with title "ObjectiveCOnlyClass" to be curated in the Swift \
+            navigator tree.
+            """
+        )
+    }
+
     func testNavigatorIndexUsingPageTitleGeneration() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
