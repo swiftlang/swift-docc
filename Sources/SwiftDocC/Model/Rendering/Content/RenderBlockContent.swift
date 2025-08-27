@@ -132,6 +132,7 @@ public enum RenderBlockContent: Equatable {
             case nocopy
             case wrap
             case highlight
+            case unknown
 
             init?(caseInsensitive raw: some StringProtocol) {
                 self.init(rawValue: raw.lowercased())
