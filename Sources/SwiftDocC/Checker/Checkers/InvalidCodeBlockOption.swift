@@ -31,33 +31,29 @@ internal struct InvalidCodeBlockOption: Checker {
     }
 
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
-        let info = codeBlock.language?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        guard !info.isEmpty else { return }
+        let (lang, tokens) = tokenizeLanguageString(codeBlock.language)
 
-        // TODO this will also fail on parsing highlight values with commas inside the array
-        let tokens = info
-            .split(separator: ",")
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty }
+        func matches(token: RenderBlockContent.CodeListing.OptionName, value: String?) {
+            guard token == .unknown, let value = value else { return }
 
-        guard !tokens.isEmpty else { return }
-
-        for token in tokens {
-            // if the token is an exact match, we don't need to do anything
-            guard !knownOptions.contains(token) else { continue }
-
-            let matches = NearMiss.bestMatches(for: knownOptions, against: token)
+            let matches = NearMiss.bestMatches(for: knownOptions, against: value)
 
             if !matches.isEmpty {
-                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(token.singleQuoted) in code block.")
+                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.")
                 let possibleSolutions = matches.map { candidate in
                     Solution(
-                        summary: "Replace \(token.singleQuoted) with \(candidate.singleQuoted).",
+                        summary: "Replace \(value.singleQuoted) with \(candidate.singleQuoted).",
                         replacements: []
                     )
                 }
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: possibleSolutions))
             }
         }
+
+        for (token, value) in tokens {
+            matches(token: token, value: value)
+        }
+        // check if first token (lang) might be a typo
+        matches(token: .unknown, value: lang)
     }
 }
