@@ -49,6 +49,7 @@ struct RenderContentCompiler: MarkupVisitor {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
 
         if FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled {
+            let (lang, tokens) = tokenizeLanguageString(codeBlock.language)
 
             func parseLanguageString(_ input: String?) -> (lang: String? , tokens: [(RenderBlockContent.CodeListing.OptionName, Substring?)]) {
                 guard let input else { return (lang: nil, tokens: []) }
@@ -92,7 +93,7 @@ struct RenderContentCompiler: MarkupVisitor {
 
             let (lang, options) = parseLanguageString(codeBlock.language)
 
-            let listing = RenderBlockContent.CodeListing(
+            var listing = RenderBlockContent.CodeListing(
                 syntax: lang ?? bundle.info.defaultCodeListingLanguage,
                 code: codeBlock.code.splitByNewlines,
                 metadata: nil,
@@ -102,7 +103,7 @@ struct RenderContentCompiler: MarkupVisitor {
             )
 
             // apply code block options
-            for (option, value) in options.tokens {
+            for (option, value) in tokens {
                 switch option {
                 case .nocopy:
                     listing.copyToClipboard = false
@@ -114,6 +115,8 @@ struct RenderContentCompiler: MarkupVisitor {
                     }
                 case .highlight:
                     listing.highlight = parseHighlight(value) ?? []
+                case .unknown:
+                    break
                 }
             }
 
