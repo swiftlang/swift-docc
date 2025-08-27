@@ -49,51 +49,10 @@ struct RenderContentCompiler: MarkupVisitor {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
 
         if FeatureFlags.current.isExperimentalCodeBlockEnabled {
-
-            func parseLanguageString(_ input: String?) -> (lang: String? , tokens: [(RenderBlockContent.CodeListing.OptionName, Substring?)]) {
-                guard let input else { return (lang: nil, tokens: []) }
-                // TODO this fails on parsing highlight values with commas inside the array
-                let parts = input
-                    .split(separator: ",")
-                    .map { $0.trimmingCharacters(in: .whitespaces) }
-                var lang: String? = nil
-                var options: [(RenderBlockContent.CodeListing.OptionName, Substring?)] = []
-
-                for part in parts {
-                    if let eq = part.firstIndex(of: "=") {
-                        let name = part[..<eq].trimmingCharacters(in: .whitespaces)
-                        let value = part[part.index(after: eq)...]
-                        if let option = RenderBlockContent.CodeListing.OptionName(caseInsensitive: name) {
-                            options.append((option, value))
-                        } else if lang == nil {
-                            lang = String(part)
-                        }
-                    } else {
-                        if let option = RenderBlockContent.CodeListing.OptionName(caseInsensitive: part) {
-                            options.append((option, nil))
-                        } else if lang == nil {
-                            lang = String(part)
-                        }
-                    }
-                }
-                return (lang, options)
-            }
-
-            func parseHighlight(_ value: Substring?) -> [Int]? {
-                guard var s = value.map(String.init) else { return nil }
-                s = s.trimmingCharacters(in: .whitespaces)
-                if s.hasPrefix("[") && s.hasSuffix("]") {
-                    s.removeFirst()
-                    s.removeLast()
-                }
-                let ints = s.split(separator: ",").compactMap{ Int($0.trimmingCharacters(in: .whitespaces)) }
-                return ints.isEmpty ? nil : ints
-            }
-
-            let options = parseLanguageString(codeBlock.language)
+            let (lang, tokens) = tokenizeLanguageString(codeBlock.language)
 
             var listing = RenderBlockContent.CodeListing(
-                syntax: options.lang ?? bundle.info.defaultCodeListingLanguage,
+                syntax: lang ?? bundle.info.defaultCodeListingLanguage,
                 code: codeBlock.code.splitByNewlines,
                 metadata: nil,
                 copyToClipboard: true, // default value
@@ -102,7 +61,7 @@ struct RenderContentCompiler: MarkupVisitor {
             )
 
             // apply code block options
-            for (option, value) in options.tokens {
+            for (option, value) in tokens {
                 switch option {
                 case .nocopy:
                     listing.copyToClipboard = false
@@ -114,6 +73,8 @@ struct RenderContentCompiler: MarkupVisitor {
                     }
                 case .highlight:
                     listing.highlight = parseHighlight(value) ?? []
+                case .unknown:
+                    break
                 }
             }
 
