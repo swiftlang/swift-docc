@@ -7,8 +7,8 @@
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
-
-public func parseHighlight(_ value: String?) -> [Int]? {
+/// A function that parses array values on code block options from the language line string
+public func parseCodeBlockOptionArray(_ value: String?) -> [Int]? {
     guard var s = value?.trimmingCharacters(in: .whitespaces), !s.isEmpty else { return [] }
 
     if s.hasPrefix("[") && s.hasSuffix("]") {
@@ -56,6 +56,7 @@ public func tokenizeLanguageString(_ input: String?) -> (lang: String?, tokens: 
     return (lang, tokens)
 }
 
+// helper function for tokenizeLanguageString to parse the language line
 func parseLanguageString(_ input: String?) -> [Substring] {
 
     guard let input else { return [] }

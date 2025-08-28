@@ -84,12 +84,12 @@ extension Snippet: RenderableDirectiveConvertible {
                 let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
                 let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
                 let copy = FeatureFlags.current.isExperimentalCodeBlockEnabled
-                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil, copyToClipboard: copy, wrap: 0, highlight: [Int]()))]
+                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil, copyToClipboard: copy, wrap: 0, highlight: [Int](), strikeout: [Int]()))]
             } else {
                 // Render the whole snippet with its explanation content.
                 let docCommentContent = snippetEntity.markup.children.flatMap { contentCompiler.visit($0) }
                 let copy = FeatureFlags.current.isExperimentalCodeBlockEnabled
-                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil, copyToClipboard: copy, wrap: 0, highlight: [Int]()))
+                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil, copyToClipboard: copy, wrap: 0, highlight: [Int](), strikeout: [Int]()))
                 return docCommentContent + [code]
             }
     }
