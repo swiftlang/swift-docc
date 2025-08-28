@@ -817,6 +817,12 @@
                         "items": {
                             "type": "integer"
                         }
+                    },
+                    "strikeout": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
                     }
                 }
             },
