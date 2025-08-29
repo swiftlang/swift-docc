@@ -24,7 +24,7 @@ let a = 1
         var checker = InvalidCodeBlockOption(sourceFile: nil)
         checker.visit(document)
         XCTAssertTrue(checker.problems.isEmpty)
-        XCTAssertEqual(RenderBlockContent.CodeListing.knownOptions, ["highlight", "nocopy", "unknown", "wrap"])
+        XCTAssertEqual(RenderBlockContent.CodeListing.knownOptions, ["highlight", "nocopy", "strikeout", "unknown", "wrap"])
     }
 
     func testOption() {
@@ -102,6 +102,24 @@ let g = 7
             let solution = try XCTUnwrap(problem.possibleSolutions.first)
             XCTAssert(solution.summary.hasSuffix("with 'nocopy'."))
 
+        }
+    }
+
+    func testLanguageNotFirst() {
+        let markupSource = """
+```nocopy, swift, highlight=[1]
+let b = 2
+```
+"""
+        let document = Document(parsing: markupSource, options: [])
+        var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
+        checker.visit(document)
+        XCTAssertEqual(1, checker.problems.count)
+
+        for problem in checker.problems {
+            XCTAssertEqual("org.swift.docc.InvalidCodeBlockOption", problem.diagnostic.identifier)
+            XCTAssertEqual(problem.diagnostic.summary, "Unknown option 'swift' in code block.")
+            XCTAssertEqual(problem.possibleSolutions.map(\.summary), ["If 'swift' is the language for this code block, then write 'swift' as the first option."])
         }
     }
 }
