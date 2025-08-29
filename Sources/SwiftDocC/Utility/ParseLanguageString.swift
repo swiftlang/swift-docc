@@ -35,6 +35,8 @@ public func tokenizeLanguageString(_ input: String?) -> (lang: String?, tokens: 
                 tokens.append((.wrap, value))
             } else if key == "highlight" {
                 tokens.append((.highlight, value))
+            } else if key == "strikeout" {
+                tokens.append((.strikeout, value))
             } else {
                 tokens.append((.unknown, key))
             }
@@ -46,6 +48,8 @@ public func tokenizeLanguageString(_ input: String?) -> (lang: String?, tokens: 
                 tokens.append((.wrap, nil as String?))
             } else if key == "highlight" {
                 tokens.append((.highlight, nil as String?))
+            } else if key == "strikeout" {
+                tokens.append((.strikeout, nil as String?))
             } else if index == 0 && !key.contains("[") && !key.contains("]") {
                 lang = key
             } else {

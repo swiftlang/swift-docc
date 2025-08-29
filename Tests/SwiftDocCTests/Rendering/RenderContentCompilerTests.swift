@@ -459,4 +459,98 @@ class RenderContentCompilerTests: XCTestCase {
         XCTAssertEqual(codeListing.syntax, "swift")
         XCTAssertEqual(codeListing.highlight, [1, 2, 3])
     }
+
+    func testMultipleHighlightMultipleStrikeout() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, strikeout=[3,5], highlight=[1, 2, 3]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift")
+        XCTAssertEqual(codeListing.highlight, [1, 2, 3])
+        XCTAssertEqual(codeListing.strikeout, [3, 5])
+    }
+
+    func testLanguageNotFirstOption() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```highlight=[1, 2, 3], swift, wrap=20, strikeout=[3]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.highlight, [1, 2, 3])
+        // we expect the language to be the first option in the language line, otherwise it remains nil.
+        XCTAssertEqual(codeListing.syntax, nil)
+        XCTAssertEqual(codeListing.wrap, 20)
+        XCTAssertEqual(codeListing.strikeout, [3])
+    }
+
+    func testUnorderedArrayOptions() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```highlight=[5,3,4], strikeout=[3,1]
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.highlight, [5, 3, 4])
+        XCTAssertEqual(codeListing.strikeout, [3, 1])
+    }
 }
