@@ -47,6 +47,14 @@ internal struct InvalidCodeBlockOption: Checker {
                     )
                 }
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: possibleSolutions))
+            } else if lang == nil {
+                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Unknown option \(value.singleQuoted) in code block.")
+                let possibleSolutions =
+                Solution(
+                    summary: "If \(value.singleQuoted) is the language for this code block, then write \(value.singleQuoted) as the first option.",
+                    replacements: []
+                )
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [possibleSolutions]))
             }
         }
 
