@@ -58,8 +58,36 @@ internal struct InvalidCodeBlockOption: Checker {
             }
         }
 
+        func validateArrayIndices(token: RenderBlockContent.CodeListing.OptionName, value: String?) {
+            guard token == .highlight || token == .strikeout, let value = value else { return }
+            // code property ends in a newline. this gives us a bogus extra line.
+            let lineCount: Int = codeBlock.code.split(omittingEmptySubsequences: false, whereSeparator: { $0.isNewline }).count - 1
+
+            guard let indices = parseCodeBlockOptionArray(value) else {
+                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Could not parse \(token.rawValue.singleQuoted) indices from \(value.singleQuoted). Expected an integer (e.g. 3) or an array (e.g. [1, 3, 5])")
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                return
+            }
+
+            let invalid = indices.filter { $0 < 1 || $0 > lineCount }
+            guard !invalid.isEmpty else { return }
+
+            let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Invalid \(token.rawValue.singleQuoted) index\(invalid.count == 1 ? "" : "es") in \(value.singleQuoted) for a code block with \(lineCount) line\(lineCount == 1 ? "" : "s"). Valid range is 1...\(lineCount).")
+            let solutions: [Solution] = {
+                if invalid.contains(where: {$0 == lineCount + 1}) {
+                    return [Solution(
+                        summary: "If you intended the last line, change '\(lineCount + 1)' to \(lineCount).",
+                        replacements: []
+                    )]
+                }
+                return []
+            }()
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+        }
+
         for (token, value) in tokens {
             matches(token: token, value: value)
+            validateArrayIndices(token: token, value: value)
         }
         // check if first token (lang) might be a typo
         matches(token: .unknown, value: lang)
