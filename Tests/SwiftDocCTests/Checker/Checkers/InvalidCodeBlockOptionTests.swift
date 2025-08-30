@@ -122,5 +122,41 @@ let b = 2
             XCTAssertEqual(problem.possibleSolutions.map(\.summary), ["If 'swift' is the language for this code block, then write 'swift' as the first option."])
         }
     }
+
+    func testInvalidHighlightIndex() throws {
+        let markupSource = """
+```swift, nocopy, highlight=[2]
+let b = 2
+```
+"""
+        let document = Document(parsing: markupSource, options: [])
+        var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
+        checker.visit(document)
+        XCTAssertEqual(1, checker.problems.count)
+        let problem = try XCTUnwrap(checker.problems.first)
+
+        XCTAssertEqual("org.swift.docc.InvalidCodeBlockOption", problem.diagnostic.identifier)
+        XCTAssertEqual(problem.diagnostic.summary, "Invalid 'highlight' index in '[2]' for a code block with 1 line. Valid range is 1...1.")
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), ["If you intended the last line, change '2' to 1."])
+    }
+
+    func testInvalidHighlightandStrikeoutIndex() throws {
+        let markupSource = """
+```swift, nocopy, highlight=[0], strikeout=[-1, 4]
+let a = 1
+let b = 2
+let c = 3
+```
+"""
+        let document = Document(parsing: markupSource, options: [])
+        var checker = InvalidCodeBlockOption(sourceFile: URL(fileURLWithPath: #file))
+        checker.visit(document)
+        XCTAssertEqual(2, checker.problems.count)
+
+        XCTAssertEqual("org.swift.docc.InvalidCodeBlockOption", checker.problems[0].diagnostic.identifier)
+        XCTAssertEqual(checker.problems[0].diagnostic.summary, "Invalid 'highlight' index in '[0]' for a code block with 3 lines. Valid range is 1...3.")
+        XCTAssertEqual(checker.problems[1].diagnostic.summary, "Invalid 'strikeout' indexes in '[-1, 4]' for a code block with 3 lines. Valid range is 1...3.")
+        XCTAssertEqual(checker.problems[1].possibleSolutions.map(\.summary), ["If you intended the last line, change '4' to 3."])
+    }
 }
 
