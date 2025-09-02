@@ -516,6 +516,9 @@ extension Docc {
             @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
             var enableExperimentalMentionedIn = false
 
+            @Flag(help: "Experimental: Create markdown versions of documents")
+            var enableExperimentalMarkdownOutput = false
+            
             @Flag(
                 name: .customLong("parameters-and-returns-validation"),
                 inversion: .prefixedEnableDisable,
@@ -601,6 +604,12 @@ extension Docc {
         public var enableExperimentalOverloadedSymbolPresentation: Bool {
             get { featureFlags.enableExperimentalOverloadedSymbolPresentation }
             set { featureFlags.enableExperimentalOverloadedSymbolPresentation = newValue }
+        }
+        
+        /// A user-provided value that is true if the user enables experimental markdown output
+        public var enableExperimentalMarkdownOutput: Bool {
+            get { featureFlags.enableExperimentalMarkdownOutput }
+            set { featureFlags.enableExperimentalMarkdownOutput = newValue }
         }
 
         /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in"
