@@ -15,6 +15,15 @@ public import Foundation
 /// If your external reference resolver or an external symbol resolver is implemented in another executable, you can use this object
 /// to communicate between DocC and the `docc` executable.
 ///
+/// # Launching and responding to requests
+///
+/// DocC launches your link resolver executable and declares _its_ own ``Capabilities`` as a raw value passed via the `--capabilities` option.
+/// Your link resolver executable is expected to respond with a ``ResponseV2/identifierAndCapabilities(_:_:)`` message that declares:
+/// - The documentation bundle identifier that the executable can to resolve links for.
+/// - The capabilities that the resolver supports.
+///
+/// After this "handshake" your link resolver executable is expected to wait for ``RequestV2`` messages from DocC and respond with exactly one ``ResponseV2`` per message.
+///
 /// The launched executable is expected to follow the flow outlined below, sending ``OutOfProcessReferenceResolver/Request``
 /// and ``OutOfProcessReferenceResolver/Response`` values back and forth:
 ///
@@ -35,6 +44,8 @@ public import Foundation
 ///     │   information    │────┘
 ///     └──────────────────┘
 ///
+/// ## Service Client ???
+///
 /// When resolving against a server, the server is expected to be able to handle messages of type "resolve-reference" with a
 /// ``OutOfProcessReferenceResolver/Request`` payload and respond with messages of type "resolved-reference-response"
 /// with a ``OutOfProcessReferenceResolver/Response`` payload.
@@ -48,6 +59,11 @@ public import Foundation
 /// - ``Response``
 public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalExternalSymbolResolver {
     private let externalLinkResolvingClient: any ExternalLinkResolving
+    
+    @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
+    public var bundleIdentifier: String {
+        bundleID.rawValue
+    }
     
     /// The bundle identifier for the reference resolver in the other process.
     public let bundleID: DocumentationBundle.Identifier
@@ -71,13 +87,35 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         
         let longRunningProcess = try LongRunningProcess(location: processLocation, errorOutputHandler: errorOutputHandler)
         
-        guard case let .bundleIdentifier(decodedBundleIdentifier) = try longRunningProcess.sendAndWait(request: nil as Request?) as Response else {
+        struct InitialHandshakeMessage: Decodable {
+            var identifier: DocumentationBundle.Identifier
+            var capabilities: Capabilities? // The old V1 handshake didn't include this but the V2 requires it.
+            
+            private enum CodingKeys: CodingKey {
+                case bundleIdentifier  // Legacy V1 handshake
+                case identifier, capabilities // V2 handshake
+            }
+            
+            init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                
+                self.identifier = try container.decodeIfPresent(DocumentationBundle.Identifier.self, forKey: CodingKeys.identifier)
+                                   ?? container.decode(DocumentationBundle.Identifier.self, forKey: CodingKeys.bundleIdentifier)
+                
+                self.capabilities = try container.decodeIfPresent(Capabilities.self, forKey: CodingKeys.capabilities)
+            }
+        }
+        
+        guard let handshake: InitialHandshakeMessage = try? longRunningProcess.readInitialHandshakeMessage() else {
             throw Error.invalidBundleIdentifierOutputFromExecutable(processLocation)
         }
         
-        self.bundleID = .init(rawValue: decodedBundleIdentifier)
+        self.bundleID = handshake.identifier
+        self.executableCapabilities = handshake.capabilities
         self.externalLinkResolvingClient = longRunningProcess
     }
+    
+    private let executableCapabilities: Capabilities?
     
     /// Creates a new reference resolver that interacts with a documentation service.
     ///
@@ -89,8 +127,8 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
     public init(bundleID: DocumentationBundle.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
         self.bundleID = bundleID
-        self.externalLinkResolvingClient = LongRunningService(
-            server: server, convertRequestIdentifier: convertRequestIdentifier)
+        self.externalLinkResolvingClient = LongRunningService(server: server, convertRequestIdentifier: convertRequestIdentifier)
+        self.executableCapabilities = nil
     }
     
     // MARK: External Reference Resolver
@@ -260,7 +298,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
 }
 
 private protocol ExternalLinkResolving {
-    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response
+    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request) throws -> Response
 }
 
 private class LongRunningService: ExternalLinkResolving {
@@ -271,7 +309,7 @@ private class LongRunningService: ExternalLinkResolving {
             server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
     
-    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
+    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request) throws -> Response {
         let responseData = try client.sendAndWait(request)
         return try JSONDecoder().decode(Response.self, from: responseData)
     }
@@ -318,19 +356,30 @@ private class LongRunningProcess: ExternalLinkResolving {
     private let errorOutput = Pipe()
     private let errorReadSource: any DispatchSourceRead
         
-    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
-        if let request {
-            guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
-                  let requestData = requestString.data(using: .utf8)
-            else {
-                throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: request.description)
-            }
-            input.fileHandleForWriting.write(requestData)
+    func readInitialHandshakeMessage<Response: Decodable>() throws -> Response {
+        return try _readResponse()
+    }
+    
+    func sendAndWait<Request: Encodable & CustomStringConvertible, Response: Decodable>(request: Request) throws -> Response {
+        // Send
+        guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
+              let requestData = requestString.data(using: .utf8)
+        else {
+            throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: request.description)
         }
+        input.fileHandleForWriting.write(requestData)
+        
+        // Receive
+        return try _readResponse()
+    }
+    
+    private func _readResponse<Response: Decodable>() throws -> Response {
         var response = output.fileHandleForReading.availableData
         guard !response.isEmpty else {
             throw OutOfProcessReferenceResolver.Error.processDidExit(code: Int(process.terminationStatus))
         }
+        
+        print(String(decoding: response, as: UTF8.self))
         
         // It's not guaranteed that the full response will be available all at once.
         while true {
