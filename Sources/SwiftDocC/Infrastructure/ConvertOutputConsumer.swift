@@ -50,6 +50,9 @@ public protocol ConvertOutputConsumer {
     
     /// Consumes a file representation of the local link resolution information.
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws
+    
+    /// Consumes a markdown output node
+    func consume(markdownNode: MarkdownOutputNode) throws
 }
 
 // Default implementations that discard the documentation conversion products, for consumers that don't need these

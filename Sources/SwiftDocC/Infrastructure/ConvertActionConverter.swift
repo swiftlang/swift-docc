@@ -131,6 +131,11 @@ package enum ConvertActionConverter {
                     
                     try outputConsumer.consume(renderNode: renderNode)
 
+                    if
+                        FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
+                        let markdownNode = converter.markdownNode(for: entity) {
+                        try outputConsumer.consume(markdownNode: markdownNode)
+                    }
                     switch documentationCoverageOptions.level {
                     case .detailed, .brief:
                         let coverageEntry = try CoverageDataEntry(

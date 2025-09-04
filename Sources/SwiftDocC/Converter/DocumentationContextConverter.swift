@@ -101,4 +101,26 @@ public class DocumentationContextConverter {
         )
         return translator.visit(node.semantic) as? RenderNode
     }
+    
+    /// Converts a documentation node to a markdown node.
+    /// - Parameters:
+    ///   - node: The documentation node to convert.
+    /// - Returns: The markdown node representation of the documentation node.
+    public func markdownNode(for node: DocumentationNode) -> MarkdownOutputNode? {
+        guard !node.isVirtual else {
+            return nil
+        }
+
+        var translator = MarkdownOutputNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: node.reference,
+//            renderContext: renderContext,
+//            emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
+//            emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
+//            sourceRepository: sourceRepository,
+//            symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
+        )
+        return translator.visit(node.semantic)
+    }
 }

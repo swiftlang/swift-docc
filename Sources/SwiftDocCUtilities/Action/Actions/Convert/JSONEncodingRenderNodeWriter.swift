@@ -115,4 +115,48 @@ class JSONEncodingRenderNodeWriter {
             try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
         }
     }
+    
+    // TODO: Should this be a separate writer? Will we write markdown without creating render JSON?
+    /// Writes a markdown node to a file at a location based on the node's relative URL.
+    ///
+    /// If the target path to the JSON file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
+    /// create those intermediate folders before writing the JSON file.
+    ///
+    /// - Parameters:
+    ///   - markdownNode: The node which the writer object writes
+    func write(_ markdownNode: MarkdownOutputNode) throws {
+        let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
+            markdownNode.identifier,
+            lowercased: true
+        )
+        
+        // The path on disk to write the markdown file at.
+        let markdownNodeTargetFileURL = renderNodeURLGenerator
+            .urlForReference(
+                markdownNode.identifier,
+                fileSafePath: fileSafePath
+            )
+            .appendingPathExtension("md")
+        
+        let renderNodeTargetFolderURL = markdownNodeTargetFileURL.deletingLastPathComponent()
+        
+        // On Linux sometimes it takes a moment for the directory to be created and that leads to
+        // errors when trying to write files concurrently in the same target location.
+        // We keep an index in `directoryIndex` and create new sub-directories as needed.
+        // When the symbol's directory already exists no code is executed during the lock below
+        // besides the set lookup.
+        try directoryIndex.sync { directoryIndex in
+            let (insertedMarkdownNodeTargetFolderURL, _) = directoryIndex.insert(renderNodeTargetFolderURL)
+            if insertedMarkdownNodeTargetFolderURL {
+                try fileManager.createDirectory(
+                    at: renderNodeTargetFolderURL,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
+            }
+        }
+        
+        let data = try markdownNode.data
+        try fileManager.createFile(at: markdownNodeTargetFileURL, contents: data, options: nil)
+    }
 }

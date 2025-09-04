@@ -68,6 +68,10 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         indexer?.index(renderNode)
     }
     
+    func consume(markdownNode: MarkdownOutputNode) throws {
+        try renderNodeWriter.write(markdownNode)
+    }
+    
     func consume(externalRenderNode: ExternalRenderNode) throws {
         // Index the external node, if indexing is enabled.
         indexer?.index(externalRenderNode)
