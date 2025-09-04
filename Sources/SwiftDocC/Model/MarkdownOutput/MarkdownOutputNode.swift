@@ -22,7 +22,22 @@ public struct MarkdownOutputNode {
         }
     }
     
-    fileprivate var removeIndentation = false
+    private(set) var removeIndentation = false
+    private(set) var isRenderingLinkList = false
+    
+    public mutating func withRenderingLinkList(_ process: (inout MarkdownOutputNode) -> Void) {
+        isRenderingLinkList = true
+        process(&self)
+        isRenderingLinkList = false
+    }
+    
+    public mutating func withRemoveIndentation(_ process: (inout MarkdownOutputNode) -> Void) {
+        removeIndentation = true
+        process(&self)
+        removeIndentation = false
+    }
+    
+    private var linkListAbstract: (any Markup)?
 }
 
 extension MarkdownOutputNode {
@@ -32,7 +47,15 @@ extension MarkdownOutputNode {
         }
     }
     
-    mutating func visit(section: (any Section)?) -> Void {
+    mutating func visit(section: (any Section)?, addingHeading: String? = nil) -> Void {
+        guard let content = section?.content, content.isEmpty == false else {
+            return
+        }
+        
+        if let addingHeading {
+            visit(Heading(level: 2, Text(addingHeading)))
+        }
+        
         section?.content.forEach {
             self.visit($0)
         }
@@ -42,6 +65,10 @@ extension MarkdownOutputNode {
         container?.elements.forEach {
             self.visit($0)
         }
+    }
+    
+    mutating func startNewParagraphIfRequired() {
+        if !markdown.isEmpty, !markdown.hasSuffix("\n\n") { markdown.append("\n\n") }
     }
 }
 
@@ -53,6 +80,26 @@ extension MarkdownOutputNode: MarkupWalker {
             markdown.append(output.removingLeadingWhitespace())
         } else {
             markdown.append(output)
+        }
+    }
+        
+    public mutating func visitHeading(_ heading: Heading) -> () {
+        startNewParagraphIfRequired()
+        markdown.append(heading.detachedFromParent.format())
+    }
+    
+    public mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> () {
+        guard isRenderingLinkList else {
+            return defaultVisit(unorderedList)
+        }
+        
+        startNewParagraphIfRequired()
+        for item in unorderedList.listItems {
+            linkListAbstract = nil
+            item.children.forEach { visit($0) }
+            visit(linkListAbstract)
+            linkListAbstract = nil
+            startNewParagraphIfRequired()
         }
     }
     
@@ -79,7 +126,25 @@ extension MarkdownOutputNode: MarkupWalker {
             markdown.append(symbolLink.format())
             return
         }
-        let link = Link(destination: destination, title: node.title, [InlineCode(node.title)])
+        
+        let linkTitle: String
+        if
+            isRenderingLinkList,
+            let doc = try? context.entity(with: resolved),
+            let symbol = doc.semantic as? Symbol
+        {
+            linkListAbstract = (doc.semantic as? Symbol)?.abstract
+            if let fragments = symbol.navigator {
+                linkTitle = fragments
+                    .map { $0.spelling }
+                    .joined(separator: " ")
+            } else {
+                linkTitle = symbol.title
+            }
+        } else {
+            linkTitle = node.title
+        }
+        let link = Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)])
         visit(link)
     }
     
@@ -89,7 +154,7 @@ extension MarkdownOutputNode: MarkupWalker {
         
     public mutating func visitParagraph(_ paragraph: Paragraph) -> () {
         
-        if !markdown.hasSuffix("\n\n") { markdown.append("\n\n") }
+        startNewParagraphIfRequired()
         
         for child in paragraph.children {
             visit(child)
@@ -119,9 +184,9 @@ extension MarkdownOutputNode: MarkupWalker {
             }
             for column in row.columns {
                 markdown.append("\n\n")
-                removeIndentation = true
-                visit(container: column.content)
-                removeIndentation = false
+                withRemoveIndentation {
+                    $0.visit(container: column.content)
+                }
             }
         case TabNavigator.directiveName:
             guard let tabs = TabNavigator(from: blockDirective, for: bundle) else {
@@ -136,9 +201,10 @@ extension MarkdownOutputNode: MarkupWalker {
                     // Don't make any assumptions about headings here
                     let para = Paragraph([Strong(Text("\(tab.title):"))])
                     visit(para)
-                    removeIndentation = true
-                    visit(container: tab.content)
-                    removeIndentation = false
+                    withRemoveIndentation {
+                        $0.visit(container: tab.content)
+                        
+                    }
                 }
             }
             

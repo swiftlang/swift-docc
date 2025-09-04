@@ -19,10 +19,25 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
         var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier)
         
         node.visit(article.title)
-        node.visit(article.abstractSection?.paragraph)
-        node.markdown.append("\n\n")
+        node.visit(article.abstract)
         node.visit(section: article.discussion)
-        node.visit(section: article.seeAlso)
+        node.withRenderingLinkList {
+            $0.visit(section: article.topics, addingHeading: "Topics")
+            $0.visit(section: article.seeAlso, addingHeading: "See Also")
+        }
+        return node
+    }
+    
+    public mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
+        var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier)
+        
+        node.visit(Heading(level: 1, Text(symbol.title)))
+        node.visit(symbol.abstract)
+        node.visit(section: symbol.discussion, addingHeading: "Overview")
+        node.withRenderingLinkList {
+            $0.visit(section: symbol.topics, addingHeading: "Topics")
+            $0.visit(section: symbol.seeAlso, addingHeading: "See Also")
+        }
         return node
     }
     
@@ -146,9 +161,7 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
         return nil
     }
     
-    public mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
-        return nil
-    }
+    
     
     public mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> MarkdownOutputNode? {
         print(#function)

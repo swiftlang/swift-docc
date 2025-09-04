@@ -138,7 +138,7 @@ class JSONEncodingRenderNodeWriter {
             )
             .appendingPathExtension("md")
         
-        let renderNodeTargetFolderURL = markdownNodeTargetFileURL.deletingLastPathComponent()
+        let markdownNodeTargetFolderURL = markdownNodeTargetFileURL.deletingLastPathComponent()
         
         // On Linux sometimes it takes a moment for the directory to be created and that leads to
         // errors when trying to write files concurrently in the same target location.
@@ -146,10 +146,10 @@ class JSONEncodingRenderNodeWriter {
         // When the symbol's directory already exists no code is executed during the lock below
         // besides the set lookup.
         try directoryIndex.sync { directoryIndex in
-            let (insertedMarkdownNodeTargetFolderURL, _) = directoryIndex.insert(renderNodeTargetFolderURL)
+            let (insertedMarkdownNodeTargetFolderURL, _) = directoryIndex.insert(markdownNodeTargetFolderURL)
             if insertedMarkdownNodeTargetFolderURL {
                 try fileManager.createDirectory(
-                    at: renderNodeTargetFolderURL,
+                    at: markdownNodeTargetFolderURL,
                     withIntermediateDirectories: true,
                     attributes: nil
                 )
