@@ -1783,6 +1783,7 @@ public class DocumentationContext {
     
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
+    private static let supportedScriptExtensions: Set<String> = ["js"]
 
     // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
     
@@ -1839,7 +1840,7 @@ public class DocumentationContext {
         }
     }
 
-    /// Returns a list of all the image assets that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the image assets that registered for a given `bundleID`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return image assets for.
     /// - Returns: A list of all the image assets for the given bundle.
@@ -1852,7 +1853,7 @@ public class DocumentationContext {
         registeredImageAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
     
-    /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the video assets that registered for a given `bundleID`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return video assets for.
     /// - Returns: A list of all the video assets for the given bundle.
@@ -1865,7 +1866,7 @@ public class DocumentationContext {
         registeredVideoAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
 
-    /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the download assets that registered for a given `bundleID`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return download assets for.
     /// - Returns: A list of all the download assets for the given bundle.
@@ -1876,6 +1877,14 @@ public class DocumentationContext {
     @available(*, deprecated, renamed: "registeredDownloadsAssets(for:)", message: "registeredDownloadsAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
     public func registeredDownloadsAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
         registeredDownloadsAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
+    }
+    
+    /// Returns a list of all the custom scripts that registered for a given `bundleID`.
+    ///
+    /// - Parameter bundleID: The identifier of the bundle to return custom scripts for.
+    /// - Returns: A list of all the custom scripts for the given bundle.
+    public func registeredCustomScripts(for bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        return registeredAssets(withExtensions: DocumentationContext.supportedScriptExtensions, forBundleID: bundleID)
     }
 
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
