@@ -48,15 +48,22 @@ extension MarkdownOutputNode {
     }
     
     mutating func visit(section: (any Section)?, addingHeading: String? = nil) -> Void {
-        guard let content = section?.content, content.isEmpty == false else {
+        guard
+            let section = section,
+            section.content.isEmpty == false else {
             return
         }
         
-        if let addingHeading {
-            visit(Heading(level: 2, Text(addingHeading)))
+        if let heading = addingHeading ?? type(of: section).title {
+            // Don't add if there is already a heading in the content
+            if let first = section.content.first as? Heading, first.level == 2 {
+                // Do nothing
+            } else {
+                visit(Heading(level: 2, Text(heading)))
+            }
         }
         
-        section?.content.forEach {
+        section.content.forEach {
             self.visit($0)
         }
     }
@@ -116,15 +123,19 @@ extension MarkdownOutputNode: MarkupWalker {
                     
         markdown.append("![\(image.altText ?? "")](images/\(bundle.id)/\(filename))")
     }
-            
+       
+    public mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> () {
+        startNewParagraphIfRequired()
+        markdown.append(codeBlock.detachedFromParent.format())
+    }
+    
     public mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> () {
         guard
             let destination = symbolLink.destination,
             let resolved = context.referenceIndex[destination],
             let node = context.topicGraph.nodeWithReference(resolved)
         else {
-            markdown.append(symbolLink.format())
-            return
+            return defaultVisit(symbolLink)
         }
         
         let linkTitle: String
@@ -147,6 +158,32 @@ extension MarkdownOutputNode: MarkupWalker {
         let link = Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)])
         visit(link)
     }
+    
+    public mutating func visitLink(_ link: Link) -> () {
+        guard
+            link.isAutolink,
+            let destination = link.destination,
+            let resolved = context.referenceIndex[destination],
+            let doc = try? context.entity(with: resolved)
+        else {
+            return defaultVisit(link)
+        }
+        
+        let linkTitle: String
+        if
+            let article = doc.semantic as? Article
+        {
+            if isRenderingLinkList {
+                linkListAbstract = article.abstract
+            }
+            linkTitle = article.title?.plainText ?? resolved.lastPathComponent
+        } else {
+            linkTitle = resolved.lastPathComponent
+        }
+        let link = Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)])
+        defaultVisit(link)
+    }
+    
     
     public mutating func visitSoftBreak(_ softBreak: SoftBreak) -> () {
         markdown.append("\n")
@@ -204,6 +241,14 @@ extension MarkdownOutputNode: MarkupWalker {
                     withRemoveIndentation {
                         $0.visit(container: tab.content)
                         
+                    }
+                }
+            }
+        case Links.directiveName:
+            withRemoveIndentation {
+                $0.withRenderingLinkList {
+                    for child in blockDirective.children {
+                        $0.visit(child)
                     }
                 }
             }

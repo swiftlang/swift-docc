@@ -33,13 +33,32 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
         
         node.visit(Heading(level: 1, Text(symbol.title)))
         node.visit(symbol.abstract)
-        node.visit(section: symbol.discussion, addingHeading: "Overview")
+        if let declarationFragments = symbol.declaration.first?.value.declarationFragments {
+            let declaration = declarationFragments
+                .map { $0.spelling }
+                .joined()
+            let code = CodeBlock(declaration)
+            node.visit(code)
+        }
+        
+        if let parametersSection = symbol.parametersSection, parametersSection.parameters.isEmpty == false {
+            node.visit(Heading(level: 2, Text(ParametersSection.title ?? "Parameters")))
+            for parameter in parametersSection.parameters {
+                node.visit(Paragraph(InlineCode(parameter.name)))
+                node.visit(container: MarkupContainer(parameter.contents))
+            }
+        }
+        
+        node.visit(section: symbol.returnsSection)
+        
+        node.visit(section: symbol.discussion, addingHeading: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
         node.withRenderingLinkList {
             $0.visit(section: symbol.topics, addingHeading: "Topics")
             $0.visit(section: symbol.seeAlso, addingHeading: "See Also")
         }
         return node
     }
+    
     
     public mutating func visitCode(_ code: Code) -> MarkdownOutputNode? {
         print(#function)
