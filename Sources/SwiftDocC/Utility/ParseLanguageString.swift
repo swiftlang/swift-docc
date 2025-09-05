@@ -44,6 +44,8 @@ public func tokenizeLanguageString(_ input: String?) -> (lang: String?, tokens: 
             let key = part.trimmingCharacters(in: .whitespaces).lowercased()
             if key == "nocopy" {
                 tokens.append((.nocopy, nil as String?))
+            } else if key == "showlinenumbers" {
+                tokens.append((.showLineNumbers, nil as String?))
             } else if key == "wrap" {
                 tokens.append((.wrap, nil as String?))
             } else if key == "highlight" {
