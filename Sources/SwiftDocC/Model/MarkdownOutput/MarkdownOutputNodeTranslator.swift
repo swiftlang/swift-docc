@@ -12,8 +12,18 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
         self.bundle = bundle
         self.identifier = identifier
     }
-        
+    
     public typealias Result = MarkdownOutputNode?
+    private var node: Result = nil
+    
+    // Tutorial processing
+    private var sectionIndex = 0
+    private var stepIndex = 0
+    private var lastCode: Code?
+}
+
+// MARK: Article Output
+extension MarkdownOutputNodeTranslator {
     
     public mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
         var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier)
@@ -27,6 +37,10 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
         }
         return node
     }
+}
+
+// MARK: Symbol Output
+extension MarkdownOutputNodeTranslator {
     
     public mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
         var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier)
@@ -58,38 +72,107 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
         }
         return node
     }
-    
-    
-    public mutating func visitCode(_ code: Code) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
-    }
-    
-    public mutating func visitStep(_ step: Step) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
-    }
-    
-    public mutating func visitSteps(_ steps: Steps) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
-    }
-    
-    public mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> MarkdownOutputNode? {
-        print(#function)
+}
+
+// MARK: Tutorial Output
+extension MarkdownOutputNodeTranslator {
+    // Tutorial table of contents is not useful as markdown or indexable content
+    public func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> MarkdownOutputNode? {
         return nil
     }
     
     public mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
-        print(#function)
+        node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier)
+        sectionIndex = 0
+        for child in tutorial.children {
+            node = visit(child) ?? node
+        }
+        return node
+    }
+    
+    public mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> MarkdownOutputNode? {
+        sectionIndex += 1
+        
+        node?.visit(Heading(level: 2, Text("Section \(sectionIndex): \(tutorialSection.title)")))
+        for child in tutorialSection.children {
+            node = visit(child) ?? node
+        }
         return nil
+    }
+    
+    public mutating func visitSteps(_ steps: Steps) -> MarkdownOutputNode? {
+        stepIndex = 0
+        for child in steps.children {
+            node = visit(child) ?? node
+        }
+        
+        if let code = lastCode {
+            node?.visit(code)
+            lastCode = nil
+        }
+        
+        return node
+    }
+    
+    public mutating func visitStep(_ step: Step) -> MarkdownOutputNode? {
+        stepIndex += 1
+        node?.visit(Heading(level: 3, Text("Step \(stepIndex)")))
+        for child in step.children {
+            node = visit(child) ?? node
+        }
+        if let media = step.media {
+            node = visit(media) ?? node
+        }
+        return node
     }
     
     public mutating func visitIntro(_ intro: Intro) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
+        
+        node?.visit(Heading(level: 1, Text(intro.title)))
+        
+        for child in intro.children {
+            node = visit(child) ?? node
+        }
+        return node
     }
     
+    public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> MarkdownOutputNode? {
+        node?.withRemoveIndentation {
+            $0.visit(container: markupContainer)
+        }
+        return node
+    }
+    
+    public mutating func visitImageMedia(_ imageMedia: ImageMedia) -> MarkdownOutputNode? {
+        node?.visit(imageMedia)
+        return node
+    }
+    
+    public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> MarkdownOutputNode? {
+        node?.visit(videoMedia)
+        return node
+    }
+    
+    public mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> MarkdownOutputNode? {
+        for child in contentAndMedia.children {
+            node = visit(child) ?? node
+        }
+        return node
+    }
+    
+    public mutating func visitCode(_ code: Code) -> MarkdownOutputNode? {
+        if let lastCode, lastCode.fileName != code.fileName {
+            node?.visit(code)
+        }
+        lastCode = code
+        return nil
+    }
+}
+
+
+// MARK: Visitors not used for markdown output
+extension MarkdownOutputNodeTranslator {
+        
     public mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) -> MarkdownOutputNode? {
         print(#function)
         return nil
@@ -114,32 +197,12 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
         print(#function)
         return nil
     }
-    
-    public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
-    }
-    
+        
     public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> MarkdownOutputNode? {
         print(#function)
         return nil
     }
-    
-    public mutating func visitImageMedia(_ imageMedia: ImageMedia) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
-    }
-    
-    public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
-    }
-    
-    public mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
-    }
-    
+        
     public mutating func visitVolume(_ volume: Volume) -> MarkdownOutputNode? {
         print(#function)
         return nil
@@ -151,7 +214,6 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
     }
     
     public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
@@ -180,14 +242,7 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
         return nil
     }
     
-    
-    
     public mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> MarkdownOutputNode? {
-        print(#function)
-        return nil
-    }
-    
-    public func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> MarkdownOutputNode? {
         print(#function)
         return nil
     }

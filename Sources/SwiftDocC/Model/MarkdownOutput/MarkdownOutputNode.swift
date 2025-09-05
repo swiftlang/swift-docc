@@ -67,13 +67,7 @@ extension MarkdownOutputNode {
             self.visit($0)
         }
     }
-    
-    mutating func visit(container: MarkupContainer?) -> Void {
-        container?.elements.forEach {
-            self.visit($0)
-        }
-    }
-    
+        
     mutating func startNewParagraphIfRequired() {
         if !markdown.isEmpty, !markdown.hasSuffix("\n\n") { markdown.append("\n\n") }
     }
@@ -205,16 +199,14 @@ extension MarkdownOutputNode: MarkupWalker {
             guard let video = VideoMedia(from: blockDirective, for: bundle) else {
                 return
             }
-            
-            let unescaped = video.source.path.removingPercentEncoding ?? video.source.path
-            var filename = video.source.url.lastPathComponent
-            if
-                let resolvedVideos = context.resolveAsset(named: unescaped, in: identifier, withType: .video), let first = resolvedVideos.variants.first?.value {
-                filename = first.lastPathComponent
-            }
+            visit(video)
                         
-            markdown.append("\n\n![\(video.altText ?? "")](videos/\(bundle.id)/\(filename))")
-            visit(container: video.caption)
+        case ImageMedia.directiveName:
+            guard let image = ImageMedia(from: blockDirective, for: bundle) else {
+                return
+            }
+            visit(image)
+            
         case Row.directiveName:
             guard let row = Row(from: blockDirective, for: bundle) else {
                 return
@@ -257,4 +249,59 @@ extension MarkdownOutputNode: MarkupWalker {
         }
         
     }
+}
+
+// Semantic handling
+extension MarkdownOutputNode {
+    
+    mutating func visit(container: MarkupContainer?) -> Void {
+        container?.elements.forEach {
+            self.visit($0)
+        }
+    }
+    
+    mutating func visit(_ video: VideoMedia) -> Void {
+        let unescaped = video.source.path.removingPercentEncoding ?? video.source.path
+        var filename = video.source.url.lastPathComponent
+        if
+            let resolvedVideos = context.resolveAsset(named: unescaped, in: identifier, withType: .video), let first = resolvedVideos.variants.first?.value {
+            filename = first.lastPathComponent
+        }
+                    
+        markdown.append("\n\n![\(video.altText ?? "")](videos/\(bundle.id)/\(filename))")
+        visit(container: video.caption)
+    }
+    
+    mutating func visit(_ image: ImageMedia) -> Void {
+        let unescaped = image.source.path.removingPercentEncoding ?? image.source.path
+        var filename = image.source.url.lastPathComponent
+        if let resolvedImages = context.resolveAsset(named: unescaped, in: identifier, withType: .image), let first = resolvedImages.variants.first?.value {
+            filename = first.lastPathComponent
+        }
+        markdown.append("\n\n![\(image.altText ?? "")](images/\(bundle.id)/\(filename))")
+    }
+    
+    mutating func visit(_ code: Code) -> Void {
+        guard let codeIdentifier = context.identifier(forAssetName: code.fileReference.path, in: identifier) else {
+            return
+        }
+        let fileReference = ResourceReference(bundleID: code.fileReference.bundleID, path: codeIdentifier)
+        let codeText: String
+        if
+            let data = try? context.resource(with: fileReference),
+            let string = String(data: data, encoding: .utf8) {
+            codeText = string
+        } else if
+            let asset = context.resolveAsset(named: code.fileReference.path, in: identifier),
+            let string = try? String(contentsOf: asset.data(bestMatching: .init()).url, encoding: .utf8)
+        {
+            codeText = string
+        } else {
+            return
+        }
+        
+        visit(Paragraph(Emphasis(Text(code.fileName))))
+        visit(CodeBlock(codeText))
+    }
+    
 }
