@@ -809,6 +809,9 @@
                     "copyToClipboard": {
                         "type": "boolean"
                     },
+                    "showLineNumbers": {
+                        "type": "boolean"
+                    },
                     "wrap": {
                         "type": "integer"
                     },

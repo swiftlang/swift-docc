@@ -100,7 +100,8 @@ struct RenderContentCompiler: MarkupVisitor {
                 copyToClipboard: !options.tokens.contains(.nocopy),
                 wrap: 0, // default value
                 highlight: [Int](), // default value
-                strikeout: [Int]() // default value
+                strikeout: [Int](), // default value
+                showLineNumbers: false, // default value
             )
 
             // apply code block options
@@ -118,6 +119,8 @@ struct RenderContentCompiler: MarkupVisitor {
                     listing.highlight = parseCodeBlockOptionArray(value) ?? []
                 case .strikeout:
                     listing.strikeout = parseCodeBlockOptionArray(value) ?? []
+                case .showLineNumbers:
+                    listing.showLineNumbers = true
                 case .unknown:
                     break
                 }
@@ -126,7 +129,7 @@ struct RenderContentCompiler: MarkupVisitor {
             return [RenderBlockContent.codeListing(listing)]
 
         } else {
-            return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: false, wrap: 0, highlight: [Int](), strikeout: [Int]()))]
+            return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: false, wrap: 0, highlight: [Int](), strikeout: [Int](), showLineNumbers: false))]
         }
     }
     

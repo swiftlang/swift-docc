@@ -127,12 +127,14 @@ public enum RenderBlockContent: Equatable {
         public var copyToClipboard: Bool
         public var wrap: Int = 100
         public var highlight: [Int] = [Int]()
+        public var showLineNumbers: Bool
         public var strikeout: [Int] = [Int]()
 
         public enum OptionName: String, CaseIterable {
             case nocopy
             case wrap
             case highlight
+            case showLineNumbers
             case strikeout
             case unknown
 
@@ -158,13 +160,14 @@ public enum RenderBlockContent: Equatable {
         }
 
         /// Make a new `CodeListing` with the given data.
-        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, wrap: Int, highlight: [Int], strikeout: [Int]) {
+        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, wrap: Int, highlight: [Int], strikeout: [Int], showLineNumbers: Bool = false) {
             self.syntax = syntax
             self.code = code
             self.metadata = metadata
             self.copyToClipboard = copyToClipboard
             self.wrap = wrap
             self.highlight = highlight
+            self.showLineNumbers = showLineNumbers
             self.strikeout = strikeout
         }
     }
@@ -733,7 +736,7 @@ extension RenderBlockContent.Table: Codable {
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
         case type
-        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start, copyToClipboard, wrap, highlight, strikeout
+        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start, copyToClipboard, wrap, highlight, strikeout, showLineNumbers
         case request, response
         case header, rows
         case numberOfColumns, columns
@@ -763,7 +766,8 @@ extension RenderBlockContent: Codable {
                 copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? copy,
                 wrap: container.decodeIfPresent(Int.self, forKey: .wrap) ?? 0,
                 highlight: container.decodeIfPresent([Int].self, forKey: .highlight) ?? [Int](),
-                strikeout: container.decodeIfPresent([Int].self, forKey: .strikeout) ?? [Int]()
+                strikeout: container.decodeIfPresent([Int].self, forKey: .strikeout) ?? [Int](),
+                showLineNumbers: container.decodeIfPresent(Bool.self, forKey: .showLineNumbers) ?? false
             ))
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
@@ -871,6 +875,7 @@ extension RenderBlockContent: Codable {
             try container.encode(l.wrap, forKey: .wrap)
             try container.encode(l.highlight, forKey: .highlight)
             try container.encode(l.strikeout, forKey: .strikeout)
+            try container.encode(l.showLineNumbers, forKey: .showLineNumbers)
         case .heading(let h):
             try container.encode(h.level, forKey: .level)
             try container.encode(h.text, forKey: .text)
