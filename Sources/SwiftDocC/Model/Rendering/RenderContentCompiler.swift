@@ -101,7 +101,7 @@ struct RenderContentCompiler: MarkupVisitor {
                 wrap: 0, // default value
                 highlight: [Int](), // default value
                 strikeout: [Int](), // default value
-                showLineNumbers: false, // default value
+                showLineNumbers: false // default value
             )
 
             // apply code block options
