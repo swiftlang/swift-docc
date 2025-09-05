@@ -137,7 +137,7 @@ extension MarkdownOutputNodeTranslator {
     }
     
     public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> MarkdownOutputNode? {
-        node?.withRemoveIndentation {
+        node?.withRemoveIndentation(from: markupContainer.elements.first) {
             $0.visit(container: markupContainer)
         }
         return node

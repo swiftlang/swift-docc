@@ -22,7 +22,7 @@ public struct MarkdownOutputNode {
         }
     }
     
-    private(set) var removeIndentation = false
+    private(set) var indentationToRemove: String?
     private(set) var isRenderingLinkList = false
     
     public mutating func withRenderingLinkList(_ process: (inout MarkdownOutputNode) -> Void) {
@@ -31,10 +31,19 @@ public struct MarkdownOutputNode {
         isRenderingLinkList = false
     }
     
-    public mutating func withRemoveIndentation(_ process: (inout MarkdownOutputNode) -> Void) {
-        removeIndentation = true
+    public mutating func withRemoveIndentation(from base: (any Markup)?, process: (inout MarkdownOutputNode) -> Void) {
+        indentationToRemove = nil
+        if let toRemove = base?
+            .format()
+            .splitByNewlines
+            .first(where: { $0.isEmpty == false })?
+            .prefix(while: { $0.isWhitespace && !$0.isNewline }) {
+            if toRemove.isEmpty == false {
+                indentationToRemove = String(toRemove)
+            }
+        } 
         process(&self)
-        removeIndentation = false
+        indentationToRemove = nil
     }
     
     private var linkListAbstract: (any Markup)?
@@ -76,12 +85,11 @@ extension MarkdownOutputNode {
 extension MarkdownOutputNode: MarkupWalker {
     
     public mutating func defaultVisit(_ markup: any Markup) -> () {
-        let output = markup.format()
-        if removeIndentation {
-            markdown.append(output.removingLeadingWhitespace())
-        } else {
-            markdown.append(output)
+        var output = markup.format()
+        if let indentationToRemove, output.hasPrefix(indentationToRemove) {
+            output.removeFirst(indentationToRemove.count)
         }
+        markdown.append(output)
     }
         
     public mutating func visitHeading(_ heading: Heading) -> () {
@@ -213,7 +221,7 @@ extension MarkdownOutputNode: MarkupWalker {
             }
             for column in row.columns {
                 markdown.append("\n\n")
-                withRemoveIndentation {
+                withRemoveIndentation(from: column.childMarkup.first) {
                     $0.visit(container: column.content)
                 }
             }
@@ -230,16 +238,16 @@ extension MarkdownOutputNode: MarkupWalker {
                     // Don't make any assumptions about headings here
                     let para = Paragraph([Strong(Text("\(tab.title):"))])
                     visit(para)
-                    withRemoveIndentation {
+                    withRemoveIndentation(from: tab.childMarkup.first) {
                         $0.visit(container: tab.content)
                         
                     }
                 }
             }
         case Links.directiveName:
-            withRemoveIndentation {
-                $0.withRenderingLinkList {
-                    for child in blockDirective.children {
+            withRenderingLinkList {
+                for child in blockDirective.children {
+                    $0.withRemoveIndentation(from: child) {
                         $0.visit(child)
                     }
                 }
