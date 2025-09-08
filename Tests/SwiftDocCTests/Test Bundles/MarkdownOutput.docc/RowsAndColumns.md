@@ -12,3 +12,5 @@ Demonstrates how row and column directives are rendered as markdown
         I am the content of column two
     }
 }
+
+<!-- Copyright (c) 2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

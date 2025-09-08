@@ -44,17 +44,28 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(node.markdown.hasSuffix(expected))
     }
     
-    func testInlineDocumentLinkFormatting() async throws {
+    func testInlineDocumentLinkArticleFormatting() async throws {
         let node = try await generateMarkdown(path: "Links")
         let expected = "inline link: [Rows and Columns](doc://org.swift.MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)"
         XCTAssert(node.markdown.contains(expected))
     }
     
-    func testTopicListLinkFormatting() async throws {
+    func testTopicListLinkArticleFormatting() async throws {
         let node = try await generateMarkdown(path: "Links")
         let expected = "[Rows and Columns](doc://org.swift.MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)\n\nDemonstrates how row and column directives are rendered as markdown"
         XCTAssert(node.markdown.contains(expected))
     }
-
-
+    
+    func testInlineDocumentLinkSymbolFormatting() async throws {
+        let node = try await generateMarkdown(path: "Links")
+        let expected = "inline link: [`MarkdownSymbol`](doc://org.swift.MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)"
+        XCTAssert(node.markdown.contains(expected))
+    }
+    
+    func testTopicListLinkSymbolFormatting() async throws {
+        let node = try await generateMarkdown(path: "Links")
+        let expected = "[`MarkdownSymbol`](doc://org.swift.MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output."
+        XCTAssert(node.markdown.contains(expected))
+    }
+    
 }
