@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -56,8 +56,6 @@ public struct MarkdownOutputNode {
         process(&self)
         indentationToRemove = nil
     }
-    
-    private var linkListAbstract: (any Markup)?
 }
 
 extension MarkdownOutputNode {
@@ -115,10 +113,7 @@ extension MarkdownOutputNode: MarkupWalker {
         
         startNewParagraphIfRequired()
         for item in unorderedList.listItems {
-            linkListAbstract = nil
             item.children.forEach { visit($0) }
-            visit(linkListAbstract)
-            linkListAbstract = nil
             startNewParagraphIfRequired()
         }
     }
@@ -152,6 +147,7 @@ extension MarkdownOutputNode: MarkupWalker {
         }
         
         let linkTitle: String
+        var linkListAbstract: (any Markup)?
         if
             isRenderingLinkList,
             let doc = try? context.entity(with: resolved),
@@ -170,6 +166,7 @@ extension MarkdownOutputNode: MarkupWalker {
         }
         let link = Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)])
         visit(link)
+        visit(linkListAbstract)
     }
     
     public mutating func visitLink(_ link: Link) -> () {
@@ -183,6 +180,7 @@ extension MarkdownOutputNode: MarkupWalker {
         }
         
         let linkTitle: String
+        var linkListAbstract: (any Markup)?
         if
             let article = doc.semantic as? Article
         {
@@ -193,8 +191,17 @@ extension MarkdownOutputNode: MarkupWalker {
         } else {
             linkTitle = resolved.lastPathComponent
         }
-        let link = Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)])
+        
+        let linkMarkup: any RecurringInlineMarkup
+        if doc.semantic is Symbol {
+            linkMarkup = InlineCode(linkTitle)
+        } else {
+            linkMarkup = Text(linkTitle)
+        }
+        
+        let link = Link(destination: destination, title: linkTitle, [linkMarkup])
         defaultVisit(link)
+        visit(linkListAbstract)
     }
     
     
