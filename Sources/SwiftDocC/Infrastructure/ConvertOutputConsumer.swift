@@ -61,6 +61,7 @@ public extension ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
+    func consume(markdownNode: MarkdownOutputNode) throws {}
 }
 
 // Default implementation so that conforming types don't need to implement deprecated API.
