@@ -341,6 +341,62 @@ class RenderContentCompilerTests: XCTestCase {
         XCTAssertEqual(codeListing.copyToClipboard, false)
     }
 
+    func testShowLineNumbers() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, showLineNumbers
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.showLineNumbers, true)
+    }
+
+    func testLowercaseShowLineNumbers() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, showlinenumbers
+        let a = 1
+        let b = 2
+        let c = 3
+        let d = 4
+        let e = 5
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.showLineNumbers, true)
+    }
+
     func testWrapAndHighlight() async throws {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
@@ -498,7 +554,7 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        ```highlight=[1, 2, 3], swift, wrap=20, strikeout=[3]
+        ```showLineNumbers, highlight=[1, 2, 3], swift, wrap=20, strikeout=[3]
         let a = 1
         let b = 2
         let c = 3
@@ -517,6 +573,7 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
+        XCTAssertEqual(codeListing.showLineNumbers, true)
         XCTAssertEqual(codeListing.highlight, [1, 2, 3])
         // we expect the language to be the first option in the language line, otherwise it remains nil.
         XCTAssertEqual(codeListing.syntax, nil)
