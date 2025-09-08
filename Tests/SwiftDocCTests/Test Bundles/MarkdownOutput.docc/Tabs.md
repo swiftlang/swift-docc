@@ -25,3 +25,5 @@ Showing how language tabs only render the primary language, but other tabs rende
         Right text
     }
 }
+
+<!-- Copyright (c) 2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

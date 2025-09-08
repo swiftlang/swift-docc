@@ -36,7 +36,10 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
 extension MarkdownOutputNodeTranslator {
     
     public mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
-        var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier)
+        var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier, documentType: .article)
+        if let title = article.title?.plainText {
+            node.metadata.title = title
+        }
         
         node.visit(article.title)
         node.visit(article.abstract)
@@ -53,7 +56,12 @@ extension MarkdownOutputNodeTranslator {
 extension MarkdownOutputNodeTranslator {
     
     public mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
-        var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier)
+        var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier, documentType: .symbol)
+        
+        node.metadata.symbolKind = symbol.kind.displayName
+        node.metadata.symbolAvailability = symbol.availability?.availability.map {
+            MarkdownOutputNode.Metadata.Availability($0)
+        }
         
         node.visit(Heading(level: 1, Text(symbol.title)))
         node.visit(symbol.abstract)
@@ -84,6 +92,17 @@ extension MarkdownOutputNodeTranslator {
     }
 }
 
+import SymbolKit
+
+extension MarkdownOutputNode.Metadata.Availability {
+    init(_ item: SymbolGraph.Symbol.Availability.AvailabilityItem) {
+        self.platform = item.domain?.rawValue ?? "*"
+        self.introduced = item.introducedVersion?.description
+        self.deprecated = item.deprecatedVersion?.description
+        self.unavailable = item.obsoletedVersion?.description
+    }
+}
+
 // MARK: Tutorial Output
 extension MarkdownOutputNodeTranslator {
     // Tutorial table of contents is not useful as markdown or indexable content
@@ -92,7 +111,11 @@ extension MarkdownOutputNodeTranslator {
     }
     
     public mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
-        node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier)
+        node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier, documentType: .tutorial)
+        if tutorial.intro.title.isEmpty == false {
+            node?.metadata.title = tutorial.intro.title
+        }
+
         sectionIndex = 0
         for child in tutorial.children {
             node = visit(child) ?? node

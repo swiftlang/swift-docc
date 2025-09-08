@@ -17,35 +17,46 @@ public struct MarkdownOutputNode {
     public let context: DocumentationContext
     public let bundle: DocumentationBundle
     public let identifier: ResolvedTopicReference
+    public var metadata: Metadata
     
-    public init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference) {
+    public init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference, documentType: Metadata.DocumentType) {
         self.context = context
         self.bundle = bundle
         self.identifier = identifier
+        self.metadata = Metadata(documentType: documentType, bundle: bundle, reference: identifier)
     }
-    
-    public struct Metadata {
-        static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
-    }
-    
-    public var metadata: Metadata = Metadata()
+
+    /// The markdown content of this node
     public var markdown: String = ""
     
+    /// Data for this node to be rendered to disk
     public var data: Data {
         get throws {
-            Data(markdown.utf8)
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted]
+            let metadata = try encoder.encode(metadata)
+            let commentOpen = "<!--\n".utf8
+            let commentClose = "\n-->\n\n".utf8
+            var data = Data()
+            data.append(contentsOf: commentOpen)
+            data.append(metadata)
+            data.append(contentsOf: commentClose)
+            data.append(contentsOf: markdown.utf8)
+            return data
         }
     }
     
     private(set) var indentationToRemove: String?
     private(set) var isRenderingLinkList = false
     
+    /// Perform actions while rendering a link list, which affects the output formatting of links
     public mutating func withRenderingLinkList(_ process: (inout MarkdownOutputNode) -> Void) {
         isRenderingLinkList = true
         process(&self)
         isRenderingLinkList = false
     }
     
+    /// Perform actions while removing a base level of indentation, typically while processing the contents of block directives.
     public mutating func withRemoveIndentation(from base: (any Markup)?, process: (inout MarkdownOutputNode) -> Void) {
         indentationToRemove = nil
         if let toRemove = base?

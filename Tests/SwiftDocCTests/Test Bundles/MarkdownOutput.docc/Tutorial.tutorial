@@ -1,5 +1,5 @@
 @Tutorial(time: 30) {
-    @Intro(title: "Tutorial") {
+    @Intro(title: "Tutorial Title") {
         A tutorial for testing markdown output.
         
         @Image(source: placeholder.png, alt: "Alternative text")
@@ -34,3 +34,5 @@
         }
     }
 }
+
+<!-- Copyright (c) 2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

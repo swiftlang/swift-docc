@@ -106,7 +106,66 @@ final class MarkdownOutputTests: XCTestCase {
     func testTutorialCodeWithNewFileIsAdded() async throws {
         let node = try await generateMarkdown(path: "/tutorials/MarkdownOutput/Tutorial")
         XCTAssertTrue(node.markdown.contains("struct StartCodeAgain {"))
-        print(node.markdown)
+    }
+    
+    // MARK: - Metadata
+    
+    func testArticleDocumentType() async throws {
+        let node = try await generateMarkdown(path: "Links")
+        XCTAssert(node.metadata.documentType == .article)
+    }
+    
+    func testArticleTitle() async throws {
+        let node = try await generateMarkdown(path: "RowsAndColumns")
+        XCTAssert(node.metadata.title == "Rows and Columns")
+    }
+    
+    func testSymbolDocumentType() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        XCTAssert(node.metadata.documentType == .symbol)
+    }
+    
+    func testSymbolTitle() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol/init(name:)")
+        XCTAssert(node.metadata.title == "init(name:)")
+    }
+    
+    func testSymbolKind() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol/init(name:)")
+        XCTAssert(node.metadata.symbolKind == "Initializer")
+    }
+    
+    func testSymbolDeprecation() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol/fullName")
+        let availability = try XCTUnwrap(node.metadata.symbolAvailability)
+        XCTAssertEqual(availability[0], .init(platform: "iOS", introduced: "1.0.0", deprecated: "4.0.0", unavailable: nil))
+        XCTAssertEqual(availability[1], .init(platform: "macOS", introduced: "2.0.0", deprecated: "4.0.0", unavailable: nil))
+    }
+    
+    func testSymbolObsolete() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol/otherName")
+        let availability = try XCTUnwrap(node.metadata.symbolAvailability)
+        XCTAssertEqual(availability[0], .init(platform: "iOS", introduced: nil, deprecated: nil, unavailable: "5.0.0"))
+    }
+    
+    func testTutorialDocumentType() async throws {
+        let node = try await generateMarkdown(path: "/tutorials/MarkdownOutput/Tutorial")
+        XCTAssert(node.metadata.documentType == .tutorial)
+    }
+    
+    func testTutorialTitle() async throws {
+        let node = try await generateMarkdown(path: "/tutorials/MarkdownOutput/Tutorial")
+        XCTAssert(node.metadata.title == "Tutorial Title")
+    }
+    
+    func testURI() async throws {
+        let node = try await generateMarkdown(path: "Links")
+        XCTAssert(node.metadata.uri == "/documentation/MarkdownOutput/Links")
+    }
+    
+    func testFramework() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        XCTAssert(node.metadata.framework == "MarkdownOutput")
     }
     
     
