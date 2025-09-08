@@ -24,7 +24,11 @@ public struct MarkdownOutputNode {
         self.identifier = identifier
     }
     
-    public var metadata: [String: String] = [:]
+    public struct Metadata {
+        static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
+    }
+    
+    public var metadata: Metadata = Metadata()
     public var markdown: String = ""
     
     public var data: Data {
@@ -249,7 +253,7 @@ extension MarkdownOutputNode: MarkupWalker {
             }
             if
                 let defaultLanguage = context.sourceLanguages(for: identifier).first?.name,
-                let languageMatch = tabs.tabs.first(where: { $0.title.lowercased() == defaultLanguage }) {
+                let languageMatch = tabs.tabs.first(where: { $0.title.lowercased() == defaultLanguage.lowercased() }) {
                 visit(container: languageMatch.content)
             } else {
                 for tab in tabs.tabs {

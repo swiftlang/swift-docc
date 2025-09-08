@@ -125,6 +125,23 @@ extension MarkdownOutputNodeTranslator {
     }
     
     public mutating func visitStep(_ step: Step) -> MarkdownOutputNode? {
+        
+        // Check if the step contains another version of the current code reference
+        if let code = lastCode {
+            if let stepCode = step.code {
+                if stepCode.fileName != code.fileName {
+                    // New reference, render before proceeding
+                    node?.visit(code)
+                }
+            } else {
+                // No code, render the current one before proceeding
+                node?.visit(code)
+                lastCode = nil
+            }
+        }
+        
+        lastCode = step.code
+        
         stepIndex += 1
         node?.visit(Heading(level: 3, Text("Step \(stepIndex)")))
         for child in step.children {
@@ -171,10 +188,7 @@ extension MarkdownOutputNodeTranslator {
     }
     
     public mutating func visitCode(_ code: Code) -> MarkdownOutputNode? {
-        if let lastCode, lastCode.fileName != code.fileName {
-            node?.visit(code)
-        }
-        lastCode = code
+        // Code rendering is handled in visitStep(_:)
         return nil
     }
 }
