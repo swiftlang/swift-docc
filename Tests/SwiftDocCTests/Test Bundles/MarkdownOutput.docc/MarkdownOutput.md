@@ -2,6 +2,10 @@
 
 This catalog contains various documents to test aspects of markdown output functionality
 
+## Overview
+
+The symbol graph included in this catalog is generated from a package held in the original-source folder.
+
 ## Topics
 
 ### Directive Processing
