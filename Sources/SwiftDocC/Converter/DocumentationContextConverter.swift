@@ -114,7 +114,7 @@ public class DocumentationContextConverter {
         var translator = MarkdownOutputNodeTranslator(
             context: context,
             bundle: bundle,
-            identifier: node.reference,
+            node: node
 //            renderContext: renderContext,
 //            emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
 //            emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,

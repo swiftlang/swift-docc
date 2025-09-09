@@ -12,28 +12,52 @@ extension MarkdownOutputNode {
     public struct Metadata: Codable {
     
         static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
+        
         public enum DocumentType: String, Codable {
             case article, tutorial, symbol
         }
         
-        public struct Availability: Codable, Equatable {
-            let platform: String
-            let introduced: String?
-            let deprecated: String?
-            let unavailable: String?
+        public struct Symbol: Codable {
+                       
+            public let availability: [Availability]?
+            public let kind: String
+            public let preciseIdentifier: String
+            public let modules: [String]
+            
+            public struct Availability: Codable, Equatable {
+
+                let platform: String
+                let introduced: String?
+                let deprecated: String?
+                let unavailable: String?
+                
+                public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: String? = nil) {
+                    self.platform = platform
+                    self.introduced = introduced
+                    self.deprecated = deprecated
+                    self.unavailable = unavailable
+                }
+            }
+            
+            public init(availability: [MarkdownOutputNode.Metadata.Symbol.Availability]? = nil, kind: String, preciseIdentifier: String, modules: [String]) {
+                self.availability = availability
+                self.kind = kind
+                self.preciseIdentifier = preciseIdentifier
+                self.modules = modules
+            }
         }
-        
-        public let version: String
+               
+        public let metadataVersion: String
         public let documentType: DocumentType
+        public var role: String?
         public let uri: String
         public var title: String
         public let framework: String
-        public var symbolKind: String?
-        public var symbolAvailability: [Availability]?
-        
+        public var symbol: Symbol?
+                
         public init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference) {
             self.documentType = documentType
-            self.version = Self.version.description
+            self.metadataVersion = Self.version.description
             self.uri = reference.path
             self.title = reference.lastPathComponent
             self.framework = bundle.displayName

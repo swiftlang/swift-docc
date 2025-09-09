@@ -58,7 +58,7 @@
 				]
 			},
 			"docComment": {
-				"uri": "file://PATH/TO/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
+				"uri": "file://path/to/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
 				"module": "MarkdownOutput",
 				"lines": [
 					{
@@ -118,7 +118,7 @@
 			],
 			"accessLevel": "public",
 			"location": {
-				"uri": "file://PATH/TO/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
+				"uri": "file://path/to/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
 				"position": {
 					"line": 3,
 					"character": 14
@@ -189,7 +189,7 @@
 			],
 			"accessLevel": "public",
 			"location": {
-				"uri": "file://PATH/TO/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
+				"uri": "file://path/to/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
 				"position": {
 					"line": 4,
 					"character": 15
@@ -286,7 +286,7 @@
 				}
 			],
 			"location": {
-				"uri": "file://PATH/TO/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
+				"uri": "file://path/to/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
 				"position": {
 					"line": 8,
 					"character": 15
@@ -374,7 +374,7 @@
 				}
 			],
 			"location": {
-				"uri": "file://PATH/TO/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
+				"uri": "file://path/to/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
 				"position": {
 					"line": 11,
 					"character": 15
@@ -475,7 +475,7 @@
 			],
 			"accessLevel": "public",
 			"location": {
-				"uri": "file://PATH/TO/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
+				"uri": "file://path/to/MarkdownOutput/Sources/MarkdownOutput/MarkdownSymbol.swift",
 				"position": {
 					"line": 13,
 					"character": 11

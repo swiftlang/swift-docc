@@ -15,12 +15,14 @@ public struct MarkdownOutputNodeTranslator: SemanticVisitor {
     
     public let context: DocumentationContext
     public let bundle: DocumentationBundle
+    public let documentationNode: DocumentationNode
     public let identifier: ResolvedTopicReference
     
-    public init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference) {
+    public init(context: DocumentationContext, bundle: DocumentationBundle, node: DocumentationNode) {
         self.context = context
         self.bundle = bundle
-        self.identifier = identifier
+        self.documentationNode = node
+        self.identifier = node.reference
     }
     
     public typealias Result = MarkdownOutputNode?
@@ -41,6 +43,7 @@ extension MarkdownOutputNodeTranslator {
             node.metadata.title = title
         }
         
+        node.metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         node.visit(article.title)
         node.visit(article.abstract)
         node.visit(section: article.discussion)
@@ -58,10 +61,7 @@ extension MarkdownOutputNodeTranslator {
     public mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
         var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier, documentType: .symbol)
         
-        node.metadata.symbolKind = symbol.kind.displayName
-        node.metadata.symbolAvailability = symbol.availability?.availability.map {
-            MarkdownOutputNode.Metadata.Availability($0)
-        }
+        node.metadata.symbol = .init(symbol, context: context)
         
         node.visit(Heading(level: 1, Text(symbol.title)))
         node.visit(symbol.abstract)
@@ -94,7 +94,37 @@ extension MarkdownOutputNodeTranslator {
 
 import SymbolKit
 
-extension MarkdownOutputNode.Metadata.Availability {
+extension MarkdownOutputNode.Metadata.Symbol {
+    init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext) {
+        self.kind = symbol.kind.displayName
+        self.preciseIdentifier = symbol.externalID ?? ""
+        let symbolAvailability = symbol.availability?.availability.map {
+            MarkdownOutputNode.Metadata.Symbol.Availability($0)
+        }
+        
+        if let availability = symbolAvailability, availability.isEmpty == false {
+            self.availability = availability
+        } else {
+            self.availability = nil
+        }
+        
+        // Gather modules
+        var modules = [String]()
+        if let main = try? context.entity(with: symbol.moduleReference) {
+            modules.append(main.name.plainText)
+        }
+        if let crossImport = symbol.crossImportOverlayModule {
+            modules.append(contentsOf: crossImport.bystanderModules)
+        }
+        if let extended = symbol.extendedModuleVariants.firstValue, modules.contains(extended) == false {
+            modules.append(extended)
+        }
+        
+        self.modules = modules
+    }
+}
+
+extension MarkdownOutputNode.Metadata.Symbol.Availability {
     init(_ item: SymbolGraph.Symbol.Availability.AvailabilityItem) {
         self.platform = item.domain?.rawValue ?? "*"
         self.introduced = item.introducedVersion?.description
@@ -102,6 +132,7 @@ extension MarkdownOutputNode.Metadata.Availability {
         self.unavailable = item.obsoletedVersion?.description
     }
 }
+
 
 // MARK: Tutorial Output
 extension MarkdownOutputNodeTranslator {

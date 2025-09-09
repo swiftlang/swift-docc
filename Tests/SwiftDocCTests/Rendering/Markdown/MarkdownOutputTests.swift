@@ -39,10 +39,10 @@ final class MarkdownOutputTests: XCTestCase {
             path = "/documentation/MarkdownOutput/\(path)"
         }
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
-        let article = try XCTUnwrap(context.entity(with: reference).semantic)
-        var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, identifier: reference)
-        let node = try XCTUnwrap(translator.visit(article))
-        return node
+        let node = try XCTUnwrap(context.entity(with: reference))
+        var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, node: node)
+        let outputNode = try XCTUnwrap(translator.visit(node.semantic))
+        return outputNode
     }
 
     // MARK: Directive special processing
@@ -115,6 +115,16 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(node.metadata.documentType == .article)
     }
     
+    func testArticleRole() async throws {
+        let node = try await generateMarkdown(path: "RowsAndColumns")
+        XCTAssert(node.metadata.role == RenderMetadata.Role.article.rawValue)
+    }
+    
+    func testAPICollectionRole() async throws {
+        let node = try await generateMarkdown(path: "APICollection")
+        XCTAssert(node.metadata.role == RenderMetadata.Role.collectionGroup.rawValue)
+    }
+    
     func testArticleTitle() async throws {
         let node = try await generateMarkdown(path: "RowsAndColumns")
         XCTAssert(node.metadata.title == "Rows and Columns")
@@ -132,20 +142,43 @@ final class MarkdownOutputTests: XCTestCase {
     
     func testSymbolKind() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol/init(name:)")
-        XCTAssert(node.metadata.symbolKind == "Initializer")
+        XCTAssert(node.metadata.symbol?.kind == "Initializer")
+    }
+    
+    func testSymbolSingleModule() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        XCTAssertEqual(node.metadata.symbol?.modules, ["MarkdownOutput"])
+    }
+    
+    func testSymbolExtendedModule() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "ModuleWithSingleExtension")
+        let entity = try XCTUnwrap(context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
+        var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, node: entity)
+        let node = try XCTUnwrap(translator.visit(entity.semantic))
+        XCTAssertEqual(node.metadata.symbol?.modules, ["ModuleWithSingleExtension", "Swift"])
+    }
+    
+    func testNoAvailabilityWhenNothingPresent() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        XCTAssertNil(node.metadata.symbol?.availability)
     }
     
     func testSymbolDeprecation() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol/fullName")
-        let availability = try XCTUnwrap(node.metadata.symbolAvailability)
+        let availability = try XCTUnwrap(node.metadata.symbol?.availability)
         XCTAssertEqual(availability[0], .init(platform: "iOS", introduced: "1.0.0", deprecated: "4.0.0", unavailable: nil))
         XCTAssertEqual(availability[1], .init(platform: "macOS", introduced: "2.0.0", deprecated: "4.0.0", unavailable: nil))
     }
     
     func testSymbolObsolete() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol/otherName")
-        let availability = try XCTUnwrap(node.metadata.symbolAvailability)
+        let availability = try XCTUnwrap(node.metadata.symbol?.availability)
         XCTAssertEqual(availability[0], .init(platform: "iOS", introduced: nil, deprecated: nil, unavailable: "5.0.0"))
+    }
+    
+    func testSymbolIdentifier() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        XCTAssertEqual(node.metadata.symbol?.preciseIdentifier, "s:14MarkdownOutput0A6SymbolV")
     }
     
     func testTutorialDocumentType() async throws {
