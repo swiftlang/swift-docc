@@ -29,9 +29,9 @@ extension MarkdownOutputNode {
                 let platform: String
                 let introduced: String?
                 let deprecated: String?
-                let unavailable: String?
+                let unavailable: Bool
                 
-                public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: String? = nil) {
+                public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
                     self.platform = platform
                     self.introduced = introduced
                     self.deprecated = deprecated
@@ -44,6 +44,10 @@ extension MarkdownOutputNode {
                 self.kind = kind
                 self.preciseIdentifier = preciseIdentifier
                 self.modules = modules
+            }
+            
+            public func availability(for platform: String) -> Availability? {
+                availability?.first(where: { $0.platform == platform })
             }
         }
                

@@ -8,3 +8,5 @@ This is an API collection
 
 -<doc:Links>
 -<doc:RowsAndColumns>
+
+<!-- Copyright (c) 2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

@@ -33,7 +33,7 @@ public struct MarkdownOutputNode {
     public var data: Data {
         get throws {
             let encoder = JSONEncoder()
-            encoder.outputFormatting = [.prettyPrinted]
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
             let metadata = try encoder.encode(metadata)
             let commentOpen = "<!--\n".utf8
             let commentClose = "\n-->\n\n".utf8

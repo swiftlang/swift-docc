@@ -61,7 +61,7 @@ extension MarkdownOutputNodeTranslator {
     public mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
         var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier, documentType: .symbol)
         
-        node.metadata.symbol = .init(symbol, context: context)
+        node.metadata.symbol = .init(symbol, context: context, bundle: bundle)
         
         node.visit(Heading(level: 1, Text(symbol.title)))
         node.visit(symbol.abstract)
@@ -95,23 +95,16 @@ extension MarkdownOutputNodeTranslator {
 import SymbolKit
 
 extension MarkdownOutputNode.Metadata.Symbol {
-    init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext) {
+    init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationBundle) {
         self.kind = symbol.kind.displayName
         self.preciseIdentifier = symbol.externalID ?? ""
-        let symbolAvailability = symbol.availability?.availability.map {
-            MarkdownOutputNode.Metadata.Symbol.Availability($0)
-        }
-        
-        if let availability = symbolAvailability, availability.isEmpty == false {
-            self.availability = availability
-        } else {
-            self.availability = nil
-        }
-        
+                
         // Gather modules
         var modules = [String]()
+        var primaryModule: String?
         if let main = try? context.entity(with: symbol.moduleReference) {
             modules.append(main.name.plainText)
+            primaryModule = main.name.plainText
         }
         if let crossImport = symbol.crossImportOverlayModule {
             modules.append(contentsOf: crossImport.bystanderModules)
@@ -121,6 +114,18 @@ extension MarkdownOutputNode.Metadata.Symbol {
         }
         
         self.modules = modules
+        
+        let symbolAvailability = symbol.availability?.availability.map {
+            MarkdownOutputNode.Metadata.Symbol.Availability($0)
+        }
+        
+        if let availability = symbolAvailability, availability.isEmpty == false {
+            self.availability = availability
+        } else if let primaryModule, let defaultAvailability = bundle.info.defaultAvailability?.modules[primaryModule] {
+            self.availability = defaultAvailability.map { .init($0) }
+        } else {
+            self.availability = nil
+        }
     }
 }
 
@@ -129,10 +134,16 @@ extension MarkdownOutputNode.Metadata.Symbol.Availability {
         self.platform = item.domain?.rawValue ?? "*"
         self.introduced = item.introducedVersion?.description
         self.deprecated = item.deprecatedVersion?.description
-        self.unavailable = item.obsoletedVersion?.description
+        self.unavailable = item.obsoletedVersion != nil
+    }
+    
+    init(_ availability: DefaultAvailability.ModuleAvailability) {
+        self.platform = availability.platformName.displayName
+        self.introduced = availability.introducedVersion
+        self.deprecated = nil
+        self.unavailable = availability.versionInformation == .unavailable
     }
 }
-
 
 // MARK: Tutorial Output
 extension MarkdownOutputNodeTranslator {

@@ -10,5 +10,17 @@
 	<string>org.swift.MarkdownOutput</string>
 	<key>CFBundleVersion</key>
 	<string>0.1.0</string>
+	<key>CDAppleDefaultAvailability</key>
+	<dict>
+		<key>MarkdownOutput</key>
+		<array>
+			<dict>
+				<key>name</key>
+				<string>iOS</string>
+				<key>version</key>
+				<string>1.0</string>
+			</dict>
+		</array>
+	</dict>
 </dict>
 </plist>

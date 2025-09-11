@@ -158,22 +158,36 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssertEqual(node.metadata.symbol?.modules, ["ModuleWithSingleExtension", "Swift"])
     }
     
-    func testNoAvailabilityWhenNothingPresent() async throws {
+    func testSymbolDefaultAvailabilityWhenNothingPresent() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol")
-        XCTAssertNil(node.metadata.symbol?.availability)
+        let availability = try XCTUnwrap(node.metadata.symbol?.availability)
+        XCTAssertEqual(availability[0], .init(platform: "iOS", introduced: "1.0.0", deprecated: nil, unavailable: false))
+    }
+    
+    func testSymbolModuleDefaultAvailability() async throws {
+        let node = try await generateMarkdown(path: "/documentation/MarkdownOutput")
+        let availability = try XCTUnwrap(node.metadata.symbol?.availability(for: "iOS"))
+        XCTAssertEqual(availability.introduced, "1.0")
+        XCTAssertFalse(availability.unavailable)
     }
     
     func testSymbolDeprecation() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol/fullName")
-        let availability = try XCTUnwrap(node.metadata.symbol?.availability)
-        XCTAssertEqual(availability[0], .init(platform: "iOS", introduced: "1.0.0", deprecated: "4.0.0", unavailable: nil))
-        XCTAssertEqual(availability[1], .init(platform: "macOS", introduced: "2.0.0", deprecated: "4.0.0", unavailable: nil))
+        let availability = try XCTUnwrap(node.metadata.symbol?.availability(for: "iOS"))
+        XCTAssertEqual(availability.introduced, "1.0.0")
+        XCTAssertEqual(availability.deprecated, "4.0.0")
+        XCTAssertEqual(availability.unavailable, false)
+        
+        let macAvailability = try XCTUnwrap(node.metadata.symbol?.availability(for: "macOS"))
+        XCTAssertEqual(macAvailability.introduced, "2.0.0")
+        XCTAssertEqual(macAvailability.deprecated, "4.0.0")
+        XCTAssertEqual(macAvailability.unavailable, false)
     }
     
     func testSymbolObsolete() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol/otherName")
-        let availability = try XCTUnwrap(node.metadata.symbol?.availability)
-        XCTAssertEqual(availability[0], .init(platform: "iOS", introduced: nil, deprecated: nil, unavailable: "5.0.0"))
+        let availability = try XCTUnwrap(node.metadata.symbol?.availability(for: "iOS"))
+        XCTAssert(availability.unavailable)
     }
     
     func testSymbolIdentifier() async throws {
