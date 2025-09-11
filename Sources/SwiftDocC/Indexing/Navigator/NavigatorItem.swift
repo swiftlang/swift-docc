@@ -152,15 +152,15 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         // Without proper serialization, these indicators would be lost when navigator indexes are loaded from disk.
         
         length = MemoryLayout<UInt8>.stride
-        // To ensure backwards compatibility, handle both when `isBeta` has been encoded and when it hasn't
+        // To ensure backwards compatibility, handle both when `isBeta` and `isExternal` has been encoded and when it hasn't
         if cursor < data.count {
+            // Encoded `isBeta`
+            assert(cursor + length <= data.count, "The serialized data is malformed: `isBeta` value should not extend past the end of the data")
             let betaValue: UInt8 = unpackedValueFromData(data[cursor..<cursor + length])
             cursor += length
             self.isBeta = betaValue != 0
-        }
-
-        // To ensure backwards compatibility, handle both when `isExternal` has been encoded and when it hasn't
-        if cursor < data.count {
+            // Encoded `isExternal`
+            assert(cursor + length <= data.count, "The serialized data is malformed: `isExternal` value should not extend past the end of the data")
             let externalValue: UInt8 = unpackedValueFromData(data[cursor..<cursor + length])
             cursor += length
             self.isExternal = externalValue != 0
