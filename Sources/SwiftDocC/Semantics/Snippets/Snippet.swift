@@ -12,8 +12,25 @@ import Foundation
 public import Markdown
 import SymbolKit
 
+/// Embeds a code example from the project's code snippets.
+///
+/// ```markdown
+/// @Snippet(path: "my-package/Snippets/example-snippet", slice: "setup")
+/// ```
+///
+/// Place the `Snippet` directive to embed a code example from the project's snippet directory.
+/// The path that references the snippet is identified with three parts:
+///
+/// 1. The package name as defined in `Package.swift`
+///
+/// 2. The directory path to the snippet file, starting with "Snippets".
+///
+/// 3. The name of your snippet file without the `.swift` extension
+///
+/// If the snippet had slices annotated within it, an individual slice of the snippet can be referenced with the `slice` option.
+/// Without the option defined, the directive embeds the entire snippet.
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
-    public static let introducedVersion = "5.6"
+    public static let introducedVersion = "5.7"
     public let originalMarkup: BlockDirective
     
     /// The path components of a symbol link that would be used to resolve a reference to a snippet,
@@ -29,8 +46,6 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
         "path"  : \Snippet._path,
         "slice" : \Snippet._slice,
     ]
-    
-    static var hiddenFromDocumentation = true
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
