@@ -36,52 +36,6 @@ extension CollectionDifference {
 }
 
 class DocumentationContextTests: XCTestCase {
-    // This test checks unregistration of workspace data providers which is deprecated
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    func testResolve() async throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try await testBundle(named: "LegacyBundle_DoNotUseInNewTests")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
-        
-        // Test resolving
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:/TestTutorial")!)
-        let parent = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "", sourceLanguage: .swift)
-        
-        guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
-            XCTFail("Couldn't resolve \(unresolved)")
-            return
-        }
-        
-        XCTAssertEqual(parent.bundleIdentifier, resolved.bundleIdentifier)
-        XCTAssertEqual("/tutorials/Test-Bundle/TestTutorial", resolved.path)
-        
-        // Test lowercasing of path
-        let unresolvedUppercase = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:/TESTTUTORIAL")!)
-        guard case .failure = context.resolve(.unresolved(unresolvedUppercase), in: parent) else {
-            XCTFail("Did incorrectly resolve \(unresolvedUppercase)")
-            return
-        }
-        
-        // Test expected URLs
-        let expectedURL = URL(string: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial")
-        XCTAssertEqual(expectedURL, resolved.url)
-        
-        guard context.documentURL(for: resolved) != nil else {
-            XCTFail("Couldn't resolve file URL for \(resolved)")
-            return
-        }
-        
-        try workspace.unregisterProvider(dataProvider)
-        
-        guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
-            XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
-            return
-        }
-    }
-    
     func testLoadEntity() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
@@ -651,35 +605,6 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(downloadsAfter.first?.variants.values.first?.lastPathComponent, "intro.png")
     }
 
-    // This test registration more than once data provider which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    func testCreatesCorrectIdentifiers() throws {
-        let testBundleLocation = Bundle.module.url(
-            forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-        let workspaceContent = Folder(name: "TestWorkspace", content: [
-            CopyOfFolder(original: testBundleLocation),
-            
-            Folder(name: "TestBundle2.docc", content: [
-                InfoPlist(displayName: "Test Bundle", identifier: "com.example.bundle2"),
-                CopyOfFolder(original: testBundleLocation, newName: "Subfolder", filter: { $0.lastPathComponent != "Info.plist" }),
-            ])
-        ])
-        
-        let tempURL = try createTemporaryDirectory()
-        
-        let workspaceURL = try workspaceContent.write(inside: tempURL)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
-
-        let workspace = DocumentationWorkspace()
-        try workspace.registerProvider(dataProvider)
-        
-        let context = try DocumentationContext(dataProvider: workspace)
-        let identifiers = context.knownIdentifiers
-        let identifierSet = Set(identifiers)
-        XCTAssertEqual(identifiers.count, identifierSet.count, "Found duplicate identifiers.")
-    }
-    
     func testDetectsReferenceCollision() async throws {
         let (_, context) = try await testBundleAndContext(named: "TestBundleWithDupe")
 

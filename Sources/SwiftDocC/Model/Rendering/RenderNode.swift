@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -125,12 +125,6 @@ public struct RenderNode: VariantContainer {
     ///
     /// The key for each reference is the ``RenderReferenceIdentifier/identifier`` of the reference's ``RenderReference/identifier``.
     public var references: [String: any RenderReference] = [:]
-        
-    @available(*, deprecated, message: "Use 'hierarchyVariants' instead. This deprecated API will be removed after 6.2 is released")
-    public var hierarchy: RenderHierarchy? {
-        get { hierarchyVariants.defaultValue }
-        set { hierarchyVariants.defaultValue = newValue }
-    }
     
     /// Hierarchy information about the context in which this documentation node is placed.
     public var hierarchyVariants: VariantCollection<RenderHierarchy?> = .init(defaultValue: nil)

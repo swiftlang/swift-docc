@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -93,7 +93,8 @@ public class LinkResolver {
         
         // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
         if let bundleID = unresolvedReference.bundleID,
-           !context._registeredBundles.contains(where: { $0.id == bundleID || urlReadablePath($0.displayName) == bundleID.rawValue })
+           context.bundle.id != bundleID,
+           urlReadablePath(context.bundle.displayName) != bundleID.rawValue
         {
             return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for '\(bundleID)'."))
         }
@@ -171,9 +172,8 @@ private final class FallbackResolverBasedLinkResolver {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleID = unresolvedReference.bundleID ?? parent.bundleID
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
-              // This uses an underscored internal variant of `registeredBundles` to avoid deprecation warnings and remain compatible with legacy data providers.
-              let knownBundleID = context._registeredBundles.first(where: { $0.id == referenceBundleID || urlReadablePath($0.displayName) == referenceBundleID.rawValue })?.id,
-              fallbackResolver.bundleID == knownBundleID
+              fallbackResolver.bundleID == context.bundle.id,
+              context.bundle.id == referenceBundleID || urlReadablePath(context.bundle.displayName) == referenceBundleID.rawValue
         else {
             return nil
         }
@@ -191,8 +191,7 @@ private final class FallbackResolverBasedLinkResolver {
         )
         allCandidateURLs.append(alreadyResolved.url)
         
-        // This uses an underscored internal variant of `bundle(identifier:)` to avoid deprecation warnings and remain compatible with legacy data providers.
-        let currentBundle = context._bundle(identifier: knownBundleID.rawValue)!
+        let currentBundle = context.bundle
         if !isCurrentlyResolvingSymbolLink {
             // First look up articles path
             allCandidateURLs.append(contentsOf: [

@@ -18,11 +18,6 @@ extension Semantic.Analyses {
     public struct ExtractAll<Child: Semantic & DirectiveConvertible> {
         public init() {}
         
-        @available(*, deprecated, renamed: "analyze(_:children:source:for:problems:)", message: "Use 'analyze(_:children:source:for:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
-            analyze(directive, children: children, source: source, for: bundle, problems: &problems)
-        }
-        
         public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
             return Semantic.Analyses.extractAll(
                 childType: Child.self,
@@ -65,11 +60,6 @@ extension Semantic.Analyses {
                 $0 as? Child
             }
             return (matches, remainder: MarkupContainer(remainder))
-        }
-        
-        @available(*, deprecated, renamed: "analyze(_:children:source:problems:)", message: "Use 'analyze(_:children:source:problems:)' instead. This deprecated API will be removed after 6.2 is released")
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for _: DocumentationBundle, in _: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) {
-            analyze(directive, children: children, source: source, problems: &problems)
         }
     }
 }
