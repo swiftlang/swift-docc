@@ -16,11 +16,6 @@ import SwiftDocCTestUtilities
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
-    override func setUp() {
-        super.setUp()
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-    }
-    
     // These tests resolve absolute symbol links in both a local and external context to verify that external links work the same local links.
     
     func testUnambiguousAbsolutePaths() async throws {
