@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -161,5 +161,29 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         self.name = name
         self.introduced = introduced
         self.isBeta = isBeta
+    }
+}
+
+extension Array where Array.Element == AvailabilityRenderItem {
+    /// Determines whether all platforms in the array are in beta.
+    ///
+    /// This property returns `true` if every availability item in the array has its `isBeta` property set to `true`,
+    /// indicating that the symbol is introduced in a beta version across all platforms. If the array is empty,
+    /// this property returns `false`, as an item with no platform availability information is not considered
+    /// to be in beta.
+    ///
+    /// This computed property centralizes the beta determination logic to avoid code duplication across multiple
+    /// components that need to check whether a symbol is in beta based on its platform availability.
+    /// `NavigatorIndexableRenderMetadataRepresentation`, `OutOfProcessReferenceResolver.ResolvedInformation` and `LinkDestinationSummary` all store an array of ``AvailabilityRenderItem`` and need to determine beta status based on platform availability,
+    /// so it is convenient to de-duplicate the shared logic here.
+    ///
+    /// - Returns: `true` if all platforms in the array are in beta; `false` if the array is empty or if any
+    ///   platform is not in beta.
+    var isBeta: Bool {
+        guard !self.isEmpty else {
+            return false
+        }
+        
+        return self.allSatisfy { $0.isBeta == true }
     }
 }
