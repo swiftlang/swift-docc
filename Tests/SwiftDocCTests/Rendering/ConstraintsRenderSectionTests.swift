@@ -273,6 +273,43 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Verify we've removed the "Self." prefix in the type names
         XCTAssertEqual(renderReference.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol and Index conforms to Equatable.")
     }
+
+    func testRenderSameShape() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+            // Add constraints to `MyClass`
+            let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
+            var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
+
+            // "Inject" generic constraints
+            graph.symbols = try graph.symbols.mapValues({ symbol -> SymbolGraph.Symbol in
+                guard symbol.identifier.precise == "s:5MyKit0A5ClassC10myFunctionyyF" else { return symbol }
+                var symbol = symbol
+                symbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] = try jsonDecoder.decode(SymbolGraph.Symbol.Swift.Extension.self, from: """
+                {"extendedModule": "MyKit",
+                 "constraints": [
+                    { "kind" : "sameShape", "lhs" : "Element", "rhs" : "MyProtocol" }
+                ]}
+                """.data(using: .utf8)!)
+                return symbol
+            })
+            try jsonEncoder.encode(graph).write(to: graphURL)
+        }
+
+        // Compile docs and verify contents
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let symbol = node.semantic as! Symbol
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        let renderNode = translator.visitSymbol(symbol) as! RenderNode
+
+        guard let renderReference = renderNode.references.first(where: { (key, value) -> Bool in
+            return key.hasSuffix("myFunction()")
+        })?.value as? TopicRenderReference else {
+            XCTFail("Did not find render reference to myFunction()")
+            return
+        }
+
+        XCTAssertEqual(renderReference.conformance?.constraints.map(flattenInlineElements).joined(), "Element is the same shape as MyProtocol.")
+    }
 }
 
 fileprivate func flattenInlineElements(el: RenderInlineContent) -> String {
