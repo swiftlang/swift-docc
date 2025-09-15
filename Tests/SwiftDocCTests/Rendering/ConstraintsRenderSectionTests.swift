@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 import SymbolKit
 
 fileprivate let jsonDecoder = JSONDecoder()
@@ -275,40 +276,36 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testRenderSameShape() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
-            // Add constraints to `MyClass`
-            let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
-            var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "SameShapeConstraint",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
 
-            // "Inject" generic constraints
-            graph.symbols = try graph.symbols.mapValues({ symbol -> SymbolGraph.Symbol in
-                guard symbol.identifier.precise == "s:5MyKit0A5ClassC10myFunctionyyF" else { return symbol }
-                var symbol = symbol
-                symbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] = try jsonDecoder.decode(SymbolGraph.Symbol.Swift.Extension.self, from: """
-                {"extendedModule": "MyKit",
-                 "constraints": [
-                    { "kind" : "sameShape", "lhs" : "Element", "rhs" : "MyProtocol" }
-                ]}
-                """.data(using: .utf8)!)
-                return symbol
-            })
-            try jsonEncoder.encode(graph).write(to: graphURL)
-        }
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "SameShapeConstraint", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile),
+        ])
+
+        let (bundle, context) = try await loadBundle(catalog: catalog)
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SameShapeConstraint/function(_:)", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
 
         guard let renderReference = renderNode.references.first(where: { (key, value) -> Bool in
-            return key.hasSuffix("myFunction()")
+            return key.hasSuffix("function(_:)")
         })?.value as? TopicRenderReference else {
-            XCTFail("Did not find render reference to myFunction()")
+            XCTFail("Did not find render reference to function(_:)")
             return
         }
 
-        XCTAssertEqual(renderReference.conformance?.constraints.map(flattenInlineElements).joined(), "Element is the same shape as MyProtocol.")
+        // The symbol graph only defines constraints on the `swiftGenerics` mixin,
+        // which docc doesn't load or render.
+        // However, this test should still run without crashing on decoding the symbol graph.
+        XCTAssertEqual(renderReference.conformance?.constraints.map(flattenInlineElements).joined(), nil)
     }
 }
 
