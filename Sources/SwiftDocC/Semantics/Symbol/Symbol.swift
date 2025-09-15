@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -208,59 +208,24 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// Any dictionary keys of the symbol, if the symbol accepts keys.
     public var dictionaryKeysSection: DictionaryKeysSection?
-    @available(*, deprecated, renamed: "dictionaryKeysSection", message: "Use 'dictionaryKeysSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection> {
-        get { .init(defaultVariantValue: dictionaryKeysSection) }
-        set { dictionaryKeysSection = newValue.firstValue }
-    }
     
     /// The symbol's possible values, if the symbol is a property list element with possible values.
     public var possibleValuesSection: PropertyListPossibleValuesSection?
-    @available(*, deprecated, renamed: "possibleValuesSection", message: "Use 'possibleValuesSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var possibleValuesSectionVariants: DocumentationDataVariants<PropertyListPossibleValuesSection> {
-        get { .init(defaultVariantValue: possibleValuesSection) }
-        set { possibleValuesSection = newValue.firstValue }
-    }
 
     /// The HTTP endpoint of an HTTP request.
     public var httpEndpointSection: HTTPEndpointSection?
-    @available(*, deprecated, renamed: "httpEndpointSection", message: "Use 'httpEndpointSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection> {
-        get { .init(defaultVariantValue: httpEndpointSection) }
-        set { httpEndpointSection = newValue.firstValue }
-    }
-
+    
     /// The upload body of an HTTP request.
     public var httpBodySection: HTTPBodySection?
-    @available(*, deprecated, renamed: "httpBodySection", message: "Use 'httpBodySection' instead. This deprecated API will be removed after 6.2 is released")
-    public var httpBodySectionVariants: DocumentationDataVariants<HTTPBodySection> {
-        get { .init(defaultVariantValue: httpBodySection) }
-        set { httpBodySection = newValue.firstValue }
-    }
-
+    
     /// The parameters of an HTTP request.
     public var httpParametersSection: HTTPParametersSection?
-    @available(*, deprecated, renamed: "httpParametersSection", message: "Use 'httpParametersSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var httpParametersSectionVariants: DocumentationDataVariants<HTTPParametersSection> {
-        get { .init(defaultVariantValue: httpParametersSection) }
-        set { httpParametersSection = newValue.firstValue }
-    }
 
     /// The responses of an HTTP request.
     public var httpResponsesSection: HTTPResponsesSection?
-    @available(*, deprecated, renamed: "httpResponsesSection", message: "Use 'httpResponsesSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var httpResponsesSectionVariants: DocumentationDataVariants<HTTPResponsesSection> {
-        get { .init(defaultVariantValue: httpResponsesSection) }
-        set { httpResponsesSection = newValue.firstValue }
-    }
     
     /// Any redirect information of the symbol, if the symbol has been moved from another location.
     public var redirects: [Redirect]?
-    @available(*, deprecated, renamed: "redirects", message: "Use 'redirects' instead. This deprecated API will be removed after 6.2 is released")
-    public var redirectsVariants: DocumentationDataVariants<[Redirect]> {
-        get { .init(defaultVariantValue: redirects) }
-        set { redirects = newValue.firstValue }
-    }
     
     /// The symbol's abstract summary as a single paragraph, in each language variant the symbol is available in.
     public var abstractVariants: DocumentationDataVariants<Paragraph> {

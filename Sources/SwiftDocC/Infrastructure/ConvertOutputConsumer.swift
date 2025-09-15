@@ -16,8 +16,8 @@ import Foundation
 /// or store them in memory.
 public protocol ConvertOutputConsumer {
     /// Consumes an array of problems that were generated during a conversion.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    func consume(problems: [Problem]) throws
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
+    func _deprecated_consume(problems: [Problem]) throws
     
     /// Consumes a render node that was generated during a conversion.
     /// > Warning: This method might be called concurrently.
@@ -62,7 +62,7 @@ public extension ConvertOutputConsumer {
 
 // Default implementation so that conforming types don't need to implement deprecated API.
 public extension ConvertOutputConsumer {
-    func consume(problems: [Problem]) throws {}
+    func _deprecated_consume(problems: [Problem]) throws {}
 }
 
 // A package-internal protocol that callers can cast to when they need to call `_consume(problems:)` for backwards compatibility (until `consume(problems:)` is removed).
@@ -84,7 +84,7 @@ package struct _Deprecated<Consumer: ConvertOutputConsumer>: _DeprecatedConsumeP
     }
     
     // This needs to be deprecated to be able to call `consume(problems:)` without a deprecation warning.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
     package func _consume(problems: [Problem]) throws {
         var problems = problems
         
@@ -94,7 +94,7 @@ package struct _Deprecated<Consumer: ConvertOutputConsumer>: _DeprecatedConsumeP
                     severity: .warning,
                     identifier: "org.swift.docc.DeprecatedDiagnosticsDigets",
                     summary: """
-                    The 'diagnostics.json' digest file is deprecated and will be removed after 6.2 is released. \
+                    The 'diagnostics.json' digest file is deprecated and will be removed after 6.3 is released. \
                     Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.
                     """)
                 ),
@@ -102,7 +102,7 @@ package struct _Deprecated<Consumer: ConvertOutputConsumer>: _DeprecatedConsumeP
             )
         }
         
-        try consumer.consume(problems: problems)
+        try consumer._deprecated_consume(problems: problems)
     }
 }
 

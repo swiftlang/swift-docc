@@ -1801,9 +1801,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         
         return SymbolGraphLoader(
             bundle: bundle,
-            dataLoader: { url, _ in
-                try FileManager.default.contents(of: url)
-            },
+            dataProvider: FileManager.default,
             symbolGraphTransformer: configureSymbolGraph
         )
     }

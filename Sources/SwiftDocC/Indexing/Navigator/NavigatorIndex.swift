@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,17 +10,6 @@
 
 public import Foundation
 import Crypto
-
-/// A protocol to provide data to be indexed.
-@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released.")
-public protocol RenderNodeProvider {
-    /// Get an instance of `RenderNode` to be processed by the index.
-    /// - Note: Returning `nil` will end the indexing process.
-    func getRenderNode() -> RenderNode?
-    
-    /// Returns an array of `Problem` indicating which problems the `Provider` encountered.
-    func getProblems() -> [Problem]
-}
 
 /**
  A `NavigatorIndex` contains all the necessary information to display the data inside a navigator.
@@ -477,14 +466,6 @@ extension NavigatorIndex {
      */
     open class Builder {
         
-        /// The data provider.
-        @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-        public var renderNodeProvider: (any RenderNodeProvider)? {
-            _renderNodeProvider as! (any RenderNodeProvider)?
-        }
-        // This property only exist to be able to assign `nil` to `renderNodeProvider` in the new initializer without causing a deprecation warning.
-        private let _renderNodeProvider: Any?
-        
         /// The documentation archive to build an index from.
         public let archiveURL: URL?
         
@@ -579,20 +560,6 @@ extension NavigatorIndex {
         ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
         public init(archiveURL: URL? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.archiveURL = archiveURL
-            self._renderNodeProvider = nil
-            self.outputURL = outputURL
-            self.bundleIdentifier = bundleIdentifier
-            self.sortRootChildrenByName = sortRootChildrenByName
-            self.groupByLanguage = groupByLanguage
-            self.writePathsOnDisk = writePathsOnDisk
-            self.usePageTitle = usePageTitle
-        }
-        
-        @available(*, deprecated, renamed: "init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)", message: "Use 'init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)' instead. This deprecated API will be removed after 6.2 is released")
-        @_disfavoredOverload
-        public init(renderNodeProvider: (any RenderNodeProvider)? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
-            self._renderNodeProvider = renderNodeProvider
-            self.archiveURL = nil
             self.outputURL = outputURL
             self.bundleIdentifier = bundleIdentifier
             self.sortRootChildrenByName = sortRootChildrenByName
@@ -1292,17 +1259,12 @@ extension NavigatorIndex {
         
         /// Build the index using the render nodes files in the provided documentation archive.
         /// - Returns: A list containing all the errors encountered during indexing.
-        /// - Precondition: Either ``archiveURL`` or ``renderNodeProvider`` is set.
+        /// - Precondition: ``archiveURL`` is set.
         public func build() -> [Problem] {
-            if let archiveURL {
-                return _build(archiveURL: archiveURL)
-            } else {
-                return (self as (any _DeprecatedRenderNodeProviderAccess))._legacyBuild()
+            guard let archiveURL else {
+                fatalError("Calling `build()` requires that `archiveURL` is set.")
             }
-        }
-        
-        // After 6.2 is released, move this into `build()`.
-        private func _build(archiveURL: URL) -> [Problem] {
+            
             setup()
             
             let dataDirectory = archiveURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName, isDirectory: true)
@@ -1313,27 +1275,6 @@ extension NavigatorIndex {
                     try index(renderNode: renderNode)
                 } catch {
                     problems.append(error.problem(source: file,
-                                                  severity: .warning,
-                                                  summaryPrefix: "RenderNode indexing process failed"))
-                }
-            }
-            
-            finalize()
-            
-            return problems
-        }
-        
-        @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-        fileprivate func _legacyBuild() -> [Problem] {
-            precondition(renderNodeProvider != nil, "Calling `build()` without an `archiveURL` or `renderNodeProvider` set is not permitted.")
-            
-            setup()
-            
-            while let renderNode = renderNodeProvider!.getRenderNode() {
-                do {
-                    try index(renderNode: renderNode)
-                } catch {
-                    problems.append(error.problem(source: renderNode.identifier.url,
                                                   severity: .warning,
                                                   summaryPrefix: "RenderNode indexing process failed"))
                 }
@@ -1416,9 +1357,3 @@ enum PathHasher: String {
         }
     }
 }
-
-private protocol _DeprecatedRenderNodeProviderAccess {
-    // This private function accesses the deprecated RenderNodeProvider
-    func _legacyBuild() -> [Problem]
-}
-extension NavigatorIndex.Builder: _DeprecatedRenderNodeProviderAccess {}
