@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -184,11 +184,7 @@ private extension Sequence<DeclarationRenderSection.Token> {
 private extension LinkDestinationSummary {
     /// A value that indicates whether this symbol is under development and likely to change.
     var isBeta: Bool {
-        guard let platforms, !platforms.isEmpty else {
-            return false
-        }
-        
-        return platforms.allSatisfy { $0.isBeta == true }
+        return platforms?.isBeta ?? false
     }
     
     /// Create a topic render render reference for this link summary and its content variants.

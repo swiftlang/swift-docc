@@ -590,11 +590,7 @@ extension OutOfProcessReferenceResolver {
        
         /// A value that indicates whether this symbol is under development and likely to change.
         var isBeta: Bool {
-            guard let platforms, !platforms.isEmpty else {
-                return false
-            }
-            
-            return platforms.allSatisfy { $0.isBeta == true }
+            return platforms?.isBeta ?? false
         }
         
         /// Creates a new resolved information value with all its values.

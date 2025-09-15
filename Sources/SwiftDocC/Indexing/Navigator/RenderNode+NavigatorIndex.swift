@@ -125,11 +125,7 @@ struct RenderNodeVariantView: NavigatorIndexableRenderNodeRepresentation {
 
 extension NavigatorIndexableRenderMetadataRepresentation {
     var isBeta: Bool {
-        guard let platforms, !platforms.isEmpty else {
-            return false
-        }
-        
-        return platforms.allSatisfy { $0.isBeta == true }
+        return platforms?.isBeta ?? false
     }
 }
 
