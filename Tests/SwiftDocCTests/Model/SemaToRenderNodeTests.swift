@@ -1188,7 +1188,8 @@ class SemaToRenderNodeTests: XCTestCase {
                         estimatedTime: nil
                     ),
                     renderReferenceDependencies: .init(),
-                    sourceLanguages: [.objectiveC]
+                    sourceLanguages: [.objectiveC],
+                    symbolKind: .class
                 )
                 return (reference, entity)
             }
@@ -1218,7 +1219,8 @@ class SemaToRenderNodeTests: XCTestCase {
                         estimatedTime: nil
                     ),
                     renderReferenceDependencies: .init(),
-                    sourceLanguages: [.swift]
+                    sourceLanguages: [.swift],
+                    symbolKind: nil
                 )
             }
         }

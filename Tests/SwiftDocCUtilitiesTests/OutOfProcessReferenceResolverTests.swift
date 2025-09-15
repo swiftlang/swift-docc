@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -53,7 +53,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     
     func assertResolvesTopicLink(makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver) throws {
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
-            kind: .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true),
+            kind: .function,
             url: URL(string: "doc://com.test.bundle/something")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
@@ -133,6 +133,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         } else {
             XCTFail("Unexpected fragments variant patch")
         }
+        
+        XCTAssertEqual(entity.symbolKind, .func)
     }
     
     func testResolvingTopicLinkProcess() throws {

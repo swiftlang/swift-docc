@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+public import SymbolKit
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
@@ -48,11 +48,18 @@ public class LinkResolver {
         ///   - topicRenderReference: The render reference for this external topic.
         ///   - renderReferenceDependencies: Any dependencies for the render reference.
         ///   - sourceLanguages: The different source languages for which this page is available.
+        ///   - symbolKind: The kind of symbol that's being referenced.
         @_spi(ExternalLinks)
-        public init(topicRenderReference: TopicRenderReference, renderReferenceDependencies: RenderReferenceDependencies, sourceLanguages: Set<SourceLanguage>) {
+        public init(
+            topicRenderReference: TopicRenderReference,
+            renderReferenceDependencies: RenderReferenceDependencies,
+            sourceLanguages: Set<SourceLanguage>,
+            symbolKind: SymbolGraph.Symbol.KindIdentifier? = nil
+        ) {
             self.topicRenderReference = topicRenderReference
             self.renderReferenceDependencies = renderReferenceDependencies
             self.sourceLanguages = sourceLanguages
+            self.symbolKind = symbolKind
         }
         
         /// The render reference for this external topic.
@@ -63,7 +70,13 @@ public class LinkResolver {
         var renderReferenceDependencies: RenderReferenceDependencies
         /// The different source languages for which this page is available.
         var sourceLanguages: Set<SourceLanguage>
-        
+        /// The kind of symbol that's being referenced.
+        ///
+        /// This value is `nil` if the entity does not reference a symbol.
+        ///
+        /// For example, the navigator requires specific knowledge about what type of external symbol is being linked to.
+        var symbolKind: SymbolGraph.Symbol.KindIdentifier?
+
         /// Creates a pre-render new topic content value to be added to a render context's reference store.
         func topicContent() -> RenderReferenceStore.TopicContent {
             return .init(

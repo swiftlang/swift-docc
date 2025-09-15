@@ -39,9 +39,10 @@ package struct ExternalRenderNode {
     }
     
     /// The symbol kind of this documentation node.
+    ///
+    /// This value is `nil` if the referenced page is not a symbol.
     var symbolKind: SymbolGraph.Symbol.KindIdentifier? {
-        // Symbol kind information is not available for external entities
-        return nil
+        externalEntity.symbolKind
     }
     
     /// The additional "role" assigned to the symbol, if any
@@ -116,7 +117,7 @@ struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
             navigatorTitle: renderNode.navigatorTitleVariants.value(for: traits),
             externalID: renderNode.externalIdentifier.identifier,
             role: renderNode.role,
-            symbolKind: renderNode.symbolKind?.identifier,
+            symbolKind: renderNode.symbolKind?.renderingIdentifier,
             images: renderNode.images,
             isBeta: renderNode.isBeta
         )

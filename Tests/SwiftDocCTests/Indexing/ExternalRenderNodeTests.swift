@@ -97,7 +97,7 @@ class ExternalRenderNodeTests: XCTestCase {
 
         XCTAssertEqual(externalRenderNodes[1].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/example/path/to/external/objCSymbol")
         XCTAssertEqual(externalRenderNodes[1].kind, .symbol)
-        XCTAssertEqual(externalRenderNodes[1].symbolKind, nil)
+        XCTAssertEqual(externalRenderNodes[1].symbolKind, .func)
         XCTAssertEqual(externalRenderNodes[1].role, "symbol")
         XCTAssertEqual(externalRenderNodes[1].externalIdentifier.identifier, "doc://com.test.external/path/to/external/objCSymbol")
         XCTAssertFalse(externalRenderNodes[1].isBeta)
@@ -111,7 +111,7 @@ class ExternalRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(externalRenderNodes[3].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/example/path/to/external/swiftSymbol")
         XCTAssertEqual(externalRenderNodes[3].kind, .symbol)
-        XCTAssertEqual(externalRenderNodes[3].symbolKind, nil)
+        XCTAssertEqual(externalRenderNodes[3].symbolKind, .class)
         XCTAssertEqual(externalRenderNodes[3].role, "symbol")
         XCTAssertEqual(externalRenderNodes[3].externalIdentifier.identifier, "doc://com.test.external/path/to/external/swiftSymbol")
         XCTAssertTrue(externalRenderNodes[3].isBeta)
@@ -143,7 +143,8 @@ class ExternalRenderNodeTests: XCTestCase {
                 navigatorTitleVariants: .init(defaultValue: navigatorTitle, objectiveCValue: occNavigatorTitle)
             ),
             renderReferenceDependencies: .init(),
-            sourceLanguages: [SourceLanguage(name: "swift"), SourceLanguage(name: "objc")])
+            sourceLanguages: [SourceLanguage(name: "swift"), SourceLanguage(name: "objc")],
+            symbolKind: .func)
         let externalRenderNode = ExternalRenderNode(
             externalEntity: externalEntity,
             bundleIdentifier: "com.test.external"
@@ -222,6 +223,8 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssert(swiftExternalNodes.first { $0.title == "SwiftSymbol" }?.isBeta == true)
         XCTAssert(occExternalNodes.first { $0.title == "ObjCArticle" }?.isBeta == true)
         XCTAssert(occExternalNodes.first { $0.title == "ObjCSymbol" }?.isBeta == false)
+        XCTAssertEqual(swiftExternalNodes.map(\.type), ["article", "class"])
+        XCTAssertEqual(occExternalNodes.map(\.type), ["article", "func"])
     }
     
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
@@ -282,6 +285,8 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCSymbol"])
         XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
         XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
+        XCTAssertEqual(swiftExternalNodes.map(\.type), ["article"])
+        XCTAssertEqual(occExternalNodes.map(\.type), ["func"])
     }
 
     func testExternalRenderNodeVariantRepresentationWhenIsBeta() throws {

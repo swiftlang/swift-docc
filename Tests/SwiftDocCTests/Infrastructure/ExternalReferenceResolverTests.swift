@@ -52,7 +52,8 @@ class ExternalReferenceResolverTests: XCTestCase {
                     }
                 ),
                 renderReferenceDependencies: RenderReferenceDependencies(),
-                sourceLanguages: [resolvedEntityLanguage]
+                sourceLanguages: [resolvedEntityLanguage],
+                symbolKind: nil
             )
         }
     }
@@ -641,7 +642,8 @@ class ExternalReferenceResolverTests: XCTestCase {
                         estimatedTime: nil
                     ),
                     renderReferenceDependencies: RenderReferenceDependencies(),
-                    sourceLanguages: [.swift]
+                    sourceLanguages: [.swift],
+                    symbolKind: .property
                 )
             }
         }
