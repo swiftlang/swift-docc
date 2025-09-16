@@ -17,37 +17,31 @@ extension MarkdownOutputNode {
             case article, tutorial, symbol
         }
         
+        public struct Availability: Codable, Equatable {
+            
+            let platform: String
+            let introduced: String?
+            let deprecated: String?
+            let unavailable: Bool
+            
+            public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
+                self.platform = platform
+                self.introduced = introduced
+                self.deprecated = deprecated
+                self.unavailable = unavailable
+            }
+        }
+        
         public struct Symbol: Codable {
-                       
-            public let availability: [Availability]?
             public let kind: String
             public let preciseIdentifier: String
             public let modules: [String]
             
-            public struct Availability: Codable, Equatable {
-
-                let platform: String
-                let introduced: String?
-                let deprecated: String?
-                let unavailable: Bool
-                
-                public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
-                    self.platform = platform
-                    self.introduced = introduced
-                    self.deprecated = deprecated
-                    self.unavailable = unavailable
-                }
-            }
             
-            public init(availability: [MarkdownOutputNode.Metadata.Symbol.Availability]? = nil, kind: String, preciseIdentifier: String, modules: [String]) {
-                self.availability = availability
+            public init(kind: String, preciseIdentifier: String, modules: [String]) {
                 self.kind = kind
                 self.preciseIdentifier = preciseIdentifier
                 self.modules = modules
-            }
-            
-            public func availability(for platform: String) -> Availability? {
-                availability?.first(where: { $0.platform == platform })
             }
         }
                
@@ -58,6 +52,7 @@ extension MarkdownOutputNode {
         public var title: String
         public let framework: String
         public var symbol: Symbol?
+        public var availability: [Availability]?
                 
         public init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference) {
             self.documentType = documentType
@@ -65,6 +60,10 @@ extension MarkdownOutputNode {
             self.uri = reference.path
             self.title = reference.lastPathComponent
             self.framework = bundle.displayName
+        }
+        
+        public func availability(for platform: String) -> Availability? {
+            availability?.first(where: { $0.platform == platform })
         }
     }
     
