@@ -141,7 +141,7 @@ public enum RenderBlockContent: Equatable {
         public enum OptionName: String, CaseIterable {
             case nocopy
 
-            init?<S: StringProtocol>(caseInsensitive raw: S) {
+            init?(caseInsensitive raw: some StringProtocol) {
                 self.init(rawValue: raw.lowercased())
             }
         }
