@@ -477,10 +477,10 @@ extension Docc {
             var experimentalEnableCustomTemplates = false
 
             @Flag(
-                name: .customLong("enable-experimental-code-block"),
-                help: "Support copy-to-clipboard for code blocks."
+                name: .customLong("enable-experimental-code-block-annotations"),
+                help: "Support annotations for code blocks."
             )
-            var enableExperimentalCodeBlock = false
+            var enableExperimentalCodeBlockAnnotations = false
 
             @Flag(help: .hidden)
             var enableExperimentalDeviceFrameSupport = false
@@ -567,9 +567,9 @@ extension Docc {
         /// A user-provided value that is true if the user enables experimental support for code block annotation.
         ///
         /// Defaults to false.
-        public var enableExperimentalCodeBlock: Bool {
-            get { featureFlags.enableExperimentalCodeBlock }
-            set { featureFlags.enableExperimentalCodeBlock = newValue}
+        public var enableExperimentalCodeBlocAnnotations: Bool {
+            get { featureFlags.enableExperimentalCodeBlockAnnotations }
+            set { featureFlags.enableExperimentalCodeBlockAnnotations = newValue}
         }
 
         /// A user-provided value that is true if the user enables experimental support for device frames.

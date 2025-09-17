@@ -48,7 +48,7 @@ struct RenderContentCompiler: MarkupVisitor {
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [any RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
 
-        if FeatureFlags.current.isExperimentalCodeBlockEnabled {
+        if FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled {
 
             func parseLanguageString(_ input: String?) -> (lang: String? , tokens: [RenderBlockContent.CodeListing.OptionName]) {
                 guard let input else { return (lang: nil, tokens: []) }
