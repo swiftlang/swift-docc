@@ -124,12 +124,12 @@ public enum RenderBlockContent: Equatable {
         public var code: [String]
         /// Additional metadata for this code block.
         public var metadata: RenderContentMetadata?
-        public var copyToClipboard: Bool = true
+        public var copyToClipboard: Bool
 
         public enum OptionName: String, CaseIterable {
             case nocopy
 
-            init?<S: StringProtocol>(caseInsensitive raw: S) {
+            init?(caseInsensitive raw: some StringProtocol) {
                 self.init(rawValue: raw.lowercased())
             }
         }
@@ -139,7 +139,7 @@ public enum RenderBlockContent: Equatable {
         }
 
         /// Make a new `CodeListing` with the given data.
-        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool) {
+        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool = true) {
             self.syntax = syntax
             self.code = code
             self.metadata = metadata
