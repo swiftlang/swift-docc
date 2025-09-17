@@ -8,15 +8,15 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
-public import Markdown
+internal import Foundation
+internal import Markdown
 
 /**
  Code blocks can have a `nocopy` option after the \`\`\`, in the language line.
 `nocopy` can be immediately after the \`\`\` or after a specified language and a comma (`,`).
  */
-public struct InvalidCodeBlockOption: Checker {
-    public var problems = [Problem]()
+internal struct InvalidCodeBlockOption: Checker {
+    var problems = [Problem]()
 
     /// Parsing options for code blocks
     private let knownOptions = RenderBlockContent.CodeListing.knownOptions
@@ -26,11 +26,11 @@ public struct InvalidCodeBlockOption: Checker {
     /// Creates a new checker that detects documents with multiple titles.
     ///
     /// - Parameter sourceFile: The URL to the documentation file that the checker checks.
-    public init(sourceFile: URL?) {
+    init(sourceFile: URL?) {
         self.sourceFile = sourceFile
     }
 
-    public mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
+    mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
         let info = codeBlock.language?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         guard !info.isEmpty else { return }
 
