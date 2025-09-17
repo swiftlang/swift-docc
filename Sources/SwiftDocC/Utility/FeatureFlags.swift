@@ -15,7 +15,7 @@ public struct FeatureFlags: Codable {
     public static var current = FeatureFlags()
 
     /// Whether or not experimental annotation of code blocks is enabled.
-    public var isExperimentalCodeBlockEnabled = false
+    public var isExperimentalCodeBlockAnnotationsEnabled = false
 
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false

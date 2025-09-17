@@ -37,11 +37,11 @@ extension DocumentationBundle.Info {
             self.unknownFeatureFlags = []
         }
 
-        /// This feature flag corresponds to ``FeatureFlags/isExperimentalCodeBlockEnabled``.
-        public var experimentalCodeBlock: Bool?
+        /// This feature flag corresponds to ``FeatureFlags/isExperimentalCodeBlockAnnotationsEnabled``.
+        public var experimentalCodeBlockAnnotations: Bool?
 
-        public init(experimentalCodeBlock: Bool? = nil) {
-            self.experimentalCodeBlock = experimentalCodeBlock
+        public init(experimentalCodeBlockAnnotations: Bool? = nil) {
+            self.experimentalCodeBlockAnnotations = experimentalCodeBlockAnnotations
             self.unknownFeatureFlags = []
         }
 
@@ -50,7 +50,7 @@ extension DocumentationBundle.Info {
 
         enum CodingKeys: String, CodingKey, CaseIterable {
             case experimentalOverloadedSymbolPresentation = "ExperimentalOverloadedSymbolPresentation"
-            case experimentalCodeBlock = "ExperimentalCodeBlock"
+            case experimentalCodeBlockAnnotations = "ExperimentalCodeBlockAnnotations"
         }
 
         struct AnyCodingKeys: CodingKey {
@@ -76,8 +76,8 @@ extension DocumentationBundle.Info {
                     case .experimentalOverloadedSymbolPresentation:
                         self.experimentalOverloadedSymbolPresentation = try values.decode(Bool.self, forKey: flagName)
 
-                    case .experimentalCodeBlock:
-                        self.experimentalCodeBlock = try values.decode(Bool.self, forKey: flagName)
+                    case .experimentalCodeBlockAnnotations:
+                        self.experimentalCodeBlockAnnotations = try values.decode(Bool.self, forKey: flagName)
                     }
                 } else {
                     unknownFeatureFlags.append(flagName.stringValue)
@@ -91,7 +91,7 @@ extension DocumentationBundle.Info {
             var container = encoder.container(keyedBy: CodingKeys.self)
 
             try container.encode(experimentalOverloadedSymbolPresentation, forKey: .experimentalOverloadedSymbolPresentation)
-            try container.encode(experimentalCodeBlock, forKey: .experimentalCodeBlock)
+            try container.encode(experimentalCodeBlockAnnotations, forKey: .experimentalCodeBlockAnnotations)
         }
     }
 }

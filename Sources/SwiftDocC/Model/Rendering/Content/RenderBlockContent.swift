@@ -733,7 +733,7 @@ extension RenderBlockContent: Codable {
             }
             self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))
         case .codeListing:
-            let copy = FeatureFlags.current.isExperimentalCodeBlockEnabled
+            let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
             self = try .codeListing(.init(
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
