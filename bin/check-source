@@ -134,8 +134,7 @@ EOF
   (
     cd "$here/.."
     find . \
-      \( \! -path './.build/*' -a \
-      \! -path './bin/benchmark/.build/*' -a \
+      \( \! -path '*/.build/*' -a \
       \! -name '.' -a \
       \( "${matching_files[@]}" \) -a \
       \( \! \( "${exceptions[@]}" \) \) \) | while read line; do
