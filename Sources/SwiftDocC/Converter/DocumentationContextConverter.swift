@@ -106,7 +106,7 @@ public class DocumentationContextConverter {
     /// - Parameters:
     ///   - node: The documentation node to convert.
     /// - Returns: The markdown node representation of the documentation node.
-    public func markdownNode(for node: DocumentationNode) -> MarkdownOutputNode? {
+    public func markdownNode(for node: DocumentationNode) -> WritableMarkdownOutputNode? {
         guard !node.isVirtual else {
             return nil
         }
@@ -121,6 +121,6 @@ public class DocumentationContextConverter {
 //            sourceRepository: sourceRepository,
 //            symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
         )
-        return translator.visit(node.semantic)
+        return translator.createOutput()
     }
 }

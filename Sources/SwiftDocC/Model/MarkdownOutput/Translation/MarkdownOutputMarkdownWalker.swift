@@ -8,56 +8,27 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
-public import Markdown
+import Markdown
 
-/// A markdown version of a documentation node.
-public struct MarkdownOutputNode {
-
-    public let context: DocumentationContext
-    public let bundle: DocumentationBundle
-    public let identifier: ResolvedTopicReference
-    public var metadata: Metadata
-    
-    public init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference, documentType: Metadata.DocumentType) {
-        self.context = context
-        self.bundle = bundle
-        self.identifier = identifier
-        self.metadata = Metadata(documentType: documentType, bundle: bundle, reference: identifier)
-    }
-
-    /// The markdown content of this node
-    public var markdown: String = ""
-    
-    /// Data for this node to be rendered to disk
-    public var data: Data {
-        get throws {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-            let metadata = try encoder.encode(metadata)
-            let commentOpen = "<!--\n".utf8
-            let commentClose = "\n-->\n\n".utf8
-            var data = Data()
-            data.append(contentsOf: commentOpen)
-            data.append(metadata)
-            data.append(contentsOf: commentClose)
-            data.append(contentsOf: markdown.utf8)
-            return data
-        }
-    }
-    
+/// Performs any markup processing necessary to build the final output markdown
+internal struct MarkdownOutputMarkupWalker: MarkupWalker {
+    let context: DocumentationContext
+    let bundle: DocumentationBundle
+    let identifier: ResolvedTopicReference
+    var markdown = ""
+     
     private(set) var indentationToRemove: String?
     private(set) var isRenderingLinkList = false
     
     /// Perform actions while rendering a link list, which affects the output formatting of links
-    public mutating func withRenderingLinkList(_ process: (inout MarkdownOutputNode) -> Void) {
+    public mutating func withRenderingLinkList(_ process: (inout Self) -> Void) {
         isRenderingLinkList = true
         process(&self)
         isRenderingLinkList = false
     }
     
     /// Perform actions while removing a base level of indentation, typically while processing the contents of block directives.
-    public mutating func withRemoveIndentation(from base: (any Markup)?, process: (inout MarkdownOutputNode) -> Void) {
+    public mutating func withRemoveIndentation(from base: (any Markup)?, process: (inout Self) -> Void) {
         indentationToRemove = nil
         if let toRemove = base?
             .format()
@@ -67,13 +38,13 @@ public struct MarkdownOutputNode {
             if toRemove.isEmpty == false {
                 indentationToRemove = String(toRemove)
             }
-        } 
+        }
         process(&self)
         indentationToRemove = nil
     }
 }
 
-extension MarkdownOutputNode {
+extension MarkdownOutputMarkupWalker {
     mutating func visit(_ optionalMarkup: (any Markup)?) -> Void {
         if let markup = optionalMarkup {
             self.visit(markup)
@@ -106,7 +77,7 @@ extension MarkdownOutputNode {
     }
 }
 
-extension MarkdownOutputNode: MarkupWalker {
+extension MarkdownOutputMarkupWalker {
     
     public mutating func defaultVisit(_ markup: any Markup) -> () {
         var output = markup.format()
@@ -293,7 +264,7 @@ extension MarkdownOutputNode: MarkupWalker {
 }
 
 // Semantic handling
-extension MarkdownOutputNode {
+extension MarkdownOutputMarkupWalker {
     
     mutating func visit(container: MarkupContainer?) -> Void {
         container?.elements.forEach {

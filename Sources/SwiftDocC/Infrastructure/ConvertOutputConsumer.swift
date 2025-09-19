@@ -52,7 +52,7 @@ public protocol ConvertOutputConsumer {
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws
     
     /// Consumes a markdown output node
-    func consume(markdownNode: MarkdownOutputNode) throws
+    func consume(markdownNode: WritableMarkdownOutputNode) throws
 }
 
 // Default implementations that discard the documentation conversion products, for consumers that don't need these
@@ -61,7 +61,7 @@ public extension ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
-    func consume(markdownNode: MarkdownOutputNode) throws {}
+    func consume(markdownNode: WritableMarkdownOutputNode) throws {}
 }
 
 // Default implementation so that conforming types don't need to implement deprecated API.

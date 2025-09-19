@@ -8,65 +8,80 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
-
-public struct MarkdownOutputNodeTranslator: SemanticVisitor {
+/// Visits the semantic structure of a documentation node and returns a ``MarkdownOutputNode``
+internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     
-    public let context: DocumentationContext
-    public let bundle: DocumentationBundle
-    public let documentationNode: DocumentationNode
-    public let identifier: ResolvedTopicReference
+    let context: DocumentationContext
+    let bundle: DocumentationBundle
+    let documentationNode: DocumentationNode
+    let identifier: ResolvedTopicReference
+    var markdownWalker: MarkdownOutputMarkupWalker
     
-    public init(context: DocumentationContext, bundle: DocumentationBundle, node: DocumentationNode) {
+    init(context: DocumentationContext, bundle: DocumentationBundle, node: DocumentationNode) {
         self.context = context
         self.bundle = bundle
         self.documentationNode = node
         self.identifier = node.reference
+        self.markdownWalker = MarkdownOutputMarkupWalker(context: context, bundle: bundle, identifier: identifier)
     }
     
     public typealias Result = MarkdownOutputNode?
-    private var node: Result = nil
     
     // Tutorial processing
     private var sectionIndex = 0
     private var stepIndex = 0
     private var lastCode: Code?
+    
+    mutating func start() -> MarkdownOutputNode? {
+        visit(documentationNode.semantic)
+    }
+}
+
+extension MarkdownOutputNode.Metadata {
+    public init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference) {
+        self.documentType = documentType
+        self.metadataVersion = Self.version.description
+        self.uri = reference.path
+        self.title = reference.lastPathComponent
+        self.framework = bundle.displayName
+    }
 }
 
 // MARK: Article Output
-extension MarkdownOutputNodeTranslator {
+extension MarkdownOutputSemanticVisitor {
     
     public mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
-        var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier, documentType: .article)
+        var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: bundle, reference: identifier)
         if let title = article.title?.plainText {
-            node.metadata.title = title
+            metadata.title = title
         }
         
         if
             let metadataAvailability = article.metadata?.availability,
             !metadataAvailability.isEmpty {
-            node.metadata.availability = metadataAvailability.map { .init($0) }
+            metadata.availability = metadataAvailability.map { .init($0) }
         }
-        node.metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
-        node.visit(article.title)
-        node.visit(article.abstract)
-        node.visit(section: article.discussion)
-        node.withRenderingLinkList {
+        metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
+        markdownWalker.visit(article.title)
+        markdownWalker.visit(article.abstract)
+        markdownWalker.visit(section: article.discussion)
+        markdownWalker.withRenderingLinkList {
             $0.visit(section: article.topics, addingHeading: "Topics")
             $0.visit(section: article.seeAlso, addingHeading: "See Also")
         }
-        return node
+        return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
 }
 
+import Markdown
+
 // MARK: Symbol Output
-extension MarkdownOutputNodeTranslator {
+extension MarkdownOutputSemanticVisitor {
     
     public mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
-        var node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier, documentType: .symbol)
+        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier)
         
-        node.metadata.symbol = .init(symbol, context: context, bundle: bundle)
+        metadata.symbol = .init(symbol, context: context, bundle: bundle)
         
         // Availability
         
@@ -75,39 +90,39 @@ extension MarkdownOutputNodeTranslator {
         }
         
         if let availability = symbolAvailability, availability.isEmpty == false {
-            node.metadata.availability = availability
-        } else if let primaryModule = node.metadata.symbol?.modules.first, let defaultAvailability = bundle.info.defaultAvailability?.modules[primaryModule] {
-            node.metadata.availability = defaultAvailability.map { .init($0) }
+            metadata.availability = availability
+        } else if let primaryModule = metadata.symbol?.modules.first, let defaultAvailability = bundle.info.defaultAvailability?.modules[primaryModule] {
+            metadata.availability = defaultAvailability.map { .init($0) }
         }
         
         // Content
         
-        node.visit(Heading(level: 1, Text(symbol.title)))
-        node.visit(symbol.abstract)
+        markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
+        markdownWalker.visit(symbol.abstract)
         if let declarationFragments = symbol.declaration.first?.value.declarationFragments {
             let declaration = declarationFragments
                 .map { $0.spelling }
                 .joined()
             let code = CodeBlock(declaration)
-            node.visit(code)
+            markdownWalker.visit(code)
         }
         
         if let parametersSection = symbol.parametersSection, parametersSection.parameters.isEmpty == false {
-            node.visit(Heading(level: 2, Text(ParametersSection.title ?? "Parameters")))
+            markdownWalker.visit(Heading(level: 2, Text(ParametersSection.title ?? "Parameters")))
             for parameter in parametersSection.parameters {
-                node.visit(Paragraph(InlineCode(parameter.name)))
-                node.visit(container: MarkupContainer(parameter.contents))
+                markdownWalker.visit(Paragraph(InlineCode(parameter.name)))
+                markdownWalker.visit(container: MarkupContainer(parameter.contents))
             }
         }
         
-        node.visit(section: symbol.returnsSection)
+        markdownWalker.visit(section: symbol.returnsSection)
         
-        node.visit(section: symbol.discussion, addingHeading: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
-        node.withRenderingLinkList {
+        markdownWalker.visit(section: symbol.discussion, addingHeading: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
+        markdownWalker.withRenderingLinkList {
             $0.visit(section: symbol.topics, addingHeading: "Topics")
             $0.visit(section: symbol.seeAlso, addingHeading: "See Also")
         }
-        return node
+        return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
 }
 
@@ -159,31 +174,31 @@ extension MarkdownOutputNode.Metadata.Availability {
 }
 
 // MARK: Tutorial Output
-extension MarkdownOutputNodeTranslator {
+extension MarkdownOutputSemanticVisitor {
     // Tutorial table of contents is not useful as markdown or indexable content
     public func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> MarkdownOutputNode? {
         return nil
     }
     
     public mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
-        node = MarkdownOutputNode(context: context, bundle: bundle, identifier: identifier, documentType: .tutorial)
+        var metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: bundle, reference: identifier)
         if tutorial.intro.title.isEmpty == false {
-            node?.metadata.title = tutorial.intro.title
+            metadata.title = tutorial.intro.title
         }
 
         sectionIndex = 0
         for child in tutorial.children {
-            node = visit(child) ?? node
+            _ = visit(child)
         }
-        return node
+        return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
     
     public mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> MarkdownOutputNode? {
         sectionIndex += 1
         
-        node?.visit(Heading(level: 2, Text("Section \(sectionIndex): \(tutorialSection.title)")))
+        markdownWalker.visit(Heading(level: 2, Text("Section \(sectionIndex): \(tutorialSection.title)")))
         for child in tutorialSection.children {
-            node = visit(child) ?? node
+            _ = visit(child)
         }
         return nil
     }
@@ -191,15 +206,15 @@ extension MarkdownOutputNodeTranslator {
     public mutating func visitSteps(_ steps: Steps) -> MarkdownOutputNode? {
         stepIndex = 0
         for child in steps.children {
-            node = visit(child) ?? node
+            _ = visit(child)
         }
         
         if let code = lastCode {
-            node?.visit(code)
+            markdownWalker.visit(code)
             lastCode = nil
         }
         
-        return node
+        return nil
     }
     
     public mutating func visitStep(_ step: Step) -> MarkdownOutputNode? {
@@ -209,11 +224,11 @@ extension MarkdownOutputNodeTranslator {
             if let stepCode = step.code {
                 if stepCode.fileName != code.fileName {
                     // New reference, render before proceeding
-                    node?.visit(code)
+                    markdownWalker.visit(code)
                 }
             } else {
                 // No code, render the current one before proceeding
-                node?.visit(code)
+                markdownWalker.visit(code)
                 lastCode = nil
             }
         }
@@ -221,48 +236,48 @@ extension MarkdownOutputNodeTranslator {
         lastCode = step.code
         
         stepIndex += 1
-        node?.visit(Heading(level: 3, Text("Step \(stepIndex)")))
+        markdownWalker.visit(Heading(level: 3, Text("Step \(stepIndex)")))
         for child in step.children {
-            node = visit(child) ?? node
+            _ = visit(child)
         }
         if let media = step.media {
-            node = visit(media) ?? node
+            _ = visit(media)
         }
-        return node
+        return nil
     }
     
     public mutating func visitIntro(_ intro: Intro) -> MarkdownOutputNode? {
         
-        node?.visit(Heading(level: 1, Text(intro.title)))
+        markdownWalker.visit(Heading(level: 1, Text(intro.title)))
         
         for child in intro.children {
-            node = visit(child) ?? node
+            _ = visit(child)
         }
-        return node
+        return nil
     }
     
     public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> MarkdownOutputNode? {
-        node?.withRemoveIndentation(from: markupContainer.elements.first) {
+        markdownWalker.withRemoveIndentation(from: markupContainer.elements.first) {
             $0.visit(container: markupContainer)
         }
-        return node
+        return nil
     }
     
     public mutating func visitImageMedia(_ imageMedia: ImageMedia) -> MarkdownOutputNode? {
-        node?.visit(imageMedia)
-        return node
+        markdownWalker.visit(imageMedia)
+        return nil
     }
     
     public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> MarkdownOutputNode? {
-        node?.visit(videoMedia)
-        return node
+        markdownWalker.visit(videoMedia)
+        return nil
     }
     
     public mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> MarkdownOutputNode? {
         for child in contentAndMedia.children {
-            node = visit(child) ?? node
+            _ = visit(child)
         }
-        return node
+        return nil
     }
     
     public mutating func visitCode(_ code: Code) -> MarkdownOutputNode? {
@@ -273,7 +288,7 @@ extension MarkdownOutputNodeTranslator {
 
 
 // MARK: Visitors not used for markdown output
-extension MarkdownOutputNodeTranslator {
+extension MarkdownOutputSemanticVisitor {
         
     public mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) -> MarkdownOutputNode? {
         print(#function)

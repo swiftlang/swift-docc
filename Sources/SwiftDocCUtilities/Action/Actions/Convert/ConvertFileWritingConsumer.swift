@@ -68,7 +68,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         indexer?.index(renderNode)
     }
     
-    func consume(markdownNode: MarkdownOutputNode) throws {
+    func consume(markdownNode: WritableMarkdownOutputNode) throws {
         try renderNodeWriter.write(markdownNode)
     }
     

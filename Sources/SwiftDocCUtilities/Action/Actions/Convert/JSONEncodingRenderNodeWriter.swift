@@ -124,7 +124,8 @@ class JSONEncodingRenderNodeWriter {
     ///
     /// - Parameters:
     ///   - markdownNode: The node which the writer object writes
-    func write(_ markdownNode: MarkdownOutputNode) throws {
+    func write(_ markdownNode: WritableMarkdownOutputNode) throws {
+        
         let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
             markdownNode.identifier,
             lowercased: true
@@ -156,7 +157,7 @@ class JSONEncodingRenderNodeWriter {
             }
         }
         
-        let data = try markdownNode.data
+        let data = try markdownNode.node.data
         try fileManager.createFile(at: markdownNodeTargetFileURL, contents: data, options: nil)
     }
 }

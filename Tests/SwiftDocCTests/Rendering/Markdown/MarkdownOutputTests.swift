@@ -41,8 +41,8 @@ final class MarkdownOutputTests: XCTestCase {
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
         let node = try XCTUnwrap(context.entity(with: reference))
         var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, node: node)
-        let outputNode = try XCTUnwrap(translator.visit(node.semantic))
-        return outputNode
+        let outputNode = try XCTUnwrap(translator.createOutput())
+        return outputNode.node
     }
 
     // MARK: Directive special processing
@@ -160,8 +160,8 @@ final class MarkdownOutputTests: XCTestCase {
         let (bundle, context) = try await testBundleAndContext(named: "ModuleWithSingleExtension")
         let entity = try XCTUnwrap(context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
         var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, node: entity)
-        let node = try XCTUnwrap(translator.visit(entity.semantic))
-        XCTAssertEqual(node.metadata.symbol?.modules, ["ModuleWithSingleExtension", "Swift"])
+        let node = try XCTUnwrap(translator.createOutput())
+        XCTAssertEqual(node.node.metadata.symbol?.modules, ["ModuleWithSingleExtension", "Swift"])
     }
     
     func testSymbolDefaultAvailabilityWhenNothingPresent() async throws {
@@ -221,6 +221,11 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(node.metadata.framework == "MarkdownOutput")
     }
     
-    
-    
+    func testMarkdownRoundTrip() async throws {
+        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        let data = try node.data
+        let fromData = try MarkdownOutputNode(data)
+        XCTAssertEqual(node.markdown, fromData.markdown)
+        XCTAssertEqual(node.metadata.uri, fromData.metadata.uri)
+    }
 }
