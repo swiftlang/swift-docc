@@ -185,11 +185,7 @@ private extension Sequence<DeclarationRenderSection.Token> {
 private extension LinkDestinationSummary {
     /// A value that indicates whether this symbol is under development and likely to change.
     var isBeta: Bool {
-        guard let platforms, !platforms.isEmpty else {
-            return false
-        }
-        
-        return platforms.allSatisfy { $0.isBeta == true }
+        return platforms?.isBeta ?? false
     }
     
     /// Create a topic render render reference for this link summary and its content variants.
