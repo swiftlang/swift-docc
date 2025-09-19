@@ -74,7 +74,7 @@ struct RenderContentCompiler: MarkupVisitor {
                 syntax: options.lang ?? bundle.info.defaultCodeListingLanguage,
                 code: codeBlock.code.splitByNewlines,
                 metadata: nil,
-                copyToClipboard: options.tokens.contains(.nocopy)
+                copyToClipboard: !options.tokens.contains(.nocopy)
             )
 
             return [RenderBlockContent.codeListing(listing)]
