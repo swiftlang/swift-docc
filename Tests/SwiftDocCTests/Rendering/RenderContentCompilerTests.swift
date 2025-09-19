@@ -342,7 +342,7 @@ class RenderContentCompilerTests: XCTestCase {
     }
 
     func testShowLineNumbers() async throws {
-        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
@@ -370,7 +370,7 @@ class RenderContentCompilerTests: XCTestCase {
     }
 
     func testLowercaseShowLineNumbers() async throws {
-        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
@@ -517,7 +517,7 @@ class RenderContentCompilerTests: XCTestCase {
     }
 
     func testMultipleHighlightMultipleStrikeout() async throws {
-        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
@@ -548,7 +548,7 @@ class RenderContentCompilerTests: XCTestCase {
     }
 
     func testLanguageNotFirstOption() async throws {
-        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
@@ -582,7 +582,7 @@ class RenderContentCompilerTests: XCTestCase {
     }
 
     func testUnorderedArrayOptions() async throws {
-        enableFeatureFlag(\.isExperimentalCodeBlockEnabled)
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
