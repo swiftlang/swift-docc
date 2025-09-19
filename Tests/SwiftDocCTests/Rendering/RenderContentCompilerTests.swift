@@ -245,7 +245,7 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.copyToClipboard, true)
+        XCTAssertEqual(codeListing.options?.copyToClipboard, true)
     }
 
     func testNoCopyToClipboard() async throws {
@@ -269,7 +269,7 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.copyToClipboard, false)
+        XCTAssertEqual(codeListing.options?.copyToClipboard, false)
     }
 
     func testCopyToClipboardNoLang() async throws {
@@ -294,7 +294,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, nil)
-        XCTAssertEqual(codeListing.copyToClipboard, false)
+        XCTAssertEqual(codeListing.options?.copyToClipboard, false)
     }
 
     func testCopyToClipboardNoFeatureFlag() async throws {
@@ -315,7 +315,7 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.copyToClipboard, false)
+        XCTAssertEqual(codeListing.options?.copyToClipboard, nil)
     }
 
     func testNoCopyToClipboardNoFeatureFlag() async throws {
@@ -338,7 +338,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift, nocopy")
-        XCTAssertEqual(codeListing.copyToClipboard, false)
+        XCTAssertEqual(codeListing.options?.copyToClipboard, nil)
     }
 
     func testShowLineNumbers() async throws {
@@ -366,7 +366,7 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.showLineNumbers, true)
+        XCTAssertEqual(codeListing.options?.showLineNumbers, true)
     }
 
     func testLowercaseShowLineNumbers() async throws {
@@ -394,7 +394,7 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.showLineNumbers, true)
+        XCTAssertEqual(codeListing.options?.showLineNumbers, true)
     }
 
     func testWrapAndHighlight() async throws {
@@ -424,8 +424,8 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift")
-        XCTAssertEqual(codeListing.wrap, 20)
-        XCTAssertEqual(codeListing.highlight, [2])
+        XCTAssertEqual(codeListing.options?.wrap, 20)
+        XCTAssertEqual(codeListing.options?.highlight, [2])
     }
 
     func testHighlight() async throws {
@@ -455,7 +455,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift")
-        XCTAssertEqual(codeListing.highlight, [2])
+        XCTAssertEqual(codeListing.options?.highlight, [2])
     }
 
     func testHighlightNoFeatureFlag() async throws {
@@ -483,7 +483,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift, highlight=[2]")
-        XCTAssertEqual(codeListing.highlight, [])
+        XCTAssertEqual(codeListing.options?.highlight, nil)
     }
 
     func testMultipleHighlight() async throws {
@@ -513,7 +513,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift")
-        XCTAssertEqual(codeListing.highlight, [1, 2, 3])
+        XCTAssertEqual(codeListing.options?.highlight, [1, 2, 3])
     }
 
     func testMultipleHighlightMultipleStrikeout() async throws {
@@ -543,8 +543,8 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift")
-        XCTAssertEqual(codeListing.highlight, [1, 2, 3])
-        XCTAssertEqual(codeListing.strikeout, [3, 5])
+        XCTAssertEqual(codeListing.options?.highlight, [1, 2, 3])
+        XCTAssertEqual(codeListing.options?.strikeout, [3, 5])
     }
 
     func testLanguageNotFirstOption() async throws {
@@ -573,12 +573,12 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.showLineNumbers, true)
-        XCTAssertEqual(codeListing.highlight, [1, 2, 3])
+        XCTAssertEqual(codeListing.options?.showLineNumbers, true)
+        XCTAssertEqual(codeListing.options?.highlight, [1, 2, 3])
         // we expect the language to be the first option in the language line, otherwise it remains nil.
         XCTAssertEqual(codeListing.syntax, nil)
-        XCTAssertEqual(codeListing.wrap, 20)
-        XCTAssertEqual(codeListing.strikeout, [3])
+        XCTAssertEqual(codeListing.options?.wrap, 20)
+        XCTAssertEqual(codeListing.options?.strikeout, [3])
     }
 
     func testUnorderedArrayOptions() async throws {
@@ -607,7 +607,7 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.highlight, [5, 3, 4])
-        XCTAssertEqual(codeListing.strikeout, [3, 1])
+        XCTAssertEqual(codeListing.options?.highlight, [5, 3, 4])
+        XCTAssertEqual(codeListing.options?.strikeout, [3, 1])
     }
 }

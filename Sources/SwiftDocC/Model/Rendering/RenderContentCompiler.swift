@@ -49,45 +49,18 @@ struct RenderContentCompiler: MarkupVisitor {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
 
         if FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled {
-            let (lang, tokens) = tokenizeLanguageString(codeBlock.language)
-
-            var listing = RenderBlockContent.CodeListing(
-                syntax: lang ?? bundle.info.defaultCodeListingLanguage,
+            let codeBlockOptions = RenderBlockContent.CodeBlockOptions(parsingLanguageString: codeBlock.language)
+            let listing = RenderBlockContent.CodeListing(
+                syntax: codeBlockOptions.language ?? bundle.info.defaultCodeListingLanguage,
                 code: codeBlock.code.splitByNewlines,
                 metadata: nil,
-                copyToClipboard: !options.tokens.contains(.nocopy),
-                wrap: 0, // default value
-                highlight: [Int](), // default value
-                strikeout: [Int](), // default value
-                showLineNumbers: false // default value
+                options: codeBlockOptions
             )
-
-            // apply code block options
-            for (option, value) in tokens {
-                switch option {
-                case .nocopy:
-                    listing.copyToClipboard = false
-                case .wrap:
-                    if let value, let intValue = Int(value) {
-                        listing.wrap = intValue
-                    } else {
-                        listing.wrap = 0
-                    }
-                case .highlight:
-                    listing.highlight = parseCodeBlockOptionArray(value) ?? []
-                case .strikeout:
-                    listing.strikeout = parseCodeBlockOptionArray(value) ?? []
-                case .showLineNumbers:
-                    listing.showLineNumbers = true
-                case .unknown:
-                    break
-                }
-            }
 
             return [RenderBlockContent.codeListing(listing)]
 
         } else {
-            return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, copyToClipboard: false, wrap: 0, highlight: [Int](), strikeout: [Int](), showLineNumbers: false))]
+            return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil, options: nil))]
         }
     }
     

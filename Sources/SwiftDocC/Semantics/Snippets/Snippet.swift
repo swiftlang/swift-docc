@@ -83,13 +83,23 @@ extension Snippet: RenderableDirectiveConvertible {
                 let lines = snippetMixin.lines[lineRange]
                 let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
                 let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
-                let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
-                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil, copyToClipboard: copy, wrap: 0, highlight: [Int](), strikeout: [Int](), showLineNumbers: false))]
+                let codeBlockOptions: RenderBlockContent.CodeBlockOptions?
+                if FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled {
+                    codeBlockOptions = .init()
+                } else {
+                    codeBlockOptions = nil
+                }
+                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil, options: codeBlockOptions))]
             } else {
                 // Render the whole snippet with its explanation content.
                 let docCommentContent = snippetEntity.markup.children.flatMap { contentCompiler.visit($0) }
-                let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
-                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil, copyToClipboard: copy, wrap: 0, highlight: [Int](), strikeout: [Int](), showLineNumbers: false))
+                let codeBlockOptions: RenderBlockContent.CodeBlockOptions?
+                if FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled {
+                    codeBlockOptions = .init()
+                } else {
+                    codeBlockOptions = nil
+                }
+                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil, options: codeBlockOptions))
                 return docCommentContent + [code]
             }
     }
