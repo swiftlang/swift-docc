@@ -2756,6 +2756,11 @@ public class DocumentationContext {
         ).isSymbol
     }
 
+    /// Returns whether the given reference resolves to an external entity.
+    func isExternal(reference: ResolvedTopicReference) -> Bool {
+        externalCache[reference] != nil
+    }
+
     // MARK: - Relationship queries
     
     /// Fetch the child nodes of a documentation node with the given `reference`, optionally filtering to only children of the given `kind`.

@@ -455,6 +455,17 @@ extension NavigatorIndex {
             self.fragment = fragment
             self.languageIdentifier = languageIdentifier
         }
+
+        /// Compare an identifier with another one, ignoring the identifier language.
+        ///
+        /// Used when curating cross-language references in multi-language frameworks.
+        ///
+        /// - Parameter other: The other identifier to compare with.
+        func isEquivalentIgnoringLanguage(to other: Identifier) -> Bool {
+            return self.bundleIdentifier == other.bundleIdentifier &&
+                   self.path == other.path &&
+                   self.fragment == other.fragment
+        }
     }
     
     /**
@@ -917,7 +928,7 @@ extension NavigatorIndex {
                     let (nodeID, parent) = nodesMultiCurated[index]
                     let placeholders = identifierToChildren[nodeID]!
                     for reference in placeholders {
-                        if let child = identifierToNode[reference] {
+                        if let child = identifierToNode[reference] ?? externalNonSymbolNode(for: reference) {
                             parent.add(child: child)
                             pendingUncuratedReferences.remove(reference)
                             if !multiCurated.keys.contains(reference) && reference.fragment == nil {
@@ -938,7 +949,7 @@ extension NavigatorIndex {
             for (nodeIdentifier, placeholders) in identifierToChildren {
                 for reference in placeholders {
                     let parent = identifierToNode[nodeIdentifier]!
-                    if let child = identifierToNode[reference] {
+                    if let child = identifierToNode[reference] ?? externalNonSymbolNode(for: reference) {
                         let needsCopy = multiCurated[reference] != nil
                         parent.add(child: (needsCopy) ? child.copy() : child)
                         pendingUncuratedReferences.remove(reference)
@@ -969,14 +980,11 @@ extension NavigatorIndex {
                 // page types as symbol nodes on the assumption that an unknown page type is a
                 // symbol kind added in a future version of Swift-DocC.
                 // Finally, don't add external references to the root; if they are not referenced within the navigation tree, they should be dropped altogether.
-                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false , !node.item.isExternal {
+                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false, !node.item.isExternal {
 
                     // If an uncurated page has been curated in another language, don't add it to the top-level.
                     if curatedReferences.contains(where: { curatedNodeID in
-                        // Compare all the identifier's properties for equality, except for its language.
-                        curatedNodeID.bundleIdentifier == nodeID.bundleIdentifier
-                            && curatedNodeID.path == nodeID.path
-                            && curatedNodeID.fragment == nodeID.fragment
+                        curatedNodeID.isEquivalentIgnoringLanguage(to: nodeID)
                     }) {
                         continue
                     }
@@ -1256,7 +1264,22 @@ extension NavigatorIndex {
             problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
             problems.append(problem)
         }
-        
+
+        /// Find an external node for the reference that is not of a symbol kind. The source language
+        /// of the reference is ignored during this lookup since the reference assumes the target node
+        /// to be of the same language as the page that it is curated in. This may or may not be true
+        /// since non-symbol kinds (articles, tutorials, etc.) are not tied to a language.
+        // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
+        // FIXME: This should ideally be solved by making the article language-agnostic rather
+        // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+        func externalNonSymbolNode(for reference: NavigatorIndex.Identifier) -> NavigatorTree.Node? {
+            identifierToNode
+            .first { identifier, node in
+                identifier.isEquivalentIgnoringLanguage(to: reference)
+                && PageType.init(rawValue: node.item.pageType)?.isSymbolKind == false
+                && node.item.isExternal
+            }?.value
+        }
         
         /// Build the index using the render nodes files in the provided documentation archive.
         /// - Returns: A list containing all the errors encountered during indexing.
