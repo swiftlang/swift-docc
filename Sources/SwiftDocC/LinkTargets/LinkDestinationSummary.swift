@@ -201,7 +201,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
         ///
         /// If the summarized element has an image but the variant doesn't, this property will be `Optional.some(nil)`.
-        public let topicImages: VariantValue<[TopicImage]?>
+        @available(*, deprecated, message: "`TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.3 is released")
+        public let topicImages: VariantValue<[TopicImage]?> = nil
         
         /// Creates a new summary variant with the values that are different from the main summarized values.
         /// 
@@ -215,7 +216,29 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///   - taskGroups: The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///   - usr: The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///   - declarationFragments: The declaration of the variant or `nil` if the declaration is the same as the summarized element.
-        ///   - topicImages: Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
+        public init(
+            traits: [RenderNode.Variant.Trait],
+            kind: VariantValue<DocumentationNode.Kind> = nil,
+            language: VariantValue<SourceLanguage> = nil,
+            relativePresentationURL: VariantValue<URL> = nil,
+            title: VariantValue<String> = nil,
+            abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
+            taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
+            usr: VariantValue<String?> = nil,
+            declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
+        ) {
+            self.traits = traits
+            self.kind = kind
+            self.language = language
+            self.relativePresentationURL = relativePresentationURL
+            self.title = title
+            self.abstract = abstract
+            self.taskGroups = taskGroups
+            self.usr = usr
+            self.declarationFragments = declarationFragments
+        }
+        
+        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:declarationFragments:)", message: "Use `init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:declarationFragments:)` instead. `TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.3 is released")
         public init(
             traits: [RenderNode.Variant.Trait],
             kind: VariantValue<DocumentationNode.Kind> = nil,
@@ -228,16 +251,17 @@ public struct LinkDestinationSummary: Codable, Equatable {
             declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
             topicImages: VariantValue<[TopicImage]?> = nil
         ) {
-            self.traits = traits
-            self.kind = kind
-            self.language = language
-            self.relativePresentationURL = relativePresentationURL
-            self.title = title
-            self.abstract = abstract
-            self.taskGroups = taskGroups
-            self.usr = usr
-            self.declarationFragments = declarationFragments
-            self.topicImages = topicImages
+            self.init(
+                traits: traits,
+                kind: kind,
+                language: language,
+                relativePresentationURL: relativePresentationURL,
+                title: title,
+                abstract: abstract,
+                taskGroups: taskGroups,
+                usr: usr,
+                declarationFragments: declarationFragments
+            )
         }
     }
     
@@ -469,8 +493,7 @@ extension LinkDestinationSummary {
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
                 taskGroups: nilIfEqual(main: taskGroups, variant: taskGroupVariants[variantTraits]),
                 usr: nil, // The symbol variant uses the same USR
-                declarationFragments: nilIfEqual(main: declaration, variant: declarationVariant),
-                topicImages: nil // The symbol variant doesn't currently have their own images
+                declarationFragments: nilIfEqual(main: declaration, variant: declarationVariant)
             )
         }
         
@@ -578,13 +601,28 @@ extension LinkDestinationSummary {
     
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(kind.id, forKey: .kind)
+        if DocumentationNode.Kind.allKnownValues.contains(kind) {
+            try container.encode(kind.id, forKey: .kind)
+        } else {
+            try container.encode(kind, forKey: .kind)
+        }
         try container.encode(relativePresentationURL, forKey: .relativePresentationURL)
         try container.encode(referenceURL, forKey: .referenceURL)
         try container.encode(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
-        try container.encode(language.id, forKey: .language)
-        try container.encode(availableLanguages.map { $0.id }, forKey: .availableLanguages)
+        if SourceLanguage.knownLanguages.contains(language) {
+            try container.encode(language.id, forKey: .language)
+        } else {
+            try container.encode(language, forKey: .language)
+        }
+        var languagesContainer = container.nestedUnkeyedContainer(forKey: .availableLanguages)
+        for language in availableLanguages.sorted() {
+            if SourceLanguage.knownLanguages.contains(language) {
+                try languagesContainer.encode(language.id)
+            } else {
+                try languagesContainer.encode(language)
+            }
+        }
         try container.encodeIfPresent(platforms, forKey: .platforms)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
         try container.encodeIfPresent(usr, forKey: .usr)
@@ -600,28 +638,47 @@ extension LinkDestinationSummary {
     
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let kindID = try container.decode(String.self, forKey: .kind)
-        guard let foundKind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
-            throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
+        // Kind can either be a known identifier or a full structure
+        do {
+            let kindID = try container.decode(String.self, forKey: .kind)
+            guard let foundKind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
+                throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
+            }
+            kind = foundKind
+        } catch {
+            kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
         }
-        kind = foundKind
         relativePresentationURL = try container.decode(URL.self, forKey: .relativePresentationURL)
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
-        let languageID = try container.decode(String.self, forKey: .language)
-        guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
-            throw DecodingError.dataCorruptedError(forKey: .language, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
-        }
-        language = foundLanguage
-        
-        let availableLanguageIDs = try container.decode([String].self, forKey: .availableLanguages)
-        availableLanguages = try Set(availableLanguageIDs.map { languageID in
+        // Language can either be an identifier of a known language or a full structure
+        do {
+            let languageID = try container.decode(String.self, forKey: .language)
             guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
-                throw DecodingError.dataCorruptedError(forKey: .availableLanguages, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+                throw DecodingError.dataCorruptedError(forKey: .language, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
             }
-            return foundLanguage
-        })
+            language = foundLanguage
+        } catch DecodingError.typeMismatch {
+            language = try container.decode(SourceLanguage.self, forKey: .language)
+        }
+          
+        // The set of languages can be a mix of identifiers and full structure
+        var languagesContainer = try container.nestedUnkeyedContainer(forKey: .availableLanguages)
+        var decodedLanguages = Set<SourceLanguage>()
+        while !languagesContainer.isAtEnd {
+            do {
+                let languageID = try languagesContainer.decode(String.self)
+                guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
+                    throw DecodingError.dataCorruptedError(forKey: .availableLanguages, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+                }
+                decodedLanguages.insert( foundLanguage )
+            } catch DecodingError.typeMismatch {
+                decodedLanguages.insert( try languagesContainer.decode(SourceLanguage.self) )
+            }
+        }
+        availableLanguages = decodedLanguages
+        
         platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
         taskGroups = try container.decodeIfPresent([TaskGroup].self, forKey: .taskGroups)
         usr = try container.decodeIfPresent(String.self, forKey: .usr)
@@ -638,7 +695,7 @@ extension LinkDestinationSummary {
 
 extension LinkDestinationSummary.Variant {
     enum CodingKeys: String, CodingKey {
-        case traits, kind, title, abstract, language, usr, taskGroups, topicImages
+        case traits, kind, title, abstract, language, usr, taskGroups
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
     }
@@ -646,44 +703,58 @@ extension LinkDestinationSummary.Variant {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(traits, forKey: .traits)
-        try container.encodeIfPresent(kind?.id, forKey: .kind)
+        if let kind {
+            if DocumentationNode.Kind.allKnownValues.contains(kind) {
+                try container.encode(kind.id, forKey: .kind)
+            } else {
+                try container.encode(kind, forKey: .kind)
+            }
+        }
         try container.encodeIfPresent(relativePresentationURL, forKey: .relativePresentationURL)
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
-        try container.encodeIfPresent(language?.id, forKey: .language)
+        if let language {
+            if SourceLanguage.knownLanguages.contains(language) {
+                try container.encode(language.id, forKey: .language)
+            } else {
+                try container.encode(language, forKey: .language)
+            }
+        }
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
-        try container.encodeIfPresent(topicImages, forKey: .topicImages)
     }
     
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        traits = try container.decode([RenderNode.Variant.Trait].self, forKey: .traits)
         
-        let traits = try container.decode([RenderNode.Variant.Trait].self, forKey: .traits)
-        for case .interfaceLanguage(let languageID) in traits {
-            guard SourceLanguage.knownLanguages.contains(where: { $0.id == languageID }) else {
-                throw DecodingError.dataCorruptedError(forKey: .traits, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+        if container.contains(.kind) {
+            // The kind can either be a known identifier or a full structure
+            do {
+                let kindID = try container.decode(String.self, forKey: .kind)
+                guard let foundKind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
+                    throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
+                }
+                kind = foundKind
+            } catch {
+                kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
             }
-        }
-        self.traits = traits
-        
-        let kindID = try container.decodeIfPresent(String.self, forKey: .kind)
-        if let kindID {
-            guard let foundKind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
-                throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
-            }
-            kind = foundKind
         } else {
             kind = nil
         }
         
-        let languageID = try container.decodeIfPresent(String.self, forKey: .language)
-        if let languageID {
-            guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
-                throw DecodingError.dataCorruptedError(forKey: .language, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+        if container.contains(.language) {
+            // Language can either be an identifier of a known language or a full structure
+            do {
+                let languageID = try container.decode(String.self, forKey: .language)
+                guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
+                    throw DecodingError.dataCorruptedError(forKey: .language, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+                }
+                language = foundLanguage
+            } catch DecodingError.typeMismatch {
+                language = try container.decode(SourceLanguage.self, forKey: .language)
             }
-            language = foundLanguage
         } else {
             language = nil
         }
@@ -693,7 +764,6 @@ extension LinkDestinationSummary.Variant {
         usr = try container.decodeIfPresent(String?.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup]?.self, forKey: .taskGroups)
-        topicImages = try container.decodeIfPresent([TopicImage]?.self, forKey: .topicImages)
     }
 }
 

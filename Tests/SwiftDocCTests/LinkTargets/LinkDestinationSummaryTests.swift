@@ -486,7 +486,6 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
             XCTAssertEqual(variant.taskGroups, nil)
-            XCTAssertEqual(variant.topicImages, nil)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -577,7 +576,6 @@ class ExternalLinkableTests: XCTestCase {
                     )
                 ]
             )
-            XCTAssertEqual(variant.topicImages, nil)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)

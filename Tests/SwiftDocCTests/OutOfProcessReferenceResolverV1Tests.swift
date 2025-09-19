@@ -12,10 +12,12 @@ import XCTest
 import Foundation
 import SymbolKit
 @_spi(ExternalLinks) @testable import SwiftDocC
-@testable import SwiftDocCUtilities
 import SwiftDocCTestUtilities
 
-class OutOfProcessReferenceResolverTests: XCTestCase {
+// This tests the deprecated V1 implementation of `OutOfProcessReferenceResolver`.
+// Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+@available(*, deprecated)
+class OutOfProcessReferenceResolverV1Tests: XCTestCase {
     
     func testInitializationProcess() throws {
         #if os(macOS)
@@ -51,7 +53,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         #endif
     }
     
-    func assertResolvesTopicLink(makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver) throws {
+    private func assertResolvesTopicLink(makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver) throws {
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
             kind: .function,
             url: URL(string: "doc://com.test.bundle/something")!,
@@ -678,11 +680,10 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
         XCTAssertEqual(resolver.bundleID, "com.test.bundle")
         
-        XCTAssertThrowsError(try resolver.resolveInformationForTopicURL(URL(string: "doc://com.test.bundle/something")!)) {
-            guard case OutOfProcessReferenceResolver.Error.executableSentBundleIdentifierAgain = $0 else {
-                XCTFail("Encountered an unexpected type of error.")
-                return
-            }
+        if case .failure(_, let errorInfo) = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingAuthoredLink: "doc://com.test.bundle/something")!))) {
+            XCTAssertEqual(errorInfo.message, "Executable sent bundle identifier message again, after it was already received.")
+        } else {
+            XCTFail("Unexpectedly resolved the link from an identifier and capabilities response")
         }
         #endif
     }

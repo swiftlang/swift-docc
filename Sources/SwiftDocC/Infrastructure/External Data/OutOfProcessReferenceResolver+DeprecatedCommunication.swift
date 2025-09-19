@@ -15,10 +15,20 @@ extension OutOfProcessReferenceResolver {
     
     // MARK: Request & Response
     
-    /// A request message to send to the external link resolver.
+    /// An outdated version of a request message to send to the external link resolver.
     ///
     /// This can either be a request to resolve a topic URL or to resolve a symbol based on its precise identifier.
-    public enum Request: Codable, CustomStringConvertible {
+    ///
+    /// @DeprecationSummary {
+    ///   This version of the communication protocol is no longer recommended. Update to ``RequestV2`` and ``ResponseV2`` instead.
+    ///
+    ///   The new version of the communication protocol both has a mechanism for expanding functionality in the future (through common ``Capabilities`` between DocC and the external resolver) and supports richer responses for both successful and and failed requests.
+    /// }
+    @available(*, deprecated, message: "This version of the communication protocol is no longer recommended. Update to `RequestV2` and `ResponseV2` instead.")
+    public typealias Request = _DeprecatedRequestV1
+    
+    // Note this type isn't formally deprecated to avoid warnings in the ConvertService, which still _implicitly_ require this version of requests and responses.
+    public enum _DeprecatedRequestV1: Codable, CustomStringConvertible {
         /// A request to resolve a topic URL
         case topic(URL)
         /// A request to resolve a symbol based on its precise identifier.
@@ -71,8 +81,18 @@ extension OutOfProcessReferenceResolver {
         }
     }
 
-    /// A response message from the external link resolver.
-    public enum Response: Codable {
+    /// An outdated version of a response message from the external link resolver.
+    ///
+    /// @DeprecationSummary {
+    ///   This version of the communication protocol is no longer recommended. Update to ``RequestV2`` and ``ResponseV2`` instead.
+    ///
+    ///   The new version of the communication protocol both has a mechanism for expanding functionality in the future (through common ``Capabilities`` between DocC and the external resolver) and supports richer responses for both successful and and failed requests.
+    /// }
+    @available(*, deprecated, message: "This version of the communication protocol is no longer recommended. Update to `RequestV2` and `ResponseV2` instead.")
+    public typealias Response = _DeprecatedResponseV1
+    
+    @available(*, deprecated, message: "This version of the communication protocol is no longer recommended. Update to `RequestV2` and `ResponseV2` instead.")
+    public enum _DeprecatedResponseV1: Codable {
         /// A bundle identifier response.
         ///
         /// This message should only be sent once, after the external link resolver has launched.
@@ -124,12 +144,9 @@ extension OutOfProcessReferenceResolver {
     
     // MARK: Resolved Information
     
-    /// A type used to transfer information about a resolved reference to DocC from from a reference resolver in another executable.
+    /// A type used of the to transfer information about a resolved reference in the outdated and no longer recommended version of the external resolver communication protocol.
+    @available(*, deprecated, message: "This type is only used in the outdated, and no longer recommended, version of the out-of-process external resolver communication protocol.")
     public struct ResolvedInformation: Codable {
-        // This type is duplicating the information from LinkDestinationSummary with some minor differences.
-        // Changes generally need to be made in both places. It would be good to replace this with LinkDestinationSummary.
-        // FIXME: https://github.com/swiftlang/swift-docc/issues/802
-        
         /// Information about the resolved kind.
         public let kind: DocumentationNode.Kind
         /// Information about the resolved URL.
@@ -276,6 +293,7 @@ extension OutOfProcessReferenceResolver {
     }
 }
 
+@available(*, deprecated, message: "This type is only used in the outdates, and no longer recommended, version of the out-of-process external resolver communication protocol.")
 extension OutOfProcessReferenceResolver.ResolvedInformation {
     enum CodingKeys: CodingKey {
         case kind

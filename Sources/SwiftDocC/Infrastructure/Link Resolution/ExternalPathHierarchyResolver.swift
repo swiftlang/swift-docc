@@ -182,9 +182,9 @@ private extension Sequence<DeclarationRenderSection.Token> {
 
 // MARK: ExternalEntity
 
-private extension LinkDestinationSummary {
+extension LinkDestinationSummary {
     /// A value that indicates whether this symbol is under development and likely to change.
-    var isBeta: Bool {
+    private var isBeta: Bool {
         guard let platforms, !platforms.isEmpty else {
             return false
         }
