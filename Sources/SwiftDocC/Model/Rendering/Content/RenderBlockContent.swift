@@ -210,7 +210,7 @@ public enum RenderBlockContent: Equatable {
         }
 
         /// A function that parses array values on code block options from the language line string
-        static internal func parseCodeBlockOptionsArray(_ value: String?) -> [Int]? {
+        static internal func parseCodeBlockOptionsArray(_ value: String?) -> [Int] {
             guard var s = value?.trimmingCharacters(in: .whitespaces), !s.isEmpty else { return [] }
 
             if s.hasPrefix("[") && s.hasSuffix("]") {
