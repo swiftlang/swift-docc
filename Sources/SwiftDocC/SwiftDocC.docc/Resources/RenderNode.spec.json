@@ -805,6 +805,27 @@
                     },
                     "metadata": {
                         "$ref": "#/components/schemas/RenderContentMetadata"
+                    },
+                    "copyToClipboard": {
+                        "type": "boolean"
+                    },
+                    "showLineNumbers": {
+                        "type": "boolean"
+                    },
+                    "wrap": {
+                        "type": "integer"
+                    },
+                    "highlight": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "strikeout": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
                     }
                 }
             },
