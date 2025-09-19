@@ -213,18 +213,18 @@ class ExternalRenderNodeTests: XCTestCase {
         // Verify that the curated external links are part of the index.
         let swiftExternalNodes = renderIndex.interfaceLanguages["swift"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
         let occExternalNodes = renderIndex.interfaceLanguages["occ"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
-        XCTAssertEqual(swiftExternalNodes.count, 2)
-        XCTAssertEqual(occExternalNodes.count, 2)
-        XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle", "SwiftSymbol"])
-        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCArticle", "ObjCSymbol"])
+        XCTAssertEqual(swiftExternalNodes.count, 3)
+        XCTAssertEqual(occExternalNodes.count, 3)
+        XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle", "SwiftSymbol", "ObjCArticle"])
+        XCTAssertEqual(occExternalNodes.map(\.title), ["SwiftArticle", "ObjCArticle", "ObjCSymbol"])
         XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
         XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
         XCTAssert(swiftExternalNodes.first { $0.title == "SwiftArticle" }?.isBeta == false)
         XCTAssert(swiftExternalNodes.first { $0.title == "SwiftSymbol" }?.isBeta == true)
         XCTAssert(occExternalNodes.first { $0.title == "ObjCArticle" }?.isBeta == true)
         XCTAssert(occExternalNodes.first { $0.title == "ObjCSymbol" }?.isBeta == false)
-        XCTAssertEqual(swiftExternalNodes.map(\.type), ["article", "class"])
-        XCTAssertEqual(occExternalNodes.map(\.type), ["article", "func"])
+        XCTAssertEqual(swiftExternalNodes.map(\.type), ["article", "class", "article"])
+        XCTAssertEqual(occExternalNodes.map(\.type), ["article", "article", "func"])
     }
     
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
@@ -280,13 +280,13 @@ class ExternalRenderNodeTests: XCTestCase {
         let swiftExternalNodes = renderIndex.interfaceLanguages["swift"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
         let occExternalNodes = renderIndex.interfaceLanguages["occ"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
         XCTAssertEqual(swiftExternalNodes.count, 1)
-        XCTAssertEqual(occExternalNodes.count, 1)
+        XCTAssertEqual(occExternalNodes.count, 2)
         XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle"])
-        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCSymbol"])
+        XCTAssertEqual(occExternalNodes.map(\.title), ["SwiftArticle", "ObjCSymbol"])
         XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
         XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
         XCTAssertEqual(swiftExternalNodes.map(\.type), ["article"])
-        XCTAssertEqual(occExternalNodes.map(\.type), ["func"])
+        XCTAssertEqual(occExternalNodes.map(\.type), ["article", "func"])
     }
 
     func testExternalRenderNodeVariantRepresentationWhenIsBeta() throws {
