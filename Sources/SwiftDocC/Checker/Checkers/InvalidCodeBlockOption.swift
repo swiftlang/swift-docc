@@ -19,7 +19,7 @@ internal struct InvalidCodeBlockOption: Checker {
     var problems = [Problem]()
 
     /// Parsing options for code blocks
-    private let knownOptions = RenderBlockContent.CodeListing.knownOptions
+    private let knownOptions = RenderBlockContent.CodeBlockOptions.knownOptions
 
     private var sourceFile: URL?
 
@@ -31,9 +31,9 @@ internal struct InvalidCodeBlockOption: Checker {
     }
 
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
-        let (lang, tokens) = tokenizeLanguageString(codeBlock.language)
+        let (lang, tokens) = RenderBlockContent.CodeBlockOptions.tokenizeLanguageString(codeBlock.language)
 
-        func matches(token: RenderBlockContent.CodeListing.OptionName, value: String?) {
+        func matches(token: RenderBlockContent.CodeBlockOptions.OptionName, value: String?) {
             guard token == .unknown, let value = value else { return }
 
             let matches = NearMiss.bestMatches(for: knownOptions, against: value)
@@ -58,12 +58,12 @@ internal struct InvalidCodeBlockOption: Checker {
             }
         }
 
-        func validateArrayIndices(token: RenderBlockContent.CodeListing.OptionName, value: String?) {
+        func validateArrayIndices(token: RenderBlockContent.CodeBlockOptions.OptionName, value: String?) {
             guard token == .highlight || token == .strikeout, let value = value else { return }
             // code property ends in a newline. this gives us a bogus extra line.
             let lineCount: Int = codeBlock.code.split(omittingEmptySubsequences: false, whereSeparator: { $0.isNewline }).count - 1
 
-            guard let indices = parseCodeBlockOptionArray(value) else {
+            guard let indices = RenderBlockContent.CodeBlockOptions.parseCodeBlockOptionsArray(value) else {
                 let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Could not parse \(token.rawValue.singleQuoted) indices from \(value.singleQuoted). Expected an integer (e.g. 3) or an array (e.g. [1, 3, 5])")
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
                 return
