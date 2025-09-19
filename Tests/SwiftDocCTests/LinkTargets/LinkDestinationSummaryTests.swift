@@ -13,87 +13,86 @@ import SymbolKit
 @testable import SwiftDocC
 import SwiftDocCTestUtilities
 
-class ExternalLinkableTests: XCTestCase {
-    
-    // Write example documentation bundle with a minimal Tutorials page
-    let catalogHierarchy = Folder(name: "unit-test.docc", content: [
-        Folder(name: "Symbols", content: []),
-        Folder(name: "Resources", content: [
-            TextFile(name: "TechnologyX.tutorial", utf8Content: """
-                @Tutorials(name: "TechnologyX") {
-                   @Intro(title: "Technology X") {
-
-                      You'll learn all about Technology X.
-
-                      @Image(source: arkit.png, alt: arkit)
-                   }
-
-                   @Redirected(from: "old/path/to/this/page")
-                   @Redirected(from: "even/older/path/to/this/page")
-
-                   @Volume(name: "Volume 1") {
-                      This volume contains Chapter 1.
-
-                      @Chapter(name: "Chapter 1") {
-                         In this chapter, you'll follow Tutorial 1.
-                         @TutorialReference(tutorial: Tutorial)
-                         @Image(source: blah, alt: blah)
-                      }
-                   }
-                }
-                """),
-            TextFile(name: "Tutorial.tutorial", utf8Content: """
-                @Tutorial(time: 20, projectFiles: project.zip) {
-                   @XcodeRequirement(title: "Xcode 10.2 Beta 3", destination: "https://www.example.com/download")
-                   @Intro(title: "Basic Augmented Reality App 💻", background: image.jpg) {
-                      @Video(source: video.mov)
-                   }
-                   
-                   @Section(title: "Create a New AR Project 💻") {
-                      @ContentAndMedia(layout: vertical) {
-                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                         ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
-
-                         Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-
-                         @Image(source: arkit.png)
-                      }
-
-                      @Redirected(from: "old/path/to/this/landmark")
-                      
-                      @Steps {
-                                                 
-                         Let's get started building the Augmented Reality app.
-                      
-                         @Step {
-                            Lorem ipsum dolor sit amet, consectetur.
-                        
-                            @Image(source: Sierra.jpg)
-                         }
-                      }
-                   }
-                   @Assessments {
-                      @MultipleChoice {
-                         Lorem ipsum dolor sit amet?
-
-                         Phasellus faucibus scelerisque eleifend donec pretium.
-                                                      
-                         @Choice(isCorrect: true) {
-                            `anchor.hitTest(view)`
-                            
-                            @Justification {
-                               This is correct because it is.
-                            }
-                         }
-                      }
-                   }
-                }
-                """),
-            ]),
-        InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-    ])
+class LinkDestinationSummaryTests: XCTestCase {
     
     func testSummaryOfTutorialPage() async throws {
+        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
+            Folder(name: "Symbols", content: []),
+            Folder(name: "Resources", content: [
+                TextFile(name: "TechnologyX.tutorial", utf8Content: """
+                    @Tutorials(name: "TechnologyX") {
+                       @Intro(title: "Technology X") {
+
+                          You'll learn all about Technology X.
+
+                          @Image(source: arkit.png, alt: arkit)
+                       }
+
+                       @Redirected(from: "old/path/to/this/page")
+                       @Redirected(from: "even/older/path/to/this/page")
+
+                       @Volume(name: "Volume 1") {
+                          This volume contains Chapter 1.
+
+                          @Chapter(name: "Chapter 1") {
+                             In this chapter, you'll follow Tutorial 1.
+                             @TutorialReference(tutorial: Tutorial)
+                             @Image(source: blah, alt: blah)
+                          }
+                       }
+                    }
+                    """),
+                TextFile(name: "Tutorial.tutorial", utf8Content: """
+                    @Tutorial(time: 20, projectFiles: project.zip) {
+                       @XcodeRequirement(title: "Xcode 10.2 Beta 3", destination: "https://www.example.com/download")
+                       @Intro(title: "Basic Augmented Reality App 💻", background: image.jpg) {
+                          @Video(source: video.mov)
+                       }
+                       
+                       @Section(title: "Create a New AR Project 💻") {
+                          @ContentAndMedia(layout: vertical) {
+                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                             ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+
+                             Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
+
+                             @Image(source: arkit.png)
+                          }
+
+                          @Redirected(from: "old/path/to/this/landmark")
+                          
+                          @Steps {
+                                                     
+                             Let's get started building the Augmented Reality app.
+                          
+                             @Step {
+                                Lorem ipsum dolor sit amet, consectetur.
+                            
+                                @Image(source: Sierra.jpg)
+                             }
+                          }
+                       }
+                       @Assessments {
+                          @MultipleChoice {
+                             Lorem ipsum dolor sit amet?
+
+                             Phasellus faucibus scelerisque eleifend donec pretium.
+                                                          
+                             @Choice(isCorrect: true) {
+                                `anchor.hitTest(view)`
+                                
+                                @Justification {
+                                   This is correct because it is.
+                                }
+                             }
+                          }
+                       }
+                    }
+                    """),
+                ]),
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+        ])
+        
         let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
@@ -581,6 +580,169 @@ class ExternalLinkableTests: XCTestCase {
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
             XCTAssertEqual(decoded, summary)
         }
+    }
+    
+    func testDecodingUnknownKindAndLanguage() throws {
+        let json = """
+        {
+          "kind" : {
+            "id" : "kind-id",
+            "name" : "Kind name",
+            "isSymbol" : false
+          },
+          "language" : {
+            "id" : "language-id",
+            "name" : "Language name",
+            "idAliases" : [
+              "language-alias-id"
+            ],
+            "linkDisambiguationID" : "language-id"
+          },
+          "availableLanguages" : [
+            "swift",
+            "data",
+            {
+              "id" : "language-id",
+              "idAliases" : [
+                "language-alias-id"
+              ],
+              "linkDisambiguationID" : "language-id",
+              "name" : "Language name"
+            },
+            {
+              "id" : "language-id-2",
+              "linkDisambiguationID" : "language-id-2",
+              "name" : "Other language name"
+            },
+            "occ"
+          ],
+          "title" : "Something",
+          "path" : "/documentation/something",
+          "referenceURL" : "/documentation/something"
+        }
+        """
+        
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(json.utf8))
+        try assertRoundTripCoding(decoded)
+        
+        XCTAssertEqual(decoded.kind, DocumentationNode.Kind(name: "Kind name", id: "kind-id", isSymbol: false))
+        XCTAssertEqual(decoded.language, SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]))
+        XCTAssertEqual(decoded.availableLanguages, [
+            // Known languages
+            .swift,
+            .objectiveC,
+            .data,
+            
+            // Custom languages
+            SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]),
+            SourceLanguage(name: "Other language name", id: "language-id-2"),
+        ])
+        
+        
+        let ref = RenderReferenceIdentifier("doc://com.test.bundle/path/to/other-page")
+        let img = RenderReferenceIdentifier("some-external-card-image-identifier")
+        let img2 = RenderReferenceIdentifier("png-example")
+        
+        // https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/560px-PNG_transparency_demonstration_1.png
+        
+        let light = URL(string: "http://example.com/some-image.jpg")!
+        let dark  = URL(string: "http://example.com/some-image@2x~dark.jpg")!
+        
+        let summary = LinkDestinationSummary(
+            kind: .init(name: "Kind name", id: "kind-id", isSymbol: true),
+            language: .init(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]),
+            relativePresentationURL: URL(string: "/documentation/something")!,
+            referenceURL: URL(string: "/documentation/something")!,
+            title: "Resolved title",
+            abstract: [
+                .text("Resolved "),
+                .strong(inlineContent: [.text("formatted")]),
+                .text(" abstract with "),
+                .image(identifier: img2, metadata: nil),
+                .text(" and "),
+                .reference(identifier: ref, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+                .text("."),
+            ],
+            availableLanguages: [
+                
+                .swift,
+                .objectiveC,
+                .data,
+                
+                .init(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]),
+                .init(name: "Other language name", id: "language-id-2", idAliases: []),
+                
+            ],
+            platforms: [
+                .init(name: "Platform name", introduced: "1.2.3", isBeta: false)
+            ],
+            taskGroups: nil,
+            usr: "resolved-unique-symbol-id",
+            declarationFragments: [
+                .init(text: "resolved", kind: .keyword),
+                .init(text: " ", kind: .text),
+                .init(text: "fragment", kind: .identifier),
+            ],
+            redirects: nil,
+            topicImages: [
+                .init(pageImagePurpose: .card, identifier: img)
+            ],
+            references: [
+                TopicRenderReference(identifier: ref, title: "Linked from abstract", abstract: [.text("Another page that's linked to from this symbol's abstract")], url: "/path/to/other-page", kind: .article),
+                
+                ImageReference(
+                    identifier: img,
+                    altText: "Resolved image alt text",
+                    imageAsset: DataAsset(
+                        variants: [
+                            .init(displayScale: .standard): light,
+                            .init(userInterfaceStyle: .dark, displayScale: .double): dark,
+                        ],
+                        metadata: [:],
+                        context: .display
+                    )
+                ),
+                ImageReference(
+                    identifier: img2,
+                    altText: nil,
+                    imageAsset: DataAsset(
+                        variants: [
+                            .init(displayScale: .standard): URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/560px-PNG_transparency_demonstration_1.png")!,
+                        ],
+                        metadata: [:],
+                        context: .display
+                    )
+                )
+            ],
+            variants: [
+                .init(
+                    traits: [.interfaceLanguage("occ")],
+                    kind: .init(name: "Variant kind name", id: "variant-kind-id", isSymbol: true),
+                    language: .objectiveC,
+                    title: "Resolved variant title",
+                    abstract: [
+                        .text("Resolved  abstract"),
+                        .codeVoice(code: "variant"),
+                        .text("Resolved  abstract"),
+                    ],
+                    declarationFragments: [
+                        .init(text: "resolved", kind: .keyword),
+                        .init(text: " ", kind: .text),
+                        .init(text: "variant", kind: .identifier),
+                        .init(text: ": ", kind: .text),
+                        .init(text: "fragment", kind: .typeIdentifier),
+                    ]
+                )
+                
+            ]
+        )
+        
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        
+        let data = try encoder.encode(OutOfProcessReferenceResolver.ResponseV2.resolved(summary))
+        
+        print(String(decoding: data, as: UTF8.self))
     }
     
     func testDecodingLegacyData() throws {

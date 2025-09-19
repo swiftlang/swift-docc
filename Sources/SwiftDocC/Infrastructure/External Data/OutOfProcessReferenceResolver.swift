@@ -333,49 +333,36 @@ extension OutOfProcessReferenceResolver {
         }
         
         private func makeEntity(with resolvedInformation: ResolvedInformation, reference: String) -> LinkResolver.ExternalEntity {
-            let (kind, role) = DocumentationContentRenderer.renderKindAndRole(resolvedInformation.kind, semantic: nil)
-            
-            var renderReference = TopicRenderReference(
-                identifier: .init(reference),
-                title: resolvedInformation.title,
-                // The resolved information only stores the plain text abstract https://github.com/swiftlang/swift-docc/issues/802
-                abstract: [.text(resolvedInformation.abstract)],
-                url: resolvedInformation.url.path,
-                kind: kind,
-                role: role,
-                fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
-                isBeta: resolvedInformation.isBeta,
-                isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
-                images: resolvedInformation.topicImages ?? []
-            )
-            for variant in resolvedInformation.variants ?? [] {
-                if let title = variant.title {
-                    renderReference.titleVariants.variants.append(
-                        .init(traits: variant.traits, patch: [.replace(value: title)])
-                    )
-                }
-                if let abstract = variant.abstract {
-                    renderReference.abstractVariants.variants.append(
-                        .init(traits: variant.traits, patch: [.replace(value: [.text(abstract)])])
-                    )
-                }
-                if let declarationFragments = variant.declarationFragments {
-                    renderReference.fragmentsVariants.variants.append(
-                        .init(traits: variant.traits, patch: [.replace(value: declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) })])
-                    )
-                }
-            }
-            let dependencies = RenderReferenceDependencies(
-                topicReferences: [],
-                linkReferences: (resolvedInformation.references ?? []).compactMap { $0 as? LinkReference },
-                imageReferences: (resolvedInformation.references ?? []).compactMap { $0 as? ImageReference }
-            )
-            
             return LinkResolver.ExternalEntity(
-                topicRenderReference: renderReference,
-                renderReferenceDependencies: dependencies,
-                sourceLanguages: resolvedInformation.availableLanguages,
-                symbolKind: DocumentationNode.symbolKind(for: resolvedInformation.kind)
+                kind: resolvedInformation.kind,
+                language: resolvedInformation.language,
+                relativePresentationURL: resolvedInformation.url.withoutHostAndPortAndScheme(),
+                referenceURL: URL(string: reference)!,
+                title: resolvedInformation.title,
+                abstract: [.text(resolvedInformation.abstract)],
+                availableLanguages: resolvedInformation.availableLanguages,
+                platforms: resolvedInformation.platforms,
+                taskGroups: nil,
+                usr: nil,
+                declarationFragments: resolvedInformation.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+                redirects: nil,
+                topicImages: resolvedInformation.topicImages,
+                references: resolvedInformation.references,
+                variants: (resolvedInformation.variants ?? []).map { variant in
+                    .init(
+                        traits: variant.traits,
+                        kind: variant.kind,
+                        language: variant.language,
+                        relativePresentationURL: variant.url?.withoutHostAndPortAndScheme(),
+                        title: variant.title,
+                        abstract: variant.abstract.map { [.text($0)] },
+                        taskGroups: nil,
+                        usr: nil,
+                        declarationFragments: variant.declarationFragments.map { fragments in
+                            fragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) }
+                        }
+                    )
+                }
             )
         }
     }
@@ -450,12 +437,12 @@ extension OutOfProcessReferenceResolver {
             guard let linkSummary = linkCache[reference.url.standardized.absoluteString] else {
                 fatalError("A topic reference that has already been resolved should always exist in the cache.")
             }
-            return makeEntity(for: linkSummary)
+            return linkSummary
         }
         
         func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
             if let cachedSummary = linkCache[preciseIdentifier] {
-                return (makeReference(for: cachedSummary), makeEntity(for: cachedSummary))
+                return (makeReference(for: cachedSummary), cachedSummary)
             }
             
             guard case ResponseV2.resolved(let linkSummary)? = try? longRunningProcess.sendAndWait(request: RequestV2.symbol(preciseIdentifier)) else {
@@ -469,19 +456,7 @@ extension OutOfProcessReferenceResolver {
             let reference = makeReference(for: linkSummary)
             linkCache[reference.absoluteString] = linkSummary
             
-            return (reference, makeEntity(for: linkSummary))
-        }
-        
-        private func makeEntity(for linkSummary: LinkDestinationSummary) -> LinkResolver.ExternalEntity {
-            LinkResolver.ExternalEntity(
-                topicRenderReference: linkSummary.topicRenderReference(),
-                renderReferenceDependencies: RenderReferenceDependencies(
-                    topicReferences: (linkSummary.references ?? []).compactMap { ($0 as? TopicRenderReference)?.topicReference(languages: linkSummary.availableLanguages) },
-                    linkReferences: (linkSummary.references ?? []).compactMap { $0 as? LinkReference },
-                    imageReferences: (linkSummary.references ?? []).compactMap { $0 as? ImageReference }
-                ),
-                sourceLanguages: linkSummary.availableLanguages
-            )
+            return (reference, linkSummary)
         }
         
         private func makeReference(for linkSummary: LinkDestinationSummary) -> ResolvedTopicReference {
@@ -492,20 +467,6 @@ extension OutOfProcessReferenceResolver {
                 sourceLanguages: linkSummary.availableLanguages
             )
         }
-    }
-}
-
-private extension TopicRenderReference {
-    func topicReference(languages: Set<SourceLanguage>) -> ResolvedTopicReference? {
-        guard let url = URL(string: identifier.identifier), let rawBundleID = url.host else {
-            return nil
-        }
-        return ResolvedTopicReference(
-            bundleID: .init(rawValue: rawBundleID),
-            path: url.path,
-            fragment: url.fragment,
-            sourceLanguages: languages
-        )
     }
 }
 
@@ -582,6 +543,7 @@ private class LongRunningProcess: ExternalLinkResolving {
         else {
             throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: "\(request)")
         }
+        print(requestString)
         input.fileHandleForWriting.write(requestData)
         
         // Receive
@@ -590,11 +552,10 @@ private class LongRunningProcess: ExternalLinkResolving {
     
     private func _readResponse<Response: Decodable>() throws -> Response {
         var response = output.fileHandleForReading.availableData
+        print(String(decoding: response, as: UTF8.self))
         guard !response.isEmpty else {
             throw OutOfProcessReferenceResolver.Error.processDidExit(code: Int(process.terminationStatus))
         }
-        
-        print(String(decoding: response, as: UTF8.self))
         
         // It's not guaranteed that the full response will be available all at once.
         while true {
@@ -715,11 +676,17 @@ extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
         var entity = entity(with: reference)
         // The entity response doesn't include the assets that it references.
         // Before returning the entity, make sure that its references assets are included among the image dependencies.
-        for image in entity.topicRenderReference.images {
+        var references = entity.references ?? []
+        
+        for image in entity.topicImages ?? [] {
             if let asset = resolve(assetNamed: image.identifier.identifier) {
-                entity.renderReferenceDependencies.imageReferences.append(ImageReference(identifier: image.identifier, imageAsset: asset))
+                references.append(ImageReference(identifier: image.identifier, imageAsset: asset))
             }
         }
+        if !references.isEmpty {
+            entity.references = references
+        }
+        
         return entity
     }
     

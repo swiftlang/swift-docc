@@ -87,31 +87,10 @@ final class ExternalPathHierarchyResolver {
     ///
     /// - Precondition: The `reference` was previously resolved by this resolver.
     func entity(_ reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-        guard let resolvedInformation = content[reference] else {
+        guard let alreadyResolvedSummary = content[reference] else {
             fatalError("The resolver should only be asked for entities that it resolved.")
         }
-        
-        let topicReferences: [ResolvedTopicReference] = (resolvedInformation.references ?? []).compactMap {
-            guard let renderReference = $0 as? TopicRenderReference,
-                  let url = URL(string: renderReference.identifier.identifier),
-                  let bundleID = url.host
-            else {
-                return nil
-            }
-            return ResolvedTopicReference(bundleID: .init(rawValue: bundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift)
-        }
-        let dependencies = RenderReferenceDependencies(
-            topicReferences: topicReferences,
-            linkReferences: (resolvedInformation.references ?? []).compactMap { $0 as? LinkReference },
-            imageReferences: (resolvedInformation.references ?? []).compactMap { $0 as? ImageReference }
-        )
-        
-        return .init(
-            topicRenderReference: resolvedInformation.topicRenderReference(),
-            renderReferenceDependencies: dependencies,
-            sourceLanguages: resolvedInformation.availableLanguages,
-            symbolKind: DocumentationNode.symbolKind(for: resolvedInformation.kind)
-        )
+        return alreadyResolvedSummary
     }
     
     // MARK: Deserialization
@@ -193,7 +172,7 @@ extension LinkDestinationSummary {
     }
     
     /// Create a topic render render reference for this link summary and its content variants.
-    func topicRenderReference() -> TopicRenderReference {
+    func makeTopicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
         
         var titleVariants = VariantCollection(defaultValue: title)

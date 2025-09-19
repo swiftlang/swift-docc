@@ -189,14 +189,15 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             }
             
             let entity = try XCTUnwrap(requestKind.perform(resolver: resolver))
+            let topicRenderReference = entity.makeTopicRenderReference()
             
-            XCTAssertEqual(entity.topicRenderReference.url, testSummary.relativePresentationURL.absoluteString)
+            XCTAssertEqual(topicRenderReference.url, testSummary.relativePresentationURL.absoluteString)
             
-            XCTAssertEqual(entity.topicRenderReference.kind.rawValue, "symbol")
-            XCTAssertEqual(entity.topicRenderReference.role, "symbol")
+            XCTAssertEqual(topicRenderReference.kind.rawValue, "symbol")
+            XCTAssertEqual(topicRenderReference.role, "symbol")
             
-            XCTAssertEqual(entity.topicRenderReference.title, "Resolved Title")
-            XCTAssertEqual(entity.topicRenderReference.abstract, [
+            XCTAssertEqual(topicRenderReference.title, "Resolved Title")
+            XCTAssertEqual(topicRenderReference.abstract, [
                 .text("Resolved abstract with "),
                 .emphasis(inlineContent: [.text("formatted")]),
                 .text(" "),
@@ -205,26 +206,26 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 .reference(identifier: .init("doc://com.test.bundle/something-else"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
             ])
             
-            XCTAssertFalse(entity.topicRenderReference.isBeta)
+            XCTAssertFalse(topicRenderReference.isBeta)
             
-            XCTAssertEqual(entity.sourceLanguages.count, 3)
+            XCTAssertEqual(entity.availableLanguages.count, 3)
             
-            let availableSourceLanguages = entity.sourceLanguages.sorted()
+            let availableSourceLanguages = entity.availableLanguages.sorted()
             let expectedLanguages = testSummary.availableLanguages.sorted()
             
             XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
             XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
             XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
             
-            XCTAssertEqual(entity.topicRenderReference.fragments, [
+            XCTAssertEqual(topicRenderReference.fragments, [
                 .init(text: "struct", kind: .keyword, preciseIdentifier: nil),
                 .init(text: " ", kind: .text, preciseIdentifier: nil),
                 .init(text: "declaration fragment", kind: .identifier, preciseIdentifier: nil),
             ])
             
             let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
-            XCTAssertEqual(entity.topicRenderReference.titleVariants.value(for: variantTraits), "Resolved Variant Title")
-            XCTAssertEqual(entity.topicRenderReference.abstractVariants.value(for: variantTraits), [
+            XCTAssertEqual(topicRenderReference.titleVariants.value(for: variantTraits), "Resolved Variant Title")
+            XCTAssertEqual(topicRenderReference.abstractVariants.value(for: variantTraits), [
                 .text("Resolved variant abstract with "),
                 .emphasis(inlineContent: [.text("formatted")]),
                 .text(" "),
@@ -233,7 +234,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 .reference(identifier: .init("doc://com.test.bundle/something-else-2"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
             ])
             
-            let fragmentVariant = try XCTUnwrap(entity.topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
+            let fragmentVariant = try XCTUnwrap(topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
             XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
             if case .replace(let variantFragment) = fragmentVariant.patch.first {
                 XCTAssertEqual(variantFragment, [.init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)])
@@ -241,19 +242,19 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 XCTFail("Unexpected fragments variant patch")
             }
             
-            XCTAssertNil(entity.topicRenderReference.conformance)
-            XCTAssertNil(entity.topicRenderReference.estimatedTime)
-            XCTAssertNil(entity.topicRenderReference.defaultImplementationCount)
-            XCTAssertFalse(entity.topicRenderReference.isBeta)
-            XCTAssertFalse(entity.topicRenderReference.isDeprecated)
-            XCTAssertNil(entity.topicRenderReference.propertyListKeyNames)
-            XCTAssertNil(entity.topicRenderReference.tags)
+            XCTAssertNil(topicRenderReference.conformance)
+            XCTAssertNil(topicRenderReference.estimatedTime)
+            XCTAssertNil(topicRenderReference.defaultImplementationCount)
+            XCTAssertFalse(topicRenderReference.isBeta)
+            XCTAssertFalse(topicRenderReference.isDeprecated)
+            XCTAssertNil(topicRenderReference.propertyListKeyNames)
+            XCTAssertNil(topicRenderReference.tags)
             
-            XCTAssertEqual(entity.topicRenderReference.images.count, 1)
-            let topicImage = try XCTUnwrap(entity.topicRenderReference.images.first)
+            XCTAssertEqual(topicRenderReference.images.count, 1)
+            let topicImage = try XCTUnwrap(topicRenderReference.images.first)
             XCTAssertEqual(topicImage.type, .card)
             
-            let image = try XCTUnwrap(entity.renderReferenceDependencies.imageReferences.first(where: { $0.identifier == topicImage.identifier }))
+            let image = try XCTUnwrap(entity.makeRenderDependencies().imageReferences.first(where: { $0.identifier == topicImage.identifier }))
             
             XCTAssertEqual(image.identifier, linkedImage)
             XCTAssertEqual(image.altText, "External card alt text")
@@ -297,6 +298,130 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         XCTAssertEqual(resolver?.bundleID, "com.test.bundle")
         
         wait(for: [didReadErrorOutputExpectation], timeout: 20.0)
+    }
+    
+    func testLinksAndImagesInExternalAbstractAreIncludedInTheRenderedPageReferenecs() async throws {
+        let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
+        
+        let imageRef = RenderReferenceIdentifier("some-external-card-image-identifier")
+        let linkRef = RenderReferenceIdentifier("doc://\(externalBundleID)/path/to/other-page")
+        
+        let imageURL = URL(string: "https://example.com/path/to/some-image.png")!
+              
+        let originalLinkedImage = ImageReference(
+            identifier: imageRef,
+            imageAsset: DataAsset(
+                variants: [.init(displayScale: .standard): imageURL],
+                metadata: [imageURL: .init()],
+                context: .display
+            )
+        )
+        
+        let originalLinkedTopic = TopicRenderReference(
+            identifier: linkRef,
+            title: "Resolved title of link inside abstract",
+            abstract: [
+                .text("This transient content is not displayed anywhere"),
+            ],
+            url: "/path/to/other-page",
+            kind: .article
+        )
+        
+        let externalSummary = LinkDestinationSummary(
+            kind: .article,
+            language: .swift,
+            relativePresentationURL: URL(string: "/path/to/something")!,
+            referenceURL: URL(string: "doc://\(externalBundleID)/path/to/something")!,
+            title: "Resolved title",
+            abstract: [
+                .text("External abstract with an image "),
+                .image(identifier: imageRef, metadata: nil),
+                .text(" and link "),
+                .reference(identifier: linkRef, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+                .text("."),
+            ],
+            availableLanguages: [.swift],
+            platforms: nil,
+            taskGroups: nil,
+            usr: nil,
+            declarationFragments: nil,
+            redirects: nil,
+            topicImages: nil,
+            references: [originalLinkedImage, originalLinkedTopic],
+            variants: []
+        )
+        
+        let resolver: OutOfProcessReferenceResolver
+        do {
+            let temporaryFolder = try createTemporaryDirectory()
+            let encodedResponse = try String(decoding: JSONEncoder().encode(OutOfProcessReferenceResolver.ResponseV2.resolved(externalSummary)), as: UTF8.self)
+            
+            let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
+            try """
+            #!/bin/bash
+            echo '{"identifier":"\(externalBundleID)","capabilities": 0}'  # Write this resolver's identifier & capabilities
+            read                                                           # Wait for docc to send a request
+            echo '\(encodedResponse)'                                      # Respond with the resolved link summary
+            read                                                           # Wait for docc to send another request
+            """.write(to: executableLocation, atomically: true, encoding: .utf8)
+            
+            // `0o0700` is `-rwx------` (read, write, & execute only for owner)
+            try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
+            XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
+            
+            resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Something.md", utf8Content: """
+            # My root page
+            
+            This page curates an an external page (so that its abstract and transient references are displayed on the page)
+            
+            ## Topics
+            
+            ### An external link
+            
+            -  <doc://\(externalBundleID)/some-link>
+            """)
+        ])
+        let inputDirectory = Folder(name: "path", content: [Folder(name: "to", content: [catalog])])
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [
+            externalBundleID: resolver
+        ]
+        let (_, context) = try await loadBundle(catalog: inputDirectory, configuration: configuration)
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [], "Encountered unexpected problems")
+        
+        let reference = try XCTUnwrap(context.soleRootModuleReference, "This example catalog only has a root page")
+        
+        let converter = DocumentationContextConverter(
+            bundle: context.bundle,
+            context: context,
+            renderContext: RenderContext(
+                documentationContext: context,
+                bundle: context.bundle
+            )
+        )
+        let renderNode = try XCTUnwrap(converter.renderNode(for: context.entity(with: reference)))
+        
+        // Verify that the topic section exist and has the external link
+        XCTAssertEqual(renderNode.topicSections.flatMap { [$0.title ?? "<no-title>"] + $0.identifiers }, [
+            "An external link",
+            "doc://\(externalBundleID)/path/to/something", // Resolved links use their canonical references
+        ])
+        
+        // Verify that the externally resolved page's references are included on the page
+        XCTAssertEqual(Set(renderNode.references.keys), [
+            "doc://com.example.test/path/to/something", // The external page that the root links to
+            
+            "some-external-card-image-identifier", // The image in that page's abstract
+            "doc://com.example.test/path/to/other-page", // The link in that page's abstract
+        ], "The external page and its two references should be included on this page")
+        
+        XCTAssertEqual(renderNode.references[imageRef.identifier] as? ImageReference, originalLinkedImage)
+        XCTAssertEqual(renderNode.references[linkRef.identifier] as? TopicRenderReference, originalLinkedTopic)
     }
     
     func testExternalLinkFailureResultInDiagnosticWithSolutions() async throws {
@@ -538,7 +663,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             }
 
             let (_, symbolEntity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")
-            return symbolEntity.topicRenderReference.isBeta
+            return symbolEntity.makeTopicRenderReference().isBeta
         }
         
         // All platforms are in beta
