@@ -225,7 +225,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
             abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
             taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
             usr: VariantValue<String?> = nil,
-            declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
+            declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil
         ) {
             self.traits = traits
             self.kind = kind
