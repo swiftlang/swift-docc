@@ -469,20 +469,20 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         ]
         let (_, context) = try await loadBundle(catalog: inputDirectory, configuration: configuration)
         
-        XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
-            "Link in document summary will not be displayed",
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
             "Some external link issue summary",
         ])
         
-        // TODO: Clean this up after the link-in-abstract warning is removed
-        let problem = try XCTUnwrap(context.problems.sorted(by: \.diagnostic.identifier).last)
+        let problem = try XCTUnwrap(context.problems.sorted(by: \.diagnostic.identifier).first)
         
         XCTAssertEqual(problem.diagnostic.summary, "Some external link issue summary")
         XCTAssertEqual(problem.diagnostic.range?.lowerBound, .init(line: 3, column: 69, source: URL(fileURLWithPath: "/path/to/unit-test.docc/Something.md")))
         XCTAssertEqual(problem.diagnostic.range?.upperBound, .init(line: 3, column: 97, source: URL(fileURLWithPath: "/path/to/unit-test.docc/Something.md")))
         
+        XCTAssertEqual(problem.possibleSolutions.count, 1)
         let solution = try XCTUnwrap(problem.possibleSolutions.first)
         XCTAssertEqual(solution.summary, "Some external solution")
+        XCTAssertEqual(solution.replacements.count, 1)
         XCTAssertEqual(solution.replacements.first?.range.lowerBound, .init(line: 3, column: 65, source: nil))
         XCTAssertEqual(solution.replacements.first?.range.upperBound, .init(line: 3, column: 97, source: nil))
         
@@ -498,13 +498,6 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         let suggestion = "\u{001B}[1;39m"
         let clear      = "\u{001B}[0;0m"
         XCTAssertEqual(diagnosticOutput.text, """
-        \(warning)warning: Link in document summary will not be displayed\(clear)
-        Summary should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
-         --> /path/to/unit-test.docc/Something.md:3:64-3:98
-        1 | # My root page
-        2 |
-        3 + This page contains an external link that will fail to resolve: \(highlight)<doc://com.example.test/some-link>\(clear)
-
         \(warning)warning: Some external link issue summary\(clear)
          --> /path/to/unit-test.docc/Something.md:3:69-3:97
         1 | # My root page

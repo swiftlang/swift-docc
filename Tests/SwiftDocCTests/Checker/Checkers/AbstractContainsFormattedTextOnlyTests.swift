@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,9 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 
+// This tests `AbstractContainsFormattedTextOnly` which are deprecated.
+// Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+@available(*, deprecated)
 class AbstractContainsFormattedTextOnlyTests: XCTestCase {
     var checker = AbstractContainsFormattedTextOnly(sourceFile: nil)
     

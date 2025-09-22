@@ -265,7 +265,6 @@ public class DocumentationContext {
     ///   - source: The location of the document.
     private func check(_ document: Document, at source: URL) {
         var checker = CompositeChecker([
-            AbstractContainsFormattedTextOnly(sourceFile: source).any(),
             DuplicateTopicsSections(sourceFile: source).any(),
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
