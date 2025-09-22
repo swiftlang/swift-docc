@@ -17,7 +17,7 @@ import SwiftDocCTestUtilities
 class SemaToRenderNodeTests: XCTestCase {
     func testCompileTutorial() async throws {
         let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -32,7 +32,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         
@@ -404,7 +404,7 @@ class SemaToRenderNodeTests: XCTestCase {
         let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         func assertTutorialWithPath(_ tutorialPath: String, hasBackground backgroundIdentifier: String) throws {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: tutorialPath, sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: tutorialPath, sourceLanguage: .swift))
             
             guard let tutorialDirective = node.markup as? BlockDirective else {
                 XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -417,7 +417,7 @@ class SemaToRenderNodeTests: XCTestCase {
                 return
             }
             
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(tutorial) as! RenderNode
             let intro = renderNode.sections.compactMap { $0 as? IntroRenderSection }.first!
             XCTAssertEqual(RenderReferenceIdentifier(backgroundIdentifier), intro.backgroundImage)
@@ -431,12 +431,12 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileTutorialArticle() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         let article = node.semantic as! TutorialArticle
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(article) as! RenderNode
         
@@ -570,7 +570,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     private func assertCompileOverviewWithNoVolumes(inputs: DocumentationContext.Inputs, context: DocumentationContext, expectedProblemsCount: Int = 0) throws {
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -586,7 +586,7 @@ class SemaToRenderNodeTests: XCTestCase {
         // Verify we emit a diagnostic for the chapter with no tutorial references.
         XCTAssertEqual(problems.count, expectedProblemsCount, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(tutorialTableOfContents) as! RenderNode
         
@@ -807,7 +807,7 @@ class SemaToRenderNodeTests: XCTestCase {
             try text.write(to: overviewURL, atomically: true, encoding: .utf8)
         }
     
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial table-of-contents not found as first child.")
@@ -822,7 +822,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 0, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(tutorialTableOfContents) as! RenderNode
 
@@ -927,7 +927,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileSymbol() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             // Remove the SideClass sub heading to match the expectations of this test
             let graphURL = url.appendingPathComponent("sidekit.symbols.json")
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -941,7 +941,7 @@ class SemaToRenderNodeTests: XCTestCase {
             try JSONEncoder().encode(graph).write(to: graphURL)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         
         // Verify that `MyProtocol` the symbol is loaded in the topic graph, but the `MyProtocol` sidecar article was removed.
         let matches = context.knownPages.filter({ reference -> Bool in
@@ -958,7 +958,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         let symbol = node.semantic as! Symbol
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
         guard renderNode.primaryContentSections.count == 4 else {
@@ -1227,7 +1227,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         let testBundleURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-        let (_, inputs, context) = try await loadBundle(
+        let (_, _, context) = try await loadBundle(
             from: testBundleURL,
             externalResolvers: ["com.test.external": TestReferenceResolver()],
             externalSymbolResolver: TestSymbolResolver()
@@ -1247,7 +1247,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertNotNil(context.externalCache["s:10Foundation4DataV"])
         XCTAssertNotNil(context.externalCache["s:5Foundation0A5NSCodableP"])
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: myProtocol.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: myProtocol.reference)
 
         let renderNode = translator.visit(myProtocolSymbol) as! RenderNode
         guard renderNode.primaryContentSections.count == 4 else {
@@ -1327,11 +1327,11 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Check for constraints in render node
         
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
         guard let conf = renderNode.metadata.conformance else {
@@ -1348,10 +1348,10 @@ class SemaToRenderNodeTests: XCTestCase {
         }.joined(), "Label is Text, Observer inherits NSObject, and S conforms to StringProtocol.")
         
         // Check for constraints in render references
-        let parent = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let parent = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         let parentSymbol = parent.semantic as! Symbol
-        var parentTranslator = RenderNodeTranslator(context: context, inputs: inputs, identifier: parent.reference)
+        var parentTranslator = RenderNodeTranslator(context: context, identifier: parent.reference)
         
         let parentRenderNode = parentTranslator.visit(parentSymbol) as! RenderNode
         guard let functionReference = parentRenderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"] as? TopicRenderReference else {
@@ -1380,10 +1380,10 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderConditionalConstraintsOnConformingType() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
         
         // Test conditional conformance for the conforming type
@@ -1402,10 +1402,10 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderConditionalConstraintsOnProtocol() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
         
         // Test conditional conformance for the conforming type
@@ -1424,12 +1424,12 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testRenderReferenceResolving() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
 
         let renderNode = translator.visit(symbol) as! RenderNode
 
@@ -1489,12 +1489,12 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testAvailabilityMetadata() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
         
@@ -1537,7 +1537,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Override with both a low and a high value
         for version in [SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1), SymbolGraph.SemanticVersion(major: 99, minor: 99, patch: 99)] {
-            let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+            let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
                 // Duplicate the symbol graph
                 let myKitURL = url.appendingPathComponent("mykit-iOS.symbols.json")
                 let myClassUSR = "s:5MyKit0A5ClassC"
@@ -1563,11 +1563,11 @@ class SemaToRenderNodeTests: XCTestCase {
                 }
             })
             
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
             
             // Compile docs and verify contents
             let symbol = node.semantic as! Symbol
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             
             let renderNode = translator.visit(symbol) as! RenderNode
             
@@ -1590,7 +1590,7 @@ class SemaToRenderNodeTests: XCTestCase {
     
     func testMediaReferencesWithSpaces() async throws {
         let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TutorialMediaWithSpaces", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TutorialMediaWithSpaces", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -1605,7 +1605,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertTrue(problems.isEmpty)
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         
@@ -1650,8 +1650,8 @@ Document @1:1-11:19
 """,
                        markup.debugDescription(options: .printSourceLocations))
         
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var contentTranslator = RenderContentCompiler(context: context, inputs: inputs, identifier: ResolvedTopicReference(bundleID: inputs.id, path: "/TestTutorial", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        var contentTranslator = RenderContentCompiler(context: context,  identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestTutorial", sourceLanguage: .swift))
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
             .paragraph(.init(inlineContent: [
@@ -1692,8 +1692,8 @@ Document
 """,
                        markup.debugDescription())
 
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var contentTranslator = RenderContentCompiler(context: context, inputs: inputs, identifier: ResolvedTopicReference(bundleID: inputs.id, path: "/TestTutorial", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        var contentTranslator = RenderContentCompiler(context: context,  identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestTutorial", sourceLanguage: .swift))
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
                 .paragraph(.init(inlineContent: [
@@ -1717,19 +1717,19 @@ Document
         
         let document = Document(parsing: markupSource, options: [])
         let node = DocumentationNode(reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift), kind: .article, sourceLanguage: .swift, name: .conceptual(title: "Title"), markup: document, semantic: Semantic())
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         XCTAssertNotNil(translator.visit(MarkupContainer(document.children)))
         }
         
     func testCompileSymbolMetadata() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
         
@@ -1831,10 +1831,10 @@ Document
 
         try content.write(to: targetURL.appendingPathComponent("article2.md"), atomically: true, encoding: .utf8)
 
-        let (_, inputs, context) = try await loadBundle(from: targetURL)
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/Test-Bundle/article2", sourceLanguage: .swift))
+        let (_, _, context) = try await loadBundle(from: targetURL)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Test-Bundle/article2", sourceLanguage: .swift))
         let article = node.semantic as! Article
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         return translator.visit(article) as! RenderNode
     }
     
@@ -1945,10 +1945,10 @@ Document
         
         // Not a beta platform
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: nil, referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: nil, referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = DocumentationNodeConverter(inputs: inputs, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
@@ -1958,12 +1958,12 @@ Document
         
         do {
             
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "Custom Name": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [])
-            let documentationContentRendered = DocumentationContentRenderer(documentationContext: context, inputs: inputs)
+            let documentationContentRendered = DocumentationContentRenderer(documentationContext: context)
             let isBeta = documentationContentRendered.isBeta(node)
             // Verify that the symbol is not beta since it does not contains availability info.
             XCTAssertFalse(isBeta)
@@ -1971,12 +1971,12 @@ Document
         
         // Different platform is beta
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "tvOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = DocumentationNodeConverter(inputs: inputs, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
@@ -1985,12 +1985,12 @@ Document
         // Beta platform but *not* matching the introduced version
         
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = DocumentationNodeConverter(inputs: inputs, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
@@ -1999,12 +1999,12 @@ Document
         // Beta platform matching the introduced version
 
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true)
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = DocumentationNodeConverter(inputs: inputs, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(context: context).convert(node)
 
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS"})?.isBeta, true)
@@ -2013,12 +2013,12 @@ Document
         // Beta platform earlier than the introduced version
         
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 14, 0), beta: true)
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = DocumentationNodeConverter(inputs: inputs, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first(where: { $0.name == "macOS" })?.isBeta, true)
@@ -2027,14 +2027,14 @@ Document
         // Set only some platforms to beta & the exact version globalFunction is being introduced at
         
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
                 "watchOS": PlatformVersion(VersionTriplet(9, 0, 0), beta: true),
                 "tvOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = DocumentationNodeConverter(inputs: inputs, context: context).convert(node)
+            let renderNode = DocumentationNodeConverter(context: context).convert(node)
             
             // Verify task group link is not in beta betas "iOS" is not being marked as beta
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, false)
@@ -2042,7 +2042,7 @@ Document
 
         // Set all platforms to beta & the exact version globalFunction is being introduced at to test beta SDK documentation
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
                 "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
                 "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
@@ -2050,7 +2050,7 @@ Document
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             
             let node = try context.entity(with: reference)
-            let renderNode = try XCTUnwrap(DocumentationNodeConverter(inputs: inputs, context: context).convert(node))
+            let renderNode = try XCTUnwrap(DocumentationNodeConverter(context: context).convert(node))
             
             // Verify task group link is beta
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, true)
@@ -2058,7 +2058,7 @@ Document
 
         // Set all platforms to beta where the symbol is available,
         // some platforms not beta but the symbol is not available there.
-        let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+        let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
             "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
@@ -2068,7 +2068,7 @@ Document
         ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
         
         let node = try context.entity(with: reference)
-        let renderNode = try XCTUnwrap(DocumentationNodeConverter(inputs: inputs, context: context).convert(node))
+        let renderNode = try XCTUnwrap(DocumentationNodeConverter(context: context).convert(node))
         
         // Verify task group link is beta
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, true)
@@ -2081,7 +2081,7 @@ Document
             renderReferenceSymbol.availability?.availability.append(SymbolGraph.Symbol.Availability.AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: "ImaginaryOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false))
 
             // Verify the rendered reference
-            let renderNode = try XCTUnwrap(DocumentationNodeConverter(inputs: inputs, context: context).convert(node))
+            let renderNode = try XCTUnwrap(DocumentationNodeConverter(context: context).convert(node))
             
             // Verify task group link is beta
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.isBeta, true)
@@ -2090,7 +2090,7 @@ Document
         // Set all platforms to beta & the exact version MyClass is being introduced.
         // Expect the symbol to no be in beta sinceit does not have an introduced version for iOS
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
                 "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
                 "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
@@ -2098,7 +2098,7 @@ Document
             ], referencePath: "/documentation/MyKit")
             
             let node = try context.entity(with: reference)
-            let renderNode = try XCTUnwrap(DocumentationNodeConverter(inputs: inputs, context: context).convert(node))
+            let renderNode = try XCTUnwrap(DocumentationNodeConverter(context: context).convert(node))
             
             // Verify task group link is not in beta because `iOS` does not have an introduced version
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, false)
@@ -2106,12 +2106,12 @@ Document
         
         // Set all platforms as unconditionally unavailable and test that the symbol is not marked as beta.
         do {
-            let (inputs, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "iOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
             ], referencePath: "/documentation/MyKit/MyClass")
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [.init(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false)])
-            let documentationContentRendered = DocumentationContentRenderer(documentationContext: context, inputs: inputs)
+            let documentationContentRendered = DocumentationContentRenderer(documentationContext: context)
             let isBeta = documentationContentRendered.isBeta(node)
             // Verify that the symbol is not beta since it's unavailable in all the platforms.
             XCTAssertFalse(isBeta)
@@ -2119,22 +2119,22 @@ Document
     }
     
     func testRendersDeprecatedViolator() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Make the referenced symbol deprecated
         do {
-            let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
                 SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: .init(major: 13, minor: 0, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             ])
         }
         
-        let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = node.semantic as! Symbol
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         // The reference is deprecated on all platforms
@@ -2142,11 +2142,11 @@ Document
     }
 
     func testDoesNotRenderDeprecatedViolator() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Make the referenced symbol deprecated
         do {
-            let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
                 SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
@@ -2154,11 +2154,11 @@ Document
             ])
         }
     
-        let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = node.semantic as! Symbol
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         // The reference is not deprecated on all platforms
@@ -2166,11 +2166,11 @@ Document
     }
     
     func testRendersDeprecatedViolatorForUnconditionallyDeprecatedReference() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Make the referenced symbol deprecated
         do {
-            let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
                 SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: true, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
@@ -2178,11 +2178,11 @@ Document
             ])
         }
 
-        let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = node.semantic as! Symbol
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         // Verify that the reference is deprecated on all platforms
@@ -2192,11 +2192,11 @@ Document
     func testRenderMetadataFragments() async throws {
         
         // Check for fragments in metadata in render node
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
         guard let fragments = renderNode.metadata.fragments else {
@@ -2212,24 +2212,24 @@ Document
     }
     
     func testRenderMetadataExtendedModule() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
         XCTAssertEqual(renderNode.metadata.extendedModule, "MyKit")
     }
     
     func testDefaultImplementations() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         // Verify that the render reference to a required symbol includes the 'required' key and the number of default implementations provided.
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideProtocol", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideProtocol", sourceLanguage: .swift))
             let symbol = node.semantic as! Symbol
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
 
             let requiredFuncReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()"])
@@ -2240,9 +2240,9 @@ Document
 
         // Verify that a required symbol includes a required metadata and default implementations
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideProtocol/func()", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideProtocol/func()", sourceLanguage: .swift))
             let symbol = node.semantic as! Symbol
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
 
             // Verify that the render reference to a required symbol includes the 'required' key and the number of default implementations provided.
@@ -2256,13 +2256,13 @@ Document
     }
 
     func testDefaultImplementationsNotListedInTopics() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         // Verify that a required symbol does not include default implementations in Topics groups
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideProtocol/func()", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideProtocol/func()", sourceLanguage: .swift))
             let symbol = node.semantic as! Symbol
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
 
             // Test that default implementations are listed ONLY under Default Implementations and not Topics
@@ -2274,11 +2274,11 @@ Document
     func testNoStringMetadata() async throws {
         
         // Check for fragments in metadata in render node
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
         let encoded = try JSONEncoder().encode(renderNode)
@@ -2303,11 +2303,11 @@ Document
     func testRenderDeclarations() async throws {
         
         // Check for fragments in metadata in render node
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
         
@@ -2322,11 +2322,11 @@ Document
 
     func testDocumentationRenderReferenceRoles() async throws {
         // Check for fragments in metadata in render node
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift))
         
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
 
@@ -2342,11 +2342,11 @@ Document
 
     func testTutorialsRenderReferenceRoles() async throws {
         // Check for fragments in metadata in render node
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         let symbol = node.semantic as! TutorialTableOfContents
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
 
@@ -2361,9 +2361,9 @@ Document
     
     func testRemovingTrailingNewLinesInDeclaration() async throws {
         // Check for fragments in metadata in render node
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
 
         // Subheading with trailing "\n"
@@ -2372,7 +2372,7 @@ Document
         // Navigator title with trailing "\n"
         XCTAssertEqual(symbol.navigator?.count, 11)
 
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
 
         // Verify trailing newline removed from subheading
@@ -2384,11 +2384,11 @@ Document
     
     func testRenderManualSeeAlsoInArticles() async throws {
         // Check for fragments in metadata in render node
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift))
         
         let article = node.semantic as! Article
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(article) as! RenderNode
         
@@ -2407,10 +2407,10 @@ Document
     
     func testSafeSectionAnchorNames() async throws {
         // Check that heading's anchor was safe-ified
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
         
@@ -2427,13 +2427,13 @@ Document
     }
     
     func testDuplicateNavigatorTitleIsRemoved() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
-        let myFuncReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
+        let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
         let symbol = node.semantic as! Symbol
 
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         translator.collectedTopicReferences.append(myFuncReference)
         let renderNode = translator.visit(symbol) as! RenderNode
 
@@ -2443,13 +2443,13 @@ Document
     }
 
     func testNonDuplicateNavigatorTitleIsRendered() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
-        let myFuncReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
         let symbol = node.semantic as! Symbol
 
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
 
         let renderReference = try XCTUnwrap(renderNode.references[myFuncReference.absoluteString] as? TopicRenderReference)
@@ -2502,7 +2502,7 @@ Document
             """.write(to: url.appendingPathComponent("TestOverview.tutorial"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
         guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial table-of-contents not found as first child.")
@@ -2517,13 +2517,13 @@ Document
         
         XCTAssert(problems.filter { $0.diagnostic.severity == .error }.isEmpty, "Found errors when analyzing Tutorials overview.")
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         // Verify we don't crash.
         _ = translator.visit(tutorialTableOfContents)
         
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
             
             guard let technologyDirective = node.markup as? BlockDirective else {
                 XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -2535,7 +2535,7 @@ Document
                 return
             }
         
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             XCTAssertNil(translator.visit(tutorial), "Render node for uncurated tutorial should not have been produced")
         }
     }
@@ -2594,7 +2594,7 @@ Document
             """.write(to: url.appendingPathComponent("TestTutorial.tutorial"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let technologyDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -2609,7 +2609,7 @@ Document
         
         XCTAssert(problems.filter { $0.diagnostic.severity == .error }.isEmpty, "Found errors when analyzing tutorial.")
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         // Verify we don't crash.
         _ = translator.visit(tutorial)
@@ -2619,7 +2619,7 @@ Document
     func testRenderAsides() async throws {
         let asidesSGFURL = Bundle.module.url(
             forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
-        let (bundleURL, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
+        let (bundleURL, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: asidesSGFURL, to: url.appendingPathComponent("Asides.symbols.json"))
         }
         defer {
@@ -2631,15 +2631,15 @@ Document
             let node = try context.entity(with: myFuncReference)
             let symbol = node.semantic as! Symbol
             
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
             let asides = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
             
             XCTAssertEqual(Array(asides.content.dropFirst()), self.asidesStressTest)
         }
         
-        let dashReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/Asides/dashAsides()", sourceLanguage: .swift)
-        let quoteReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/Asides/quoteAsides()", sourceLanguage: .swift)
+        let dashReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/dashAsides()", sourceLanguage: .swift)
+        let quoteReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/quoteAsides()", sourceLanguage: .swift)
         
         try testReference(dashReference)
         try testReference(quoteReference)
@@ -2664,20 +2664,20 @@ Document
         let sgURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5MyProtocol0Afunc()"#)
                 .write(to: url.appendingPathComponent("sidekit.symbols.json"), atomically: true, encoding: .utf8)
         })
 
-        let myFuncReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
+        let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         // Verify that by default we inherit docs.
         do {
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
 
             // Verify the expected inherited abstract text.
@@ -2690,7 +2690,7 @@ Document
         let sgURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle but
             // from the MyKit module.
             try String(contentsOf: sgURL)
@@ -2698,13 +2698,13 @@ Document
                 .write(to: url.appendingPathComponent("sidekit.symbols.json"), atomically: true, encoding: .utf8)
         })
 
-        let myFuncReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
+        let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         // Verify that by default we inherit docs.
         do {
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
 
             // Verify the expected default abstract text.
@@ -2713,7 +2713,7 @@ Document
     }
     /// Tests that we generated an automatic abstract and remove source docs.
     func testDisabledDocInheritance() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
         // Verify that the inherited docs which should be ignored are not reference resolved.
         // Verify inherited docs are reference resolved and their problems are recorded.
@@ -2724,13 +2724,13 @@ Document
             return p.diagnostic.summary == "Resource 'my-inherited-image.png' couldn't be found"
         }))
 
-        let myFuncReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
+        let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         // Verify that by default we don't inherit docs and we generate default abstract.
         do {
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
 
             // Verify the expected default abstract text.
@@ -2744,7 +2744,7 @@ Document
 
     /// Tests doc extensions are matched to inherited symbols
     func testInheritedSymbolDocExtension() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try? """
             # ``SideKit/SideClass/Element/inherited()``
             Doc extension abstract.
@@ -2753,13 +2753,13 @@ Document
             """.write(to: url.appendingPathComponent("inherited.md"), atomically: true, encoding: .utf8)
         })
         
-        let myFuncReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
+        let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         // Verify the doc extension was matched to the inherited symbol.
         do {
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
 
             // Verify the expected default abstract text.
@@ -2887,7 +2887,7 @@ Document
         for testData in testData {
             let sgURL = Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
          
-            let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
                 // Replace the out-of-bundle origin with a symbol from the same bundle but
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
@@ -2898,13 +2898,13 @@ Document
                     .write(to: url.appendingPathComponent("sidekit.symbols.json"))
             })
             
-            let myFuncReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
+            let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
             let node = try context.entity(with: myFuncReference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             
             // Verify the doc extension was matched to the inherited symbol.
             do {
-                var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+                var translator = RenderNodeTranslator(context: context, identifier: node.reference)
                 let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
                 
                 // Verify the expected default abstract text.
@@ -2921,20 +2921,20 @@ Document
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.inheritDocs = true
         
-        let (_, inputs, context) = try await loadBundle(from: bundleURL, configuration: configuration)
+        let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
 
         // Verify that we don't reference resolve inherited docs.
         XCTAssertFalse(context.diagnosticEngine.problems.contains(where: { problem in
             problem.diagnostic.summary.contains("my-inherited-image.png")
         }))
 
-        let myFuncReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
+        let myFuncReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         // Verify that by default we don't inherit docs and we generate default abstract.
         do {
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
 
             // Verify the expected default abstract text.
@@ -2961,13 +2961,13 @@ Document
     
     // Verifies that undocumented symbol gets a nil abstract.
     func testNonDocumentedSymbolNilAbstract() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
 
-        let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
 
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
 
         // Verify that an undocumented symbol gets a nil abstract.
@@ -3069,7 +3069,7 @@ Document
 
     /// Tests links to symbols that have deprecation summary in markdown appear deprecated.
     func testLinkToDeprecatedSymbolViaDirectiveIsDeprecated() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``MyKit/MyProtocol``
             @DeprecationSummary {
@@ -3078,10 +3078,10 @@ Document
             """.write(to: url.appendingPathComponent("documentation").appendingPathComponent("myprotocol.md"), atomically: true, encoding: .utf8)
         })
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
         
         let reference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyProtocol"] as? TopicRenderReference)
@@ -3089,7 +3089,7 @@ Document
     }
     
     func testCustomSymbolDisplayNames() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``MyKit``
             
@@ -3119,9 +3119,9 @@ Document
             """.write(to: url.appendingPathComponent("documentation").appendingPathComponent("myprotocol.md"), atomically: true, encoding: .utf8)
         })
          
-        let moduleReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift)
-        let protocolReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
-        let functionReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let protocolReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        let functionReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
         
         // Verify the MyKit module
         
@@ -3134,7 +3134,7 @@ Document
             XCTAssertEqual(titleVariant.variant, "My custom conceptual name")
         }
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: moduleNode.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: moduleNode.reference)
         let moduleRenderNode = try XCTUnwrap(translator.visit(moduleSymbol) as? RenderNode)
         
         XCTAssertEqual(moduleRenderNode.metadata.title, "My custom conceptual name")
@@ -3180,7 +3180,7 @@ Document
         
         let functionNode = try context.entity(with: functionReference)
         let functionSymbol = try XCTUnwrap(functionNode.semantic as? Symbol)
-        translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: functionNode.reference)
+        translator = RenderNodeTranslator(context: context, identifier: functionNode.reference)
         let functionRenderNode = try XCTUnwrap(translator.visit(functionSymbol) as? RenderNode)
         XCTAssertTrue(functionRenderNode.metadata.modulesVariants.variants.isEmpty)
         // Test that the symbol name `MyKit` is not added as a related module.
@@ -3241,7 +3241,7 @@ Document
             }
             """.write(to: url.appendingPathComponent("TestOverview.tutorial"), atomically: true, encoding: .utf8)
         }
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         guard let technologyDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
             return
@@ -3251,7 +3251,7 @@ Document
             XCTFail("Couldn't create technology from markup: \(problems)")
             return
         }
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(tutorialTableOfContents) as? RenderNode)
         XCTAssertEqual(renderNode.references.count, 5)
         XCTAssertNotNil(renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial"] as? TopicRenderReference)
@@ -3293,7 +3293,7 @@ Document
         
         let moduleNode = try context.entity(with: moduleReference)
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: moduleNode.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: moduleNode.reference)
         let moduleRenderNode = try XCTUnwrap(translator.visit(moduleNode.semantic) as? RenderNode)
         
         XCTAssertEqual(
@@ -3340,7 +3340,7 @@ Document
         
         let articleNode = try context.entity(with: articleReference)
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: articleNode.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: articleNode.reference)
         let articleRenderNode = try XCTUnwrap(translator.visit(articleNode.semantic) as? RenderNode)
         
         XCTAssertEqual(
@@ -3356,7 +3356,7 @@ Document
     }
     
     func testLanguageSpecificTopicSections() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
             try """
             # ``MixedFramework/MyObjectiveCClassObjectiveCName``
             
@@ -3393,7 +3393,7 @@ Document
         let documentationNode = try context.entity(with: reference)
         XCTAssertEqual(documentationNode.availableVariantTraits.count, 2, "This page has Swift and Objective-C variants")
         
-        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(documentationNode)
         
         let topicSectionsVariants = renderNode.topicSectionsVariants
@@ -3447,7 +3447,7 @@ Document
             - ``SomeClass4``
             """),
         ])
-        let (inputs, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "\(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -3479,13 +3479,12 @@ Document
             ], file: file, line: line)
         }
         
-        let nodeConverter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let nodeConverter = DocumentationNodeConverter(context: context)
         assertExpectedTopicSections(nodeConverter.convert(documentationNode))
         
         let contextConverter = DocumentationContextConverter(
-            inputs: inputs,
             context: context,
-            renderContext: RenderContext(documentationContext: context, inputs: inputs)
+            renderContext: RenderContext(documentationContext: context)
         )
         try assertExpectedTopicSections(XCTUnwrap(contextConverter.renderNode(for: documentationNode)))
     }
@@ -3521,14 +3520,14 @@ Document
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
         
-        let (_, inputs, context) = try await loadBundle(from: bundleURL, diagnosticEngine: .init() /* no diagnostic consumers */)
+        let (_, _, context) = try await loadBundle(from: bundleURL, diagnosticEngine: .init() /* no diagnostic consumers */)
         
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         
         let documentationNode = try context.entity(with: reference)
         XCTAssertEqual(documentationNode.availableVariantTraits.count, 1)
         
-        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(documentationNode)
         
         let topicSection = renderNode.topicSectionsVariants.defaultValue
@@ -3541,13 +3540,13 @@ Document
     }
     
     func testAutomaticCurationForRefinedSymbols() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(named: "GeometricalShapes")
+        let (_, _, context) = try await testBundleAndContext(named: "GeometricalShapes")
         
         do {
             let root = try XCTUnwrap(context.soleRootModuleReference)
             let node = try context.entity(with: root)
             
-            let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+            let converter = DocumentationNodeConverter(context: context)
             let renderNode = converter.convert(node)
             
             let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
@@ -3577,10 +3576,10 @@ Document
         }
         
         do {
-            let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/GeometricalShapes/Circle", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/GeometricalShapes/Circle", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             
-            let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+            let converter = DocumentationNodeConverter(context: context)
             let renderNode = converter.convert(node)
             
             let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
@@ -3626,9 +3625,9 @@ Document
         
         XCTAssertEqual(markup.childCount, 1)
         
-        let (inputs, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         
-        var contentTranslator = RenderContentCompiler(context: context, inputs: inputs, identifier: ResolvedTopicReference(bundleID: inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
+        var contentTranslator = RenderContentCompiler(context: context,  identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
@@ -3659,7 +3658,7 @@ Document
             ))
         ])
         
-        let (inputs, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.knownPages.map(\.path).sorted(), [
             "/documentation/ModuleName",
@@ -3672,7 +3671,7 @@ Document
         let unnamedStructReference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SomeContainer/struct_(unnamed)")
         let node = try context.entity(with: unnamedStructReference)
         
-        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(node)
         
         XCTAssertEqual(renderNode.metadata.title, "struct (unnamed)")

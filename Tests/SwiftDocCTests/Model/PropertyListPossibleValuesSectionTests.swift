@@ -82,18 +82,18 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testAbsenceOfPossibleValues() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "DictionaryData")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
-        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(context: context)
         
         // Check that the `Possible Values` section is not rendered if the symbol don't define any possible value.
         XCTAssertNil(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
     }
     
     func testUndocumentedPossibleValues() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "DictionaryData")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
-        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(context: context)
         let possibleValuesSection = try XCTUnwrap(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
         let possibleValues: [PossibleValuesRenderSection.NamedValue] = possibleValuesSection.values
         

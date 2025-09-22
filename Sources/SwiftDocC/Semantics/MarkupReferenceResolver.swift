@@ -44,13 +44,11 @@ private func removedLinkDestinationProblem(reference: ResolvedTopicReference, ra
  */
 struct MarkupReferenceResolver: MarkupRewriter {
     var context: DocumentationContext
-    var inputs: DocumentationContext.Inputs
     var problems = [Problem]()
     var rootReference: ResolvedTopicReference
     
-    init(context: DocumentationContext, inputs: DocumentationContext.Inputs, rootReference: ResolvedTopicReference) {
+    init(context: DocumentationContext, rootReference: ResolvedTopicReference) {
         self.context = context
-        self.inputs = inputs
         self.rootReference = rootReference
     }
 
@@ -84,14 +82,14 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 return nil
             }
             
-            let uncuratedArticleMatch = context.uncuratedArticles[inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
+            let uncuratedArticleMatch = context.uncuratedArticles[context.inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
             problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: fromSymbolLink))
             return nil
         }
     }
 
     mutating func visitImage(_ image: Image) -> (any Markup)? {
-        if let reference = image.reference(in: inputs), !context.resourceExists(with: reference) {
+        if let reference = image.reference(in: context.inputs), !context.resourceExists(with: reference) {
             problems.append(unresolvedResourceProblem(resource: reference, source: image.range?.source, range: image.range, severity: .warning))
         }
 
@@ -172,7 +170,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         switch blockDirective.name {
         case Snippet.directiveName:
             var problems = [Problem]()
-            guard let snippet = Snippet(from: blockDirective, source: source, for: inputs, problems: &problems) else {
+            guard let snippet = Snippet(from: blockDirective, source: source, for: context.inputs, problems: &problems) else {
                 return blockDirective
             }
             
@@ -192,7 +190,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 return blockDirective
             }
         case ImageMedia.directiveName:
-            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: inputs) else {
+            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: context.inputs) else {
                 return blockDirective
             }
             
@@ -210,7 +208,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             
             return blockDirective
         case VideoMedia.directiveName:
-            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: inputs) else {
+            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: context.inputs) else {
                 return blockDirective
             }
             

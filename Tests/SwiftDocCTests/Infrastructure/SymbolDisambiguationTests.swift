@@ -194,7 +194,7 @@ class SymbolDisambiguationTests: XCTestCase {
         var loader = SymbolGraphLoader(inputs: inputs, dataProvider: context.dataProvider)
         try loader.loadAll()
         
-        let references = context.linkResolver.localResolver.referencesForSymbols(in: loader.unifiedGraphs, inputs: inputs, context: context).mapValues(\.path)
+        let references = context.linkResolver.localResolver.referencesForSymbols(in: loader.unifiedGraphs, context: context).mapValues(\.path)
         XCTAssertEqual(Set(references.keys), [
             SymbolGraph.Symbol.Identifier(precise: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"),
             .init(precise: "c:@E@Foo", interfaceLanguage: "swift"),
@@ -337,6 +337,6 @@ class SymbolDisambiguationTests: XCTestCase {
         
         let context = try await DocumentationContext(inputs: inputs, dataProvider: provider)
         
-        return context.linkResolver.localResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], inputs: inputs, context: context)
+        return context.linkResolver.localResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], context: context)
     }
 }

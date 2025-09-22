@@ -122,9 +122,9 @@ extension XCTestCase {
     }
     
     func renderNode(atPath path: String, fromTestBundleNamed testBundleName: String) async throws -> RenderNode {
-        let (inputs, context) = try await testBundleAndContext(named: testBundleName)
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: path, sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        let (_, context) = try await testBundleAndContext(named: testBundleName)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         return try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
     }
     
@@ -199,8 +199,8 @@ extension XCTestCase {
         directive: Directive?,
         collectedReferences: [String : any RenderReference]
     ) {
-        let (inputs, context) = try await loadBundle(catalog: catalog)
-        return try parseDirective(directive, inputs: inputs, context: context, content: content, file: file, line: line)
+        let (_, context) = try await loadBundle(catalog: catalog)
+        return try parseDirective(directive, context: context, content: content, file: file, line: line)
     }
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
@@ -233,20 +233,18 @@ extension XCTestCase {
         directive: Directive?,
         collectedReferences: [String : any RenderReference]
     ) {
-        let inputs: DocumentationContext.Inputs
         let context: DocumentationContext
         
         if let bundleName {
-            (inputs, context) = try await testBundleAndContext(named: bundleName)
+            (_, context) = try await testBundleAndContext(named: bundleName)
         } else {
-            (inputs, context) = try await testBundleAndContext()
+            (_, context) = try await testBundleAndContext()
         }
-        return try parseDirective(directive, inputs: inputs, context: context, content: content, file: file, line: line)
+        return try parseDirective(directive, context: context, content: content, file: file, line: line)
     }
     
     private func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
-        inputs: DocumentationContext.Inputs,
         context: DocumentationContext,
         content: () -> String,
         file: StaticString = #filePath,
@@ -264,15 +262,11 @@ extension XCTestCase {
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var analyzer = SemanticAnalyzer(source: source, inputs: inputs)
+        var analyzer = SemanticAnalyzer(source: source, inputs: context.inputs)
         let result = analyzer.visit(blockDirectiveContainer)
         context.diagnosticEngine.emit(analyzer.problems)
         
-        var referenceResolver = MarkupReferenceResolver(
-            context: context,
-            inputs: inputs,
-            rootReference: inputs.rootReference
-        )
+        var referenceResolver = MarkupReferenceResolver(context: context, rootReference: context.inputs.rootReference)
         
         _ = referenceResolver.visit(blockDirectiveContainer)
         context.diagnosticEngine.emit(referenceResolver.problems)
@@ -304,9 +298,8 @@ extension XCTestCase {
         
         var contentCompiler = RenderContentCompiler(
             context: context,
-            inputs: inputs,
             identifier: ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/test-path-123",
                 sourceLanguage: .swift
             )

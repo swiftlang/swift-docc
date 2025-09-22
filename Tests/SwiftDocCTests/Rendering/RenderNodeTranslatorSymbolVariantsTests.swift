@@ -510,7 +510,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             ]))
         ])
         
-        let (inputs, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let dictionaryReference = moduleReference.appendingPath("SomeDictionary")
         
@@ -521,7 +521,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             symbol.dictionaryKeysSection = dictionaryKeysSection
             context.documentationCache[dictionaryReference] = node
             
-            let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+            let converter = DocumentationNodeConverter(context: context)
             let renderNode = converter.convert(node)
             
             return try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PropertiesRenderSection }))
@@ -1242,7 +1242,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertAfterApplyingVariant: (RenderNode) throws -> (),
         assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) throws {
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: identifier)
+        var translator = RenderNodeTranslator(context: context, identifier: identifier)
         
         configureRenderNodeTranslator(&translator)
         

@@ -158,7 +158,7 @@ public struct ConvertService: DocumentationService {
             let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: configuration)
             
             // Precompute the render context
-            let renderContext = RenderContext(documentationContext: context, inputs: inputs)
+            let renderContext = RenderContext(documentationContext: context)
             
             let symbolIdentifiersMeetingRequirementsForExpandedDocumentation: [String]? = request.symbolIdentifiersWithExpandedDocumentation?.compactMap { identifier, expandedDocsRequirement in
                 guard let documentationNode = context.documentationCache[identifier] else {
@@ -168,7 +168,6 @@ public struct ConvertService: DocumentationService {
                 return documentationNode.meetsExpandedDocumentationRequirements(expandedDocsRequirement) ? identifier : nil
             }
             let converter = DocumentationContextConverter(
-                inputs: inputs,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
@@ -245,7 +244,7 @@ public struct ConvertService: DocumentationService {
                 
                 let inputs = context.inputs
                 guard inputs.id == topicReference.bundleID else { return nil }
-                let renderer = DocumentationContentRenderer(documentationContext: context, inputs: inputs)
+                let renderer = DocumentationContentRenderer(documentationContext: context)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
                 let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: inputs)?.node

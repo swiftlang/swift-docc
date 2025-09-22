@@ -24,7 +24,6 @@ package enum ConvertActionConverter {
     /// Converts the documentation bundle in the given context and passes its output to a given consumer.
     ///
     /// - Parameters:
-    ///   - inputs: The collection of inputs files that the context is created from.
     ///   - context: The context of documentation information to convert.
     ///   - outputConsumer: The consumer that the conversion passes outputs of the conversion to.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
@@ -32,7 +31,6 @@ package enum ConvertActionConverter {
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
     /// - Returns: A list of problems that occurred during the conversion (excluding the problems that the context already encountered).
     package static func convert(
-        inputs: DocumentationContext.Inputs,
         context: DocumentationContext,
         outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
         sourceRepository: SourceRepository?,
@@ -61,15 +59,14 @@ package enum ConvertActionConverter {
         
         // Precompute the render context
         let renderContext = signposter.withIntervalSignpost("Build RenderContext", id: signposter.makeSignpostID()) {
-            RenderContext(documentationContext: context, inputs: inputs)
+            RenderContext(documentationContext: context)
         }
         try outputConsumer.consume(renderReferenceStore: renderContext.store)
 
         // Copy images, sample files, and other static assets.
-        try outputConsumer.consume(assetsInInputs: inputs)
+        try outputConsumer.consume(assetsInInputs: context.inputs)
         
         let converter = DocumentationContextConverter(
-            inputs: inputs,
             context: context,
             renderContext: renderContext,
             sourceRepository: sourceRepository
@@ -104,12 +101,14 @@ package enum ConvertActionConverter {
         let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
         let resultsGroup = DispatchGroup()
         
+        let id = context.inputs.id
+        
         // Consume external links and add them into the sidebar.
         for externalLink in context.externalCache {
             // Here we're associating the external node with the **current** bundle's bundle ID.
             // This is needed because nodes are only considered children if the parent and child's bundle ID match.
             // Otherwise, the node will be considered as a separate root node and displayed separately.
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: inputs.id)
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: id)
             try outputConsumer.consume(externalRenderNode: externalRenderNode)
         }
         
@@ -192,7 +191,7 @@ package enum ConvertActionConverter {
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
             signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
                 do {
-                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: inputs.id)
+                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: id)
                     try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
                     
                     if !emitDigest {
@@ -225,7 +224,7 @@ package enum ConvertActionConverter {
             break
         }
         
-        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: inputs.displayName, bundleID: inputs.id))
+        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: context.inputs.displayName, bundleID: id))
         
         // Log the finalized topic graph checksum.
         benchmark(add: Benchmark.TopicGraphHash(context: context))

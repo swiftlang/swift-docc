@@ -93,7 +93,7 @@ class RenderNodeSerializationTests: XCTestCase {
     
     func testBundleRoundTrip() async throws {
         let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -108,7 +108,7 @@ class RenderNodeSerializationTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         checkRoundTrip(renderNode)
@@ -116,7 +116,7 @@ class RenderNodeSerializationTests: XCTestCase {
     
     func testTutorialArticleRoundTrip() async throws {
         let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
@@ -131,7 +131,7 @@ class RenderNodeSerializationTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing article markup")
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(article) as! RenderNode
         checkRoundTrip(renderNode)
@@ -141,7 +141,7 @@ class RenderNodeSerializationTests: XCTestCase {
         typealias JSONDictionary = [String: Any]
         
         let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -156,7 +156,7 @@ class RenderNodeSerializationTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         let data = try encode(renderNode: renderNode)
@@ -193,7 +193,7 @@ class RenderNodeSerializationTests: XCTestCase {
 
     func testDiffAvailability() async throws {
         let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
@@ -206,7 +206,7 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
 
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
 
         var renderNode = translator.visit(article) as! RenderNode
 

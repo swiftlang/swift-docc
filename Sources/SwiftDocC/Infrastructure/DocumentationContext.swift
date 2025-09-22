@@ -72,10 +72,6 @@ public class DocumentationContext {
 
     /// The collection of input files that the context was created from.
     let inputs: DocumentationContext.Inputs
-    @available(*, deprecated, renamed: "inputs")
-    var bundle: DocumentationContext.Inputs {
-        inputs
-    }
 
     /// A collection of configuration for this context.
     public let configuration: Configuration
@@ -221,29 +217,15 @@ public class DocumentationContext {
         ResolvedTopicReference.enableReferenceCaching(for: inputs.id)
         try register(inputs)
     }
-    
-    // Remove these  when removing `registeredBundles` and `bundle(identifier:)`.
-    // These exist so that internal code that need to be compatible with legacy data providers can access the bundles without deprecation warnings.
-    @available(*, deprecated, renamed: "bundle", message: "REMOVE THIS")
-    var _registeredBundles: [DocumentationBundle] {
-        [inputs]
-    }
-    
-    @available(*, deprecated, renamed: "bundle", message: "REMOVE THIS")
-    func _bundle(identifier: String) -> DocumentationBundle? {
-        assert(inputs.id.rawValue == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
-        return inputs.id.rawValue == identifier ? inputs : nil
-    }
         
     /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
     ///
     /// - Parameters:
     ///   - document: The document to analyze.
     ///   - source: The location of the document.
-    ///   - inputs: The collection of inputs files that the context was created from.
     ///   - problems: A mutable collection of problems to update with any problem encountered during the semantic analysis.
     /// - Returns: The result of the semantic analysis.
-    private func analyze(_ document: Document, at source: URL, in inputs: DocumentationContext.Inputs, engine: DiagnosticEngine) -> Semantic? {
+    private func analyze(_ document: Document, at source: URL, engine: DiagnosticEngine) -> Semantic? {
         var analyzer = SemanticAnalyzer(source: source, inputs: inputs)
         let result = analyzer.visit(document)
         engine.emit(analyzer.problems)
@@ -446,7 +428,7 @@ public class DocumentationContext {
                 return
             }
             
-            var resolver = ReferenceResolver(context: self, inputs: inputs, rootReference: reference, inheritanceParentReference: symbolOriginReference)
+            var resolver = ReferenceResolver(context: self, rootReference: reference, inheritanceParentReference: symbolOriginReference)
             
             // Update the node with the markup that contains resolved references instead of authored links.
             documentationNode.semantic = autoreleasepool { 
@@ -576,7 +558,7 @@ public class DocumentationContext {
         for tableOfContentsResult in tutorialTableOfContentsResults {
             autoreleasepool {
                 let url = tableOfContentsResult.source
-                var resolver = ReferenceResolver(context: self, inputs: inputs)
+                var resolver = ReferenceResolver(context: self)
                 let tableOfContents = resolver.visit(tableOfContentsResult.value) as! TutorialTableOfContents
                 diagnosticEngine.emit(resolver.problems)
                 
@@ -648,7 +630,7 @@ public class DocumentationContext {
             autoreleasepool {
                 let url = tutorialResult.source
                 let unresolvedTutorial = tutorialResult.value
-                var resolver = ReferenceResolver(context: self, inputs: inputs)
+                var resolver = ReferenceResolver(context: self)
                 let tutorial = resolver.visit(unresolvedTutorial) as! Tutorial
                 diagnosticEngine.emit(resolver.problems)
                 
@@ -682,7 +664,7 @@ public class DocumentationContext {
             autoreleasepool {
                 let url = articleResult.source
                 let unresolvedTutorialArticle = articleResult.value
-                var resolver = ReferenceResolver(context: self, inputs: inputs)
+                var resolver = ReferenceResolver(context: self)
                 let article = resolver.visit(unresolvedTutorialArticle) as! TutorialArticle
                 diagnosticEngine.emit(resolver.problems)
                             
@@ -748,7 +730,7 @@ public class DocumentationContext {
                     diagnosticEngine.emit(langChecker.problems)
                 }
 
-                guard let analyzed = analyze(document, at: url, in: inputs, engine: diagnosticEngine) else {
+                guard let analyzed = analyze(document, at: url, engine: diagnosticEngine) else {
                     return
                 }
                 
@@ -1002,12 +984,8 @@ public class DocumentationContext {
         diagnosticEngine.emit(result.problems)
     }
     
-    /// Loads all graph files from a given `bundle` and merges them together while building the symbol relationships and loading any available markdown documentation for those symbols.
-    ///
-    /// - Parameter inputs: The collection of files to load symbol graph files from.
-    /// - Returns: A pair of the references to all loaded modules and the hierarchy of all the loaded symbol's references.
+    /// Loads all symbol graph files from context's inputs and merges them together while building the symbol relationships and loading any available markdown documentation for those symbols.
     private func registerSymbols(
-        from inputs: DocumentationContext.Inputs,
         symbolGraphLoader: SymbolGraphLoader,
         documentationExtensions: [SemanticResult<Article>]
     ) throws {
@@ -1029,7 +1007,7 @@ public class DocumentationContext {
             
             // Build references for all symbols in all of this module's symbol graphs.
             let symbolReferences = signposter.withIntervalSignpost("Disambiguate references") {
-                linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, inputs: inputs, context: self)
+                linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, context: self)
             }
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
@@ -1349,7 +1327,6 @@ public class DocumentationContext {
                 SymbolGraphRelationshipsBuilder.addImplementationRelationship(
                     edge: edge,
                     selector: selector,
-                    in: bundle,
                     context: self,
                     localCache: documentationCache,
                     engine: diagnosticEngine
@@ -2166,7 +2143,7 @@ public class DocumentationContext {
         }
         
         registerRootPages(from: rootPageArticles, in: inputs)
-        try registerSymbols(from: inputs, symbolGraphLoader: symbolGraphLoader, documentationExtensions: documentationExtensions)
+        try registerSymbols(symbolGraphLoader: symbolGraphLoader, documentationExtensions: documentationExtensions)
         // We don't need to keep the loader in memory after we've registered all symbols.
         symbolGraphLoader = nil
         
@@ -2219,7 +2196,7 @@ public class DocumentationContext {
         }
         
         try shouldContinueRegistration()
-        var allCuratedReferences = try crawlSymbolCuration(in: linkResolver.localResolver.topLevelSymbols(), inputs: inputs)
+        var allCuratedReferences = try crawlSymbolCuration(in: linkResolver.localResolver.topLevelSymbols())
         
         // Store the list of manually curated references if doc coverage is on.
         if configuration.experimentalCoverageConfiguration.shouldStoreManuallyCuratedReferences {
@@ -2234,13 +2211,13 @@ public class DocumentationContext {
         }
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
-        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), inputs: inputs, initial: allCuratedReferences)
+        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), initial: allCuratedReferences)
         
         // Automatically curate articles that haven't been manually curated
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, startingFrom: rootNode)
-            allCuratedReferences = try crawlSymbolCuration(in: articleReferences, inputs: inputs, initial: allCuratedReferences)
+            allCuratedReferences = try crawlSymbolCuration(in: articleReferences, initial: allCuratedReferences)
         }
         
         // Remove curation paths that have been created automatically above
@@ -2464,17 +2441,16 @@ public class DocumentationContext {
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
     /// - Parameters:
     ///   - references: A list of references to crawl.
-    ///   - inputs: A collection of input files the the crawled documentation originate from.
     ///   - initial: A list of references to skip when crawling.
     /// - Returns: The references of all the symbols that were curated.
     @discardableResult
-    func crawlSymbolCuration(in references: [ResolvedTopicReference], inputs: DocumentationContext.Inputs, initial: Set<ResolvedTopicReference> = []) throws -> Set<ResolvedTopicReference> {
+    func crawlSymbolCuration(in references: [ResolvedTopicReference], initial: Set<ResolvedTopicReference> = []) throws -> Set<ResolvedTopicReference> {
         let signpostHandle = signposter.beginInterval("Curate symbols", id: signposter.makeSignpostID())
         defer {
             signposter.endInterval("Curate symbols", signpostHandle)
         }
         
-        var crawler = DocumentationCurator(in: self, inputs: inputs, initial: initial)
+        var crawler = DocumentationCurator(in: self, initial: initial)
 
         for reference in references {
             try crawler.crawlChildren(

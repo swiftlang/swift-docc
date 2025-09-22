@@ -17,14 +17,10 @@ struct DocumentationCurator {
     /// The documentation context to crawl.
     private let context: DocumentationContext
     
-    /// The current collection of input files.
-    private let inputs: DocumentationContext.Inputs
-    
     private(set) var problems = [Problem]()
     
-    init(in context: DocumentationContext, inputs: DocumentationContext.Inputs, initial: Set<ResolvedTopicReference> = []) {
+    init(in context: DocumentationContext, initial: Set<ResolvedTopicReference> = []) {
         self.context = context
-        self.inputs = inputs
         self.curatedNodes = initial
     }
     
@@ -99,7 +95,7 @@ struct DocumentationCurator {
             // - "documentation/CatalogName/ArticleName"
             switch path.components(separatedBy: "/").count {
             case 0,1:
-                return NodeURLGenerator.Path.article(bundleName: inputs.displayName, articleName: path).stringValue
+                return NodeURLGenerator.Path.article(bundleName: context.inputs.displayName, articleName: path).stringValue
             case 2:
                 return "\(NodeURLGenerator.Path.documentationFolder)/\(path)"
             default:

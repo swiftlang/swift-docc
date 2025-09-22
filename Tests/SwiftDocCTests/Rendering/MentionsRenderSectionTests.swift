@@ -29,7 +29,7 @@ class MentionsRenderSectionTests: XCTestCase {
             sourceLanguage: .swift
         )
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         let mentionsSection = try XCTUnwrap(renderNode.primaryContentSections.mapFirst { $0 as? MentionsRenderSection })
         XCTAssertEqual(1, mentionsSection.mentions.count)
@@ -47,7 +47,7 @@ class MentionsRenderSectionTests: XCTestCase {
             sourceLanguage: .swift
         )
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         let mentionsSection = renderNode.primaryContentSections.mapFirst { $0 as? MentionsRenderSection }
         XCTAssertNil(mentionsSection)

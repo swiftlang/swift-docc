@@ -20,7 +20,6 @@ extension RenderInlineContent: RenderContent {}
 
 struct RenderContentCompiler: MarkupVisitor {
     var context: DocumentationContext
-    var inputs: DocumentationContext.Inputs
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
     var videoReferences: [String: VideoReference] = [:]
@@ -28,9 +27,8 @@ struct RenderContentCompiler: MarkupVisitor {
     var collectedTopicReferences = GroupedSequence<String, ResolvedTopicReference> { $0.absoluteString }
     var linkReferences: [String: LinkReference] = [:]
     
-    init(context: DocumentationContext, inputs: DocumentationContext.Inputs, identifier: ResolvedTopicReference) {
+    init(context: DocumentationContext, identifier: ResolvedTopicReference) {
         self.context = context
-        self.inputs = inputs
         self.identifier = identifier
     }
     
@@ -47,7 +45,7 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [any RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? inputs.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
+        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? context.inputs.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
     }
     
     mutating func visitHeading(_ heading: Heading) -> [any RenderContent] {

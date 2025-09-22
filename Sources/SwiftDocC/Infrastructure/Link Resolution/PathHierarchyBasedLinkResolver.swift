@@ -264,8 +264,8 @@ final class PathHierarchyBasedLinkResolver {
     ///
     /// - Parameters:
     ///   - symbolGraph: The complete symbol graph to walk through.
-    ///   - inputs: The collection of inputs files where the symbols originated from.
-    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], inputs: DocumentationContext.Inputs, context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
+    ///   - context: The context that the symbols belong to.
+    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
         let disambiguatedPaths = pathHierarchy.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true, includeLanguage: true, allowAdvancedDisambiguation: false)
         
         var result: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] = [:]
@@ -280,7 +280,7 @@ final class PathHierarchyBasedLinkResolver {
                    pathComponents.count == componentsCount
                 {
                     let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
-                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, inputs: inputs)
+                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, inputs: context.inputs)
                 }
                 
                 guard let path = disambiguatedPaths[uniqueIdentifier] else {
@@ -288,7 +288,7 @@ final class PathHierarchyBasedLinkResolver {
                 }
                 
                 return ResolvedTopicReference(
-                    bundleID: inputs.documentationRootReference.bundleID,
+                    bundleID: context.inputs.documentationRootReference.bundleID,
                     path: NodeURLGenerator.Path.documentationFolder + path,
                     sourceLanguages: symbol.sourceLanguages
                 )

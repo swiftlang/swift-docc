@@ -707,7 +707,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
         
         // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
-        let dependencyConverter = DocumentationContextConverter(inputs: dependencyInputs, context: dependencyContext, renderContext: .init(documentationContext: dependencyContext, inputs: dependencyInputs))
+        let dependencyConverter = DocumentationContextConverter(context: dependencyContext, renderContext: .init(documentationContext: dependencyContext))
         
         let linkSummaries: [LinkDestinationSummary] = try dependencyContext.knownPages.flatMap { reference in
             let entity = try dependencyContext.entity(with: reference)
@@ -724,7 +724,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
         
         // After building the dependency,
-        let (mainBundle, mainContext) = try await loadBundle(
+        let (_, mainContext) = try await loadBundle(
             catalog: Folder(name: "Main.docc", content: [
                 JSONFile(name: "Main.symbols.json", content: makeSymbolGraph(
                     moduleName: "Main",
@@ -794,11 +794,11 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         XCTAssertEqual(mainContext.knownPages.count, 3 /* 2 symbols & 1 module*/)
         
-        let mainConverter = DocumentationContextConverter(inputs: mainBundle, context: mainContext, renderContext: .init(documentationContext: mainContext, inputs: mainBundle))
+        let mainConverter = DocumentationContextConverter(context: mainContext, renderContext: .init(documentationContext: mainContext))
         
         // Check the relationships of 'SomeClass'
         do {
-            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainContext.inputs.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -822,7 +822,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the declaration of 'someFunction'
         do {
-            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainContext.inputs.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -1000,7 +1000,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
         var entitySummaries = [LinkDestinationSummary]()
-        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
             let renderNode = converter.convert(node)

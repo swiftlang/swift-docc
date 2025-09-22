@@ -34,12 +34,12 @@ class HeadingAnchorTests: XCTestCase {
                 """),
             ])
         
-        let (inputs, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)
-        let renderContext = RenderContext(documentationContext: context, inputs: inputs)
-        let converter = DocumentationContextConverter(inputs: inputs, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let renderNode = try XCTUnwrap(converter.renderNode(for: node))
 
         // Check heading anchors are encoded

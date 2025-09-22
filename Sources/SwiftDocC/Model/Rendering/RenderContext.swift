@@ -17,7 +17,6 @@ import SymbolKit
 /// converting nodes in bulk, i.e. when converting a complete documentation model for example.
 public struct RenderContext {
     let documentationContext: DocumentationContext
-    let inputs: DocumentationContext.Inputs
     let renderer: DocumentationContentRenderer
     
     /// Creates a new render context.
@@ -25,16 +24,15 @@ public struct RenderContext {
     /// - Parameters:
     ///   - documentationContext: A documentation context.
     ///   - inputs: The collection of inputs files that the context is created from.
-    public init(documentationContext: DocumentationContext, inputs: DocumentationContext.Inputs) {
+    public init(documentationContext: DocumentationContext) {
         self.documentationContext = documentationContext
-        self.inputs = inputs
-        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext, inputs: inputs)
+        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext)
         createRenderedContent()
     }
     
-    @available(*, deprecated, renamed: "init(documentationContext:inputs:)", message: "Use 'init(documentationContext:inputs:)' instead. This deprecated API will be removed after 6.3 is released")
-    public init(documentationContext: DocumentationContext, bundle: DocumentationContext.Inputs) {
-        self.init(documentationContext: documentationContext, inputs: bundle)
+    @available(*, deprecated, renamed: "init(documentationContext:)", message: "Use 'init(documentationContext:)' instead. This deprecated API will be removed after 6.3 is released")
+    public init(documentationContext: DocumentationContext, bundle _: DocumentationContext.Inputs) {
+        self.init(documentationContext: documentationContext)
     }
     
     /// The pre-rendered content per node reference.

@@ -18,7 +18,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
         forResource: "Availability.symbols", withExtension: "json", subdirectory: "Test Resources")!
     
     func testSortingAtRenderTime() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             let availabilitySymbolGraphURL = url.appendingPathComponent("Availability.symbols.json")
             try? FileManager.default.copyItem(at: self.availabilitySGFURL, to: availabilitySymbolGraphURL)
 
@@ -62,9 +62,9 @@ class AvailabilityRenderOrderTests: XCTestCase {
             try data.write(to: availabilitySymbolGraphURL)
         }
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
         
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify that all the symbol's availabilities were sorted into the order

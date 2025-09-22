@@ -318,7 +318,6 @@ public struct ConvertAction: AsyncAction {
         do {
             conversionProblems = try signposter.withIntervalSignpost("Process") {
                 try ConvertActionConverter.convert(
-                    inputs: inputs,
                     context: context,
                     outputConsumer: outputConsumer,
                     sourceRepository: sourceRepository,

@@ -24,7 +24,7 @@ extension RenderableDirectiveConvertible {
         _ blockDirective: BlockDirective,
         with contentCompiler: inout RenderContentCompiler
     ) -> [any RenderContent] {
-        guard let directive = Self.init(from: blockDirective, for: contentCompiler.inputs) else {
+        guard let directive = Self.init(from: blockDirective, for: contentCompiler.context.inputs) else {
             return []
         }
         

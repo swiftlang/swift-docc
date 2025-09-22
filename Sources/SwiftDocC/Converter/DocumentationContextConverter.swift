@@ -20,9 +20,6 @@ public class DocumentationContextConverter {
     /// The context the converter uses to resolve references it finds in the documentation node's content.
     let context: DocumentationContext
     
-    /// The input files that contains the content from which the documentation node originated.
-    let inputs: DocumentationContext.Inputs
-    
     /// A context that contains common pre-rendered pieces of content.
     let renderContext: RenderContext
     
@@ -48,7 +45,6 @@ public class DocumentationContextConverter {
     /// The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.
     ///
     /// - Parameters:
-    ///   - inputs: The inputs files that the documentation node originated from.
     ///   - context: The context that the converter uses to to resolve references it finds in the documentation node's content.
     ///   - renderContext: A context that contains common pre-rendered pieces of content.
     ///   - emitSymbolSourceFileURIs: Whether the documentation converter should include
@@ -61,7 +57,6 @@ public class DocumentationContextConverter {
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - symbolIdentifiersWithExpandedDocumentation: A list of symbol IDs that have version of their documentation page with more content that a renderer can link to.
     public init(
-        inputs: DocumentationContext.Inputs,
         context: DocumentationContext,
         renderContext: RenderContext,
         emitSymbolSourceFileURIs: Bool = false,
@@ -69,7 +64,6 @@ public class DocumentationContextConverter {
         sourceRepository: SourceRepository? = nil,
         symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
-        self.inputs = inputs
         self.context = context
         self.renderContext = renderContext
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
@@ -78,9 +72,9 @@ public class DocumentationContextConverter {
         self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
     }
     
-    @available(*, deprecated, renamed: "init(inputs:context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)", message: "Use 'init(inputs:context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)' instead. This deprecated API will be removed after 6.3 is released")
+    @available(*, deprecated, renamed: "init(context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)", message: "Use 'init(context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:sourceRepository:symbolIdentifiersWithExpandedDocumentation:)' instead. This deprecated API will be removed after 6.3 is released")
     public convenience init(
-        bundle: DocumentationBundle,
+        bundle _: DocumentationBundle,
         context: DocumentationContext,
         renderContext: RenderContext,
         emitSymbolSourceFileURIs: Bool = false,
@@ -89,7 +83,6 @@ public class DocumentationContextConverter {
         symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
         self.init(
-            inputs: bundle,
             context: context,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: emitSymbolSourceFileURIs,
@@ -112,7 +105,6 @@ public class DocumentationContextConverter {
 
         var translator = RenderNodeTranslator(
             context: context,
-            inputs: inputs,
             identifier: node.reference,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,

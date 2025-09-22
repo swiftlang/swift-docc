@@ -52,14 +52,12 @@ struct SymbolGraphRelationshipsBuilder {
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
     ///   - selector: The symbol graph selector in which the relationship is relevant.
-    ///   - inputs: The collection of inputs files that the context was created from.
     ///   - context: A documentation context.
     ///   - localCache: A cache of local documentation content.
     ///   - engine: A diagnostic collecting engine.
     static func addImplementationRelationship(
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
-        in inputs: DocumentationContext.Inputs,
         context: DocumentationContext,
         localCache: DocumentationContext.LocalCache,
         engine: DiagnosticEngine
@@ -83,7 +81,7 @@ struct SymbolGraphRelationshipsBuilder {
                 ?? implementorNode.reference.sourceLanguage
             
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, inputs: inputs) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, inputs: context.inputs) else {
                 // The symbol reference format is invalid.
                 assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return

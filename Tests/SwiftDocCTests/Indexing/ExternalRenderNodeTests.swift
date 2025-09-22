@@ -187,8 +187,8 @@ class ExternalRenderNodeTests: XCTestCase {
                 """
             try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
         }
-        let renderContext = RenderContext(documentationContext: context, inputs: inputs)
-        let converter = DocumentationContextConverter(inputs: inputs, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
@@ -252,8 +252,8 @@ class ExternalRenderNodeTests: XCTestCase {
                 """
             try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
         }
-        let renderContext = RenderContext(documentationContext: context, inputs: inputs)
-        let converter = DocumentationContextConverter(inputs: inputs, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()

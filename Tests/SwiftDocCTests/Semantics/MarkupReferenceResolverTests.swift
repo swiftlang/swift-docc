@@ -14,7 +14,7 @@ import Markdown
 
 class MarkupReferenceResolverTests: XCTestCase {
     func testArbitraryReferenceInComment() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let source = """
         @Comment {
             ``hello`` and ``world`` are 2 arbitrary symbol links.
@@ -23,7 +23,7 @@ class MarkupReferenceResolverTests: XCTestCase {
         }
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        var resolver = MarkupReferenceResolver(context: context, inputs: inputs, rootReference: context.rootModules[0])
+        var resolver = MarkupReferenceResolver(context: context, rootReference: context.rootModules[0])
         _ = resolver.visit(document)
         XCTAssertEqual(0, resolver.problems.count)
     }

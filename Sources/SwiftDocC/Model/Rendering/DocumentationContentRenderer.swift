@@ -48,22 +48,19 @@ extension RenderReferenceDependencies: Codable {
 public class DocumentationContentRenderer {
 
     let documentationContext: DocumentationContext
-    let inputs: DocumentationContext.Inputs
     let urlGenerator: PresentationURLGenerator
     
     /// Creates a new content renderer for the given documentation context and inputs.
     /// - Parameters:
     ///   - documentationContext: A documentation context.
-    ///   - inputs: A collection of inputs files that the context was created from.
-    public init(documentationContext: DocumentationContext, inputs: DocumentationContext.Inputs) {
+    public init(documentationContext: DocumentationContext) {
         self.documentationContext = documentationContext
-        self.inputs = inputs
-        self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: inputs.baseURL)
+        self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: documentationContext.inputs.baseURL)
     }
     
-    @available(*, deprecated, renamed: "init(documentationContext:inputs:)", message: "Use 'init(documentationContext:inputs:)' instead. This deprecated API will be removed after 6.3 is released")
-    public convenience init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
-        self.init(documentationContext: documentationContext, inputs: bundle)
+    @available(*, deprecated, renamed: "init(documentationContext:)", message: "Use 'init(documentationContext:)' instead. This deprecated API will be removed after 6.3 is released")
+    public convenience init(documentationContext: DocumentationContext, bundle _: DocumentationBundle) {
+        self.init(documentationContext: documentationContext)
     }
     
     /// For symbol nodes, returns the declaration render section if any.
@@ -329,7 +326,7 @@ public class DocumentationContentRenderer {
         // Topic render references require the URLs to be relative, even if they're external.
         let presentationURL = urlGenerator.presentationURLForReference(reference)
         
-        var contentCompiler = RenderContentCompiler(context: documentationContext, inputs: inputs, identifier: reference)
+        var contentCompiler = RenderContentCompiler(context: documentationContext, identifier: reference)
         let abstractContent: VariantCollection<[RenderInlineContent]>
         
         var abstractedNode = node
@@ -521,7 +518,7 @@ public class DocumentationContentRenderer {
             }
             
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: inputs)?.language
+                SupportedLanguage(from: $0, source: nil, for: documentationContext.inputs)?.language
             }
             
             return ReferenceGroup(

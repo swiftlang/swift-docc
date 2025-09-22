@@ -338,7 +338,7 @@ class VideoMediaTests: XCTestCase {
             path: "",
             sourceLanguage: .swift
         )
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let videoMediaReference = translator.visitVideoMedia(video!) as! RenderReferenceIdentifier
         let videoMedia = translator.videoReferences[videoMediaReference.identifier]
         // Check that the video references in the node translator contains the alt text.

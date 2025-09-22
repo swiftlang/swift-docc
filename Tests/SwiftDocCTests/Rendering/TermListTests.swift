@@ -86,12 +86,12 @@ class TermListTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle": resolver]
-        let (inputs, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
-        let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
-        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(entity)
         
         let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
@@ -161,8 +161,8 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (inputs, context) = try await testBundleAndContext()
-        var renderContentCompiler = RenderContentCompiler(context: context, inputs: inputs, identifier: ResolvedTopicReference(bundleID: inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - term First term : A paragraph that
@@ -204,8 +204,8 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (inputs, context) = try await testBundleAndContext()
-        var renderContentCompiler = RenderContentCompiler(context: context, inputs: inputs, identifier: ResolvedTopicReference(bundleID: inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - Not a term list, and

@@ -319,7 +319,7 @@ public extension DocumentationNode {
         let urlGenerator = PresentationURLGenerator(context: context, baseURL: inputs.baseURL)
         let relativePresentationURL = urlGenerator.presentationURLForReference(reference).withoutHostAndPortAndScheme()
         
-        var compiler = RenderContentCompiler(context: context, inputs: inputs, identifier: reference)
+        var compiler = RenderContentCompiler(context: context, identifier: reference)
 
         let platforms = renderNode.metadata.platforms
         

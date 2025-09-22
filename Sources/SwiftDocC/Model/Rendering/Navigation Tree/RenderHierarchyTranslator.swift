@@ -13,7 +13,6 @@ import Foundation
 /// A hierarchy translator that converts a part of the topic graph into a hierarchy tree.
 struct RenderHierarchyTranslator {
     var context: DocumentationContext
-    var inputs: DocumentationContext.Inputs
     
     var collectedTopicReferences = Set<ResolvedTopicReference>()
     var linkReferences = [String: LinkReference]()
@@ -21,10 +20,8 @@ struct RenderHierarchyTranslator {
     /// Creates a new translator for the given bundle in the given context.
     /// - Parameters:
     ///   - context: The documentation context for the conversion.
-    ///   - inputs: The collection of inputs files that the content originated from.
-    init(context: DocumentationContext, inputs: DocumentationContext.Inputs) {
+    init(context: DocumentationContext) {
         self.context = context
-        self.inputs = inputs
     }
     
     static let assessmentsAnchor = urlReadableFragment(TutorialAssessmentsRenderSection.title)
@@ -164,7 +161,7 @@ struct RenderHierarchyTranslator {
             let assessmentReference = ResolvedTopicReference(bundleID: tutorialReference.bundleID, path: tutorialReference.path, fragment: RenderHierarchyTranslator.assessmentsAnchor, sourceLanguage: .swift)
             renderHierarchyTutorial.landmarks.append(RenderHierarchyLandmark(reference: RenderReferenceIdentifier(assessmentReference.absoluteString), kind: .assessment))
             
-            let urlGenerator = PresentationURLGenerator(context: context, baseURL: inputs.baseURL)
+            let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
             let assessmentLinkReference = LinkReference(
                 identifier: RenderReferenceIdentifier(assessmentReference.absoluteString),
                 title: "Check Your Understanding",

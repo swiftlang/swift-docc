@@ -15,8 +15,8 @@ import XCTest
 
 class RenderContentCompilerTests: XCTestCase {
     func testLinkOverrideTitle() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var compiler = RenderContentCompiler(context: context, inputs: inputs, identifier: ResolvedTopicReference(bundleID: inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
         [Example](http://example.com)
@@ -133,8 +133,8 @@ class RenderContentCompilerTests: XCTestCase {
     }
     
     func testLineBreak() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var compiler = RenderContentCompiler(context: context, inputs: inputs, identifier: ResolvedTopicReference(bundleID: inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         Backslash before new line\
@@ -198,8 +198,8 @@ class RenderContentCompilerTests: XCTestCase {
     }
     
     func testThematicBreak() async throws {
-        let (inputs, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, inputs: inputs, identifier: ResolvedTopicReference(bundleID: inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
 
         let source = #"""

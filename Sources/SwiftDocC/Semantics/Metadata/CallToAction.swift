@@ -149,13 +149,9 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
 }
 
 extension CallToAction {
-    func resolveFile(
-        for inputs: DocumentationContext.Inputs,
-        in context: DocumentationContext,
-        problems: inout [Problem]) -> ResourceReference?
-    {
+    func resolveFile(in context: DocumentationContext, problems: inout [Problem]) -> ResourceReference? {
         if let file = self.file {
-            if context.resolveAsset(named: file.url.lastPathComponent, in: inputs.rootReference) == nil {
+            if context.resolveAsset(named: file.url.lastPathComponent, in: context.inputs.rootReference) == nil {
                 problems.append(.init(
                     diagnostic: Diagnostic(
                         source: url,

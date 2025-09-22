@@ -14,9 +14,9 @@ import XCTest
 
 class RenderContextTests: XCTestCase {
     func testCreatesRenderReferences() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        let renderContext = RenderContext(documentationContext: context, inputs: inputs)
+        let renderContext = RenderContext(documentationContext: context)
         
         // Verify render references are created for all topics
         XCTAssertEqual(Array(renderContext.store.topics.keys.sorted(by: { $0.absoluteString < $1.absoluteString })), context.knownIdentifiers.sorted(by: { $0.absoluteString < $1.absoluteString }), "Didn't create render references for all context topics.")

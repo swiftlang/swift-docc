@@ -30,7 +30,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
             let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
 
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
 
             return renderNode.primaryContentSections.first! as! ContentRenderSection

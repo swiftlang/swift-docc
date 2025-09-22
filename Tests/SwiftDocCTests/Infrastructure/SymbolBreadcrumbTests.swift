@@ -140,7 +140,7 @@ class SymbolBreadcrumbTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, inputs: inputs)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitSymbol(reference)
         
         XCTAssertNotNil(hierarchyVariants.defaultValue, "Should always have default breadcrumbs", file: file, line: line)
@@ -154,7 +154,7 @@ class SymbolBreadcrumbTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, inputs: inputs)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitSymbol(reference)
         
         XCTAssertNotNil(hierarchyVariants.defaultValue, "Should always have default breadcrumbs", file: file, line: line)

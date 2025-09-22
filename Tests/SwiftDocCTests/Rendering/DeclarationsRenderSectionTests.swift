@@ -152,7 +152,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         }))
         
         // Verify that the rendered symbol displays both signatures
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
 
@@ -218,7 +218,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 2)
@@ -265,7 +265,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 1)
@@ -316,7 +316,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 1)
@@ -371,7 +371,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 1)
@@ -458,12 +458,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
         ])
 
-        let (inputs, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
 
         func assertDeclarations(for USR: String, file: StaticString = #filePath, line: UInt = #line) throws {
             let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: USR), file: file, line: line)
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol, file: file, line: line)
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode, file: file, line: line)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first, file: file, line: line)
             XCTAssertEqual(declarationsSection.declarations.count, 1, file: file, line: line)
@@ -504,7 +504,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 1)
@@ -539,7 +539,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
         XCTAssertEqual(declarationsSection.declarations.count, 1)

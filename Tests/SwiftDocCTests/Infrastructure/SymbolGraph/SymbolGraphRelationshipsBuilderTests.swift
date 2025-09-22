@@ -58,14 +58,14 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge = createSymbols(documentationCache: &documentationCache, inputs: inputs, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, selector: swiftSelector, in: inputs, context: context, localCache: documentationCache, engine: engine)
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, selector: swiftSelector, context: context, localCache: documentationCache, engine: engine)
         
         // Test default implementation was added
         XCTAssertFalse((documentationCache["B"]!.semantic as! Symbol).defaultImplementations.implementations.isEmpty)
     }
 
     func testMultipleImplementsRelationships() async throws {
-        let (inputs, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
 
@@ -73,10 +73,10 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let identifierB = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         let identifierC = SymbolGraph.Symbol.Identifier(precise: "C", interfaceLanguage: SourceLanguage.swift.id)
 
-        let symbolRefA = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SomeModuleName/A", sourceLanguage: .swift)
-        let symbolRefB = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SomeModuleName/B", sourceLanguage: .swift)
-        let symbolRefC = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SomeModuleName/C", sourceLanguage: .swift)
-        let moduleRef = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SomeModuleName", sourceLanguage: .swift)
+        let symbolRefA = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SomeModuleName/A", sourceLanguage: .swift)
+        let symbolRefB = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SomeModuleName/B", sourceLanguage: .swift)
+        let symbolRefC = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SomeModuleName/C", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SomeModuleName", sourceLanguage: .swift)
 
         let symbolA = SymbolGraph.Symbol(identifier: identifierA, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
         let symbolB = SymbolGraph.Symbol(identifier: identifierB, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "Function"), mixins: [:])
@@ -102,8 +102,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge1 = SymbolGraph.Relationship(source: identifierB.precise, target: identifierA.precise, kind: .defaultImplementationOf, targetFallback: nil)
         let edge2 = SymbolGraph.Relationship(source: identifierC.precise, target: identifierA.precise, kind: .defaultImplementationOf, targetFallback: nil)
 
-        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge1, selector: swiftSelector, in: inputs, context: context, localCache: documentationCache, engine: engine)
-        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge2, selector: swiftSelector, in: inputs, context: context, localCache: documentationCache, engine: engine)
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge1, selector: swiftSelector, context: context, localCache: documentationCache, engine: engine)
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge2, selector: swiftSelector, context: context, localCache: documentationCache, engine: engine)
 
         XCTAssertEqual((documentationCache["A"]!.semantic as! Symbol).defaultImplementations.groups.first?.references.map(\.url?.lastPathComponent), ["B", "C"])
     }
