@@ -11,105 +11,62 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class DefaultCodeBlockSyntaxTests: XCTestCase {
-    enum Errors: Error {
-        case noCodeBlockFound
+    func testCodeBlockWithoutAnyLanguageOrDefault() async throws {
+        let codeListing = try await makeCodeBlock(fenceLanguage: nil, infoPlistLanguage: nil)
+        XCTAssertEqual(codeListing.language, nil)
     }
     
-    var renderSectionWithLanguageDefault: ContentRenderSection!
-    var renderSectionWithoutLanguageDefault: ContentRenderSection!
-
-    var testBundleWithLanguageDefault: DocumentationContext.Inputs!
-    var testBundleWithoutLanguageDefault: DocumentationContext.Inputs!
-
-    override func setUp() async throws {
-        try await super.setUp()
-        
-        func renderSection(for inputs: DocumentationContext.Inputs, in context: DocumentationContext) throws -> ContentRenderSection {
-            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
-
-            let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
-            let renderNode = translator.visit(node.semantic) as! RenderNode
-
-            return renderNode.primaryContentSections.first! as! ContentRenderSection
-        }
-
-        let (_, bundleWithLanguageDefault, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
-
-        testBundleWithLanguageDefault = bundleWithLanguageDefault
-
-        // Copy the bundle but explicitly set `defaultCodeListingLanguage` to `nil` to mimic having no default language set.
-        testBundleWithoutLanguageDefault = DocumentationContext.Inputs(
-            info: DocumentationContext.Inputs.Info(
-                displayName: testBundleWithLanguageDefault.displayName,
-                id: testBundleWithLanguageDefault.id,
-                defaultCodeListingLanguage: nil
-            ),
-            baseURL: testBundleWithLanguageDefault.baseURL,
-            symbolGraphURLs: testBundleWithLanguageDefault.symbolGraphURLs,
-            markupURLs: testBundleWithLanguageDefault.markupURLs,
-            miscResourceURLs: testBundleWithLanguageDefault.miscResourceURLs
-        )
-
-        renderSectionWithLanguageDefault = try renderSection(for: testBundleWithLanguageDefault, in: context)
-        renderSectionWithoutLanguageDefault = try renderSection(for: testBundleWithoutLanguageDefault, in: context)
+    func testExplicitFencedCodeBlockLanguage() async throws {
+        let codeListing = try await makeCodeBlock(fenceLanguage: "swift", infoPlistLanguage: nil)
+        XCTAssertEqual(codeListing.language, "swift")
     }
 
-    struct CodeListing {
+    func testDefaultCodeBlockLanguage() async throws {
+        let codeListing = try await makeCodeBlock(fenceLanguage: nil, infoPlistLanguage: "swift")
+        XCTAssertEqual(codeListing.language, "swift")
+    }
+
+    func testExplicitlySetLanguageOverridesDefaultLanguage() async throws {
+        let codeListing = try await makeCodeBlock(fenceLanguage: "objective-c", infoPlistLanguage: "swift")
+        XCTAssertEqual(codeListing.language, "objective-c", "The explicit language of the code listing should override the bundle's default language")
+    }
+
+    private struct CodeListing {
         var language: String?
         var lines: [String]
     }
-
-    private func codeListing(at index: Int, in renderSection: ContentRenderSection, file: StaticString = #filePath, line: UInt = #line) throws -> CodeListing {
-        if case let .codeListing(l) = renderSection.content[index] {
-            return CodeListing(language: l.syntax, lines: l.code)
+    
+    private func makeCodeBlock(fenceLanguage: String?, infoPlistLanguage: String?) async throws -> CodeListing {
+        let catalog = Folder(name: "Something.docc", content: [
+            InfoPlist(defaultCodeListingLanguage: infoPlistLanguage),
+            
+            TextFile(name: "Root.md", utf8Content: """
+            # Root
+                
+            This article contains a code block
+            
+            ```\(fenceLanguage ?? "")
+            Some code goes 
+            ```
+            """)
+        ])
+        
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let reference = try XCTUnwrap(context.soleRootModuleReference)
+        let converter = DocumentationNodeConverter(context: context)
+        
+        let renderNode = converter.convert(try context.entity(with: reference))
+        let renderSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
+        
+        guard case .codeListing(let codeListing)? = renderSection.content.last else {
+            struct Error: DescribedError {
+                let errorDescription = "Didn't fide code block is known markup"
+            }
+            throw Error()
         }
-
-        XCTFail("Expected code listing at index \(index)", file: (file), line: line)
-        throw Errors.noCodeBlockFound
-    }
-
-    func testDefaultCodeBlockSyntaxForFencedCodeListingWithoutExplicitLanguage() throws {
-        let fencedCodeListing = try codeListing(at: 1, in: renderSectionWithLanguageDefault)
-
-        XCTAssertEqual("swift", fencedCodeListing.language, "Default a language of 'CDDefaultCodeListingLanguage' if  it is set in the 'Info.plist'")
-
-        XCTAssertEqual(fencedCodeListing.lines, [
-            "// With no language set, this should highlight to 'swift' because the 'CDDefaultCodeListingLanguage' key is set to 'swift'.",
-            "func foo()",
-        ])
-    }
-
-    func testDefaultCodeBlockSyntaxForNonFencedCodeListing() throws {
-        let indentedCodeListing = try codeListing(at: 2, in: renderSectionWithLanguageDefault)
-
-        XCTAssertEqual("swift", indentedCodeListing.language, "Default a language of 'CDDefaultCodeListingLanguage' if  it is set in the 'Info.plist'")
-        XCTAssertEqual(indentedCodeListing.lines, [
-            "/// This is a non fenced code listing and should also default to the 'CDDefaultCodeListingLanguage' language.",
-            "func foo()",
-        ])
-    }
-
-    func testExplicitlySetLanguageOverridesBundleDefault() throws {
-        let explicitlySetLanguageCodeListing = try codeListing(at: 3, in: renderSectionWithLanguageDefault)
-
-        XCTAssertEqual("objective-c", explicitlySetLanguageCodeListing.language, "The explicit language of the code listing should override the bundle's default language")
-
-        XCTAssertEqual(explicitlySetLanguageCodeListing.lines, [
-            "/// This is a fenced code block with an explicit language set, and it should override the default language for the bundle.",
-            "- (void)foo;",
-        ])
-    }
-
-    func testHasNoLanguageWhenNoPlistKeySetAndNoExplicitLanguageProvided() throws {
-        let fencedCodeListing = try codeListing(at: 1, in: renderSectionWithoutLanguageDefault)
-        let indentedCodeListing = try codeListing(at: 2, in: renderSectionWithoutLanguageDefault)
-        let explicitlySetLanguageCodeListing = try codeListing(at: 3, in: renderSectionWithoutLanguageDefault)
-
-        XCTAssertEqual(fencedCodeListing.language, nil)
-        XCTAssertEqual(indentedCodeListing.language, nil)
-        XCTAssertEqual(explicitlySetLanguageCodeListing.language, "objective-c")
+        return CodeListing(language: codeListing.syntax, lines: codeListing.code)
     }
 }

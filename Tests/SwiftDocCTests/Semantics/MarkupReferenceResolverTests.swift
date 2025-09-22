@@ -11,10 +11,15 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class MarkupReferenceResolverTests: XCTestCase {
     func testArbitraryReferenceInComment() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName"))
+        ])
+        
+        let (_, context) = try await loadBundle(catalog: catalog)
         let source = """
         @Comment {
             ``hello`` and ``world`` are 2 arbitrary symbol links.
