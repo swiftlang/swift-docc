@@ -31,7 +31,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
                     estimatedTime: nil
                 ),
                 renderReferenceDependencies: .init(),
-                sourceLanguages: [.swift]
+                sourceLanguages: [.swift],
+                symbolKind: .class
             )
             return (reference, entity)
         }
