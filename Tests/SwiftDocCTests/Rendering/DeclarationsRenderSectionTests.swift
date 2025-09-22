@@ -134,9 +134,9 @@ class DeclarationsRenderSectionTests: XCTestCase {
     }
 
     func testAlternateDeclarations() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AlternateDeclarations")
+        let (inputs, context) = try await testBundleAndContext(named: "AlternateDeclarations")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/AlternateDeclarations/MyClass/present(completion:)",
             sourceLanguage: .swift
         )
@@ -152,7 +152,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         }))
         
         // Verify that the rendered symbol displays both signatures
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
 
@@ -210,15 +210,15 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: symbolGraph2),
             ])
 
-            let (bundle, context) = try await loadBundle(catalog: catalog)
+            let (inputs, context) = try await loadBundle(catalog: catalog)
 
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/PlatformSpecificDeclarations/myInit",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 2)
@@ -249,7 +249,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (inputs, context) = try await loadBundle(catalog: catalog)
 
         // Make sure that type decorators like arrays, dictionaries, and optionals are correctly highlighted.
         do {
@@ -260,12 +260,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload1(param: Set<Int>) {}
             // func overload1(param: [Int: Int]) {}
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/FancyOverloads/overload1(param:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 1)
@@ -311,12 +311,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload2(p1: (Int) -> Int?, p2: Int) {}
             // func overload2(p1: ((Int) -> Int)?, p2: Int) {} // <- overload group
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/FancyOverloads/overload2(p1:p2:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 1)
@@ -366,12 +366,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload3<T: Hashable>(_ p: [T: T]) {}
             // func overload3<K: Hashable, V>(_ p: [K: V]) {}
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/FancyOverloads/overload3(_:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 1)
@@ -458,12 +458,12 @@ class DeclarationsRenderSectionTests: XCTestCase {
             JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (inputs, context) = try await loadBundle(catalog: catalog)
 
         func assertDeclarations(for USR: String, file: StaticString = #filePath, line: UInt = #line) throws {
             let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: USR), file: file, line: line)
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol, file: file, line: line)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode, file: file, line: line)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first, file: file, line: line)
             XCTAssertEqual(declarationsSection.declarations.count, 1, file: file, line: line)
@@ -495,16 +495,16 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (inputs, context) = try await loadBundle(catalog: catalog)
 
         for hash in ["7eht8", "8p1lo", "858ja"] {
             let reference = ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/FancyOverloads/overload3(_:)-\(hash)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 1)
@@ -528,18 +528,18 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (inputs, context) = try await loadBundle(catalog: catalog)
 
         // MyClass<T>
         // - myFunc() where T: Equatable
         // - myFunc() where T: Hashable // <- overload group
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/ConformanceOverloads/MyClass/myFunc()",
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
         XCTAssertEqual(declarationsSection.declarations.count, 1)

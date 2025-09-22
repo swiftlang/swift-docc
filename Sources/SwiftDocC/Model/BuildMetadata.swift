@@ -24,14 +24,14 @@ public struct BuildMetadata: Codable {
     public var bundleDisplayName: String
     
     /// The bundle identifier of the documentation bundle that DocC built.
-    public let bundleID: DocumentationBundle.Identifier
+    public let bundleID: DocumentationContext.Inputs.Identifier
     
     /// Creates a build metadata value for a documentation bundle built by DocC.
     ///
     /// - Parameters:
     ///   - bundleDisplayName: The display name of the documentation bundle.
     ///   - bundleID: The bundle identifier of the documentation bundle.
-    public init(bundleDisplayName: String, bundleID: DocumentationBundle.Identifier) {
+    public init(bundleDisplayName: String, bundleID: DocumentationContext.Inputs.Identifier) {
         self.bundleDisplayName = bundleDisplayName
         self.bundleID = bundleID
     }

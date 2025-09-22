@@ -96,7 +96,7 @@ struct ReferenceResolver: SemanticVisitor {
     var context: DocumentationContext
     
     /// The bundle in which visited documents reside.
-    var bundle: DocumentationBundle
+    var inputs: DocumentationContext.Inputs
     
     /// Problems found while trying to resolve references.
     var problems = [Problem]()
@@ -106,10 +106,10 @@ struct ReferenceResolver: SemanticVisitor {
     /// If the documentation is inherited, the reference of the parent symbol.
     var inheritanceParentReference: ResolvedTopicReference?
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
+    init(context: DocumentationContext, inputs: DocumentationContext.Inputs, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
         self.context = context
-        self.bundle = bundle
-        self.rootReference = rootReference ?? bundle.rootReference
+        self.inputs = inputs
+        self.rootReference = rootReference ?? inputs.rootReference
         self.inheritanceParentReference = inheritanceParentReference
     }
     
@@ -119,7 +119,7 @@ struct ReferenceResolver: SemanticVisitor {
             return .success(resolved)
             
         case let .failure(unresolved, error):
-            let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
+            let uncuratedArticleMatch = context.uncuratedArticles[inputs.documentationRootReference.appendingPathOfReference(unresolved)]?.source
             problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
             return .failure(unresolved, error)
         }
@@ -172,9 +172,9 @@ struct ReferenceResolver: SemanticVisitor {
         
         // Change the context of the project file to `download`
         if let projectFiles = tutorial.projectFiles,
-            var resolvedDownload = context.resolveAsset(named: projectFiles.path, in: bundle.rootReference) {
+            var resolvedDownload = context.resolveAsset(named: projectFiles.path, in: inputs.rootReference) {
             resolvedDownload.context = .download
-            context.updateAsset(named: projectFiles.path, asset: resolvedDownload, in: bundle.rootReference)
+            context.updateAsset(named: projectFiles.path, asset: resolvedDownload, in: inputs.rootReference)
         }
         
         return Tutorial(originalMarkup: tutorial.originalMarkup, durationMinutes: tutorial.durationMinutes, projectFiles: tutorial.projectFiles, requirements: newRequirements, intro: newIntro, sections: newSections, assessments: newAssessments, callToActionImage: newCallToActionImage, redirects: tutorial.redirects)
@@ -215,7 +215,7 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> Semantic {
-        var markupResolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: rootReference)
+        var markupResolver = MarkupReferenceResolver(context: context, inputs: inputs, rootReference: rootReference)
         let parent = inheritanceParentReference
         let context = self.context
         
@@ -315,7 +315,7 @@ struct ReferenceResolver: SemanticVisitor {
         // i.e. doc:/${SOME_TECHNOLOGY}/${PROJECT} or doc://${BUNDLE_ID}/${SOME_TECHNOLOGY}/${PROJECT}
         switch tutorialReference.topic {
         case .unresolved:
-            let maybeResolved = resolve(tutorialReference.topic, in: bundle.tutorialsContainerReference,
+            let maybeResolved = resolve(tutorialReference.topic, in: inputs.tutorialsContainerReference,
                                         range: tutorialReference.originalMarkup.range,
                                         severity: .warning)
             return TutorialReference(originalMarkup: tutorialReference.originalMarkup, tutorial: .resolved(maybeResolved))
@@ -369,10 +369,10 @@ struct ReferenceResolver: SemanticVisitor {
             visitMarkupContainer($0) as? MarkupContainer
         }
         // If there's a call to action with a local-file reference, change its context to `download`
-        if let downloadFile = article.metadata?.callToAction?.resolveFile(for: bundle, in: context, problems: &problems),
-            var resolvedDownload = context.resolveAsset(named: downloadFile.path, in: bundle.rootReference) {
+        if let downloadFile = article.metadata?.callToAction?.resolveFile(for: inputs, in: context, problems: &problems),
+            var resolvedDownload = context.resolveAsset(named: downloadFile.path, in: inputs.rootReference) {
             resolvedDownload.context = .download
-            context.updateAsset(named: downloadFile.path, asset: resolvedDownload, in: bundle.rootReference)
+            context.updateAsset(named: downloadFile.path, asset: resolvedDownload, in: inputs.rootReference)
         }
 
         return Article(
@@ -543,15 +543,15 @@ fileprivate extension URL {
 }
 
 extension Image {
-    func reference(in bundle: DocumentationBundle) -> ResourceReference? {
+    func reference(in inputs: DocumentationContext.Inputs) -> ResourceReference? {
         guard let source else {
-            return ResourceReference(bundleID: bundle.id, path: "")
+            return ResourceReference(bundleID: inputs.id, path: "")
         }
         
         if let url = URL(string: source), url.isLikelyWebURL {
             return nil
         } else {
-            return ResourceReference(bundleID: bundle.id, path: source)
+            return ResourceReference(bundleID: inputs.id, path: source)
         }
     }
 }

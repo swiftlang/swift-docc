@@ -21,13 +21,13 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
             return Semantic.Analyses.extractExactlyOne(
                 childType: Child.self,
                 parentDirective: directive,
                 children: children,
                 source: source,
-                for: bundle,
+                for: inputs,
                 severityIfNotFound: severityIfNotFound,
                 problems: &problems
             ) as! (Child?, MarkupContainer)
@@ -39,7 +39,7 @@ extension Semantic.Analyses {
         parentDirective: BlockDirective,
         children: some Sequence<any Markup>,
         source: URL?,
-        for bundle: DocumentationBundle,
+        for inputs: DocumentationContext.Inputs,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         problems: inout [Problem]
     ) -> ((any DirectiveConvertible)?, remainder: MarkupContainer) {
@@ -89,7 +89,7 @@ extension Semantic.Analyses {
             }
         }
         
-        return (childType.init(from: candidate, source: source, for: bundle, problems: &problems), MarkupContainer(remainder))
+        return (childType.init(from: candidate, source: source, for: inputs, problems: &problems), MarkupContainer(remainder))
     }
     
     /// Checks a parent directive for the presence of exactly one of two child directives---but not both---to be converted to a type ``SemanticAnalysis/Result``. If so, return that child and the remainder.
@@ -99,7 +99,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child1?, Child2?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationContext.Inputs, problems: inout [Problem]) -> (Child1?, Child2?, remainder: MarkupContainer) {
             let (candidates, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective else {
                     return nil
@@ -149,7 +149,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> ((any Media)?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationContext.Inputs, problems: inout [Problem]) -> ((any Media)?, remainder: MarkupContainer) {
             let (foundImage, foundVideo, remainder) = HasExactlyOneOf<Parent, ImageMedia, VideoMedia>(severityIfNotFound: severityIfNotFound).analyze(directive, children: children, source: source, for: bundle, problems: &problems)
             return (foundImage ?? foundVideo, remainder)
         }
@@ -162,7 +162,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> ((any Media)?, remainder: MarkupContainer) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationContext.Inputs, problems: inout [Problem]) -> ((any Media)?, remainder: MarkupContainer) {
             let (mediaDirectives, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective else {
                     return nil

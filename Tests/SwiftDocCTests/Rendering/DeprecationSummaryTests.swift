@@ -31,12 +31,12 @@ class DeprecationSummaryTests: XCTestCase {
     /// This test verifies that a symbol's deprecation summary comes from its sidecar doc
     /// and it's preferred over the original deprecation note in the code docs.
     func testAuthoredDeprecatedSummary() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
+        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode, "Could not compile the node")
         XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, [.text("This initializer has been deprecated.")])
@@ -44,7 +44,7 @@ class DeprecationSummaryTests: XCTestCase {
 
     /// Test for a warning when symbol is not deprecated
     func testIncorrectlyAuthoredDeprecatedSummary() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
             // Add a sidecar file with wrong deprecated summary
             try """
             # ``SideKit/SideClass``
@@ -63,11 +63,11 @@ class DeprecationSummaryTests: XCTestCase {
         })
         
         // Verify the deprecation is still rendered.
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode, "Could not compile the node")
         XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, [.text("This class has been deprecated.")])
@@ -80,10 +80,10 @@ class DeprecationSummaryTests: XCTestCase {
     /// and it's preferred over the original deprecation note in the code docs.
     /// (r69719494)
     func testAuthoredDeprecatedSummaryAsSoleItemInFile() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/CoolFramework/CoolClass",
                 sourceLanguage: .swift
             )
@@ -91,7 +91,7 @@ class DeprecationSummaryTests: XCTestCase {
 
         // Compile docs and verify contents
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
 
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")
@@ -112,10 +112,10 @@ class DeprecationSummaryTests: XCTestCase {
     }
     
     func testSymbolDeprecatedSummary() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )
@@ -123,7 +123,7 @@ class DeprecationSummaryTests: XCTestCase {
         
         // Compile docs and verify contents
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode, "Could not compile the node")
 
@@ -134,10 +134,10 @@ class DeprecationSummaryTests: XCTestCase {
     }
   
     func testDeprecationOverride() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
       let node = try context.entity(
           with: ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
               path: "/documentation/CoolFramework/CoolClass/init()",
               sourceLanguage: .swift
           )
@@ -145,7 +145,7 @@ class DeprecationSummaryTests: XCTestCase {
       
       // Compile docs and verify contents
       let symbol = try XCTUnwrap(node.semantic as? Symbol)
-      var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
       
       let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode, "Could not compile the node")
 
@@ -163,10 +163,10 @@ class DeprecationSummaryTests: XCTestCase {
   }
     
     func testDeprecationSummaryInDiscussionSection() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/CoolFramework/CoolClass/coolFunc()",
                 sourceLanguage: .swift
             )
@@ -174,7 +174,7 @@ class DeprecationSummaryTests: XCTestCase {
         
         // Compile docs and verify contents
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode, "Could not compile the node")
 
@@ -192,10 +192,10 @@ class DeprecationSummaryTests: XCTestCase {
     }
     
     func testDeprecationSummaryWithMultiLineCommentSymbol() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: inputs.id,
                 path: "/documentation/CoolFramework/CoolClass/init(config:cache:)",
                 sourceLanguage: .swift
             )
@@ -203,7 +203,7 @@ class DeprecationSummaryTests: XCTestCase {
         
         // Compile docs and verify contents
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode, "Could not compile the node")
         

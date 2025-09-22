@@ -15,7 +15,7 @@ import SymbolKit
 import SwiftDocCTestUtilities
 
 class ConvertServiceTests: XCTestCase {
-    private let testBundleInfo = DocumentationBundle.Info(
+    private let testBundleInfo = DocumentationContext.Inputs.Info(
         displayName: "TestBundle",
         id: "identifier"
     )
@@ -1728,7 +1728,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            bundleInfo: DocumentationContext.Inputs.Info(
                 displayName: "TestBundle",
                 id: "com.test.bundle"
             ),
@@ -2017,7 +2017,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            bundleInfo: DocumentationContext.Inputs.Info(
                 displayName: "TestBundle",
                 id: "org.swift.example"
             ),
@@ -2126,7 +2126,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            bundleInfo: DocumentationContext.Inputs.Info(
                 displayName: "TestBundleDisplayName",
                 id: "com.test.bundle"
             ),
@@ -2164,7 +2164,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            bundleInfo: DocumentationContext.Inputs.Info(
                 displayName: "TestBundleDisplayName",
                 id: "com.test.bundle"
             ),
@@ -2203,7 +2203,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            bundleInfo: DocumentationContext.Inputs.Info(
                 displayName: "TestBundleDisplayName",
                 id: "com.test.bundle"
             ),
@@ -2331,7 +2331,7 @@ class ConvertServiceTests: XCTestCase {
         let bundleURL = tempURL.appendingPathComponent("unit-test.docc")
         
         let requestWithDifferentBundleID = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", id: "com.example.something-else"),
+            bundleInfo: DocumentationContext.Inputs.Info(displayName: "DisplayName", id: "com.example.something-else"),
             externalIDsToConvert: [],
             bundleLocation: bundleURL,
             symbolGraphs: [],
@@ -2341,7 +2341,7 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(try linkResolutionRequestsForConvertRequest(requestWithDifferentBundleID), [], "Shouldn't make any link resolution requests because the bundle IDs are different.")
         
         let requestWithSameBundleID = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", id: "com.example.something"),
+            bundleInfo: DocumentationContext.Inputs.Info(displayName: "DisplayName", id: "com.example.something"),
             externalIDsToConvert: [],
             bundleLocation: bundleURL,
             symbolGraphs: [],

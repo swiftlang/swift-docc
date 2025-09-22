@@ -167,7 +167,7 @@ public struct ConvertAction: AsyncAction {
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
-        let (bundle, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
+        let (inputs, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
             try DocumentationContext.InputsProvider(fileManager: fileManager)
             .inputsAndDataProvider(
                 startingPoint: documentationBundleURL,
@@ -178,12 +178,12 @@ public struct ConvertAction: AsyncAction {
 
         self.configuration = configuration
         
-        self.bundle = bundle
+        self.inputs = inputs
         self.dataProvider = dataProvider
     }
     
     let configuration: DocumentationContext.Configuration
-    private let bundle: DocumentationBundle
+    private let inputs: DocumentationContext.Inputs
     private let dataProvider: any DataProvider
     
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
@@ -286,10 +286,10 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        let indexer = try Indexer(outputURL: temporaryFolder, bundleID: bundle.id)
+        let indexer = try Indexer(outputURL: temporaryFolder, bundleID: inputs.id)
 
         let registerInterval = signposter.beginInterval("Register", id: signposter.makeSignpostID())
-        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         signposter.endInterval("Register", registerInterval)
         
         let outputConsumer = ConvertFileWritingConsumer(
@@ -300,7 +300,7 @@ public struct ConvertAction: AsyncAction {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleID: bundle.id
+            bundleID: inputs.id
         )
 
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
@@ -318,7 +318,7 @@ public struct ConvertAction: AsyncAction {
         do {
             conversionProblems = try signposter.withIntervalSignpost("Process") {
                 try ConvertActionConverter.convert(
-                    bundle: bundle,
+                    inputs: inputs,
                     context: context,
                     outputConsumer: outputConsumer,
                     sourceRepository: sourceRepository,
@@ -347,7 +347,7 @@ public struct ConvertAction: AsyncAction {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
             var replacements = [Replacement]()
-            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(bundle.displayName)[tableOfContentsFilename] {
+            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(inputs.displayName)[tableOfContentsFilename] {
                 replacements.append(
                     Replacement(
                         range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
@@ -438,7 +438,7 @@ public struct ConvertAction: AsyncAction {
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleID: bundle.id
+                bundleID: inputs.id
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)

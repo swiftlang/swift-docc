@@ -79,7 +79,7 @@ class DiagnosticTests: XCTestCase {
     
     /// Test offsetting diagnostic ranges
     func testOffsetDiagnostics() async throws {
-        let (bundle, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+        let (inputs, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName"))
         ]))
 
@@ -87,7 +87,7 @@ class DiagnosticTests: XCTestCase {
         let markup = Document(parsing: content, source: URL(string: "/tmp/foo.symbols.json"), options: .parseSymbolLinks)
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
-        var resolver = ReferenceResolver(context: context, bundle: bundle, rootReference: moduleReference)
+        var resolver = ReferenceResolver(context: context, inputs: inputs, rootReference: moduleReference)
         
         // Resolve references
         _ = resolver.visitMarkup(markup)

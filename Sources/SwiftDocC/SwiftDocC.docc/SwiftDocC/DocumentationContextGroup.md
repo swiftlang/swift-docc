@@ -24,7 +24,7 @@ let (bundle, dataProvider) = try inputsProvider.inputsAndDataProvider(
     options: bundleDiscoveryOptions
 )
 
-let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider)
+let context = try DocumentationContext(inputs: bundle, dataProvider: dataProvider)
 ```
 
 ### Accessing Documentation
@@ -79,4 +79,4 @@ let sourceFileURL = try context.documentURL(for: reference)
 - ``CodeColorsPreferenceKey``
 - ``SRGBColor``
 
-<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

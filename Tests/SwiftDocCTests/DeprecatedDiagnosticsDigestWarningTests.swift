@@ -23,12 +23,12 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             An empty root page
             """)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (inputs, context) = try await loadBundle(catalog: catalog)
         
         let outputConsumer = TestOutputConsumer()
         
         _ = try ConvertActionConverter.convert(
-            bundle: bundle,
+            inputs: inputs,
             context: context,
             outputConsumer: outputConsumer,
             sourceRepository: nil,
@@ -49,12 +49,12 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             This link will result in a warning: ``NotFound``.
             """)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (inputs, context) = try await loadBundle(catalog: catalog)
         
         let outputConsumer = TestOutputConsumer()
         
         _ = try ConvertActionConverter.convert(
-            bundle: bundle,
+            inputs: inputs,
             context: context,
             outputConsumer: outputConsumer,
             sourceRepository: nil,
@@ -79,7 +79,7 @@ private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     }
     
     func consume(renderNode: RenderNode) throws { }
-    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
+    func consume(assetsInBundle bundle: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }

@@ -737,13 +737,13 @@ final class RenderIndexTests: XCTestCase {
     }
     
     func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) async throws -> RenderIndex {
-        let (bundle, context) = try await testBundleAndContext(named: testBundleName)
-        return try generatedRenderIndex(for: bundle, withIdentifier: bundleIdentifier, withContext: context)
+        let (inputs, context) = try await testBundleAndContext(named: testBundleName)
+        return try generatedRenderIndex(for: inputs, withIdentifier: bundleIdentifier, withContext: context)
     }
     
-    func generatedRenderIndex(for bundle: DocumentationBundle, withIdentifier bundleIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+    func generatedRenderIndex(for inputs: DocumentationContext.Inputs, withIdentifier bundleIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
+        let renderContext = RenderContext(documentationContext: context, inputs: inputs)
+        let converter = DocumentationContextConverter(inputs: inputs, context: context, renderContext: renderContext)
         let indexDirectory = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(
             outputURL: indexDirectory,

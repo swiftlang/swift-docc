@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,7 @@ import Foundation
 
 extension ConvertService {
     /// Creates a bundle and an associated in-memory data provider from the information of a given convert request
-    static func makeBundleAndInMemoryDataProvider(_ request: ConvertRequest) -> (bundle: DocumentationBundle, provider: InMemoryDataProvider) {
+    static func makeBundleAndInMemoryDataProvider(_ request: ConvertRequest) -> (inputs: DocumentationContext.Inputs, provider: InMemoryDataProvider) {
         var files: [URL: Data] = [:]
         files.reserveCapacity(
               request.symbolGraphs.count
@@ -21,10 +21,10 @@ extension ConvertService {
             + request.miscResourceURLs.count
         )
         for markupFile in request.markupFiles {
-            files[makeURL().appendingPathExtension(DocumentationBundleFileTypes.referenceFileExtension)] = markupFile
+            files[makeURL().appendingPathExtension(DocumentationInputFileTypes.referenceFileExtension)] = markupFile
         }
         for tutorialFile in request.tutorialFiles {
-            files[makeURL().appendingPathExtension(DocumentationBundleFileTypes.tutorialFileExtension)] = tutorialFile
+            files[makeURL().appendingPathExtension(DocumentationInputFileTypes.tutorialFileExtension)] = tutorialFile
         }
         let markupFileURL = Array(files.keys)
         
@@ -37,7 +37,7 @@ extension ConvertService {
         }
         
         return (
-            DocumentationBundle(
+            DocumentationContext.Inputs(
                 info: request.bundleInfo,
                 symbolGraphURLs: symbolGraphURLs,
                 markupURLs: markupFileURL,

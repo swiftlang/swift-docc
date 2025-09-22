@@ -2898,7 +2898,7 @@ class ConvertActionTests: XCTestCase {
         )
         let (_, context) = try await action.perform(logHandle: .none)
 
-        let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
+        let bundle = try XCTUnwrap(context.inputs, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "MyKit")
         XCTAssertEqual(bundle.id, "MyKit")
     }
@@ -2976,9 +2976,9 @@ class ConvertActionTests: XCTestCase {
         )
         let (_, context) = try await action.perform(logHandle: .none)
 
-        let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
-        XCTAssertEqual(bundle.displayName, "Something")
-        XCTAssertEqual(bundle.id, "com.example.test")
+        let inputs = try XCTUnwrap(context.inputs, "Should have registered the generated test bundle.")
+        XCTAssertEqual(inputs.displayName, "Something")
+        XCTAssertEqual(inputs.id, "com.example.test")
     }
 
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {

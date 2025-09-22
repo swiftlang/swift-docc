@@ -34,14 +34,14 @@ class PlatformAvailabilityTests: XCTestCase {
 
     /// Ensure that adding `@Available` directives in an article causes the final RenderNode to contain the appropriate availability data.
     func testPlatformAvailabilityFromArticle() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 1)
@@ -53,14 +53,14 @@ class PlatformAvailabilityTests: XCTestCase {
 
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
     func testPlatformAvailabilityFromExtension() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 1)
@@ -71,14 +71,14 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     func testMultiplePlatformAvailabilityFromArticle() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 3)
@@ -99,14 +99,14 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     func testArbitraryPlatformAvailability() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/AvailabilityBundle/ArbitraryPlatforms",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 2)
@@ -124,15 +124,15 @@ class PlatformAvailabilityTests: XCTestCase {
     
     // Test that the Info.plist default availability does not affect the deprecated/unavailable availabilities provided by the symbol graph.
     func testAvailabilityParserWithInfoPlistDefaultAvailability() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "AvailabilityOverrideBundle")
+        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityOverrideBundle")
 
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 5)
@@ -164,14 +164,14 @@ class PlatformAvailabilityTests: XCTestCase {
         let platformMetadata = [
             "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
         ]
-        let (bundle, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let (inputs, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 1)
@@ -187,14 +187,14 @@ class PlatformAvailabilityTests: XCTestCase {
             "macOS": PlatformVersion(VersionTriplet(12, 0, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(7, 0, 0), beta: true),
         ]
-        let (bundle, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let (inputs, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 3)
@@ -219,14 +219,14 @@ class PlatformAvailabilityTests: XCTestCase {
         let platformMetadata = [
             "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
         ]
-        let (bundle, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let (inputs, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
         XCTAssertEqual(availability.count, 1)
@@ -237,7 +237,7 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     
-    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) async throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = platformMetadata

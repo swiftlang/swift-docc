@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -76,7 +76,7 @@ extension DocumentationContext {
         /// A collection of configuration related to external sources of documentation.
         public struct ExternalDocumentationConfiguration {
             /// The lookup of external documentation sources by their bundle identifiers.
-            public var sources: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:]
+            public var sources: [DocumentationContext.Inputs.Identifier: any ExternalDocumentationSource] = [:]
             /// A type that resolves all symbols that are referenced in symbol graph files but can't be found in any of the locally available symbol graph files.
             public var globalSymbolResolver: (any GlobalExternalSymbolResolver)?
             /// A list of URLs to documentation archives that the local documentation depends on.

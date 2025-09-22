@@ -140,7 +140,7 @@ extension TopicReferenceResolutionErrorInfo {
 /// > Important: This type has copy-on-write semantics and wraps an underlying class to store
 /// > its data.
 public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomStringConvertible {
-    typealias ReferenceBundleIdentifier = DocumentationBundle.Identifier
+    typealias ReferenceBundleIdentifier = DocumentationContext.Inputs.Identifier
     private struct ReferenceKey: Hashable {
         var path: String
         var fragment: String?
@@ -177,7 +177,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     let _storage: Storage
     
     /// The identifier of the bundle that owns this documentation topic.
-    public var bundleID: DocumentationBundle.Identifier {
+    public var bundleID: DocumentationContext.Inputs.Identifier {
         _storage.bundleID
     }
     
@@ -207,11 +207,11 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     /// - Note: The `path` parameter is escaped to a path readable string.
-    public init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
+    public init(bundleID: DocumentationContext.Inputs.Identifier, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
         self.init(bundleID: bundleID, path: path, fragment: fragment, sourceLanguages: [sourceLanguage])
     }
     
-    public init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+    public init(bundleID: DocumentationContext.Inputs.Identifier, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
         self.init(
             bundleID: bundleID,
             urlReadablePath: urlReadablePath(path),
@@ -220,7 +220,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         )
     }
     
-    private init(bundleID: DocumentationBundle.Identifier, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+    private init(bundleID: DocumentationContext.Inputs.Identifier, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
         precondition(!sourceLanguages.isEmpty, "ResolvedTopicReference.sourceLanguages cannot be empty")
         // Check for a cached instance of the reference
         let key = ReferenceKey(path: urlReadablePath, fragment: urlReadableFragment, sourceLanguages: sourceLanguages)
@@ -440,7 +440,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     ///
     /// This is a reference type which allows ``ResolvedTopicReference`` to have copy-on-write behavior.
     class Storage: Hashable {
-        let bundleID: DocumentationBundle.Identifier
+        let bundleID: DocumentationContext.Inputs.Identifier
         let path: String
         let fragment: String?
         let sourceLanguages: Set<SourceLanguage>
@@ -452,7 +452,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let absoluteString: String
         
         init(
-            bundleID: DocumentationBundle.Identifier,
+            bundleID: DocumentationContext.Inputs.Identifier,
             path: String,
             fragment: String? = nil,
             sourceLanguages: Set<SourceLanguage>
@@ -529,7 +529,7 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     public let topicURL: ValidatedURL
     
     /// The bundle identifier, if one was provided in the host name component of the original URL.
-    public var bundleID: DocumentationBundle.Identifier? {
+    public var bundleID: DocumentationContext.Inputs.Identifier? {
         topicURL.components.host.map { .init(rawValue: $0) }
     }
     
@@ -590,7 +590,7 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
 /// A reference to an auxiliary resource such as an image.
 public struct ResourceReference: Hashable {
     /// The documentation bundle identifier for the bundle in which this resource resides.
-    public let bundleID: DocumentationBundle.Identifier
+    public let bundleID: DocumentationContext.Inputs.Identifier
 
     /// The path of the resource local to its bundle.
     public let path: String
@@ -599,7 +599,7 @@ public struct ResourceReference: Hashable {
     /// - Parameters:
     ///   - bundleID: The documentation bundle identifier for the bundle in which this resource resides.
     ///   - path: The path of the resource local to its bundle.
-    init(bundleID: DocumentationBundle.Identifier, path: String) {
+    init(bundleID: DocumentationContext.Inputs.Identifier, path: String) {
         self.bundleID = bundleID
         self.path = path.removingPercentEncoding ?? path
     }

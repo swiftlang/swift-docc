@@ -16,21 +16,21 @@ import Markdown
 
 class SnippetTests: XCTestCase {
     func testNoPath() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
+        let (inputs, _) = try await testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet()
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        XCTAssertNil(Snippet(from: directive, source: nil, for: bundle, problems: &problems))
+        XCTAssertNil(Snippet(from: directive, source: nil, for: inputs, problems: &problems))
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual(.warning, problems[0].diagnostic.severity)
         XCTAssertEqual("org.swift.docc.HasArgument.path", problems[0].diagnostic.identifier)
     }
 
     func testHasInnerContent() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
+        let (inputs, _) = try await testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet(path: "path/to/snippet") {
             This content shouldn't be here.
@@ -39,7 +39,7 @@ class SnippetTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        XCTAssertNotNil(Snippet(from: directive, source: nil, for: bundle, problems: &problems))
+        XCTAssertNotNil(Snippet(from: directive, source: nil, for: inputs, problems: &problems))
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual(.warning, problems[0].diagnostic.severity)
         XCTAssertEqual("org.swift.docc.Snippet.NoInnerContentAllowed", problems[0].diagnostic.identifier)
@@ -60,12 +60,12 @@ class SnippetTests: XCTestCase {
     }
     
     func testUnresolvedSnippetPathDiagnostic() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "Snippets")
+        let (inputs, context) = try await testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet(path: "Test/Snippets/DoesntExist")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: context.rootModules[0])
+        var resolver = MarkupReferenceResolver(context: context, inputs: inputs, rootReference: context.rootModules[0])
         _ = resolver.visit(document)
         XCTAssertEqual(1, resolver.problems.count)
         resolver.problems.first.map {

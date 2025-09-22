@@ -24,11 +24,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await testBundleAndContext()
+        let (inputs, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: inputs, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context, inputs: inputs)
         _ = resolver.visitIntro(intro)
         XCTAssertEqual(resolver.problems.count, 1)
     }
@@ -43,11 +43,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await testBundleAndContext()
+        let (inputs, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)!
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: inputs, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context, inputs: inputs)
         _ = resolver.visit(contentAndMedia)
         XCTAssertEqual(resolver.problems.count, 1)
     }
@@ -60,11 +60,11 @@ class ReferenceResolverTests: XCTestCase {
     """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await testBundleAndContext()
+        let (inputs, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: inputs, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context, inputs: inputs)
         
         guard let container = resolver.visit(intro).children.first as? MarkupContainer,
               let firstElement = container.elements.first,
@@ -78,7 +78,7 @@ class ReferenceResolverTests: XCTestCase {
     
     // Tests all reference syntax formats to a child symbol
     func testReferencesToChildFromFramework() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -101,7 +101,7 @@ class ReferenceResolverTests: XCTestCase {
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -111,7 +111,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test relative paths to non-child symbol
     func testReferencesToGrandChildFromFramework() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -127,7 +127,7 @@ class ReferenceResolverTests: XCTestCase {
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -137,7 +137,7 @@ class ReferenceResolverTests: XCTestCase {
     
     // Test references to a sibling symbol
     func testReferencesToSiblingFromFramework() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -153,7 +153,7 @@ class ReferenceResolverTests: XCTestCase {
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -163,7 +163,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test references to symbols in root paths
     func testReferencesToTutorial() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -179,7 +179,7 @@ class ReferenceResolverTests: XCTestCase {
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -189,7 +189,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test references to technology pages
     func testReferencesToTechnologyPages() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -204,7 +204,7 @@ class ReferenceResolverTests: XCTestCase {
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -214,7 +214,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test external references
     func testExternalReferencesConsiderBundleIdentifier() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -230,7 +230,7 @@ class ReferenceResolverTests: XCTestCase {
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -346,7 +346,7 @@ class ReferenceResolverTests: XCTestCase {
     }
     
     func testRelativeReferencesToExtensionSymbols() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
             // We don't want the external target to be part of the archive as that is not
             // officially supported yet.
             try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))
@@ -378,7 +378,7 @@ class ReferenceResolverTests: XCTestCase {
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         let content = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection).content
@@ -407,10 +407,10 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     func testCuratedExtensionRemovesEmptyPage() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "ModuleWithSingleExtension")
+        let (inputs, context) = try await testBundleAndContext(named: "ModuleWithSingleExtension")
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
         // The only children of the root topic should be the `MyNamespace` enum - i.e. the Swift
@@ -421,11 +421,11 @@ class ReferenceResolverTests: XCTestCase {
 
         // Make sure that the symbol added in the extension is still present in the topic graph,
         // even though its synthetic "extended symbol" parents are not
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
     }
 
     func testCuratedExtensionWithDanglingReference() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
             let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
             try FileManager.default.removeItem(at: topLevelArticle)
 
@@ -445,16 +445,16 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(replacement.replacement, "`Swift/Array`")
 
         // Also make sure that the extension pages are still gone
-        let extendedModule = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        let extendedModule = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedModule }))
 
-        let extendedStructure = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        let extendedStructure = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
 
         // Load the RenderNode for the root article and make sure that the `Swift/Array` symbol link
         // is not rendered as a link
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
         XCTAssertEqual(renderNode.abstract, [
@@ -522,10 +522,10 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     func testCuratedExtensionWithAdditionalConformance() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "ModuleWithConformanceAndExtension")
+        let (inputs, context) = try await testBundleAndContext(named: "ModuleWithConformanceAndExtension")
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithConformanceAndExtension/MyProtocol", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/ModuleWithConformanceAndExtension/MyProtocol", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
         let conformanceSection = try XCTUnwrap(renderNode.relationshipSections.first(where: { $0.type == RelationshipsGroup.Kind.conformingTypes.rawValue }))
@@ -538,10 +538,10 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     func testExtensionWithEmptyDeclarationFragments() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "ModuleWithEmptyDeclarationFragments")
+        let (inputs, context) = try await testBundleAndContext(named: "ModuleWithEmptyDeclarationFragments")
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithEmptyDeclarationFragments", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/ModuleWithEmptyDeclarationFragments", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
         // Despite having an extension to Float, there are no symbols added by that extension, so
@@ -560,11 +560,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await testBundleAndContext()
+        let (inputs, context) = try await testBundleAndContext()
         var problems = [Problem]()
 
-        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: bundle, problems: &problems))
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: inputs, problems: &problems))
+        var resolver = ReferenceResolver(context: context, inputs: inputs)
         _ = resolver.visitChapter(chapter)
         XCTAssertFalse(resolver.problems.containsErrors)
         XCTAssertEqual(resolver.problems.count, 1)
@@ -580,11 +580,11 @@ class ReferenceResolverTests: XCTestCase {
         Discussion link to ``SideKit``.
         """
         
-        let (bundle, context) = try await testBundleAndContext()
+        let (inputs, context) = try await testBundleAndContext()
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:]))
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context, inputs: inputs)
         let resolvedArticle = try XCTUnwrap(resolver.visitArticle(article) as? Article)
         let abstractSection = try XCTUnwrap(resolvedArticle.abstractSection)
         
@@ -612,9 +612,9 @@ class ReferenceResolverTests: XCTestCase {
     }
     
     func testForwardsSymbolPropertiesThatAreUnmodifiedDuringLinkResolution() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context, inputs: inputs)
         
         let symbol = try XCTUnwrap(context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)
         
@@ -768,7 +768,7 @@ class ReferenceResolverTests: XCTestCase {
             mixins: [:]
         )
         
-        let (bundle, context) = try await testBundleAndContext()
+        let (inputs, context) = try await testBundleAndContext()
         
         let documentationExtensionContent = """
         # ``Something``
@@ -785,7 +785,7 @@ class ReferenceResolverTests: XCTestCase {
         let article = Article(
             from: Document(parsing: documentationExtensionContent, source: documentationExtensionURL, options: [.parseSymbolLinks, .parseBlockDirectives]),
             source: documentationExtensionURL,
-            for: bundle,
+            for: inputs,
             problems: &ignoredProblems
         )
         XCTAssert(ignoredProblems.isEmpty, "Unexpected problems creating article")
@@ -801,7 +801,7 @@ class ReferenceResolverTests: XCTestCase {
         
         XCTAssertEqual(node.docChunks.count, 2, "This node has content from both the in-source comment and the documentation extension file.")
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context, inputs: inputs)
         _ = resolver.visitSymbol(node.semantic as! Symbol)
         
         let problems = resolver.problems.sorted(by: \.diagnostic.summary)

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -150,7 +150,7 @@ public struct SerializableLinkResolutionInformation: Codable {
     // This type is public so that it can be an argument to a function in `ConvertOutputConsumer`
     
     var version: SemanticVersion
-    var bundleID: DocumentationBundle.Identifier
+    var bundleID: DocumentationContext.Inputs.Identifier
     var pathHierarchy: PathHierarchy.FileRepresentation
     // Separate storage of node data because the path hierarchy doesn't know the resolved references for articles.
     var nonSymbolPaths: [Int: String]
@@ -160,7 +160,7 @@ extension PathHierarchyBasedLinkResolver {
     /// Create a file representation of the link resolver.
     ///
     /// The file representation can be decoded in later documentation builds to resolve external links to the content where the link resolver was originally created for.
-    func prepareForSerialization(bundleID: DocumentationBundle.Identifier) throws -> SerializableLinkResolutionInformation {
+    func prepareForSerialization(bundleID: DocumentationContext.Inputs.Identifier) throws -> SerializableLinkResolutionInformation {
         var nonSymbolPaths: [Int: String] = [:]
         let hierarchyFileRepresentation = PathHierarchy.FileRepresentation(pathHierarchy) { identifiers in
             nonSymbolPaths.reserveCapacity(identifiers.count)

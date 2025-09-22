@@ -38,7 +38,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
 
     // Test the sorting of articles mentioning a given symbol
     func testArticlesMentioningSorting() throws {
-        let bundleID: DocumentationBundle.Identifier = "org.swift.test"
+        let bundleID: DocumentationContext.Inputs.Identifier = "org.swift.test"
         let articles = ["a", "b", "c", "d", "e", "f"].map { letter in
             ResolvedTopicReference(
                 bundleID: bundleID,

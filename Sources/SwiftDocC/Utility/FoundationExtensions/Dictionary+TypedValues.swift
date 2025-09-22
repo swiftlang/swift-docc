@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -53,7 +53,7 @@ enum TypedValueError: DescribedError {
     /// The requested value is of the wrong type.
     case wrongType(key: String, expected: Any.Type, actual: Any.Type)
     /// One or more required ``DocumentationBundle.Info.Key``s are missing.
-    case missingRequiredKeys([DocumentationBundle.Info.CodingKeys])
+    case missingRequiredKeys([DocumentationContext.Inputs.Info.CodingKeys])
     
     var errorDescription: String {
         switch self {

@@ -11,7 +11,7 @@
 public import Foundation
 
 /// A collection of functions to check if a file is one of the documentation bundle files types.
-public enum DocumentationBundleFileTypes {
+public enum DocumentationInputFileTypes {
     
     static let referenceFileExtension = "md"
     /// Checks if a file is a reference documentation file.
@@ -85,3 +85,7 @@ public enum DocumentationBundleFileTypes {
         return url.lastPathComponent == themeSettingsFileName
     }
 }
+
+@available(*, deprecated, renamed: "DocumentationInputFileTypes", message: "Use 'DocumentationInputFileTypes' instead. This deprecated API will be removed after 6.3 is released")
+public typealias DocumentationBundleFileTypes = DocumentationInputFileTypes
+

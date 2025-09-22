@@ -23,7 +23,7 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
         from markupElements: inout [any Markup],
         parentType: Semantic.Type,
         source: URL?,
-        bundle: DocumentationBundle,
+        inputs: DocumentationContext.Inputs,
         problems: inout [Problem]
     ) -> Directive? {
         let (directiveElements, remainder) = markupElements.categorize { markup -> Directive? in
@@ -35,7 +35,7 @@ struct DirectiveParser<Directive: AutomaticDirectiveConvertible> {
             return Directive(
                 from: childDirective,
                 source: source,
-                for: bundle,
+                for: inputs,
                 problems: &problems
             )
         }

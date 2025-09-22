@@ -17,11 +17,11 @@ class ConvertActionIndexerTests: XCTestCase {
     
     // Tests the standalone indexer
     func testConvertActionIndexer() async throws {
-        let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
+        let (inputs, dataProvider) = try DocumentationContext.InputsProvider()
             .inputsAndDataProvider(startingPoint: testCatalogURL(named: "LegacyBundle_DoNotUseInNewTests"), options: .init())
         
-        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider)
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         
         // Add /documentation/MyKit to the index, verify the tree dump
         do {
@@ -29,7 +29,7 @@ class ConvertActionIndexerTests: XCTestCase {
             let renderNode = try converter.convert(context.entity(with: reference))
 
             let tempIndexURL = try createTemporaryDirectory(named: "index")
-            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleID: bundle.id)
+            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleID: inputs.id)
             indexer.index(renderNode)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)
             let treeDump = try XCTUnwrap(indexer.dumpTree())
@@ -54,7 +54,7 @@ class ConvertActionIndexerTests: XCTestCase {
             let renderNode2 = try converter.convert(context.entity(with: reference2))
 
             let tempIndexURL = try createTemporaryDirectory(named: "index")
-            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleID: bundle.id)
+            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleID: inputs.id)
             indexer.index(renderNode1)
             indexer.index(renderNode2)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)

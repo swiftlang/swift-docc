@@ -102,7 +102,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         self.redirects = redirects
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) {
         precondition(directive.name == TutorialArticle.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialArticle>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName])
@@ -116,20 +116,20 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
             
         var remainder: MarkupContainer
         let optionalIntro: Intro?
-        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
+        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: inputs, problems: &problems)
         
-        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: inputs, problems: &problems)
         
-        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, problems: &problems)
+        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: inputs, problems: &problems)
         
         let optionalAssessments: Assessments?
-        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>().analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>().analyze(directive, children: remainder, source: source, for: inputs, problems: &problems)
         
         let optionalCallToActionImage: ImageMedia?
-        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: inputs, problems: &problems)
         
         let redirects: [Redirect]
-            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: inputs, problems: &problems)
         
         self.init(originalMarkup: directive, durationMinutes: optionalTime, intro: optionalIntro, content: content, assessments: optionalAssessments, callToActionImage: optionalCallToActionImage, landmarks: headings, redirects: redirects.isEmpty ? nil : redirects)
     }
@@ -152,7 +152,7 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> [MarkupLayout] {
+    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationContext.Inputs, problems: inout [Problem]) -> [MarkupLayout] {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,

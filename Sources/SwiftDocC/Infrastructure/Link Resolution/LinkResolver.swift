@@ -106,8 +106,8 @@ public class LinkResolver {
         
         // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
         if let bundleID = unresolvedReference.bundleID,
-           context.bundle.id != bundleID,
-           urlReadablePath(context.bundle.displayName) != bundleID.rawValue
+           context.inputs.id != bundleID,
+           urlReadablePath(context.inputs.displayName) != bundleID.rawValue
         {
             return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for '\(bundleID)'."))
         }
@@ -185,8 +185,8 @@ private final class FallbackResolverBasedLinkResolver {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleID = unresolvedReference.bundleID ?? parent.bundleID
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
-              fallbackResolver.bundleID == context.bundle.id,
-              context.bundle.id == referenceBundleID || urlReadablePath(context.bundle.displayName) == referenceBundleID.rawValue
+              fallbackResolver.bundleID == context.inputs.id,
+              context.inputs.id == referenceBundleID || urlReadablePath(context.inputs.displayName) == referenceBundleID.rawValue
         else {
             return nil
         }
@@ -204,7 +204,7 @@ private final class FallbackResolverBasedLinkResolver {
         )
         allCandidateURLs.append(alreadyResolved.url)
         
-        let currentBundle = context.bundle
+        let currentBundle = context.inputs
         if !isCurrentlyResolvingSymbolLink {
             // First look up articles path
             allCandidateURLs.append(contentsOf: [

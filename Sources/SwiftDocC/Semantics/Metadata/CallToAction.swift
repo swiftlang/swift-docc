@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -150,12 +150,12 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
 
 extension CallToAction {
     func resolveFile(
-        for bundle: DocumentationBundle,
+        for inputs: DocumentationContext.Inputs,
         in context: DocumentationContext,
         problems: inout [Problem]) -> ResourceReference?
     {
         if let file = self.file {
-            if context.resolveAsset(named: file.url.lastPathComponent, in: bundle.rootReference) == nil {
+            if context.resolveAsset(named: file.url.lastPathComponent, in: inputs.rootReference) == nil {
                 problems.append(.init(
                     diagnostic: Diagnostic(
                         source: url,

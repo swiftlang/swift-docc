@@ -44,7 +44,7 @@ public struct BundleDiscoveryOptions {
     ///   - fallbackInfo: Fallback documentation bundle information to use if any discovered bundles are missing an Info.plist.
     ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
     public init(
-        fallbackInfo: DocumentationBundle.Info,
+        fallbackInfo: DocumentationContext.Inputs.Info,
         additionalSymbolGraphFiles: [URL] = []
     ) throws {
         // Use JSONEncoder to dynamically create the Info.plist fallback
@@ -55,7 +55,7 @@ public struct BundleDiscoveryOptions {
         let serializedFallbackInfo = try JSONSerialization.jsonObject(with: data)
         
         guard let fallbackInfoDictionary = serializedFallbackInfo as? [String: Any] else {
-            throw DocumentationBundle.Info.Error.wrongType(
+            throw DocumentationContext.Inputs.Info.Error.wrongType(
                 expected: [String: Any].Type.self,
                 actual: type(of: serializedFallbackInfo)
             )

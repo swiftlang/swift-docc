@@ -32,9 +32,9 @@ public struct FeatureFlags: Codable {
     /// Creates a set of feature flags with all default values.
     public init() {}
 
-    /// Set feature flags that were loaded from a bundle's Info.plist.
-    internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationBundle.Info.BundleFeatureFlags) {
-        if let overloadsPresentation = bundleFlags.experimentalOverloadedSymbolPresentation {
+    /// Set feature flags that were loaded from an input files Info.plist.
+    internal mutating func loadFlagsFromInputs(_ inputFilesFlags: DocumentationContext.Inputs.Info.BundleFeatureFlags) {
+        if let overloadsPresentation = inputFilesFlags.experimentalOverloadedSymbolPresentation {
             self.isExperimentalOverloadedSymbolPresentationEnabled = overloadsPresentation
         }
     }

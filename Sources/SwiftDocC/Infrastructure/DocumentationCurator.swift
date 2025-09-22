@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,14 +17,14 @@ struct DocumentationCurator {
     /// The documentation context to crawl.
     private let context: DocumentationContext
     
-    /// The current bundle.
-    private let bundle: DocumentationBundle
+    /// The current collection of input files.
+    private let inputs: DocumentationContext.Inputs
     
     private(set) var problems = [Problem]()
     
-    init(in context: DocumentationContext, bundle: DocumentationBundle, initial: Set<ResolvedTopicReference> = []) {
+    init(in context: DocumentationContext, inputs: DocumentationContext.Inputs, initial: Set<ResolvedTopicReference> = []) {
         self.context = context
-        self.bundle = bundle
+        self.inputs = inputs
         self.curatedNodes = initial
     }
     
@@ -80,7 +80,7 @@ struct DocumentationCurator {
         }
         
         // Check if the link has been externally resolved already.
-        if let bundleID = unresolved.topicURL.components.host.map({ DocumentationBundle.Identifier(rawValue: $0) }),
+        if let bundleID = unresolved.topicURL.components.host.map({ DocumentationContext.Inputs.Identifier(rawValue: $0) }),
            context.configuration.externalDocumentationConfiguration.sources[bundleID] != nil || context.configuration.convertServiceConfiguration.fallbackResolver != nil {
             if case .success(let resolvedExternalReference) = context.externallyResolvedLinks[unresolved.topicURL] {
                 return resolvedExternalReference
@@ -99,7 +99,7 @@ struct DocumentationCurator {
             // - "documentation/CatalogName/ArticleName"
             switch path.components(separatedBy: "/").count {
             case 0,1:
-                return NodeURLGenerator.Path.article(bundleName: bundle.displayName, articleName: path).stringValue
+                return NodeURLGenerator.Path.article(bundleName: inputs.displayName, articleName: path).stringValue
             case 2:
                 return "\(NodeURLGenerator.Path.documentationFolder)/\(path)"
             default:

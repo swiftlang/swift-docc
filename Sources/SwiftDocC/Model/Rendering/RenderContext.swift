@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,19 +17,24 @@ import SymbolKit
 /// converting nodes in bulk, i.e. when converting a complete documentation model for example.
 public struct RenderContext {
     let documentationContext: DocumentationContext
-    let bundle: DocumentationBundle
+    let inputs: DocumentationContext.Inputs
     let renderer: DocumentationContentRenderer
     
     /// Creates a new render context.
     /// - Warning: Creating a render context pre-renders all content that the context provides.
     /// - Parameters:
     ///   - documentationContext: A documentation context.
-    ///   - bundle: A documentation bundle.
-    public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
+    ///   - inputs: The collection of inputs files that the context is created from.
+    public init(documentationContext: DocumentationContext, inputs: DocumentationContext.Inputs) {
         self.documentationContext = documentationContext
-        self.bundle = bundle
-        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext, bundle: bundle)
+        self.inputs = inputs
+        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext, inputs: inputs)
         createRenderedContent()
+    }
+    
+    @available(*, deprecated, renamed: "init(documentationContext:inputs:)", message: "Use 'init(documentationContext:inputs:)' instead. This deprecated API will be removed after 6.3 is released")
+    public init(documentationContext: DocumentationContext, bundle: DocumentationContext.Inputs) {
+        self.init(documentationContext: documentationContext, inputs: bundle)
     }
     
     /// The pre-rendered content per node reference.

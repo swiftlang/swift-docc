@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -148,14 +148,14 @@ public struct AutomaticCuration {
     /// - Parameters:
     ///   - node: A node for which to generate a See Also group.
     ///   - context: A documentation context.
-    ///   - bundle: A documentation bundle.
+    ///   - inputs: The collection of input files that the context is created from.
     /// - Returns: A group title and the group's references or links.
     ///   `nil` if the method can't find any relevant links to automatically generate a See Also content.
     static func seeAlso(
         for node: DocumentationNode,
         withTraits variantsTraits: Set<DocumentationDataVariantsTrait>,
         context: DocumentationContext,
-        bundle: DocumentationBundle,
+        inputs: DocumentationContext.Inputs,
         renderContext: RenderContext?,
         renderer: DocumentationContentRenderer
     ) -> TaskGroup? {

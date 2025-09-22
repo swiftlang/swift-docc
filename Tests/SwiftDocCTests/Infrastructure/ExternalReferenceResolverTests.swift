@@ -16,7 +16,7 @@ import SwiftDocCTestUtilities
 
 class ExternalReferenceResolverTests: XCTestCase {
     class TestExternalReferenceResolver: ExternalDocumentationSource {
-        var bundleID: DocumentationBundle.Identifier = "com.external.testbundle"
+        var bundleID: DocumentationContext.Inputs.Identifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
         var expectedFragment: String? = nil
         var resolvedEntityTitle = "Externally Resolved Title"
@@ -97,7 +97,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         // Set the language of the externally resolved entity to 'data'.
         externalResolver.resolvedEntityLanguage = .data
         
-        let (_, bundle, context) = try await testBundleAndContext(
+        let (_, inputs, context) = try await testBundleAndContext(
             copying: "LegacyBundle_DoNotUseInNewTests",
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
@@ -119,9 +119,9 @@ class ExternalReferenceResolverTests: XCTestCase {
             try sideClassExtension.write(to: sideClassExtensionURL, atomically: true, encoding: .utf8)
         }
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         let sideClassReference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/SideKit/SideClass",
             sourceLanguage: .swift
         )
@@ -186,10 +186,10 @@ class ExternalReferenceResolverTests: XCTestCase {
             externalResolver.resolvedEntityTitle = "ClassName"
             externalResolver.resolvedEntityKind = resolvedEntityKind
             
-            let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver])
+            let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver])
             
-            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+            let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
             
             guard let fileURL = context.documentURL(for: node.reference) else {
                 XCTFail("Unable to find the file for \(node.reference.path)")
@@ -228,7 +228,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             .init(kind: .identifier, spelling: "ClassName", preciseIdentifier: nil),
         ])
         
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -242,8 +242,8 @@ class ExternalReferenceResolverTests: XCTestCase {
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         let renderNode = converter.convert(node)
         
@@ -285,10 +285,10 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
-        let (bundle, context) = try await loadBundle(catalog: tempFolder, configuration: configuration)
+        let (inputs, context) = try await loadBundle(catalog: tempFolder, configuration: configuration)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/article", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/article", sourceLanguage: .swift))
         
         let renderNode = converter.convert(node)
         
@@ -320,7 +320,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         externalResolver.resolvedEntityTitle = "Name of Sample"
         externalResolver.resolvedEntityKind = .sampleCode
         
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -334,8 +334,8 @@ class ExternalReferenceResolverTests: XCTestCase {
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         let renderNode = converter.convert(node)
         
@@ -408,7 +408,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             ),
         ]
         
-        let (_, bundle, context) = try await testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # SomeSample
 
@@ -433,8 +433,8 @@ class ExternalReferenceResolverTests: XCTestCase {
             """.write(to: url.appendingPathComponent("SomeSample.md"), atomically: true, encoding: .utf8)
         }
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeSample", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SomeSample", sourceLanguage: .swift))
         
         let renderNode = converter.convert(node)
         
@@ -652,7 +652,7 @@ class ExternalReferenceResolverTests: XCTestCase {
 
         // Copy the test bundle and add external links to the MyKit See Also.
         // We're using a See Also group, because external links aren't rendered in Topics groups.
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : resolver]) { url in
+        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : resolver]) { url in
             try """
             # ``MyKit``
             MyKit module root symbol <doc://com.external.testbundle/not-resolvable-2>
@@ -704,8 +704,8 @@ class ExternalReferenceResolverTests: XCTestCase {
                   "The external reference resolver error message is included in that problem's error summary.")
         
         // Get MyKit symbol
-        let entity = try context.entity(with: .init(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift))
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let entity = try context.entity(with: .init(bundleID: inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         let renderNode = converter.convert(entity)
         
         let taskGroupLinks = try XCTUnwrap(renderNode.seeAlsoSections.first?.identifiers)
@@ -805,7 +805,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             )
         )
         
-        let (_, bundle, context) = try await testBundleAndContext(
+        let (_, inputs, context) = try await testBundleAndContext(
             copying: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
@@ -825,9 +825,9 @@ class ExternalReferenceResolverTests: XCTestCase {
                 """
             try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
         }
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         let mixedLanguageFrameworkReference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: "/documentation/MixedLanguageFramework",
             sourceLanguage: .swift
         )
@@ -956,7 +956,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (inputs, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -972,10 +972,10 @@ class ExternalReferenceResolverTests: XCTestCase {
         ])
         
         // Check the rendered SeeAlso sections for the two curated articles.
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         
         do {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/First", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/unit-test/First", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let rendered = converter.convert(node)
             
@@ -989,7 +989,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         do {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Second", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/unit-test/Second", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let rendered = converter.convert(node)
             
@@ -1024,7 +1024,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (inputs, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -1032,7 +1032,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         // Check the curation on the root page
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         let rendered = converter.convert(node)
         
         XCTAssertEqual(rendered.seeAlsoSections.count, 1, "The page should only have the authored See Also section.")

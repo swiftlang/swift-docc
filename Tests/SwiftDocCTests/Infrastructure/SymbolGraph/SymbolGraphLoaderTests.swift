@@ -147,7 +147,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     /// Tests if we detect correctly a Mac Catalyst graph
     func testLoadingiOSAndCatalystGraphs() async throws {
-        func testBundleCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) async throws -> (URL, DocumentationBundle, DocumentationContext) {
+        func testBundleCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) async throws -> (URL, DocumentationContext.Inputs, DocumentationContext) {
             return try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: { bundleURL in
                 // Create an iOS symbol graph file
                 let iOSGraphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
@@ -1788,8 +1788,8 @@ class SymbolGraphLoaderTests: XCTestCase {
         symbolGraphURLs: [URL],
         configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
     ) throws -> SymbolGraphLoader {
-        let bundle = DocumentationBundle(
-            info: DocumentationBundle.Info(
+        let inputs = DocumentationContext.Inputs(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "Test",
                 id: "com.example.test"
             ),
@@ -1800,7 +1800,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         )
         
         return SymbolGraphLoader(
-            bundle: bundle,
+            inputs: inputs,
             dataProvider: FileManager.default,
             symbolGraphTransformer: configureSymbolGraph
         )

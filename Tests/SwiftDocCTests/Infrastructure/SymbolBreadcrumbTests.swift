@@ -136,11 +136,11 @@ class SymbolBreadcrumbTests: XCTestCase {
     private func assertNoVariantsForRenderHierarchy(
         _ reference: ResolvedTopicReference,
         _ context: DocumentationContext,
-        _ bundle: DocumentationBundle,
+        _ inputs: DocumentationContext.Inputs,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context, inputs: inputs)
         let hierarchyVariants = hierarchyTranslator.visitSymbol(reference)
         
         XCTAssertNotNil(hierarchyVariants.defaultValue, "Should always have default breadcrumbs", file: file, line: line)
@@ -150,11 +150,11 @@ class SymbolBreadcrumbTests: XCTestCase {
     private func assertHasSomeVariantsForRenderHierarchy(
         _ reference: ResolvedTopicReference,
         _ context: DocumentationContext,
-        _ bundle: DocumentationBundle,
+        _ inputs: DocumentationContext.Inputs,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context, inputs: inputs)
         let hierarchyVariants = hierarchyTranslator.visitSymbol(reference)
         
         XCTAssertNotNil(hierarchyVariants.defaultValue, "Should always have default breadcrumbs", file: file, line: line)

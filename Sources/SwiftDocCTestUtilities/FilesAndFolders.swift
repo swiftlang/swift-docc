@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -114,14 +114,14 @@ public struct InfoPlist: File, DataRepresentable {
         }
 
         public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
+            let container = try decoder.container(keyedBy: DocumentationContext.Inputs.Info.CodingKeys.self)
             displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
             identifier = try container.decodeIfPresent(String.self, forKey: .id)
             defaultAvailability = try container.decodeIfPresent([String : [DefaultAvailability.ModuleAvailability]].self, forKey: .defaultAvailability)
         }
         
         public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
+            var container = encoder.container(keyedBy: DocumentationContext.Inputs.Info.CodingKeys.self)
             try container.encodeIfPresent(displayName, forKey: .displayName)
             try container.encodeIfPresent(identifier, forKey: .id)
             try container.encodeIfPresent(defaultAvailability, forKey: .defaultAvailability)

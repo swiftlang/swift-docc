@@ -94,9 +94,9 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     /// - Parameters:
     ///   - markup: The markup that makes up this article's content.
     ///   - source: The location of the file that this article's content comes from.
-    ///   - bundle: The documentation bundle that the source file belongs to.
+    ///   - inputs: The documentation bundle that the source file belongs to.
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
-    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    public convenience init?(from markup: any Markup, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
             let range = markup.child(at: 0)?.range ?? SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title")
@@ -125,7 +125,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, problems: &problems)
+            return Redirect(from: childDirective, source: source, for: inputs, problems: &problems)
         }
         
         var optionalMetadata = DirectiveParser()
@@ -134,7 +134,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 from: &remainder,
                 parentType: Article.self,
                 source: source,
-                bundle: bundle,
+                inputs: inputs,
                 problems: &problems
             )
 
@@ -152,7 +152,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             return Options(
                 from: childDirective,
                 source: source,
-                for: bundle,
+                for: inputs,
                 problems: &problems
             )
         }

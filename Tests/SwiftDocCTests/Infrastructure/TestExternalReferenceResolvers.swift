@@ -17,7 +17,7 @@ import Markdown
 // instead to verify a mix of successes and failures in the same test.
 
 class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
-    var bundleID: DocumentationBundle.Identifier = "com.external.testbundle"
+    var bundleID: DocumentationContext.Inputs.Identifier = "com.external.testbundle"
     
     // The minimal information that the test resolver needs to create a resolved reference and documentation node
     struct EntityInfo {

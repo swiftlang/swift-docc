@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -66,7 +66,7 @@ class DocumentationServer_DefaultTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            bundleInfo: DocumentationContext.Inputs.Info(
                 displayName: "TestBundle",
                 id: "identifier"
             ),

@@ -699,7 +699,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             )
         }
         
-        let (dependencyBundle, dependencyContext) = try await loadBundle(
+        let (dependencyInputs, dependencyContext) = try await loadBundle(
             catalog: Folder(name: "Dependency.docc", content: [
                 InfoPlist(identifier: "com.example.dependency"), // This isn't necessary but makes it easier to distinguish the identifier from the module name in the external references.
                 JSONFile(name: "Dependency.symbols.json", content: makeSymbolGraph(moduleName: "Dependency", symbols: symbols))
@@ -707,7 +707,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
         
         // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
-        let dependencyConverter = DocumentationContextConverter(bundle: dependencyBundle, context: dependencyContext, renderContext: .init(documentationContext: dependencyContext, bundle: dependencyBundle))
+        let dependencyConverter = DocumentationContextConverter(inputs: dependencyInputs, context: dependencyContext, renderContext: .init(documentationContext: dependencyContext, inputs: dependencyInputs))
         
         let linkSummaries: [LinkDestinationSummary] = try dependencyContext.knownPages.flatMap { reference in
             let entity = try dependencyContext.entity(with: reference)
@@ -715,7 +715,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.id)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyInputs.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -794,7 +794,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         XCTAssertEqual(mainContext.knownPages.count, 3 /* 2 symbols & 1 module*/)
         
-        let mainConverter = DocumentationContextConverter(bundle: mainBundle, context: mainContext, renderContext: .init(documentationContext: mainContext, bundle: mainBundle))
+        let mainConverter = DocumentationContextConverter(inputs: mainBundle, context: mainContext, renderContext: .init(documentationContext: mainContext, inputs: mainBundle))
         
         // Check the relationships of 'SomeClass'
         do {
@@ -991,16 +991,16 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     
     private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try await loadBundle(from: bundleURL, configuration: configuration)
+        let (_, inputs, context) = try await loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.id)
+        let resolverInfo = try localResolver.prepareForSerialization(bundleID: inputs.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
         var entitySummaries = [LinkDestinationSummary]()
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
             let renderNode = converter.convert(node)

@@ -36,7 +36,7 @@ public protocol DirectiveConvertible {
     ///   -  source: The location of the source file that contains the markup for the parsed block directive.
     ///   -  bundle: The documentation bundle that the source file belongs to.
     ///   -  problems: An inout array of ``Problem`` to be collected for later diagnostic reporting.
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem])
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationContext.Inputs, problems: inout [Problem])
     
     /// Returns a Boolean value indicating whether the `DirectiveConvertible` recognizes the given directive.
     ///

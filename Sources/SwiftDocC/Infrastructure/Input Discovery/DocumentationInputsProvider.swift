@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -72,7 +72,7 @@ extension DocumentationContext {
 
 extension DocumentationContext.InputsProvider {
 
-    private typealias FileTypes = DocumentationBundleFileTypes
+    private typealias FileTypes = DocumentationInputFileTypes
 
     /// A discovered documentation catalog.
     struct CatalogURL {
@@ -129,10 +129,6 @@ extension DocumentationContext.InputsProvider {
 }
 
 // MARK: Create from catalog
-
-extension DocumentationContext {
-    package typealias Inputs = DocumentationBundle
-}
 
 extension DocumentationContext.InputsProvider {
 
@@ -243,7 +239,7 @@ extension DocumentationContext.InputsProvider {
         }
 
         return (
-            inputs: DocumentationBundle(
+            inputs: DocumentationContext.Inputs(
                 info: info,
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
                 markupURLs: topLevelPages,

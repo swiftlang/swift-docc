@@ -14,7 +14,7 @@ import Markdown
 import SwiftDocCTestUtilities
 
 class LineHighlighterTests: XCTestCase {
-    static let bundleID: DocumentationBundle.Identifier = "org.swift.docc.LineHighlighterTests"
+    static let bundleID: DocumentationContext.Inputs.Identifier = "org.swift.docc.LineHighlighterTests"
     static let defaultOverview = TextFile(name: "TechnologyX.tutorial", utf8Content: """
         @Technology(name: "TechnologyX") {
            @Intro(title: "Technology X") {

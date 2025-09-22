@@ -10,7 +10,7 @@
 
 public import Foundation
 
-extension DocumentationBundle {
+extension DocumentationContext.Inputs {
     /// Information about a documentation bundle that's unrelated to its documentation content.
     ///
     /// This information is meant to be decoded from the bundle's Info.plist file.
@@ -19,7 +19,7 @@ extension DocumentationBundle {
         public var displayName: String
         
         /// The unique identifier of the bundle.
-        public var id: DocumentationBundle.Identifier
+        public var id: DocumentationContext.Inputs.Identifier
         
         /// The default language identifier for code listings in the bundle.
         public var defaultCodeListingLanguage: String?
@@ -85,7 +85,7 @@ extension DocumentationBundle {
         ///   - defaultModuleKind: The default kind for the various modules in the bundle.
         public init(
             displayName: String,
-            id: DocumentationBundle.Identifier,
+            id: DocumentationContext.Inputs.Identifier,
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
             defaultModuleKind: String?
@@ -120,7 +120,7 @@ extension DocumentationBundle {
                 
                 do {
                     self = try propertyListDecoder.decode(
-                        DocumentationBundle.Info.self,
+                        DocumentationContext.Inputs.Info.self,
                         from: infoPlist
                     )
                 } catch DecodingError.dataCorrupted(let context) {
@@ -148,7 +148,7 @@ extension DocumentationBundle {
         }
         
         private init(
-            with values: KeyedDecodingContainer<DocumentationBundle.Info.CodingKeys>?,
+            with values: KeyedDecodingContainer<DocumentationContext.Inputs.Info.CodingKeys>?,
             bundleDiscoveryOptions: BundleDiscoveryOptions?,
             derivedDisplayName: String?
         ) throws {
@@ -179,7 +179,7 @@ extension DocumentationBundle {
                 } else if let values {
                     return try values.decode(T.self, forKey: key)
                 } else {
-                    throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
+                    throw DocumentationContext.Inputs.PropertyListError.keyNotFound(key.rawValue)
                 }
             }
             
@@ -232,7 +232,7 @@ extension DocumentationBundle {
 
         init(
             displayName: String,
-            id: DocumentationBundle.Identifier,
+            id: DocumentationContext.Inputs.Identifier,
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil,
@@ -274,7 +274,7 @@ extension BundleDiscoveryOptions {
         // This ensures that when new coding keys are added, the compiler will enforce
         // that we handle them here as well.
         
-        let fallbacks = DocumentationBundle.Info.CodingKeys.allCases.compactMap { key -> (String, Any)? in
+        let fallbacks = DocumentationContext.Inputs.Info.CodingKeys.allCases.compactMap { key -> (String, Any)? in
             let value: Any?
             
             switch key {

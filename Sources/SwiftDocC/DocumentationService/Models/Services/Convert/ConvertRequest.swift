@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ public struct ConvertRequest: Codable {
     ///
     /// ## See Also
     /// - ``DocumentationBundle/Info``
-    public var bundleInfo: DocumentationBundle.Info
+    public var bundleInfo: DocumentationContext.Inputs.Info
     
     /// Feature flags to enable when performing this convert request.
     public var featureFlags: FeatureFlags
@@ -116,7 +116,7 @@ public struct ConvertRequest: Codable {
     ///   - symbolIdentifiersWithExpandedDocumentation: A dictionary of identifiers to requirements for these symbols to have expanded
     ///   documentation available.
     public init(
-        bundleInfo: DocumentationBundle.Info,
+        bundleInfo: DocumentationContext.Inputs.Info,
         featureFlags: FeatureFlags = FeatureFlags(),
         externalIDsToConvert: [String]?,
         documentPathsToConvert: [String]? = nil,

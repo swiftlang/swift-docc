@@ -29,7 +29,7 @@ class BundleDiscoveryTests: XCTestCase {
     func testBundleFormat() throws {
         let allFiles = try flatListOfFiles()
         
-        func parsedBundle(from folder: any File) throws -> DocumentationBundle {
+        func parsedBundle(from folder: any File) throws -> DocumentationContext.Inputs {
             let fileSystem = try TestFileSystem(folders: [
                 Folder(name: "path", content: [
                     Folder(name: "to", content: [
@@ -39,8 +39,8 @@ class BundleDiscoveryTests: XCTestCase {
             ])
             
             let inputProvider = DocumentationContext.InputsProvider(fileManager: fileSystem)
-            let (bundle, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
-            return bundle
+            let (inputs, _) = try inputProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
+            return inputs
         }
         
         let expectedBundle = try parsedBundle(from: CopyOfFolder(original: testBundleLocation))
@@ -119,10 +119,10 @@ class BundleDiscoveryTests: XCTestCase {
             Folder(name: "path", content: [
                 Folder(name: "to", content: [
                     // The test bundle without all the symbol graph files
-                    CopyOfFolder(original: testBundleLocation, filter: { !DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+                    CopyOfFolder(original: testBundleLocation, filter: { !DocumentationInputFileTypes.isSymbolGraphFile($0) }),
                     
                     // Just the symbol graph files in a non-bundle folder
-                    CopyOfFolder(original: testBundleLocation, newName: "Not a catalog", filter: { DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
+                    CopyOfFolder(original: testBundleLocation, newName: "Not a catalog", filter: { DocumentationInputFileTypes.isSymbolGraphFile($0) }),
                 ])
             ])
         ])

@@ -75,7 +75,7 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
         self.mediaPosition = mediaPosition
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) {
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<ContentAndMedia>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Layout.argumentName, Semantics.Eyebrow.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
         Semantic.Analyses.HasOnlyKnownDirectives<ContentAndMedia>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
@@ -85,7 +85,7 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
         
         let layout = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Layout>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         
-        let (media, remainder) = Semantic.Analyses.HasExactlyOneMedia<ContentAndMedia>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
+        let (media, remainder) = Semantic.Analyses.HasExactlyOneMedia<ContentAndMedia>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: inputs, problems: &problems)
         
         let mediaPosition: MediaPosition
         if let firstChildDirective = directive.child(at: 0) as? BlockDirective,

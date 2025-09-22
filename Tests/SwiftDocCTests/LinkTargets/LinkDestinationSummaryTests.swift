@@ -94,11 +94,11 @@ class ExternalLinkableTests: XCTestCase {
     ])
     
     func testSummaryOfTutorialPage() async throws {
-        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
+        let (inputs, context) = try await loadBundle(catalog: catalogHierarchy)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
         let renderNode = converter.convert(node)
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
@@ -151,8 +151,8 @@ class ExternalLinkableTests: XCTestCase {
     }
 
     func testSymbolSummaries() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
@@ -313,7 +313,7 @@ class ExternalLinkableTests: XCTestCase {
     }
     
     func testTopicImageReferences() async throws {
-        let (url, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (url, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = """
             # ``MyKit/MyClass/myFunction()``
 
@@ -328,7 +328,7 @@ class ExternalLinkableTests: XCTestCase {
             let fileURL = url.appendingPathComponent("documentation").appendingPathComponent("myFunction.md")
             try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
         }
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
@@ -415,24 +415,24 @@ class ExternalLinkableTests: XCTestCase {
             summary.references = summary.references?.compactMap { (original: RenderReference) -> (any RenderReference)? in
                 guard var imageRef = original as? ImageReference else { return nil }
                 imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
-                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: bundle.id.rawValue)
+                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: inputs.id.rawValue)
                 }
                 imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
-                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: bundle.id.rawValue), value)
+                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: inputs.id.rawValue), value)
                 })
                 return imageRef as (any RenderReference)
             }
             
             
-            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: bundle.id.rawValue).encode(summary)
+            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: inputs.id.rawValue).encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
             XCTAssertEqual(decoded, summary)
         }
     }
     
     func testVariantSummaries() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (inputs, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
         
         // Check a symbol that's represented as a class in both Swift and Objective-C
         do {
@@ -723,11 +723,11 @@ class ExternalLinkableTests: XCTestCase {
             JSONFile(name: "MyModule.symbols.json", content: symbolGraph),
             InfoPlist(displayName: "MyModule", identifier: "com.example.mymodule")
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
+        let (inputs, context) = try await loadBundle(catalog: catalogHierarchy)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(inputs: inputs, context: context)
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
         let renderNode = converter.convert(node)
 
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)

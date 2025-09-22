@@ -15,19 +15,24 @@ public struct DocumentationNodeConverter {
     /// The context the converter uses to resolve references it finds in the documentation node's content.
     let context: DocumentationContext
     
-    /// The bundle that contains the content from which the documentation node originated.
-    let bundle: DocumentationBundle
+    /// The input files that contains the content from which the documentation node originated.
+    let inputs: DocumentationContext.Inputs
     
     /// Creates a new node converter for the given bundle and context.
     ///
     /// The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.
     ///
     /// - Parameters:
-    ///   - bundle: The bundle that contains the content from which the documentation node originated.
+    ///   - inputs: The input files that contains the content from which the documentation node originated.
     ///   - context: The context that the converter uses to to resolve references it finds in the documentation node's content.
-    public init(bundle: DocumentationBundle, context: DocumentationContext) {
-        self.bundle = bundle
+    public init(inputs: DocumentationContext.Inputs, context: DocumentationContext) {
+        self.inputs = inputs
         self.context = context
+    }
+    
+    @available(*, deprecated, renamed: "init(inputs:context:)", message: "Use 'init(inputs:context:)' instead. This deprecated API will be removed after 6.3 is released")
+    public init(bundle: DocumentationBundle, context: DocumentationContext) {
+        self.init(inputs: bundle, context: context)
     }
     
     /// Converts a documentation node to a render node.
@@ -37,7 +42,7 @@ public struct DocumentationNodeConverter {
     ///   - node: The documentation node to convert.
     /// - Returns: The render node representation of the documentation node.
     public func convert(_ node: DocumentationNode) -> RenderNode {
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
         return translator.visit(node.semantic) as! RenderNode
     }
 }

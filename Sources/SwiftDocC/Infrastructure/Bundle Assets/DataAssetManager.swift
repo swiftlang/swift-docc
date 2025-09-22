@@ -348,10 +348,10 @@ public struct AssetReference: Hashable, Codable {
     public var assetName: String
     
     /// The identifier of the bundle the asset is apart of.
-    public let bundleID: DocumentationBundle.Identifier
+    public let bundleID: DocumentationContext.Inputs.Identifier
     
     /// Creates a reference from a given asset name and the bundle it is apart of.
-    public init(assetName: String, bundleID: DocumentationBundle.Identifier) {
+    public init(assetName: String, bundleID: DocumentationContext.Inputs.Identifier) {
         self.assetName = assetName
         self.bundleID = bundleID
     }

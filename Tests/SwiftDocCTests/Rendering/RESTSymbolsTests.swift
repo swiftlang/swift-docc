@@ -330,10 +330,10 @@ class RESTSymbolsTests: XCTestCase {
                     )),
                 ] + extraFiles
             )
-            let (bundle, context) = try await loadBundle(catalog: catalog)
-            let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
+            let (inputs, context) = try await loadBundle(catalog: catalog)
+            let moduleReference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
             let moduleSymbol = try XCTUnwrap((try context.entity(with: moduleReference)).semantic as? Symbol)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
+            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: moduleReference)
             let renderNode = translator.visit(moduleSymbol) as! RenderNode
             return try XCTUnwrap((renderNode.references["doc://unit-test/documentation/ModuleName/plist-key-symbolname"] as? TopicRenderReference))
         }

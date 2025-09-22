@@ -13,7 +13,7 @@ import XCTest
 
 class RenderNodeDiffingBundleTests: XCTestCase {
     let testBundleName = "LegacyBundle_DoNotUseInNewTests"
-    let testBundleID: DocumentationBundle.Identifier = "org.swift.docc.example"
+    let testBundleID: DocumentationContext.Inputs.Identifier = "org.swift.docc.example"
     
     func testDiffSymbolFromBundleWithDiscussionSectionRemoved() async throws {
         let pathToSymbol = "/documentation/MyKit"
@@ -284,9 +284,9 @@ class RenderNodeDiffingBundleTests: XCTestCase {
     }
     
     func testNoDiffsWhenReconvertingSameBundle() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: testBundleName)
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (inputs, context) = try await testBundleAndContext(named: testBundleName)
+        let renderContext = RenderContext(documentationContext: context, inputs: inputs)
+        let converter = DocumentationContextConverter(inputs: inputs, context: context, renderContext: renderContext)
         
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
@@ -299,28 +299,28 @@ class RenderNodeDiffingBundleTests: XCTestCase {
     }
     
     func getDiffsFromModifiedDocument(bundleName: String,
-                                      bundleID: DocumentationBundle.Identifier,
+                                      bundleID: DocumentationContext.Inputs.Identifier,
                                       topicReferencePath: String,
                                       modification: @escaping (URL) throws -> ()
     ) async throws -> JSONPatchDifferences {
-        let (bundleOriginal, contextOriginal) = try await testBundleAndContext(named: bundleName)
+        let (originalInputs, contextOriginal) = try await testBundleAndContext(named: bundleName)
         let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
-        var renderContext = RenderContext(documentationContext: contextOriginal, bundle: bundleOriginal)
-        var converter = DocumentationContextConverter(bundle: bundleOriginal, context: contextOriginal, renderContext: renderContext)
+        var renderContext = RenderContext(documentationContext: contextOriginal, inputs: originalInputs)
+        var converter = DocumentationContextConverter(inputs: originalInputs, context: contextOriginal, renderContext: renderContext)
         
         let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal))
         
         // Make copy of the bundle on disk, modify the document, and write it
-        let (_, bundleModified, contextModified) = try await testBundleAndContext(copying: bundleName) { url in
+        let (_, modifiedInputs, contextModified) = try await testBundleAndContext(copying: bundleName) { url in
             try modification(url)
         }
         let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
-        renderContext = RenderContext(documentationContext: contextModified, bundle: bundleModified)
-        converter = DocumentationContextConverter(bundle: bundleModified, context: contextModified, renderContext: renderContext)
+        renderContext = RenderContext(documentationContext: contextModified, inputs: modifiedInputs)
+        converter = DocumentationContextConverter(inputs: modifiedInputs, context: contextModified, renderContext: renderContext)
         
         let renderNodeModified = try XCTUnwrap(converter.renderNode(for: nodeModified))
         

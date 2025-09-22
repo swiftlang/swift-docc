@@ -25,7 +25,7 @@ extension Semantic.Analyses {
             _ directive: BlockDirective,
             children: some Sequence<any Markup>,
             source: URL?,
-            for bundle: DocumentationBundle,
+            for inputs: DocumentationContext.Inputs,
             problems: inout [Problem]
         ) -> ([Child], remainder: MarkupContainer) {
             Semantic.Analyses.extractAtLeastOne(
@@ -33,7 +33,7 @@ extension Semantic.Analyses {
                 parentDirective: directive,
                 children: children,
                 source: source,
-                for: bundle,
+                for: inputs,
                 severityIfNotFound: severityIfNotFound,
                 problems: &problems
             ) as! ([Child], MarkupContainer)
@@ -45,7 +45,7 @@ extension Semantic.Analyses {
         parentDirective: BlockDirective,
         children: some Sequence<any Markup>,
         source: URL?,
-        for bundle: DocumentationBundle,
+        for bundle: DocumentationContext.Inputs,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         problems: inout [Problem]
     ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {

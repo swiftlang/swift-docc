@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,7 +20,7 @@ extension RenderInlineContent: RenderContent {}
 
 struct RenderContentCompiler: MarkupVisitor {
     var context: DocumentationContext
-    var bundle: DocumentationBundle
+    var inputs: DocumentationContext.Inputs
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
     var videoReferences: [String: VideoReference] = [:]
@@ -28,9 +28,9 @@ struct RenderContentCompiler: MarkupVisitor {
     var collectedTopicReferences = GroupedSequence<String, ResolvedTopicReference> { $0.absoluteString }
     var linkReferences: [String: LinkReference] = [:]
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference) {
+    init(context: DocumentationContext, inputs: DocumentationContext.Inputs, identifier: ResolvedTopicReference) {
         self.context = context
-        self.bundle = bundle
+        self.inputs = inputs
         self.identifier = identifier
     }
     
@@ -47,7 +47,7 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [any RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
+        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? inputs.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
     }
     
     mutating func visitHeading(_ heading: Heading) -> [any RenderContent] {

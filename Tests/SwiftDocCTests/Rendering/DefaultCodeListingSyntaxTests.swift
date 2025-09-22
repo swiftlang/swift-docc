@@ -20,17 +20,17 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
     var renderSectionWithLanguageDefault: ContentRenderSection!
     var renderSectionWithoutLanguageDefault: ContentRenderSection!
 
-    var testBundleWithLanguageDefault: DocumentationBundle!
-    var testBundleWithoutLanguageDefault: DocumentationBundle!
+    var testBundleWithLanguageDefault: DocumentationContext.Inputs!
+    var testBundleWithoutLanguageDefault: DocumentationContext.Inputs!
 
     override func setUp() async throws {
         try await super.setUp()
         
-        func renderSection(for bundle: DocumentationBundle, in context: DocumentationContext) throws -> ContentRenderSection {
+        func renderSection(for inputs: DocumentationContext.Inputs, in context: DocumentationContext) throws -> ContentRenderSection {
             let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
 
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
 
             return renderNode.primaryContentSections.first! as! ContentRenderSection
@@ -41,8 +41,8 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         testBundleWithLanguageDefault = bundleWithLanguageDefault
 
         // Copy the bundle but explicitly set `defaultCodeListingLanguage` to `nil` to mimic having no default language set.
-        testBundleWithoutLanguageDefault = DocumentationBundle(
-            info: DocumentationBundle.Info(
+        testBundleWithoutLanguageDefault = DocumentationContext.Inputs(
+            info: DocumentationContext.Inputs.Info(
                 displayName: testBundleWithLanguageDefault.displayName,
                 id: testBundleWithLanguageDefault.id,
                 defaultCodeListingLanguage: nil

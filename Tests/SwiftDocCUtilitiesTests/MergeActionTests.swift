@@ -876,13 +876,13 @@ class MergeActionTests: XCTestCase {
             try fileSystem.createDirectory(at: catalogDir, withIntermediateDirectories: true)
             try fileSystem.addFolder(catalog, basePath: catalogDir.deletingLastPathComponent())
             
-            let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
                 .inputsAndDataProvider(startingPoint: catalogDir, options: .init())
-            XCTAssertEqual(bundle.miscResourceURLs.map(\.lastPathComponent), [
+            XCTAssertEqual(inputs.miscResourceURLs.map(\.lastPathComponent), [
                 "\(name.lowercased())-card.png",
             ])
             
-            let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: .init())
+            let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: .init())
 
             XCTAssert(
                 context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.SummaryContainsLink" }.isEmpty,
@@ -893,11 +893,11 @@ class MergeActionTests: XCTestCase {
             let outputPath = baseOutputDir.appendingPathComponent("\(name).doccarchive", isDirectory: true)
             
             let realTempURL = try createTemporaryDirectory() // The navigator builder only support real file systems
-            let indexer = try ConvertAction.Indexer(outputURL: realTempURL, bundleID: bundle.id)
+            let indexer = try ConvertAction.Indexer(outputURL: realTempURL, bundleID: inputs.id)
             
-            let outputConsumer = ConvertFileWritingConsumer(targetFolder: outputPath, bundleRootFolder: catalogDir, fileManager: fileSystem, context: context, indexer: indexer, transformForStaticHostingIndexHTML: nil, bundleID: bundle.id)
+            let outputConsumer = ConvertFileWritingConsumer(targetFolder: outputPath, bundleRootFolder: catalogDir, fileManager: fileSystem, context: context, indexer: indexer, transformForStaticHostingIndexHTML: nil, bundleID: inputs.id)
             
-            let convertProblems = try ConvertActionConverter.convert(bundle: bundle, context: context, outputConsumer: outputConsumer, sourceRepository: nil, emitDigest: false, documentationCoverageOptions: .noCoverage)
+            let convertProblems = try ConvertActionConverter.convert(inputs: inputs, context: context, outputConsumer: outputConsumer, sourceRepository: nil, emitDigest: false, documentationCoverageOptions: .noCoverage)
             XCTAssert(convertProblems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)
             
             let navigatorProblems = indexer.finalize(emitJSON: true, emitLMDB: false)
@@ -1262,7 +1262,7 @@ class MergeActionTests: XCTestCase {
                 JSONFile(name: "index.json", content: RenderIndex(interfaceLanguages: [:], includedArchiveIdentifiers: [identifier]))
             ]),
             
-            JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleID: DocumentationBundle.Identifier(rawValue: identifier)))
+            JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleID: DocumentationContext.Inputs.Identifier(rawValue: identifier)))
         ]
         
         return Folder(name: "\(name).doccarchive", content: content)

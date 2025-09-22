@@ -17,7 +17,7 @@ final class TestParent: Semantic, DirectiveConvertible {
     static let introducedVersion = "1.2.3"
     let originalMarkup: BlockDirective
     let testChildren: [TestChild]
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) {
         precondition(TestParent.canConvertDirective(directive))
         self.originalMarkup = directive
         self.testChildren = directive.children.compactMap { child -> TestChild? in
@@ -25,7 +25,7 @@ final class TestParent: Semantic, DirectiveConvertible {
                 childDirective.name == TestChild.directiveName else {
                     return nil
             }
-            return TestChild(from: directive, source: nil, for: bundle, problems: &problems)
+            return TestChild(from: directive, source: nil, for: inputs, problems: &problems)
         }
     }
     
@@ -38,7 +38,7 @@ final class TestChild: Semantic, DirectiveConvertible {
     static let directiveName = "Child"
     static let introducedVersion = "1.2.3"
     let originalMarkup: BlockDirective
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationContext.Inputs, problems: inout [Problem]) {
         precondition(TestChild.canConvertDirective(directive))
         self.originalMarkup = directive
     }

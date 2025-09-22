@@ -197,13 +197,13 @@ class MetadataTests: XCTestCase {
         The abstract of this article
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let (bundle, _) = try await testBundleAndContext()
+        let (inputs, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child.")
         XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: inputs)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
     }
@@ -219,15 +219,15 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try await testBundleAndContext()
+        let (inputs, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
         XCTAssertNotNil(article?.metadata?.displayName, "The Article has the parsed DisplayName metadata.")
         
         XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: inputs)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
     }
@@ -243,9 +243,9 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try await testBundleAndContext()
+        let (inputs, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
         XCTAssertNotNil(article?.metadata, "The Article has the parsed Metadata")
         XCTAssertNil(article?.metadata?.displayName, "The Article doesn't have the DisplayName")
@@ -279,16 +279,16 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try await testBundleAndContext()
+        let (inputs, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a TitleHeading child.")
         XCTAssertNotNil(article?.metadata?.titleHeading, "The Article has the parsed TitleHeading metadata.")
         XCTAssertEqual(article?.metadata?.titleHeading?.heading, "Custom Heading")
         
         XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
-        var analyzer = SemanticAnalyzer(source: nil, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: nil, inputs: inputs)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
     }

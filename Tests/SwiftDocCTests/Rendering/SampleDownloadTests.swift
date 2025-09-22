@@ -126,14 +126,14 @@ class SampleDownloadTests: XCTestCase {
     }
     
     private func renderNodeFromSampleBundle(at referencePath: String) async throws -> RenderNode {
-        let (bundle, context) = try await testBundleAndContext(named: "SampleBundle")
+        let (inputs, context) = try await testBundleAndContext(named: "SampleBundle")
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: inputs.id,
             path: referencePath,
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, inputs: inputs, identifier: reference)
         return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
     }
 

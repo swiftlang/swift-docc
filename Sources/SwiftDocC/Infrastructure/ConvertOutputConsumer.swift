@@ -23,7 +23,10 @@ public protocol ConvertOutputConsumer {
     /// > Warning: This method might be called concurrently.
     func consume(renderNode: RenderNode) throws
     
-    /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
+    /// Consumes a collection of input files with the purpose of extracting its on-disk assets.
+    func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws
+    
+    @available(*, deprecated, renamed: "consume(assetsInInputs:)", message: "Use 'consume(assetsInInputs:)' instead. This deprecated API will be removed after 6.3 is released")
     func consume(assetsInBundle bundle: DocumentationBundle) throws
     
     /// Consumes the linkable element summaries produced during a conversion.
@@ -63,6 +66,16 @@ public extension ConvertOutputConsumer {
 // Default implementation so that conforming types don't need to implement deprecated API.
 public extension ConvertOutputConsumer {
     func _deprecated_consume(problems: [Problem]) throws {}
+}
+
+@available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
+public extension ConvertOutputConsumer {
+    func consume(assetsInBundle bundle: DocumentationBundle) throws {
+        try consume(assetsInInputs: bundle)
+    }
+    
+    // This is needed so that conforming types don't break. After 6.3 is released we can remove it.
+    func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws {}
 }
 
 // A package-internal protocol that callers can cast to when they need to call `_consume(problems:)` for backwards compatibility (until `consume(problems:)` is removed).

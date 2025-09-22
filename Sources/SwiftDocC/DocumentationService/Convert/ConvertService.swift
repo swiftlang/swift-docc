@@ -137,7 +137,7 @@ public struct ConvertService: DocumentationService {
                 configuration.externalDocumentationConfiguration.globalSymbolResolver = resolver
             }
             
-            let bundle: DocumentationBundle
+            let inputs: DocumentationContext.Inputs
             let dataProvider: any DataProvider
             
             let inputProvider = DocumentationContext.InputsProvider()
@@ -149,16 +149,16 @@ public struct ConvertService: DocumentationService {
                     additionalSymbolGraphFiles: []
                 )
                 
-                bundle = try inputProvider.makeInputs(contentOf: catalogURL, options: bundleDiscoveryOptions)
+                inputs = try inputProvider.makeInputs(contentOf: catalogURL, options: bundleDiscoveryOptions)
                 dataProvider = FileManager.default
             } else {
-                (bundle, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
+                (inputs, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
             }
             
-            let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
+            let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: configuration)
             
             // Precompute the render context
-            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            let renderContext = RenderContext(documentationContext: context, inputs: inputs)
             
             let symbolIdentifiersMeetingRequirementsForExpandedDocumentation: [String]? = request.symbolIdentifiersWithExpandedDocumentation?.compactMap { identifier, expandedDocsRequirement in
                 guard let documentationNode = context.documentationCache[identifier] else {
@@ -168,7 +168,7 @@ public struct ConvertService: DocumentationService {
                 return documentationNode.meetsExpandedDocumentationRequirements(expandedDocsRequirement) ? identifier : nil
             }
             let converter = DocumentationContextConverter(
-                bundle: bundle,
+                inputs: inputs,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
@@ -243,12 +243,12 @@ public struct ConvertService: DocumentationService {
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
                 
-                let bundle = context.bundle
-                guard bundle.id == topicReference.bundleID else { return nil }
-                let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+                let inputs = context.inputs
+                guard inputs.id == topicReference.bundleID else { return nil }
+                let renderer = DocumentationContentRenderer(documentationContext: context, inputs: inputs)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
-                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: bundle)?.node
+                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: inputs)?.node
                 var dependencies = RenderReferenceDependencies()
                 let renderReference = renderer.renderReference(for: topicReference, with: overridingDocumentationNode, dependencies: &dependencies)
                 
