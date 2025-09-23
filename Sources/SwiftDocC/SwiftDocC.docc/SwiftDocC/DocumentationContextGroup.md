@@ -7,7 +7,7 @@ Build and query the in-memory documentation model.
 A documentation context is the the in-memory representation of a "unit" of documentation (for example a module, package, or technology). 
 The context is generally responsible for:
 
- - Analyzing bundle file contents and converting to semantic models.
+ - Analyzing input file contents and converting to semantic models.
  - Managing a graph of documentation nodes (a single node representing one documentation topic).
  - Processing assets like media files or download archives.
  - Resolving links to external documentation sources via ``ExternalDocumentationSource`` and resolving external symbols via ``GlobalExternalSymbolResolver``.
@@ -15,16 +15,16 @@ The context is generally responsible for:
 
 ### Creating a Context
 
-Use ``DocumentationContext/init(bundle:dataProvider:diagnosticEngine:configuration:)`` to create a context for a given bundle:
+Use ``DocumentationContext/init(inputs:dataProvider:diagnosticEngine:configuration:)`` to create a context for a given collection of inputs files:
 
 ```swift
 let inputsProvider = DocumentationContext.InputsProvider()
-let (bundle, dataProvider) = try inputsProvider.inputsAndDataProvider(
+let (inputs, dataProvider) = try inputsProvider.inputsAndDataProvider(
     startingPoint: catalogURL, 
     options: bundleDiscoveryOptions
 )
 
-let context = try DocumentationContext(inputs: bundle, dataProvider: dataProvider)
+let context = try DocumentationContext(inputs: inputs, dataProvider: dataProvider)
 ```
 
 ### Accessing Documentation
@@ -33,7 +33,7 @@ Use ``DocumentationContext/entity(with:)`` to access a documentation node by its
 
 ```swift
 let reference = ResolvedTopicReference(
-    bundleID: "com.mybundle",
+    bundleID: "com.example",
     path: "/documentation/ValidationKit/EmailValidator",
     fragment: nil,
     sourceLanguage: .swift)
@@ -74,8 +74,6 @@ let sourceFileURL = try context.documentURL(for: reference)
 
 ### Code Listings
 
-- ``AttributedCodeListing``
-- ``UnresolvedCodeListingReference``
 - ``CodeColorsPreferenceKey``
 - ``SRGBColor``
 

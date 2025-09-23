@@ -36,17 +36,17 @@ This will only gather new metrics for the local changes, as you iterate, but wil
 
 When you work on a particular feature and you want to track a given custom metric you can temporarily add it to the log.
 
-For example, to add a metric that counts the registered bundles, create a `BundlesCount` class that adopts the ``BenchmarkMetric`` protocol:
+For example, to add a metric that counts the the number of markdown files in the collection of inputs, create a `MarkdownFileCount` class that adopts the ``BenchmarkMetric`` protocol:
 
 ```swift
-class BundlesCount: BenchmarkMetric {
-  static let identifier = "bundles-count"
-  static let displayName = "Bundles Count"
+class MarkdownFileCount: BenchmarkMetric {
+  static let identifier = "markdown-file-count"
+  static let displayName = "Markdown File Count"
   
   var result: MetricValue?
   
   init(context: DocumentationContext) {
-    result = .number(Double(context.registeredBundles.count))
+    result = .number(Double(context.inputs.markupURLs.count))
   }
 }
 ```
@@ -80,4 +80,4 @@ benchmark(add: BundlesCount(context: context))
 - ``benchmark(end:benchmarkLog:)``
 - ``benchmark(wrap:benchmarkLog:body:)``
 
-<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
