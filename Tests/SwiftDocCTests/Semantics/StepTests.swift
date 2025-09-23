@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class StepTests: XCTestCase {
     func testEmpty() async throws {
@@ -46,9 +47,11 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let context = try await load(catalog: Folder(name: "Something.docc", content: [
+            DataFile(name: "test.png", data: Data())
+        ]))
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: inputs, problems: &problems)
+        let step = Step(from: directive, source: nil, for: context.inputs, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
         XCTAssertNotNil(step)
         

@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class MultipleChoiceTests: XCTestCase {
     func testInvalidEmpty() async throws {
@@ -19,7 +20,7 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
@@ -53,7 +54,7 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let inputs = try await makeEmptyContext().inputs
         
         try directive.map { directive in
             var problems = [Problem]()
@@ -101,12 +102,15 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let context = try await load(catalog: Folder(name: "Something.docc", content: [
+            DataFile(name: "blah.png", data: Data()),
+            InfoPlist(identifier: "org.swift.docc.example")
+        ]))
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: inputs, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: context.inputs, problems: &problems)
             XCTAssertNotNil(multipleChoice)
             XCTAssertFalse(problems.isEmpty)
             problems.first.map {
@@ -158,7 +162,7 @@ MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
@@ -214,7 +218,7 @@ MultipleChoice @1:1-18:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
@@ -274,7 +278,7 @@ MultipleChoice @1:1-22:2 title: 'SwiftDocC.MarkupContainer'
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
         
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let inputs = try await makeEmptyContext().inputs
         
         var problems = [Problem]()
         XCTAssertEqual(MultipleChoice.directiveName, directive.name)

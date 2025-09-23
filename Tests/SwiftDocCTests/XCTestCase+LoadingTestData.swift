@@ -232,6 +232,21 @@ extension XCTestCase {
         return try parseDirective(directive, context: context, content: content, file: file, line: line)
     }
     
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        withAvailableAssetNames assetNames: [String],
+        content: () -> String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
+        let context = try await load(catalog: Folder(name: "Something.docc", content: assetNames.map {
+            DataFile(name: $0, data: Data())
+        }))
+        
+        let (renderedContent, problems, directive, _) = try parseDirective(directive, context: context, content: content)
+        return (renderedContent, problems, directive)
+    }
+    
     private func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
         context: DocumentationContext,

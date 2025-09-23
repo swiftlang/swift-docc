@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class StackTests: XCTestCase {
     func testEmpty() async throws {
@@ -78,12 +79,14 @@ class StackTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let context = try await load(catalog: Folder(name: "Something.docc", content: [
+            DataFile(name: "code4.png", data: Data())
+        ]))
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: inputs, problems: &problems)
+            let stack = Stack(from: directive, source: nil, for: context.inputs, problems: &problems)
             XCTAssertNotNil(stack)
             XCTAssertEqual(1, problems.count)
             XCTAssertEqual(

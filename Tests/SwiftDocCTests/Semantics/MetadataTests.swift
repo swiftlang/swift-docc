@@ -418,7 +418,7 @@ class MetadataTests: XCTestCase {
         line: UInt = #line
     ) async throws -> (problems: [String], metadata: Metadata) {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         
