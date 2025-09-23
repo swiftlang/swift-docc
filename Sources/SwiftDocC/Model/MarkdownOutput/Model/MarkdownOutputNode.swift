@@ -42,11 +42,33 @@ extension MarkdownOutputNode {
             let deprecated: String?
             let unavailable: Bool
             
+            public enum CodingKeys: String, CodingKey {
+                case platform, introduced, deprecated, unavailable
+            }
+            
             public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
                 self.platform = platform
                 self.introduced = introduced
                 self.deprecated = deprecated
                 self.unavailable = unavailable
+            }
+            
+            public func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encode(platform, forKey: .platform)
+                try container.encodeIfPresent(introduced, forKey: .introduced)
+                try container.encodeIfPresent(deprecated, forKey: .deprecated)
+                if unavailable {
+                    try container.encode(unavailable, forKey: .unavailable)
+                }
+            }
+            
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                platform = try container.decode(String.self, forKey: .platform)
+                introduced = try container.decodeIfPresent(String.self, forKey: .introduced)
+                deprecated = try container.decodeIfPresent(String.self, forKey: .deprecated)
+                unavailable = try container.decodeIfPresent(Bool.self, forKey: .unavailable) ?? false
             }
         }
         
