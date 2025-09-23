@@ -77,7 +77,13 @@ public struct ExternalMetadata {
     public var inheritDocs = false
 
     /// If `true`, there is no source catalog on disk and the inputs were passed via command line parameters.
-    public var isGeneratedBundle = false
+    public var isGeneratedCatalog = false
+    
+    @available(*, deprecated, renamed: "isGeneratedCatalog", message: "Use 'isGeneratedCatalog' instead. This deprecated API will be removed after 6.3 is released.")
+    public var isGeneratedBundle: Bool {
+        get { isGeneratedCatalog }
+        set { isGeneratedCatalog = newValue }
+    }
     
     /// The granularity of diagnostics to emit via the engine.
     public var diagnosticLevel: DiagnosticSeverity = .warning

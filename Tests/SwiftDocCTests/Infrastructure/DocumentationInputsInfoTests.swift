@@ -78,7 +78,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         XCTAssertEqual(
             try DocumentationContext.Inputs.Info(
                 from: infoPlistWithAllFieldsData,
-                bundleDiscoveryOptions: bundleDiscoveryOptions
+                catalogDiscoveryOptions: bundleDiscoveryOptions
             ),
             DocumentationContext.Inputs.Info(
                 displayName: "Info Plist Display Name",
@@ -89,7 +89,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         XCTAssertEqual(
             try DocumentationContext.Inputs.Info(
                 from: nil,
-                bundleDiscoveryOptions: bundleDiscoveryOptions
+                catalogDiscoveryOptions: bundleDiscoveryOptions
             ),
             DocumentationContext.Inputs.Info(
                 displayName: "Fallback Display Name",
@@ -100,7 +100,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         XCTAssertEqual(
             try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutDisplayNameData,
-                bundleDiscoveryOptions: bundleDiscoveryOptions
+                catalogDiscoveryOptions: bundleDiscoveryOptions
             ),
             DocumentationContext.Inputs.Info(
                 displayName: "Fallback Display Name",
@@ -124,7 +124,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         XCTAssertEqual(
             try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutVersionData,
-                bundleDiscoveryOptions: nil
+                catalogDiscoveryOptions: nil
             ),
             DocumentationContext.Inputs.Info(
                 displayName: "Info Plist Display Name",
@@ -232,7 +232,7 @@ class DocumentationInputsInfoTests: XCTestCase {
             )
         )
         
-        let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: bundleDiscoveryOptions)
+        let info = try DocumentationContext.Inputs.Info(catalogDiscoveryOptions: bundleDiscoveryOptions)
         XCTAssertEqual(
             info,
             DocumentationContext.Inputs.Info(
@@ -275,7 +275,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         let bundleDiscoveryOptions = try CatalogDiscoveryOptions(fallbackInfo: info)
         XCTAssertEqual(
             info,
-            try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: bundleDiscoveryOptions)
+            try DocumentationContext.Inputs.Info(catalogDiscoveryOptions: bundleDiscoveryOptions)
         )
     }
     
@@ -336,7 +336,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         XCTAssertEqual(
             try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutRequiredKeysData,
-                bundleDiscoveryOptions: nil,
+                catalogDiscoveryOptions: nil,
                 derivedDisplayName: "Derived Display Name"
             ),
             DocumentationContext.Inputs.Info(
@@ -361,7 +361,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         XCTAssertEqual(
             try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutRequiredKeysData,
-                bundleDiscoveryOptions: nil,
+                catalogDiscoveryOptions: nil,
                 derivedDisplayName: "Derived Display Name"
             ),
             DocumentationContext.Inputs.Info(
@@ -386,7 +386,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         XCTAssertEqual(
             try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutRequiredKeysData,
-                bundleDiscoveryOptions: nil
+                catalogDiscoveryOptions: nil
             ),
             DocumentationContext.Inputs.Info(
                 displayName: "Example",
@@ -415,7 +415,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         let infoPlistWithFeatureFlagsData = Data(infoPlistWithFeatureFlags.utf8)
         let info = try DocumentationContext.Inputs.Info(
             from: infoPlistWithFeatureFlagsData,
-            bundleDiscoveryOptions: nil)
+            catalogDiscoveryOptions: nil)
 
         let featureFlags = try XCTUnwrap(info.featureFlags)
         XCTAssertTrue(try XCTUnwrap(featureFlags.experimentalOverloadedSymbolPresentation))

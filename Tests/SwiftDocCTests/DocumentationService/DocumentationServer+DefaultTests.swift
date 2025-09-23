@@ -66,7 +66,7 @@ class DocumentationServer_DefaultTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationContext.Inputs.Info(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "TestBundle",
                 id: "identifier"
             ),

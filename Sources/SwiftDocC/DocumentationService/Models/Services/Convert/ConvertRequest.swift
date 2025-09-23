@@ -16,8 +16,14 @@ public struct ConvertRequest: Codable {
     /// Information about the documentation catalog to convert.
     ///
     /// ## See Also
-    public var bundleInfo: DocumentationContext.Inputs.Info
     /// - ``DocumentationContext/Inputs/Info``
+    public var info: DocumentationContext.Inputs.Info
+    
+    @available(*, deprecated, renamed: "info", message: "Use 'info' instead. This deprecated API will be removed after 6.3 is released.")
+    public var bundleInfo: URL? {
+        get { catalogLocation }
+        set { catalogLocation = newValue }
+    }
     
     /// Feature flags to enable when performing this convert request.
     public var featureFlags: FeatureFlags
@@ -55,7 +61,13 @@ public struct ConvertRequest: Codable {
     public var includeRenderReferenceStore: Bool?
     
     /// The file location of the catalog to convert, if any.
-    public var bundleLocation: URL?
+    public var catalogLocation: URL?
+    
+    @available(*, deprecated, renamed: "catalogLocation", message: "Use 'catalogLocation' instead. This deprecated API will be removed after 6.3 is released.")
+    public var bundleLocation: URL? {
+        get { catalogLocation }
+        set { catalogLocation = newValue }
+    }
     
     /// The symbols graph data included in the documentation catalog to convert.
     ///
@@ -97,13 +109,13 @@ public struct ConvertRequest: Codable {
     
     /// Creates a request to convert in-memory documentation.
     /// - Parameters:
-    ///   - bundleInfo: Information about the catalog to convert.
+    ///   - info: Information about the catalog to convert.
     ///   - featureFlags: Feature flags to enable when performing this convert request.
     ///   - externalIDsToConvert: The external IDs of the symbols to convert.
     ///   - documentPathsToConvert: The paths of the documentation nodes to convert.
     ///   - includeRenderReferenceStore: Whether the conversion's render reference store should be included in the
     ///   response.
-    ///   - bundleLocation: The file location of the documentation catalog to convert, if any.
+    ///   - catalogLocation: The file location of the documentation catalog to convert, if any.
     ///   - symbolGraphs: The symbols graph data included in the documentation catalog to convert.
     ///   - overridingDocumentationComments: The mapping of external symbol identifiers to lines of a
     ///   documentation comment that overrides the value in the symbol graph.
@@ -115,6 +127,45 @@ public struct ConvertRequest: Codable {
     ///   - miscResourceURLs: The on-disk resources in the documentation catalog to convert.
     ///   - symbolIdentifiersWithExpandedDocumentation: A dictionary of identifiers to requirements for these symbols to have expanded
     ///   documentation available.
+    public init(
+        info: DocumentationContext.Inputs.Info,
+        featureFlags: FeatureFlags = FeatureFlags(),
+        externalIDsToConvert: [String]?,
+        documentPathsToConvert: [String]? = nil,
+        includeRenderReferenceStore: Bool? = nil,
+        catalogLocation: URL? = nil,
+        symbolGraphs: [Data],
+        overridingDocumentationComments: [String: [Line]]? = nil,
+        knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
+        emitSymbolSourceFileURIs: Bool = true,
+        markupFiles: [Data],
+        tutorialFiles: [Data] = [],
+        miscResourceURLs: [URL],
+        symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]? = nil
+    ) {
+        self.externalIDsToConvert = externalIDsToConvert
+        self.documentPathsToConvert = documentPathsToConvert
+        self.includeRenderReferenceStore = includeRenderReferenceStore
+        self.catalogLocation = catalogLocation
+        self.symbolGraphs = symbolGraphs
+        self.overridingDocumentationComments = overridingDocumentationComments
+        self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
+        
+        // The default value for this is `true` to enable the inclusion of symbol declaration file paths
+        // in the produced render json by default.
+        // This default to true, because the render nodes created by `ConvertService` are intended for
+        // local uses of documentation where this information could be relevant and we don't have the
+        // privacy concerns that come with including this information in public releases of docs.
+        self.emitSymbolSourceFileURIs = emitSymbolSourceFileURIs
+        self.markupFiles = markupFiles
+        self.tutorialFiles = tutorialFiles
+        self.miscResourceURLs = miscResourceURLs
+        self.info = info
+        self.featureFlags = featureFlags
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+    }
+    
+    @available(*, deprecated, renamed: "init(info:featureFlags:externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:catalogLocation:symbolGraphs:overridingDocumentationComments:knownDisambiguatedSymbolPathComponents:emitSymbolSourceFileURIs:markupFiles:tutorialFiles:miscResourceURLs:symbolIdentifiersWithExpandedDocumentation:)", message: "Use 'init(info:featureFlags:externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:catalogLocation:symbolGraphs:overridingDocumentationComments:knownDisambiguatedSymbolPathComponents:emitSymbolSourceFileURIs:markupFiles:tutorialFiles:miscResourceURLs:symbolIdentifiersWithExpandedDocumentation:)' instead. This deprecated API will be removed after 6.3 is released.")
     public init(
         bundleInfo: DocumentationContext.Inputs.Info,
         featureFlags: FeatureFlags = FeatureFlags(),
@@ -131,26 +182,22 @@ public struct ConvertRequest: Codable {
         miscResourceURLs: [URL],
         symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]? = nil
     ) {
-        self.externalIDsToConvert = externalIDsToConvert
-        self.documentPathsToConvert = documentPathsToConvert
-        self.includeRenderReferenceStore = includeRenderReferenceStore
-        self.bundleLocation = bundleLocation
-        self.symbolGraphs = symbolGraphs
-        self.overridingDocumentationComments = overridingDocumentationComments
-        self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
-        
-        // The default value for this is `true` to enable the inclusion of symbol declaration file paths
-        // in the produced render json by default.
-        // This default to true, because the render nodes created by `ConvertService` are intended for
-        // local uses of documentation where this information could be relevant and we don't have the
-        // privacy concerns that come with including this information in public releases of docs.
-        self.emitSymbolSourceFileURIs = emitSymbolSourceFileURIs
-        self.markupFiles = markupFiles
-        self.tutorialFiles = tutorialFiles
-        self.miscResourceURLs = miscResourceURLs
-        self.bundleInfo = bundleInfo
-        self.featureFlags = featureFlags
-        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+        self.init(
+            info: bundleInfo,
+            featureFlags: featureFlags,
+            externalIDsToConvert: externalIDsToConvert,
+            documentPathsToConvert: documentPathsToConvert,
+            includeRenderReferenceStore: includeRenderReferenceStore,
+            catalogLocation: bundleLocation,
+            symbolGraphs: symbolGraphs,
+            overridingDocumentationComments: overridingDocumentationComments,
+            knownDisambiguatedSymbolPathComponents: knownDisambiguatedSymbolPathComponents,
+            emitSymbolSourceFileURIs: emitSymbolSourceFileURIs,
+            markupFiles: markupFiles,
+            tutorialFiles: tutorialFiles,
+            miscResourceURLs: miscResourceURLs,
+            symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
+        )
     }
 }
 

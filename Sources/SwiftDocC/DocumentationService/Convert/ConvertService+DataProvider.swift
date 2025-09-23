@@ -38,7 +38,7 @@ extension ConvertService {
         
         return (
             DocumentationContext.Inputs(
-                info: request.bundleInfo,
+                info: request.info,
                 symbolGraphURLs: symbolGraphURLs,
                 markupURLs: markupFileURL,
                 miscResourceURLs: request.miscResourceURLs

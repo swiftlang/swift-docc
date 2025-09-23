@@ -54,12 +54,12 @@ struct PathHierarchy {
     ///
     /// - Parameters:
     ///   - loader: The symbol graph loader that provides all symbols.
-    ///   - bundleName: The name of the documentation bundle, used as a container for articles and tutorials.
+    ///   - catalogName: The name of the documentation catalog, used as a container for articles and tutorials.
     ///   - moduleKindDisplayName: The display name for the "module" kind of symbol.
     ///   - knownDisambiguatedPathComponents: A list of path components with known required disambiguations.
     init(
         symbolGraphLoader loader: SymbolGraphLoader,
-        bundleName: String,
+        catalogName: String,
         moduleKindDisplayName: String = "Framework",
         knownDisambiguatedPathComponents: [String: [String]]? = nil
     ) {
@@ -420,8 +420,8 @@ struct PathHierarchy {
             lookup[id] = node
             return node
         }
-        self.articlesContainer = roots[bundleName] ?? newNode(bundleName)
-        self.tutorialContainer = newNode(bundleName)
+        self.articlesContainer = roots[catalogName] ?? newNode(catalogName)
+        self.tutorialContainer = newNode(catalogName)
         self.tutorialOverviewContainer = newNode("tutorials")
         
         assert(

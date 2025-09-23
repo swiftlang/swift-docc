@@ -128,7 +128,7 @@ public struct ConvertService: DocumentationService {
             
             if let linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
-                    bundleID: request.bundleInfo.id,
+                    bundleID: request.info.id,
                     server: linkResolvingServer,
                     convertRequestIdentifier: messageIdentifier
                 )
@@ -141,11 +141,11 @@ public struct ConvertService: DocumentationService {
             let dataProvider: any DataProvider
             
             let inputProvider = DocumentationContext.InputsProvider()
-            if let bundleLocation = request.bundleLocation,
-               let catalogURL = try inputProvider.findCatalog(startingPoint: bundleLocation, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
+            if let catalogLocation = request.catalogLocation,
+               let catalogURL = try inputProvider.findCatalog(startingPoint: catalogLocation, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
             {
                 let bundleDiscoveryOptions = try CatalogDiscoveryOptions(
-                    fallbackInfo: request.bundleInfo,
+                    fallbackInfo: request.info,
                     additionalSymbolGraphFiles: []
                 )
                 

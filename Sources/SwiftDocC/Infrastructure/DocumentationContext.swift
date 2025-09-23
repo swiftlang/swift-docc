@@ -2003,7 +2003,7 @@ public class DocumentationContext {
                 hierarchyBasedResolver = signposter.withIntervalSignpost("Build PathHierarchy", id: signposter.makeSignpostID()) {
                     PathHierarchyBasedLinkResolver(pathHierarchy: PathHierarchy(
                         symbolGraphLoader: symbolGraphLoader,
-                        bundleName: urlReadablePath(inputs.displayName),
+                        catalogName: urlReadablePath(inputs.displayName),
                         knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
                     ))
                 }
