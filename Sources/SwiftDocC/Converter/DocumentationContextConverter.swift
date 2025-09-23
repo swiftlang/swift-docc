@@ -115,11 +115,6 @@ public class DocumentationContextConverter {
             context: context,
             bundle: bundle,
             node: node
-//            renderContext: renderContext,
-//            emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
-//            emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
-//            sourceRepository: sourceRepository,
-//            symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
         )
         return translator.createOutput()
     }

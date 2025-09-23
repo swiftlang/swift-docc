@@ -124,18 +124,20 @@ package enum ConvertActionConverter {
                 do {
                     let entity = try context.entity(with: identifier)
 
-                    guard let renderNode = converter.renderNode(for: entity) else {
+                    guard var renderNode = converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
                         return
                     }
                     
-                    try outputConsumer.consume(renderNode: renderNode)
-
                     if
                         FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
                         let markdownNode = converter.markdownNode(for: entity) {
                         try outputConsumer.consume(markdownNode: markdownNode)
+                        renderNode.metadata.hasGeneratedMarkdown = true
                     }
+                    
+                    try outputConsumer.consume(renderNode: renderNode)
+
                     switch documentationCoverageOptions.level {
                     case .detailed, .brief:
                         let coverageEntry = try CoverageDataEntry(
