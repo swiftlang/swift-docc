@@ -45,7 +45,7 @@ extension Semantic.Analyses {
         parentDirective: BlockDirective,
         children: some Sequence<any Markup>,
         source: URL?,
-        for bundle: DocumentationContext.Inputs,
+        for inputs: DocumentationContext.Inputs,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         problems: inout [Problem]
     ) -> ([any DirectiveConvertible], remainder: MarkupContainer) {
@@ -79,7 +79,7 @@ extension Semantic.Analyses {
             return childType.init(
                 from: childDirective,
                 source: source,
-                for: bundle,
+                for: inputs,
                 problems: &problems
             )
         }

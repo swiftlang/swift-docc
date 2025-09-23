@@ -38,7 +38,7 @@ final class TestChild: Semantic, DirectiveConvertible {
     static let directiveName = "Child"
     static let introducedVersion = "1.2.3"
     let originalMarkup: BlockDirective
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationContext.Inputs, problems: inout [Problem]) {
+    init?(from directive: BlockDirective, source: URL?, for _: DocumentationContext.Inputs, problems: inout [Problem]) {
         precondition(TestChild.canConvertDirective(directive))
         self.originalMarkup = directive
     }

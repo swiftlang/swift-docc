@@ -17,9 +17,8 @@ struct RenderHierarchyTranslator {
     var collectedTopicReferences = Set<ResolvedTopicReference>()
     var linkReferences = [String: LinkReference]()
     
-    /// Creates a new translator for the given bundle in the given context.
-    /// - Parameters:
-    ///   - context: The documentation context for the conversion.
+    /// Creates a new translator for the given context.
+    /// - Parameter context: The documentation context for the conversion.
     init(context: DocumentationContext) {
         self.context = context
     }

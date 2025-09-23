@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,7 @@ public import Foundation
 
 /// A reference to a resource.
 ///
-/// The reference can refer to a resource within a documentation bundle (e.g., another symbol) or an external resource (e.g., a web URL).
+/// The reference can refer to a resource within a unit of documentation (e.g., another symbol) or an external resource (e.g., a web URL).
 /// Check the conforming types to browse the different kinds of references.
 public protocol RenderReference: Codable {
     /// The type of the reference.

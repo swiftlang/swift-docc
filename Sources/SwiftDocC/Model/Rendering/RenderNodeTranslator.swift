@@ -22,7 +22,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Resolved topic references that were seen by the visitor. These should be used to populate the references dictionary.
     var collectedTopicReferences: [ResolvedTopicReference] = []
     
-    /// Unresolvable topic references outside the current bundle.
+    /// Unresolvable topic references outside the current unit of documentation.
     var collectedUnresolvedTopicReferences: [UnresolvedTopicReference] = []
     
     /// Any collected constraints to symbol relationships.

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,10 +17,9 @@ import Foundation
 ///
 /// If a symbol in a symbol graph file references a symbol in another module---for example, when the symbol conforms to a protocol from another module, when the
 /// symbol inherits from a class in another module, or the symbol has arguments or return values that are types from other modules---then this resolver is used to
-/// look up those symbols by their unique identifier. This allows references in symbol declarations to be turned into links for external symbols, just like in-bundle
-/// symbol references.
+/// look up those symbols by their unique identifier. This allows references in symbol declarations to be turned into links for external symbols, just like local symbol references.
 ///
-/// Because symbol identifiers don't specify what bundle the symbol belongs to, a documentation context can only have one global external symbol resolver.
+/// Because symbol identifiers don't specify what module the symbol belongs to, a documentation context can only have one global external symbol resolver.
 ///
 /// ## See Also
 /// - ``DocumentationContext/globalExternalSymbolResolver``

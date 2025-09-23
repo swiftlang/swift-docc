@@ -11,9 +11,9 @@
 import Foundation
 import SymbolKit
 
-/// Loads symbol graph files from a documentation bundle.
+/// Loads symbol graph files from a collection of inputs.
 ///
-/// A type that groups a bundle's symbol graphs by the module they describe,
+/// A type that groups a catalogs's symbol graphs by the module they describe,
 /// which makes detecting symbol collisions and overloads easier.
 struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
@@ -49,7 +49,7 @@ struct SymbolGraphLoader {
     /// The symbol graph decoding strategy to use.
     private(set) var decodingStrategy: DecodingConcurrencyStrategy = .concurrentlyEachFileInBatches
 
-    /// Loads all symbol graphs in the given bundle.
+    /// Loads all symbol graphs in the given catalog.
     ///
     /// - Throws: If loading and decoding any of the symbol graph files throws, this method re-throws one of the encountered errors.
     mutating func loadAll() throws {
@@ -82,7 +82,7 @@ struct SymbolGraphLoader {
                 symbolGraphTransformer?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
-                // If the bundle provides availability defaults add symbol availability data.
+                // If the catalog provides availability defaults add symbol availability data.
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
 
                 // main symbol graphs are ambiguous
@@ -264,7 +264,7 @@ struct SymbolGraphLoader {
         }
     }    
 
-    /// If the bundle defines default availability for the symbols in the given symbol graph
+    /// If the catalog defines default availability for the symbols in the given symbol graph
     /// this method adds them to each of the symbols in the graph.
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
         // Check if there are defined default availabilities for the current module
@@ -465,7 +465,7 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
      in from the `defaults`. If the defaults do not have a version for
      this item's domain/platform, also try the `fallbackPlatform`.
 
-     - parameter defaults: Default module availabilities for each platform mentioned in a documentation bundle's `Info.plist`
+     - parameter defaults: Default module availabilities for each platform mentioned in a documentation catalog's `Info.plist`
      - parameter fallbackPlatform: An optional fallback platform name if this item's domain isn't found in the `defaults`.
      */
     func fillingMissingIntroducedVersion(from defaults: [PlatformName: SymbolGraph.SemanticVersion],

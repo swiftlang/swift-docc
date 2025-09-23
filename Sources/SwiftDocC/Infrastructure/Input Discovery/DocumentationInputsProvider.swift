@@ -15,19 +15,19 @@ extension DocumentationContext {
 
     /// A type that provides inputs for a unit of documentation.
     ///
-    /// The inputs provider discovers documentation catalogs on the file system and creates a ``DocumentationBundle`` from the discovered catalog content.
+    /// The inputs provider discovers documentation catalogs on the file system and creates a ``DocumentationContext/Inputs`` from the discovered catalog content.
     ///
-    /// The input provider categorizes the catalog content based on corresponding ``DocumentationBundleFileTypes`` conditions:
+    /// The input provider categorizes the catalog content based on corresponding ``DocumentationInputFileTypes`` conditions:
     ///
-    ///  Category                                 | Condition
-    ///  ---------------------------------------- | -------------------------------------------------
-    ///  ``DocumentationBundle/markupURLs``       | ``DocumentationBundleFileTypes/isMarkupFile(_:)``
-    ///  ``DocumentationBundle/symbolGraphURLs``  | ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
-    ///  ``DocumentationBundle/info``             | ``DocumentationBundleFileTypes/isInfoPlistFile(_:)``
-    ///  ``DocumentationBundle/themeSettings``    | ``DocumentationBundleFileTypes/isThemeSettingsFile(_:)``
-    ///  ``DocumentationBundle/customHeader``     | ``DocumentationBundleFileTypes/isCustomHeader(_:)``
-    ///  ``DocumentationBundle/customFooter``     | ``DocumentationBundleFileTypes/isCustomFooter(_:)``
-    ///  ``DocumentationBundle/miscResourceURLs`` | Any file not already matched above.
+    /// Category                                         | Condition
+    /// ------------------------------------------------ | -------------------------------------------------
+    /// ``DocumentationContext/Inputs/markupURLs``       | ``DocumentationInputFileTypes/isMarkupFile(_:)``
+    /// ``DocumentationContext/Inputs/symbolGraphURLs``  | ``DocumentationInputFileTypes/isSymbolGraphFile(_:)``
+    /// ``DocumentationContext/Inputs/info``             | ``DocumentationInputFileTypes/isInfoPlistFile(_:)``
+    /// ``DocumentationContext/Inputs/themeSettings``    | ``DocumentationInputFileTypes/isThemeSettingsFile(_:)``
+    /// ``DocumentationContext/Inputs/customHeader``     | ``DocumentationInputFileTypes/isCustomHeader(_:)``
+    /// ``DocumentationContext/Inputs/customFooter``     | ``DocumentationInputFileTypes/isCustomFooter(_:)``
+    /// ``DocumentationContext/Inputs/miscResourceURLs`` | Any file not already matched above.
     ///
     /// ## Topics
     ///

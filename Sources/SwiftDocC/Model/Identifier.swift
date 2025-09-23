@@ -150,13 +150,13 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// A synchronized reference cache to store resolved references.
     private static var sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: ResolvedTopicReference]]())
     
-    /// Clears cached references belonging to the bundle with the given identifier.
-    /// - Parameter id: The identifier of the bundle to which the method should clear belonging references.
+    /// Clears cached references belonging to the unit of documentation with the given identifier.
+    /// - Parameter id: The identifier of the unit of documentation to which the method should clear belonging references.
     static func purgePool(for id: ReferenceBundleIdentifier) {
         sharedPool.sync { $0.removeValue(forKey: id) }
     }
     
-    /// Enables reference caching for any identifiers created with the given bundle identifier.
+    /// Enables reference caching for any identifiers created with the given identifier.
     static func enableReferenceCaching(for id: ReferenceBundleIdentifier) {
         sharedPool.sync { sharedPool in
             if !sharedPool.keys.contains(id) {
@@ -176,12 +176,12 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// The storage for the resolved topic reference's state.
     let _storage: Storage
     
-    /// The identifier of the bundle that owns this documentation topic.
+    /// The identifier of the unit of documentation that owns this documentation topic.
     public var bundleID: DocumentationContext.Inputs.Identifier {
         _storage.bundleID
     }
     
-    /// The absolute path from the bundle to this topic, delimited by `/`.
+    /// The path from the root of documentation to this topic, delimited by `/`.
     public var path: String {
         return _storage.path
     }
@@ -521,7 +521,7 @@ extension ResolvedTopicReference: RenderJSONDiffable {
 /// You can create unresolved references from partial information if that information can be derived from the enclosing context when the
 /// reference is resolved. For example:
 ///
-///  - The bundle identifier can be inferred from the documentation bundle that owns the document from which the unresolved reference came.
+///  - The identifier can be inferred from the unit of documentation that owns the document from which the unresolved reference came.
 ///  - The URL scheme of topic references is always "doc".
 ///  - The symbol precise identifier suffix can be left out when there are no known overloads or name collisions for the symbol.
 public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
@@ -589,10 +589,10 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
 
 /// A reference to an auxiliary resource such as an image.
 public struct ResourceReference: Hashable {
-    /// The documentation bundle identifier for the bundle in which this resource resides.
+    /// The identifier for the unit of documentation in which this resource resides.
     public let bundleID: DocumentationContext.Inputs.Identifier
 
-    /// The path of the resource local to its bundle.
+    /// The path of the resource local to its unit of documentation.
     public let path: String
 
     /// Creates a new resource reference.

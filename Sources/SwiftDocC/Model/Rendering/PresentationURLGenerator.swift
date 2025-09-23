@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,14 +17,14 @@ import SymbolKit
 public struct PresentationURLGenerator {
     /// The documentation context the URL generator queries for external reference resolvers.
     var context: DocumentationContext
-    /// The URL generator for in-bundle references.
+    /// The URL generator for local documentation references.
     let urlGenerator: NodeURLGenerator
     
     /// Creates a new URL generator.
     ///
     /// - Parameters:
     ///   - context: The documentation context the URL generator will queries for external reference resolvers.
-    ///   - baseURL: The base URL for in-bundle references.
+    ///   - baseURL: The base URL for local documentation references.
     public init(context: DocumentationContext, baseURL: URL) {
         self.context = context
         self.urlGenerator = NodeURLGenerator(baseURL: baseURL)

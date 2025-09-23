@@ -1340,7 +1340,7 @@
             "text" : "     **(optional)**"
           },
           {
-            "text" : "  - file: The location of the associated link, as a reference to a file in this documentation bundle."
+            "text" : "  - file: The location of the associated link, as a reference to a file in this documentation catalog."
           },
           {
             "text" : "     **(optional)**"

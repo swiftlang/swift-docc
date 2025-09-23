@@ -13,11 +13,11 @@ public import Foundation
 
 /// A request to convert in-memory documentation.
 public struct ConvertRequest: Codable {
-    /// Information about the documentation bundle to convert.
+    /// Information about the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/Info``
     public var bundleInfo: DocumentationContext.Inputs.Info
+    /// - ``DocumentationContext/Inputs/Info``
     
     /// Feature flags to enable when performing this convert request.
     public var featureFlags: FeatureFlags
@@ -51,16 +51,16 @@ public struct ConvertRequest: Codable {
     /// Whether the conversion's render reference store should be included in the response.
     ///
     /// The ``RenderReferenceStore`` contains compiled information for documentation nodes registered in a context. This
-    /// information can be used as a lightweight index of the available documentation content in the bundle that's been converted.
+    /// information can be used as a lightweight index of the available documentation content in the context that's been converted.
     public var includeRenderReferenceStore: Bool?
     
-    /// The file location of the bundle to convert, if any.
+    /// The file location of the catalog to convert, if any.
     public var bundleLocation: URL?
     
-    /// The symbols graph data included in the documentation bundle to convert.
+    /// The symbols graph data included in the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/symbolGraphURLs``
+    /// - ``DocumentationContext/Inputs/symbolGraphURLs``
     public var symbolGraphs: [Data]
     
     /// The mapping of external symbol identifiers to lines of a documentation comment that overrides the value in the symbol graph.
@@ -72,20 +72,20 @@ public struct ConvertRequest: Codable {
     /// Whether the conversion's rendered documentation should include source file location metadata.
     public var emitSymbolSourceFileURIs: Bool
     
-    /// The article and documentation extension file data included in the documentation bundle to convert.
+    /// The article and documentation extension file data included in the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/markupURLs``
+    /// - ``DocumentationContext/Inputs/markupURLs``
     public var markupFiles: [Data]
     
     
-    /// The tutorial file data included in the documentation bundle to convert.
+    /// The tutorial file data included in the documentation catalog to convert.
     public var tutorialFiles: [Data]
     
-    /// The on-disk resources in the documentation bundle to convert.
+    /// The on-disk resources in the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/miscResourceURLs``
+    /// - ``DocumentationContext/Inputs/miscResourceURLs``
     public var miscResourceURLs: [URL]
     
     /// The symbol identifiers that have an expanded documentation page available if they meet the associated access level requirement.
@@ -97,22 +97,22 @@ public struct ConvertRequest: Codable {
     
     /// Creates a request to convert in-memory documentation.
     /// - Parameters:
-    ///   - bundleInfo: Information about the bundle to convert.
+    ///   - bundleInfo: Information about the catalog to convert.
     ///   - featureFlags: Feature flags to enable when performing this convert request.
     ///   - externalIDsToConvert: The external IDs of the symbols to convert.
     ///   - documentPathsToConvert: The paths of the documentation nodes to convert.
     ///   - includeRenderReferenceStore: Whether the conversion's render reference store should be included in the
     ///   response.
-    ///   - bundleLocation: The file location of the documentation bundle to convert, if any.
-    ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
+    ///   - bundleLocation: The file location of the documentation catalog to convert, if any.
+    ///   - symbolGraphs: The symbols graph data included in the documentation catalog to convert.
     ///   - overridingDocumentationComments: The mapping of external symbol identifiers to lines of a
     ///   documentation comment that overrides the value in the symbol graph.
     ///   - emitSymbolSourceFileURIs: Whether the conversion's rendered documentation should include source file location metadata.
     ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
     ///   known disambiguated symbol path components.
-    ///   - markupFiles: The article and documentation extension file data included in the documentation bundle to convert.
-    ///   - tutorialFiles: The tutorial file data included in the documentation bundle to convert.
-    ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
+    ///   - markupFiles: The article and documentation extension file data included in the documentation catalog to convert.
+    ///   - tutorialFiles: The tutorial file data included in the documentation catalog to convert.
+    ///   - miscResourceURLs: The on-disk resources in the documentation catalog to convert.
     ///   - symbolIdentifiersWithExpandedDocumentation: A dictionary of identifiers to requirements for these symbols to have expanded
     ///   documentation available.
     public init(

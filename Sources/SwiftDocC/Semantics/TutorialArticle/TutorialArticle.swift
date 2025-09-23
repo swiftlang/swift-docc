@@ -152,14 +152,14 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationContext.Inputs, problems: inout [Problem]) -> [MarkupLayout] {
+    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) -> [MarkupLayout] {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,
-                    let stack = Stack(from: directive, source: source, for: bundle, problems: &problems) {
+                    let stack = Stack(from: directive, source: source, for: inputs, problems: &problems) {
                     accumulation.append(.stack(stack))
                 } else if directive.name == ContentAndMedia.directiveName,
-                    let contentAndMedia = ContentAndMedia(from: directive, source: source, for: bundle, problems: &problems) {
+                    let contentAndMedia = ContentAndMedia(from: directive, source: source, for: inputs, problems: &problems) {
                     accumulation.append(.contentAndMedia(contentAndMedia))
                 }
             } else {

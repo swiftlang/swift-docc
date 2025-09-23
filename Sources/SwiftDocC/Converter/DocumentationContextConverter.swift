@@ -40,9 +40,9 @@ public class DocumentationContextConverter {
     /// The remote source control repository where the documented module's source is hosted.
     let sourceRepository: SourceRepository?
     
-    /// Creates a new node converter for the given bundle and context.
+    /// Creates a new node converter for the given context.
     ///
-    /// The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.
+    /// The converter uses the context to resolve references to other documentation and describe the documentation hierarchy.
     ///
     /// - Parameters:
     ///   - context: The context that the converter uses to to resolve references it finds in the documentation node's content.

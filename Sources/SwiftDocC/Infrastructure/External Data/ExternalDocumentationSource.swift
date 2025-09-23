@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,7 +20,7 @@ import Foundation
 /// ``DocumentationContext/externalDocumentationSources`` for the bundle identifier of the unresolved reference. If there is, that source is asked to attempt to resolve the reference.
 ///
 /// If the referenced documentation exists in the external source, the source returns a resolved reference to the context. Later, the context uses this resolved reference to ask the source
-/// for the external entity with the documentation content for that reference. Because this content isn't part of the compiled bundle, it won't have its own page in the build output.
+/// for the external entity with the documentation content for that reference. Because this content isn't part of the compiled catalog, it won't have its own page in the build output.
 ///
 /// If the reference doesn't exist in the external source of documentation or if an error occurs while attempting to resolve the reference, the external source returns information about the error.
 ///

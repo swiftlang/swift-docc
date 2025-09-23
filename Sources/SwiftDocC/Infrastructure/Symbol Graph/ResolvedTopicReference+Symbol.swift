@@ -15,7 +15,7 @@ extension ResolvedTopicReference {
     /// - Parameters:
     ///   - symbolReference: A reference to a symbol.
     ///   - moduleName: The module, to which the symbol belongs.
-    ///   - inputs: A documentation bundle, to which the symbol belongs.
+    ///   - inputs: A collection of documentation inputs that the symbol belongs to.
     init(symbolReference: SymbolReference, moduleName: String, inputs: DocumentationContext.Inputs) {
         let path = symbolReference.path.isEmpty ? "" : "/" + symbolReference.path
         

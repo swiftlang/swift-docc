@@ -14,7 +14,7 @@ import Crypto
 /**
  A `NavigatorIndex` contains all the necessary information to display the data inside a navigator.
  The data ranges from the tree to the necessary pieces of information to filter the content and perform actions in a fast way.
- A navigator index is created per bundle and needs a bundle identifier to correctly work. Anonymous bundles are allowed, but they limit
+ A navigator index is created per context and needs a bundle identifier to correctly work. Anonymous bundles are allowed, but they limit
  the functionalities of the index.
  
  A `NavigatorIndex` is composed by two main components:

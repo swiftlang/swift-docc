@@ -10,7 +10,7 @@
 
 public import Foundation
 
-/// A collection of functions to check if a file is one of the documentation bundle files types.
+/// A collection of functions to check if a file is one of the documentation catalog's files types.
 public enum DocumentationInputFileTypes {
     
     static let referenceFileExtension = "md"

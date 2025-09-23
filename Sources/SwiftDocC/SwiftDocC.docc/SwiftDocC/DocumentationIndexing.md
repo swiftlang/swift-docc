@@ -28,7 +28,6 @@ Each rendering model element adopts the ``TextIndexing`` protocol in order to pr
 
 - ``AvailabilityIndex``
 - ``RenderNodeDataExtractor``
-- ``RenderNodeProvider``
 - ``Serializable``
 - ``AnyCodable``
 - ``AnyMetadata``

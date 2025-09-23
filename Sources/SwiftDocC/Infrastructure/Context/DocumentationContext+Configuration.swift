@@ -36,7 +36,7 @@ extension DocumentationContext {
             /// path components into the documentation context.
             var knownDisambiguatedSymbolPathComponents: [String: [String]]?
             
-            /// Controls whether bundle registration should allow registering articles when no technology root is defined.
+            /// Controls whether catalog registration should allow registering articles when no technology root is defined.
             ///
             /// Set this property to `true` to enable registering documentation for standalone articles,
             /// for example when using ``ConvertService``.

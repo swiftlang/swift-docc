@@ -13,7 +13,7 @@ public import Markdown
 
 /// A type that can be initialized from markup.
 public protocol MarkupConvertible {
-    /// Initializes a new element with a given markup and source that's part of a given documentation bundle.
+    /// Initializes a new element with a given markup and source that's part of a given documentation catalog.
     ///
     /// - Parameters:
     ///   - markup: The markup that makes up this element's content.

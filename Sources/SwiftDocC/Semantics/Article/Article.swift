@@ -89,12 +89,12 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     /// Any automatically created task groups.
     var automaticTaskGroups: [AutomaticTaskGroupSection]
 
-    /// Initializes a new article with a given markup and source for a given documentation bundle and documentation context.
+    /// Initializes a new article with a given markup and source for a given documentation catalog.
     ///
     /// - Parameters:
     ///   - markup: The markup that makes up this article's content.
     ///   - source: The location of the file that this article's content comes from.
-    ///   - inputs: The documentation bundle that the source file belongs to.
+    ///   - inputs: The documentation catalog that the source file belongs to.
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
     public convenience init?(from markup: any Markup, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {

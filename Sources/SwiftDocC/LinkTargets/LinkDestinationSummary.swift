@@ -14,13 +14,13 @@ import SymbolKit
 
 // Link resolution works in two parts:
 //
-//  1. When DocC compiles a documentation bundle and encounters an "external" reference it will call out to
-//     resolve that reference using the external resolver that's been registered for that bundle identifier.
-//     The reference may be a page in another documentation bundle or a page from another source.
+//  1. When DocC compiles a documentation catalog and encounters an "external" reference it will call out to
+//     resolve that reference using the external resolver that's been registered for that identifier.
+//     The reference may be a page in another documentation catalog or a page from another source.
 //
-//  2. Once DocC has finished compiling the documentation bundle it will summarize all the pages and on-page
+//  2. Once DocC has finished compiling the documentation catalog it will summarize all the pages and on-page
 //     elements that can be linked to.
-//     This information is returned when another documentation bundle resolves a reference for that page.
+//     This information is returned when another unit of documentation resolves a reference for that page.
 //
 //
 //   DocC                                                                                           Backend endpoint
@@ -28,7 +28,7 @@ import SymbolKit
 //  │ ┌──────────────────────────┐                             │                                   │                               │
 //  │ │                          │                             │                                   │                               │
 //  │ │   DocumentationContext   │                             │                                   │                               │
-//  │ │     Register bundle      │                             │                                   │                               │
+//  │ │     Register catalog     │                             │                                   │                               │
 //  │ │                          │                             │                                   │                               │
 //  │ └──────────────────────────┘       Resolve external      │                                   │                               │
 //  │               │                       references         │                                   │                               │
@@ -63,9 +63,9 @@ import SymbolKit
 //  │                                                          │    └───────────────────────┘      │                               │
 //  └──────────────────────────────────────────────────────────┘                                   └───────────────────────────────┘
 
-/// A summary of an element that you can link to from outside the documentation bundle.
+/// A summary of an element that you can link to from outside the unit of documentation.
 ///
-/// The non-optional properties of this summary are all the information needed when another bundle references this element.
+/// The non-optional properties of this summary are all the information needed when another catalog references this element.
 ///
 /// Various information from the summary is used depending on what content references the summarized element. For example:
 ///  - In a paragraph of text, a link to this element will use the ``title`` as the link text and style the tile in code font if the ``kind`` is a type of symbol.
@@ -299,7 +299,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
 // MARK: - Accessing the externally linkable elements
 
 public extension DocumentationNode {
-    /// Summarizes the node and all of its child elements that you can link to from outside the bundle.
+    /// Summarizes the node and all of its child elements that you can link to from outside the local unit of documentation.
     ///
     /// - Parameters:
     ///   - context: The context in which references that are found the node's content are resolved in.
@@ -523,7 +523,7 @@ extension LinkDestinationSummary {
     ///
     /// - Parameters:
     ///   - landmark: The landmark to summarize.
-    ///   - relativeParentPresentationURL: The bundle-relative path of the page that contain this section.
+    ///   - relativeParentPresentationURL: The relative path of the page that contain this section.
     ///   - page: The topic reference of the page that contain this section.
     ///   - compiler: The content compiler that's used to render the section's abstract.
     init?(landmark: any Landmark, relativeParentPresentationURL: URL, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {

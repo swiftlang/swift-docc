@@ -18,7 +18,7 @@ public class LinkResolver {
         self.dataProvider = dataProvider
     }
     
-    /// The link resolver to use to resolve links in the local bundle
+    /// The link resolver to use to resolve links in the local documentation.
     var localResolver: PathHierarchyBasedLinkResolver!
     /// A fallback resolver to use when the local resolver fails to resolve a link.
     ///

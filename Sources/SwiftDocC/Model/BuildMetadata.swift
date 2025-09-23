@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// A value that encapsulates metadata for a documentation bundle that DocC built.
+/// A value that encapsulates metadata for a documentation archive that DocC built.
 public struct BuildMetadata: Codable {
     
     /// The current version of the build metadata schema.
@@ -20,17 +20,17 @@ public struct BuildMetadata: Codable {
         patch: 0
     )
     
-    /// The display name of the documentation bundle that DocC built.
+    /// The display name of the documentation archive that DocC built.
     public var bundleDisplayName: String
     
-    /// The bundle identifier of the documentation bundle that DocC built.
+    /// The stable identifier of the documentation archive that DocC built.
     public let bundleID: DocumentationContext.Inputs.Identifier
     
-    /// Creates a build metadata value for a documentation bundle built by DocC.
+    /// Creates a build metadata value for a documentation archive built by DocC.
     ///
     /// - Parameters:
-    ///   - bundleDisplayName: The display name of the documentation bundle.
-    ///   - bundleID: The bundle identifier of the documentation bundle.
+    ///   - bundleDisplayName: The display name of the documentation archive.
+    ///   - bundleID: The bundle identifier of the documentation archive.
     public init(bundleDisplayName: String, bundleID: DocumentationContext.Inputs.Identifier) {
         self.bundleDisplayName = bundleDisplayName
         self.bundleID = bundleID

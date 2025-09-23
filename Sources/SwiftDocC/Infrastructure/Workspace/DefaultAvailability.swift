@@ -14,7 +14,7 @@ import Foundation
 ///
 /// Default availability is used as a fallback value for symbols without explicit availability information.
 ///
-/// This information can be authored in the bundle's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
+/// This information can be authored in the catalog's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
 /// or in the case where the platform in unconditionally unavailable, "name" and "unavailable" pairs:
 ///
 /// ```

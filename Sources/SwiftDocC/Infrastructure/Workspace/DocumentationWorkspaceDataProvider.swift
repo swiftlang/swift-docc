@@ -10,24 +10,22 @@
 
 public import Foundation
 
-/// Options to configure the discovery of documentation catalogs
+/// Options to configure the discovery of a documentation catalog
 public struct CatalogDiscoveryOptions {
     // When adding new configuration, remember to include a default value in the initializer so that an options
     // value can be created without passing any arguments, resulting in the "default" configuration.
-    //
-    // The provider uses the default configuration in the `DocumentationWorkspaceDataProvider.bundles()` function.
     
-    /// Fallback values for information that's missing in the bundle's Info.plist file.
+    /// Fallback values for information that's missing in the catalog's Info.plist file.
     public let infoPlistFallbacks: [String: Any]
     
-    /// Additional symbol graph files that the provider should include in the discovered bundles.
+    /// Additional symbol graph files that the provider should include in the discovered catalog.
     public let additionalSymbolGraphFiles: [URL]
     
     /// Creates a new options value with the given configurations.
     ///
     /// - Parameters:
-    ///   - infoPlistFallbacks: Fallback values for information that's missing in the bundle's Info.plist file.
-    ///   - additionalSymbolGraphFiles: Additional symbol graph files that the provider should include in the discovered bundles.
+    ///   - infoPlistFallbacks: Fallback values for information that's missing in the catalog's Info.plist file.
+    ///   - additionalSymbolGraphFiles: Additional symbol graph files that the provider should include in the discovered catalog.
     public init(
         infoPlistFallbacks: [String: Any] = [:],
         additionalSymbolGraphFiles: [URL] = []
@@ -36,18 +34,17 @@ public struct CatalogDiscoveryOptions {
         self.additionalSymbolGraphFiles = additionalSymbolGraphFiles
     }
     
-    /// Creates new bundle discovery options with the provided documentation bundle info
-    /// as Info.plist fallback values.
+    /// Creates new catalog discovery options with the provided documentation info as Info.plist fallback values.
     ///
     /// - Parameters:
-    ///   - fallbackInfo: Fallback documentation bundle information to use if any discovered bundles are missing an Info.plist.
-    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
+    ///   - fallbackInfo: Fallback documentation information to use if the discovered catalog is missing an Info.plist file.
+    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment the discovered catalog.
     public init(
         fallbackInfo: DocumentationContext.Inputs.Info,
         additionalSymbolGraphFiles: [URL] = []
     ) throws {
         // Use JSONEncoder to dynamically create the Info.plist fallback
-        // dictionary the `BundleDiscoveryOption`s expect from given DocumentationBundle.Info
+        // dictionary the `CatalogDiscoveryOption`s expect from given DocumentationContext.Inputs.Info
         // model.
         
         let data = try JSONEncoder().encode(fallbackInfo)

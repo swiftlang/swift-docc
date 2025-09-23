@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,9 +11,7 @@
 public import Foundation
 public import Markdown
 
-/**
- A `Document` may only have one level-2 "Topics" heading at the top level, since it serves as structured data for a documentation bundle's hierarchy.
- */
+/// A document only supports a single level-2 "Topics" heading at the top level, because it's used to define the documentation's hierarchy.
 public struct DuplicateTopicsSections: Checker {
     /// The list of level-2 headings with the text "Topics" found in the document.
     public var foundTopicsHeadings = [Heading]()

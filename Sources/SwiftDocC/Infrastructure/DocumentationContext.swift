@@ -12,13 +12,7 @@ public import Foundation
 import Markdown
 import SymbolKit
 
-/// The documentation context manages the in-memory model for the built documentation.
-///
-/// A ``DocumentationWorkspace`` discovers serialized documentation bundles from a variety of sources (files on disk, databases, or web services), provides them to the `DocumentationContext`,
-/// and notifies the context when bundles are added or removed using the ``DocumentationContextDataProviderDelegate`` protocol.
-///
-/// When a documentation bundle is registered with the context, all of its content is loaded into memory and relationships between documentation entities are built. When this is done, the context can be queried
-/// about documentation entities, resources, and relationships between entities.
+/// An in-memory model for the built documentation.
 ///
 /// ## Topics
 ///
@@ -47,7 +41,7 @@ public class DocumentationContext {
         /// but if such a declaration is found the symbol can have only one declaration.
         case unexpectedEmptyPlatformName(String)
         
-        /// The bundle registration operation is cancelled externally.
+        /// The context creation was cancelled externally.
         case registrationDisabled
         
         public var errorDescription: String {
@@ -59,7 +53,7 @@ public class DocumentationContext {
                 case .unexpectedEmptyPlatformName(let symbolIdentifier):
                     return "Declaration without operating system name for symbol \(symbolIdentifier) cannot be merged with more declarations with operating system name for the same symbol"
                 case .registrationDisabled:
-                    return "The bundle registration operation is cancelled externally."
+                    return "The context creation was cancelled externally."
             }
         }
     }
@@ -97,9 +91,9 @@ public class DocumentationContext {
         }
     }
     
-    /// The root module nodes of the Topic Graph.
+    /// The root module nodes of the topic graph.
     ///
-    /// This property is initialized during the registration of a documentation bundle.
+    /// This property is initialized during the context's initialization.
     public private(set) var rootModules: [ResolvedTopicReference]!
         
     /// The topic reference of the root module, if it's the only registered module.
@@ -128,7 +122,7 @@ public class DocumentationContext {
     /// nodes by their symbol's ID when it builds up in-memory relationships between symbols. Later, the context adds articles and other conceptual content with only their
     /// references for lookup.
     var documentationCache = LocalCache()
-    /// The asset managers for each documentation bundle, keyed by the bundle's identifier.
+    /// The asset managers for each unit of documentation, keyed by their identifiers.
     var assetManagers = [DocumentationContext.Inputs.Identifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
@@ -147,12 +141,12 @@ public class DocumentationContext {
         documentationCache.reference(symbolID: symbolID) ?? externalCache.reference(symbolID: symbolID)
     }
     
-    /// A list of all the problems that was encountered while registering and processing the documentation bundles in this context.
+    /// A list of all the problems that was encountered while initializing the documentation context.
     public var problems: [Problem] {
         return diagnosticEngine.problems
     }
 
-    /// The engine that collects problems encountered while registering and processing the documentation bundles in this context.
+    /// The engine that collects problems encountered while initializing the documentation context
     public var diagnosticEngine: DiagnosticEngine
     
     /// All the link references that have been resolved from external sources, either successfully or not.
@@ -162,8 +156,7 @@ public class DocumentationContext {
     
     /// A temporary structure to hold a semantic value that hasn't yet had its links resolved.
     ///
-    /// These temporary values are only expected to exist while the documentation is being built. Once the documentation bundles have been fully registered and the topic graph
-    /// has been built, the documentation context shouldn't hold any semantic result values anymore.
+    /// These temporary values are only expected to exist while the documentation is being initialized. Once the context has been fully initialized, it shouldn't hold any semantic result values anymore.
     struct SemanticResult<S: Semantic> {
         /// The ``Semantic`` value with unresolved links.
         var value: S
@@ -177,16 +170,14 @@ public class DocumentationContext {
     
     /// Temporary storage for articles before they are curated and moved to the documentation cache.
     ///
-    /// This storage is only used while the documentation context is being built. Once the documentation bundles have been fully registered and the topic graph
-    /// has been built, this list of uncurated articles will be empty.
+    /// This storage is only used while the documentation context is being built. Once the documentation context has been fully initialized, this list of uncurated articles will be empty.
     ///
     /// The key to lookup an article is the reference to the article itself.
     var uncuratedArticles = [ResolvedTopicReference: SemanticResult<Article>]()
     
     /// Temporary storage for documentation extension files before they are curated and moved to the documentation cache.
     ///
-    /// This storage is only used while the documentation context is being built. Once the documentation bundles have been fully registered and the topic graph
-    /// has been built, this list of uncurated documentation extensions will be empty.
+    /// This storage is only used while the documentation context is being built. Once the documentation context has been fully initialized, this list of uncurated documentation extensions will be empty.
     ///
     /// The key to lookup a documentation extension file is the symbol reference from its title (level 1 heading).
     var uncuratedDocumentationExtensions = [ResolvedTopicReference: SemanticResult<Article>]()
@@ -194,14 +185,14 @@ public class DocumentationContext {
     /// Mentions of symbols within articles.
     var articleSymbolMentions = ArticleSymbolMentions()
 
-    /// Initializes a documentation context with a given `bundle`.
+    /// Initializes a documentation context with a given collection of input files.
     ///
     /// - Parameters:
     ///   - inputs: The collection of documentation inputs files to register with the context.
-    ///   - fileManager: The file manager that the context uses to read files from the bundle.
+    ///   - fileManager: The file manager that the context uses to read files from the inputs.
     ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
+    /// - Throws: If an error is encountered while creating the context.
     package init(
         inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
@@ -267,7 +258,7 @@ public class DocumentationContext {
     
     /// Find the known plain string module name for a given module reference.
     ///
-    /// - Note: Looking up module names requires that the module names have been pre-resolved. This happens automatically at the end of bundle registration.
+    /// - Note: Looking up module names requires that the module names have been pre-resolved. This happens automatically at the end of the context's initialization.
     ///
     /// - Parameter moduleReference: The module reference to find the module name for.
     /// - Returns: The plain string name for the referenced module.
@@ -278,7 +269,7 @@ public class DocumentationContext {
         // If no name is found it's considered a programmer error; either that the names haven't been resolved yet
         // or that the passed argument isn't a reference to a known module.
         if moduleNameCache.isEmpty {
-            fatalError("Incorrect use of API: '\(#function)' requires that bundles have finished registering.")
+            fatalError("Incorrect use of API: '\(#function)' requires that the context has fully initialized.")
         }
         fatalError("Incorrect use of API: '\(#function)' can only be used with known module references")
     }
@@ -296,7 +287,7 @@ public class DocumentationContext {
         }
     }
 
-    /// Attempts to resolve links external to the given bundle.
+    /// Attempts to resolve links external to the local unit of documentation.
     ///
     /// The link resolution results are collected in ``externallyResolvedLinks``.
     ///
@@ -318,7 +309,7 @@ public class DocumentationContext {
         return (reference: from.topicGraphNode.reference, semantic: from.value)
     }
     
-    /// Attempts to resolve links external to the given bundle by visiting the given list of semantic objects.
+    /// Attempts to resolve links external to the local unit of documentation by visiting the given list of semantic objects.
     ///
     /// The resolved references are collected in ``externallyResolvedLinks``.
     ///
@@ -1060,7 +1051,7 @@ public class DocumentationContext {
                         interfaceLanguage: moduleInterfaceLanguages.first!.id
                     )
                     
-                    // Use the default module kind for this bundle if one was provided,
+                    // Use the default module kind for this catalog if one was provided,
                     // otherwise fall back to 'Framework'
                     let moduleKindDisplayName = inputs.info.defaultModuleKind ?? "Framework"
                     let moduleSymbol = SymbolGraph.Symbol(
@@ -1595,7 +1586,7 @@ public class DocumentationContext {
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
-    // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
+    // TODO: Move this functionality to ``DocumentationInputFileTypes`` (rdar://68156425).
     
     /// A type of asset.
     public enum AssetType: CustomStringConvertible {
@@ -1953,9 +1944,7 @@ public class DocumentationContext {
         return articleReferences
     }
     
-    /**
-     Register a documentation bundle with this context.
-     */
+    /// Register a collection of documentation inputs with this context.
     private func register(_ inputs: DocumentationContext.Inputs) throws {
         try shouldContinueRegistration()
 
@@ -1988,16 +1977,15 @@ public class DocumentationContext {
             }
         }
 
-        // Note: Each bundle is registered and processed separately.
-        // Documents and symbols may both reference each other so the bundle is registered in 4 steps
+        // Note: It's possible for both documents and symbols to reference each other so the inputs are registered in 4 steps
         
-        // In the bundle discovery phase all tasks run in parallel as they don't depend on each other.
+        // In the discovery phase all tasks run in parallel as they don't depend on each other.
         let discoveryGroup = DispatchGroup()
         let discoveryQueue = DispatchQueue(label: "org.swift.docc.Discovery", qos: .unspecified, attributes: .concurrent, autoreleaseFrequency: .workItem)
         
         let discoveryError = Synchronized<(any Error)?>(nil)
 
-        // Load all bundle symbol graphs into the loader.
+        // Load all the inputs' symbol graphs into the loader.
         var symbolGraphLoader: SymbolGraphLoader!
         var hierarchyBasedResolver: PathHierarchyBasedLinkResolver!
         
@@ -2637,7 +2625,7 @@ public class DocumentationContext {
     // MARK: - Getting documentation relationships
 
     /**
-     Look for a secondary resource among the registered bundles.
+     Look for a secondary resource among the registered assets.
 
      The context tracks resources by file name. If the documentation author specified a resource reference using a
      qualified path, instead of a file name, the context will fail to find that resource.
@@ -2678,7 +2666,7 @@ public class DocumentationContext {
     }
     
     /**
-     Look for a documentation node among the registered bundles and via any external resolvers.
+     Look for a documentation node among the registered content and via any external resolvers.
 
      - Returns: A ``DocumentationNode`` with the given identifier.
      - Throws: ``ContextError/notFound(_:)`` if a documentation node with the given identifier was not found.

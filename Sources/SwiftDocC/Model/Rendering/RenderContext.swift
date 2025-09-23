@@ -21,9 +21,7 @@ public struct RenderContext {
     
     /// Creates a new render context.
     /// - Warning: Creating a render context pre-renders all content that the context provides.
-    /// - Parameters:
-    ///   - documentationContext: A documentation context.
-    ///   - inputs: The collection of inputs files that the context is created from.
+    /// - Parameter documentationContext: A documentation context.
     public init(documentationContext: DocumentationContext) {
         self.documentationContext = documentationContext
         self.renderer = DocumentationContentRenderer(documentationContext: documentationContext)
