@@ -32,9 +32,6 @@ Alternatively, use the `docc` command-line tool directly, for example:
 
 ```shell 
 docc convert MyNewPackage.docc \
-  --fallback-display-name MyNewPackage \
-  --fallback-bundle-identifier com.example.MyNewPackage \
-  --fallback-bundle-version 1 \
   --additional-symbol-graph-dir .build \
   --output-dir MyNewPackage.doccarchive
 ```
