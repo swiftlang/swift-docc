@@ -339,6 +339,7 @@ extension OutOfProcessReferenceResolver {
                 relativePresentationURL: resolvedInformation.url.withoutHostAndPortAndScheme(),
                 referenceURL: URL(string: reference)!,
                 title: resolvedInformation.title,
+                // The resolved information only stores the plain text abstract and can't be changed. Use the version 2 communication protocol to support rich abstracts.
                 abstract: [.text(resolvedInformation.abstract)],
                 availableLanguages: resolvedInformation.availableLanguages,
                 platforms: resolvedInformation.platforms,
@@ -495,7 +496,7 @@ private class LongRunningService: ExternalLinkResolving {
 /// This private class is only used by the ``OutOfProcessReferenceResolver`` and shouldn't be used for general communication with other processes.
 private class LongRunningProcess: ExternalLinkResolving {
     
-#if os(macOS) || os(Linux) || os(Android) || os(FreeBSD)
+    #if os(macOS) || os(Linux) || os(Android) || os(FreeBSD)
     private let process: Process
     
     init(location: URL, errorOutputHandler: @escaping (String) -> Void) throws {
@@ -543,7 +544,6 @@ private class LongRunningProcess: ExternalLinkResolving {
         else {
             throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: "\(request)")
         }
-        print(requestString)
         input.fileHandleForWriting.write(requestData)
         
         // Receive
@@ -552,7 +552,6 @@ private class LongRunningProcess: ExternalLinkResolving {
     
     private func _readResponse<Response: Decodable>() throws -> Response {
         var response = output.fileHandleForReading.availableData
-        print(String(decoding: response, as: UTF8.self))
         guard !response.isEmpty else {
             throw OutOfProcessReferenceResolver.Error.processDidExit(code: Int(process.terminationStatus))
         }
@@ -564,7 +563,7 @@ private class LongRunningProcess: ExternalLinkResolving {
                 // To avoid blocking forever we check if the response can be decoded after each chunk of data.
                 return try JSONDecoder().decode(Response.self, from: response)
             } catch {
-                if case DecodingError.dataCorrupted = error,     // If the data wasn't valid JSON, read more data and try to decode it again.
+                if case DecodingError.dataCorrupted = error,    // If the data wasn't valid JSON, read more data and try to decode it again.
                    response.count.isMultiple(of: Int(PIPE_BUF)) // To reduce the risk of deadlocking, check that bytes so far is a multiple of the pipe buffer size.
                 {
                     let moreResponseData = output.fileHandleForReading.availableData
@@ -581,8 +580,8 @@ private class LongRunningProcess: ExternalLinkResolving {
         }
     }
     
-#else
-    
+    #else
+        
     init(location: URL, errorOutputHandler: @escaping (String) -> Void) {
         fatalError("Cannot initialize an out of process resolver outside of macOS or Linux platforms.")
     }
@@ -591,7 +590,7 @@ private class LongRunningProcess: ExternalLinkResolving {
         fatalError("Cannot call sendAndWait in non macOS/Linux platform.")
     }
     
-#endif
+    #endif
 }
 
 // MARK: Error
@@ -630,31 +629,31 @@ extension OutOfProcessReferenceResolver {
         /// A plain text representation of the error message.
         var errorDescription: String {
             switch self {
-                    // Setup
-                case .missingResolverAt(let url):
-                    return "No file exist at '\(url.path)'."
-                case .resolverNotExecutable(let url):
-                    return "File at at '\(url.path)' is not executable."
-                case .processDidExit(let code):
-                    return "Link resolver process did exit unexpectedly while docc was still running. Exit code '\(code)'."
-                case .invalidBundleIdentifierOutputFromExecutable(let resolverLocation):
-                    return "Expected bundle identifier output from '\(resolverLocation.lastPathComponent)'."
-                    // Loop
-                case .executableSentBundleIdentifierAgain:
-                    return "Executable sent bundle identifier message again, after it was already received."
-                case .forwardedErrorFromClient(let errorMessage):
-                    return errorMessage
-                case .invalidResponseKindFromClient:
-                    return "Unable to determine message. Expected either 'bundleIdentifier', 'errorMessage', 'resolvedInformation', or 'resolvedSymbolInformationResponse'."
-                case .unableToDecodeResponseFromClient(let response, let error):
-                    let responseString = String(data: response, encoding: .utf8) ?? "<non uft-8 data>"
-                    return "Unable to decode response:\n\(responseString)\nError: \(error)"
-                case .unableToEncodeRequestToClient(let requestDescription):
-                    return "Unable to encode request for \(requestDescription)."
-                case .unknownTypeOfRequest:
-                    return "Unable to decode request. Type of request is unknown (neither 'topic' nor 'symbol')."
-                case .unexpectedResponse(let response, let requestDescription):
-                    return "Received unexpected response '\(response)' for request: \(requestDescription)."
+            // Setup
+            case .missingResolverAt(let url):
+                return "No file exist at '\(url.path)'."
+            case .resolverNotExecutable(let url):
+                return "File at at '\(url.path)' is not executable."
+            case .processDidExit(let code):
+                return "Link resolver process did exit unexpectedly while docc was still running. Exit code '\(code)'."
+            case .invalidBundleIdentifierOutputFromExecutable(let resolverLocation):
+                return "Expected bundle identifier output from '\(resolverLocation.lastPathComponent)'."
+            // Loop
+            case .executableSentBundleIdentifierAgain:
+                return "Executable sent bundle identifier message again, after it was already received."
+            case .forwardedErrorFromClient(let errorMessage):
+                return errorMessage
+            case .invalidResponseKindFromClient:
+                return "Unable to determine message. Expected either 'bundleIdentifier', 'errorMessage', 'resolvedInformation', or 'resolvedSymbolInformationResponse'."
+            case .unableToDecodeResponseFromClient(let response, let error):
+                let responseString = String(data: response, encoding: .utf8) ?? "<non uft-8 data>"
+                return "Unable to decode response:\n\(responseString)\nError: \(error)"
+            case .unableToEncodeRequestToClient(let requestDescription):
+                return "Unable to encode request for \(requestDescription)."
+            case .unknownTypeOfRequest:
+                return "Unable to decode request. Type of request is unknown (neither 'topic' nor 'symbol')."
+            case .unexpectedResponse(let response, let requestDescription):
+                return "Received unexpected response '\(response)' for request: \(requestDescription)."
             }
         }
     }

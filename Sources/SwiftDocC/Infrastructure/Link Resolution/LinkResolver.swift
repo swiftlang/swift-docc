@@ -41,7 +41,7 @@ public class LinkResolver {
     
     /// The minimal information about an external entity necessary to render links to it on another page.
     @_spi(ExternalLinks) // This isn't stable API yet.
-    public typealias ExternalEntity = LinkDestinationSummary
+    public typealias ExternalEntity = LinkDestinationSummary // Currently we use the same format as DocC outputs for its own pages. That may change depending on what information we need here.
     
     /// Attempts to resolve an unresolved reference.
     ///

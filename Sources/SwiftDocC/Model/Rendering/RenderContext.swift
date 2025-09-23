@@ -91,6 +91,8 @@ public struct RenderContext {
         // Add all the external content to the topic store
         for (reference, entity) in documentationContext.externalCache {
             topics[reference] = entity.makeTopicContent()
+            
+            // Also include transitive dependencies in the store, so that the external entity can reference them.
             for case let dependency as TopicRenderReference in (entity.references ?? []) {
                 guard let url = URL(string: dependency.identifier.identifier), let rawBundleID = url.host else {
                     // This dependency doesn't have a valid topic reference, skip adding it to the render context.

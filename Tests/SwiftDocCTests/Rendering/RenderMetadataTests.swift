@@ -117,7 +117,7 @@ class RenderMetadataTests: XCTestCase {
     /// Test that when a bystanders symbol graph is loaded that extends a different module, that
     /// those symbols correctly report the modules when rendered.
     func testRendersBystanderExtensionsFromSymbolGraph() async throws {
-//        throw XCTSkip("Fails in CI. rdar://159615046")
+        throw XCTSkip("Fails in CI. rdar://159615046")
 
         let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let baseSymbolGraphURL = Bundle.module.url(

@@ -144,7 +144,7 @@ extension OutOfProcessReferenceResolver {
     
     // MARK: Resolved Information
     
-    /// A type used of the to transfer information about a resolved reference in the outdated and no longer recommended version of the external resolver communication protocol.
+    /// A type used to transfer information about a resolved reference in the outdated and no longer recommended version of the external resolver communication protocol.
     @available(*, deprecated, message: "This type is only used in the outdated, and no longer recommended, version of the out-of-process external resolver communication protocol.")
     public struct ResolvedInformation: Codable {
         /// Information about the resolved kind.
