@@ -26,6 +26,7 @@ extension ConvertAction {
         FeatureFlags.current.isMentionedInEnabled = convert.enableMentionedIn
         FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.enableParametersAndReturnsValidation
         FeatureFlags.current.isExperimentalMarkdownOutputEnabled = convert.enableExperimentalMarkdownOutput
+        FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled = convert.enableExperimentalMarkdownOutputManifest
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.

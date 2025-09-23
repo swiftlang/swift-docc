@@ -21,7 +21,7 @@ public struct MarkdownOutputNodeTranslator {
     
     public mutating func createOutput() -> WritableMarkdownOutputNode? {
         if let node = visitor.start() {
-            return WritableMarkdownOutputNode(identifier: visitor.identifier, node: node)
+            return WritableMarkdownOutputNode(identifier: visitor.identifier, node: node, manifestDocument: visitor.manifestDocument)
         }
         return nil
     }
@@ -30,4 +30,5 @@ public struct MarkdownOutputNodeTranslator {
 public struct WritableMarkdownOutputNode {
     public let identifier: ResolvedTopicReference
     public let node: MarkdownOutputNode
+    public let manifestDocument: MarkdownOutputManifest.Document?
 }

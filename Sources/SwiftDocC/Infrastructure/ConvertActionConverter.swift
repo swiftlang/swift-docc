@@ -81,6 +81,7 @@ package enum ConvertActionConverter {
         var assets = [RenderReferenceType : [any RenderReference]]()
         var coverageInfo = [CoverageDataEntry]()
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
+        var markdownManifest = MarkdownOutputManifest(title: bundle.displayName, documents: [])
         
         // An inner function to gather problems for errors encountered during the conversion.
         //
@@ -134,6 +135,14 @@ package enum ConvertActionConverter {
                         let markdownNode = converter.markdownNode(for: entity) {
                         try outputConsumer.consume(markdownNode: markdownNode)
                         renderNode.metadata.hasGeneratedMarkdown = true
+                        if
+                            FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+                            let document = markdownNode.manifestDocument
+                        {
+                            resultsGroup.async(queue: resultsSyncQueue) {
+                                markdownManifest.documents.append(document)
+                            }
+                        }
                     }
                     
                     try outputConsumer.consume(renderNode: renderNode)
@@ -219,6 +228,10 @@ package enum ConvertActionConverter {
                     recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
                 }
             }
+        }
+        
+        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled {
+            try outputConsumer.consume(markdownManifest: markdownManifest)
         }
 
         switch documentationCoverageOptions.level {

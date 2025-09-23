@@ -72,6 +72,14 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         try renderNodeWriter.write(markdownNode)
     }
     
+    func consume(markdownManifest: MarkdownOutputManifest) throws {
+        let url = targetFolder.appendingPathComponent("\(markdownManifest.title)-markdown-manifest.json", isDirectory: false)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        let data = try encoder.encode(markdownManifest)
+        try fileManager.createFile(at: url, contents: data)
+    }
+    
     func consume(externalRenderNode: ExternalRenderNode) throws {
         // Index the external node, if indexing is enabled.
         indexer?.index(externalRenderNode)

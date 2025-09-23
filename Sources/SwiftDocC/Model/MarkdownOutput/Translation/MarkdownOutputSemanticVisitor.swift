@@ -16,6 +16,7 @@ internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     let documentationNode: DocumentationNode
     let identifier: ResolvedTopicReference
     var markdownWalker: MarkdownOutputMarkupWalker
+    var manifestDocument: MarkdownOutputManifest.Document?
     
     init(context: DocumentationContext, bundle: DocumentationBundle, node: DocumentationNode) {
         self.context = context
@@ -56,6 +57,13 @@ extension MarkdownOutputSemanticVisitor {
             metadata.title = title
         }
         
+        manifestDocument = MarkdownOutputManifest.Document(
+            uri: identifier.path,
+            documentType: .article,
+            title: metadata.title,
+            references: [:]
+        )
+        
         if
             let metadataAvailability = article.metadata?.availability,
             !metadataAvailability.isEmpty {
@@ -82,6 +90,13 @@ extension MarkdownOutputSemanticVisitor {
         var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier)
         
         metadata.symbol = .init(symbol, context: context, bundle: bundle)
+        
+        manifestDocument = MarkdownOutputManifest.Document(
+            uri: identifier.path,
+            documentType: .symbol,
+            title: metadata.title,
+            references: [:]
+        )
         
         // Availability
         
@@ -182,10 +197,18 @@ extension MarkdownOutputSemanticVisitor {
     
     public mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
         var metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: bundle, reference: identifier)
+        
         if tutorial.intro.title.isEmpty == false {
             metadata.title = tutorial.intro.title
         }
 
+        manifestDocument = MarkdownOutputManifest.Document(
+            uri: identifier.path,
+            documentType: .tutorial,
+            title: metadata.title,
+            references: [:]
+        )
+        
         sectionIndex = 0
         for child in tutorial.children {
             _ = visit(child)

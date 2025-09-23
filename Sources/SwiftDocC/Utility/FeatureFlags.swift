@@ -26,6 +26,9 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental markdown generation is enabled
     public var isExperimentalMarkdownOutputEnabled = false
     
+    /// Whether or not experimental markdown manifest generation is enabled
+    public var isExperimentalMarkdownOutputManifestEnabled = false
+    
     /// Whether support for automatically rendering links on symbol documentation to articles that mention that symbol is enabled.
     public var isMentionedInEnabled = true
     
