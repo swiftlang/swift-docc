@@ -55,7 +55,7 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
             let catalog = Folder(name: "unit-test.docc", content: [
                 TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
             ])
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
             let converter = DocumentationNodeConverter(context: context)
             let renderNode = converter.convert(node)

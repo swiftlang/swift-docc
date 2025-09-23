@@ -88,7 +88,7 @@ class DoxygenTests: XCTestCase {
                 )),
             ])
 
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
 
         // Verify the expected content in the in-memory model

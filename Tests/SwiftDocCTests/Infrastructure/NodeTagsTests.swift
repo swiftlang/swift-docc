@@ -14,17 +14,13 @@ import SwiftDocCTestUtilities
 
 class NodeTagsTests: XCTestCase {
     func testSPIMetadata() async throws {
-        let spiSGURL = Bundle.module.url(
-            forResource: "SPI.symbols", withExtension: "json", subdirectory: "Test Resources")!
-        
-        let bundleFolder = Folder(name: "unit-tests.docc", content: [
+        let spiSGURL = Bundle.module.url(forResource: "SPI.symbols", withExtension: "json", subdirectory: "Test Resources")!
+        let catalog = Folder(name: "unit-tests.docc", content: [
             InfoPlist(displayName: "spi", identifier: "com.tests.spi"),
             CopyOfFile(original: spiSGURL),
         ])
-        let tempURL = try createTemporaryDirectory().appendingPathComponent("unit-tests.docc")
-        try bundleFolder.write(to: tempURL)
         
-        let (_, _, context) = try await loadBundle(from: tempURL)
+        let context = try await load(catalog: catalog)
         
         // Verify that `Test` is marked as SPI.
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)

@@ -20,9 +20,9 @@ class VideoMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let video = VideoMedia(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNil(video)
         XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -39,9 +39,9 @@ class VideoMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let video = VideoMedia(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(video)
         XCTAssertTrue(problems.isEmpty)
         video.map { video in
@@ -58,9 +58,9 @@ class VideoMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, _) = try await testBundleAndContext()
+            let inputs = try await makeEmptyContext().inputs
             var problems = [Problem]()
-            let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+            let video = VideoMedia(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(video)
             XCTAssertTrue(problems.isEmpty)
             video.map { video in
@@ -77,9 +77,9 @@ class VideoMediaTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let video = VideoMedia(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNil(video)
         XCTAssertEqual(3, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -326,16 +326,16 @@ class VideoMediaTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (inputs, context) = try await loadBundle(
+        let context = try await load(
             catalog: Folder(name: "unit-test.docc", content: [
                 DataFile(name: "introvideo.mov", data: Data())
             ])
         )
         var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: inputs, problems: &problems)
+        let video = VideoMedia(from: directive, source: nil, for: context.inputs, problems: &problems)
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
-            path: "",
+            bundleID: context.inputs.id,
+            path: "/",
             sourceLanguage: .swift
         )
         var translator = RenderNodeTranslator(context: context, identifier: reference)

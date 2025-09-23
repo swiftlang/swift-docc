@@ -16,7 +16,7 @@ import Markdown
 
 class SnippetTests: XCTestCase {
     func testNoPath() async throws {
-        let (inputs, _) = try await testBundleAndContext(named: "Snippets")
+        let inputs = try await loadFromDisk(catalogName: "Snippets").inputs
         let source = """
         @Snippet()
         """
@@ -30,7 +30,7 @@ class SnippetTests: XCTestCase {
     }
 
     func testHasInnerContent() async throws {
-        let (inputs, _) = try await testBundleAndContext(named: "Snippets")
+        let inputs = try await loadFromDisk(catalogName: "Snippets").inputs
         let source = """
         @Snippet(path: "path/to/snippet") {
             This content shouldn't be here.
@@ -46,21 +46,21 @@ class SnippetTests: XCTestCase {
     }
 
     func testLinkResolves() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
+        let inputs = try await loadFromDisk(catalogName: "Snippets").inputs
         let source = """
         @Snippet(path: "Test/Snippets/MySnippet")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: bundle, problems: &problems))
+        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: inputs, problems: &problems))
         XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
         XCTAssertNotNil(snippet)
         XCTAssertTrue(problems.isEmpty)
     }
     
     func testUnresolvedSnippetPathDiagnostic() async throws {
-        let (_, context) = try await testBundleAndContext(named: "Snippets")
+        let context = try await loadFromDisk(catalogName: "Snippets")
         let source = """
         @Snippet(path: "Test/Snippets/DoesntExist")
         """
@@ -74,14 +74,14 @@ class SnippetTests: XCTestCase {
     }
     
     func testSliceResolves() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
+        let inputs = try await loadFromDisk(catalogName: "Snippets").inputs
         let source = """
         @Snippet(path: "Test/Snippets/MySnippet", slice: "foo")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: bundle, problems: &problems))
+        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: inputs, problems: &problems))
         XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
         XCTAssertEqual("foo", snippet.slice)
         XCTAssertNotNil(snippet)

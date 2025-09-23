@@ -510,7 +510,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             ]))
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let dictionaryReference = moduleReference.appendingPath("SomeDictionary")
         
@@ -1167,10 +1167,10 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertAfterApplyingVariant: (RenderNode) throws -> () = { _ in },
         assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: bundleName)
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: bundleName)
         
         let identifier = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -1187,7 +1187,6 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         try assertMultiLanguageSemantic(
             symbol,
             context: context,
-            inputs: inputs,
             identifier: identifier,
             configureRenderNodeTranslator: configureRenderNodeTranslator,
             assertOriginalRenderNode: assertOriginalRenderNode,
@@ -1204,10 +1203,10 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertAfterApplyingVariant: (RenderNode) throws -> () = { _ in },
         assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests")
         
         let identifier = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/Test-Bundle/article",
             sourceLanguage: .swift
         )
@@ -1224,7 +1223,6 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         try assertMultiLanguageSemantic(
             article,
             context: context,
-            inputs: inputs,
             identifier: identifier,
             assertOriginalRenderNode: assertOriginalRenderNode,
             assertAfterApplyingVariant: assertAfterApplyingVariant,
@@ -1235,7 +1233,6 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     private func assertMultiLanguageSemantic(
         _ semantic: Semantic,
         context: DocumentationContext,
-        inputs: DocumentationContext.Inputs,
         identifier: ResolvedTopicReference,
         configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
         assertOriginalRenderNode: (RenderNode) throws -> (),

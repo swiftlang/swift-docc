@@ -14,7 +14,7 @@ import XCTest
 
 class LinkTitleResolverTests: XCTestCase {
     func testSymbolTitleResolving() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let resolver = LinkTitleResolver(context: context, source: nil)
         guard let reference = context.knownIdentifiers.filter({ ref -> Bool in
             return ref.path.hasSuffix("MyProtocol")

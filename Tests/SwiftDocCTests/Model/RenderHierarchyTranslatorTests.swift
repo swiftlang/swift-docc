@@ -13,7 +13,7 @@ import XCTest
 
 class RenderHierarchyTranslatorTests: XCTestCase {
     func test() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let technologyReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
         var translator = RenderHierarchyTranslator(context: context)
@@ -89,7 +89,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
     
     func testMultiplePaths() async throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
             ## Topics
@@ -129,7 +129,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
     }
     
     func testLanguageSpecificHierarchies() async throws {
-        let (_, context) = try await testBundleAndContext(named: "GeometricalShapes")
+        let context = try await loadFromDisk(catalogName: "GeometricalShapes")
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
         // An inner function to assert the rendered hierarchy values for a given reference

@@ -273,7 +273,7 @@ class ListItemExtractorTests: XCTestCase {
     ) async throws {
         // Build documentation for a module page with one tagged item with a lot of different
         
-        let (_, context) = try await loadBundle(
+        let context = try await load(
             catalog: Folder(name: "Something.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
                 TextFile(name: "Extension.md", utf8Content: """
@@ -339,7 +339,7 @@ class ListItemExtractorTests: XCTestCase {
     ) async throws {
         // Build documentation for a module page with one tagged item with a lot of different
         
-        let (_, context) = try await loadBundle(
+        let context = try await load(
             catalog: Folder(name: "Something.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
                 TextFile(name: "Extension.md", utf8Content: """

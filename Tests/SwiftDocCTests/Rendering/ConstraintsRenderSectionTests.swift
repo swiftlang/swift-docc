@@ -19,7 +19,7 @@ fileprivate let jsonEncoder = JSONEncoder()
 class ConstraintsRenderSectionTests: XCTestCase {
     
     func testSingleConstraint() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -49,7 +49,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testSingleRedundantConstraint() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -78,7 +78,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testSingleRedundantConstraintForLeaves() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -107,7 +107,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testPreservesNonRedundantConstraints() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -137,7 +137,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testGroups2Constraints() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -167,7 +167,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testGroups3Constraints() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -198,7 +198,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testRenderReferences() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -236,7 +236,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testRenderReferencesWithNestedTypeInSelf() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))

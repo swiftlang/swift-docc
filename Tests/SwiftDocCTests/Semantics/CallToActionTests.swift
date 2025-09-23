@@ -21,12 +21,12 @@ class CallToActionTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+        let inputs = try await loadFromDisk(catalogName: "SampleBundle").inputs
 
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
+            let callToAction = CallToAction(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNil(callToAction)
             XCTAssertEqual(2, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -41,12 +41,12 @@ class CallToActionTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
 
-            let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+            let inputs = try await loadFromDisk(catalogName: "SampleBundle").inputs
 
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
+                let callToAction = CallToAction(from: directive, source: nil, for: inputs, problems: &problems)
                 XCTAssertNil(callToAction)
                 XCTAssertEqual(1, problems.count)
                 let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -63,12 +63,12 @@ class CallToActionTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
 
-            let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+            let inputs = try await loadFromDisk(catalogName: "SampleBundle").inputs
 
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
+                let callToAction = CallToAction(from: directive, source: nil, for: inputs, problems: &problems)
                 XCTAssertNil(callToAction)
                 XCTAssertEqual(1, problems.count)
                 let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -85,12 +85,12 @@ class CallToActionTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+        let inputs = try await loadFromDisk(catalogName: "SampleBundle").inputs
 
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
+            let callToAction = CallToAction(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNil(callToAction)
             XCTAssertEqual(1, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -104,12 +104,12 @@ class CallToActionTests: XCTestCase {
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
 
-            let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+            let inputs = try await loadFromDisk(catalogName: "SampleBundle").inputs
 
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(CallToAction.directiveName, directive.name)
-                let callToAction = CallToAction(from: directive, source: nil, for: bundle, problems: &problems)
+                let callToAction = CallToAction(from: directive, source: nil, for: inputs, problems: &problems)
                 XCTAssertNotNil(callToAction)
                 XCTAssert(problems.isEmpty)
             }
@@ -141,11 +141,11 @@ class CallToActionTests: XCTestCase {
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
 
-            let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+            let inputs = try await loadFromDisk(catalogName: "SampleBundle").inputs
 
             var problems = [Problem]()
             XCTAssertEqual(CallToAction.directiveName, directive.name)
-            let callToAction = try XCTUnwrap(CallToAction(from: directive, source: nil, for: bundle, problems: &problems))
+            let callToAction = try XCTUnwrap(CallToAction(from: directive, source: nil, for: inputs, problems: &problems))
             XCTAssert(problems.isEmpty)
             
             XCTAssertEqual(callToAction.buttonLabel(for: nil), expectedDefaultLabel)

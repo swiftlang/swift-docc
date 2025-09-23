@@ -54,7 +54,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
             """)
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let converter = DocumentationNodeConverter(context: context)
         

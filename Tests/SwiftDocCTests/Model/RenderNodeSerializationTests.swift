@@ -92,7 +92,7 @@ class RenderNodeSerializationTests: XCTestCase {
     }
     
     func testBundleRoundTrip() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
@@ -101,7 +101,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: inputs, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -115,7 +115,7 @@ class RenderNodeSerializationTests: XCTestCase {
     }
     
     func testTutorialArticleRoundTrip() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
@@ -124,7 +124,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: inputs, problems: &problems) else {
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, problems: &problems) else {
             XCTFail("Couldn't create article from markup: \(problems)")
             return
         }
@@ -140,7 +140,7 @@ class RenderNodeSerializationTests: XCTestCase {
     func testAssetReferenceDictionary() async throws {
         typealias JSONDictionary = [String: Any]
         
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
@@ -149,7 +149,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: inputs, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: context.inputs, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -192,7 +192,7 @@ class RenderNodeSerializationTests: XCTestCase {
     }
 
     func testDiffAvailability() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
@@ -201,7 +201,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: inputs, problems: &problems) else {
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: context.inputs, problems: &problems) else {
             XCTFail("Couldn't create article from markup: \(problems)")
             return
         }

@@ -330,7 +330,7 @@ class RESTSymbolsTests: XCTestCase {
                     )),
                 ] + extraFiles
             )
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let moduleReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
             let moduleSymbol = try XCTUnwrap((try context.entity(with: moduleReference)).semantic as? Symbol)
             var translator = RenderNodeTranslator(context: context, identifier: moduleReference)

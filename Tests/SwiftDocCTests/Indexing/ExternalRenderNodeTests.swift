@@ -56,10 +56,9 @@ class ExternalRenderNodeTests: XCTestCase {
     }
         
     func testExternalRenderNode() async throws {
-        
         let externalResolver = generateExternalResolver()
-        let (_, bundle, context) = try await testBundleAndContext(
-            copying: "MixedLanguageFramework",
+        let (_, context) = try await loadFromDisk(
+            copyingCatalogNamed: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
             let mixedLanguageFrameworkExtension = """
@@ -82,7 +81,7 @@ class ExternalRenderNodeTests: XCTestCase {
         var externalRenderNodes = [ExternalRenderNode]()
         for externalLink in context.externalCache {
             externalRenderNodes.append(
-                ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+                ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
             )
         }
         externalRenderNodes.sort(by: \.titleVariants.defaultValue)
@@ -167,8 +166,8 @@ class ExternalRenderNodeTests: XCTestCase {
 
     func testNavigatorWithExternalNodes() async throws {
         let externalResolver = generateExternalResolver()
-        let (_, inputs, context) = try await testBundleAndContext(
-            copying: "MixedLanguageFramework",
+        let (_, context) = try await loadFromDisk(
+            copyingCatalogNamed: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
             let mixedLanguageFrameworkExtension = """
@@ -190,10 +189,10 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: inputs.id)
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
             try builder.index(renderNode: externalRenderNode)
         }
         for identifier in context.knownPages {
@@ -230,8 +229,8 @@ class ExternalRenderNodeTests: XCTestCase {
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
         let externalResolver = generateExternalResolver()
         
-        let (_, inputs, context) = try await testBundleAndContext(
-            copying: "MixedLanguageFramework",
+        let (_, context) = try await loadFromDisk(
+            copyingCatalogNamed: "MixedLanguageFramework",
             externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
             let mixedLanguageFrameworkExtension = """
@@ -255,10 +254,10 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: inputs.id)
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
             try builder.index(renderNode: externalRenderNode)
         }
         for identifier in context.knownPages {

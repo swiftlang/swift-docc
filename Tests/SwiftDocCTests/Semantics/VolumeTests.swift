@@ -20,9 +20,9 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let volume = Volume(from: directive, source: nil, for: bundle, problems: &problems)
+        let volume = Volume(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNil(volume)
         XCTAssertEqual(4, problems.count)
         XCTAssertEqual([
@@ -51,9 +51,9 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let volume = Volume(from: directive, source: nil, for: bundle, problems: &problems)
+        let volume = Volume(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(volume)
         XCTAssertTrue(problems.isEmpty)
         volume.map { volume in
@@ -97,9 +97,9 @@ class VolumeTests: XCTestCase {
             """)
         ])
         
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let node = try context.entity(
-            with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+            with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         )
 
         let tutorial = try XCTUnwrap(node.semantic as? TutorialTableOfContents)

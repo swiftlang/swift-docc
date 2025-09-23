@@ -17,14 +17,14 @@ class MentionsRenderSectionTests: XCTestCase {
     /// pointing to the correct article.
     func testMentionedInSectionFull() async throws {
         enableFeatureFlag(\.isMentionedInEnabled)
-        let (inputs, context) = try await createMentionedInTestBundle()
+        let context = try await createMentionedInTestBundle()
         let identifier = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift
         )
         let mentioningArticle = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/ArticleMentioningSymbol",
             sourceLanguage: .swift
         )
@@ -40,9 +40,9 @@ class MentionsRenderSectionTests: XCTestCase {
     /// If there are no qualifying mentions of a symbol, the Mentioned In section should not appear.
     func testMentionedInSectionEmpty() async throws {
         enableFeatureFlag(\.isMentionedInEnabled)
-        let (inputs, context) = try await createMentionedInTestBundle()
+        let context = try await createMentionedInTestBundle()
         let identifier = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/MyClass/myFunction()",
             sourceLanguage: .swift
         )

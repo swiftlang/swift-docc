@@ -34,7 +34,7 @@ class HeadingAnchorTests: XCTestCase {
                 """),
             ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)

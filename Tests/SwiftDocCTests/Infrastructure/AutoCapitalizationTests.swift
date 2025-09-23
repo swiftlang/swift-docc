@@ -60,7 +60,7 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
@@ -105,7 +105,7 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
@@ -146,7 +146,7 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         

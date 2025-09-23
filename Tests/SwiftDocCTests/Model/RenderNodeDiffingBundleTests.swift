@@ -284,7 +284,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
     }
     
     func testNoDiffsWhenReconvertingSameBundle() async throws {
-        let (_, context) = try await testBundleAndContext(named: testBundleName)
+        let context = try await loadFromDisk(catalogName: testBundleName)
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
@@ -303,7 +303,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                       topicReferencePath: String,
                                       modification: @escaping (URL) throws -> ()
     ) async throws -> JSONPatchDifferences {
-        let (_, contextOriginal) = try await testBundleAndContext(named: bundleName)
+        let contextOriginal = try await loadFromDisk(catalogName: bundleName)
         let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
@@ -313,7 +313,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal))
         
         // Make copy of the bundle on disk, modify the document, and write it
-        let (_, _, contextModified) = try await testBundleAndContext(copying: bundleName) { url in
+        let (_, contextModified) = try await loadFromDisk(copyingCatalogNamed: bundleName) { url in
             try modification(url)
         }
         let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleID: bundleID,

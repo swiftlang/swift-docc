@@ -19,12 +19,12 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNil(tutorial)
             XCTAssertEqual(
                 [
@@ -195,12 +195,12 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(tutorial)
             XCTAssertTrue(problems.isEmpty)
             tutorial.map { tutorial in
@@ -354,12 +354,12 @@ Tutorial @1:1-150:2 projectFiles: nil
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(tutorial)
             XCTAssertEqual(1, tutorial?.sections.count)
             XCTAssertEqual([
@@ -373,7 +373,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -392,7 +392,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -412,7 +412,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -434,7 +434,7 @@ Tutorial @1:1-150:2 projectFiles: nil
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
 
         let tutorialNode = node(withTitle: "tutorial-article", ofKind: .tutorial)
 

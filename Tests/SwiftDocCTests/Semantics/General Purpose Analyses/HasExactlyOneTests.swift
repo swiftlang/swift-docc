@@ -19,11 +19,11 @@ class HasExactlyOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
+            let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: inputs, problems: &problems)
             XCTAssertNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertEqual(1, problems.count)
@@ -50,11 +50,11 @@ class HasExactlyOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
+            let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertTrue(problems.isEmpty)
@@ -73,11 +73,11 @@ class HasExactlyOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
+            let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertEqual(2, problems.count)
@@ -102,11 +102,11 @@ class HasExactlyOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
-            let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, problems: &problems)
+            let (match, remainder) = Semantic.Analyses.HasExactlyOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertTrue(problems.isEmpty)

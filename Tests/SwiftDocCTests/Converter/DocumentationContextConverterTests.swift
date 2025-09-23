@@ -14,7 +14,7 @@ import XCTest
 
 class DocumentationContextConverterTests: XCTestCase {
     func testRenderNodesAreIdentical() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         
         // We'll use this to convert nodes ad-hoc
         let perNodeConverter = DocumentationNodeConverter(context: context)
@@ -41,7 +41,7 @@ class DocumentationContextConverterTests: XCTestCase {
     }
     
     func testSymbolLocationsAreOnlyIncludedWhenRequested() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
@@ -69,7 +69,7 @@ class DocumentationContextConverterTests: XCTestCase {
     }
     
     func testSymbolAccessLevelsAreOnlyIncludedWhenRequested() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(

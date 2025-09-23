@@ -23,7 +23,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             An empty root page
             """)
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         
         let outputConsumer = TestOutputConsumer()
         
@@ -48,7 +48,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             This link will result in a warning: ``NotFound``.
             """)
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         
         let outputConsumer = TestOutputConsumer()
         

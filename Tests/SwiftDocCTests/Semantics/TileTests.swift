@@ -26,9 +26,9 @@ class TileTests: XCTestCase {
                 let source = "@\(directiveName)"
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
-                let (bundle, _) = try await testBundleAndContext()
+                let inputs = try await makeEmptyContext().inputs
                 var problems = [Problem]()
-                let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
+                let tile = Tile(from: directive, source: nil, for: inputs, problems: &problems)
                 XCTAssertNotNil(tile)
                 XCTAssertEqual(2, problems.count)
                 XCTAssertEqual([
@@ -49,9 +49,9 @@ class TileTests: XCTestCase {
 """
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
-                let (bundle, _) = try await testBundleAndContext()
+                let inputs = try await makeEmptyContext().inputs
                 var problems = [Problem]()
-                let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
+                let tile = Tile(from: directive, source: nil, for: inputs, problems: &problems)
                 XCTAssertNotNil(tile)
                 XCTAssertTrue(problems.isEmpty)
                 tile.map { tile in
@@ -75,9 +75,9 @@ class TileTests: XCTestCase {
                 let source = "@\(directiveName)"
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
-                let (bundle, _) = try await testBundleAndContext()
+                let inputs = try await makeEmptyContext().inputs
                 var problems = [Problem]()
-                let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
+                let tile = Tile(from: directive, source: nil, for: inputs, problems: &problems)
                 XCTAssertNotNil(tile)
                 XCTAssertEqual(1, problems.count)
                 XCTAssertEqual([
@@ -97,9 +97,9 @@ class TileTests: XCTestCase {
 """
                 let document = Document(parsing: source, options: .parseBlockDirectives)
                 let directive = document.child(at: 0)! as! BlockDirective
-                let (bundle, _) = try await testBundleAndContext()
+                let inputs = try await makeEmptyContext().inputs
                 var problems = [Problem]()
-                let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
+                let tile = Tile(from: directive, source: nil, for: inputs, problems: &problems)
                 XCTAssertNotNil(tile)
                 XCTAssertTrue(problems.isEmpty)
                 tile.map { tile in
@@ -120,9 +120,9 @@ class TileTests: XCTestCase {
     """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, _) = try await testBundleAndContext()
+            let inputs = try await makeEmptyContext().inputs
             var problems = [Problem]()
-            let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
+            let tile = Tile(from: directive, source: nil, for: inputs, problems: &problems)
             // Destination is set.
             XCTAssertEqual(destination, tile?.destination)
         }
@@ -136,9 +136,9 @@ class TileTests: XCTestCase {
     """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, _) = try await testBundleAndContext()
+            let inputs = try await makeEmptyContext().inputs
             var problems = [Problem]()
-            let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
+            let tile = Tile(from: directive, source: nil, for: inputs, problems: &problems)
             // Destination is nil.
             XCTAssertNotNil(tile)
             XCTAssertEqual(nil, tile?.destination)
@@ -149,9 +149,9 @@ class TileTests: XCTestCase {
         let source = "@UnknownTile"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let tile = Tile(from: directive, source: nil, for: bundle, problems: &problems)
+        let tile = Tile(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNil(tile)
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual(problems.first?.diagnostic.identifier, "org.swift.docc.Resources.UnknownTile")

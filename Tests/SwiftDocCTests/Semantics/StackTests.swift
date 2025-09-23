@@ -19,12 +19,12 @@ class StackTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: bundle, problems: &problems)
+            let stack = Stack(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(stack)
             XCTAssertEqual(1, problems.count)
             XCTAssertEqual(
@@ -48,12 +48,12 @@ class StackTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: bundle, problems: &problems)
+            let stack = Stack(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(stack)
             XCTAssertEqual(0, problems.count)
         }
@@ -78,12 +78,12 @@ class StackTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Stack.directiveName, directive.name)
-            let stack = Stack(from: directive, source: nil, for: bundle, problems: &problems)
+            let stack = Stack(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(stack)
             XCTAssertEqual(1, problems.count)
             XCTAssertEqual(

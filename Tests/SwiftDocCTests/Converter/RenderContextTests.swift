@@ -14,7 +14,7 @@ import XCTest
 
 class RenderContextTests: XCTestCase {
     func testCreatesRenderReferences() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         
         let renderContext = RenderContext(documentationContext: context)
         

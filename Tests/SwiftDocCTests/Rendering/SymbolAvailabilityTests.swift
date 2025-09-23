@@ -37,7 +37,7 @@ class SymbolAvailabilityTests: XCTestCase {
                 )),
             ]
         )
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath(symbolName)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: reference.path, sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)

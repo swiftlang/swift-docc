@@ -19,7 +19,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     
     func testPossibleValuesDiagnostics() async throws {
         // Check that a problem is emitted when extra possible values are documented.
-        var (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        var (url, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -44,7 +44,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         }
         
         // Check that no problems are emitted if no extra possible values are documented.
-        (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        (url, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -61,7 +61,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         }
         
         // Check that a problem is emitted with possible solutions.
-        (url, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        (url, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -82,7 +82,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testAbsenceOfPossibleValues() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData")
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
         let converter = DocumentationNodeConverter(context: context)
         
@@ -91,7 +91,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testUndocumentedPossibleValues() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData")
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let converter = DocumentationNodeConverter(context: context)
         let possibleValuesSection = try XCTUnwrap(converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
@@ -102,7 +102,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testDocumentedPossibleValuesMatchSymbolGraphPossibleValues() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -116,7 +116,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         let possibleValues = try XCTUnwrap(symbol.possibleValuesSection?.possibleValues)
         
@@ -126,7 +126,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testDocumentedPossibleValues() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -136,7 +136,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         let possibleValues = try XCTUnwrap(symbol.possibleValuesSection?.possibleValues)
         
@@ -150,7 +150,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testUnresolvedLinkWarnings() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData") { url in
             try """
             #  ``Month``
             
@@ -172,7 +172,7 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
     }
     
     func testResolvedLins() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "DictionaryData") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "DictionaryData") { url in
             try """
             #  ``Month``
             

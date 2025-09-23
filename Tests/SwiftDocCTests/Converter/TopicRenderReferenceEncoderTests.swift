@@ -158,7 +158,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     /// Verifies that when JSON encoder should sort keys, the custom render reference cache
     /// respects that setting and prints the references in alphabetical order.
     func testSortedReferences() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(context: context)
 
         // Create a JSON encoder
@@ -218,7 +218,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     // Verifies that there is no extra comma at the end of the references list.
     func testRemovesLastReferencesListDelimiter() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(context: context)
 
         // Create a JSON encoder

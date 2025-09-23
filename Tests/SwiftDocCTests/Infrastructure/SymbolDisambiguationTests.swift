@@ -189,9 +189,9 @@ class SymbolDisambiguationTests: XCTestCase {
     }
     
     func testMixedLanguageFramework() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFramework")
         
-        var loader = SymbolGraphLoader(inputs: inputs, dataProvider: context.dataProvider)
+        var loader = SymbolGraphLoader(inputs: context.inputs, dataProvider: context.dataProvider)
         try loader.loadAll()
         
         let references = context.linkResolver.localResolver.referencesForSymbols(in: loader.unifiedGraphs, context: context).mapValues(\.path)

@@ -87,18 +87,18 @@ class ArticleSymbolMentionsTests: XCTestCase {
     }
 
     func testSymbolLinkCollectorEnabled() async throws {
-        let (bundle, context) = try await createMentionedInTestBundle()
+        let context = try await createMentionedInTestBundle()
 
         // The test bundle currently only has one article with symbol mentions
         // in the abstract/discussion.
         XCTAssertEqual(1, context.articleSymbolMentions.mentions.count)
 
         let mentioningArticle = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/ArticleMentioningSymbol",
             sourceLanguage: .swift)
         let mentionedSymbol = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
         
@@ -116,11 +116,11 @@ class ArticleSymbolMentionsTests: XCTestCase {
         FeatureFlags.current.isMentionedInEnabled = false
         
         
-        let (bundle, context) = try await createMentionedInTestBundle()
+        let context = try await createMentionedInTestBundle()
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 
         let mentionedSymbol = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
 

@@ -14,7 +14,7 @@ import XCTest
 class TopicAnchorHashTests: XCTestCase {
     func testAnchorSectionsHash() async throws {
         func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
-            let (_, context) = try await self.testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+            let (_, context) = try await self.loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicAnchorHash(context: context), benchmarkLog: testBenchmark)
             
@@ -33,7 +33,7 @@ class TopicAnchorHashTests: XCTestCase {
     func testTopicAnchorsChangedHash() async throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         
         do {
             let testBenchmark = Benchmark()

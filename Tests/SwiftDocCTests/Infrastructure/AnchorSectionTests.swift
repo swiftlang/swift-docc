@@ -17,7 +17,7 @@ import Markdown
 class AnchorSectionTests: XCTestCase {
         
     func testResolvingArticleSubsections() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
@@ -75,7 +75,7 @@ class AnchorSectionTests: XCTestCase {
     }
 
     func testResolvingSymbolSubsections() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
@@ -133,7 +133,7 @@ class AnchorSectionTests: XCTestCase {
     }
 
     func testResolvingRootPageSubsections() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
@@ -191,7 +191,7 @@ class AnchorSectionTests: XCTestCase {
     }
     
     func testWarnsWhenCuratingSections() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         
         // The module page has 3 section links in a Topics group,
         // the context should contain the three warnings about those links

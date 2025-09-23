@@ -15,7 +15,7 @@ import SwiftDocCTestUtilities
 
 class DocumentationContext_RootPageTests: XCTestCase {
     func testArticleOnlyCatalogWithExplicitTechnologyRoot() async throws {
-        let (_, context) = try await loadBundle(catalog:
+        let context = try await load(catalog:
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
                 TextFile(name: "ReleaseNotes.md", utf8Content: """
@@ -51,7 +51,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
     }
 
     func testWarnsAboutExtensionFileTechnologyRoot() async throws {
-        let (_, context) = try await loadBundle(catalog:
+        let context = try await load(catalog:
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
                 TextFile(name: "ReleaseNotes.md", utf8Content: """
@@ -85,7 +85,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
     }
     
     func testSingleArticleWithoutTechnologyRootDirective() async throws {
-        let (_, context) = try await loadBundle(catalog:
+        let context = try await load(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "Article.md", utf8Content: """
                 # My article
@@ -102,7 +102,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
     }
     
     func testMultipleArticlesWithoutTechnologyRootDirective() async throws {
-        let (_, context) = try await loadBundle(catalog:
+        let context = try await load(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "First.md", utf8Content: """
                 # My first article
@@ -136,7 +136,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
     }
     
     func testMultipleArticlesWithoutTechnologyRootDirectiveWithOneMatchingTheCatalogName() async throws {
-        let (_, context) = try await loadBundle(catalog:
+        let context = try await load(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "Something.md", utf8Content: """
                 # Some article

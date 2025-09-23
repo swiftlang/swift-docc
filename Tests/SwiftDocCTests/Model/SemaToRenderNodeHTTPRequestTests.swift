@@ -15,7 +15,7 @@ import XCTest
 
 class SemaToRenderNodeHTTPRequestTests: XCTestCase {
     func testBaseRenderNodeFromHTTPRequest() async throws {
-        let (_, context) = try await testBundleAndContext(named: "HTTPRequests")
+        let context = try await loadFromDisk(catalogName: "HTTPRequests")
         
         let expectedPageUSRsAndLanguages: [String : Set<SourceLanguage>] = [
             // Get Artist endpoint - ``Get_Artist``:

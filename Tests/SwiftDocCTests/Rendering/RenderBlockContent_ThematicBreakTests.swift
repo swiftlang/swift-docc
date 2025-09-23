@@ -38,7 +38,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 3)
         
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
         var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
@@ -65,7 +65,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 3)
         
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
         var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         
@@ -95,7 +95,7 @@ class RenderBlockContent_ThematicBreakTests: XCTestCase {
         
         XCTAssertEqual(markup.childCount, 6)
         
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         
         var contentTranslator = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/TestThematicBreak", sourceLanguage: .swift))
         

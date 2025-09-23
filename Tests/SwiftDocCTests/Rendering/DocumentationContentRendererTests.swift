@@ -139,7 +139,7 @@ private extension DocumentationDataVariantsTrait {
 
 private extension DocumentationContentRendererTests {
     func makeDocumentationContentRenderer() async throws -> DocumentationContentRenderer {
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         return DocumentationContentRenderer(documentationContext: context)
     }
     

@@ -147,8 +147,8 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     /// Tests if we detect correctly a Mac Catalyst graph
     func testLoadingiOSAndCatalystGraphs() async throws {
-        func testBundleCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) async throws -> (URL, DocumentationContext.Inputs, DocumentationContext) {
-            return try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: { bundleURL in
+        func loadContextCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) async throws -> (URL, DocumentationContext) {
+            return try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: { bundleURL in
                 // Create an iOS symbol graph file
                 let iOSGraphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
                 let renamediOSGraphURL = bundleURL.appendingPathComponent(iOSSymbolGraphName)
@@ -177,7 +177,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         do {
             // We rename the iOS graph file to contain a "@" which makes it being loaded after main symbol graphs
             // to simulate the loading order we want to test.
-            let (_, _, context) = try await testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
+            let (_, context) = try await loadContextCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
 
             guard let availability = (context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
@@ -197,7 +197,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         do {
             // We rename the Mac Catalyst graph file to contain a "@" which makes it being loaded after main symbol graphs
             // to simulate the loading order we want to test.
-            let (_, _, context) = try await testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
+            let (_, context) = try await loadContextCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
             
             guard let availability = (context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
@@ -214,13 +214,13 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     // Tests if main and bystanders graphs are loaded
     func testLoadingModuleBystanderExtensions() async throws {
-        let (_, bundle, _) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
         }
 
-        var loader = try makeSymbolGraphLoader(symbolGraphURLs: bundle.symbolGraphURLs)
+        var loader = try makeSymbolGraphLoader(symbolGraphURLs: context.inputs.symbolGraphURLs)
         try loader.loadAll()
 
         // Verify both main and bystanders graphs are loaded
@@ -381,7 +381,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         )
     }
 
-    func testDefaulAvailabilityWhenMissingSGFs() async throws {
+    func testDefaultAvailabilityWhenMissingSGFs() async throws {
         // Symbol from SGF
         let symbol = """
         {
@@ -453,7 +453,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        var (_, _, context) = try await loadBundle(from: targetURL)
+        var context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -478,7 +478,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         """
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        (_, _, context) = try await loadBundle(from: targetURL)
+        context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -519,7 +519,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         """
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        (_, _, context) = try await loadBundle(from: targetURL)
+        context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -532,57 +532,18 @@ class SymbolGraphLoaderTests: XCTestCase {
     }
     
     func testFallbackAvailabilityVersion() async throws {
-        // Symbol from SG
-        let symbol = """
-        {
-            "kind": {
-                "displayName" : "Instance Property",
-                "identifier" : "swift.property"
-            },
-            "identifier": {
-                "precise": "c:@F@A",
-                "interfaceLanguage": "swift"
-            },
-            "pathComponents": [
-                "Foo"
-            ],
-            "names": {
-                "title": "Foo",
-            },
-            "accessLevel": "public",
-            "availability" : [
-                {
-                  "domain" : "iOS",
-                  "introduced" : {
-                    "major" : 12,
-                    "minor" : 0,
-                    "patch" : 0
-                  }
-                }
-            ]
-        }
-        """
-        let symbolGraphString = makeSymbolGraphString(
-            moduleName: "MyModule",
-            symbols: symbol,
-            platform: """
-            "operatingSystem" : {
-               "minimumVersion" : {
-                 "major" : 12,
-                 "minor" : 0,
-                 "patch" : 0
-               },
-               "name" : "ios"
-             }
-            """
-        )
-        // Create an empty bundle
-        let targetURL = try createTemporaryDirectory(named: "test.docc")
-        // Create symbol graph
-        let symbolGraphURL = targetURL.appendingPathComponent("MyModule.symbols.json")
-        try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
-        // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try await loadBundle(from: targetURL)
+        let catalog = Folder(name: "test.docc", content: [
+            JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "MyModule",
+                platform: .init(operatingSystem: .init(name: "ios", minimumVersion: .init(major: 12, minor: 0, patch: 0))),
+                symbols: [
+                    makeSymbol(id: "c:@F@A", kind: .property, pathComponents: ["Foo"], availability: [
+                        .init(domain: .init(rawValue: "iOS"), introducedVersion: .init(major: 12, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
+                    ])
+                ]
+            ))
+        ])
+        let context = try await load(catalog: catalog)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -687,7 +648,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         try symbolGraphStringiOS.write(to: targetURL.appendingPathComponent("MyModule-ios.symbols.json"), atomically: true, encoding: .utf8)
         try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try await loadBundle(from: targetURL)
+        let context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -824,7 +785,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try await loadBundle(from: targetURL)
+        let context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -921,7 +882,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try await loadBundle(from: targetURL)
+        let context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1050,7 +1011,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        var (_, _, context) = try await loadBundle(from: targetURL)
+        var context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1070,7 +1031,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             platform: """
             """
         ).write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
-        (_, _, context) = try await loadBundle(from: targetURL)
+        context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1192,7 +1153,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             """
         ).write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        var (_, _, context) = try await loadBundle(from: targetURL)
+        var context = try await loadFromDisk(catalogURL: targetURL)
         guard let availabilityFoo = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1245,7 +1206,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         // Create info list
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
-        (_, _, context) = try await loadBundle(from: targetURL)
+        context = try await loadFromDisk(catalogURL: targetURL)
         guard let availabilityFoo = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1319,7 +1280,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         """
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
-        let (_, _, context) = try await loadBundle(from: targetURL)
+        let context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1444,7 +1405,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         ])
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
-        let (_, _, context) = try await loadBundle(from: bundleURL)
+        let context = try await loadFromDisk(catalogURL: bundleURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1568,7 +1529,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         try infoPlist.write(to: targetURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try await loadBundle(from: targetURL)
+        let context = try await loadFromDisk(catalogURL: targetURL)
         let availability = try XCTUnwrap((context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability)
         // Verify we fallback to iOS even if there's default availability for the Catalyst platform.
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
@@ -1641,7 +1602,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         try infoPlist.write(to: targetURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try await loadBundle(from: targetURL)
+        let context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1769,7 +1730,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try await loadBundle(from: targetURL)
+        let context = try await loadFromDisk(catalogURL: targetURL)
         guard let availability = (context.documentationCache["c:@F@Bar"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@Bar'")
             return

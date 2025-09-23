@@ -18,8 +18,8 @@ class DefaultAvailabilityTests: XCTestCase {
 
     // Test whether missing default availability key correctly produces nil availability
     func testBundleWithoutDefaultAvailability() async throws {
-        let bundle = try await testBundle(named: "BundleWithoutAvailability")
-        XCTAssertNil(bundle.info.defaultAvailability)
+        let inputs = try await loadFromDisk(catalogName: "BundleWithoutAvailability").inputs
+        XCTAssertNil(inputs.info.defaultAvailability)
     }
 
     // Test resource with default availability included
@@ -34,7 +34,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is loaded from Info.plist and applied during render time
     func testBundleWithDefaultAvailability() async throws {
         // Copy an Info.plist with default availability
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { (url) in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
             
@@ -57,7 +57,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Verify the bundle has loaded the default availability
         XCTAssertEqual(
-            inputs.info.defaultAvailability?
+            context.inputs.info.defaultAvailability?
                 .modules["MyKit"]?
                 .map({ "\($0.platformName.displayName) \($0.introducedVersion ?? "")" })
                 .sorted(),
@@ -65,7 +65,7 @@ class DefaultAvailabilityTests: XCTestCase {
         )
         
         // Bail the rendering part of the test if the availability hasn't been loaded
-        guard inputs.info.defaultAvailability != nil else {
+        guard context.inputs.info.defaultAvailability != nil else {
             return
         }
         
@@ -131,7 +131,7 @@ class DefaultAvailabilityTests: XCTestCase {
             JSONFile(name: "MyKit.symbols.json", content: makeSymbolGraph(moduleName: "MyKit")),
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let context = try await load(catalog: catalog, configuration: configuration)
         let reference = try XCTUnwrap(context.soleRootModuleReference, file: file, line: line)
         
         // Test whether we:
@@ -177,7 +177,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Set a beta status for the docs (which would normally be set via command line argument)
         configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
         
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configuration: configuration) { (url) in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configuration: configuration) { (url) in
             // Copy an Info.plist with default availability of macOS 10.15.1
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
@@ -202,7 +202,7 @@ class DefaultAvailabilityTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         // Set a beta status for the docs (which would normally be set via command line argument)
         configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
-        let (_, _, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", configuration: configuration)
+        let (_, context) = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests", configuration: configuration)
         
         do {
             let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
@@ -329,14 +329,14 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test that setting default availability doesn't prevent symbols with "universal" deprecation
     // (i.e. a platform of '*' and unconditional deprecation) from showing up as deprecated.
     func testUniversalDeprecationWithDefaultAvailability() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: []) { (url) in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "BundleWithLonelyDeprecationDirective", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
         
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )
@@ -575,8 +575,7 @@ class DefaultAvailabilityTests: XCTestCase {
             let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
             let infoPlist = makeInfoPlist(defaultAvailability: defaultAvailability)
             try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
-            // Load the bundle & reference resolve symbol graph docs
-            let (_, _, context) = try await loadBundle(from: targetURL)
+            let context = try await loadFromDisk(catalogURL: targetURL)
             return context
         }
         

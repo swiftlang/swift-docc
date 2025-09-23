@@ -19,9 +19,9 @@ class MetadataTests: XCTestCase {
         let source = "@Metadata"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata, "Even if a Metadata directive is empty we can create it")
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual("org.swift.docc.Metadata.NoConfiguration", problems.first?.diagnostic.identifier)
@@ -33,9 +33,9 @@ class MetadataTests: XCTestCase {
         let source = "@Metadata(argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a metadata value")
         XCTAssertEqual(2, problems.count)
         XCTAssertEqual("org.swift.docc.UnknownArgument", problems.first?.diagnostic.identifier)
@@ -50,9 +50,9 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a Metadata value")
         XCTAssertEqual(3, problems.count)
         XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
@@ -69,9 +69,9 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata, "Even if there are warnings we can create a Metadata value")
         XCTAssertEqual(2, problems.count)
         XCTAssertEqual("org.swift.docc.Metadata.UnexpectedContent", problems.first?.diagnostic.identifier)
@@ -88,9 +88,9 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata)
         XCTAssertEqual(0, problems.count)
         XCTAssertEqual(metadata?.documentationOptions?.behavior, .override)
@@ -105,9 +105,9 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata)
         XCTAssertEqual(2, problems.count)
         XCTAssertEqual(problems.map(\.diagnostic.identifier).sorted(), [
@@ -125,9 +125,9 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata)
         XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
@@ -142,9 +142,9 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata)
         XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
@@ -160,9 +160,9 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata)
         XCTAssertEqual(metadata?.customMetadata.count, 2)
         XCTAssertEqual(problems.count, 0)
@@ -176,9 +176,9 @@ class MetadataTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+        let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(metadata)
         XCTAssertEqual(0, problems.count)
         XCTAssertEqual(metadata?.redirects?.first?.oldPath.relativePath, "some/other/path")
@@ -197,7 +197,7 @@ class MetadataTests: XCTestCase {
         The abstract of this article
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let (inputs, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child.")
@@ -219,7 +219,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (inputs, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
@@ -243,7 +243,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (inputs, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
@@ -279,7 +279,7 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (inputs, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a TitleHeading child.")
@@ -307,9 +307,9 @@ class MetadataTests: XCTestCase {
         The abstract of this documentation extension
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
         XCTAssertNotNil(article?.metadata, "The Article has the parsed Metadata")
         XCTAssertNil(article?.metadata?.displayName, "The Article doesn't have the DisplayName")
@@ -418,10 +418,9 @@ class MetadataTests: XCTestCase {
         line: UInt = #line
     ) async throws -> (problems: [String], metadata: Metadata) {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         
         let problemIDs = problems.map { problem -> String in
             let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"

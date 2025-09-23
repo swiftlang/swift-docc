@@ -134,9 +134,9 @@ class DeclarationsRenderSectionTests: XCTestCase {
     }
 
     func testAlternateDeclarations() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "AlternateDeclarations")
+        let context = try await loadFromDisk(catalogName: "AlternateDeclarations")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AlternateDeclarations/MyClass/present(completion:)",
             sourceLanguage: .swift
         )
@@ -210,10 +210,10 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 JSONFile(name: "symbols\(forwards ? "2" : "1").symbols.json", content: symbolGraph2),
             ])
 
-            let (inputs, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
 
             let reference = ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/PlatformSpecificDeclarations/myInit",
                 sourceLanguage: .swift
             )
@@ -249,7 +249,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (inputs, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
 
         // Make sure that type decorators like arrays, dictionaries, and optionals are correctly highlighted.
         do {
@@ -260,7 +260,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload1(param: Set<Int>) {}
             // func overload1(param: [Int: Int]) {}
             let reference = ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/FancyOverloads/overload1(param:)",
                 sourceLanguage: .swift
             )
@@ -311,7 +311,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload2(p1: (Int) -> Int?, p2: Int) {}
             // func overload2(p1: ((Int) -> Int)?, p2: Int) {} // <- overload group
             let reference = ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/FancyOverloads/overload2(p1:p2:)",
                 sourceLanguage: .swift
             )
@@ -366,7 +366,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload3<T: Hashable>(_ p: [T: T]) {}
             // func overload3<K: Hashable, V>(_ p: [K: V]) {}
             let reference = ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/FancyOverloads/overload3(_:)",
                 sourceLanguage: .swift
             )
@@ -451,14 +451,11 @@ class DeclarationsRenderSectionTests: XCTestCase {
                     otherMixins: [reverseDeclarations ? declaration1 : declaration2]),
             ]
         })
-        let symbolGraph = makeSymbolGraph(moduleName: "FancierOverloads", symbols: symbols)
-
         let catalog = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "FancierOverloads", identifier: "com.test.example"),
-            JSONFile(name: "FancierOverloads.symbols.json", content: symbolGraph),
+            JSONFile(name: "FancierOverloads.symbols.json", content: makeSymbolGraph(moduleName: "FancierOverloads", symbols: symbols)),
         ])
-
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
 
         func assertDeclarations(for USR: String, file: StaticString = #filePath, line: UInt = #line) throws {
             let reference = try XCTUnwrap(context.documentationCache.reference(symbolID: USR), file: file, line: line)
@@ -495,11 +492,11 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (inputs, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
 
         for hash in ["7eht8", "8p1lo", "858ja"] {
             let reference = ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/FancyOverloads/overload3(_:)-\(hash)",
                 sourceLanguage: .swift
             )
@@ -528,13 +525,13 @@ class DeclarationsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (inputs, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
 
         // MyClass<T>
         // - myFunc() where T: Equatable
         // - myFunc() where T: Hashable // <- overload group
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/ConformanceOverloads/MyClass/myFunc()",
             sourceLanguage: .swift
         )

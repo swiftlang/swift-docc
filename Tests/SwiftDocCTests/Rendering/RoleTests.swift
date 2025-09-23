@@ -25,7 +25,7 @@ class RoleTests: XCTestCase {
     ]
     
     func testNodeRoles() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests")
 
         // Compile docs and verify contents
         for (path, expectedRole) in expectedRoles {
@@ -43,7 +43,7 @@ class RoleTests: XCTestCase {
     }
     
     func testDocumentationRenderReferenceRoles() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests")
 
         let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
@@ -56,7 +56,7 @@ class RoleTests: XCTestCase {
     }
 
     func testTutorialsRenderReferenceRoles() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests")
 
         let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
         let node = try context.entity(with: identifier)

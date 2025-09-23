@@ -648,10 +648,10 @@ final class RenderIndexTests: XCTestCase {
         )
         try bundle.write(to: bundleDirectory)
 
-        let (_, loadedBundle, context) = try await loadBundle(from: bundleDirectory)
+        let context = try await loadFromDisk(catalogURL: bundleDirectory)
 
         XCTAssertEqual(
-            try generatedRenderIndex(for: loadedBundle, withIdentifier: "com.test.example", withContext: context),
+            try generatedRenderIndex(withIdentifier: "com.test.example", withContext: context),
             try RenderIndex.fromString(#"""
             {
                 "interfaceLanguages": {
@@ -736,12 +736,12 @@ final class RenderIndexTests: XCTestCase {
         )
     }
     
-    func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) async throws -> RenderIndex {
-        let (inputs, context) = try await testBundleAndContext(named: testBundleName)
-        return try generatedRenderIndex(for: inputs, withIdentifier: bundleIdentifier, withContext: context)
+    private func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) async throws -> RenderIndex {
+        let context = try await loadFromDisk(catalogName: testBundleName)
+        return try generatedRenderIndex(withIdentifier: bundleIdentifier, withContext: context)
     }
     
-    func generatedRenderIndex(for inputs: DocumentationContext.Inputs, withIdentifier bundleIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
+    private func generatedRenderIndex(withIdentifier bundleIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let indexDirectory = try createTemporaryDirectory()

@@ -18,7 +18,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
         forResource: "Availability.symbols", withExtension: "json", subdirectory: "Test Resources")!
     
     func testSortingAtRenderTime() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             let availabilitySymbolGraphURL = url.appendingPathComponent("Availability.symbols.json")
             try? FileManager.default.copyItem(at: self.availabilitySGFURL, to: availabilitySymbolGraphURL)
 

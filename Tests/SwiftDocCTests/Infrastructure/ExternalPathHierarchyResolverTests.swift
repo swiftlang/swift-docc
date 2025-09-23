@@ -699,7 +699,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             )
         }
         
-        let (dependencyInputs, dependencyContext) = try await loadBundle(
+        let dependencyContext = try await load(
             catalog: Folder(name: "Dependency.docc", content: [
                 InfoPlist(identifier: "com.example.dependency"), // This isn't necessary but makes it easier to distinguish the identifier from the module name in the external references.
                 JSONFile(name: "Dependency.symbols.json", content: makeSymbolGraph(moduleName: "Dependency", symbols: symbols))
@@ -715,7 +715,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyInputs.id)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyContext.inputs.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -724,7 +724,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
         
         // After building the dependency,
-        let (_, mainContext) = try await loadBundle(
+        let mainContext = try await load(
             catalog: Folder(name: "Main.docc", content: [
                 JSONFile(name: "Main.symbols.json", content: makeSymbolGraph(
                     moduleName: "Main",
@@ -990,12 +990,12 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     }
     
     private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> LinkResolvers {
-        let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, inputs, context) = try await loadBundle(from: bundleURL, configuration: configuration)
+        let catalogURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
+        let context = try await loadFromDisk(catalogURL: catalogURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: inputs.id)
+        let resolverInfo = try localResolver.prepareForSerialization(bundleID: context.inputs.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         

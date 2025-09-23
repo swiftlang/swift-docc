@@ -1494,8 +1494,8 @@ class ConvertServiceTests: XCTestCase {
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try await testBundleAndContext(
-            copying: "LegacyBundle_DoNotUseInNewTests",
+        let (testBundleURL, _) = try await loadFromDisk(
+            copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "sidekit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -1623,8 +1623,8 @@ class ConvertServiceTests: XCTestCase {
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try await testBundleAndContext(
-            copying: "LegacyBundle_DoNotUseInNewTests",
+        let (testBundleURL, _) = try await loadFromDisk(
+            copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "mykit-iOS.symbols.json",
                 "MyKit@SideKit.symbols.json",
@@ -1665,10 +1665,10 @@ class ConvertServiceTests: XCTestCase {
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try await testBundleAndContext(
+        let (testBundleURL, _) = try await loadFromDisk(
             // Use a bundle that contains only articles, one of which is declared as the TechnologyRoot and curates the
             // other articles.
-            copying: "BundleWithTechnologyRoot"
+            copyingCatalogNamed: "BundleWithTechnologyRoot"
         )
         
         let request = ConvertRequest(

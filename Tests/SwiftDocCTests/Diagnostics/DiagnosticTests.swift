@@ -79,7 +79,7 @@ class DiagnosticTests: XCTestCase {
     
     /// Test offsetting diagnostic ranges
     func testOffsetDiagnostics() async throws {
-        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+        let context = try await load(catalog: Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SomeModuleName"))
         ]))
 

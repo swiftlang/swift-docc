@@ -18,7 +18,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with no authored See Also and with no curated siblings
     /// does not have a See Also section.
     func testNoSeeAlso() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -41,7 +41,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with authored See Also and with no curated siblings
     /// does include an authored See Also section
     func testAuthoredSeeAlso() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -77,7 +77,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with authored See Also and with curated siblings
     /// does include both in See Also with authored section first
     func testAuthoredAndAutomaticSeeAlso() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Extension that curates `SideClass`
             try """
             # ``SideKit``
@@ -138,7 +138,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     // Duplicate of the `testAuthoredAndAutomaticSeeAlso()` test above
     // but with automatic see also creation disabled
     func testAuthoredSeeAlsoWithDisabledAutomaticSeeAlso() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -201,7 +201,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     // Duplicate of the `testAuthoredAndAutomaticSeeAlso()` test above
     // but with automatic see also creation globally disabled
     func testAuthoredSeeAlsoWithGloballyDisabledAutomaticSeeAlso() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -283,7 +283,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
 
-        let (_, _, context) = try await loadBundle(from: bundleURL)
+        let context = try await loadFromDisk(catalogURL: bundleURL)
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "MyKit", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))

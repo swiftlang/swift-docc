@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     private let testOutputURL = URL(fileURLWithPath: "/unit-test/output-dir") // Nothing is written to this path in this test
     
     func testWriteTopLevelSymbolCuration() async throws {
-        let (url, _, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let (url, context) = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(depthLimit: 0)
@@ -111,7 +111,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testWriteSymbolCurationFromTopLevelSymbol() async throws {
-        let (url, _, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let (url, context) = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         
@@ -142,7 +142,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testWriteSymbolCurationWithLimitedDepth() async throws {
-        let (url, _, context) = try await testBundleAndContext(named: "BundleWithSameNameForSymbolAndContainer")
+        let (url, context) = try await loadFromDisk(catalogName: "BundleWithSameNameForSymbolAndContainer")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let depthLevelsToTest = [nil, 0, 1, 2, 3, 4, 5]
@@ -253,7 +253,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testSkipsManuallyCuratedPages() async throws {
-        let (url, _, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let (url, context) = try await loadFromDisk(catalogName: "MixedManualAutomaticCuration")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents()
@@ -283,7 +283,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testAddsCommentForDisambiguatedLinks() async throws {
-        let (url, _, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let (url, context) = try await loadFromDisk(catalogName: "OverloadedSymbols")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "OverloadedProtocol")
@@ -309,7 +309,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testLinksSupportNonPathCharacters() async throws {
-        let (url, _, context) = try await testBundleAndContext(named: "InheritedOperators")
+        let (url, context) = try await loadFromDisk(catalogName: "InheritedOperators")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "MyNumber")
@@ -347,7 +347,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testGeneratingLanguageSpecificCuration() async throws {
-        let (url, _, context) = try await testBundleAndContext(named: "GeometricalShapes")
+        let (url, context) = try await loadFromDisk(catalogName: "GeometricalShapes")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents()
@@ -440,7 +440,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     
     
     func testCustomOutputLocation() async throws {
-        let (url, _, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let (url, context) = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents()

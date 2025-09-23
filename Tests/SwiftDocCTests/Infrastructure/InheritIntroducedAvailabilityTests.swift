@@ -38,7 +38,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
-        (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        (_, context) = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
     }
     
     override func tearDown() {

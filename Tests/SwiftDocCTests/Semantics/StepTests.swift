@@ -19,9 +19,9 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
+        let step = Step(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertEqual([
             "org.swift.docc.HasContent",
         ], problems.map { $0.diagnostic.identifier })
@@ -46,9 +46,9 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
+        let step = Step(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
         XCTAssertNotNil(step)
         
@@ -97,16 +97,16 @@ Step @1:1-9:2
 
    > Important: This is not extraneous.
 
-   This is an extranous paragraph.
+   This is an extraneous paragraph.
 
    > Note: More than one aside is technically allowed per design.
 }
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
+        let step = Step(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertEqual(2, problems.count)
         
         XCTAssertEqual([

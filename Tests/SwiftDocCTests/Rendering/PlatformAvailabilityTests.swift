@@ -34,9 +34,9 @@ class PlatformAvailabilityTests: XCTestCase {
 
     /// Ensure that adding `@Available` directives in an article causes the final RenderNode to contain the appropriate availability data.
     func testPlatformAvailabilityFromArticle() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let context = try await loadFromDisk(catalogName: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
@@ -53,9 +53,9 @@ class PlatformAvailabilityTests: XCTestCase {
 
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
     func testPlatformAvailabilityFromExtension() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let context = try await loadFromDisk(catalogName: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -71,9 +71,9 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     func testMultiplePlatformAvailabilityFromArticle() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let context = try await loadFromDisk(catalogName: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
@@ -99,9 +99,9 @@ class PlatformAvailabilityTests: XCTestCase {
     }
 
     func testArbitraryPlatformAvailability() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let context = try await loadFromDisk(catalogName: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailabilityBundle/ArbitraryPlatforms",
             sourceLanguage: .swift
         )
@@ -124,10 +124,10 @@ class PlatformAvailabilityTests: XCTestCase {
     
     // Test that the Info.plist default availability does not affect the deprecated/unavailable availabilities provided by the symbol graph.
     func testAvailabilityParserWithInfoPlistDefaultAvailability() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "AvailabilityOverrideBundle")
+        let context = try await loadFromDisk(catalogName: "AvailabilityOverrideBundle")
 
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -164,9 +164,9 @@ class PlatformAvailabilityTests: XCTestCase {
         let platformMetadata = [
             "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
         ]
-        let (inputs, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let context = try await loadContextConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
@@ -187,9 +187,9 @@ class PlatformAvailabilityTests: XCTestCase {
             "macOS": PlatformVersion(VersionTriplet(12, 0, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(7, 0, 0), beta: true),
         ]
-        let (inputs, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let context = try await loadContextConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
@@ -219,9 +219,9 @@ class PlatformAvailabilityTests: XCTestCase {
         let platformMetadata = [
             "iOS": PlatformVersion(VersionTriplet(16, 0, 0), beta: true),
         ]
-        let (inputs, context) = try await testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
+        let context = try await loadContextConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -236,13 +236,10 @@ class PlatformAvailabilityTests: XCTestCase {
         XCTAssert(iosAvailability.isBeta == true)
     }
 
-    
-    func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) async throws -> (DocumentationContext.Inputs, DocumentationContext) {
-        let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
+    private func loadContextConfiguredPlatforms(named catalogName: String, platformMetadata: [String : PlatformVersion]) async throws -> DocumentationContext {
+        let catalogURL = try XCTUnwrap(Bundle.module.url(forResource: catalogName, withExtension: "docc", subdirectory: "Test Bundles"))
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = platformMetadata
-        let (_, bundle, context) = try await loadBundle(from: bundleURL, configuration: configuration)
-        return (bundle, context)
+        return try await loadFromDisk(catalogURL: catalogURL, configuration: configuration)
     }
-
 }

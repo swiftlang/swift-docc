@@ -15,7 +15,7 @@ import XCTest
 
 class RenderContentCompilerTests: XCTestCase {
     func testLinkOverrideTitle() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
@@ -133,7 +133,7 @@ class RenderContentCompilerTests: XCTestCase {
     }
     
     func testLineBreak() async throws {
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
@@ -198,7 +198,7 @@ class RenderContentCompilerTests: XCTestCase {
     }
     
     func testThematicBreak() async throws {
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
 

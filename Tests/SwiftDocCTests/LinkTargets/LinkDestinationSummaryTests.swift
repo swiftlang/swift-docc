@@ -94,7 +94,7 @@ class ExternalLinkableTests: XCTestCase {
     ])
     
     func testSummaryOfTutorialPage() async throws {
-        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+        let context = try await load(catalog: catalogHierarchy)
         
         let converter = DocumentationNodeConverter(context: context)
         
@@ -151,7 +151,7 @@ class ExternalLinkableTests: XCTestCase {
     }
 
     func testSymbolSummaries() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let converter = DocumentationNodeConverter(context: context)
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
@@ -313,7 +313,7 @@ class ExternalLinkableTests: XCTestCase {
     }
     
     func testTopicImageReferences() async throws {
-        let (url, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (url, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = """
             # ``MyKit/MyClass/myFunction()``
 
@@ -415,23 +415,23 @@ class ExternalLinkableTests: XCTestCase {
             summary.references = summary.references?.compactMap { (original: RenderReference) -> (any RenderReference)? in
                 guard var imageRef = original as? ImageReference else { return nil }
                 imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
-                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: inputs.id.rawValue)
+                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: context.inputs.id.rawValue)
                 }
                 imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
-                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: inputs.id.rawValue), value)
+                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: context.inputs.id.rawValue), value)
                 })
                 return imageRef as (any RenderReference)
             }
             
             
-            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: inputs.id.rawValue).encode(summary)
+            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: context.inputs.id.rawValue).encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
             XCTAssertEqual(decoded, summary)
         }
     }
     
     func testVariantSummaries() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFramework")
         let converter = DocumentationNodeConverter(context: context)
         
         // Check a symbol that's represented as a class in both Swift and Objective-C
@@ -723,7 +723,7 @@ class ExternalLinkableTests: XCTestCase {
             JSONFile(name: "MyModule.symbols.json", content: symbolGraph),
             InfoPlist(displayName: "MyModule", identifier: "com.example.mymodule")
         ])
-        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+        let context = try await load(catalog: catalogHierarchy)
         
         let converter = DocumentationNodeConverter(context: context)
 

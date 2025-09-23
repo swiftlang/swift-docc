@@ -17,7 +17,7 @@ import SymbolKit
 
 class RenderNodeTranslatorTests: XCTestCase {
     private func findDiscussion(forSymbolPath: String, configureBundle: ((URL) throws -> Void)? = nil) async throws -> ContentRenderSection? {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configureBundle: configureBundle)
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: configureBundle)
         
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: forSymbolPath, sourceLanguage: .swift))
         
@@ -223,7 +223,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
             
     func testArticleRoles() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
         var problems = [Problem]()
         
         // Verify article's role
@@ -236,7 +236,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let article = try XCTUnwrap(
-                Article(from: document.root, source: nil, for: bundle, problems: &problems)
+                Article(from: document.root, source: nil, for: inputs, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.article, DocumentationContentRenderer.roleForArticle(article, nodeKind: .article))
         }
@@ -256,7 +256,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify a collection group
             let article1 = try XCTUnwrap(
-                Article(from: document.root, source: nil, for: bundle, problems: &problems)
+                Article(from: document.root, source: nil, for: inputs, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.collectionGroup, DocumentationContentRenderer.roleForArticle(article1, nodeKind: .article))
             
@@ -272,7 +272,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify a collection
             let article2 = try XCTUnwrap(
-                Article(from: metadataDocument.root, source: nil, for: bundle, problems: &problems)
+                Article(from: metadataDocument.root, source: nil, for: inputs, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.collection, DocumentationContentRenderer.roleForArticle(article2, nodeKind: .article))
         }
@@ -281,7 +281,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     // Verifies that links to sections include their container's abstract rdar://72110558
     func testSectionAbstracts() async throws {
         // Create an article including a link to a tutorial section
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
             try """
             # Article
             Article abstract
@@ -303,7 +303,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
 
     func testEmptyTaskGroupsNotRendered() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         
         let source = """
@@ -339,7 +339,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
-            Article(from: document.root, source: nil, for: inputs, problems: &problems)
+            Article(from: document.root, source: nil, for: context.inputs, problems: &problems)
         )
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/taskgroups", fragment: nil, sourceLanguage: .swift)
         context.documentationCache[reference] = try DocumentationNode(reference: reference, article: article)
@@ -365,7 +365,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     /// Tests the ordering of automatic groups for symbols
     func testAutomaticTaskGroupsOrderingInSymbols() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             SideClass abstract
@@ -406,7 +406,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Articles",
                     references: [
                         ResolvedTopicReference(
-                            bundleID: inputs.id,
+                            bundleID: context.inputs.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -440,7 +440,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Articles",
                     references: [
                         ResolvedTopicReference(
-                            bundleID: inputs.id,
+                            bundleID: context.inputs.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -451,7 +451,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Default Implementations",
                     references: [
                         ResolvedTopicReference(
-                            bundleID: inputs.id,
+                            bundleID: context.inputs.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -462,7 +462,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Another Task Group",
                     references: [
                         ResolvedTopicReference(
-                            bundleID: inputs.id,
+                            bundleID: context.inputs.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -492,7 +492,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     /// Tests the ordering of automatic groups for articles
     func testAutomaticTaskGroupsOrderingInArticles() async throws {
-        let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: { url in
             try """
             # Article
             Article abstract
@@ -525,7 +525,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Articles",
                     references: [
                         ResolvedTopicReference(
-                            bundleID: inputs.id,
+                            bundleID: context.inputs.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -553,7 +553,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Articles",
                     references: [
                         ResolvedTopicReference(
-                            bundleID: inputs.id,
+                            bundleID: context.inputs.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -564,7 +564,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Default Implementations",
                     references: [
                         ResolvedTopicReference(
-                            bundleID: inputs.id,
+                            bundleID: context.inputs.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -575,7 +575,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     title: "Another Task Group",
                     references: [
                         ResolvedTopicReference(
-                            bundleID: inputs.id,
+                            bundleID: context.inputs.id,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
                         ),
@@ -599,7 +599,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
     /// Tests the ordering of automatic groups in defining protocol
     func testOrderingOfAutomaticGroupsInDefiningProtocol() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: { url in
             //
         })
         
@@ -649,7 +649,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             forResource: "FancyProtocol.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
         // Create a test bundle copy with the symbol graph from above
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: fancyProtocolSGFURL, to: url.appendingPathComponent("FancyProtocol.symbols.json"))
         }
 
@@ -853,8 +853,8 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(references.map(\.title), expectedTitles, file: file, line: line)
     }
     
-    func loadRenderNode(at path: String, in bundleURL: URL) async throws -> RenderNode {
-        let (_, _, context) = try await loadBundle(from: bundleURL)
+    private func loadRenderNode(at path: String, in catalogURL: URL) async throws -> RenderNode {
+        let context = try await loadFromDisk(catalogURL: catalogURL)
 
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
@@ -864,7 +864,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testAutomaticTaskGroupTopicsAreSorted() async throws {
-        let (_, context) = try await testBundleAndContext(named: "DefaultImplementations")
+        let context = try await loadFromDisk(catalogName: "DefaultImplementations")
         let structReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/DefaultImplementations/Foo", sourceLanguage: .swift)
         let structNode = try context.entity(with: structReference)
         let symbol = try XCTUnwrap(structNode.semantic as? Symbol)
@@ -885,7 +885,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     // Verifies we don't render links to non linkable nodes.
     func testNonLinkableNodes() async throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
@@ -925,7 +925,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testLinkInAbstract() async throws {
         do {
             // First verify that `SideKit` page does not contain render reference to `SideKit/SideClass/Element`.
-            let (inputs, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+            let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
             
             let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
@@ -935,12 +935,12 @@ class RenderNodeTranslatorTests: XCTestCase {
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             
             // No render reference to `Element`
-            XCTAssertFalse(renderNode.references.keys.contains("doc://\(inputs.id)/documentation/SideKit/SideClass/Element"))
+            XCTAssertFalse(renderNode.references.keys.contains("doc://\(context.inputs.id)/documentation/SideKit/SideClass/Element"))
         }
         
         do {
             // Create a bundle with a link in abstract, then verify the render reference is present in `SideKit` render node references.
-            let (_, inputs, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: { url in
                 try """
                 # ``SideKit/SideClass``
                 This is a link to <doc:/documentation/SideKit/SideClass/Element>.
@@ -955,12 +955,12 @@ class RenderNodeTranslatorTests: XCTestCase {
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             
             // There is a render reference to `Element`
-            XCTAssertTrue(renderNode.references.keys.contains("doc://\(inputs.id)/documentation/SideKit/SideClass/Element"))
+            XCTAssertTrue(renderNode.references.keys.contains("doc://\(context.inputs.id)/documentation/SideKit/SideClass/Element"))
         }
     }
 
     func testSnippetToCodeListing() async throws {
-        let (_, context) = try await testBundleAndContext(named: "Snippets")
+        let context = try await loadFromDisk(catalogName: "Snippets")
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
@@ -990,7 +990,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testSnippetSliceToCodeListing() async throws {
-        let (_, context) = try await testBundleAndContext(named: "Snippets")
+        let context = try await loadFromDisk(catalogName: "Snippets")
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
@@ -1014,7 +1014,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
 
     func testNestedSnippetSliceToCodeListing() async throws {
-        let (_, context) = try await testBundleAndContext(named: "Snippets")
+        let context = try await loadFromDisk(catalogName: "Snippets")
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
@@ -1045,7 +1045,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testSnippetSliceTrimsIndentation() async throws {
-        let (_, context) = try await testBundleAndContext(named: "Snippets")
+        let context = try await loadFromDisk(catalogName: "Snippets")
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Snippets/SliceIndentation", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
@@ -1070,9 +1070,9 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testRowAndColumn() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BookLikeContent")
+        let context = try await loadFromDisk(catalogName: "BookLikeContent")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/BestBook/MyArticle",
             sourceLanguage: .swift
         )
@@ -1099,9 +1099,9 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testSmall() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BookLikeContent")
+        let context = try await loadFromDisk(catalogName: "BookLikeContent")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/BestBook/MyArticle",
             sourceLanguage: .swift
         )
@@ -1127,9 +1127,9 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testTabNavigator() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BookLikeContent")
+        let context = try await loadFromDisk(catalogName: "BookLikeContent")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/BestBook/TabNavigatorArticle",
             sourceLanguage: .swift
         )
@@ -1164,9 +1164,9 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testRenderNodeMetadata() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BookLikeContent")
+        let context = try await loadFromDisk(catalogName: "BookLikeContent")
          let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
              path: "/documentation/BestBook/MyArticle",
              sourceLanguage: .swift
          )
@@ -1240,9 +1240,9 @@ class RenderNodeTranslatorTests: XCTestCase {
      }
     
     func testPageColorMetadataInSymbolExtension() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let context = try await loadFromDisk(catalogName: "MixedManualAutomaticCuration")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/TestBed",
             sourceLanguage: .swift
         )
@@ -1256,9 +1256,9 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
 
     func testTitleHeadingMetadataInSymbolExtension() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let context = try await loadFromDisk(catalogName: "MixedManualAutomaticCuration")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: "/documentation/TestBed",
             sourceLanguage: .swift
         )
@@ -1334,7 +1334,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
 
         func renderNodeArticleFromReferencePath(
             referencePath: String
@@ -1426,7 +1426,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
 
         func renderNodeArticleFromReferencePath(
             referencePath: String
@@ -1461,7 +1461,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     func testEncodesOverloadsInRenderNode() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let context = try await loadFromDisk(catalogName: "OverloadedSymbols")
         
         let overloadPreciseIdentifiers = ["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF",
                                    "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF",
@@ -1497,7 +1497,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testAlternateRepresentationsRenderedAsVariants() async throws {
-        let (_, context) = try await loadBundle(catalog: Folder(
+        let context = try await load(catalog: Folder(
             name: "unit-test.docc",
             content: [
                 TextFile(name: "Symbol.md", utf8Content: """

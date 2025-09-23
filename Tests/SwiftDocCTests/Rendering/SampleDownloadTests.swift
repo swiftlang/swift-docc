@@ -126,9 +126,9 @@ class SampleDownloadTests: XCTestCase {
     }
     
     private func renderNodeFromSampleBundle(at referencePath: String) async throws -> RenderNode {
-        let (inputs, context) = try await testBundleAndContext(named: "SampleBundle")
+        let context = try await loadFromDisk(catalogName: "SampleBundle")
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: referencePath,
             sourceLanguage: .swift
         )

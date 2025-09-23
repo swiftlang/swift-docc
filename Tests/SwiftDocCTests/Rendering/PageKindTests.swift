@@ -16,9 +16,9 @@ import XCTest
 class PageKindTests: XCTestCase {
     
     private func generateRenderNodeFromBundle(bundleName: String, resolvedTopicPath: String) async throws -> RenderNode {
-        let (inputs, context) = try await testBundleAndContext(named: bundleName)
+        let context = try await loadFromDisk(catalogName: bundleName)
         let reference = ResolvedTopicReference(
-            bundleID: inputs.id,
+            bundleID: context.inputs.id,
             path: resolvedTopicPath,
             sourceLanguage: .swift
         )
@@ -75,12 +75,12 @@ class PageKindTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+        let inputs = try await loadFromDisk(catalogName: "SampleBundle").inputs
 
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Metadata.directiveName, directive.name)
-            let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+            let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(metadata)
             XCTAssertNotNil(metadata?.pageKind)
             XCTAssertEqual(metadata?.pageKind?.kind, .article)

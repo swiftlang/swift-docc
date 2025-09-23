@@ -85,12 +85,12 @@ extension TestRenderNodeOutputConsumer {
 
 extension XCTestCase {
     func renderNodeConsumer(
-        for bundleName: String,
+        for catalogName: String,
         sourceRepository: SourceRepository? = nil,
         configureBundle: ((URL) throws -> Void)? = nil
     ) async throws -> TestRenderNodeOutputConsumer {
-        let (_, _, context) = try await testBundleAndContext(
-            copying: bundleName,
+        let (_, context) = try await loadFromDisk(
+            copyingCatalogNamed: catalogName,
             configureBundle: configureBundle
         )
         

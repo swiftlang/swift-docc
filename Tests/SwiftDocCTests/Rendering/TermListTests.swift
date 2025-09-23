@@ -86,7 +86,7 @@ class TermListTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle": resolver]
-        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let context = try await load(catalog: catalog, configuration: configuration)
         
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
@@ -161,7 +161,7 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
@@ -204,7 +204,7 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """

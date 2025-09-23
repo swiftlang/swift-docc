@@ -31,7 +31,7 @@ class DeprecationSummaryTests: XCTestCase {
     /// This test verifies that a symbol's deprecation summary comes from its sidecar doc
     /// and it's preferred over the original deprecation note in the code docs.
     func testAuthoredDeprecatedSummary() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
         
         // Compile docs and verify contents
@@ -44,7 +44,7 @@ class DeprecationSummaryTests: XCTestCase {
 
     /// Test for a warning when symbol is not deprecated
     func testIncorrectlyAuthoredDeprecatedSummary() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: { url in
             // Add a sidecar file with wrong deprecated summary
             try """
             # ``SideKit/SideClass``
@@ -80,10 +80,10 @@ class DeprecationSummaryTests: XCTestCase {
     /// and it's preferred over the original deprecation note in the code docs.
     /// (r69719494)
     func testAuthoredDeprecatedSummaryAsSoleItemInFile() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/CoolFramework/CoolClass",
                 sourceLanguage: .swift
             )
@@ -112,10 +112,10 @@ class DeprecationSummaryTests: XCTestCase {
     }
     
     func testSymbolDeprecatedSummary() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )
@@ -134,39 +134,39 @@ class DeprecationSummaryTests: XCTestCase {
     }
   
     func testDeprecationOverride() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
-      let node = try context.entity(
-          with: ResolvedTopicReference(
-            bundleID: inputs.id,
-              path: "/documentation/CoolFramework/CoolClass/init()",
-              sourceLanguage: .swift
-          )
-      )
-      
-      // Compile docs and verify contents
-      let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
-      
-      let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode, "Could not compile the node")
-
-      // `init()` has deprecation information in both the symbol graph and the documentation extension; when there are extra headings in an extension file, we need to make sure we correctly parse out the deprecation message from the extension and display that
-      XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, [
-        .text("Use the "),
-        .reference(
-            identifier: SwiftDocC.RenderReferenceIdentifier("doc://org.swift.docc.example/documentation/CoolFramework/CoolClass/init(config:cache:)"),
-            isActive: true,
-            overridingTitle: nil,
-            overridingTitleInlineContent: nil
-        ),
-        .text(" initializer instead."),
-    ])
-  }
-    
-    func testDeprecationSummaryInDiscussionSection() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
+                path: "/documentation/CoolFramework/CoolClass/init()",
+                sourceLanguage: .swift
+            )
+        )
+        
+        // Compile docs and verify contents
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
+        
+        let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode, "Could not compile the node")
+        
+        // `init()` has deprecation information in both the symbol graph and the documentation extension; when there are extra headings in an extension file, we need to make sure we correctly parse out the deprecation message from the extension and display that
+        XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, [
+            .text("Use the "),
+            .reference(
+                identifier: SwiftDocC.RenderReferenceIdentifier("doc://org.swift.docc.example/documentation/CoolFramework/CoolClass/init(config:cache:)"),
+                isActive: true,
+                overridingTitle: nil,
+                overridingTitleInlineContent: nil
+            ),
+            .text(" initializer instead."),
+        ])
+    }
+    
+    func testDeprecationSummaryInDiscussionSection() async throws {
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
+        let node = try context.entity(
+            with: ResolvedTopicReference(
+                bundleID: context.inputs.id,
                 path: "/documentation/CoolFramework/CoolClass/coolFunc()",
                 sourceLanguage: .swift
             )
@@ -192,10 +192,10 @@ class DeprecationSummaryTests: XCTestCase {
     }
     
     func testDeprecationSummaryWithMultiLineCommentSymbol() async throws {
-        let (inputs, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let context = try await loadFromDisk(catalogName: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: inputs.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/CoolFramework/CoolClass/init(config:cache:)",
                 sourceLanguage: .swift
             )

@@ -19,12 +19,12 @@ class TutorialArticleTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(2, problems.count)
             XCTAssertEqual([
@@ -56,12 +56,12 @@ class TutorialArticleTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(2, problems.count)
             article.map { article in
@@ -106,12 +106,12 @@ TutorialArticle @1:1-13:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(4, problems.count)
             article.map { article in
@@ -155,12 +155,12 @@ TutorialArticle @1:1-23:2
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(0, problems.count)
             article.map { article in
@@ -265,12 +265,12 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-            let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+            let article = TutorialArticle(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(3, problems.count)
             let arbitraryMarkupProblem = problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.Stack.UnexpectedContent" })
@@ -361,12 +361,12 @@ TutorialArticle @1:1-81:2
             let directive = document.child(at: 0) as? BlockDirective
             XCTAssertNotNil(directive)
             
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let inputs = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests").inputs
             
             directive.map { directive in
                 var problems = [Problem]()
                 XCTAssertEqual(TutorialArticle.directiveName, directive.name)
-                let article = TutorialArticle(from: directive, source: nil, for: bundle, problems: &problems)
+                let article = TutorialArticle(from: directive, source: nil, for: inputs, problems: &problems)
                 XCTAssertNotNil(article)
                 XCTAssertEqual(0, problems.count)
                 article.map { article in
@@ -398,7 +398,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -417,7 +417,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -437,7 +437,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -459,7 +459,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
 
         let tutorialArticleNode = node(withTitle: "tutorial-article", ofKind: .tutorialArticle)
 

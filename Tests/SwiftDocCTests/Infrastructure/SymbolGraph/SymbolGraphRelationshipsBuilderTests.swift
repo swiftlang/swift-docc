@@ -51,11 +51,11 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     private let swiftSelector = UnifiedSymbolGraph.Selector(interfaceLanguage: "swift", platform: nil)
     
     func testImplementsRelationship() async throws {
-        let (inputs, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(documentationCache: &documentationCache, inputs: inputs, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
+        let edge = createSymbols(documentationCache: &documentationCache, inputs: context.inputs, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
         SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, selector: swiftSelector, context: context, localCache: documentationCache, engine: engine)
@@ -65,7 +65,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testMultipleImplementsRelationships() async throws {
-        let (_, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
 
@@ -109,7 +109,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testConformsRelationship() async throws {
-        let (inputs, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -138,7 +138,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testInheritanceRelationship() async throws {
-        let (inputs, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -167,15 +167,15 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testInheritanceRelationshipFromOtherFramework() async throws {
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
         let sourceIdentifier = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
         let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         
-        let sourceRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName/A", sourceLanguage: .swift)
-        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SomeModuleName", sourceLanguage: .swift)
+        let sourceRef = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SomeModuleName/A", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/SomeModuleName", sourceLanguage: .swift)
         
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["SomeModuleName", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         
@@ -188,7 +188,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         
         let edge = SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .inheritsFrom, targetFallback: "MyOtherKit.B")
         
-        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: bundle, localCache: documentationCache, externalCache: .init(), engine: engine)
+        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: inputs, localCache: documentationCache, externalCache: .init(), engine: engine)
         
         let relationships = (documentationCache["A"]!.semantic as! Symbol).relationships
         guard let inheritsShouldHaveFallback = relationships.groups.first(where: { group -> Bool in
@@ -204,7 +204,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testRequirementRelationship() async throws {
-        let (inputs, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -218,7 +218,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testOptionalRequirementRelationship() async throws {
-        let (inputs, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
         let engine = DiagnosticEngine()
         
@@ -233,7 +233,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
 
     func testRequiredAndOptionalRequirementRelationships() async throws {
         do {
-            let (inputs, _) = try await testBundleAndContext()
+            let inputs = try await makeEmptyContext().inputs
             var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
             let engine = DiagnosticEngine()
 
@@ -248,7 +248,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         }
 
         do {
-            let (inputs, _) = try await testBundleAndContext()
+            let inputs = try await makeEmptyContext().inputs
             var documentationCache = DocumentationContext.ContentCache<DocumentationNode>()
             let engine = DiagnosticEngine()
 

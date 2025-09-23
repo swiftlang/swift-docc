@@ -170,7 +170,7 @@ class RenderNodeCodableTests: XCTestCase {
     }
     
     func testEncodeRenderNodeWithCustomTopicSectionStyle() async throws {
-        let (inputs, context) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var problems = [Problem]()
         
         let source = """
@@ -185,7 +185,7 @@ class RenderNodeCodableTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
-            Article(from: document.root, source: nil, for: inputs, problems: &problems)
+            Article(from: document.root, source: nil, for: context.inputs, problems: &problems)
         )
         
         let reference = ResolvedTopicReference(

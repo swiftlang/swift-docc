@@ -19,12 +19,12 @@ class AssessmentsTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Assessments.directiveName, directive.name)
-            let assessments = Assessments(from: directive, source: nil, for: bundle, problems: &problems)
+            let assessments = Assessments(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(assessments)
             XCTAssertEqual(1, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })

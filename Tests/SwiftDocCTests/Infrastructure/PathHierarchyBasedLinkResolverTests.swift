@@ -16,7 +16,7 @@ class PathHierarchyBasedLinkResolverTests: XCTestCase {
     func testOverloadedSymbolsWithOverloadGroups() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let context = try await loadFromDisk(catalogName: "OverloadedSymbols")
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
         // Returns nil for all non-overload groups

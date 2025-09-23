@@ -73,7 +73,7 @@ class RenderMetadataTests: XCTestCase {
         var typesOfPages = [Tutorial.self, TutorialTableOfContents.self, Article.self, TutorialArticle.self, Symbol.self]
         
         for bundleName in ["LegacyBundle_DoNotUseInNewTests"] {
-            let (_, context) = try await testBundleAndContext(named: bundleName)
+            let context = try await loadFromDisk(catalogName: bundleName)
             
             let renderContext = RenderContext(documentationContext: context)
             let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
@@ -93,7 +93,7 @@ class RenderMetadataTests: XCTestCase {
     /// Test that a bystanders symbol graph is loaded, symbols are merged into the main module
     /// and the bystanders are included in the render node metadata.
     func testRendersBystandersFromSymbolGraph() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
@@ -119,7 +119,7 @@ class RenderMetadataTests: XCTestCase {
     func testRendersBystanderExtensionsFromSymbolGraph() async throws {
         throw XCTSkip("Fails in CI. rdar://159615046")
 
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let baseSymbolGraphURL = Bundle.module.url(
                 forResource: "BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: baseSymbolGraphURL, to: url.appendingPathComponent("BaseKit.symbols.json"))
@@ -144,7 +144,7 @@ class RenderMetadataTests: XCTestCase {
     }
 
     func testRendersExtensionSymbolsWithBystanderModules() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "BundleWithRelativePathAmbiguity") { root in
             // We don't want the external target to be part of the archive as that is not
             // officially supported yet.
             try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))

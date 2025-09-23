@@ -44,7 +44,7 @@ class DocumentationContext_MixedLanguageSourceLanguagesTests: XCTestCase {
             "moduleAvailableLanguages can only contain Swift and Objective-C as languages."
         )
         
-        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "MixedLanguageFramework") { url in
             try """
             # MyArticle
             

@@ -182,7 +182,7 @@ func aBlackListedFunc() {
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
     }
@@ -203,7 +203,7 @@ func aBlackListedFunc() {
             ])
             var configuration = DocumentationContext.Configuration()
             configuration.externalMetadata.diagnosticLevel = severity
-            let (_, context) = try await loadBundle(catalog: catalog, diagnosticEngine: .init(filterLevel: severity), configuration: configuration)
+            let context = try await load(catalog: catalog, diagnosticEngine: .init(filterLevel: severity), configuration: configuration)
             
             // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
             XCTAssertEqual(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }), enabled)

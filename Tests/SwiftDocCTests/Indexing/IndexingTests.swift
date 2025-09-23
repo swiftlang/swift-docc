@@ -15,7 +15,7 @@ class IndexingTests: XCTestCase {
     
     // MARK: - Tutorial
     func testTutorial() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let tutorialReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: tutorialReference)
         let tutorial = node.semantic as! Tutorial
@@ -89,7 +89,7 @@ class IndexingTests: XCTestCase {
     // MARK: - Article
     
     func testArticle() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! TutorialArticle
@@ -187,7 +187,7 @@ class IndexingTests: XCTestCase {
     }
     
     func testRootPageIndexingRecord() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let articleReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
@@ -207,7 +207,7 @@ class IndexingTests: XCTestCase {
     }
     
     func testSymbolIndexingRecord() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             // Modify the documentation to have default availability for MyKit so that there is platform availability
             // information for MyProtocol (both in the render node and in the indexing record.
             let plistURL = url.appendingPathComponent("Info.plist")

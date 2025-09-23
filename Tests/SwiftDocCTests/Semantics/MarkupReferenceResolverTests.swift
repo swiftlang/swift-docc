@@ -19,7 +19,7 @@ class MarkupReferenceResolverTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName"))
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let source = """
         @Comment {
             ``hello`` and ``world`` are 2 arbitrary symbol links.
@@ -34,7 +34,7 @@ class MarkupReferenceResolverTests: XCTestCase {
     }
 
     func testDuplicatedDiagnosticForExtensionFile() async throws {
-        let (_, context) = try await testBundleAndContext(named: "ExtensionArticleBundle")
+        let context = try await loadFromDisk(catalogName: "ExtensionArticleBundle")
         // Before #733, symbols with documentation extension files emitted duplicated problems:
         // - one with a source location in the in-source documentation comment
         // - one with a source location in the documentation extension file.

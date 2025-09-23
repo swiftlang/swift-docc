@@ -16,7 +16,7 @@ import XCTest
 
 class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func testBaseRenderNodeFromMixedLanguageFramework() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFramework")
         
         for (_, documentationNode) in context.documentationCache where documentationNode.kind.isSymbol {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
@@ -449,7 +449,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testSymbolLinkWorkInMultipleLanguages() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "MixedLanguageFramework") { url in
             try """
             # ``MixedLanguageFramework/Bar``
             
@@ -962,7 +962,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func testAutomaticSeeAlsoSectionElementLimit() async throws {
-        let (_, context) = try await loadBundle(catalog:
+        let context = try await load(catalog:
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: (1...50).map {
                     makeSymbol(id: "symbol-id-\($0)", kind: .class, pathComponents: ["SymbolName\($0)"])
