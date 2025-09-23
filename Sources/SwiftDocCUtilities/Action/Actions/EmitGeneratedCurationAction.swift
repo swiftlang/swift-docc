@@ -45,7 +45,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
         let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
             startingPoint: catalogURL,
-            options: BundleDiscoveryOptions(
+            options: CatalogDiscoveryOptions(
                 infoPlistFallbacks: [:],
                 additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectory)
             )

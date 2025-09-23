@@ -267,7 +267,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
+            bundleDiscoveryOptions: CatalogDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
             )
@@ -2892,7 +2892,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
+            bundleDiscoveryOptions: CatalogDiscoveryOptions(
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
             )
         )
@@ -2933,7 +2933,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 fileManager: fileSystem,
                 temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
-                bundleDiscoveryOptions: BundleDiscoveryOptions(
+                bundleDiscoveryOptions: CatalogDiscoveryOptions(
                     infoPlistFallbacks: ["CFBundleIdentifier": "com.example.test"],
                     additionalSymbolGraphFiles: [
                         URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json"),
@@ -2969,7 +2969,7 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             temporaryDirectory: createTemporaryDirectory(),
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
+            bundleDiscoveryOptions: CatalogDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
                 additionalSymbolGraphFiles: []
             )

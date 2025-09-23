@@ -81,7 +81,7 @@ public struct ConvertAction: AsyncAction {
         fileManager: any FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
-        bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
+        bundleDiscoveryOptions: CatalogDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
         diagnosticEngine: DiagnosticEngine? = nil,
         diagnosticFilePath: URL? = nil,

@@ -144,7 +144,7 @@ public struct ConvertService: DocumentationService {
             if let bundleLocation = request.bundleLocation,
                let catalogURL = try inputProvider.findCatalog(startingPoint: bundleLocation, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
             {
-                let bundleDiscoveryOptions = try BundleDiscoveryOptions(
+                let bundleDiscoveryOptions = try CatalogDiscoveryOptions(
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 )

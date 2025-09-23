@@ -68,7 +68,7 @@ class DocumentationInputsInfoTests: XCTestCase {
         
         let infoPlistWithoutDisplayNameData = Data(infoPlistWithoutDisplayName.utf8)
         
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let bundleDiscoveryOptions = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
                 "CFBundleIdentifier": "com.fallback.Identifier"
@@ -215,7 +215,7 @@ class DocumentationInputsInfoTests: XCTestCase {
     }
     
     func testFallbackToBundleDiscoveryOptions() throws {
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let bundleDiscoveryOptions = CatalogDiscoveryOptions(
             fallbackDisplayName: "Display Name",
             fallbackIdentifier: "swift.org.Identifier",
             fallbackDefaultCodeListingLanguage: "swift",
@@ -272,7 +272,7 @@ class DocumentationInputsInfoTests: XCTestCase {
             )
         )
         
-        let bundleDiscoveryOptions = try BundleDiscoveryOptions(fallbackInfo: info)
+        let bundleDiscoveryOptions = try CatalogDiscoveryOptions(fallbackInfo: info)
         XCTAssertEqual(
             info,
             try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: bundleDiscoveryOptions)

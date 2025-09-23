@@ -127,7 +127,7 @@ class BundleDiscoveryTests: XCTestCase {
             ])
         ])
         
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let bundleDiscoveryOptions = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
             ],
@@ -160,7 +160,7 @@ class BundleDiscoveryTests: XCTestCase {
     func testNoInfoPlist() throws {
         let catalog = Folder(name: "Something.docc", content: [])
 
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let bundleDiscoveryOptions = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
                 "CFBundleIdentifier": "com.fallback.bundle.identifier"

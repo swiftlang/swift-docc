@@ -87,10 +87,10 @@ extension ConvertAction {
 }
 
 package extension Docc.Convert {
-    var bundleDiscoveryOptions: BundleDiscoveryOptions {
+    var bundleDiscoveryOptions: CatalogDiscoveryOptions {
         let additionalSymbolGraphFiles = symbolGraphFiles(in: additionalSymbolGraphDirectory)
         
-        return BundleDiscoveryOptions(
+        return CatalogDiscoveryOptions(
             fallbackDisplayName: fallbackBundleDisplayName,
             fallbackIdentifier: fallbackBundleIdentifier,
             fallbackDefaultCodeListingLanguage: defaultCodeListingLanguage,

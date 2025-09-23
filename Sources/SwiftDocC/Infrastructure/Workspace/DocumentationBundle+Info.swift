@@ -104,7 +104,7 @@ extension DocumentationContext.Inputs {
         /// in the given bundle discovery options if necessary.
         init(
             from infoPlist: Data? = nil,
-            bundleDiscoveryOptions options: BundleDiscoveryOptions? = nil,
+            bundleDiscoveryOptions options: CatalogDiscoveryOptions? = nil,
             derivedDisplayName: String? = nil
         ) throws {
             if let infoPlist {
@@ -137,7 +137,7 @@ extension DocumentationContext.Inputs {
         }
         
         public init(from decoder: any Decoder) throws {
-            let bundleDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? BundleDiscoveryOptions
+            let bundleDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? CatalogDiscoveryOptions
             let derivedDisplayName = decoder.userInfo[.derivedDisplayName] as? String
             
             try self.init(
@@ -149,7 +149,7 @@ extension DocumentationContext.Inputs {
         
         private init(
             with values: KeyedDecodingContainer<DocumentationContext.Inputs.Info.CodingKeys>?,
-            bundleDiscoveryOptions: BundleDiscoveryOptions?,
+            bundleDiscoveryOptions: CatalogDiscoveryOptions?,
             derivedDisplayName: String?
         ) throws {
             // Here we define two helper functions that simplify
@@ -248,7 +248,7 @@ extension DocumentationContext.Inputs {
     }
 }
 
-extension BundleDiscoveryOptions {
+extension CatalogDiscoveryOptions {
     /// Creates new bundle discovery options with the given information.
     /// 
     /// The given fallback values will be used if any of the discovered bundles are missing that

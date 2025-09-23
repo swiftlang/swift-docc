@@ -132,7 +132,7 @@ extension DocumentationContext.InputsProvider {
 
 extension DocumentationContext.InputsProvider {
 
-    package typealias Options = BundleDiscoveryOptions
+    package typealias Options = CatalogDiscoveryOptions
 
     /// Creates a collection of documentation inputs from the content of the given documentation catalog.
     /// 

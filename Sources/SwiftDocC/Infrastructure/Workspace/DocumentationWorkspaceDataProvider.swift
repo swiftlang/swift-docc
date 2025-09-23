@@ -10,9 +10,8 @@
 
 public import Foundation
 
-
-/// Options to configure the discovery of documentation bundles
-public struct BundleDiscoveryOptions {
+/// Options to configure the discovery of documentation catalogs
+public struct CatalogDiscoveryOptions {
     // When adding new configuration, remember to include a default value in the initializer so that an options
     // value can be created without passing any arguments, resulting in the "default" configuration.
     //
@@ -67,3 +66,6 @@ public struct BundleDiscoveryOptions {
         )
     }
 }
+
+@available(*, deprecated, renamed: "CatalogDiscoveryOptions", message: "Use 'CatalogDiscoveryOptions' instead. This deprecated type will be removed after 6.3 is released.")
+public typealias BundleDiscoveryOptions = CatalogDiscoveryOptions
