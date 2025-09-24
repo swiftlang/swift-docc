@@ -2703,7 +2703,7 @@ public class DocumentationContext {
      - Returns: A ``DocumentationNode`` with the given identifier.
      - Throws: ``ContextError/notFound(_:)`` if a documentation node with the given identifier was not found.
      */
-    public func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
+    public func entity(with reference: ResolvedTopicReference) throws(ContextError) -> DocumentationNode {
         if let cached = documentationCache[reference] {
             return cached
         }
