@@ -115,6 +115,7 @@ class LinkDestinationSummaryTests: XCTestCase {
         XCTAssertNil(pageSummary.usr, "Only symbols have USRs")
         XCTAssertNil(pageSummary.fullName, "Only symbols have full names")
         XCTAssertNil(pageSummary.declarationFragments, "Only symbols have declaration fragments")
+        XCTAssertNil(pageSummary.navigatorTitle, "Only symbols have navigator titles")
         XCTAssertNil(pageSummary.abstract, "There is no text to use as an abstract for the tutorial page")
         XCTAssertNil(pageSummary.topicImages, "The tutorial page doesn't have any topic images")
         XCTAssertNil(pageSummary.references, "Since the tutorial page doesn't have any topic images it also doesn't have any references")
@@ -134,6 +135,7 @@ class LinkDestinationSummaryTests: XCTestCase {
         XCTAssertNil(sectionSummary.usr, "Only symbols have USRs")
         XCTAssertNil(sectionSummary.fullName, "Only symbols have full names")
         XCTAssertNil(sectionSummary.declarationFragments, "Only symbols have declaration fragments")
+        XCTAssertNil(sectionSummary.navigatorTitle, "Only symbols have navigator titles")
         XCTAssertEqual(sectionSummary.abstract, [
             .text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"),
             .text(" "),
@@ -188,6 +190,9 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "MyClass", kind: .identifier, identifier: nil),
             ])
+            XCTAssertEqual(summary.navigatorTitle, [
+                .init(text: "MyClassNavigator", kind: .identifier, identifier: nil),
+            ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -230,6 +235,9 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: " : ", kind: .text, identifier: nil),
                 .init(text: "Hashable", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "p:hPP"),
             ])
+            XCTAssertEqual(summary.navigatorTitle, [
+                .init(text: "MyProtocol", kind: .identifier, identifier: nil),
+            ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -266,6 +274,7 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: "...", kind: .text, identifier: nil),
                 .init(text: ")", kind: .text, identifier: nil)
             ])
+            XCTAssertNil(summary.navigatorTitle, "This symbol doesn't have a navigator title")
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -292,6 +301,18 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.usr, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
             XCTAssertEqual(summary.fullName, "func globalFunction(_: Data, considering: Int)")
             XCTAssertEqual(summary.declarationFragments, [
+                .init(text: "func", kind: .keyword, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "globalFunction", kind: .identifier, identifier: nil),
+                .init(text: "(", kind: .text, identifier: nil),
+                .init(text: "Data", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:10Foundation4DataV"),
+                .init(text: ", ", kind: .text, identifier: nil),
+                .init(text: "considering", kind: .identifier, identifier: nil),
+                .init(text: ": ", kind: .text, identifier: nil),
+                .init(text: "Int", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:Si"),
+                .init(text: ")", kind: .text, identifier: nil)
+            ])
+            XCTAssertEqual(summary.navigatorTitle, [
                 .init(text: "func", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "globalFunction", kind: .identifier, identifier: nil),
@@ -358,7 +379,8 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: "...", kind: .text, identifier: nil),
                 .init(text: ")", kind: .text, identifier: nil)
             ])
-            
+            XCTAssertNil(summary.navigatorTitle, "This symbol doesn't have a navigator title")
+
             XCTAssertEqual(summary.topicImages, [
                 TopicImage(
                     type: .card,
@@ -465,6 +487,9 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "Bar", kind: .identifier, identifier: nil)
             ])
+            XCTAssertEqual(summary.navigatorTitle, [
+                .init(text: "Bar", kind: .identifier, identifier: nil)
+            ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -481,7 +506,10 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: " : ", kind: .text, identifier: nil),
                 .init(text: "NSObject", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "c:objc(cs)NSObject"),
             ])
-            
+            XCTAssertEqual(variant.navigatorTitle, [
+                .init(text: "Bar (objective c)", kind: .identifier, identifier: nil),
+            ])
+
             // Check variant content that is the same as the summarized element
             XCTAssertEqual(variant.title, nil)
             XCTAssertEqual(variant.abstract, nil)
@@ -534,6 +562,9 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: " -> ", kind: .text, identifier: nil),
                 .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:SS")
             ])
+            XCTAssertEqual(summary.navigatorTitle, [
+                .init(text: "myStringFunction:error: (navigator title)", kind: .identifier, identifier: nil),
+            ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -548,7 +579,8 @@ class LinkDestinationSummaryTests: XCTestCase {
                 .init(text: "+ ", kind: .text, identifier: nil),
                 .init(text: "myStringFunction:error:", kind: .identifier, identifier: nil)
             ])
-            
+            XCTAssertEqual(variant.navigatorTitle, .none, "Navigator title is the same across variants")
+
             // Check variant content that is the same as the summarized element
             XCTAssertEqual(variant.abstract, nil)
             XCTAssertEqual(variant.usr, nil)

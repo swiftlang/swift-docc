@@ -136,6 +136,12 @@
       },
       "names" : {
         "title" : "Bar",
+        "navigator": [
+            {
+                "kind": "identifier",
+                "spelling": "Bar (objective c)"
+            }
+        ],
         "subHeading" : [
           {
             "kind" : "keyword",
