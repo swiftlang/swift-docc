@@ -58,13 +58,13 @@ final class ExternalPathHierarchyResolver {
             return collidingNode.name
         }
         if let symbolID = collidingNode.symbol?.identifier {
-            if symbolID.interfaceLanguage == summary.language.id, let fragments = summary.declarationFragments {
-                return fragments.plainTextDeclaration()
+            if symbolID.interfaceLanguage == summary.language.id, let fullName = summary.fullName {
+                return fullName
             }
             if let variant = summary.variants.first(where: { $0.traits.contains(.interfaceLanguage(symbolID.interfaceLanguage)) }),
-               let fragments = variant.declarationFragments ?? summary.declarationFragments
+               let fullName = variant.fullName ?? summary.fullName
             {
-                return fragments.plainTextDeclaration()
+                return fullName
             }
         }
         return summary.title
@@ -150,12 +150,6 @@ final class ExternalPathHierarchyResolver {
             linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: dataProvider.contents(of: linkHierarchyFile)),
             entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
         )
-    }
-}
-
-private extension Sequence<DeclarationRenderSection.Token> {
-    func plainTextDeclaration() -> String {
-        return self.map(\.text).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
     }
 }
 
