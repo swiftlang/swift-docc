@@ -63,7 +63,9 @@ internal struct InvalidCodeBlockOption: Checker {
             // code property ends in a newline. this gives us a bogus extra line.
             let lineCount: Int = codeBlock.code.split(omittingEmptySubsequences: false, whereSeparator: { $0.isNewline }).count - 1
 
-            guard let indices = RenderBlockContent.CodeBlockOptions.parseCodeBlockOptionsArray(value) else {
+            let indices = RenderBlockContent.CodeBlockOptions.parseCodeBlockOptionsArray(value)
+
+            if !value.isEmpty, indices.isEmpty {
                 let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: codeBlock.range, identifier: "org.swift.docc.InvalidCodeBlockOption", summary: "Could not parse \(token.rawValue.singleQuoted) indices from \(value.singleQuoted). Expected an integer (e.g. 3) or an array (e.g. [1, 3, 5])")
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
                 return
