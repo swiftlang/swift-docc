@@ -76,6 +76,9 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         let url = targetFolder.appendingPathComponent("\(markdownManifest.title)-markdown-manifest.json", isDirectory: false)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        #if DEBUG
+        encoder.outputFormatting.insert(.prettyPrinted)
+        #endif
         let data = try encoder.encode(markdownManifest)
         try fileManager.createFile(at: url, contents: data)
     }

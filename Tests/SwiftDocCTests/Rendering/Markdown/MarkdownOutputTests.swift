@@ -28,11 +28,11 @@ final class MarkdownOutputTests: XCTestCase {
             return try await task.value
         }
     }
-        
-    /// Generates markdown from a given path
+      
+    /// Generates a writable markdown node from a given path
     /// - Parameter path: The path. If you just supply a name (no leading slash), it will prepend `/documentation/MarkdownOutput/`, otherwise the path will be used
-    /// - Returns: The generated markdown output node
-    private func generateMarkdown(path: String) async throws -> MarkdownOutputNode {
+    /// - Returns: The generated writable markdown output node
+    private func generateWritableMarkdown(path: String) async throws -> WritableMarkdownOutputNode {
         let (bundle, context) = try await bundleAndContext()
         var path = path
         if !path.hasPrefix("/") {
@@ -41,8 +41,22 @@ final class MarkdownOutputTests: XCTestCase {
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
         let node = try XCTUnwrap(context.entity(with: reference))
         var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, node: node)
-        let outputNode = try XCTUnwrap(translator.createOutput())
+        return try XCTUnwrap(translator.createOutput())
+    }
+    /// Generates a markdown node from a given path
+    /// - Parameter path: The path. If you just supply a name (no leading slash), it will prepend `/documentation/MarkdownOutput/`, otherwise the path will be used
+    /// - Returns: The generated markdown output node
+    private func generateMarkdown(path: String) async throws -> MarkdownOutputNode {
+        let outputNode = try await generateWritableMarkdown(path: path)
         return outputNode.node
+    }
+    
+    /// Generates a markdown manifest document (with relationships) from a given path
+    /// - Parameter path: The path. If you just supply a name (no leading slash), it will prepend `/documentation/MarkdownOutput/`, otherwise the path will be used
+    /// - Returns: The generated markdown output manifest document
+    private func generateMarkdownManifestDocument(path: String) async throws -> MarkdownOutputManifest.Document {
+        let outputNode = try await generateWritableMarkdown(path: path)
+        return try XCTUnwrap(outputNode.manifestDocument)
     }
 
     // MARK: Directive special processing
@@ -148,7 +162,8 @@ final class MarkdownOutputTests: XCTestCase {
     
     func testSymbolKind() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol/init(name:)")
-        XCTAssert(node.metadata.symbol?.kind == "Initializer")
+        XCTAssert(node.metadata.symbol?.kind == "init")
+        XCTAssert(node.metadata.role == "Initializer")
     }
     
     func testSymbolSingleModule() async throws {
@@ -221,11 +236,73 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(node.metadata.framework == "MarkdownOutput")
     }
     
+    // MARK: - Encoding / Decoding
     func testMarkdownRoundTrip() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol")
         let data = try node.data
         let fromData = try MarkdownOutputNode(data)
         XCTAssertEqual(node.markdown, fromData.markdown)
         XCTAssertEqual(node.metadata.uri, fromData.metadata.uri)
+    }
+    
+    // MARK: - Manifest
+    func testArticleManifestLinks() async throws {
+        let document = try await generateMarkdownManifestDocument(path: "Links")
+        let topics = try XCTUnwrap(document.references(for: .topics))
+        XCTAssertEqual(topics.count, 2)
+        let ids = topics.map { $0.uri }
+        XCTAssert(ids.contains("/documentation/MarkdownOutput/RowsAndColumns"))
+        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol"))
+    }
+    
+    func testSymbolManifestChildSymbols() async throws {
+        let document = try await generateMarkdownManifestDocument(path: "MarkdownSymbol")
+        let children = try XCTUnwrap(document.references(for: .memberSymbols))
+        XCTAssertEqual(children.count, 4)
+        let ids = children.map { $0.uri }
+        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol/name"))
+        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol/otherName"))
+        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol/fullName"))
+        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol/init(name:)"))
+    }
+    
+    func testSymbolManifestInheritance() async throws {
+        let document = try await generateMarkdownManifestDocument(path: "LocalSubclass")
+        let relationships = try XCTUnwrap(document.references(for: .relationships))
+        XCTAssert(relationships.contains(where: {
+            $0.uri == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == "inheritsFrom"
+        }))
+    }
+    
+    func testSymbolManifestInheritedBy() async throws {
+        let document = try await generateMarkdownManifestDocument(path: "LocalSuperclass")
+        let relationships = try XCTUnwrap(document.references(for: .relationships))
+        XCTAssert(relationships.contains(where: {
+            $0.uri == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == "inheritedBy"
+        }))
+    }
+    
+    func testSymbolManifestConformsTo() async throws {
+        let document = try await generateMarkdownManifestDocument(path: "LocalConformer")
+        let relationships = try XCTUnwrap(document.references(for: .relationships))
+        XCTAssert(relationships.contains(where: {
+            $0.uri == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == "conformsTo"
+        }))
+    }
+    
+    func testSymbolManifestConformingTypes() async throws {
+        let document = try await generateMarkdownManifestDocument(path: "LocalProtocol")
+        let relationships = try XCTUnwrap(document.references(for: .relationships))
+        XCTAssert(relationships.contains(where: {
+            $0.uri == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == "conformingTypes"
+        }))
+    }
+    
+    func testSymbolManifestExternalConformsTo() async throws {
+        let document = try await generateMarkdownManifestDocument(path: "ExternalConformer")
+        let relationships = try XCTUnwrap(document.references(for: .relationships))
+        XCTAssert(relationships.contains(where: {
+            $0.uri == "/documentation/Swift/Hashable" && $0.subtype == "conformsTo"
+        }))
     }
 }

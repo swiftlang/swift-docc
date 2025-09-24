@@ -16,6 +16,7 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     let bundle: DocumentationBundle
     let identifier: ResolvedTopicReference
     var markdown = ""
+    var outgoingReferences: Set<ResolvedTopicReference> = []
      
     private(set) var indentationToRemove: String?
     private(set) var isRenderingLinkList = false
@@ -58,7 +59,7 @@ extension MarkdownOutputMarkupWalker {
             return
         }
         
-        if let heading = addingHeading ?? type(of: section).title {
+        if let heading = addingHeading ?? type(of: section).title, heading.isEmpty == false {
             // Don't add if there is already a heading in the content
             if let first = section.content.first as? Heading, first.level == 2 {
                 // Do nothing
@@ -131,7 +132,7 @@ extension MarkdownOutputMarkupWalker {
         else {
             return defaultVisit(symbolLink)
         }
-        
+        outgoingReferences.insert(resolved)
         let linkTitle: String
         var linkListAbstract: (any Markup)?
         if
@@ -164,7 +165,7 @@ extension MarkdownOutputMarkupWalker {
         else {
             return defaultVisit(link)
         }
-        
+        outgoingReferences.insert(resolved)
         let linkTitle: String
         var linkListAbstract: (any Markup)?
         if

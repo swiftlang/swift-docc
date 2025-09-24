@@ -48,6 +48,29 @@ extension MarkdownOutputNode.Metadata {
     }
 }
 
+extension MarkdownOutputManifest.Document {
+    mutating func add(reference: ResolvedTopicReference, subtype: String, forRelationshipType type: MarkdownOutputManifest.RelationshipType) {
+        let related = MarkdownOutputManifest.RelatedDocument(uri: reference.path, subtype: subtype)
+        references[type, default: []].insert(related)
+    }
+    
+    mutating func add(fallbackReference: String, subtype: String, forRelationshipType type: MarkdownOutputManifest.RelationshipType) {
+        let uri: String
+        let components = fallbackReference.components(separatedBy: ".")
+        if components.count > 1 {
+            uri = "/documentation/\(components.joined(separator: "/"))"
+        } else {
+            uri = fallbackReference
+        }
+        let related = MarkdownOutputManifest.RelatedDocument(uri: uri, subtype: subtype)
+        references[type, default: []].insert(related)
+    }
+    
+    func references(for type: MarkdownOutputManifest.RelationshipType) -> Set<MarkdownOutputManifest.RelatedDocument>? {
+        references[type]
+    }
+}
+
 // MARK: Article Output
 extension MarkdownOutputSemanticVisitor {
     
@@ -73,9 +96,15 @@ extension MarkdownOutputSemanticVisitor {
         markdownWalker.visit(article.title)
         markdownWalker.visit(article.abstract)
         markdownWalker.visit(section: article.discussion)
+        
+        // Only care about references from these sections
+        markdownWalker.outgoingReferences = []
         markdownWalker.withRenderingLinkList {
             $0.visit(section: article.topics, addingHeading: "Topics")
             $0.visit(section: article.seeAlso, addingHeading: "See Also")
+        }
+        for reference in markdownWalker.outgoingReferences {
+            manifestDocument?.add(reference: reference, subtype: "Topics", forRelationshipType: .topics)
         }
         return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
@@ -90,6 +119,7 @@ extension MarkdownOutputSemanticVisitor {
         var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier)
         
         metadata.symbol = .init(symbol, context: context, bundle: bundle)
+        metadata.role = symbol.kind.displayName
         
         manifestDocument = MarkdownOutputManifest.Document(
             uri: identifier.path,
@@ -133,9 +163,33 @@ extension MarkdownOutputSemanticVisitor {
         markdownWalker.visit(section: symbol.returnsSection)
         
         markdownWalker.visit(section: symbol.discussion, addingHeading: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
+        
+        markdownWalker.outgoingReferences = []
         markdownWalker.withRenderingLinkList {
             $0.visit(section: symbol.topics, addingHeading: "Topics")
             $0.visit(section: symbol.seeAlso, addingHeading: "See Also")
+        }
+        for reference in markdownWalker.outgoingReferences {
+            manifestDocument?.add(reference: reference, subtype: "Topics", forRelationshipType: .topics)
+        }
+        for child in context.children(of: identifier) {
+            // Only interested in symbols
+            guard child.kind.isSymbol else { continue }
+            // Not interested in symbols that have been curated already
+            if markdownWalker.outgoingReferences.contains(child.reference) { continue }
+            manifestDocument?.add(reference: child.reference, subtype: child.kind.name, forRelationshipType: .memberSymbols)
+        }
+        for relationshipGroup in symbol.relationships.groups {
+            for destination in relationshipGroup.destinations {
+                switch context.resolve(destination, in: identifier) {
+                case .success(let resolved):
+                    manifestDocument?.add(reference: resolved, subtype: relationshipGroup.kind.rawValue, forRelationshipType: .relationships)
+                case .failure(let unresolved, let error):
+                    if let fallback = symbol.relationships.targetFallbacks[destination] {
+                        manifestDocument?.add(fallbackReference: fallback, subtype: relationshipGroup.kind.rawValue, forRelationshipType: .relationships)
+                    }
+                }
+            }
         }
         return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
@@ -145,7 +199,7 @@ import SymbolKit
 
 extension MarkdownOutputNode.Metadata.Symbol {
     init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationBundle) {
-        self.kind = symbol.kind.displayName
+        self.kind = symbol.kind.identifier.identifier
         self.preciseIdentifier = symbol.externalID ?? ""
                 
         // Gather modules

@@ -35,6 +35,13 @@ extension MarkdownOutputManifest {
     
     public enum RelationshipType: String, Codable {
         case topics
+        case memberSymbols
+        case relationships
+    }
+    
+    public struct RelatedDocument: Codable, Hashable {
+        public let uri: String
+        public let subtype: String
     }
     
     public struct Document: Codable {
@@ -44,10 +51,11 @@ extension MarkdownOutputManifest {
         public let documentType: DocumentType
         /// The title of the document
         public let title: String
-        /// The outgoing references of the document, grouped by relationship type
-        public var references: [RelationshipType: [String]]
         
-        public init(uri: String, documentType: MarkdownOutputManifest.DocumentType, title: String, references: [MarkdownOutputManifest.RelationshipType : [String]]) {
+        /// The outgoing references of the document, grouped by relationship type
+        public var references: [RelationshipType: Set<RelatedDocument>]
+        
+        public init(uri: String, documentType: MarkdownOutputManifest.DocumentType, title: String, references: [MarkdownOutputManifest.RelationshipType : Set<RelatedDocument>]) {
             self.uri = uri
             self.documentType = documentType
             self.title = title
