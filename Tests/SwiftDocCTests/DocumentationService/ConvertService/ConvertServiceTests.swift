@@ -532,9 +532,6 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testConvertPageWithLinkResolvingAndKnownPathComponents() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "mykit-one-symbol",
@@ -830,9 +827,7 @@ class ConvertServiceTests: XCTestCase {
             )
         }
     }
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+
     func testConvertTutorialWithCode() throws {
         let tutorialContent = """
         @Tutorial(time: 99) {
@@ -1003,9 +998,6 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testConvertArticleWithImageReferencesAndDetailedGridLinks() throws {
         let articleData = try XCTUnwrap("""
             # First article
@@ -1726,9 +1718,6 @@ class ConvertServiceTests: XCTestCase {
         #endif
     }
     
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testConvertPageWithLinkResolving() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "mykit-one-symbol",
@@ -2018,9 +2007,6 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testConvertTopLevelSymbolWithLinkResolving() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "one-symbol-top-level",
@@ -2128,9 +2114,6 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testOrderOfLinkResolutionRequestsForDocLink() throws {
         let symbolGraphFile = try XCTUnwrap(
             Bundle.module.url(
@@ -2169,9 +2152,6 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
     }
     
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testOrderOfLinkResolutionRequestsForDeeplyNestedSymbol() throws {
         let symbolGraphFile = try XCTUnwrap(
             Bundle.module.url(
@@ -2211,9 +2191,6 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
     }
     
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testOrderOfLinkResolutionRequestsForSymbolLink() throws {
         let symbolGraphFile = try XCTUnwrap(
             Bundle.module.url(
@@ -2249,10 +2226,7 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
     }
     
-    // This test helper uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
-    private func linkResolutionRequestsForConvertRequest(_ request: ConvertRequest) throws -> [String] {
+    func linkResolutionRequestsForConvertRequest(_ request: ConvertRequest) throws -> [String] {
         var receivedLinkResolutionRequests = [String]()
         let mockLinkResolvingService = LinkResolvingService { message in
             do {
@@ -2340,9 +2314,6 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
-    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testDoesNotResolveLinksUnlessBundleIDMatches() throws {
         let tempURL = try createTempFolder(content: [
             Folder(name: "unit-test.docc", content: [

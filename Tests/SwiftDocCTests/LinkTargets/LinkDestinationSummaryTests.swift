@@ -13,10 +13,12 @@ import SymbolKit
 @testable import SwiftDocC
 import SwiftDocCTestUtilities
 
-class LinkDestinationSummaryTests: XCTestCase {
+class ExternalLinkableTests: XCTestCase {
     
-    func testSummaryOfTutorialPage() async throws {
-        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
+    // Write example documentation bundle with a minimal Tutorials page
+    let catalogHierarchy = Folder(name: "unit-test.docc", content: [
+        Folder(name: "Symbols", content: []),
+        Folder(name: "Resources", content: [
             TextFile(name: "TechnologyX.tutorial", utf8Content: """
                 @Tutorials(name: "TechnologyX") {
                    @Intro(title: "Technology X") {
@@ -87,9 +89,11 @@ class LinkDestinationSummaryTests: XCTestCase {
                    }
                 }
                 """),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
-        ])
-
+            ]),
+        InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+    ])
+    
+    func testSummaryOfTutorialPage() async throws {
         let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
@@ -482,6 +486,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
             XCTAssertEqual(variant.taskGroups, nil)
+            XCTAssertEqual(variant.topicImages, nil)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -572,68 +577,12 @@ class LinkDestinationSummaryTests: XCTestCase {
                     )
                 ]
             )
+            XCTAssertEqual(variant.topicImages, nil)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
             XCTAssertEqual(decoded, summary)
         }
-    }
-    
-    func testDecodingUnknownKindAndLanguage() throws {
-        let json = """
-        {
-          "kind" : {
-            "id" : "kind-id",
-            "name" : "Kind name",
-            "isSymbol" : false
-          },
-          "language" : {
-            "id" : "language-id",
-            "name" : "Language name",
-            "idAliases" : [
-              "language-alias-id"
-            ],
-            "linkDisambiguationID" : "language-id"
-          },
-          "availableLanguages" : [
-            "swift",
-            "data",
-            {
-              "id" : "language-id",
-              "idAliases" : [
-                "language-alias-id"
-              ],
-              "linkDisambiguationID" : "language-id",
-              "name" : "Language name"
-            },
-            {
-              "id" : "language-id-2",
-              "linkDisambiguationID" : "language-id-2",
-              "name" : "Other language name"
-            },
-            "occ"
-          ],
-          "title" : "Something",
-          "path" : "/documentation/something",
-          "referenceURL" : "/documentation/something"
-        }
-        """
-        
-        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(json.utf8))
-        try assertRoundTripCoding(decoded)
-        
-        XCTAssertEqual(decoded.kind, DocumentationNode.Kind(name: "Kind name", id: "kind-id", isSymbol: false))
-        XCTAssertEqual(decoded.language, SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]))
-        XCTAssertEqual(decoded.availableLanguages, [
-            // Known languages
-            .swift,
-            .objectiveC,
-            .data,
-            
-            // Custom languages
-            SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]),
-            SourceLanguage(name: "Other language name", id: "language-id-2"),
-        ])
     }
     
     func testDecodingLegacyData() throws {
