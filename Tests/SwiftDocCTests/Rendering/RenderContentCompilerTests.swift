@@ -13,6 +13,8 @@ import Markdown
 @testable import SwiftDocC
 import XCTest
 
+typealias Position = RenderBlockContent.CodeBlockOptions.Position
+
 class RenderContentCompilerTests: XCTestCase {
     func testLinkOverrideTitle() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
@@ -425,7 +427,13 @@ class RenderContentCompilerTests: XCTestCase {
 
         XCTAssertEqual(codeListing.syntax, "swift")
         XCTAssertEqual(codeListing.options?.wrap, 20)
-        XCTAssertEqual(codeListing.options?.highlight, [2])
+        let line = Position(line: 2)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line..<line
+                )
+            ])
     }
 
     func testHighlight() async throws {
@@ -455,7 +463,12 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift")
-        XCTAssertEqual(codeListing.options?.highlight, [2])
+        let line = Position(line: 2)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line..<line
+            )])
     }
 
     func testHighlightNoFeatureFlag() async throws {
@@ -483,7 +496,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift, highlight=[2]")
-        XCTAssertEqual(codeListing.options?.highlight, nil)
+        XCTAssertEqual(codeListing.options?.lineAnnotations, nil)
     }
 
     func testMultipleHighlight() async throws {
@@ -513,7 +526,24 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift")
-        XCTAssertEqual(codeListing.options?.highlight, [1, 2, 3])
+
+        let line1 = Position(line: 1)
+        let line2 = Position(line: 2)
+        let line3 = Position(line: 3)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line1..<line1
+            ),
+             RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line2..<line2
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line3..<line3
+            )
+            ])
     }
 
     func testMultipleHighlightMultipleStrikeout() async throws {
@@ -543,8 +573,33 @@ class RenderContentCompilerTests: XCTestCase {
         }
 
         XCTAssertEqual(codeListing.syntax, "swift")
-        XCTAssertEqual(codeListing.options?.highlight, [1, 2, 3])
-        XCTAssertEqual(codeListing.options?.strikeout, [3, 5])
+
+        let line1 = Position(line: 1)
+        let line2 = Position(line: 2)
+        let line3 = Position(line: 3)
+        let line5 = Position(line: 5)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+         [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line1..<line1
+            ),
+             RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line2..<line2
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line5..<line5
+            )
+            ])
     }
 
     func testLanguageNotFirstOption() async throws {
@@ -573,12 +628,32 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.options?.showLineNumbers, true)
-        XCTAssertEqual(codeListing.options?.highlight, [1, 2, 3])
         // we expect the language to be the first option in the language line, otherwise it remains nil.
         XCTAssertEqual(codeListing.syntax, nil)
+        XCTAssertEqual(codeListing.options?.showLineNumbers, true)
         XCTAssertEqual(codeListing.options?.wrap, 20)
-        XCTAssertEqual(codeListing.options?.strikeout, [3])
+
+        let line1 = Position(line: 1)
+        let line2 = Position(line: 2)
+        let line3 = Position(line: 3)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line1..<line1
+            ),
+             RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line2..<line2
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line3..<line3
+            )
+            ])
     }
 
     func testUnorderedArrayOptions() async throws {
@@ -607,7 +682,31 @@ class RenderContentCompilerTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(codeListing.options?.highlight, [5, 3, 4])
-        XCTAssertEqual(codeListing.options?.strikeout, [3, 1])
+        let line1 = Position(line: 1)
+        let line3 = Position(line: 3)
+        let line4 = Position(line: 4)
+        let line5 = Position(line: 5)
+        XCTAssertEqual(codeListing.options?.lineAnnotations,
+            [RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line5..<line5
+            ),
+             RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "highlight",
+                range: line4..<line4
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line3..<line3
+            ),
+            RenderBlockContent.CodeBlockOptions.LineAnnotation(
+                style: "strikeout",
+                range: line1..<line1
+            )
+            ])
     }
 }

@@ -139,10 +139,36 @@ public enum RenderBlockContent: Equatable {
     public struct CodeBlockOptions: Equatable {
         public var language: String?
         public var copyToClipboard: Bool
-        public var wrap: Int
-        public var highlight: [Int]
         public var showLineNumbers: Bool
-        public var strikeout: [Int]
+        public var wrap: Int
+        public var lineAnnotations: [LineAnnotation]
+
+        public struct Position: Equatable, Comparable, Codable {
+            public static func < (lhs: RenderBlockContent.CodeBlockOptions.Position, rhs: RenderBlockContent.CodeBlockOptions.Position) -> Bool {
+                if lhs.line == rhs.line, let lhsCharacter = lhs.character, let rhsCharacter = rhs.character {
+                    return lhsCharacter < rhsCharacter
+                }
+                return lhs.line < rhs.line
+            }
+
+            public init(line: Int, character: Int? = nil) {
+                self.line = line
+                self.character = character
+            }
+
+            var line: Int
+            var character: Int?
+        }
+
+        //public struct Range: Equatable, Codable {
+        //    var start: Position
+        //    var end: Position
+        //}
+
+        public struct LineAnnotation: Equatable, Codable {
+            var style: String
+            var range: Range<Position>
+        }
 
         public enum OptionName: String, CaseIterable {
             case _nonFrozenEnum_useDefaultCase
@@ -166,10 +192,9 @@ public enum RenderBlockContent: Equatable {
         public init() {
             self.language = ""
             self.copyToClipboard = true
-            self.wrap = 0
-            self.highlight = []
             self.showLineNumbers = false
-            self.strikeout = []
+            self.wrap = 0
+            self.lineAnnotations = []
         }
 
         public init(parsingLanguageString language: String?) {
@@ -186,27 +211,53 @@ public enum RenderBlockContent: Equatable {
                 self.wrap = 0
             }
 
-            if let highlightString = tokens.first(where: { $0.name == .highlight })?.value,
-               let highlightValue = Self.parseCodeBlockOptionsArray(highlightString) {
-                self.highlight = highlightValue
-            } else {
-                self.highlight = []
+            var annotations: [LineAnnotation] = []
+
+            if let highlightString = tokens.first(where: { $0.name == .highlight })?.value {
+                let highlightValue = Self.parseCodeBlockOptionsArray(highlightString)
+                for line in highlightValue {
+                    let pos = Position(line: line, character: nil)
+                    let range = pos..<pos
+                    annotations.append(LineAnnotation(style: "highlight", range: range))
+                }
             }
 
-            if let strikeoutString = tokens.first(where: { $0.name == .strikeout })?.value,
-               let strikeoutValue = Self.parseCodeBlockOptionsArray(strikeoutString) {
-                self.strikeout = strikeoutValue
-            } else {
-                self.strikeout = []
+            if let strikeoutString = tokens.first(where: { $0.name == .strikeout })?.value {
+                let strikeoutValue = Self.parseCodeBlockOptionsArray(strikeoutString)
+                for line in strikeoutValue {
+                    let pos = Position(line: line, character: nil)
+                    let range = pos..<pos
+                    annotations.append(LineAnnotation(style: "strikeout", range: range))
+                }
             }
+
+            self.lineAnnotations = annotations
         }
 
-        public init(copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, wrap: Int, highlight: [Int], strikeout: [Int], showLineNumbers: Bool = false) {
+        public init(copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
             self.copyToClipboard = copyToClipboard
-            self.wrap = wrap
-            self.highlight = highlight
             self.showLineNumbers = showLineNumbers
-            self.strikeout = strikeout
+            self.wrap = wrap
+
+            var annotations: [LineAnnotation] = []
+            for line in highlight {
+                    let pos = Position(line: line, character: nil)
+                    let range = pos..<pos
+                    annotations.append(LineAnnotation(style: "highlight", range: range))
+            }
+            for line in strikeout {
+                    let pos = Position(line: line, character: nil)
+                    let range = pos..<pos
+                    annotations.append(LineAnnotation(style: "strikeout", range: range))
+            }
+            self.lineAnnotations = annotations
+        }
+
+        public init(copyToClipboard: Bool, showLineNumbers: Bool, wrap: Int, lineAnnotations: [LineAnnotation]) {
+            self.copyToClipboard = copyToClipboard
+            self.showLineNumbers = showLineNumbers
+            self.wrap = wrap
+            self.lineAnnotations = lineAnnotations
         }
 
         /// A function that parses array values on code block options from the language line string
@@ -863,7 +914,7 @@ extension RenderBlockContent.Table: Codable {
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
         case type
-        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start, copyToClipboard, wrap, highlight, strikeout, showLineNumbers
+        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start, copyToClipboard, showLineNumbers, wrap, lineAnnotations
         case request, response
         case header, rows
         case numberOfColumns, columns
@@ -887,13 +938,12 @@ extension RenderBlockContent: Codable {
         case .codeListing:
             let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
             let options: CodeBlockOptions?
-            if !Set(container.allKeys).isDisjoint(with: [.copyToClipboard, .wrap, .highlight, .strikeout, .showLineNumbers]) {
+            if !Set(container.allKeys).isDisjoint(with: [.copyToClipboard, .showLineNumbers, .wrap, .lineAnnotations]) {
                 options = try CodeBlockOptions(
                     copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? copy,
+                    showLineNumbers: container.decodeIfPresent(Bool.self, forKey: .showLineNumbers) ?? false,
                     wrap: container.decodeIfPresent(Int.self, forKey: .wrap) ?? 0,
-                    highlight: container.decodeIfPresent([Int].self, forKey: .highlight) ?? [],
-                    strikeout: container.decodeIfPresent([Int].self, forKey: .strikeout) ?? [],
-                    showLineNumbers: container.decodeIfPresent(Bool.self, forKey: .showLineNumbers) ?? false
+                    lineAnnotations: container.decodeIfPresent([CodeBlockOptions.LineAnnotation].self, forKey: .lineAnnotations) ?? []
                 )
             } else {
                 options = nil
@@ -1007,10 +1057,9 @@ extension RenderBlockContent: Codable {
             try container.encode(l.code, forKey: .code)
             try container.encodeIfPresent(l.metadata, forKey: .metadata)
             try container.encodeIfPresent(l.options?.copyToClipboard, forKey: .copyToClipboard)
-            try container.encodeIfPresent(l.options?.wrap, forKey: .wrap)
-            try container.encodeIfPresent(l.options?.highlight, forKey: .highlight)
-            try container.encodeIfPresent(l.options?.strikeout, forKey: .strikeout)
             try container.encodeIfPresent(l.options?.showLineNumbers, forKey: .showLineNumbers)
+            try container.encodeIfPresent(l.options?.wrap, forKey: .wrap)
+            try container.encodeIfPresent(l.options?.lineAnnotations, forKey: .lineAnnotations)
         case .heading(let h):
             try container.encode(h.level, forKey: .level)
             try container.encode(h.text, forKey: .text)
