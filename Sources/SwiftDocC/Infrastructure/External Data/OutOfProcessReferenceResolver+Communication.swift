@@ -160,11 +160,23 @@ extension OutOfProcessReferenceResolver {
 extension OutOfProcessReferenceResolver.ResponseV2 {
     /// Information about why the external resolver failed to resolve the `link(_:)`, or `symbol(_:)` request.
     public struct DiagnosticInformation: Codable {
-        /// A brief user-facing summary of the issue that caused the external resolver to
+        /// A brief user-facing summary of the issue that caused the external resolver to fail.
         public var summary: String
         
-        /// An optional list of possible solutions
+        /// A list of possible suggested solutions that can address the failure.
         public var solutions: [Solution]?
+        
+        /// Creates a new value with information about why the external resolver failed to resolve the `link(_:)`, or `symbol(_:)` request.
+        /// - Parameters:
+        ///   - summary: A brief user-facing summary of the issue that caused the external resolver to fail.
+        ///   - solutions: Possible possible suggested solutions that can address the failure.
+        public init(
+            summary: String,
+            solutions: [Solution]?
+        ) {
+            self.summary = summary
+            self.solutions = solutions
+        }
         
         /// A possible solution to an external resolver issue.
         public struct Solution: Codable {
@@ -172,6 +184,15 @@ extension OutOfProcessReferenceResolver.ResponseV2 {
             public var summary: String
             /// A full replacement of the link.
             public var replacement: String?
+            
+            /// Creates a new solution to an external resolver issue
+            /// - Parameters:
+            ///   - summary: A brief user-facing description of what the solution is.
+            ///   - replacement: A full replacement of the link.
+            public init(summary: String, replacement: String?) {
+                self.summary = summary
+                self.replacement = replacement
+            }
         }
     }
 }
