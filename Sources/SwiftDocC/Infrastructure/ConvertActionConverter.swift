@@ -137,10 +137,11 @@ package enum ConvertActionConverter {
                         renderNode.metadata.hasGeneratedMarkdown = true
                         if
                             FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
-                            let document = markdownNode.manifestDocument
+                            let manifest = markdownNode.manifest
                         {
                             resultsGroup.async(queue: resultsSyncQueue) {
-                                markdownManifest.documents.append(document)
+                                markdownManifest.documents.formUnion(manifest.documents)
+                                markdownManifest.relationships.formUnion(manifest.relationships)
                             }
                         }
                     }

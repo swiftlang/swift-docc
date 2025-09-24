@@ -54,9 +54,9 @@ final class MarkdownOutputTests: XCTestCase {
     /// Generates a markdown manifest document (with relationships) from a given path
     /// - Parameter path: The path. If you just supply a name (no leading slash), it will prepend `/documentation/MarkdownOutput/`, otherwise the path will be used
     /// - Returns: The generated markdown output manifest document
-    private func generateMarkdownManifestDocument(path: String) async throws -> MarkdownOutputManifest.Document {
+    private func generateMarkdownManifest(path: String) async throws -> MarkdownOutputManifest {
         let outputNode = try await generateWritableMarkdown(path: path)
-        return try XCTUnwrap(outputNode.manifestDocument)
+        return try XCTUnwrap(outputNode.manifest)
     }
 
     // MARK: Directive special processing
@@ -247,62 +247,73 @@ final class MarkdownOutputTests: XCTestCase {
     
     // MARK: - Manifest
     func testArticleManifestLinks() async throws {
-        let document = try await generateMarkdownManifestDocument(path: "Links")
-        let topics = try XCTUnwrap(document.references(for: .topics))
-        XCTAssertEqual(topics.count, 2)
-        let ids = topics.map { $0.uri }
-        XCTAssert(ids.contains("/documentation/MarkdownOutput/RowsAndColumns"))
-        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol"))
+        let manifest = try await generateMarkdownManifest(path: "Links")
+        let rows = MarkdownOutputManifest.Relationship(
+            sourceURI: "/documentation/MarkdownOutput/RowsAndColumns",
+            relationshipType: .belongsToTopic,
+            targetURI: "/documentation/MarkdownOutput/Links#Links-with-abstracts"
+        )
+        
+        let symbol = MarkdownOutputManifest.Relationship(
+            sourceURI: "/documentation/MarkdownOutput/MarkdownSymbol",
+            relationshipType: .belongsToTopic,
+            targetURI: "/documentation/MarkdownOutput/Links#Links-with-abstracts"
+        )
+        
+        XCTAssert(manifest.relationships.contains(rows))
+        XCTAssert(manifest.relationships.contains(symbol))
     }
     
     func testSymbolManifestChildSymbols() async throws {
-        let document = try await generateMarkdownManifestDocument(path: "MarkdownSymbol")
-        let children = try XCTUnwrap(document.references(for: .memberSymbols))
+        let manifest = try await generateMarkdownManifest(path: "MarkdownSymbol")
+        let children = manifest.relationships
+            .filter { $0.relationshipType == .memberSymbol }
+            .map { $0.targetURI }
         XCTAssertEqual(children.count, 4)
-        let ids = children.map { $0.uri }
-        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol/name"))
-        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol/otherName"))
-        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol/fullName"))
-        XCTAssert(ids.contains("/documentation/MarkdownOutput/MarkdownSymbol/init(name:)"))
+        
+        XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/name"))
+        XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/otherName"))
+        XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/fullName"))
+        XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/init(name:)"))
     }
     
     func testSymbolManifestInheritance() async throws {
-        let document = try await generateMarkdownManifestDocument(path: "LocalSubclass")
-        let relationships = try XCTUnwrap(document.references(for: .relationships))
-        XCTAssert(relationships.contains(where: {
-            $0.uri == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == "inheritsFrom"
+        let manifest = try await generateMarkdownManifest(path: "LocalSubclass")
+        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        XCTAssert(related.contains(where: {
+            $0.targetURI == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == "inheritsFrom"
         }))
     }
     
     func testSymbolManifestInheritedBy() async throws {
-        let document = try await generateMarkdownManifestDocument(path: "LocalSuperclass")
-        let relationships = try XCTUnwrap(document.references(for: .relationships))
-        XCTAssert(relationships.contains(where: {
-            $0.uri == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == "inheritedBy"
+        let manifest = try await generateMarkdownManifest(path: "LocalSuperclass")
+        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        XCTAssert(related.contains(where: {
+            $0.targetURI == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == "inheritedBy"
         }))
     }
     
     func testSymbolManifestConformsTo() async throws {
-        let document = try await generateMarkdownManifestDocument(path: "LocalConformer")
-        let relationships = try XCTUnwrap(document.references(for: .relationships))
-        XCTAssert(relationships.contains(where: {
-            $0.uri == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == "conformsTo"
+        let manifest = try await generateMarkdownManifest(path: "LocalConformer")
+        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        XCTAssert(related.contains(where: {
+            $0.targetURI == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == "conformsTo"
         }))
     }
     
     func testSymbolManifestConformingTypes() async throws {
-        let document = try await generateMarkdownManifestDocument(path: "LocalProtocol")
-        let relationships = try XCTUnwrap(document.references(for: .relationships))
-        XCTAssert(relationships.contains(where: {
-            $0.uri == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == "conformingTypes"
+        let manifest = try await generateMarkdownManifest(path: "LocalProtocol")
+        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        XCTAssert(related.contains(where: {
+            $0.targetURI == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == "conformingTypes"
         }))
     }
     
     func testSymbolManifestExternalConformsTo() async throws {
-        let document = try await generateMarkdownManifestDocument(path: "ExternalConformer")
-        let relationships = try XCTUnwrap(document.references(for: .relationships))
-        XCTAssert(relationships.contains(where: {
-            $0.uri == "/documentation/Swift/Hashable" && $0.subtype == "conformsTo"
+        let manifest = try await generateMarkdownManifest(path: "ExternalConformer")
+        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        XCTAssert(related.contains(where: {
+            $0.targetURI == "/documentation/Swift/Hashable" && $0.subtype == "conformsTo"
         }))
     }
 }

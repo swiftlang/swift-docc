@@ -13,7 +13,7 @@ public import Foundation
 // Consumers of `MarkdownOutputNode` in other packages should be able to lift this file and be able to use it standalone, without any dependencies from SwiftDocC.
 
 /// A markdown version of a documentation node.
-public struct MarkdownOutputNode {
+public struct MarkdownOutputNode: Sendable {
 
     /// The metadata about this node
     public var metadata: Metadata
@@ -27,15 +27,15 @@ public struct MarkdownOutputNode {
 }
 
 extension MarkdownOutputNode {
-    public struct Metadata: Codable {
+    public struct Metadata: Codable, Sendable {
     
         static let version = "0.1.0"
         
-        public enum DocumentType: String, Codable {
+        public enum DocumentType: String, Codable, Sendable {
             case article, tutorial, symbol
         }
         
-        public struct Availability: Codable, Equatable {
+        public struct Availability: Codable, Equatable, Sendable {
             
             let platform: String
             let introduced: String?
@@ -72,7 +72,7 @@ extension MarkdownOutputNode {
             }
         }
         
-        public struct Symbol: Codable {
+        public struct Symbol: Codable, Sendable {
             public let kind: String
             public let preciseIdentifier: String
             public let modules: [String]

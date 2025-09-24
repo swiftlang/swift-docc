@@ -15,11 +15,19 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     let context: DocumentationContext
     let bundle: DocumentationBundle
     let identifier: ResolvedTopicReference
+    
+    init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference) {
+        self.context = context
+        self.bundle = bundle
+        self.identifier = identifier
+    }
+    
     var markdown = ""
-    var outgoingReferences: Set<ResolvedTopicReference> = []
+    var outgoingReferences: Set<MarkdownOutputManifest.Relationship> = []
      
     private(set) var indentationToRemove: String?
     private(set) var isRenderingLinkList = false
+    private var lastHeading: String? = nil
     
     /// Perform actions while rendering a link list, which affects the output formatting of links
     public mutating func withRenderingLinkList(_ process: (inout Self) -> Void) {
@@ -91,6 +99,9 @@ extension MarkdownOutputMarkupWalker {
     public mutating func visitHeading(_ heading: Heading) -> () {
         startNewParagraphIfRequired()
         markdown.append(heading.detachedFromParent.format())
+        if heading.level > 1 {
+            lastHeading = heading.plainText
+        }
     }
     
     public mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> () {
@@ -132,7 +143,7 @@ extension MarkdownOutputMarkupWalker {
         else {
             return defaultVisit(symbolLink)
         }
-        outgoingReferences.insert(resolved)
+        
         let linkTitle: String
         var linkListAbstract: (any Markup)?
         if
@@ -148,6 +159,7 @@ extension MarkdownOutputMarkupWalker {
             } else {
                 linkTitle = symbol.title
             }
+            add(source: resolved, type: .belongsToTopic, subtype: nil)
         } else {
             linkTitle = node.title
         }
@@ -165,7 +177,7 @@ extension MarkdownOutputMarkupWalker {
         else {
             return defaultVisit(link)
         }
-        outgoingReferences.insert(resolved)
+        
         let linkTitle: String
         var linkListAbstract: (any Markup)?
         if
@@ -173,6 +185,7 @@ extension MarkdownOutputMarkupWalker {
         {
             if isRenderingLinkList {
                 linkListAbstract = article.abstract
+                add(source: resolved, type: .belongsToTopic, subtype: nil)
             }
             linkTitle = article.title?.plainText ?? resolved.lastPathComponent
         } else {
@@ -317,4 +330,17 @@ extension MarkdownOutputMarkupWalker {
         visit(CodeBlock(codeText))
     }
     
+}
+
+// MARK: - Manifest construction
+extension MarkdownOutputMarkupWalker {
+    mutating func add(source: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: String?) {
+        var targetURI = identifier.path
+        if let lastHeading {
+            targetURI.append("#\(urlReadableFragment(lastHeading))")
+        }
+        let relationship = MarkdownOutputManifest.Relationship(sourceURI: source.path, relationshipType: type, subtype: subtype, targetURI: targetURI)
+        outgoingReferences.insert(relationship)
+                                                               
+    }
 }
