@@ -9,7 +9,6 @@
 */
 
 import Foundation
-public import SymbolKit
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
@@ -42,53 +41,7 @@ public class LinkResolver {
     
     /// The minimal information about an external entity necessary to render links to it on another page.
     @_spi(ExternalLinks) // This isn't stable API yet.
-    public struct ExternalEntity {
-        /// Creates a new external entity.
-        /// - Parameters:
-        ///   - topicRenderReference: The render reference for this external topic.
-        ///   - renderReferenceDependencies: Any dependencies for the render reference.
-        ///   - sourceLanguages: The different source languages for which this page is available.
-        ///   - symbolKind: The kind of symbol that's being referenced.
-        @_spi(ExternalLinks)
-        public init(
-            topicRenderReference: TopicRenderReference,
-            renderReferenceDependencies: RenderReferenceDependencies,
-            sourceLanguages: Set<SourceLanguage>,
-            symbolKind: SymbolGraph.Symbol.KindIdentifier? = nil
-        ) {
-            self.topicRenderReference = topicRenderReference
-            self.renderReferenceDependencies = renderReferenceDependencies
-            self.sourceLanguages = sourceLanguages
-            self.symbolKind = symbolKind
-        }
-        
-        /// The render reference for this external topic.
-        var topicRenderReference: TopicRenderReference
-        /// Any dependencies for the render reference.
-        ///
-        /// For example, if the external content contains links or images, those are included here.
-        var renderReferenceDependencies: RenderReferenceDependencies
-        /// The different source languages for which this page is available.
-        var sourceLanguages: Set<SourceLanguage>
-        /// The kind of symbol that's being referenced.
-        ///
-        /// This value is `nil` if the entity does not reference a symbol.
-        ///
-        /// For example, the navigator requires specific knowledge about what type of external symbol is being linked to.
-        var symbolKind: SymbolGraph.Symbol.KindIdentifier?
-
-        /// Creates a pre-render new topic content value to be added to a render context's reference store.
-        func topicContent() -> RenderReferenceStore.TopicContent {
-            return .init(
-                renderReference: topicRenderReference,
-                canonicalPath: nil,
-                taskGroups: nil,
-                source: nil,
-                isDocumentationExtensionContent: false,
-                renderReferenceDependencies: renderReferenceDependencies
-            )
-        }
-    }
+    public typealias ExternalEntity = LinkDestinationSummary // Currently we use the same format as DocC outputs for its own pages. That may change depending on what information we need here.
     
     /// Attempts to resolve an unresolved reference.
     ///
@@ -266,5 +219,44 @@ private final class FallbackResolverBasedLinkResolver {
         }
         // Give up: there is no local or external document for this reference.
         return nil
+    }
+}
+
+extension LinkResolver.ExternalEntity {
+    /// Creates a pre-render new topic content value to be added to a render context's reference store.
+    func makeTopicContent() -> RenderReferenceStore.TopicContent {
+        .init(
+            renderReference: makeTopicRenderReference(),
+            canonicalPath: nil,
+            taskGroups: nil,
+            source: nil,
+            isDocumentationExtensionContent: false,
+            renderReferenceDependencies: makeRenderDependencies()
+        )
+    }
+    
+    func makeRenderDependencies() -> RenderReferenceDependencies {
+        guard let references else { return .init() }
+        
+       return .init(
+            topicReferences: references.compactMap { ($0 as? TopicRenderReference)?.topicReference(languages: availableLanguages) },
+            linkReferences:  references.compactMap { $0 as? LinkReference },
+            imageReferences: references.compactMap { $0 as? ImageReference }
+        )
+    }
+}
+
+private extension TopicRenderReference {
+    func topicReference(languages: Set<SourceLanguage>) -> ResolvedTopicReference? {
+        guard let url = URL(string: identifier.identifier), let rawBundleID = url.host else {
+            return nil
+        }
+        return ResolvedTopicReference(
+            bundleID: .init(rawValue: rawBundleID),
+            path: url.path,
+            fragment: url.fragment,
+            // TopicRenderReference doesn't have language information. Also, the reference's languages _doesn't_ specify the languages of the linked entity.
+            sourceLanguages: languages
+        )
     }
 }
