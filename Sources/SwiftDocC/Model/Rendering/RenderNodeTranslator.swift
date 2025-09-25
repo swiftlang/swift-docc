@@ -1054,10 +1054,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                guard context.isSymbol(reference: reference) else {
-                    // If the reference corresponds to any kind except Symbol
-                    // (e.g., Article, Tutorial, SampleCode...), allow the topic
-                    // to appear independently of the source language it belongs to.
+                // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
+                // and is external to the bundle, then curate the topic irrespective of the source
+                // language of the page or reference.
+                if !context.isSymbol(reference: reference) && context.isExternal(reference: reference) {
                     return true
                 }
                 
