@@ -94,7 +94,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             availableLanguages: [entityInfo.language],
             platforms: entityInfo.platforms,
             subheadingDeclarationFragments: entityInfo.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
-            navigatorTitle: entityInfo.navigatorTitle?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+            navigatorDeclarationFragments: entityInfo.navigatorTitle?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
             topicImages: entityInfo.topicImages?.map(\.0),
             references: entityInfo.topicImages?.map { topicImage, altText in
                 ImageReference(identifier: topicImage.identifier, altText: altText, imageAsset: assetsToReturn[topicImage.identifier.identifier] ?? .init())

@@ -77,6 +77,12 @@
                             "$ref": "#/components/schemas/DeclarationToken"
                         }
                     },
+                    "navigatorFragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
                     "topicImages": {
                         "type": "array",
                         "items": {
@@ -166,6 +172,13 @@
                         "nullable": true
                     },
                     "fragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        },
+                        "nullable": true
+                    },
+                    "navigatorFragments": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/DeclarationToken"
