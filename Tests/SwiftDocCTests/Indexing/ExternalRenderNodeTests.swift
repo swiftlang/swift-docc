@@ -180,13 +180,13 @@ class ExternalRenderNodeTests: XCTestCase {
             title: swiftTitle,
             availableLanguages: [.swift, .objectiveC],
             usr: "some-unique-symbol-id",
-            declarationFragments: swiftFragments,
+            subheadingDeclarationFragments: swiftFragments,
             variants: [
                 .init(
                     traits: [.interfaceLanguage(SourceLanguage.objectiveC.id)],
                     language: .objectiveC,
                     title: objcTitle,
-                    declarationFragments: objcFragments
+                    subheadingDeclarationFragments: objcFragments
                 )
             ]
         )
@@ -467,13 +467,13 @@ class ExternalRenderNodeTests: XCTestCase {
             availableLanguages: [.swift, .objectiveC],
             platforms: [.init(name: "Platform name", introduced: "1.2.3", isBeta: true)],
             usr: "some-unique-symbol-id",
-            declarationFragments: swiftFragments,
+            subheadingDeclarationFragments: swiftFragments,
             variants: [
                 .init(
                     traits: [.interfaceLanguage(SourceLanguage.objectiveC.id)],
                     language: .objectiveC,
                     title: objcTitle,
-                    declarationFragments: objcFragments
+                    subheadingDeclarationFragments: objcFragments
                 )
             ]
         )

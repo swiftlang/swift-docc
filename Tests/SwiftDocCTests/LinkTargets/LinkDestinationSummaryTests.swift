@@ -114,7 +114,7 @@ class LinkDestinationSummaryTests: XCTestCase {
         XCTAssertEqual(pageSummary.redirects, nil)
         XCTAssertNil(pageSummary.usr, "Only symbols have USRs")
         XCTAssertNil(pageSummary.plainTextDeclaration, "Only symbols have a plain text declaration")
-        XCTAssertNil(pageSummary.declarationFragments, "Only symbols have declaration fragments")
+        XCTAssertNil(pageSummary.subheadingDeclarationFragments, "Only symbols have subheading declaration fragments")
         XCTAssertNil(pageSummary.navigatorTitle, "Only symbols have navigator titles")
         XCTAssertNil(pageSummary.abstract, "There is no text to use as an abstract for the tutorial page")
         XCTAssertNil(pageSummary.topicImages, "The tutorial page doesn't have any topic images")
@@ -134,7 +134,7 @@ class LinkDestinationSummaryTests: XCTestCase {
         ])
         XCTAssertNil(sectionSummary.usr, "Only symbols have USRs")
         XCTAssertNil(sectionSummary.plainTextDeclaration, "Only symbols have a plain text declaration")
-        XCTAssertNil(sectionSummary.declarationFragments, "Only symbols have declaration fragments")
+        XCTAssertNil(sectionSummary.subheadingDeclarationFragments, "Only symbols have subheading declaration fragments")
         XCTAssertNil(sectionSummary.navigatorTitle, "Only symbols have navigator titles")
         XCTAssertEqual(sectionSummary.abstract, [
             .text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"),
@@ -185,7 +185,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC")
             XCTAssertEqual(summary.plainTextDeclaration, "class MyClass")
-            XCTAssertEqual(summary.declarationFragments, [
+            XCTAssertEqual(summary.subheadingDeclarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "MyClass", kind: .identifier, identifier: nil),
@@ -228,7 +228,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ProtocolP")
             XCTAssertEqual(summary.plainTextDeclaration, "protocol MyProtocol : Hashable")
-            XCTAssertEqual(summary.declarationFragments, [
+            XCTAssertEqual(summary.subheadingDeclarationFragments, [
                 .init(text: "protocol", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "MyProtocol", kind: .identifier, identifier: nil),
@@ -263,7 +263,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
             XCTAssertEqual(summary.plainTextDeclaration, "func myFunction(for name...)")
-            XCTAssertEqual(summary.declarationFragments, [
+            XCTAssertEqual(summary.subheadingDeclarationFragments, [
                 .init(text: "func", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "myFunction", kind: .identifier, identifier: nil),
@@ -300,7 +300,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
             XCTAssertEqual(summary.plainTextDeclaration, "func globalFunction(_: Data, considering: Int)")
-            XCTAssertEqual(summary.declarationFragments, [
+            XCTAssertEqual(summary.subheadingDeclarationFragments, [
                 .init(text: "func", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "globalFunction", kind: .identifier, identifier: nil),
@@ -368,7 +368,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
             XCTAssertEqual(summary.plainTextDeclaration, "func myFunction(for name...)")
-            XCTAssertEqual(summary.declarationFragments, [
+            XCTAssertEqual(summary.subheadingDeclarationFragments, [
                 .init(text: "func", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "myFunction", kind: .identifier, identifier: nil),
@@ -482,7 +482,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar")
             XCTAssertEqual(summary.plainTextDeclaration, "class Bar")
-            XCTAssertEqual(summary.declarationFragments, [
+            XCTAssertEqual(summary.subheadingDeclarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "Bar", kind: .identifier, identifier: nil)
@@ -499,7 +499,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             // Check variant content that is different
             XCTAssertEqual(variant.language, .objectiveC)
             XCTAssertEqual(variant.plainTextDeclaration, "@interface Bar : NSObject")
-            XCTAssertEqual(variant.declarationFragments, [
+            XCTAssertEqual(variant.subheadingDeclarationFragments, [
                 .init(text: "@interface", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "Bar", kind: .identifier, identifier: nil),
@@ -549,7 +549,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar(cm)myStringFunction:error:")
             XCTAssertEqual(summary.plainTextDeclaration, "class func myStringFunction(_ string: String) throws -> String")
-            XCTAssertEqual(summary.declarationFragments, [
+            XCTAssertEqual(summary.subheadingDeclarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "func", kind: .keyword, identifier: nil),
@@ -575,7 +575,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(variant.language, .objectiveC)
             XCTAssertEqual(variant.title, "myStringFunction:error:")
             XCTAssertEqual(variant.plainTextDeclaration, "+ (NSString *) myStringFunction: (NSString *)string error: (NSError **)error;")
-            XCTAssertEqual(variant.declarationFragments, [
+            XCTAssertEqual(variant.subheadingDeclarationFragments, [
                 .init(text: "+ ", kind: .text, identifier: nil),
                 .init(text: "myStringFunction:error:", kind: .identifier, identifier: nil)
             ])
@@ -713,7 +713,7 @@ class LinkDestinationSummaryTests: XCTestCase {
         XCTAssertEqual(decoded.title, "ClassName")
         XCTAssertEqual(decoded.abstract?.plainText, "A brief explanation of my class.")
         XCTAssertEqual(decoded.relativePresentationURL.absoluteString, "documentation/MyKit/ClassName")
-        XCTAssertEqual(decoded.declarationFragments, [
+        XCTAssertEqual(decoded.subheadingDeclarationFragments, [
             .init(text: "class", kind: .keyword, identifier: nil),
             .init(text: " ", kind: .text, identifier: nil),
             .init(text: "ClassName", kind: .identifier, identifier: nil),
