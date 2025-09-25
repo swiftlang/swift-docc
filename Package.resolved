@@ -3,7 +3,7 @@
     {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-argument-parser.git",
+      "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
         "revision" : "0fbc8848e389af3bb55c182bc19ca9d5dc2f255b",
         "version" : "1.4.0"
@@ -66,10 +66,10 @@
     {
       "identity" : "swift-docc-symbolkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-docc-symbolkit.git",
+      "location" : "https://github.com/QuietMisdreavus/swift-docc-symbolkit.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "96bce1cfad4f4d7e265c1eb46729ebf8a7695f4b"
+        "branch" : "same-shape",
+        "revision" : "ca7571fd81e6427a8b16a50b162212aee972669a"
       }
     },
     {
