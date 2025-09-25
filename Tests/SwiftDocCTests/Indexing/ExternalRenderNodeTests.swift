@@ -65,6 +65,42 @@ class ExternalRenderNodeTests: XCTestCase {
                 platforms: [.init(name: "macOS", introduced: nil, isBeta: false)]
             )
         )
+        externalResolver.entitiesToReturn["/path/to/external/navigatorTitleSwiftSymbol"] = .success(
+            .init(
+                referencePath: "/path/to/external/navigatorTitleSwiftSymbol",
+                title: "NavigatorTitleSwiftSymbol (title)",
+                kind: .class,
+                language: .swift,
+                declarationFragments: .init(declarationFragments: [
+                    .init(kind: .keyword, spelling: "class", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                    .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol", preciseIdentifier: nil)
+                ]),
+                navigatorTitle: .init(declarationFragments: [
+                    .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol (navigator title)", preciseIdentifier: nil)
+                ]),
+                platforms: [.init(name: "iOS", introduced: nil, isBeta: true)]
+            )
+        )
+        externalResolver.entitiesToReturn["/path/to/external/navigatorTitleObjCSymbol"] = .success(
+            .init(
+                referencePath: "/path/to/external/navigatorTitleObjCSymbol",
+                title: "NavigatorTitleObjCSymbol (title)",
+                kind: .function,
+                language: .objectiveC,
+                declarationFragments: .init(declarationFragments: [
+                    .init(kind: .text, spelling: "- ", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: nil),
+                    .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+                    .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil)
+                ]),
+                navigatorTitle: .init(declarationFragments: [
+                    .init(kind: .identifier, spelling: "NavigatorTitleObjCSymbol (navigator title)", preciseIdentifier: nil)
+                ]),
+                platforms: [.init(name: "macOS", introduced: nil, isBeta: false)]
+            )
+        )
         return externalResolver
     }
         
@@ -266,6 +302,80 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(objcSymbolExternalNode.type, "func")
     }
     
+    func testNavigatorWithExternalNodesWithNavigatorTitle() async throws {
+        let catalog = Folder(name: "ModuleName.docc", content: [
+            Folder(name: "swift", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
+                ]))
+            ]),
+            Folder(name: "clang", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
+                ]))
+            ]),
+            
+            InfoPlist(identifier: "some.custom.identifier"),
+            
+            TextFile(name: "ModuleName.md", utf8Content: """
+            # ``ModuleName``
+            
+            Curate a few external language-specific symbols and articles 
+
+            ## Topics
+
+            ### External Reference
+
+            - <doc://com.test.external/path/to/external/navigatorTitleSwiftSymbol>
+            - <doc://com.test.external/path/to/external/navigatorTitleObjCSymbol>
+            """),
+        ])
+        
+        var configuration = DocumentationContext.Configuration()
+        let externalResolver = generateExternalResolver()
+        configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        builder.setup()
+        for externalLink in context.externalCache {
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+            try builder.index(renderNode: externalRenderNode)
+        }
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+        }
+        builder.finalize()
+        let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+
+        // Verify that there are no uncurated external links at the top level
+        XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.count(where: \.isExternal), 0)
+        XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.count(where: \.isExternal), 0)
+
+        func externalNodes(by language: SourceLanguage) -> [RenderIndex.Node]? {
+            renderIndex.interfaceLanguages[language.id]?.first?.children?.filter(\.isExternal)
+        }
+        
+        // Verify that the curated external links are part of the index.
+        let swiftExternalNodes = try XCTUnwrap(externalNodes(by: .swift))
+        let objcExternalNodes = try XCTUnwrap(externalNodes(by: .objectiveC))
+
+        XCTAssertEqual(swiftExternalNodes.count, 1)
+        XCTAssertEqual(objcExternalNodes.count, 1)
+
+        let swiftSymbolExternalNode = try XCTUnwrap(swiftExternalNodes.first)
+        let objcSymbolExternalNode = try XCTUnwrap(objcExternalNodes.first)
+
+        XCTAssertEqual(swiftSymbolExternalNode.title, "NavigatorTitleSwiftSymbol (title)")  // Swift types prefer not using the navigator title where possible
+        XCTAssertEqual(objcSymbolExternalNode.title, "NavigatorTitleObjCSymbol (navigator title)")  // Objective C types prefer using the navigator title where possible
+    }
+
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
         let catalog = Folder(name: "ModuleName.docc", content: [
             Folder(name: "swift", content: [
