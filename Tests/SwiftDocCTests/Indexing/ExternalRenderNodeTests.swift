@@ -269,15 +269,15 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.count(where: \.isExternal), 0)
 
         
-        func externalNodes(by language: SourceLanguage) -> [RenderIndex.Node]? {
+        func externalTopLevelNodes(for language: SourceLanguage) -> [RenderIndex.Node]? {
             renderIndex.interfaceLanguages[language.id]?.first?.children?.filter(\.isExternal)
         }
         
         // Verify that the curated external links are part of the index.
-        let swiftExternalNodes = try XCTUnwrap(externalNodes(by: .swift))
+        let swiftExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .swift))
         XCTAssertEqual(swiftExternalNodes.count, 2)
 
-        let objcExternalNodes = try XCTUnwrap(externalNodes(by: .objectiveC))
+        let objcExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .objectiveC))
         XCTAssertEqual(objcExternalNodes.count, 2)
 
         let swiftArticleExternalNode = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/swiftarticle" }))
@@ -358,13 +358,13 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.count(where: \.isExternal), 0)
         XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.count(where: \.isExternal), 0)
 
-        func externalNodes(by language: SourceLanguage) -> [RenderIndex.Node]? {
+        func externalTopLevelNodes(for language: SourceLanguage) -> [RenderIndex.Node]? {
             renderIndex.interfaceLanguages[language.id]?.first?.children?.filter(\.isExternal)
         }
         
         // Verify that the curated external links are part of the index.
-        let swiftExternalNodes = try XCTUnwrap(externalNodes(by: .swift))
-        let objcExternalNodes = try XCTUnwrap(externalNodes(by: .objectiveC))
+        let swiftExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .swift))
+        let objcExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .objectiveC))
 
         XCTAssertEqual(swiftExternalNodes.count, 1)
         XCTAssertEqual(objcExternalNodes.count, 1)
