@@ -65,30 +65,29 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
 
 extension Snippet: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
-        guard let snippet = Snippet(from: originalMarkup, for: contentCompiler.bundle) else {
-                return []
-            }
+        guard case .success(let resolvedSnippet) = contentCompiler.context.snippetResolver.resolveSnippet(path: path) else {
+            return []
+        }
+        let mixin = resolvedSnippet.mixin
+        
+        if let sliceRange = slice.flatMap({ mixin.slices[$0] }) {
+            // Render only this slice without the explanatory content.
+            let lines = mixin.lines
+                // Trim the lines
+                .dropFirst(sliceRange.startIndex).prefix(sliceRange.endIndex - sliceRange.startIndex)
+                // Trim the whitespace
+                .linesWithoutLeadingWhitespace()
+                // Make dedicated copies of each line because the RenderBlockContent.codeListing requires it.
+                .map { String($0) }
             
-            guard let snippetReference = contentCompiler.resolveSymbolReference(destination: snippet.path),
-                  let snippetEntity = try? contentCompiler.context.entity(with: snippetReference),
-                  let snippetSymbol = snippetEntity.symbol,
-                  let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
-                return []
-            }
+            return [RenderBlockContent.codeListing(.init(syntax: mixin.language, code: lines, metadata: nil))]
+        } else {
+            // Render the full snippet and its explanatory content.
+            let fullCode = RenderBlockContent.codeListing(.init(syntax: mixin.language, code: mixin.lines, metadata: nil))
             
-            if let requestedSlice = snippet.slice,
-               let requestedLineRange = snippetMixin.slices[requestedSlice] {
-                // Render only the slice.
-                let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
-                let lines = snippetMixin.lines[lineRange]
-                let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
-                let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
-                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
-            } else {
-                // Render the whole snippet with its explanation content.
-                let docCommentContent = snippetEntity.markup.children.flatMap { contentCompiler.visit($0) }
-                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
-                return docCommentContent + [code]
-            }
+            var content: [any RenderContent] = resolvedSnippet.explanation?.children.flatMap { contentCompiler.visit($0) } ?? []
+            content.append(fullCode)
+            return content
+        }
     }
 }

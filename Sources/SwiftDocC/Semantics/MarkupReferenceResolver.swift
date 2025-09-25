@@ -26,6 +26,34 @@ private func unknownSnippetSliceProblem(snippetPath: String, slice: String, rang
     return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
+private func unresolvedSnippetPathProblem(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Problem {
+    var solutions: [Solution] = []
+    var notes: [DiagnosticNote] = []
+    if let range {
+        if let note = errorInfo.note, let source {
+            notes.append(DiagnosticNote(source: source, range: range, message: note))
+        }
+        
+        solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: range))
+    }
+    
+    let diagnosticRange: SourceRange?
+    if var rangeAdjustment = errorInfo.rangeAdjustment, let range {
+        rangeAdjustment.offsetWithRange(range)
+        assert(rangeAdjustment.lowerBound.column >= 0, """
+            Unresolved snippet reference range adjustment created range with negative column.
+            Source: \(source?.absoluteString ?? "nil")
+            Range: \(rangeAdjustment.lowerBound.description):\(rangeAdjustment.upperBound.description)
+            Summary: \(errorInfo.message)
+            """)
+        diagnosticRange = rangeAdjustment
+    } else {
+        diagnosticRange = range
+    }
+    
+    let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: "org.swift.docc.unresolvedSnippetPath", summary: errorInfo.message, notes: notes)
+    return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
+}
 private func removedLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     var solutions = [Solution]()
     if let range, reference.pathComponents.count > 3 {
@@ -171,24 +199,22 @@ struct MarkupReferenceResolver: MarkupRewriter {
         let source = blockDirective.range?.source
         switch blockDirective.name {
         case Snippet.directiveName:
-            var problems = [Problem]()
+            var problems = [Problem]() // ???: DAVID IS IGNORED?
             guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, problems: &problems) else {
                 return blockDirective
             }
             
-            if let resolved = resolveAbsoluteSymbolLink(unresolvedDestination: snippet.path, elementRange: blockDirective.range) {
-                var argumentText = "path: \"\(resolved.absoluteString)\""
-                if let requestedSlice = snippet.slice,
-                   let snippetMixin = try? context.entity(with: resolved).symbol?
-                    .mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet {
-                    guard snippetMixin.slices[requestedSlice] != nil else {
-                        problems.append(unknownSnippetSliceProblem(snippetPath: snippet.path, slice: requestedSlice, range: blockDirective.nameRange))
+            switch context.snippetResolver.resolveSnippet(path: snippet.path) {
+            case .success(let resolvedSnippet):
+                if let requestedSlice = snippet.slice {
+                    guard resolvedSnippet.mixin.slices[requestedSlice] != nil else {
+                        self.problems.append(unknownSnippetSliceProblem(snippetPath: snippet.path, slice: requestedSlice, range: blockDirective.nameRange))
                         return blockDirective
                     }
-                    argumentText.append(", slice: \"\(requestedSlice)\"")
                 }
-                return BlockDirective(name: Snippet.directiveName, argumentText: argumentText, children: [])
-            } else {
+                return blockDirective
+            case .failure(let errorInfo):
+                self.problems.append(unresolvedSnippetPathProblem(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
                 return blockDirective
             }
         case ImageMedia.directiveName:
