@@ -13,76 +13,69 @@ import SymbolKit
 
 /// A rendering-friendly representation of a external node.
 package struct ExternalRenderNode {
-    private var entity: LinkResolver.ExternalEntity
-    private var topicRenderReference:  TopicRenderReference
-    
+    /// Underlying external entity backing this external node.
+    private var externalEntity: LinkResolver.ExternalEntity
+
     /// The bundle identifier for this external node.
     private var bundleIdentifier: DocumentationBundle.Identifier
 
-    // This type is designed to misrepresent external content as local content to fit in with the navigator.
-    // This spreads the issue to more code rather than fixing it, which adds technical debt and can be fragile.
-    //
-    // At the time of writing this comment, this type and the issues it comes with has spread to 6 files (+ 3 test files).
-    // Luckily, none of that code is public API so we can modify or even remove it without compatibility restrictions.
     init(externalEntity: LinkResolver.ExternalEntity, bundleIdentifier: DocumentationBundle.Identifier) {
-        self.entity = externalEntity
+        self.externalEntity = externalEntity
         self.bundleIdentifier = bundleIdentifier
-        self.topicRenderReference = externalEntity.makeTopicRenderReference()
     }
     
     /// The identifier of the external render node.
     package var identifier: ResolvedTopicReference {
         ResolvedTopicReference(
             bundleID: bundleIdentifier,
-            path: entity.referenceURL.path,
-            fragment: entity.referenceURL.fragment,
-            sourceLanguages: entity.availableLanguages
+            path: externalEntity.topicRenderReference.url,
+            sourceLanguages: externalEntity.sourceLanguages
         )
     }
 
     /// The kind of this documentation node.
     var kind: RenderNode.Kind {
-        topicRenderReference.kind
+        externalEntity.topicRenderReference.kind
     }
     
     /// The symbol kind of this documentation node.
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     var symbolKind: SymbolGraph.Symbol.KindIdentifier? {
-        DocumentationNode.symbolKind(for: entity.kind)
+        externalEntity.symbolKind
     }
     
     /// The additional "role" assigned to the symbol, if any
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     var role: String? {
-        topicRenderReference.role
+        externalEntity.topicRenderReference.role
     }
     
     /// The variants of the title.
     var titleVariants: VariantCollection<String> {
-        topicRenderReference.titleVariants
+        externalEntity.topicRenderReference.titleVariants
     }
     
     /// The variants of the abbreviated declaration of the symbol to display in navigation.
     var navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> {
-        topicRenderReference.navigatorTitleVariants
+        externalEntity.topicRenderReference.navigatorTitleVariants
     }
     
     /// Author provided images that represent this page.
     var images: [TopicImage] {
-        entity.topicImages ?? []
+        externalEntity.topicRenderReference.images
     }
 
     /// The identifier of the external reference.
     var externalIdentifier: RenderReferenceIdentifier {
-        topicRenderReference.identifier
+        externalEntity.topicRenderReference.identifier
     }
 
     /// List of variants of the same external node for various languages.
     var variants: [RenderNode.Variant]? {
-        entity.availableLanguages.map {
-            RenderNode.Variant(traits: [.interfaceLanguage($0.id)], paths: [topicRenderReference.url])
+        externalEntity.sourceLanguages.map {
+            RenderNode.Variant(traits: [.interfaceLanguage($0.id)], paths: [externalEntity.topicRenderReference.url])
         }
     }
     
@@ -90,16 +83,13 @@ package struct ExternalRenderNode {
     ///
     /// This value is `false` if the referenced page is not a symbol.
     var isBeta: Bool {
-        topicRenderReference.isBeta
+        externalEntity.topicRenderReference.isBeta
     }
 }
 
 /// A language specific representation of an external render node value for building a navigator index.
 struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
-    private var _identifier: ResolvedTopicReference
-    var identifier: ResolvedTopicReference {
-        _identifier
-    }
+    var identifier: ResolvedTopicReference
     var kind: RenderNode.Kind
     var metadata: ExternalRenderNodeMetadataRepresentation
     
@@ -119,7 +109,7 @@ struct NavigatorExternalRenderNode: NavigatorIndexableRenderNodeRepresentation {
         }
         let traits = trait.map { [$0] } ?? []
 
-        self._identifier = renderNode.identifier.withSourceLanguages([traitLanguage])
+        self.identifier = renderNode.identifier.withSourceLanguages(Set(arrayLiteral: traitLanguage))
         self.kind = renderNode.kind
         
         self.metadata = ExternalRenderNodeMetadataRepresentation(

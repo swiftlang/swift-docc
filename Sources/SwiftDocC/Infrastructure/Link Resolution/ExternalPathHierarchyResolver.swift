@@ -87,10 +87,31 @@ final class ExternalPathHierarchyResolver {
     ///
     /// - Precondition: The `reference` was previously resolved by this resolver.
     func entity(_ reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-        guard let alreadyResolvedSummary = content[reference] else {
+        guard let resolvedInformation = content[reference] else {
             fatalError("The resolver should only be asked for entities that it resolved.")
         }
-        return alreadyResolvedSummary
+        
+        let topicReferences: [ResolvedTopicReference] = (resolvedInformation.references ?? []).compactMap {
+            guard let renderReference = $0 as? TopicRenderReference,
+                  let url = URL(string: renderReference.identifier.identifier),
+                  let bundleID = url.host
+            else {
+                return nil
+            }
+            return ResolvedTopicReference(bundleID: .init(rawValue: bundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+        }
+        let dependencies = RenderReferenceDependencies(
+            topicReferences: topicReferences,
+            linkReferences: (resolvedInformation.references ?? []).compactMap { $0 as? LinkReference },
+            imageReferences: (resolvedInformation.references ?? []).compactMap { $0 as? ImageReference }
+        )
+        
+        return .init(
+            topicRenderReference: resolvedInformation.topicRenderReference(),
+            renderReferenceDependencies: dependencies,
+            sourceLanguages: resolvedInformation.availableLanguages,
+            symbolKind: DocumentationNode.symbolKind(for: resolvedInformation.kind)
+        )
     }
     
     // MARK: Deserialization
@@ -161,9 +182,9 @@ private extension Sequence<DeclarationRenderSection.Token> {
 
 // MARK: ExternalEntity
 
-extension LinkDestinationSummary {
+private extension LinkDestinationSummary {
     /// A value that indicates whether this symbol is under development and likely to change.
-    private var isBeta: Bool {
+    var isBeta: Bool {
         guard let platforms, !platforms.isEmpty else {
             return false
         }
@@ -172,7 +193,7 @@ extension LinkDestinationSummary {
     }
     
     /// Create a topic render render reference for this link summary and its content variants.
-    func makeTopicRenderReference() -> TopicRenderReference {
+    func topicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
         
         var titleVariants = VariantCollection(defaultValue: title)
