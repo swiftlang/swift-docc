@@ -158,7 +158,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// These navigator fragments are suitable to use to refer to a symbol that's linked to in a navigator.
     ///
     /// - Note: The navigator title does not represent the symbol's full declaration.
-    ///   Different overloads may have indistinguishable subheading fragments.
+    ///   Different overloads may have indistinguishable navigator fragments.
     public let navigatorDeclarationFragments: DeclarationFragments?
 
     /// Any previous URLs for this element.
