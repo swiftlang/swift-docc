@@ -173,11 +173,6 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)
         
-        for child in context.children(of: identifier) {
-            // Only interested in symbols
-            guard child.kind.isSymbol else { continue }
-            add(target: child.reference, type: .memberSymbol, subtype: child.kind.name)
-        }
         for relationshipGroup in symbol.relationships.groups {
             for destination in relationshipGroup.destinations {
                 switch context.resolve(destination, in: identifier) {
