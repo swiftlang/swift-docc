@@ -1478,7 +1478,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                             }
                         } else if let entity = context.externalCache[resolved] {
                             collectedTopicReferences.append(resolved)
-                            destinationsMap[destination] = entity.title
+                            destinationsMap[destination] = entity.topicRenderReference.title
                         } else {
                             fatalError("A successfully resolved reference should have either local or external content.")
                         }

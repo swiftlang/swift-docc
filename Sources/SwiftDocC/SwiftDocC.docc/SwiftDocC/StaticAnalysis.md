@@ -12,6 +12,7 @@ Run static analysis checks on markup files.
 
 ### Predefined Checks
 
+- ``AbstractContainsFormattedTextOnly``
 - ``DuplicateTopicsSections``
 - ``InvalidAdditionalTitle``
 - ``MissingAbstract``
@@ -19,4 +20,4 @@ Run static analysis checks on markup files.
 - ``NonOverviewHeadingChecker``
 - ``SeeAlsoInTopicsHeadingChecker``
 
-<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

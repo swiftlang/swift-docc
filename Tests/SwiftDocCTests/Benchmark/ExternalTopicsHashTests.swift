@@ -22,13 +22,17 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
             let reference = ResolvedTopicReference(bundleID: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift)
             let entity = LinkResolver.ExternalEntity(
-                kind: .class,
-                language: .swift,
-                relativePresentationURL: URL(string: "/\(preciseIdentifier)")!,
-                referenceURL: reference.url,
-                title: preciseIdentifier,
-                availableLanguages: [.swift],
-                variants: []
+                topicRenderReference: TopicRenderReference(
+                    identifier: .init(preciseIdentifier),
+                    title: preciseIdentifier,
+                    abstract: [],
+                    url: "/" + preciseIdentifier,
+                    kind: .symbol,
+                    estimatedTime: nil
+                ),
+                renderReferenceDependencies: .init(),
+                sourceLanguages: [.swift],
+                symbolKind: .class
             )
             return (reference, entity)
         }
