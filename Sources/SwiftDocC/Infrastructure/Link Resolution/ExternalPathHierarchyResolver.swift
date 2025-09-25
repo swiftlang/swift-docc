@@ -58,13 +58,13 @@ final class ExternalPathHierarchyResolver {
             return collidingNode.name
         }
         if let symbolID = collidingNode.symbol?.identifier {
-            if symbolID.interfaceLanguage == summary.language.id, let fullName = summary.fullName {
-                return fullName
+            if symbolID.interfaceLanguage == summary.language.id, let plainTextDeclaration = summary.plainTextDeclaration {
+                return plainTextDeclaration
             }
             if let variant = summary.variants.first(where: { $0.traits.contains(.interfaceLanguage(symbolID.interfaceLanguage)) }),
-               let fullName = variant.fullName ?? summary.fullName
+               let plainTextDeclaration = variant.plainTextDeclaration ?? summary.plainTextDeclaration
             {
-                return fullName
+                return plainTextDeclaration
             }
         }
         return summary.title

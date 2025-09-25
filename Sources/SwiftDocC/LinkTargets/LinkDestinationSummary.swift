@@ -135,8 +135,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     public let usr: String?
     
-    /// The full name of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
-    public let fullName: String?
+    /// The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
+    public let plainTextDeclaration: String?
     
     /// The rendered fragments of a symbol's declaration.
     public typealias DeclarationFragments = [DeclarationRenderSection.Token]
@@ -199,10 +199,10 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// If the summarized element has a precise symbol identifier but the variant doesn't, this property will be `Optional.some(nil)`.
         public let usr: VariantValue<String?>
         
-        /// The full name of this symbol, derived from its full declaration fragments, or `nil` if the precise symbol identifier is the same as the summarized element.
+        /// The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the precise symbol identifier is the same as the summarized element.
         ///
-        /// If the summarized element has a full name but the variant doesn't, this property will be `Optional.some(nil)`.
-        public let fullName: VariantValue<String?>
+        /// If the summarized element has a plain text declaration but the variant doesn't, this property will be `Optional.some(nil)`.
+        public let plainTextDeclaration: VariantValue<String?>
         
         /// The abbreviated declaration of the variant, to display in links, or `nil` if the declaration is the same as the summarized element.
         ///
@@ -231,7 +231,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///   - abstract: The abstract of the variant or `nil` if the abstract is the same as the summarized element.
         ///   - taskGroups: The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///   - usr: The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
-        ///   - fullName: The full name of this symbol, derived from its full declaration fragments, or `nil` if the precise symbol identifier is the same as the summarized element.
+        ///   - plainTextDeclaration: The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the precise symbol identifier is the same as the summarized element.
         ///   - declarationFragments: The abbreviated declaration of the variant, to display in links, or `nil` if the declaration is the same as the summarized element.
         ///   - navigatorTitle: The abbreviated declaration for this symbol's declaration, to display in navigation, or `nil` if the declaration is the same as the summarized element.
         public init(
@@ -243,7 +243,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
             abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
             taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
             usr: VariantValue<String?> = nil,
-            fullName: VariantValue<String?> = nil,
+            plainTextDeclaration: VariantValue<String?> = nil,
             declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
             navigatorTitle: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil
         ) {
@@ -255,12 +255,12 @@ public struct LinkDestinationSummary: Codable, Equatable {
             self.abstract = abstract
             self.taskGroups = taskGroups
             self.usr = usr
-            self.fullName = fullName
+            self.plainTextDeclaration = plainTextDeclaration
             self.declarationFragments = declarationFragments
             self.navigatorTitle = navigatorTitle
         }
         
-        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:fullName:declarationFragments:navigatorTitle:)", message: "Use `init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:fullName:declarationFragments:navigatorTitle:)` instead. `TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.3 is released")
+        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:declarationFragments:navigatorTitle:)", message: "Use `init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:declarationFragments:navigatorTitle:)` instead. `TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.3 is released")
         public init(
             traits: [RenderNode.Variant.Trait],
             kind: VariantValue<DocumentationNode.Kind> = nil,
@@ -270,7 +270,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
             abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
             taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
             usr: VariantValue<String?> = nil,
-            fullName: VariantValue<String?> = nil,
+            plainTextDeclaration: VariantValue<String?> = nil,
             declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
             navigatorTitle: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
             topicImages: VariantValue<[TopicImage]?> = nil
@@ -284,7 +284,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
                 abstract: abstract,
                 taskGroups: taskGroups,
                 usr: usr,
-                fullName: fullName,
+                plainTextDeclaration: plainTextDeclaration,
                 declarationFragments: declarationFragments,
                 navigatorTitle: navigatorTitle
             )
@@ -307,7 +307,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - platforms: Information about the platforms for which the summarized element is available.
     ///   - taskGroups: The reference URLs of the summarized element's children, grouped by their task groups.
     ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
-    ///   - fullName: The full name of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
+    ///   - plainTextDeclaration: The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
     ///   - declarationFragments: The abbreviated fragments for this symbol's declaration, to display in links, or `nil` if the summarized element isn't a symbol.
     ///   - navigatorTitle: The abbreviated fragments for this symbol's declaration, to display in navigation, or `nil` if the summarized element isn't a symbol.
     ///   - redirects: Any previous URLs for this element, or `nil` if this element has no previous URLs.
@@ -324,7 +324,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
         taskGroups: [LinkDestinationSummary.TaskGroup]? = nil,
         usr: String? = nil,
-        fullName: String? = nil,
+        plainTextDeclaration: String? = nil,
         declarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
         navigatorTitle: LinkDestinationSummary.DeclarationFragments? = nil,
         redirects: [URL]? = nil,
@@ -342,7 +342,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.platforms = platforms
         self.taskGroups = taskGroups
         self.usr = usr
-        self.fullName = fullName
+        self.plainTextDeclaration = plainTextDeclaration
         self.declarationFragments = declarationFragments
         self.navigatorTitle = navigatorTitle
         self.redirects = redirects
@@ -498,7 +498,7 @@ extension LinkDestinationSummary {
         
         let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstract)
         let usr = symbol.externalIDVariants[summaryTrait] ?? symbol.externalID
-        let fullName = symbol.fullName(for: summaryTrait)
+        let plainTextDeclaration = symbol.plainTextDeclaration(for: summaryTrait)
         let language = documentationNode.sourceLanguage
         // Use the abbreviated declaration fragments instead of the full declaration fragments.
         // These have been derived from the symbol's subheading declaration fragments as part of rendering.
@@ -522,7 +522,7 @@ extension LinkDestinationSummary {
                 return main == variant ? nil : variant
             }
             
-            let fullNameVariant = symbol.fullName(for: trait)
+            let plainTextDeclarationVariant = symbol.plainTextDeclaration(for: trait)
             let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(interfaceLanguage)]
             
             // Use the abbreviated declaration fragments instead of the full declaration fragments.
@@ -543,7 +543,7 @@ extension LinkDestinationSummary {
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
                 taskGroups: nilIfEqual(main: taskGroups, variant: taskGroupVariants[variantTraits]),
                 usr: nil, // The symbol variant uses the same USR
-                fullName: nilIfEqual(main: fullName, variant: fullNameVariant),
+                plainTextDeclaration: nilIfEqual(main: plainTextDeclaration, variant: plainTextDeclarationVariant),
                 declarationFragments: nilIfEqual(main: declaration, variant: declarationVariant),
                 navigatorTitle: nilIfEqual(main: navigatorTitle, variant: navigatorTitleVariant)
             )
@@ -564,7 +564,7 @@ extension LinkDestinationSummary {
             platforms: platforms,
             taskGroups: taskGroups,
             usr: usr,
-            fullName: fullName,
+            plainTextDeclaration: plainTextDeclaration,
             declarationFragments: declaration,
             navigatorTitle: navigatorTitle,
             redirects: redirects,
@@ -648,7 +648,7 @@ extension LinkDestinationSummary {
 // Add Codable methods—which include an initializer—in an extension so that it doesn't override the member-wise initializer.
 extension LinkDestinationSummary {
     enum CodingKeys: String, CodingKey {
-        case kind, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, topicImages, references, variants, fullName, navigatorTitle
+        case kind, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, topicImages, references, variants, plainTextDeclaration, navigatorTitle
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
     }
@@ -680,7 +680,7 @@ extension LinkDestinationSummary {
         try container.encodeIfPresent(platforms, forKey: .platforms)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
         try container.encodeIfPresent(usr, forKey: .usr)
-        try container.encodeIfPresent(fullName, forKey: .fullName)
+        try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(navigatorTitle, forKey: .navigatorTitle)
         try container.encodeIfPresent(redirects, forKey: .redirects)
@@ -738,7 +738,7 @@ extension LinkDestinationSummary {
         platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
         taskGroups = try container.decodeIfPresent([TaskGroup].self, forKey: .taskGroups)
         usr = try container.decodeIfPresent(String.self, forKey: .usr)
-        fullName = try container.decodeIfPresent(String.self, forKey: .fullName)
+        plainTextDeclaration = try container.decodeIfPresent(String.self, forKey: .plainTextDeclaration)
         declarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .declarationFragments)
         navigatorTitle = try container.decodeIfPresent(DeclarationFragments.self, forKey: .navigatorTitle)
         redirects = try container.decodeIfPresent([URL].self, forKey: .redirects)
@@ -753,7 +753,7 @@ extension LinkDestinationSummary {
 
 extension LinkDestinationSummary.Variant {
     enum CodingKeys: String, CodingKey {
-        case traits, kind, title, abstract, language, usr, taskGroups, fullName, navigatorTitle
+        case traits, kind, title, abstract, language, usr, taskGroups, plainTextDeclaration, navigatorTitle
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
     }
@@ -779,7 +779,7 @@ extension LinkDestinationSummary.Variant {
             }
         }
         try container.encodeIfPresent(usr, forKey: .usr)
-        try container.encodeIfPresent(fullName, forKey: .fullName)
+        try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(navigatorTitle, forKey: .navigatorTitle)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
@@ -822,7 +822,7 @@ extension LinkDestinationSummary.Variant {
         title = try container.decodeIfPresent(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
         usr = try container.decodeIfPresent(String?.self, forKey: .usr)
-        fullName = try container.decodeIfPresent(String?.self, forKey: .fullName)
+        plainTextDeclaration = try container.decodeIfPresent(String?.self, forKey: .plainTextDeclaration)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         navigatorTitle = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorTitle)
         taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup]?.self, forKey: .taskGroups)
@@ -934,15 +934,9 @@ private extension Collection {
     }
 }
 
-private extension Sequence<DeclarationRenderSection.Token> {
-    func plainTextDeclaration() -> String {
-        return self.map(\.text).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
-    }
-}
-
 private extension Symbol {
-    func fullName(for trait: DocumentationDataVariantsTrait) -> String? {
-        let fullDeclaration = (self.declarationVariants[trait] ?? self.declaration).renderDeclarationTokens()
-        return fullDeclaration?.plainTextDeclaration()
+    func plainTextDeclaration(for trait: DocumentationDataVariantsTrait) -> String? {
+        guard let fullDeclaration = (self.declarationVariants[trait] ?? self.declaration).mainRenderFragments() else { return nil }
+        return fullDeclaration.declarationFragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
     }
 }

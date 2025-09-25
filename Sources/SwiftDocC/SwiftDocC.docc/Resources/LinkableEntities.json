@@ -68,6 +68,9 @@
                     "usr": {
                         "type": "string"
                     },
+                    "plainTextDeclaration": {
+                        "type": "string"
+                    },
                     "fragments": {
                         "type": "array",
                         "items": {
@@ -155,6 +158,10 @@
                         "nullable": true
                     },
                     "usr": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "plainTextDeclaration": {
                         "type": "string",
                         "nullable": true
                     },

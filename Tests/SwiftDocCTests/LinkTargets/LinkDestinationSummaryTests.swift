@@ -113,7 +113,7 @@ class LinkDestinationSummaryTests: XCTestCase {
         XCTAssertEqual(pageSummary.platforms, renderNode.metadata.platforms)
         XCTAssertEqual(pageSummary.redirects, nil)
         XCTAssertNil(pageSummary.usr, "Only symbols have USRs")
-        XCTAssertNil(pageSummary.fullName, "Only symbols have full names")
+        XCTAssertNil(pageSummary.plainTextDeclaration, "Only symbols have a plain text declaration")
         XCTAssertNil(pageSummary.declarationFragments, "Only symbols have declaration fragments")
         XCTAssertNil(pageSummary.navigatorTitle, "Only symbols have navigator titles")
         XCTAssertNil(pageSummary.abstract, "There is no text to use as an abstract for the tutorial page")
@@ -133,7 +133,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             URL(string: "old/path/to/this/landmark")!,
         ])
         XCTAssertNil(sectionSummary.usr, "Only symbols have USRs")
-        XCTAssertNil(sectionSummary.fullName, "Only symbols have full names")
+        XCTAssertNil(sectionSummary.plainTextDeclaration, "Only symbols have a plain text declaration")
         XCTAssertNil(sectionSummary.declarationFragments, "Only symbols have declaration fragments")
         XCTAssertNil(sectionSummary.navigatorTitle, "Only symbols have navigator titles")
         XCTAssertEqual(sectionSummary.abstract, [
@@ -184,7 +184,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC")
-            XCTAssertEqual(summary.fullName, "class MyClass")
+            XCTAssertEqual(summary.plainTextDeclaration, "class MyClass")
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -227,7 +227,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ProtocolP")
-            XCTAssertEqual(summary.fullName, "protocol MyProtocol : Hashable")
+            XCTAssertEqual(summary.plainTextDeclaration, "protocol MyProtocol : Hashable")
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "protocol", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -262,7 +262,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
-            XCTAssertEqual(summary.fullName, "func myFunction(for name...)")
+            XCTAssertEqual(summary.plainTextDeclaration, "func myFunction(for name...)")
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "func", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -299,7 +299,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
-            XCTAssertEqual(summary.fullName, "func globalFunction(_: Data, considering: Int)")
+            XCTAssertEqual(summary.plainTextDeclaration, "func globalFunction(_: Data, considering: Int)")
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "func", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -367,7 +367,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
-            XCTAssertEqual(summary.fullName, "func myFunction(for name...)")
+            XCTAssertEqual(summary.plainTextDeclaration, "func myFunction(for name...)")
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "func", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -481,7 +481,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar")
-            XCTAssertEqual(summary.fullName, "class Bar")
+            XCTAssertEqual(summary.plainTextDeclaration, "class Bar")
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -498,7 +498,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             
             // Check variant content that is different
             XCTAssertEqual(variant.language, .objectiveC)
-            XCTAssertEqual(variant.fullName, "@interface Bar : NSObject")
+            XCTAssertEqual(variant.plainTextDeclaration, "@interface Bar : NSObject")
             XCTAssertEqual(variant.declarationFragments, [
                 .init(text: "@interface", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -548,7 +548,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar(cm)myStringFunction:error:")
-            XCTAssertEqual(summary.fullName, "class func myStringFunction(_ string: String) throws -> String")
+            XCTAssertEqual(summary.plainTextDeclaration, "class func myStringFunction(_ string: String) throws -> String")
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -574,7 +574,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             // Check variant content that is different
             XCTAssertEqual(variant.language, .objectiveC)
             XCTAssertEqual(variant.title, "myStringFunction:error:")
-            XCTAssertEqual(variant.fullName, "+ (NSString *) myStringFunction: (NSString *)string error: (NSError **)error;")
+            XCTAssertEqual(variant.plainTextDeclaration, "+ (NSString *) myStringFunction: (NSString *)string error: (NSError **)error;")
             XCTAssertEqual(variant.declarationFragments, [
                 .init(text: "+ ", kind: .text, identifier: nil),
                 .init(text: "myStringFunction:error:", kind: .identifier, identifier: nil)
