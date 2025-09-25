@@ -58,20 +58,46 @@ class SnippetTests: XCTestCase {
         XCTAssertNotNil(snippet)
         XCTAssertTrue(problems.isEmpty)
     }
+    func testLinkResolvesWithoutOptionalPrefix() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "Snippets")
+        
+        for snippetPath in [
+            "/Test/Snippets/MySnippet",
+             "Test/Snippets/MySnippet",
+                  "Snippets/MySnippet",
+                           "MySnippet",
+        ] {
+            let source = """
+            @Snippet(path: "\(snippetPath)")
+            """
+            let document = Document(parsing: source, options: .parseBlockDirectives)
+            var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: try XCTUnwrap(context.soleRootModuleReference))
+            _ = resolver.visit(document)
+            XCTAssertTrue(resolver.problems.isEmpty, "Unexpected problems: \(resolver.problems.map(\.diagnostic.summary))")
+        }
+    }
     
     func testWarningAboutUnresolvedSnippetPath() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "Snippets")
-        let source = """
-        @Snippet(path: "Test/Snippets/DoesNotExist")
-        """
-        let document = Document(parsing: source, options: .parseBlockDirectives)
-        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: try XCTUnwrap(context.soleRootModuleReference))
-        _ = resolver.visit(document)
-        XCTAssertEqual(1, resolver.problems.count)
-        let problem = try XCTUnwrap(resolver.problems.first)
-        XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.unresolvedSnippetPath")
-        XCTAssertEqual(problem.diagnostic.summary, "Snippet named 'DoesNotExist' couldn't be found.")
-        XCTAssertEqual(problem.possibleSolutions.count, 0)
+        
+        for snippetPath in [
+            "/Test/Snippets/DoesNotExist",
+             "Test/Snippets/DoesNotExist",
+                  "Snippets/DoesNotExist",
+                           "DoesNotExist",
+        ] {
+            let source = """
+            @Snippet(path: "\(snippetPath)")
+            """
+            let document = Document(parsing: source, options: .parseBlockDirectives)
+            var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: try XCTUnwrap(context.soleRootModuleReference))
+            _ = resolver.visit(document)
+            XCTAssertEqual(1, resolver.problems.count)
+            let problem = try XCTUnwrap(resolver.problems.first)
+            XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.unresolvedSnippetPath")
+            XCTAssertEqual(problem.diagnostic.summary, "Snippet named 'DoesNotExist' couldn't be found.")
+            XCTAssertEqual(problem.possibleSolutions.count, 0)
+        }
     }
     
     func testParsesSlice() async throws {
