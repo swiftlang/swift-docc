@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class ExternalRenderNodeTests: XCTestCase {
     private func generateExternalResolver() -> TestMultiResultExternalReferenceResolver {
@@ -56,7 +57,6 @@ class ExternalRenderNodeTests: XCTestCase {
     }
         
     func testExternalRenderNode() async throws {
-        
         let externalResolver = generateExternalResolver()
         let (_, bundle, context) = try await testBundleAndContext(
             copying: "MixedLanguageFramework",
@@ -79,37 +79,33 @@ class ExternalRenderNodeTests: XCTestCase {
             try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
         }
         
-        var externalRenderNodes = [ExternalRenderNode]()
-        for externalLink in context.externalCache {
-            externalRenderNodes.append(
-                ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
-            )
-        }
-        externalRenderNodes.sort(by: \.titleVariants.defaultValue)
+        let externalRenderNodes = context.externalCache.valuesByReference.values.map {
+            ExternalRenderNode(externalEntity: $0, bundleIdentifier: bundle.id)
+        }.sorted(by: \.titleVariants.defaultValue)
         XCTAssertEqual(externalRenderNodes.count, 4)
         
-        XCTAssertEqual(externalRenderNodes[0].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/example/path/to/external/objCArticle")
+        XCTAssertEqual(externalRenderNodes[0].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/path/to/external/objCArticle")
         XCTAssertEqual(externalRenderNodes[0].kind, .article)
         XCTAssertEqual(externalRenderNodes[0].symbolKind, nil)
         XCTAssertEqual(externalRenderNodes[0].role, "article")
         XCTAssertEqual(externalRenderNodes[0].externalIdentifier.identifier, "doc://com.test.external/path/to/external/objCArticle")
         XCTAssertTrue(externalRenderNodes[0].isBeta)
 
-        XCTAssertEqual(externalRenderNodes[1].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/example/path/to/external/objCSymbol")
+        XCTAssertEqual(externalRenderNodes[1].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/path/to/external/objCSymbol")
         XCTAssertEqual(externalRenderNodes[1].kind, .symbol)
         XCTAssertEqual(externalRenderNodes[1].symbolKind, .func)
         XCTAssertEqual(externalRenderNodes[1].role, "symbol")
         XCTAssertEqual(externalRenderNodes[1].externalIdentifier.identifier, "doc://com.test.external/path/to/external/objCSymbol")
         XCTAssertFalse(externalRenderNodes[1].isBeta)
         
-        XCTAssertEqual(externalRenderNodes[2].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/example/path/to/external/swiftArticle")
+        XCTAssertEqual(externalRenderNodes[2].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/path/to/external/swiftArticle")
         XCTAssertEqual(externalRenderNodes[2].kind, .article)
         XCTAssertEqual(externalRenderNodes[2].symbolKind, nil)
         XCTAssertEqual(externalRenderNodes[2].role, "article")
         XCTAssertEqual(externalRenderNodes[2].externalIdentifier.identifier, "doc://com.test.external/path/to/external/swiftArticle")
         XCTAssertFalse(externalRenderNodes[2].isBeta)
         
-        XCTAssertEqual(externalRenderNodes[3].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/example/path/to/external/swiftSymbol")
+        XCTAssertEqual(externalRenderNodes[3].identifier.absoluteString, "doc://org.swift.MixedLanguageFramework/path/to/external/swiftSymbol")
         XCTAssertEqual(externalRenderNodes[3].kind, .symbol)
         XCTAssertEqual(externalRenderNodes[3].symbolKind, .class)
         XCTAssertEqual(externalRenderNodes[3].role, "symbol")
@@ -118,33 +114,34 @@ class ExternalRenderNodeTests: XCTestCase {
     }
     
     func testExternalRenderNodeVariantRepresentation() throws {
-        let renderReferenceIdentifier = RenderReferenceIdentifier(forExternalLink: "doc://com.test.external/path/to/external/symbol")
+        let reference = ResolvedTopicReference(bundleID: "com.test.external", path: "/path/to/external/symbol", sourceLanguages: [.swift, .objectiveC])
         
         // Variants for the title
         let swiftTitle = "Swift Symbol"
-        let occTitle = "Occ Symbol"
-        
-        // Variants for the navigator title
-        let navigatorTitle: [DeclarationRenderSection.Token] = [.init(text: "symbol", kind: .identifier)]
-        let occNavigatorTitle: [DeclarationRenderSection.Token] = [.init(text: "occ_symbol", kind: .identifier)]
+        let objcTitle  = "Objective-C Symbol"
         
         // Variants for the fragments
-        let fragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "symbol", kind: .identifier)]
-        let occFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
+        let swiftFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "symbol", kind: .identifier)]
+        let objcFragments:  [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
         
         let externalEntity = LinkResolver.ExternalEntity(
-            topicRenderReference: .init(
-                identifier: renderReferenceIdentifier,
-                titleVariants: .init(defaultValue: swiftTitle, objectiveCValue: occTitle),
-                abstractVariants: .init(defaultValue: []),
-                url: "/example/path/to/external/symbol",
-                kind: .symbol,
-                fragmentsVariants: .init(defaultValue: fragments, objectiveCValue: occFragments),
-                navigatorTitleVariants: .init(defaultValue: navigatorTitle, objectiveCValue: occNavigatorTitle)
-            ),
-            renderReferenceDependencies: .init(),
-            sourceLanguages: [SourceLanguage(name: "swift"), SourceLanguage(name: "objc")],
-            symbolKind: .func)
+            kind: .function,
+            language: .swift,
+            relativePresentationURL: URL(string: "/example/path/to/external/symbol")!,
+            referenceURL: reference.url,
+            title: swiftTitle,
+            availableLanguages: [.swift, .objectiveC],
+            usr: "some-unique-symbol-id",
+            declarationFragments: swiftFragments,
+            variants: [
+                .init(
+                    traits: [.interfaceLanguage(SourceLanguage.objectiveC.id)],
+                    language: .objectiveC,
+                    title: objcTitle,
+                    declarationFragments: objcFragments
+                )
+            ]
+        )
         let externalRenderNode = ExternalRenderNode(
             externalEntity: externalEntity,
             bundleIdentifier: "com.test.external"
@@ -154,39 +151,52 @@ class ExternalRenderNodeTests: XCTestCase {
             NavigatorExternalRenderNode(renderNode: externalRenderNode)
         )
         XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.title, swiftTitle)
-        XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.navigatorTitle, navigatorTitle)
         XCTAssertFalse(swiftNavigatorExternalRenderNode.metadata.isBeta)
 
         let objcNavigatorExternalRenderNode = try XCTUnwrap(
-            NavigatorExternalRenderNode(renderNode: externalRenderNode, trait: .interfaceLanguage("objc"))
+            NavigatorExternalRenderNode(renderNode: externalRenderNode, trait: .interfaceLanguage(SourceLanguage.objectiveC.id))
         )
-        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, occTitle)
-        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.navigatorTitle, occNavigatorTitle)
+        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, objcTitle)
         XCTAssertFalse(objcNavigatorExternalRenderNode.metadata.isBeta)
     }
 
     func testNavigatorWithExternalNodes() async throws {
+        let catalog = Folder(name: "ModuleName.docc", content: [
+            Folder(name: "swift", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
+                ]))
+            ]),
+            Folder(name: "clang", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
+                ]))
+            ]),
+            
+            InfoPlist(identifier: "some.custom.identifier"),
+            
+            TextFile(name: "ModuleName.md", utf8Content: """
+            # ``ModuleName``
+            
+            Curate a few external language-specific symbols and articles 
+
+            ## Topics
+
+            ### External Reference
+
+            - <doc://com.test.external/path/to/external/swiftArticle>
+            - <doc://com.test.external/path/to/external/swiftSymbol>
+            - <doc://com.test.external/path/to/external/objCArticle>
+            - <doc://com.test.external/path/to/external/objCSymbol>
+            """),
+        ])
+        
+        var configuration = DocumentationContext.Configuration()
         let externalResolver = generateExternalResolver()
-        let (_, bundle, context) = try await testBundleAndContext(
-            copying: "MixedLanguageFramework",
-            externalResolvers: [externalResolver.bundleID: externalResolver]
-        ) { url in
-            let mixedLanguageFrameworkExtension = """
-                # ``MixedLanguageFramework``
-                
-                This symbol has a Swift and Objective-C variant.
-
-                ## Topics
-
-                ### External Reference
-
-                - <doc://com.test.external/path/to/external/swiftArticle>
-                - <doc://com.test.external/path/to/external/swiftSymbol>
-                - <doc://com.test.external/path/to/external/objCArticle>
-                - <doc://com.test.external/path/to/external/objCSymbol>
-                """
-            try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
-        }
+        configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
@@ -205,53 +215,63 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
 
         // Verify that there are no uncurated external links at the top level
-        let swiftTopLevelExternalNodes = renderIndex.interfaceLanguages["swift"]?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
-        let occTopLevelExternalNodes = renderIndex.interfaceLanguages["occ"]?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
-        XCTAssertEqual(swiftTopLevelExternalNodes.count, 0)
-        XCTAssertEqual(occTopLevelExternalNodes.count, 0)
+        XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.count(where: \.isExternal), 0)
+        XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.count(where: \.isExternal), 0)
 
         // Verify that the curated external links are part of the index.
-        let swiftExternalNodes = renderIndex.interfaceLanguages["swift"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
-        let occExternalNodes = renderIndex.interfaceLanguages["occ"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
+        let swiftExternalNodes = (renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
+        let objcExternalNodes  = (renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
         XCTAssertEqual(swiftExternalNodes.count, 2)
-        XCTAssertEqual(occExternalNodes.count, 2)
+        XCTAssertEqual(objcExternalNodes.count, 2)
         XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle", "SwiftSymbol"])
-        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCArticle", "ObjCSymbol"])
-        XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
-        XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
-        XCTAssert(swiftExternalNodes.first { $0.title == "SwiftArticle" }?.isBeta == false)
-        XCTAssert(swiftExternalNodes.first { $0.title == "SwiftSymbol" }?.isBeta == true)
-        XCTAssert(occExternalNodes.first { $0.title == "ObjCArticle" }?.isBeta == true)
-        XCTAssert(occExternalNodes.first { $0.title == "ObjCSymbol" }?.isBeta == false)
+        XCTAssertEqual(objcExternalNodes.map(\.title),  ["ObjCArticle",  "ObjCSymbol"])
+        XCTAssert(swiftExternalNodes.first?.isBeta == false)
+        XCTAssert(swiftExternalNodes.last?.isBeta == true)
+        XCTAssert(objcExternalNodes.first?.isBeta == true)
+        XCTAssert(objcExternalNodes.last?.isBeta == false)
         XCTAssertEqual(swiftExternalNodes.map(\.type), ["article", "class"])
-        XCTAssertEqual(occExternalNodes.map(\.type), ["article", "func"])
+        XCTAssertEqual(objcExternalNodes.map(\.type), ["article", "func"])
     }
     
     func testNavigatorWithExternalNodesOnlyAddsCuratedNodesToNavigator() async throws {
-        let externalResolver = generateExternalResolver()
+        let catalog = Folder(name: "ModuleName.docc", content: [
+            Folder(name: "swift", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SomeClass"])
+                ]))
+            ]),
+            Folder(name: "clang", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["TLASomeClass"])
+                ]))
+            ]),
+            
+            InfoPlist(identifier: "some.custom.identifier"),
+            
+            TextFile(name: "ModuleName.md", utf8Content: """
+            # ``ModuleName``
+            
+            Curate and link to a few external language-specific symbols and articles 
+
+            It also has an external reference which is not curated in the Topics section:
+            <doc://com.test.external/path/to/external/objCArticle>
+            <doc://com.test.external/path/to/external/swiftSymbol>
+            
+            ## Topics
+            
+            ### External Reference
+            
+            - <doc://com.test.external/path/to/external/swiftArticle>
+            - <doc://com.test.external/path/to/external/objCSymbol>
+            """),
+        ])
         
-        let (_, bundle, context) = try await testBundleAndContext(
-            copying: "MixedLanguageFramework",
-            externalResolvers: [externalResolver.bundleID: externalResolver]
-        ) { url in
-            let mixedLanguageFrameworkExtension = """
-                # ``MixedLanguageFramework``
-                
-                This symbol has a Swift and Objective-C variant.
-                
-                It also has an external reference which is not curated in the Topics section:
-                <doc://com.test.external/path/to/external/objCArticle>
-                <doc://com.test.external/path/to/external/swiftSymbol>
-                
-                ## Topics
-                
-                ### External Reference
-                
-                - <doc://com.test.external/path/to/external/swiftArticle>
-                - <doc://com.test.external/path/to/external/objCSymbol>
-                """
-            try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
-        }
+        var configuration = DocumentationContext.Configuration()
+        let externalResolver = generateExternalResolver()
+        configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
@@ -268,55 +288,52 @@ class ExternalRenderNodeTests: XCTestCase {
         }
         builder.finalize()
         let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
-
         
         // Verify that there are no uncurated external links at the top level
-        let swiftTopLevelExternalNodes = renderIndex.interfaceLanguages["swift"]?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
-        let occTopLevelExternalNodes = renderIndex.interfaceLanguages["occ"]?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
-        XCTAssertEqual(swiftTopLevelExternalNodes.count, 0)
-        XCTAssertEqual(occTopLevelExternalNodes.count, 0)
+        XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.count(where: \.isExternal), 0)
+        XCTAssertEqual(renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.count(where: \.isExternal), 0)
 
         // Verify that the curated external links are part of the index.
-        let swiftExternalNodes = renderIndex.interfaceLanguages["swift"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
-        let occExternalNodes = renderIndex.interfaceLanguages["occ"]?.first { $0.path == "/documentation/mixedlanguageframework" }?.children?.filter { $0.path?.contains("/path/to/external") ?? false } ?? []
+        let swiftExternalNodes = (renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
+        let objcExternalNodes  = (renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
         XCTAssertEqual(swiftExternalNodes.count, 1)
-        XCTAssertEqual(occExternalNodes.count, 1)
+        XCTAssertEqual(objcExternalNodes.count, 1)
         XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle"])
-        XCTAssertEqual(occExternalNodes.map(\.title), ["ObjCSymbol"])
-        XCTAssert(swiftExternalNodes.allSatisfy(\.isExternal))
-        XCTAssert(occExternalNodes.allSatisfy(\.isExternal))
+        XCTAssertEqual(objcExternalNodes.map(\.title), ["ObjCSymbol"])
         XCTAssertEqual(swiftExternalNodes.map(\.type), ["article"])
-        XCTAssertEqual(occExternalNodes.map(\.type), ["func"])
+        XCTAssertEqual(objcExternalNodes.map(\.type), ["func"])
     }
 
     func testExternalRenderNodeVariantRepresentationWhenIsBeta() throws {
-        let renderReferenceIdentifier = RenderReferenceIdentifier(forExternalLink: "doc://com.test.external/path/to/external/symbol")
+        let reference = ResolvedTopicReference(bundleID: "com.test.external", path: "/path/to/external/symbol", sourceLanguages: [.swift, .objectiveC])
         
         // Variants for the title
         let swiftTitle = "Swift Symbol"
-        let occTitle = "Occ Symbol"
-        
-        // Variants for the navigator title
-        let navigatorTitle: [DeclarationRenderSection.Token] = [.init(text: "symbol", kind: .identifier)]
-        let occNavigatorTitle: [DeclarationRenderSection.Token] = [.init(text: "occ_symbol", kind: .identifier)]
+        let objcTitle  = "Objective-C Symbol"
         
         // Variants for the fragments
-        let fragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "symbol", kind: .identifier)]
-        let occFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
+        let swiftFragments: [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "symbol", kind: .identifier)]
+        let objcFragments:  [DeclarationRenderSection.Token] = [.init(text: "func", kind: .keyword), .init(text: "occ_symbol", kind: .identifier)]
         
         let externalEntity = LinkResolver.ExternalEntity(
-            topicRenderReference: .init(
-                identifier: renderReferenceIdentifier,
-                titleVariants: .init(defaultValue: swiftTitle, objectiveCValue: occTitle),
-                abstractVariants: .init(defaultValue: []),
-                url: "/example/path/to/external/symbol",
-                kind: .symbol,
-                fragmentsVariants: .init(defaultValue: fragments, objectiveCValue: occFragments),
-                navigatorTitleVariants: .init(defaultValue: navigatorTitle, objectiveCValue: occNavigatorTitle),
-                isBeta: true
-            ),
-            renderReferenceDependencies: .init(),
-            sourceLanguages: [SourceLanguage(name: "swift"), SourceLanguage(name: "objc")])
+            kind: .function,
+            language: .swift,
+            relativePresentationURL: URL(string: "/example/path/to/external/symbol")!,
+            referenceURL: reference.url,
+            title: swiftTitle,
+            availableLanguages: [.swift, .objectiveC],
+            platforms: [.init(name: "Platform name", introduced: "1.2.3", isBeta: true)],
+            usr: "some-unique-symbol-id",
+            declarationFragments: swiftFragments,
+            variants: [
+                .init(
+                    traits: [.interfaceLanguage(SourceLanguage.objectiveC.id)],
+                    language: .objectiveC,
+                    title: objcTitle,
+                    declarationFragments: objcFragments
+                )
+            ]
+        )
         let externalRenderNode = ExternalRenderNode(
             externalEntity: externalEntity,
             bundleIdentifier: "com.test.external"
@@ -326,14 +343,12 @@ class ExternalRenderNodeTests: XCTestCase {
             NavigatorExternalRenderNode(renderNode: externalRenderNode)
         )
         XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.title, swiftTitle)
-        XCTAssertEqual(swiftNavigatorExternalRenderNode.metadata.navigatorTitle, navigatorTitle)
         XCTAssertTrue(swiftNavigatorExternalRenderNode.metadata.isBeta)
 
         let objcNavigatorExternalRenderNode = try XCTUnwrap(
-            NavigatorExternalRenderNode(renderNode: externalRenderNode, trait: .interfaceLanguage("objc"))
+            NavigatorExternalRenderNode(renderNode: externalRenderNode, trait: .interfaceLanguage(SourceLanguage.objectiveC.id))
         )
-        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, occTitle)
-        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.navigatorTitle, occNavigatorTitle)
+        XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, objcTitle)
         XCTAssertTrue(objcNavigatorExternalRenderNode.metadata.isBeta)
     }
 }
