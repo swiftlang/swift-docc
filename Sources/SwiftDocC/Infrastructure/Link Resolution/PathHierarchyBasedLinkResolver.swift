@@ -99,10 +99,10 @@ final class PathHierarchyBasedLinkResolver {
     // MARK: - Adding non-symbols
     
     /// Map the resolved identifiers to resolved topic references for a given bundle's article, tutorial, and technology root pages.
-    func addMappingForRoots(bundle: DocumentationBundle) {
-        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.tutorialsContainerReference
-        resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = bundle.articlesDocumentationRootReference
-        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.tutorialTableOfContentsContainer
+    func addMappingForRoots(inputs: DocumentationContext.Inputs) {
+        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = inputs.tutorialsContainerReference
+        resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = inputs.articlesDocumentationRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = inputs.tutorialTableOfContentsContainer
     }
     
     /// Map the resolved identifiers to resolved topic references for all symbols in the given symbol index.
@@ -264,14 +264,14 @@ final class PathHierarchyBasedLinkResolver {
     ///
     /// - Parameters:
     ///   - symbolGraph: The complete symbol graph to walk through.
-    ///   - bundle: The bundle to use when creating symbol references.
-    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], bundle: DocumentationBundle, context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
+    ///   - context: The context that the symbols belong to.
+    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
         let disambiguatedPaths = pathHierarchy.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true, includeLanguage: true, allowAdvancedDisambiguation: false)
         
         var result: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] = [:]
         
         for (moduleName, symbolGraph) in unifiedGraphs {
-            let paths: [ResolvedTopicReference?] = Array(symbolGraph.symbols.values).concurrentMap { unifiedSymbol -> ResolvedTopicReference? in
+            let paths: [ResolvedTopicReference?] = Array(symbolGraph.symbols.values).concurrentMap { (unifiedSymbol: UnifiedSymbolGraph.Symbol) -> ResolvedTopicReference? in
                 let symbol = unifiedSymbol
                 let uniqueIdentifier = unifiedSymbol.uniqueIdentifier
                 
@@ -280,7 +280,7 @@ final class PathHierarchyBasedLinkResolver {
                    pathComponents.count == componentsCount
                 {
                     let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
-                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
+                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, inputs: context.inputs)
                 }
                 
                 guard let path = disambiguatedPaths[uniqueIdentifier] else {
@@ -288,7 +288,7 @@ final class PathHierarchyBasedLinkResolver {
                 }
                 
                 return ResolvedTopicReference(
-                    bundleID: bundle.documentationRootReference.bundleID,
+                    bundleID: context.inputs.documentationRootReference.bundleID,
                     path: NodeURLGenerator.Path.documentationFolder + path,
                     sourceLanguages: symbol.sourceLanguages
                 )

@@ -27,10 +27,10 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: inputs, problems: &problems)
         
         XCTAssertTrue(problems.isEmpty)
     }
@@ -50,10 +50,10 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: inputs, problems: &problems)
         
         XCTAssertTrue(problems.isEmpty)
     }
@@ -65,10 +65,10 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: inputs, problems: &problems)
         
         XCTAssertEqual(problems.map { $0.diagnostic.summary },
                        [
@@ -86,10 +86,10 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: inputs, problems: &problems)
         
         XCTAssertEqual(problems.map { $0.diagnostic.summary },
                        [

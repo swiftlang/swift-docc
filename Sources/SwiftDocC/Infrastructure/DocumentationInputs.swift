@@ -10,6 +10,8 @@
 
 public import Foundation
 
+extension DocumentationContext {
+    
 /// A collection of the build inputs for a unit of documentation.
 ///
 /// A unit of documentation may for example cover a framework, library, or tool.
@@ -33,18 +35,18 @@ public import Foundation
 ///
 /// - ``info``
 /// - ``displayName``
-/// - ``identifier``
-public struct DocumentationBundle {
+/// - ``id``
+public struct Inputs {
     public enum PropertyListError: DescribedError {
         case invalidVersionString(String)
         case keyNotFound(String)
         
         public var errorDescription: String {
             switch self {
-            case .invalidVersionString(let versionString):
-                return "'\(versionString)' is not a valid version string"
-            case .keyNotFound(let name):
-                return "Expected key \(name.singleQuoted) not found"
+                case .invalidVersionString(let versionString):
+                    return "'\(versionString)' is not a valid version string"
+                case .keyNotFound(let name):
+                    return "Expected key \(name.singleQuoted) not found"
             }
         }
     }
@@ -57,8 +59,8 @@ public struct DocumentationBundle {
         info.displayName
     }
     
-    /// The documentation bundle's stable and locally unique identifier.
-    public var id: DocumentationBundle.Identifier {
+    /// The unit of documentation's stable and locally unique identifier.
+    public var id: Identifier {
         info.id
     }
     
@@ -68,7 +70,7 @@ public struct DocumentationBundle {
     ///
     /// ## See Also
     ///
-    /// - ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
+    /// - ``DocumentationInputFileTypes/isSymbolGraphFile(_:)``
     public let symbolGraphURLs: [URL]
     
     /// Documentation markup input files for this unit of documentation.
@@ -77,7 +79,7 @@ public struct DocumentationBundle {
     ///
     /// ## See Also
     ///
-    /// - ``DocumentationBundleFileTypes/isMarkupFile(_:)``
+    /// - ``DocumentationInputFileTypes/isMarkupFile(_:)``
     public let markupURLs: [URL]
     
     /// Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.
@@ -133,16 +135,21 @@ public struct DocumentationBundle {
     }
     
     public private(set) var rootReference: ResolvedTopicReference
-
+    
     /// Default path to resolve symbol links.
     public private(set) var documentationRootReference: ResolvedTopicReference
-
+    
     /// Default path to resolve tutorial table-of-contents links.
     public var tutorialTableOfContentsContainer: ResolvedTopicReference
-
+    
     /// Default path to resolve tutorial links.
     public var tutorialsContainerReference: ResolvedTopicReference
-
+    
     /// Default path to resolve articles.
     public var articlesDocumentationRootReference: ResolvedTopicReference
 }
+
+}
+
+@available(*, deprecated, renamed: "DocumentationContext.Inputs", message: "Use 'DocumentationContext.Inputs' instead. This deprecated API will be removed after 6.3 is released")
+public typealias DocumentationBundle = DocumentationContext.Inputs

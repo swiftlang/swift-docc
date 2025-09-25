@@ -52,7 +52,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     private let externalLinkResolvingClient: any ExternalLinkResolving
     
     /// The bundle identifier for the reference resolver in the other process.
-    public let bundleID: DocumentationBundle.Identifier
+    public let bundleID: DocumentationContext.Inputs.Identifier
     
     /// Creates a new reference resolver that interacts with another executable.
     ///
@@ -89,7 +89,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     ///   - bundleID: The bundle identifier the server can resolve references for.
     ///   - server: The server to send link resolution requests to.
     ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
-    public init(bundleID: DocumentationBundle.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+    public init(bundleID: DocumentationContext.Inputs.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
         self.bundleID = bundleID
         self.externalLinkResolvingClient = LongRunningService(
             server: server, convertRequestIdentifier: convertRequestIdentifier)

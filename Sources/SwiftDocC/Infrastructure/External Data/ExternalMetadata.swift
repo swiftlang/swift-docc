@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -76,8 +76,14 @@ public struct ExternalMetadata {
     /// If `true`, inherited symbols retain their original docs.
     public var inheritDocs = false
 
-    /// If `true`, there is no source bundle on disk and the inputs were passed via command line parameters.
-    public var isGeneratedBundle = false
+    /// If `true`, there is no source catalog on disk and the inputs were passed via command line parameters.
+    public var isGeneratedCatalog = false
+    
+    @available(*, deprecated, renamed: "isGeneratedCatalog", message: "Use 'isGeneratedCatalog' instead. This deprecated API will be removed after 6.3 is released.")
+    public var isGeneratedBundle: Bool {
+        get { isGeneratedCatalog }
+        set { isGeneratedCatalog = newValue }
+    }
     
     /// The granularity of diagnostics to emit via the engine.
     public var diagnosticLevel: DiagnosticSeverity = .warning

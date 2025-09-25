@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,7 @@
 
 import Foundation
 
-extension DocumentationBundle {
+extension DocumentationContext.Inputs {
     /// A stable and locally unique identifier for a collection of documentation inputs.
     public struct Identifier: RawRepresentable {
         public let rawValue: String
@@ -28,32 +28,32 @@ extension DocumentationBundle {
     }
 }
 
-extension DocumentationBundle.Identifier: Hashable {}
-extension DocumentationBundle.Identifier: Sendable {}
+extension DocumentationContext.Inputs.Identifier: Hashable {}
+extension DocumentationContext.Inputs.Identifier: Sendable {}
 
 // Support creating an identifier from a string literal.
-extension DocumentationBundle.Identifier: ExpressibleByStringLiteral {
+extension DocumentationContext.Inputs.Identifier: ExpressibleByStringLiteral {
     public init(stringLiteral value: StringLiteralType) {
         self.init(rawValue: value)
     }
 }
 
 // Sort identifiers based on their raw string value.
-extension DocumentationBundle.Identifier: Comparable {
+extension DocumentationContext.Inputs.Identifier: Comparable {
     public static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 }
 
 // Print as a single string value
-extension DocumentationBundle.Identifier: CustomStringConvertible {
+extension DocumentationContext.Inputs.Identifier: CustomStringConvertible {
     public var description: String {
         rawValue
     }
 }
 
 // Encode and decode the identifier as a single string value.
-extension DocumentationBundle.Identifier: Codable {
+extension DocumentationContext.Inputs.Identifier: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let rawValue = try container.decode(String.self)

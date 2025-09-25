@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import Foundation
 ///
 /// Default availability is used as a fallback value for symbols without explicit availability information.
 ///
-/// This information can be authored in the bundle's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
+/// This information can be authored in the catalog's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
 /// or in the case where the platform in unconditionally unavailable, "name" and "unavailable" pairs:
 ///
 /// ```
@@ -107,7 +107,7 @@ public struct DefaultAvailability: Codable, Equatable {
             // semantic version.
             if let introducedVersion {
                 guard let version = Version(versionString: introducedVersion), (2...3).contains(version.count) else {
-                    throw DocumentationBundle.PropertyListError.invalidVersionString(introducedVersion)
+                    throw DocumentationContext.Inputs.PropertyListError.invalidVersionString(introducedVersion)
                 }
             }
         }

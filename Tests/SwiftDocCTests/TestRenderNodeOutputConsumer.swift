@@ -21,7 +21,7 @@ class TestRenderNodeOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer 
         }
     }
     
-    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
+    func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }
@@ -85,19 +85,18 @@ extension TestRenderNodeOutputConsumer {
 
 extension XCTestCase {
     func renderNodeConsumer(
-        for bundleName: String,
+        for catalogName: String,
         sourceRepository: SourceRepository? = nil,
         configureBundle: ((URL) throws -> Void)? = nil
     ) async throws -> TestRenderNodeOutputConsumer {
-        let (_, bundle, context) = try await testBundleAndContext(
-            copying: bundleName,
+        let (_, context) = try await loadFromDisk(
+            copyingCatalogNamed: catalogName,
             configureBundle: configureBundle
         )
         
         let outputConsumer = TestRenderNodeOutputConsumer()
         
         _ = try ConvertActionConverter.convert(
-            bundle: bundle,
             context: context,
             outputConsumer: outputConsumer,
             sourceRepository: sourceRepository,

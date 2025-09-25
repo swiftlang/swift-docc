@@ -20,19 +20,18 @@ extension XCTestCase {
     ///   - catalog: The directory structure of the documentation catalog
     ///   - otherFileSystemDirectories: Any other directories in the test file system.
     ///   - configuration: Configuration for the created context.
-    /// - Returns: The loaded documentation bundle and context for the given catalog input.
-    func loadBundle(
+    /// - Returns: The loaded documentation context for the provided catalog.
+    func load(
         catalog: Folder,
         otherFileSystemDirectories: [Folder] = [],
         configuration: DocumentationContext.Configuration = .init()
-    ) async throws -> (DocumentationBundle, DocumentationContext) {
+    ) async throws -> DocumentationContext {
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
         
-        let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
 
-        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
-        return (bundle, context)
+        return try await DocumentationContext(inputs: inputs, dataProvider: dataProvider, configuration: configuration)
     }
     
     func testCatalogURL(named name: String, file: StaticString = #filePath, line: UInt = #line) throws -> URL {

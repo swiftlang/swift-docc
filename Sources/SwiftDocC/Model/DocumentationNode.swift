@@ -332,14 +332,14 @@ public struct DocumentationNode {
     mutating func initializeSymbolContent(
         documentationExtension: Article?,
         engine: DiagnosticEngine,
-        bundle: DocumentationBundle
+        inputs: DocumentationContext.Inputs
     ) {
         precondition(unifiedSymbol != nil && symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
         
         let (markup, docChunks, metadataFromDocumentationComment) = Self.contentFrom(
             documentedSymbol: unifiedSymbol?.documentedSymbol,
             documentationExtension: documentationExtension,
-            bundle: bundle,
+            inputs: inputs,
             engine: engine
         )
         
@@ -500,7 +500,7 @@ public struct DocumentationNode {
     static func contentFrom(
         documentedSymbol: SymbolGraph.Symbol?,
         documentationExtension: Article?,
-        bundle: DocumentationBundle? = nil,
+        inputs: DocumentationContext.Inputs? = nil,
         engine: DiagnosticEngine
     ) -> (
         markup: any Markup,
@@ -543,14 +543,14 @@ public struct DocumentationNode {
 
             var problems = [Problem]()
             
-            if let bundle {
+            if let inputs {
                 metadata = DirectiveParser()
                     .parseSingleDirective(
                         Metadata.self,
                         from: &docCommentMarkupElements,
                         parentType: Symbol.self,
                         source: docCommentLocation?.url,
-                        bundle: bundle,
+                        inputs: inputs,
                         problems: &problems
                     )
                 

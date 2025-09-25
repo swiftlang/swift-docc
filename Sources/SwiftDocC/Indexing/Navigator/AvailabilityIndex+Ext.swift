@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -63,7 +63,7 @@ extension AvailabilityIndex {
 // MARK: - InterfaceLanguage
 
 /**
- Interface Language identifies a programming language used to index a content of a documentation bundle.
+ Interface Language identifies a programming language used to index a content of a documentation context.
  
  - Note: The name reflects what a render node JSON provides to identify a programming language.
  The name has been decided to avoid confusion with locale languages.

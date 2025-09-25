@@ -59,7 +59,7 @@ public final class Code: Semantic, DirectiveConvertible {
         self.preview = preview
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) {
         precondition(directive.name == Code.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
@@ -67,7 +67,7 @@ public final class Code: Semantic, DirectiveConvertible {
         Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
         guard let requiredFileReference = Semantic.Analyses.HasArgument<Code, Semantics.File>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
-        let fileReference = ResourceReference(bundleID: bundle.id, path: requiredFileReference)
+        let fileReference = ResourceReference(bundleID: inputs.id, path: requiredFileReference)
         
         guard let requiredFileName = Semantic.Analyses.HasArgument<Code, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
         
@@ -80,10 +80,10 @@ public final class Code: Semantic, DirectiveConvertible {
             shouldResetDiff = false
         }
        
-        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
+        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: inputs, problems: &problems)
         
         let optionalPreviousFileReference = Semantic.Analyses.HasArgument<Code, Semantics.PreviousFile>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems).map { argument in
-            ResourceReference(bundleID: bundle.id, path: argument)
+            ResourceReference(bundleID: inputs.id, path: argument)
         }
         
         self.init(originalMarkup: directive, fileReference: fileReference, fileName: requiredFileName, previousFileReference: optionalPreviousFileReference, shouldResetDiff: shouldResetDiff, preview: optionalPreview)

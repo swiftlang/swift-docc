@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 
-class DocumentationBundleInfoTests: XCTestCase {
+class DocumentationInputsInfoTests: XCTestCase {
     // Test whether the bundle correctly loads the test bundle Info.plist file.
     func testLoadTestBundleInfoPlist() throws {
         let infoPlistURL = Bundle.module.url(
@@ -19,7 +19,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             .appendingPathComponent("Info.plist")
 
         let infoPlistData = try Data(contentsOf: infoPlistURL)
-        let info = try DocumentationBundle.Info(from: infoPlistData)
+        let info = try DocumentationContext.Inputs.Info(from: infoPlistData)
         
         XCTAssertEqual(info.displayName, "Test Bundle")
         XCTAssertEqual(info.id.rawValue, "org.swift.docc.example")
@@ -32,7 +32,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             forResource: "Info+Availability", withExtension: "plist", subdirectory: "Test Resources")!
         
         let infoPlistData = try Data(contentsOf: infoPlistURL)
-        let info = try DocumentationBundle.Info(from: infoPlistData)
+        let info = try DocumentationContext.Inputs.Info(from: infoPlistData)
 
         XCTAssertEqual(
             info.defaultAvailability?
@@ -68,7 +68,7 @@ class DocumentationBundleInfoTests: XCTestCase {
         
         let infoPlistWithoutDisplayNameData = Data(infoPlistWithoutDisplayName.utf8)
         
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let bundleDiscoveryOptions = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
                 "CFBundleIdentifier": "com.fallback.Identifier"
@@ -76,33 +76,33 @@ class DocumentationBundleInfoTests: XCTestCase {
         )
         
         XCTAssertEqual(
-            try DocumentationBundle.Info(
+            try DocumentationContext.Inputs.Info(
                 from: infoPlistWithAllFieldsData,
-                bundleDiscoveryOptions: bundleDiscoveryOptions
+                catalogDiscoveryOptions: bundleDiscoveryOptions
             ),
-            DocumentationBundle.Info(
+            DocumentationContext.Inputs.Info(
                 displayName: "Info Plist Display Name",
                 id: "com.info.Plist"
             )
         )
         
         XCTAssertEqual(
-            try DocumentationBundle.Info(
+            try DocumentationContext.Inputs.Info(
                 from: nil,
-                bundleDiscoveryOptions: bundleDiscoveryOptions
+                catalogDiscoveryOptions: bundleDiscoveryOptions
             ),
-            DocumentationBundle.Info(
+            DocumentationContext.Inputs.Info(
                 displayName: "Fallback Display Name",
                 id: "com.fallback.Identifier"
             )
         )
         
         XCTAssertEqual(
-            try DocumentationBundle.Info(
+            try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutDisplayNameData,
-                bundleDiscoveryOptions: bundleDiscoveryOptions
+                catalogDiscoveryOptions: bundleDiscoveryOptions
             ),
-            DocumentationBundle.Info(
+            DocumentationContext.Inputs.Info(
                 displayName: "Fallback Display Name",
                 id: "com.info.Plist"
             )
@@ -122,11 +122,11 @@ class DocumentationBundleInfoTests: XCTestCase {
         let infoPlistWithoutVersionData = Data(infoPlistWithoutVersion.utf8)
         
         XCTAssertEqual(
-            try DocumentationBundle.Info(
+            try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutVersionData,
-                bundleDiscoveryOptions: nil
+                catalogDiscoveryOptions: nil
             ),
-            DocumentationBundle.Info(
+            DocumentationContext.Inputs.Info(
                 displayName: "Info Plist Display Name",
                 id: "com.info.Plist"
             )
@@ -194,13 +194,13 @@ class DocumentationBundleInfoTests: XCTestCase {
         
         """
         
-        let decodedInfo = try DocumentationBundle.Info(from: Data(infoPlist.utf8))
+        let decodedInfo = try DocumentationContext.Inputs.Info(from: Data(infoPlist.utf8))
         
         let propertyListEncoder = PropertyListEncoder()
         propertyListEncoder.outputFormat = .xml
         let reEncodedInfo = try propertyListEncoder.encode(decodedInfo)
         
-        let reDecodedInfo = try DocumentationBundle.Info(from: reEncodedInfo)
+        let reDecodedInfo = try DocumentationContext.Inputs.Info(from: reEncodedInfo)
         XCTAssertEqual(decodedInfo, reDecodedInfo)
         
         let reEncodedString = try XCTUnwrap(String(
@@ -215,7 +215,7 @@ class DocumentationBundleInfoTests: XCTestCase {
     }
     
     func testFallbackToBundleDiscoveryOptions() throws {
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+        let bundleDiscoveryOptions = CatalogDiscoveryOptions(
             fallbackDisplayName: "Display Name",
             fallbackIdentifier: "swift.org.Identifier",
             fallbackDefaultCodeListingLanguage: "swift",
@@ -232,10 +232,10 @@ class DocumentationBundleInfoTests: XCTestCase {
             )
         )
         
-        let info = try DocumentationBundle.Info(bundleDiscoveryOptions: bundleDiscoveryOptions)
+        let info = try DocumentationContext.Inputs.Info(catalogDiscoveryOptions: bundleDiscoveryOptions)
         XCTAssertEqual(
             info,
-            DocumentationBundle.Info(
+            DocumentationContext.Inputs.Info(
                 displayName: "Display Name",
                 id: "swift.org.Identifier",
                 defaultCodeListingLanguage: "swift",
@@ -255,7 +255,7 @@ class DocumentationBundleInfoTests: XCTestCase {
     }
     
     func testFallbackToInfoInBundleDiscoveryOptions() throws {
-        let info = DocumentationBundle.Info(
+        let info = DocumentationContext.Inputs.Info(
             displayName: "Display Name",
             id: "swift.org.Identifier",
             defaultCodeListingLanguage: "swift",
@@ -272,10 +272,10 @@ class DocumentationBundleInfoTests: XCTestCase {
             )
         )
         
-        let bundleDiscoveryOptions = try BundleDiscoveryOptions(fallbackInfo: info)
+        let bundleDiscoveryOptions = try CatalogDiscoveryOptions(fallbackInfo: info)
         XCTAssertEqual(
             info,
-            try DocumentationBundle.Info(bundleDiscoveryOptions: bundleDiscoveryOptions)
+            try DocumentationContext.Inputs.Info(catalogDiscoveryOptions: bundleDiscoveryOptions)
         )
     }
     
@@ -308,12 +308,12 @@ class DocumentationBundleInfoTests: XCTestCase {
         
         let valueMissingInvalidPlistData = Data(valueMissingInvalidPlist.utf8)
         XCTAssertThrowsError(
-            try DocumentationBundle.Info(from: valueMissingInvalidPlistData),
+            try DocumentationContext.Inputs.Info(from: valueMissingInvalidPlistData),
             "Info.plist decode didn't throw as expected"
         ) { error in
-            XCTAssertTrue(error is DocumentationBundle.Info.Error)
+            XCTAssertTrue(error is DocumentationContext.Inputs.Info.Error)
             let errorTypeChecking: Bool
-            if case DocumentationBundle.Info.Error.plistDecodingError(_) = error {
+            if case DocumentationContext.Inputs.Info.Error.plistDecodingError(_) = error {
                 errorTypeChecking = true
             } else {
                 errorTypeChecking = false
@@ -334,12 +334,12 @@ class DocumentationBundleInfoTests: XCTestCase {
         let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
         
         XCTAssertEqual(
-            try DocumentationBundle.Info(
+            try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutRequiredKeysData,
-                bundleDiscoveryOptions: nil,
+                catalogDiscoveryOptions: nil,
                 derivedDisplayName: "Derived Display Name"
             ),
-            DocumentationBundle.Info(
+            DocumentationContext.Inputs.Info(
                 displayName: "Derived Display Name",
                 id: "Derived Display Name"
             )
@@ -359,12 +359,12 @@ class DocumentationBundleInfoTests: XCTestCase {
         let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
         
         XCTAssertEqual(
-            try DocumentationBundle.Info(
+            try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutRequiredKeysData,
-                bundleDiscoveryOptions: nil,
+                catalogDiscoveryOptions: nil,
                 derivedDisplayName: "Derived Display Name"
             ),
-            DocumentationBundle.Info(
+            DocumentationContext.Inputs.Info(
                 displayName: "Derived Display Name",
                 id: "org.swift.docc.example"
             )
@@ -384,11 +384,11 @@ class DocumentationBundleInfoTests: XCTestCase {
         let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
         
         XCTAssertEqual(
-            try DocumentationBundle.Info(
+            try DocumentationContext.Inputs.Info(
                 from: infoPlistWithoutRequiredKeysData,
-                bundleDiscoveryOptions: nil
+                catalogDiscoveryOptions: nil
             ),
-            DocumentationBundle.Info(
+            DocumentationContext.Inputs.Info(
                 displayName: "Example",
                 id: "Example"
             )
@@ -413,9 +413,9 @@ class DocumentationBundleInfoTests: XCTestCase {
         """
 
         let infoPlistWithFeatureFlagsData = Data(infoPlistWithFeatureFlags.utf8)
-        let info = try DocumentationBundle.Info(
+        let info = try DocumentationContext.Inputs.Info(
             from: infoPlistWithFeatureFlagsData,
-            bundleDiscoveryOptions: nil)
+            catalogDiscoveryOptions: nil)
 
         let featureFlags = try XCTUnwrap(info.featureFlags)
         XCTAssertTrue(try XCTUnwrap(featureFlags.experimentalOverloadedSymbolPresentation))

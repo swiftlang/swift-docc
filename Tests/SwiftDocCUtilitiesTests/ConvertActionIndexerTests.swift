@@ -17,19 +17,19 @@ class ConvertActionIndexerTests: XCTestCase {
     
     // Tests the standalone indexer
     func testConvertActionIndexer() async throws {
-        let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
+        let (inputs, dataProvider) = try DocumentationContext.InputsProvider()
             .inputsAndDataProvider(startingPoint: testCatalogURL(named: "LegacyBundle_DoNotUseInNewTests"), options: .init())
         
-        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider)
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let context = try await DocumentationContext(inputs: inputs, dataProvider: dataProvider)
+        let converter = DocumentationNodeConverter(context: context)
         
         // Add /documentation/MyKit to the index, verify the tree dump
         do {
-            let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift)
             let renderNode = try converter.convert(context.entity(with: reference))
 
             let tempIndexURL = try createTemporaryDirectory(named: "index")
-            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleID: bundle.id)
+            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleID: inputs.id)
             indexer.index(renderNode)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)
             let treeDump = try XCTUnwrap(indexer.dumpTree())
@@ -47,14 +47,14 @@ class ConvertActionIndexerTests: XCTestCase {
         // Add two nodes /documentation/MyKit and /documentation/Test-Bundle/Default-Code-Listing-Syntax to the index
         // and verify the tree.
         do {
-            let reference1 = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+            let reference1 = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift)
             let renderNode1 = try converter.convert(context.entity(with: reference1))
 
-            let reference2 = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", sourceLanguage: .swift)
+            let reference2 = ResolvedTopicReference(bundleID: inputs.id, path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", sourceLanguage: .swift)
             let renderNode2 = try converter.convert(context.entity(with: reference2))
 
             let tempIndexURL = try createTemporaryDirectory(named: "index")
-            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleID: bundle.id)
+            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleID: inputs.id)
             indexer.index(renderNode1)
             indexer.index(renderNode2)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)

@@ -11,29 +11,29 @@
 import Foundation
 import SymbolKit
 
-/// Loads symbol graph files from a documentation bundle.
+/// Loads symbol graph files from a collection of inputs.
 ///
-/// A type that groups a bundle's symbol graphs by the module they describe,
+/// A type that groups a catalogs's symbol graphs by the module they describe,
 /// which makes detecting symbol collisions and overloads easier.
 struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private let dataProvider: any DataProvider
-    private let bundle: DocumentationBundle
+    private let inputs: DocumentationContext.Inputs
     private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
     
     /// Creates a new symbol graph loader
     /// - Parameters:
-    ///   - bundle: The documentation bundle from which to load symbol graphs.
+    ///   - inputs: The collection of inputs files from which to load symbol graphs.
     ///   - dataProvider: A provider that the loader uses to read symbol graph data.
     ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
-        bundle: DocumentationBundle,
+        inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
-        self.bundle = bundle
+        self.inputs = inputs
         self.dataProvider = dataProvider
         self.symbolGraphTransformer = symbolGraphTransformer
     }
@@ -49,7 +49,7 @@ struct SymbolGraphLoader {
     /// The symbol graph decoding strategy to use.
     private(set) var decodingStrategy: DecodingConcurrencyStrategy = .concurrentlyEachFileInBatches
 
-    /// Loads all symbol graphs in the given bundle.
+    /// Loads all symbol graphs in the given catalog.
     ///
     /// - Throws: If loading and decoding any of the symbol graph files throws, this method re-throws one of the encountered errors.
     mutating func loadAll() throws {
@@ -82,7 +82,7 @@ struct SymbolGraphLoader {
                 symbolGraphTransformer?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
-                // If the bundle provides availability defaults add symbol availability data.
+                // If the catalog provides availability defaults add symbol availability data.
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
 
                 // main symbol graphs are ambiguous
@@ -113,22 +113,22 @@ struct SymbolGraphLoader {
         // This strategy benchmarks better when we have multiple
         // "larger" symbol graphs.
         #if os(macOS) || os(iOS)
-        if bundle.symbolGraphURLs.filter({ !$0.lastPathComponent.contains("@") }).count > 1 {
+        if inputs.symbolGraphURLs.filter({ !$0.lastPathComponent.contains("@") }).count > 1 {
             // There are multiple main symbol graphs, better parallelize all files decoding.
             decodingStrategy = .concurrentlyAllFiles
         }
         #endif
         
-        let numberOfSymbolGraphs = bundle.symbolGraphURLs.count
+        let numberOfSymbolGraphs = inputs.symbolGraphURLs.count
         let decodeSignpostHandle = signposter.beginInterval("Decode symbol graphs", id: signposter.makeSignpostID(), "Decode \(numberOfSymbolGraphs) symbol graphs")
         switch decodingStrategy {
         case .concurrentlyAllFiles:
             // Concurrently load and decode all symbol graphs
-            bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
+            inputs.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
             
         case .concurrentlyEachFileInBatches:
             // Serially load and decode all symbol graphs, each one in concurrent batches.
-            bundle.symbolGraphURLs.forEach(loadGraphAtURL)
+            inputs.symbolGraphURLs.forEach(loadGraphAtURL)
         }
         signposter.endInterval("Decode symbol graphs", decodeSignpostHandle)
         
@@ -166,7 +166,7 @@ struct SymbolGraphLoader {
             var defaultUnavailablePlatforms = [PlatformName]()
             var defaultAvailableInformation = [DefaultAvailability.ModuleAvailability]()
 
-            if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
+            if let defaultAvailabilities = inputs.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
                 let (unavailablePlatforms, availablePlatforms) = defaultAvailabilities.categorize(where: { $0.versionInformation == .unavailable })
                 defaultUnavailablePlatforms = unavailablePlatforms.map(\.platformName)
                 defaultAvailableInformation = availablePlatforms
@@ -264,11 +264,11 @@ struct SymbolGraphLoader {
         }
     }    
 
-    /// If the bundle defines default availability for the symbols in the given symbol graph
+    /// If the catalog defines default availability for the symbols in the given symbol graph
     /// this method adds them to each of the symbols in the graph.
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
         // Check if there are defined default availabilities for the current module
-        if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
+        if let defaultAvailabilities = inputs.info.defaultAvailability?.modules[moduleName],
             let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
 
             // Prepare a default availability versions lookup for this module.
@@ -465,7 +465,7 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
      in from the `defaults`. If the defaults do not have a version for
      this item's domain/platform, also try the `fallbackPlatform`.
 
-     - parameter defaults: Default module availabilities for each platform mentioned in a documentation bundle's `Info.plist`
+     - parameter defaults: Default module availabilities for each platform mentioned in a documentation catalog's `Info.plist`
      - parameter fallbackPlatform: An optional fallback platform name if this item's domain isn't found in the `defaults`.
      */
     func fillingMissingIntroducedVersion(from defaults: [PlatformName: SymbolGraph.SemanticVersion],

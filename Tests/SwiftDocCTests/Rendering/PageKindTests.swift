@@ -16,14 +16,14 @@ import XCTest
 class PageKindTests: XCTestCase {
     
     private func generateRenderNodeFromBundle(bundleName: String, resolvedTopicPath: String) async throws -> RenderNode {
-        let (bundle, context) = try await testBundleAndContext(named: bundleName)
+        let context = try await loadFromDisk(catalogName: bundleName)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: resolvedTopicPath,
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
     }
     
@@ -75,12 +75,12 @@ class PageKindTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, _) = try await testBundleAndContext(named: "SampleBundle")
+        let inputs = try await loadFromDisk(catalogName: "SampleBundle").inputs
 
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Metadata.directiveName, directive.name)
-            let metadata = Metadata(from: directive, source: nil, for: bundle, problems: &problems)
+            let metadata = Metadata(from: directive, source: nil, for: inputs, problems: &problems)
             XCTAssertNotNil(metadata)
             XCTAssertNotNil(metadata?.pageKind)
             XCTAssertEqual(metadata?.pageKind?.kind, .article)

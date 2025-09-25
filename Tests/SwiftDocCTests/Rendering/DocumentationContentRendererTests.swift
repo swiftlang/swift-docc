@@ -139,8 +139,8 @@ private extension DocumentationDataVariantsTrait {
 
 private extension DocumentationContentRendererTests {
     func makeDocumentationContentRenderer() async throws -> DocumentationContentRenderer {
-        let (bundle, context) = try await testBundleAndContext()
-        return DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        let context = try await makeEmptyContext()
+        return DocumentationContentRenderer(documentationContext: context)
     }
     
     var nodeWithSubheadingAndNavigatorVariants: DocumentationNode {

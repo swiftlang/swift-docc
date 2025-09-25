@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,11 +14,11 @@ extension UnresolvedTopicReference {
     /// Creates an unresolved reference out of a symbol reference.
     /// - Parameters:
     ///   - symbolReference: A reference to a symbol.
-    ///   - bundle: A documentation bundle.
-    init?(symbolReference: SymbolReference, bundle: DocumentationBundle) {
+    ///   - inputs: A collection of inputs files that the symbol is from.
+    init?(symbolReference: SymbolReference, inputs: DocumentationContext.Inputs) {
         guard var components = URLComponents(string: symbolReference.path) else { return nil }
         components.scheme = ResolvedTopicReference.urlScheme
-        components.host = bundle.id.rawValue
+        components.host = inputs.id.rawValue
         if !components.path.hasPrefix("/") {
             components.path.insert("/", at: components.path.startIndex)
         }

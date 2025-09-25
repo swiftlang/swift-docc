@@ -48,17 +48,19 @@ extension RenderReferenceDependencies: Codable {
 public class DocumentationContentRenderer {
 
     let documentationContext: DocumentationContext
-    let bundle: DocumentationBundle
     let urlGenerator: PresentationURLGenerator
     
-    /// Creates a new content renderer for the given documentation context and bundle.
+    /// Creates a new content renderer for the given documentation context and inputs.
     /// - Parameters:
     ///   - documentationContext: A documentation context.
-    ///   - bundle: A documentation bundle.
-    public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
+    public init(documentationContext: DocumentationContext) {
         self.documentationContext = documentationContext
-        self.bundle = bundle
-        self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: bundle.baseURL)
+        self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: documentationContext.inputs.baseURL)
+    }
+    
+    @available(*, deprecated, renamed: "init(documentationContext:)", message: "Use 'init(documentationContext:)' instead. This deprecated API will be removed after 6.3 is released")
+    public convenience init(documentationContext: DocumentationContext, bundle _: DocumentationBundle) {
+        self.init(documentationContext: documentationContext)
     }
     
     /// For symbol nodes, returns the declaration render section if any.
@@ -324,7 +326,7 @@ public class DocumentationContentRenderer {
         // Topic render references require the URLs to be relative, even if they're external.
         let presentationURL = urlGenerator.presentationURLForReference(reference)
         
-        var contentCompiler = RenderContentCompiler(context: documentationContext, bundle: bundle, identifier: reference)
+        var contentCompiler = RenderContentCompiler(context: documentationContext, identifier: reference)
         let abstractContent: VariantCollection<[RenderInlineContent]>
         
         var abstractedNode = node
@@ -516,7 +518,7 @@ public class DocumentationContentRenderer {
             }
             
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: bundle)?.language
+                SupportedLanguage(from: $0, source: nil, for: documentationContext.inputs)?.language
             }
             
             return ReferenceGroup(

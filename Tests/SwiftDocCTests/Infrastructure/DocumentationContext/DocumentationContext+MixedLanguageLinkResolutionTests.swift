@@ -14,7 +14,7 @@ import XCTest
 class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
     
     func testResolvingLinksWhenSymbolHasSameNameInBothLanguages() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFrameworkComplexLinks") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "MixedLanguageFrameworkComplexLinks") { url in
              let swiftSymbolGraph = url.appendingPathComponent("symbol-graph/swift/ObjCLinks.symbols.json")
              try String(contentsOf: swiftSymbolGraph)
                  .replacingOccurrences(of: "FooSwift", with: "FooObjC")

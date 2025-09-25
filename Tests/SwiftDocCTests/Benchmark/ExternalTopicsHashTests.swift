@@ -40,7 +40,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     
     func testNoMetricAddedIfNoExternalTopicsAreResolved() async throws {
         // Load bundle without using external resolvers
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         XCTAssertTrue(context.externallyResolvedLinks.isEmpty)
         
         // Try adding external topics metrics
@@ -56,7 +56,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
-            let (_, _, context) = try await self.testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+            let (_, context) = try await self.loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -92,7 +92,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
-            let (_, _, context) = try await self.testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver], externalSymbolResolver: self.externalSymbolResolver) { url in
+            let (_, context) = try await self.loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver], externalSymbolResolver: self.externalSymbolResolver) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -128,7 +128,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         let externalResolver = self.externalResolver
 
         // Load a bundle with external links
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
         try """
         # ``SideKit/SideClass``
 

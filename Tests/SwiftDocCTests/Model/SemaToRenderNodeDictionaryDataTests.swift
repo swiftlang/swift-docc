@@ -15,7 +15,7 @@ import XCTest
 
 class SemaToRenderNodeDictionaryDataTests: XCTestCase {
     func testBaseRenderNodeFromDictionaryData() async throws {
-        let (_, context) = try await testBundleAndContext(named: "DictionaryData")
+        let context = try await loadFromDisk(catalogName: "DictionaryData")
         
         let expectedPageUSRsAndLangs: [String : Set<SourceLanguage>] = [
             // Artist dictionary - ``Artist``:

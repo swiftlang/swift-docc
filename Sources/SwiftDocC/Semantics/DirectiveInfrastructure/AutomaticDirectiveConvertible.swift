@@ -92,21 +92,20 @@ extension AutomaticDirectiveConvertible {
     /// the same function but supports collecting an array of problems for diagnostics.
     ///
     /// - Parameters:
-    ///     - directive: The block directive that will be parsed
-    ///     - source: An optional URL for the source location where this directive is written.
-    ///     - bundle: The documentation bundle that owns the directive.
-    ///     - context: The documentation context in which the bundle resides.
+    ///   - directive: The block directive that will be parsed
+    ///   - source: An optional URL for the source location where this directive is written.
+    ///   - inputs: The collection of inputs files that the directive originates from.
     public init?(
         from directive: BlockDirective,
         source: URL? = nil,
-        for bundle: DocumentationBundle
+        for inputs: DocumentationContext.Inputs
     ) {
         var problems = [Problem]()
         
         self.init(
             from: directive,
             source: source,
-            for: bundle,
+            for: inputs,
             problems: &problems
         )
     }
@@ -114,7 +113,7 @@ extension AutomaticDirectiveConvertible {
     public init?(
         from directive: BlockDirective,
         source: URL?,
-        for bundle: DocumentationBundle,
+        for inputs: DocumentationContext.Inputs,
         problems: inout [Problem]
     ) {
         precondition(directive.name == Self.directiveName)
@@ -144,7 +143,7 @@ extension AutomaticDirectiveConvertible {
                 allowedValues: reflectedArgument.allowedValues,
                 expectedFormat: reflectedArgument.expectedFormat,
                 convert: { argumentValue in
-                    return reflectedArgument.parseArgument(bundle, argumentValue)
+                    return reflectedArgument.parseArgument(inputs, argumentValue)
                 },
                 valueTypeDiagnosticName: reflectedArgument.typeDisplayName
             )
@@ -177,7 +176,7 @@ extension AutomaticDirectiveConvertible {
             childType: Comment.self,
             children: remainder,
             source: source,
-            for: bundle,
+            for: inputs,
             problems: &problems
         )
         
@@ -190,7 +189,7 @@ extension AutomaticDirectiveConvertible {
                     parentDirective: directive,
                     children: remainder,
                     source: source,
-                    for: bundle,
+                    for: inputs,
                     problems: &problems
                 )
                 
@@ -214,7 +213,7 @@ extension AutomaticDirectiveConvertible {
                     parentDirective: directive,
                     children: remainder,
                     source: source,
-                    for: bundle,
+                    for: inputs,
                     problems: &problems
                 )
                 
@@ -237,7 +236,7 @@ extension AutomaticDirectiveConvertible {
                     childType: childDirective.type,
                     children: remainder,
                     source: source,
-                    for: bundle,
+                    for: inputs,
                     problems: &problems
                 )
                 
@@ -251,7 +250,7 @@ extension AutomaticDirectiveConvertible {
                     parentDirective: directive,
                     children: remainder,
                     source: source,
-                    for: bundle,
+                    for: inputs,
                     problems: &problems
                 )
                 

@@ -8,7 +8,7 @@ A representation of the in-memory model's documentation nodes when compiled into
 
 A documentation node represents a single documentation topic and it might reference a variety of resources within the documentation context. Unlike a documentation node, a rendering node is a self-contained entity that includes any and all data necessary to display a single page of documentation.
 
-Hereto a rendering node contains data not only about a single specific topic (a tutorial, an article, or a framework symbol) but also data about its hierarchy in the documentation bundle, the titles and abstracts of any linked symbols, and any other metadata needed to display a single documentation page.
+Hereto a rendering node contains data not only about a single specific topic (a tutorial, an article, or a framework symbol) but also data about its hierarchy in the documentation, the titles and abstracts of any linked symbols, and any other metadata needed to display a single documentation page.
 
 ``RenderNodeTranslator`` is the type that converts a ``DocumentationNode`` into a ``RenderNode`` and ``PresentationURLGenerator`` is the one that automatically determines the location of the resulting rendering node within the compiled documentation.
 
@@ -74,4 +74,4 @@ Hereto a rendering node contains data not only about a single specific topic (a 
 
 - ``SemanticVersion``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

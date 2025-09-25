@@ -17,9 +17,9 @@ class IntroTests: XCTestCase {
         let source = "@Intro"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
+        let intro = Intro(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNil(intro)
         XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -42,9 +42,9 @@ class IntroTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
+        let intro = Intro(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNotNil(intro)
         XCTAssertTrue(problems.isEmpty)
         intro.map { intro in
@@ -68,9 +68,9 @@ class IntroTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let inputs = try await makeEmptyContext().inputs
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)
+        let intro = Intro(from: directive, source: nil, for: inputs, problems: &problems)
         XCTAssertNil(intro)
         XCTAssertEqual(2, problems.count)
         XCTAssertFalse(problems.containsErrors)

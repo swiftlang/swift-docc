@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,19 +15,19 @@ extension DocumentationContext {
 
     /// A type that provides inputs for a unit of documentation.
     ///
-    /// The inputs provider discovers documentation catalogs on the file system and creates a ``DocumentationBundle`` from the discovered catalog content.
+    /// The inputs provider discovers documentation catalogs on the file system and creates a ``DocumentationContext/Inputs`` from the discovered catalog content.
     ///
-    /// The input provider categorizes the catalog content based on corresponding ``DocumentationBundleFileTypes`` conditions:
+    /// The input provider categorizes the catalog content based on corresponding ``DocumentationInputFileTypes`` conditions:
     ///
-    ///  Category                                 | Condition
-    ///  ---------------------------------------- | -------------------------------------------------
-    ///  ``DocumentationBundle/markupURLs``       | ``DocumentationBundleFileTypes/isMarkupFile(_:)``
-    ///  ``DocumentationBundle/symbolGraphURLs``  | ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
-    ///  ``DocumentationBundle/info``             | ``DocumentationBundleFileTypes/isInfoPlistFile(_:)``
-    ///  ``DocumentationBundle/themeSettings``    | ``DocumentationBundleFileTypes/isThemeSettingsFile(_:)``
-    ///  ``DocumentationBundle/customHeader``     | ``DocumentationBundleFileTypes/isCustomHeader(_:)``
-    ///  ``DocumentationBundle/customFooter``     | ``DocumentationBundleFileTypes/isCustomFooter(_:)``
-    ///  ``DocumentationBundle/miscResourceURLs`` | Any file not already matched above.
+    /// Category                                         | Condition
+    /// ------------------------------------------------ | -------------------------------------------------
+    /// ``DocumentationContext/Inputs/markupURLs``       | ``DocumentationInputFileTypes/isMarkupFile(_:)``
+    /// ``DocumentationContext/Inputs/symbolGraphURLs``  | ``DocumentationInputFileTypes/isSymbolGraphFile(_:)``
+    /// ``DocumentationContext/Inputs/info``             | ``DocumentationInputFileTypes/isInfoPlistFile(_:)``
+    /// ``DocumentationContext/Inputs/themeSettings``    | ``DocumentationInputFileTypes/isThemeSettingsFile(_:)``
+    /// ``DocumentationContext/Inputs/customHeader``     | ``DocumentationInputFileTypes/isCustomHeader(_:)``
+    /// ``DocumentationContext/Inputs/customFooter``     | ``DocumentationInputFileTypes/isCustomFooter(_:)``
+    /// ``DocumentationContext/Inputs/miscResourceURLs`` | Any file not already matched above.
     ///
     /// ## Topics
     ///
@@ -72,7 +72,7 @@ extension DocumentationContext {
 
 extension DocumentationContext.InputsProvider {
 
-    private typealias FileTypes = DocumentationBundleFileTypes
+    private typealias FileTypes = DocumentationInputFileTypes
 
     /// A discovered documentation catalog.
     struct CatalogURL {
@@ -130,13 +130,9 @@ extension DocumentationContext.InputsProvider {
 
 // MARK: Create from catalog
 
-extension DocumentationContext {
-    package typealias Inputs = DocumentationBundle
-}
-
 extension DocumentationContext.InputsProvider {
 
-    package typealias Options = BundleDiscoveryOptions
+    package typealias Options = CatalogDiscoveryOptions
 
     /// Creates a collection of documentation inputs from the content of the given documentation catalog.
     /// 
@@ -153,7 +149,7 @@ extension DocumentationContext.InputsProvider {
 
         let info = try DocumentationContext.Inputs.Info(
             from: infoPlistData,
-            bundleDiscoveryOptions: options,
+            catalogDiscoveryOptions: options,
             derivedDisplayName: url.deletingPathExtension().lastPathComponent
         )
 
@@ -219,7 +215,7 @@ extension DocumentationContext.InputsProvider {
         }
         let derivedDisplayName = moduleNames.count == 1 ? moduleNames.first : nil
 
-        let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
+        let info = try DocumentationContext.Inputs.Info(catalogDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
         
         let topLevelPages: [URL]
         let provider: any DataProvider
@@ -243,7 +239,7 @@ extension DocumentationContext.InputsProvider {
         }
 
         return (
-            inputs: DocumentationBundle(
+            inputs: DocumentationContext.Inputs(
                 info: info,
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
                 markupURLs: topLevelPages,

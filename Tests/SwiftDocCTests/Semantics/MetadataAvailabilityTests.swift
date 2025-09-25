@@ -158,12 +158,12 @@ class MetadataAvailabilityTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, _) = try await testBundleAndContext(named: "AvailabilityBundle")
+        let inputs = try await loadFromDisk(catalogName: "AvailabilityBundle").inputs
 
         try directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Directive.directiveName, directive.name)
-            let converted = Directive(from: directive, source: nil, for: bundle, problems: &problems)
+            let converted = Directive(from: directive, source: nil, for: inputs, problems: &problems)
             try assert(converted, problems)
         }
     }

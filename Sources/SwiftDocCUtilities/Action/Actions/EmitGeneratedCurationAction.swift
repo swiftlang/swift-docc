@@ -45,12 +45,12 @@ struct EmitGeneratedCurationAction: AsyncAction {
         let inputProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
         let (bundle, dataProvider) = try inputProvider.inputsAndDataProvider(
             startingPoint: catalogURL,
-            options: BundleDiscoveryOptions(
+            options: CatalogDiscoveryOptions(
                 infoPlistFallbacks: [:],
                 additionalSymbolGraphFiles: symbolGraphFiles(in: additionalSymbolGraphDirectory)
             )
         )
-        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider)
+        let context = try await DocumentationContext(inputs: bundle, dataProvider: dataProvider)
 
         let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: outputURL)
         let curation = try writer.generateDefaultCurationContents(fromSymbol: startingPointSymbolLink, depthLimit: depthLimit)
@@ -69,5 +69,5 @@ private func symbolGraphFiles(in directory: URL?) -> [URL] {
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }
-        .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
+        .filter { DocumentationInputFileTypes.isSymbolGraphFile($0) }
 }

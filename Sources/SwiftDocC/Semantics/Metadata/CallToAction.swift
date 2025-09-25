@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -57,10 +57,10 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public var url: URL? = nil
 
-    /// The location of the associated link, as a reference to a file in this documentation bundle.
+    /// The location of the associated link, as a reference to a file in this documentation catalog.
     @DirectiveArgumentWrapped(
-        parseArgument: { bundle, argumentValue in
-            ResourceReference(bundleID: bundle.id, path: argumentValue)
+        parseArgument: { inputs, argumentValue in
+            ResourceReference(bundleID: inputs.id, path: argumentValue)
         }
     )
     public var file: ResourceReference? = nil
@@ -149,13 +149,9 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
 }
 
 extension CallToAction {
-    func resolveFile(
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
-        problems: inout [Problem]) -> ResourceReference?
-    {
+    func resolveFile(in context: DocumentationContext, problems: inout [Problem]) -> ResourceReference? {
         if let file = self.file {
-            if context.resolveAsset(named: file.url.lastPathComponent, in: bundle.rootReference) == nil {
+            if context.resolveAsset(named: file.url.lastPathComponent, in: context.inputs.rootReference) == nil {
                 problems.append(.init(
                     diagnostic: Diagnostic(
                         source: url,

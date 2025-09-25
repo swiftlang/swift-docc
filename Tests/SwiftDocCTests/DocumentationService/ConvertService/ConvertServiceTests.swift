@@ -15,7 +15,7 @@ import SymbolKit
 import SwiftDocCTestUtilities
 
 class ConvertServiceTests: XCTestCase {
-    private let testBundleInfo = DocumentationBundle.Info(
+    private let testBundleInfo = DocumentationContext.Inputs.Info(
         displayName: "TestBundle",
         id: "identifier"
     )
@@ -30,7 +30,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -113,7 +113,7 @@ class ConvertServiceTests: XCTestCase {
         let myFunctionExtensionData = try Data(contentsOf: myFunctionExtension)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -162,7 +162,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -203,7 +203,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -237,7 +237,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -303,7 +303,7 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -376,7 +376,7 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -428,7 +428,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         var request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -542,7 +542,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -603,7 +603,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -653,7 +653,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -689,7 +689,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -725,7 +725,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -758,7 +758,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -791,7 +791,7 @@ class ConvertServiceTests: XCTestCase {
         let article = try Data(contentsOf: articleFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
             symbolGraphs: [],
@@ -870,10 +870,10 @@ class ConvertServiceTests: XCTestCase {
         let catalog = tempURL.appendingPathComponent("TutorialWithCodeTest.docc")
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
-            bundleLocation: nil,
+            catalogLocation: nil,
             symbolGraphs: [],
             knownDisambiguatedSymbolPathComponents: nil,
             markupFiles: [],
@@ -1019,7 +1019,7 @@ class ConvertServiceTests: XCTestCase {
             """.data(using: .utf8))
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
             symbolGraphs: [],
@@ -1245,7 +1245,7 @@ class ConvertServiceTests: XCTestCase {
         let tutorial = try Data(contentsOf: tutorialFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
             symbolGraphs: [],
@@ -1291,7 +1291,7 @@ class ConvertServiceTests: XCTestCase {
         let tutorialOverview = try Data(contentsOf: tutorialOverviewFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
             symbolGraphs: [],
@@ -1365,7 +1365,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
             symbolGraphs: [symbolGraph],
@@ -1386,10 +1386,10 @@ class ConvertServiceTests: XCTestCase {
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
-            bundleLocation: testBundleURL,
+            catalogLocation: testBundleURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -1447,10 +1447,10 @@ class ConvertServiceTests: XCTestCase {
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: ["/documentation/Test-Bundle/article"],
-            bundleLocation: testBundleURL,
+            catalogLocation: testBundleURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -1471,10 +1471,10 @@ class ConvertServiceTests: XCTestCase {
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
-            bundleLocation: testBundleURL,
+            catalogLocation: testBundleURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -1494,8 +1494,8 @@ class ConvertServiceTests: XCTestCase {
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try await testBundleAndContext(
-            copying: "LegacyBundle_DoNotUseInNewTests",
+        let (testBundleURL, _) = try await loadFromDisk(
+            copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "sidekit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -1505,11 +1505,11 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
-            bundleLocation: testBundleURL,
+            catalogLocation: testBundleURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -1623,8 +1623,8 @@ class ConvertServiceTests: XCTestCase {
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try await testBundleAndContext(
-            copying: "LegacyBundle_DoNotUseInNewTests",
+        let (testBundleURL, _) = try await loadFromDisk(
+            copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "mykit-iOS.symbols.json",
                 "MyKit@SideKit.symbols.json",
@@ -1633,11 +1633,11 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
-            bundleLocation: testBundleURL,
+            catalogLocation: testBundleURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -1665,18 +1665,18 @@ class ConvertServiceTests: XCTestCase {
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try await testBundleAndContext(
+        let (testBundleURL, _) = try await loadFromDisk(
             // Use a bundle that contains only articles, one of which is declared as the TechnologyRoot and curates the
             // other articles.
-            copying: "BundleWithTechnologyRoot"
+            copyingCatalogNamed: "BundleWithTechnologyRoot"
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
-            bundleLocation: testBundleURL,
+            catalogLocation: testBundleURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -1728,7 +1728,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "TestBundle",
                 id: "com.test.bundle"
             ),
@@ -2017,7 +2017,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "TestBundle",
                 id: "org.swift.example"
             ),
@@ -2126,7 +2126,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "TestBundleDisplayName",
                 id: "com.test.bundle"
             ),
@@ -2164,7 +2164,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "TestBundleDisplayName",
                 id: "com.test.bundle"
             ),
@@ -2203,7 +2203,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
+            info: DocumentationContext.Inputs.Info(
                 displayName: "TestBundleDisplayName",
                 id: "com.test.bundle"
             ),
@@ -2297,7 +2297,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testReturnsErrorWhenConversionThrows() throws {
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            info: testBundleInfo,
             externalIDsToConvert: nil,
             symbolGraphs: [Data()],
             markupFiles: [],
@@ -2331,9 +2331,9 @@ class ConvertServiceTests: XCTestCase {
         let bundleURL = tempURL.appendingPathComponent("unit-test.docc")
         
         let requestWithDifferentBundleID = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", id: "com.example.something-else"),
+            info: DocumentationContext.Inputs.Info(displayName: "DisplayName", id: "com.example.something-else"),
             externalIDsToConvert: [],
-            bundleLocation: bundleURL,
+            catalogLocation: bundleURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -2341,9 +2341,9 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(try linkResolutionRequestsForConvertRequest(requestWithDifferentBundleID), [], "Shouldn't make any link resolution requests because the bundle IDs are different.")
         
         let requestWithSameBundleID = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", id: "com.example.something"),
+            info: DocumentationContext.Inputs.Info(displayName: "DisplayName", id: "com.example.something"),
             externalIDsToConvert: [],
-            bundleLocation: bundleURL,
+            catalogLocation: bundleURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []

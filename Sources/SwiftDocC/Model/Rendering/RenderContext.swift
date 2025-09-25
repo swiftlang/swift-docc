@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,19 +17,20 @@ import SymbolKit
 /// converting nodes in bulk, i.e. when converting a complete documentation model for example.
 public struct RenderContext {
     let documentationContext: DocumentationContext
-    let bundle: DocumentationBundle
     let renderer: DocumentationContentRenderer
     
     /// Creates a new render context.
     /// - Warning: Creating a render context pre-renders all content that the context provides.
-    /// - Parameters:
-    ///   - documentationContext: A documentation context.
-    ///   - bundle: A documentation bundle.
-    public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
+    /// - Parameter documentationContext: A documentation context.
+    public init(documentationContext: DocumentationContext) {
         self.documentationContext = documentationContext
-        self.bundle = bundle
-        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext, bundle: bundle)
+        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext)
         createRenderedContent()
+    }
+    
+    @available(*, deprecated, renamed: "init(documentationContext:)", message: "Use 'init(documentationContext:)' instead. This deprecated API will be removed after 6.3 is released")
+    public init(documentationContext: DocumentationContext, bundle _: DocumentationContext.Inputs) {
+        self.init(documentationContext: documentationContext)
     }
     
     /// The pre-rendered content per node reference.

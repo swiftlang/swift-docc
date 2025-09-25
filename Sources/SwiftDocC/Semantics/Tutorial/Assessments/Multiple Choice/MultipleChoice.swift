@@ -51,7 +51,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         self.choices = choices
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for inputs: DocumentationContext.Inputs, problems: inout [Problem]) {
         precondition(directive.name == MultipleChoice.directiveName)
         
         _ = Semantic.Analyses.HasOnlyKnownArguments<MultipleChoice>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, problems: &problems)
@@ -70,7 +70,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         }
         
         let choices: [Choice]
-        (choices, remainder) = Semantic.Analyses.ExtractAll<Choice>().analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (choices, remainder) = Semantic.Analyses.ExtractAll<Choice>().analyze(directive, children: remainder, source: source, for: inputs, problems: &problems)
         
         if choices.count < 2 || choices.count > 4 {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).CorrectNumberOfChoices", summary: "`\(MultipleChoice.directiveName)` should contain 2-4 `\(Choice.directiveName)` child directives")
@@ -115,7 +115,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         }
         
         let images: [ImageMedia]
-        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>().analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
+        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>().analyze(directive, children: remainder, source: source, for: inputs, problems: &problems)
         
         if images.count > 1 {
             for extraneousImage in images.suffix(from: 1) {

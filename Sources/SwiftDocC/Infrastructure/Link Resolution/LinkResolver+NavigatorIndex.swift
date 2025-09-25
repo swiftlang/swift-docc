@@ -17,9 +17,9 @@ package struct ExternalRenderNode {
     private var externalEntity: LinkResolver.ExternalEntity
 
     /// The bundle identifier for this external node.
-    private var bundleIdentifier: DocumentationBundle.Identifier
+    private var bundleIdentifier: DocumentationContext.Inputs.Identifier
 
-    init(externalEntity: LinkResolver.ExternalEntity, bundleIdentifier: DocumentationBundle.Identifier) {
+    init(externalEntity: LinkResolver.ExternalEntity, bundleIdentifier: DocumentationContext.Inputs.Identifier) {
         self.externalEntity = externalEntity
         self.bundleIdentifier = bundleIdentifier
     }

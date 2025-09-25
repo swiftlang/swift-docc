@@ -14,11 +14,11 @@ import Markdown
 struct SemanticAnalyzer: MarkupVisitor {
     var problems = [Problem]()
     let source: URL?
-    let bundle: DocumentationBundle
+    let inputs: DocumentationContext.Inputs
     
-    init(source: URL?, bundle: DocumentationBundle) {
+    init(source: URL?, inputs: DocumentationContext.Inputs) {
         self.source = source
-        self.bundle = bundle
+        self.inputs = inputs
     }
 
     private mutating func analyzeChildren(of markup: any Markup) -> [Semantic] {
@@ -51,13 +51,13 @@ struct SemanticAnalyzer: MarkupVisitor {
             .list(finalConjunction: .or)
         
         if let source {
-            if !topLevelChildren.isEmpty, !DocumentationBundleFileTypes.isTutorialFile(source) {
+            if !topLevelChildren.isEmpty, !DocumentationInputFileTypes.isTutorialFile(source) {
                 // Only tutorials support top level directives. This document has top level directives but is not a tutorial file.
                 let directiveName = type(of: topLevelChildren.first! as! (any DirectiveConvertible)).directiveName
                 let diagnostic = Diagnostic(source: source, severity: .warning, range: document.range, identifier: "org.swift.docc.unsupportedTopLevelChild", summary: "Found unsupported \(directiveName.singleQuoted) directive in '.\(source.pathExtension)' file", explanation: "Only '.tutorial' files support top-level directives")
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
                 return nil
-            } else if topLevelChildren.isEmpty, !DocumentationBundleFileTypes.isReferenceDocumentationFile(source) {
+            } else if topLevelChildren.isEmpty, !DocumentationInputFileTypes.isReferenceDocumentationFile(source) {
                 // Only reference documentation support all markdown content. This document has no top level directives but is not a reference documentation file.
                 let diagnostic = Diagnostic(
                     source: source,
@@ -77,7 +77,7 @@ struct SemanticAnalyzer: MarkupVisitor {
         }
         
         if topLevelChildren.isEmpty {
-            guard let article = Article(from: document, source: source, for: bundle, problems: &problems) else {
+            guard let article = Article(from: document, source: source, for: inputs, problems: &problems) else {
                 // We've already diagnosed the invalid article.
                 return nil
             }
@@ -100,58 +100,58 @@ struct SemanticAnalyzer: MarkupVisitor {
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> Semantic? {
         switch blockDirective.name {
         case TutorialTableOfContents.directiveName:
-            return TutorialTableOfContents(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return TutorialTableOfContents(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Volume.directiveName:
-            return Volume(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Volume(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Chapter.directiveName:
-            return Chapter(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Chapter(from: blockDirective, source: source, for: inputs, problems: &problems)
         case TutorialReference.directiveName:
-            return TutorialReference(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return TutorialReference(from: blockDirective, source: source, for: inputs, problems: &problems)
         case ContentAndMedia.directiveName:
-            return ContentAndMedia(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return ContentAndMedia(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Intro.directiveName:
-            return Intro(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Intro(from: blockDirective, source: source, for: inputs, problems: &problems)
         case ImageMedia.directiveName:
-            return ImageMedia(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return ImageMedia(from: blockDirective, source: source, for: inputs, problems: &problems)
         case VideoMedia.directiveName:
-            return VideoMedia(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return VideoMedia(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Tutorial.directiveName:
-            return Tutorial(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Tutorial(from: blockDirective, source: source, for: inputs, problems: &problems)
         case TutorialArticle.directiveName:
-            return TutorialArticle(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return TutorialArticle(from: blockDirective, source: source, for: inputs, problems: &problems)
         case XcodeRequirement.directiveName:
-            return XcodeRequirement(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return XcodeRequirement(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Assessments.directiveName:
-            return Assessments(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Assessments(from: blockDirective, source: source, for: inputs, problems: &problems)
         case MultipleChoice.directiveName:
-            return MultipleChoice(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return MultipleChoice(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Choice.directiveName:
-            return Choice(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Choice(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Justification.directiveName:
-            return Justification(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Justification(from: blockDirective, source: source, for: inputs, problems: &problems)
         case TutorialSection.directiveName:
-            return TutorialSection(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return TutorialSection(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Step.directiveName:
-            return Step(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Step(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Resources.directiveName:
-            return Resources(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Resources(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Comment.directiveName:
-            return Comment(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Comment(from: blockDirective, source: source, for: inputs, problems: &problems)
         case DeprecationSummary.directiveName:
-            return DeprecationSummary(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return DeprecationSummary(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Metadata.directiveName:
-            return Metadata(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Metadata(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Redirect.directiveName:
-            return Redirect(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return Redirect(from: blockDirective, source: source, for: inputs, problems: &problems)
         case DocumentationExtension.directiveName:
-            return DocumentationExtension(from: blockDirective, source: source, for: bundle, problems: &problems)
+            return DocumentationExtension(from: blockDirective, source: source, for: inputs, problems: &problems)
         case Snippet.directiveName:
             // A snippet directive does not need to stay around as a Semantic object.
             // we only need to check the path argument and that it doesn't
             // have any inner content as a convenience to the author.
             // The path will resolve as a symbol link later in the
             // MarkupReferenceResolver.
-            _ = Snippet(from: blockDirective, source: source, for: bundle, problems: &problems)
+            _ = Snippet(from: blockDirective, source: source, for: inputs, problems: &problems)
             return nil
         case Options.directiveName:
             return nil
@@ -166,7 +166,7 @@ struct SemanticAnalyzer: MarkupVisitor {
             guard let directive = directiveType.init(
                 from: blockDirective,
                 source: source,
-                for: bundle,
+                for: inputs,
                 problems: &problems
             ) else {
                 return nil

@@ -38,9 +38,9 @@ class AutomaticCurationTests: XCTestCase {
                     ))
                 ])
             
-            let (bundle, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             
-            try assertRenderedPage(atPath: "/documentation/ModuleName/SomeClass", containsAutomaticTopicSectionFor: kind, context: context, bundle: bundle)
+            try assertRenderedPage(atPath: "/documentation/ModuleName/SomeClass", containsAutomaticTopicSectionFor: kind, context: context)
         }
     }
     
@@ -83,10 +83,10 @@ class AutomaticCurationTests: XCTestCase {
                     )),
                 ])
             
-            let (bundle, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             
-            try assertRenderedPage(atPath: "/documentation/ModuleName", containsAutomaticTopicSectionFor: .extendedModule, context: context, bundle: bundle)
-            try assertRenderedPage(atPath: "/documentation/ModuleName/ExtendedModule", containsAutomaticTopicSectionFor: kind, context: context, bundle: bundle)
+            try assertRenderedPage(atPath: "/documentation/ModuleName", containsAutomaticTopicSectionFor: .extendedModule, context: context)
+            try assertRenderedPage(atPath: "/documentation/ModuleName/ExtendedModule", containsAutomaticTopicSectionFor: kind, context: context)
         }
     }
     
@@ -94,12 +94,11 @@ class AutomaticCurationTests: XCTestCase {
         atPath path: String,
         containsAutomaticTopicSectionFor kind: SymbolGraph.Symbol.KindIdentifier,
         context: DocumentationContext,
-        bundle: DocumentationBundle,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode, file: file, line: line)
         
         for section in renderNode.topicSections {
@@ -117,7 +116,7 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testAutomaticTopicsSkippingCustomCuratedSymbols() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", configureBundle: { url in
             // Curate some of members of SideClass in an API collection
             try """
             # Some API collection
@@ -136,11 +135,11 @@ class AutomaticCurationTests: XCTestCase {
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         // Compile the render node to flex the automatic curator
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
         
         // Verify that uncurated element `SideKit/SideClass/Element` is
@@ -172,7 +171,7 @@ class AutomaticCurationTests: XCTestCase {
         for curatedIndices in variationsOfChildrenToCurate {
             let manualCuration = curatedIndices.map { "- <\(allExpectedChildren[$0])>" }.joined(separator: "\n")
             
-            let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+            let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
                 try """
                 # ``SideKit/SideClass``
 
@@ -186,10 +185,10 @@ class AutomaticCurationTests: XCTestCase {
                 """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
             
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
             // Compile docs and verify the generated Topics section
             let symbol = node.semantic as! Symbol
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
             
             // Verify that all the symbols are curated, either manually or automatically
@@ -231,7 +230,7 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testSeeAlsoSectionForAutomaticallyCuratedTopics() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("sidekit.symbols.json")))
             
             // Copy `SideClass` a handful of times
@@ -348,8 +347,8 @@ class AutomaticCurationTests: XCTestCase {
         
         // The first topic section
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // SideKit includes the "Manually curated" task group and additional automatically created groups.
@@ -364,8 +363,8 @@ class AutomaticCurationTests: XCTestCase {
         
         // The second topic section
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassFour", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClassFour", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // The other symbols in the same topic section appear in this See Also section
@@ -377,8 +376,8 @@ class AutomaticCurationTests: XCTestCase {
         
         // The second topic section
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassSix", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClassSix", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // The other symbols in the same topic section appear in this See Also section
@@ -389,22 +388,22 @@ class AutomaticCurationTests: XCTestCase {
         
         // The automatically curated symbols shouldn't have a See Also section
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassEight", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClassEight", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             XCTAssertNil(renderNode.seeAlsoSections.first, "This symbol was automatically curated and shouldn't have a See Also section")
         }
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassNine", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClassNine", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             XCTAssertNil(renderNode.seeAlsoSections.first, "This symbol was automatically curated and shouldn't have a See Also section")
         }
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClassTen", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClassTen", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             XCTAssertNil(renderNode.seeAlsoSections.first, "This symbol was automatically curated and shouldn't have a See Also section")
@@ -421,7 +420,7 @@ class AutomaticCurationTests: XCTestCase {
             forResource: "TopLevelCuration.symbols", withExtension: "json", subdirectory: "Test Resources")!
         
         // Create a test bundle copy with the symbol graph from above
-        let (bundleURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
+        let (bundleURL, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: topLevelCurationSGFURL, to: url.appendingPathComponent("TopLevelCuration.symbols.json"))
         }
         defer {
@@ -430,8 +429,8 @@ class AutomaticCurationTests: XCTestCase {
 
         do {
             // Get the framework render node
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TestBed", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // Verify that `B` isn't automatically curated under the framework node
@@ -443,8 +442,8 @@ class AutomaticCurationTests: XCTestCase {
         
         do {
             // Get the `A` render node
-            let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/A", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TestBed/A", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // Verify that `B` was in fact curated under `A`
@@ -456,7 +455,7 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testNoAutoCuratedMixedLanguageDuplicates() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "MixedLanguageFramework") { url in
 
             // Load the existing Obj-C symbol graph from this fixture.
             let path = "symbol-graphs/clang/MixedLanguageFramework.symbols.json"
@@ -480,10 +479,10 @@ class AutomaticCurationTests: XCTestCase {
             try newGraphData.write(to: url.appendingPathComponent("symbol-graphs/clang/MixedLanguageFramework.symbols.json"))
         }
 
-        // Load the "MixedLanguageProtocol Implementations" API COllection
+        // Load the "MixedLanguageProtocol Implementations" API Collection
         let protocolImplementationsNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
                 sourceLanguages: [.swift, .objectiveC]
             )
@@ -505,14 +504,10 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testRelevantLanguagesAreAutoCuratedInMixedLanguageFramework() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFramework")
         
         let frameworkDocumentationNode = try context.entity(
-            with: ResolvedTopicReference(
-                bundleID: bundle.id,
-                path: "/documentation/MixedLanguageFramework",
-                sourceLanguages: [.swift, .objectiveC]
-            )
+            with: XCTUnwrap(context.soleRootModuleReference)
         )
         
         let swiftTopics = try AutomaticCuration.topics(
@@ -578,16 +573,13 @@ class AutomaticCurationTests: XCTestCase {
         let whatsitSymbols = Bundle.module.url(
             forResource: "Whatsit-Objective-C.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
-        let (bundleURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: whatsitSymbols, to: url.appendingPathComponent("Whatsit-Objective-C.symbols.json"))
-        }
-        defer {
-            try? FileManager.default.removeItem(at: bundleURL)
         }
 
         let frameworkDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/Whatsit",
                 sourceLanguages: [.objectiveC]
             )
@@ -613,7 +605,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let classDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/Whatsit/Whatsit",
                 sourceLanguages: [.objectiveC]
             )
@@ -639,16 +631,13 @@ class AutomaticCurationTests: XCTestCase {
         let symbolURL = Bundle.module.url(
             forResource: "TypeSubscript.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
-        let (bundleURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: symbolURL, to: url.appendingPathComponent("TypeSubscript.symbols.json"))
-        }
-        defer {
-            try? FileManager.default.removeItem(at: bundleURL)
         }
 
         let containerDocumentationNode = try context.entity(
             with: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/ThirdOrder/SomeStruct",
                 sourceLanguages: [.swift]
             )
@@ -671,14 +660,10 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testCPlusPlusSymbolsAreCuratedProperly() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "CxxSymbols")
+        let context = try await loadFromDisk(catalogName: "CxxSymbols")
 
         let rootDocumentationNode = try context.entity(
-            with: .init(
-                bundleID: bundle.id,
-                path: "/documentation/CxxSymbols",
-                sourceLanguage: .objectiveC
-            )
+            with: XCTUnwrap(context.soleRootModuleReference)
         )
         let topics = try AutomaticCuration.topics(
             for: rootDocumentationNode,
@@ -703,7 +688,7 @@ class AutomaticCurationTests: XCTestCase {
     // Ensures that manually curated sample code articles are not also
     // automatically curated.
     func testSampleCodeArticlesRespectManualCuration() async throws {
-        let renderNode = try await renderNode(atPath: "/documentation/SomeSample", fromTestBundleNamed: "SampleBundle")
+        let renderNode = try await renderNode(atPath: "/documentation/SomeSample", fromOnDiskCatalogNamed: "SampleBundle")
         
         guard renderNode.topicSections.count == 2 else {
             XCTFail("Expected to find '2' topic sections. Found: \(renderNode.topicSections.count.description.singleQuoted).")
@@ -736,7 +721,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let protocolRenderNode = try await renderNode(
             atPath: "/documentation/ShapeKit/OverloadedProtocol",
-            fromTestBundleNamed: "OverloadedSymbols")
+            fromOnDiskCatalogNamed: "OverloadedSymbols")
 
         guard protocolRenderNode.topicSections.count == 1, let protocolTopicSection = protocolRenderNode.topicSections.first else {
             XCTFail("Expected to find 1 topic section, found \(protocolRenderNode.topicSections.count): \(protocolRenderNode.topicSections.map(\.title?.singleQuoted))")
@@ -750,7 +735,7 @@ class AutomaticCurationTests: XCTestCase {
 
         let overloadGroupRenderNode = try await renderNode(
             atPath: "/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
-            fromTestBundleNamed: "OverloadedSymbols")
+            fromOnDiskCatalogNamed: "OverloadedSymbols")
 
         XCTAssertEqual(
             overloadGroupRenderNode.topicSections.count, 0,
@@ -761,11 +746,11 @@ class AutomaticCurationTests: XCTestCase {
     func testAutomaticCurationHandlesOverloadsWithLanguageFilters() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let (bundle, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let (_, context) = try await loadFromDisk(catalogName: "OverloadedSymbols")
 
         let protocolDocumentationNode = try context.entity(
             with: .init(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/ShapeKit/OverloadedProtocol",
                 sourceLanguage: .swift))
 
@@ -802,7 +787,7 @@ class AutomaticCurationTests: XCTestCase {
     func testAutomaticCurationDropsOverloadGroupWhenOverloadsAreCurated() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let (_, bundle, context) = try await testBundleAndContext(copying: "OverloadedSymbols") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "OverloadedSymbols") { url in
             try """
             # ``OverloadedProtocol``
 
@@ -819,13 +804,13 @@ class AutomaticCurationTests: XCTestCase {
 
         let protocolDocumentationNode = try context.entity(
             with: .init(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/documentation/ShapeKit/OverloadedProtocol",
                 sourceLanguage: .swift))
 
         // Compile the render node to flex the automatic curator
         let symbol = protocolDocumentationNode.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: protocolDocumentationNode.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: protocolDocumentationNode.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
 
         XCTAssertEqual(renderNode.topicSections.count, 2)
@@ -862,7 +847,7 @@ class AutomaticCurationTests: XCTestCase {
             - ``SecondClass``
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -894,7 +879,7 @@ class AutomaticCurationTests: XCTestCase {
             - <doc:API-Collection>
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -922,7 +907,7 @@ class AutomaticCurationTests: XCTestCase {
             - ``SecondClass``
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -954,7 +939,7 @@ class AutomaticCurationTests: XCTestCase {
             - <doc:API-Collection>
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -982,7 +967,7 @@ class AutomaticCurationTests: XCTestCase {
             - ``SecondClass``
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -1011,7 +996,7 @@ class AutomaticCurationTests: XCTestCase {
             - ``FirstClass/firstMember``
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -1045,7 +1030,7 @@ class AutomaticCurationTests: XCTestCase {
             - <doc:API-Collection>
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -1077,7 +1062,7 @@ class AutomaticCurationTests: XCTestCase {
             - ``FirstClass/firstMember``
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -1123,7 +1108,7 @@ class AutomaticCurationTests: XCTestCase {
             - <doc:API-Collection-1>
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -1156,7 +1141,7 @@ class AutomaticCurationTests: XCTestCase {
             - ``OuterClass/someMember``
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -1195,7 +1180,7 @@ class AutomaticCurationTests: XCTestCase {
             # First article
             """),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -1242,12 +1227,12 @@ class AutomaticCurationTests: XCTestCase {
              """),
              ])
              let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
-             let (_, bundle, context) = try await loadBundle(from: catalogURL)
+             let context = try await loadFromDisk(catalogURL: catalogURL)
 
-             let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift))
+             let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift))
 
              // Compile docs and verify the generated Topics section
-             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
              let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
 
              // Verify that there are no duplicate sections in `SomeClass`'s "Topics" section
@@ -1285,7 +1270,7 @@ class AutomaticCurationTests: XCTestCase {
         ])
         
         // Load the bundle
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         // Get the module and its automatic curation groups
@@ -1351,7 +1336,7 @@ class AutomaticCurationTests: XCTestCase {
         ])
 
         // Load the bundle
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         // Get the module and its automatic curation groups

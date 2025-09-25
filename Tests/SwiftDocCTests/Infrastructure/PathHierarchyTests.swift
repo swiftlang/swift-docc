@@ -17,7 +17,7 @@ import Markdown
 class PathHierarchyTests: XCTestCase {
     
     func testFindingUnambiguousAbsolutePaths() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         try assertFindsPath("/MixedFramework", in: tree, asSymbolID: "MixedFramework")
@@ -289,7 +289,7 @@ class PathHierarchyTests: XCTestCase {
     func testAmbiguousPaths() async throws {
         enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
         
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // Symbol name not found. Suggestions only include module names (search is not relative to a known page)
@@ -575,7 +575,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testRedundantKindDisambiguation() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         try assertFindsPath("/MixedFramework-module", in: tree, asSymbolID: "MixedFramework")
@@ -627,7 +627,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testBothRedundantDisambiguations() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         try assertFindsPath("/MixedFramework-module-9r7pl", in: tree, asSymbolID: "MixedFramework")
@@ -691,7 +691,7 @@ class PathHierarchyTests: XCTestCase {
         // ---- Outer
         // @_exported import Inner
         // public typealias Something = Inner.Something
-        let (_, context) = try await testBundleAndContext(named: "DefaultImplementationsWithExportedImport")
+        let context = try await loadFromDisk(catalogName: "DefaultImplementationsWithExportedImport")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // The @_export imported protocol can be found
@@ -713,7 +713,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testDisambiguatedPaths() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -850,7 +850,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testDisambiguatedOperatorPaths() async throws {
-        let (_, context) = try await testBundleAndContext(named: "InheritedOperators")
+        let context = try await loadFromDisk(catalogName: "InheritedOperators")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -920,7 +920,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testFindingRelativePaths() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let moduleID = try tree.find(path: "/MixedFramework", onlyFindSymbols: true)
@@ -1092,7 +1092,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testPathWithDocumentationPrefix() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let moduleID = try tree.find(path: "/MixedFramework", onlyFindSymbols: true)
@@ -1107,12 +1107,12 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testUnrealisticMixedTestCatalog() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         let linkResolver = try XCTUnwrap(context.linkResolver.localResolver)
         let tree = try XCTUnwrap(linkResolver.pathHierarchy)
         
         // Test finding the parent via the `fromTopicReference` integration shim.
-        let parentID = linkResolver.resolvedReferenceMap[ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)]!
+        let parentID = linkResolver.resolvedReferenceMap[ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift)]!
         XCTAssertNotNil(parentID)
         XCTAssertEqual(try tree.findSymbol(path: "globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
         XCTAssertEqual(try tree.findSymbol(path: "MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
@@ -1173,7 +1173,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testMixedLanguageFramework() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let context = try await loadFromDisk(catalogName: "MixedLanguageFramework")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction(_:)", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
@@ -1227,7 +1227,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testArticleAndSymbolCollisions() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "MixedLanguageFramework") { url in
             try """
             # An article
             
@@ -1244,7 +1244,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testArticleSelfAnchorLinks() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "MixedLanguageFramework") { url in
             try """
             # ArticleWithHeading
 
@@ -1267,7 +1267,7 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testOverloadedSymbols() async throws {
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let context = try await loadFromDisk(catalogName: "OverloadedSymbols")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -1331,7 +1331,7 @@ class PathHierarchyTests: XCTestCase {
     func testOverloadedSymbolsWithOverloadGroups() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let context = try await loadFromDisk(catalogName: "OverloadedSymbols")
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -1956,7 +1956,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             })),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
@@ -2005,7 +2005,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             })),
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
@@ -2040,7 +2040,7 @@ class PathHierarchyTests: XCTestCase {
     func testOverloadGroupSymbolsResolveLinksWithoutHash() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let context = try await loadFromDisk(catalogName: "OverloadedSymbols")
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         // The enum case should continue to resolve by kind, since it has no hash collision
@@ -2058,7 +2058,7 @@ class PathHierarchyTests: XCTestCase {
 
     func testAmbiguousPathsForOverloadedGroupSymbols() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-        let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
+        let context = try await loadFromDisk(catalogName: "OverloadedSymbols")
         let tree = context.linkResolver.localResolver.pathHierarchy
         try assertPathRaisesErrorMessage("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
@@ -2076,7 +2076,7 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testDoesNotSuggestBundleNameForSymbolLink() async throws {
-        let exampleDocumentation = Folder(name: "Something.docc", content: [
+        let catalog = Folder(name: "Something.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
             
             InfoPlist(displayName: "ModuleNaem"), // The bundle name is intentionally misspelled.
@@ -2088,8 +2088,8 @@ class PathHierarchyTests: XCTestCase {
             A documentation extension file with a misspelled link that happens to match the, also misspelled, bundle name.
             """),
         ])
-        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
-        let (_, _, context) = try await loadBundle(from: catalogURL)
+        
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // This link is intentionally misspelled
@@ -2102,7 +2102,7 @@ class PathHierarchyTests: XCTestCase {
     }
         
     func testSymbolsWithSameNameAsModule() async throws {
-        let (_, context) = try await testBundleAndContext(named: "SymbolsWithSameNameAsModule")
+        let context = try await loadFromDisk(catalogName: "SymbolsWithSameNameAsModule")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // /* in a module named "Something "*/
@@ -2163,7 +2163,7 @@ class PathHierarchyTests: XCTestCase {
         // public extension InnerClass {
         //     func something() {}
         // }
-        let (_, context) = try await testBundleAndContext(named: "ShadowExtendedModuleWithLocalSymbol")
+        let context = try await loadFromDisk(catalogName: "ShadowExtendedModuleWithLocalSymbol")
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         try assertPathCollision("Outer/Inner", in: tree, collisions: [
@@ -2238,7 +2238,7 @@ class PathHierarchyTests: XCTestCase {
             ),
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2264,7 +2264,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testContinuesSearchingIfNonSymbolMatchesSymbolLink() async throws {
-        let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
+        let catalog = Folder(name: "CatalogName.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"])
             ])),
@@ -2281,8 +2281,7 @@ class PathHierarchyTests: XCTestCase {
              ### OtherHeading
              """),
         ])
-        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
-        let (_, _, context) = try await loadBundle(from: catalogURL)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
@@ -2307,14 +2306,13 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testDiagnosticDoesNotSuggestReplacingPartOfSymbolName() async throws {
-        let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
+        let catalog = Folder(name: "CatalogName.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-class-id-1", kind: .class, pathComponents: ["SomeClass-(Something)"]),
                 makeSymbol(id: "some-class-id-2", kind: .class, pathComponents: ["SomeClass-(Something)"]),
             ])),
         ])
-        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
-        let (_, _, context) = try await loadBundle(from: catalogURL)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
@@ -2338,7 +2336,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testSnippets() async throws {
-        let (_, context) = try await testBundleAndContext(named: "Snippets")
+        let context = try await loadFromDisk(catalogName: "Snippets")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         try assertFindsPath("/Snippets/Snippets/MySnippet", in: tree, asSymbolID: "$snippet__Test.Snippets.MySnippet")
@@ -2363,7 +2361,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testInheritedOperators() async throws {
-        let (_, context) = try await testBundleAndContext(named: "InheritedOperators")
+        let context = try await loadFromDisk(catalogName: "InheritedOperators")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // public struct MyNumber: SignedNumeric, Comparable, Equatable, Hashable {
@@ -2465,7 +2463,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testSameNameForSymbolAndContainer() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithSameNameForSymbolAndContainer")
+        let context = try await loadFromDisk(catalogName: "BundleWithSameNameForSymbolAndContainer")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // public struct Something {
@@ -2499,7 +2497,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testPrefersNonSymbolsWhenOnlyFindSymbolIsFalse() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "SymbolsWithSameNameAsModule") { url in
             // This bundle has a top-level struct named "Wrapper". Adding an article named "Wrapper.md" introduces a possibility for a link collision
             try """
             # An article
@@ -2531,15 +2529,13 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testOneSymbolPathsWithKnownDisambiguation() async throws {
-        let exampleDocumentation = Folder(name: "MyKit.docc", content: [
+        let catalog = Folder(name: "MyKit.docc", content: [
             CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!),
             InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
         ])
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
 
         do {
-            let (_, _, context) = try await loadBundle(from: bundleURL)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertFindsPath("/MyKit/MyClass/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
@@ -2558,7 +2554,7 @@ class PathHierarchyTests: XCTestCase {
             configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = [
                 "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
             ]
-            let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
+            let context = try await load(catalog: catalog, configuration: configuration)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertFindsPath("/MyKit/MyClass-swift.class/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
@@ -2577,7 +2573,7 @@ class PathHierarchyTests: XCTestCase {
             configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = [
                 "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class-hash", "myFunction()"]
             ]
-            let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
+            let context = try await load(catalog: catalog, configuration: configuration)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertFindsPath("/MyKit/MyClass-swift.class-hash/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
@@ -2594,7 +2590,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testArticleWithDisambiguationLookingName() async throws {
-        let exampleDocumentation = Folder(name: "MyKit.docc", content: [
+        let catalog = Folder(name: "MyKit.docc", content: [
             CopyOfFile(original: Bundle.module.url(forResource: "BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!),
             InfoPlist(displayName: "BaseKit", identifier: "com.test.BaseKit"),
             TextFile(name: "basekit.md", utf8Content: """
@@ -2613,11 +2609,10 @@ class PathHierarchyTests: XCTestCase {
             An article with a file name that resembles a disambiguated symbol name.
             """),
         ])
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+        
 
         do {
-            let (_, _, context) = try await loadBundle(from: bundleURL)
+            let context = try await load(catalog: catalog)
             XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0) })")
             
             let tree = context.linkResolver.localResolver.pathHierarchy
@@ -2634,7 +2629,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testGeometricalShapes() async throws {
-        let (_, context) = try await testBundleAndContext(named: "GeometricalShapes")
+        let context = try await loadFromDisk(catalogName: "GeometricalShapes")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths().values.sorted()
@@ -2664,7 +2659,7 @@ class PathHierarchyTests: XCTestCase {
             ["X", "Y"],
             ["X", "Y2", "Z", "W"],
         ]
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "Module.symbols.json", content: makeSymbolGraph(
                 moduleName: "Module",
                 symbols: symbolPaths.map { 
@@ -2672,10 +2667,7 @@ class PathHierarchyTests: XCTestCase {
                 }
             )),
         ])
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
-        
-        let (_, _, context) = try await loadBundle(from: bundleURL)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         try assertPathNotFound("/Module/A", in: tree)
@@ -2731,7 +2723,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2773,7 +2765,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2813,7 +2805,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2861,7 +2853,7 @@ class PathHierarchyTests: XCTestCase {
             })
         ])
 
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         let resolvedSwiftContainerID = try tree.find(path: "/ModuleName/ContainerName-struct", onlyFindSymbols: true)
@@ -2939,7 +2931,7 @@ class PathHierarchyTests: XCTestCase {
             ])
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2966,7 +2958,7 @@ class PathHierarchyTests: XCTestCase {
             ))
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
@@ -3020,7 +3012,7 @@ class PathHierarchyTests: XCTestCase {
             """)
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let moduleID = try tree.find(path: "/ModuleName", onlyFindSymbols: true)
@@ -3094,7 +3086,7 @@ class PathHierarchyTests: XCTestCase {
             """)
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
@@ -3127,7 +3119,7 @@ class PathHierarchyTests: XCTestCase {
             makeSymbolGraphFile(platformName: "PlatformTwo"),
         ])
         
-        let (_, context) = try await loadBundle(catalog: multiPlatformCatalog)
+        let context = try await load(catalog: multiPlatformCatalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -3138,14 +3130,14 @@ class PathHierarchyTests: XCTestCase {
         let singlePlatformCatalog = Folder(name: "unit-test.docc", content: [
             makeSymbolGraphFile(platformName: "PlatformOne"),
         ])
-        let (_, singlePlatformContext) = try await loadBundle(catalog: singlePlatformCatalog)
+        let singlePlatformContext = try await load(catalog: singlePlatformCatalog)
         let singlePlatformPaths = singlePlatformContext.linkResolver.localResolver.pathHierarchy.caseInsensitiveDisambiguatedPaths()
         XCTAssertEqual(paths[protocolRequirementID], singlePlatformPaths[protocolRequirementID])
         XCTAssertEqual(paths[defaultImplementationID], singlePlatformPaths[defaultImplementationID])
     }
     
     func testMultiPlatformModuleWithExtension() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MultiPlatformModuleWithExtension")
+        let context = try await loadFromDisk(catalogName: "MultiPlatformModuleWithExtension")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         try assertFindsPath("/MainModule/TopLevelProtocol/extensionMember(_:)", in: tree, asSymbolID: "extensionMember1")
@@ -3179,7 +3171,7 @@ class PathHierarchyTests: XCTestCase {
             })
         ])
 
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         let container = try tree.findNode(path: "/ModuleName/ContainerName-struct", onlyFindSymbols: true)
@@ -3237,7 +3229,7 @@ class PathHierarchyTests: XCTestCase {
             })
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let swiftSpecificNode = try tree.findNode(path: "/ModuleName/OuterContainerName-struct/MiddleContainerName-struct/InnerContainerName-struct/swiftSpecificMember()", onlyFindSymbols: true, parent: nil)
@@ -3321,7 +3313,7 @@ class PathHierarchyTests: XCTestCase {
             ))
         })
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         try assertFindsPath("/ModuleName/ContainerName/memberName", in: tree, asSymbolID: memberID)
@@ -3371,7 +3363,7 @@ class PathHierarchyTests: XCTestCase {
             ))
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let link = "/ModuleName/doSomething(with:and:)"
@@ -3448,7 +3440,7 @@ class PathHierarchyTests: XCTestCase {
             })
         ])
 
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
@@ -3466,7 +3458,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testLinksToCxxOperators() async throws {
-        let (_, context) = try await testBundleAndContext(named: "CxxOperators")
+        let context = try await loadFromDisk(catalogName: "CxxOperators")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         // MyClass operator+() const;                     // unary plus
@@ -3779,7 +3771,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(first:second:third:)", in: tree, collisions: [
@@ -3829,7 +3821,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(first:second:third:)", in: tree, collisions: [
@@ -3879,7 +3871,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(first:second:)", in: tree, collisions: [
@@ -3916,7 +3908,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(with:)", in: tree, collisions: [
@@ -3958,7 +3950,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(first:second:third:)", in: tree, collisions: [
@@ -4057,7 +4049,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(first:second:third:fourth:fifth:sixth:)", in: tree, collisions: [
@@ -4123,7 +4115,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(first:second:)", in: tree, collisions: [
@@ -4173,7 +4165,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(first:)", in: tree, collisions: [
@@ -4218,7 +4210,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(...)", in: tree, collisions: [
@@ -4245,7 +4237,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(...)", in: tree, collisions: [
@@ -4272,7 +4264,7 @@ class PathHierarchyTests: XCTestCase {
                 ))
             ])
             
-            let (_, context) = try await loadBundle(catalog: catalog)
+            let context = try await load(catalog: catalog)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertPathCollision("ModuleName/doSomething(...)", in: tree, collisions: [
@@ -4442,7 +4434,7 @@ class PathHierarchyTests: XCTestCase {
             """),
         ])
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let rootIdentifier = try XCTUnwrap(tree.modules.first?.identifier)

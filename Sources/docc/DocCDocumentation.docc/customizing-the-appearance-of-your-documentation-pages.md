@@ -80,7 +80,7 @@ of a green hue.
 As a general rule, the default color properties provided by DocC assumes a
 naming convention where "fill" colors are used for backgrounds and "figure"
 colors are used for foreground colors, like text. Note that colors defined in 
-`theme-settings.json` will be used across all pages of your documentation bundle.
+`theme-settings.json` will be used across all pages of your documentation.
 
 > Tip:
 > For a more complete example of a fully customized documentation website, you
@@ -255,4 +255,4 @@ Most notably:
 [3]: https://mportiz08.github.io/swift-docc/documentation/docc
 [4]: https://mportiz08.github.io/swift-docc/theme-settings.json
 
-<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2022-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,11 +10,11 @@
 
 import Foundation
 
-extension DocumentationBundle.Info {
-    /// A collection of feature flags that can be enabled from a bundle's Info.plist.
+extension DocumentationContext.Inputs.Info {
+    /// A collection of feature flags that can be enabled from a catalog's Info.plist.
     ///
     /// This is a subset of flags from ``FeatureFlags`` that can influence how a documentation
-    /// bundle is written, and so can be considered a property of the documentation itself, rather
+    /// catalog is written, and so can be considered a property of the documentation itself, rather
     /// than as an experimental behavior that can be enabled for one-off builds.
     ///
     /// ```xml

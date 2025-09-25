@@ -11,10 +11,15 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class MarkupReferenceResolverTests: XCTestCase {
     func testArbitraryReferenceInComment() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName"))
+        ])
+        
+        let context = try await load(catalog: catalog)
         let source = """
         @Comment {
             ``hello`` and ``world`` are 2 arbitrary symbol links.
@@ -23,13 +28,13 @@ class MarkupReferenceResolverTests: XCTestCase {
         }
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: context.rootModules[0])
+        var resolver = MarkupReferenceResolver(context: context, rootReference: context.rootModules[0])
         _ = resolver.visit(document)
         XCTAssertEqual(0, resolver.problems.count)
     }
 
     func testDuplicatedDiagnosticForExtensionFile() async throws {
-        let (_, context) = try await testBundleAndContext(named: "ExtensionArticleBundle")
+        let context = try await loadFromDisk(catalogName: "ExtensionArticleBundle")
         // Before #733, symbols with documentation extension files emitted duplicated problems:
         // - one with a source location in the in-source documentation comment
         // - one with a source location in the documentation extension file.

@@ -502,16 +502,14 @@ class SymbolTests: XCTestCase {
     }
     
     func testNoWarningWhenDocCommentContainsDoxygen() async throws {
-        let tempURL = try createTemporaryDirectory()
-        
-        let bundleURL = try Folder(name: "Inheritance.docc", content: [
+        let catalog = Folder(name: "Inheritance.docc", content: [
             InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance"),
             CopyOfFile(original: Bundle.module.url(
                 forResource: "Inheritance.symbols", withExtension: "json",
                 subdirectory: "Test Resources")!),
-        ]).write(inside: tempURL)
+        ])
         
-        let (_, _, context) = try await loadBundle(from: bundleURL)
+        let context = try await load(catalog: catalog)
         let problems = context.diagnosticEngine.problems
         XCTAssertEqual(problems.count, 0)
     }
@@ -522,7 +520,7 @@ class SymbolTests: XCTestCase {
             withExtension: "symbols.json",
             subdirectory: "Test Resources"
         )!
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             try? FileManager.default.copyItem(at: deckKitSymbolGraph, to: url.appendingPathComponent("DeckKit.symbols.json"))
         }
         let symbol = try XCTUnwrap(context.documentationCache["c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:"]?.semantic as? Symbol)
@@ -540,7 +538,7 @@ class SymbolTests: XCTestCase {
     }
 
     func testUnresolvedReferenceWarningsInDocumentationExtension() async throws {
-        let (url, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (url, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             let myKitDocumentationExtensionComment = """
             # ``MyKit/MyClass``
 
@@ -950,7 +948,7 @@ class SymbolTests: XCTestCase {
         - <doc://com.test.external/ExternalPage>
         """
         
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
 
@@ -1107,7 +1105,7 @@ class SymbolTests: XCTestCase {
 
     func testAddingConstraintsToSymbol() async throws {
         let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             
             let newDocComment = self.makeLineList(
@@ -1612,7 +1610,7 @@ class SymbolTests: XCTestCase {
         }
         
         let diagnosticEngine = DiagnosticEngine(filterLevel: diagnosticEngineFilterLevel)
-        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: catalogContent), diagnosticEngine: diagnosticEngine)
+        let context = try await load(catalog: Folder(name: "unit-test.docc", content: catalogContent), diagnosticEngine: diagnosticEngine)
         
         let node = try XCTUnwrap(context.documentationCache[methodUSR], file: file, line: line)
         

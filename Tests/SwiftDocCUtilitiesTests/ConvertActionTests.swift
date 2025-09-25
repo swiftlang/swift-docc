@@ -267,7 +267,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
+            bundleDiscoveryOptions: CatalogDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
             )
@@ -2892,13 +2892,13 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
+            bundleDiscoveryOptions: CatalogDiscoveryOptions(
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
             )
         )
         let (_, context) = try await action.perform(logHandle: .none)
 
-        let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
+        let bundle = try XCTUnwrap(context.inputs, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "MyKit")
         XCTAssertEqual(bundle.id, "MyKit")
     }
@@ -2933,7 +2933,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 fileManager: fileSystem,
                 temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
-                bundleDiscoveryOptions: BundleDiscoveryOptions(
+                bundleDiscoveryOptions: CatalogDiscoveryOptions(
                     infoPlistFallbacks: ["CFBundleIdentifier": "com.example.test"],
                     additionalSymbolGraphFiles: [
                         URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json"),
@@ -2969,16 +2969,16 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             temporaryDirectory: createTemporaryDirectory(),
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
+            bundleDiscoveryOptions: CatalogDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
                 additionalSymbolGraphFiles: []
             )
         )
         let (_, context) = try await action.perform(logHandle: .none)
 
-        let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
-        XCTAssertEqual(bundle.displayName, "Something")
-        XCTAssertEqual(bundle.id, "com.example.test")
+        let inputs = try XCTUnwrap(context.inputs, "Should have registered the generated test bundle.")
+        XCTAssertEqual(inputs.displayName, "Something")
+        XCTAssertEqual(inputs.id, "com.example.test")
     }
 
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {

@@ -9,7 +9,7 @@
 ### Command Line Options
 
 - ``DocCArchiveOption``
-- ``DocumentationBundleOption``
+- ``DocumentationCatalogOption``
 - ``OutOfProcessLinkResolverOption``
 - ``TemplateOption``
 

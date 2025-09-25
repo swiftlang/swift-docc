@@ -140,7 +140,7 @@ extension TopicReferenceResolutionErrorInfo {
 /// > Important: This type has copy-on-write semantics and wraps an underlying class to store
 /// > its data.
 public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomStringConvertible {
-    typealias ReferenceBundleIdentifier = DocumentationBundle.Identifier
+    typealias ReferenceBundleIdentifier = DocumentationContext.Inputs.Identifier
     private struct ReferenceKey: Hashable {
         var path: String
         var fragment: String?
@@ -150,13 +150,13 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// A synchronized reference cache to store resolved references.
     private static var sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: ResolvedTopicReference]]())
     
-    /// Clears cached references belonging to the bundle with the given identifier.
-    /// - Parameter id: The identifier of the bundle to which the method should clear belonging references.
+    /// Clears cached references belonging to the unit of documentation with the given identifier.
+    /// - Parameter id: The identifier of the unit of documentation to which the method should clear belonging references.
     static func purgePool(for id: ReferenceBundleIdentifier) {
         sharedPool.sync { $0.removeValue(forKey: id) }
     }
     
-    /// Enables reference caching for any identifiers created with the given bundle identifier.
+    /// Enables reference caching for any identifiers created with the given identifier.
     static func enableReferenceCaching(for id: ReferenceBundleIdentifier) {
         sharedPool.sync { sharedPool in
             if !sharedPool.keys.contains(id) {
@@ -176,12 +176,12 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// The storage for the resolved topic reference's state.
     let _storage: Storage
     
-    /// The identifier of the bundle that owns this documentation topic.
-    public var bundleID: DocumentationBundle.Identifier {
+    /// The identifier of the unit of documentation that owns this documentation topic.
+    public var bundleID: DocumentationContext.Inputs.Identifier {
         _storage.bundleID
     }
     
-    /// The absolute path from the bundle to this topic, delimited by `/`.
+    /// The path from the root of documentation to this topic, delimited by `/`.
     public var path: String {
         return _storage.path
     }
@@ -207,11 +207,11 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     /// - Note: The `path` parameter is escaped to a path readable string.
-    public init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
+    public init(bundleID: DocumentationContext.Inputs.Identifier, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
         self.init(bundleID: bundleID, path: path, fragment: fragment, sourceLanguages: [sourceLanguage])
     }
     
-    public init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+    public init(bundleID: DocumentationContext.Inputs.Identifier, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
         self.init(
             bundleID: bundleID,
             urlReadablePath: urlReadablePath(path),
@@ -220,7 +220,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         )
     }
     
-    private init(bundleID: DocumentationBundle.Identifier, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+    private init(bundleID: DocumentationContext.Inputs.Identifier, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
         precondition(!sourceLanguages.isEmpty, "ResolvedTopicReference.sourceLanguages cannot be empty")
         // Check for a cached instance of the reference
         let key = ReferenceKey(path: urlReadablePath, fragment: urlReadableFragment, sourceLanguages: sourceLanguages)
@@ -440,7 +440,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     ///
     /// This is a reference type which allows ``ResolvedTopicReference`` to have copy-on-write behavior.
     class Storage: Hashable {
-        let bundleID: DocumentationBundle.Identifier
+        let bundleID: DocumentationContext.Inputs.Identifier
         let path: String
         let fragment: String?
         let sourceLanguages: Set<SourceLanguage>
@@ -452,7 +452,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let absoluteString: String
         
         init(
-            bundleID: DocumentationBundle.Identifier,
+            bundleID: DocumentationContext.Inputs.Identifier,
             path: String,
             fragment: String? = nil,
             sourceLanguages: Set<SourceLanguage>
@@ -521,7 +521,7 @@ extension ResolvedTopicReference: RenderJSONDiffable {
 /// You can create unresolved references from partial information if that information can be derived from the enclosing context when the
 /// reference is resolved. For example:
 ///
-///  - The bundle identifier can be inferred from the documentation bundle that owns the document from which the unresolved reference came.
+///  - The identifier can be inferred from the unit of documentation that owns the document from which the unresolved reference came.
 ///  - The URL scheme of topic references is always "doc".
 ///  - The symbol precise identifier suffix can be left out when there are no known overloads or name collisions for the symbol.
 public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
@@ -529,7 +529,7 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     public let topicURL: ValidatedURL
     
     /// The bundle identifier, if one was provided in the host name component of the original URL.
-    public var bundleID: DocumentationBundle.Identifier? {
+    public var bundleID: DocumentationContext.Inputs.Identifier? {
         topicURL.components.host.map { .init(rawValue: $0) }
     }
     
@@ -589,17 +589,17 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
 
 /// A reference to an auxiliary resource such as an image.
 public struct ResourceReference: Hashable {
-    /// The documentation bundle identifier for the bundle in which this resource resides.
-    public let bundleID: DocumentationBundle.Identifier
+    /// The identifier for the unit of documentation in which this resource resides.
+    public let bundleID: DocumentationContext.Inputs.Identifier
 
-    /// The path of the resource local to its bundle.
+    /// The path of the resource local to its unit of documentation.
     public let path: String
 
     /// Creates a new resource reference.
     /// - Parameters:
     ///   - bundleID: The documentation bundle identifier for the bundle in which this resource resides.
     ///   - path: The path of the resource local to its bundle.
-    init(bundleID: DocumentationBundle.Identifier, path: String) {
+    init(bundleID: DocumentationContext.Inputs.Identifier, path: String) {
         self.bundleID = bundleID
         self.path = path.removingPercentEncoding ?? path
     }

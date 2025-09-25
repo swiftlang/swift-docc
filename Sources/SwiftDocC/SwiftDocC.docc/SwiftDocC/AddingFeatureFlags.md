@@ -27,14 +27,11 @@ instance, which can then be used during the compilation process.
 
 ### Feature flags in Info.plist
 
-A subset of feature flags can affect how a documentation bundle is authored. For example, the
-experimental overloaded symbol presentation can affect how a bundle curates its symbols due to the 
-creation of overload group pages. These flags should also be added to the
-``DocumentationBundle/Info/BundleFeatureFlags`` type, so that they can be parsed out of a bundle's
-Info.plist.
+A subset of feature flags can affect how you write documentation. 
+For example, the experimental overloaded symbol presentation can affect how you curate symbols due to the creation of overload group pages. 
+Feature flags like this can be defined in the ``DocumentationContext/Inputs/Info/BundleFeatureFlags`` the, so that they can be parsed out of a documentation catalog's Info.plist file.
 
-Feature flags that are loaded from an Info.plist file are saved into the global feature flags while
-the bundle is being registered. To ensure that your new feature flag is properly loaded, update the
-``FeatureFlags/loadFlagsFromBundle(_:)`` method to load your new field into the global flags.
+Feature flags that are loaded from an Info.plist file are saved into the global ``FeatureFlags/current`` feature flags during the context registration. 
+To ensure that your new feature flag is properly loaded, update the ``FeatureFlags/loadFlagsFromBundle(_:)`` method to load your new field into the global ``FeatureFlags/current`` flags.
 
-<!-- Copyright (c) 2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2024-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

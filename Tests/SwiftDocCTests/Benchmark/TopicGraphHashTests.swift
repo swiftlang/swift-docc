@@ -14,7 +14,7 @@ import XCTest
 class TopicGraphHashTests: XCTestCase {
     func testTopicGraphSameHash() async throws {
         func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
-            let (_, context) = try await self.testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+            let (_, context) = try await self.loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
             
@@ -33,7 +33,7 @@ class TopicGraphHashTests: XCTestCase {
     func testTopicGraphChangedHash() async throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let context = try await loadFromDisk(catalogName: "LegacyBundle_DoNotUseInNewTests")
         
         do {
             let testBenchmark = Benchmark()
@@ -89,7 +89,7 @@ class TopicGraphHashTests: XCTestCase {
             "/externally/resolved/path/to/article2": .success(.init(referencePath: "/externally/resolved/path/to/article2")),
         ]
         
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [
+        let (_, context) = try await loadFromDisk(copyingCatalogNamed: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [
             "com.external.testbundle" : resolver
         ]) { url in
             // Add external links to the MyKit Topics.
@@ -106,7 +106,7 @@ class TopicGraphHashTests: XCTestCase {
         }
         
         // Get MyKit symbol
-        let entity = try context.entity(with: .init(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let entity = try context.entity(with: .init(bundleID: context.inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift))
         let taskGroupLinks = try XCTUnwrap((entity.semantic as? Symbol)?.topics?.taskGroups.first?.links.compactMap({ $0.destination }))
         
         // Verify the task group links have been resolved and are still present in the link list.
@@ -118,7 +118,7 @@ class TopicGraphHashTests: XCTestCase {
         ])
         
         // Verify correct hierarchy under `MyKit` in the topic graph dump including external symbols.
-        let myKitRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let myKitRef = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let myKitNode = try XCTUnwrap(context.topicGraph.nodeWithReference(myKitRef))
         
         let expectedHierarchyWithExternalSymbols = """

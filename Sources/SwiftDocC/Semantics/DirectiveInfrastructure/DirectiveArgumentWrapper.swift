@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,7 +19,7 @@ protocol _DirectiveArgumentProtocol {
     var expectedFormat: String? { get }
     var hiddenFromDocumentation: Bool { get }
     
-    var parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?) { get }
+    var parseArgument: (_ inputs: DocumentationContext.Inputs, _ argumentValue: String) -> (Any?) { get }
     
     func setProperty(
         on containingDirective: some AutomaticDirectiveConvertible,
@@ -68,7 +68,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     let expectedFormat: String?
     let hiddenFromDocumentation: Bool
     
-    let parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?)
+    let parseArgument: (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Any?)
     
     let defaultValue: Value?
     var storedAsOptional: Bool {
@@ -99,7 +99,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     init(
         wrappedValue: Value,
         name: _DirectiveArgumentName = .inferredFromPropertyName,
-        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        parseArgument: @escaping (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
         expectedFormat: String? = nil,
         hiddenFromDocumentation: Bool = false
@@ -118,7 +118,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     @_disfavoredOverload
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
-        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        parseArgument: @escaping (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
         expectedFormat: String? = nil,
         hiddenFromDocumentation: Bool = false
@@ -137,7 +137,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     private init(
         value: Value?,
         name: _DirectiveArgumentName,
-        transform: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        transform: @escaping (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]?,
         expectedFormat: String?,
         required: Bool?,
@@ -325,7 +325,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
     @_disfavoredOverload
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
-        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        parseArgument: @escaping (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
         hiddenFromDocumentation: Bool = false
     ) {
@@ -336,7 +336,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
     init(
         wrappedValue: Value,
         name: _DirectiveArgumentName = .inferredFromPropertyName,
-        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        parseArgument: @escaping (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
         hiddenFromDocumentation: Bool = false
     ) {
@@ -346,7 +346,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
     private init(
         value: Value?,
         name: _DirectiveArgumentName,
-        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        parseArgument: @escaping (_ bundle: DocumentationContext.Inputs, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
         expectedFormat: String? = nil,
         hiddenFromDocumentation: Bool = false

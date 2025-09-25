@@ -34,7 +34,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
         transformForStaticHostingIndexHTML: URL?,
-        bundleID: DocumentationBundle.Identifier?
+        bundleID: DocumentationContext.Inputs.Identifier?
     ) {
         self.targetFolder = targetFolder
         self.bundleRootFolder = bundleRootFolder
@@ -73,7 +73,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         indexer?.index(externalRenderNode)
     }
     
-    func consume(assetsInBundle bundle: DocumentationBundle) throws {
+    func consume(assetsInInputs inputs: DocumentationContext.Inputs) throws {
         func copyAsset(_ asset: DataAsset, to destinationFolder: URL) throws {
             for sourceURL in asset.variants.values where !sourceURL.isAbsoluteWebURL {
                 let assetName = sourceURL.lastPathComponent
@@ -84,7 +84,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
             }
         }
 
-        let bundleID = bundle.id
+        let bundleID = inputs.id
         assert(bundleID.rawValue == self.assetPrefixComponent, "Unexpectedly encoding assets for a bundle other than the one this output consumer was created for.")
         
         // Create images directory if needed.
@@ -129,21 +129,21 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         // If the bundle contains a `header.html` file, inject a <template> into
         // the `index.html` file using its contents. This will only be done if
         // the --experimental-enable-custom-templates flag is given
-        if let customHeader = bundle.customHeader, enableCustomTemplates {
+        if let customHeader = inputs.customHeader, enableCustomTemplates {
             try injectCustomTemplate(customHeader, identifiedBy: .header)
         }
 
         // If the bundle contains a `footer.html` file, inject a <template> into
         // the `index.html` file using its contents. This will only be done if
         // the --experimental-enable-custom-templates flag is given
-        if let customFooter = bundle.customFooter, enableCustomTemplates {
+        if let customFooter = inputs.customFooter, enableCustomTemplates {
             try injectCustomTemplate(customFooter, identifiedBy: .footer)
         }
 
         // Copy the `theme-settings.json` file into the output directory if one
         // is provided. It will override any default `theme-settings.json` file
         // that the renderer template may already contain.
-        if let themeSettings = bundle.themeSettings {
+        if let themeSettings = inputs.themeSettings {
             let targetFile = targetFolder.appendingPathComponent(themeSettings.lastPathComponent, isDirectory: false)
             if fileManager.fileExists(atPath: targetFile.path) {
                 try fileManager.removeItem(at: targetFile)

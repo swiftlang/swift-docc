@@ -41,7 +41,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
     private var markupResolver: ExternalMarkupReferenceWalker
     
     /// Collected unresolved external references, grouped by the bundle ID.
-    var collectedExternalReferences: [DocumentationBundle.Identifier: [UnresolvedTopicReference]] {
+    var collectedExternalReferences: [DocumentationContext.Inputs.Identifier: [UnresolvedTopicReference]] {
         return markupResolver.collectedExternalLinks.mapValues { links in
             links.map(UnresolvedTopicReference.init(topicURL:))
         }
@@ -49,7 +49,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
     
     /// Creates a new semantic walker that collects links to other documentation sources.
     /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    init(localBundleID: DocumentationBundle.Identifier) {
+    init(localBundleID: DocumentationContext.Inputs.Identifier) {
         self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
     }
     

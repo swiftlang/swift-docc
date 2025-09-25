@@ -198,7 +198,7 @@ class SymbolReferenceTests: XCTestCase {
             ]),
         ])
         
-        let (_, context) = try await loadBundle(catalog: testCatalog)
+        let context = try await load(catalog: testCatalog)
         
         // The overloads are sorted and all dupes get a hash suffix.
         XCTAssertEqual(

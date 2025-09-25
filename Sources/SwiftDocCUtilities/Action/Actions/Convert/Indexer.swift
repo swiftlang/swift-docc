@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,7 +33,7 @@ extension ConvertAction {
         /// - Parameters:
         ///   - outputURL: The target directory to create the index file.
         ///   - bundleID: The identifier of the bundle being indexed.
-        init(outputURL: URL, bundleID: DocumentationBundle.Identifier) throws {
+        init(outputURL: URL, bundleID: DocumentationContext.Inputs.Identifier) throws {
             let indexURL = outputURL.appendingPathComponent("index", isDirectory: true)
             indexBuilder = Synchronized<NavigatorIndex.Builder>(
                 NavigatorIndex.Builder(
