@@ -586,7 +586,11 @@ private class LongRunningProcess: ExternalLinkResolving {
         fatalError("Cannot initialize an out of process resolver outside of macOS or Linux platforms.")
     }
     
-    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
+    func readInitialHandshakeMessage<Response: Decodable>() throws -> Response {
+        fatalError("Cannot call sendAndWait in non macOS/Linux platform.")
+    }
+    
+    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response {
         fatalError("Cannot call sendAndWait in non macOS/Linux platform.")
     }
     
