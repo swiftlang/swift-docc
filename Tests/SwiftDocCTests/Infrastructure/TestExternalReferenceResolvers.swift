@@ -28,6 +28,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
         var kind = DocumentationNode.Kind.article
         var language = SourceLanguage.swift
         var declarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
+        var navigatorTitle: SymbolGraph.Symbol.DeclarationFragments? = nil
         var topicImages: [(TopicImage, alt: String)]? = nil
         var platforms: [AvailabilityRenderItem]? = nil
     }
@@ -53,7 +54,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             
             let entity = entityInfo(path: path)
             return .success(
-                ResolvedTopicReference(bundleID: bundleID, path: entity.referencePath,fragment: entity.fragment,sourceLanguage: entity.language)
+                ResolvedTopicReference(bundleID: bundleID, path: entity.referencePath, fragment: entity.fragment, sourceLanguage: entity.language)
             )
         }
     }
@@ -84,33 +85,21 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
     }
     
     private func makeNode(for entityInfo: EntityInfo, reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(entityInfo.kind, semantic: nil)
-        
-        let dependencies: RenderReferenceDependencies
-        if let topicImages = entityInfo.topicImages {
-            dependencies = .init(imageReferences: topicImages.map { topicImage, altText in
-                return ImageReference(identifier: topicImage.identifier, altText: altText, imageAsset: assetsToReturn[topicImage.identifier.identifier] ?? .init())
-            })
-        } else {
-            dependencies = .init()
-        }
-        
-        return LinkResolver.ExternalEntity(
-            topicRenderReference: TopicRenderReference(
-                identifier: .init(reference.absoluteString),
-                title: entityInfo.title,
-                abstract: [.text(entityInfo.abstract.format())],
-                url: "/example" + reference.path,
-                kind: kind,
-                role: role,
-                fragments: entityInfo.declarationFragments?.declarationFragments.map { fragment in
-                    return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
-                },
-                isBeta: entityInfo.platforms?.allSatisfy({$0.isBeta == true}) ?? false,
-                images: entityInfo.topicImages?.map(\.0) ?? []
-            ),
-            renderReferenceDependencies: dependencies,
-            sourceLanguages: [entityInfo.language]
+        LinkResolver.ExternalEntity(
+            kind: entityInfo.kind,
+            language: entityInfo.language,
+            relativePresentationURL: reference.url.withoutHostAndPortAndScheme(),
+            referenceURL: reference.url,
+            title: entityInfo.title,
+            availableLanguages: [entityInfo.language],
+            platforms: entityInfo.platforms,
+            subheadingDeclarationFragments: entityInfo.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+            navigatorDeclarationFragments: entityInfo.navigatorTitle?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+            topicImages: entityInfo.topicImages?.map(\.0),
+            references: entityInfo.topicImages?.map { topicImage, altText in
+                ImageReference(identifier: topicImage.identifier, altText: altText, imageAsset: assetsToReturn[topicImage.identifier.identifier] ?? .init())
+            },
+            variants: []
         )
     }
 }

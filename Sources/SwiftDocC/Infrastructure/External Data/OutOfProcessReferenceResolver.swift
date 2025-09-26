@@ -9,54 +9,78 @@
 */
 
 public import Foundation
-import Markdown
-public import SymbolKit
+private import Markdown
 
 /// A reference resolver that launches and interactively communicates with another process or service to resolve links.
 ///
 /// If your external reference resolver or an external symbol resolver is implemented in another executable, you can use this object
 /// to communicate between DocC and the `docc` executable.
 ///
-/// The launched executable is expected to follow the flow outlined below, sending ``OutOfProcessReferenceResolver/Request``
-/// and ``OutOfProcessReferenceResolver/Response`` values back and forth:
+/// ## Launching and responding to requests
 ///
-///               │
-///      1        ▼
-///     ┌──────────────────┐
-///     │ Output bundle ID │
-///     └──────────────────┘
-///               │
-///      2        ▼
-///     ┌──────────────────┐
-///     │  Wait for input  │◀───┐
-///     └──────────────────┘    │
-///               │             │
-///      3        ▼             │ repeat
-///     ┌──────────────────┐    │
-///     │ Output resolved  │    │
-///     │   information    │────┘
-///     └──────────────────┘
+/// When creating an out-of-process resolver using ``init(processLocation:errorOutputHandler:)`` to communicate with another executable;
+/// DocC launches your link resolver executable and declares _its_ own ``Capabilities`` as a raw value passed via the `--capabilities` option.
+/// Your link resolver executable is expected to respond with a ``ResponseV2/identifierAndCapabilities(_:_:)`` message that declares:
+/// - The documentation bundle identifier that the executable can to resolve links for.
+/// - The capabilities that the resolver supports.
 ///
-/// When resolving against a server, the server is expected to be able to handle messages of type "resolve-reference" with a
-/// ``OutOfProcessReferenceResolver/Request`` payload and respond with messages of type "resolved-reference-response"
-/// with a ``OutOfProcessReferenceResolver/Response`` payload.
+/// After this "handshake" your link resolver executable is expected to wait for ``RequestV2`` messages from DocC and respond with exactly one ``ResponseV2`` per message.
+/// A visual representation of this flow of execution can be seen in the diagram below:
+///
+///         DocC                link resolver executable
+///         ┌─┐                              ╎
+///         │ ├─────────── Launch ──────────▶┴┐
+///         │ │        --capabilities       │ │
+///         │ │                             │ │
+///         │ ◀───────── Handshake ─────────┤ │
+///         │ │  { "identifier"   : ... ,   │ │
+///         │ │    "capabilities" : ... }   │ │
+///     ┏ loop ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+///     ┃   │ │                             │ │   ┃
+///     ┃   │ ├────────── Request ──────────▶ │   ┃
+///     ┃   │ │  { "link"   : ... }  OR     │ │   ┃
+///     ┃   │ │  { "symbol" : ... }         │ │   ┃
+///     ┃   │ │                             │ │   ┃
+///     ┃   │ ◀────────── Response ─────────┤ │   ┃
+///     ┃   │ │  { "resolved" : ... }  OR   │ │   ┃
+///     ┃   │ │  { "failure"  : ... }       │ │   ┃
+///     ┃   │ │                             │ │   ┃
+///     ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+///         │ │                             └─┘
+///         │ │                              ╎
+///
+/// ## Interacting with a Convert Service
+///
+/// When creating an out-of-process resolver using ``init(bundleID:server:convertRequestIdentifier:)`` to communicate with another process using a ``ConvertService``;
+/// DocC sends that service `"resolve-reference"` messages with a``OutOfProcessReferenceResolver/Request`` payload and expects a `"resolved-reference-response"` responses with a ``OutOfProcessReferenceResolver/Response`` payload.
+///
+/// Because the ``ConvertService`` messages are _implicitly_ tied to these outdated—and no longer recommended—request and response types, the richness of its responses is limited.
+///
+/// - Note: when interacting with a ``ConvertService`` your service also needs to handle "asset" requests (``OutOfProcessReferenceResolver/Request/asset(_:)`` and responses that (``OutOfProcessReferenceResolver/Response/asset(_:)``) that link resolver executables don't need to handle.
+///
+/// ## Topics
+///
+/// - ``RequestV2``
+/// - ``ResponseV2``
 ///
 /// ## See Also
-/// - ``ExternalDocumentationSource``
-/// - ``GlobalExternalSymbolResolver``
 /// - ``DocumentationContext/externalDocumentationSources``
 /// - ``DocumentationContext/globalExternalSymbolResolver``
-/// - ``Request``
-/// - ``Response``
 public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalExternalSymbolResolver {
-    private let externalLinkResolvingClient: any ExternalLinkResolving
+    private var implementation: any _Implementation
     
     /// The bundle identifier for the reference resolver in the other process.
-    public let bundleID: DocumentationBundle.Identifier
+    public var bundleID: DocumentationBundle.Identifier {
+        implementation.bundleID
+    }
+    
+    // This variable is used below for the `ConvertServiceFallbackResolver` conformance.
+    private var assetCache: [AssetReference: DataAsset] = [:]
     
     /// Creates a new reference resolver that interacts with another executable.
     ///
     /// Initializing the resolver will also launch the other executable. The other executable will remain running for the lifetime of this object.
+    /// This and the rest of the communication between DocC and the link resolver executable is described in <doc:OutOfProcessReferenceResolver#Launching-and-responding-to-requests>
     ///
     /// - Parameters:
     ///   - processLocation: The location of the other executable.
@@ -73,12 +97,12 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         
         let longRunningProcess = try LongRunningProcess(location: processLocation, errorOutputHandler: errorOutputHandler)
         
-        guard case let .bundleIdentifier(decodedBundleIdentifier) = try longRunningProcess.sendAndWait(request: nil as Request?) as Response else {
+        guard let handshake: InitialHandshakeMessage = try? longRunningProcess.readInitialHandshakeMessage() else {
             throw Error.invalidBundleIdentifierOutputFromExecutable(processLocation)
         }
         
-        self.bundleID = .init(rawValue: decodedBundleIdentifier)
-        self.externalLinkResolvingClient = longRunningProcess
+        // This private type and protocol exist to silence deprecation warnings
+        self.implementation = (_ImplementationProvider() as (any _ImplementationProviding)).makeImplementation(for: handshake, longRunningProcess: longRunningProcess)
     }
     
     /// Creates a new reference resolver that interacts with a documentation service.
@@ -90,174 +114,367 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     ///   - server: The server to send link resolution requests to.
     ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
     public init(bundleID: DocumentationBundle.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
-        self.bundleID = bundleID
-        self.externalLinkResolvingClient = LongRunningService(
-            server: server, convertRequestIdentifier: convertRequestIdentifier)
+        self.implementation = (_ImplementationProvider() as any _ImplementationProviding).makeImplementation(
+            for: .init(identifier: bundleID, capabilities: nil /* always use the V1 implementation */),
+            longRunningProcess: LongRunningService(server: server, convertRequestIdentifier: convertRequestIdentifier)
+        )
+    }
+    
+    fileprivate struct InitialHandshakeMessage: Decodable {
+        var identifier: DocumentationBundle.Identifier
+        var capabilities: Capabilities? // The old V1 handshake didn't include this but the V2 requires it.
+        
+        init(identifier: DocumentationBundle.Identifier, capabilities: OutOfProcessReferenceResolver.Capabilities?) {
+            self.identifier = identifier
+            self.capabilities = capabilities
+        }
+        
+        private enum CodingKeys: CodingKey {
+            case bundleIdentifier  // Legacy V1 handshake
+            case identifier, capabilities // V2 handshake
+        }
+        
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            
+            guard container.contains(.identifier) || container.contains(.bundleIdentifier) else {
+                throw DecodingError.keyNotFound(CodingKeys.identifier, .init(codingPath: decoder.codingPath, debugDescription: """
+                    Initial handshake message includes neither a '\(CodingKeys.identifier.stringValue)' key nor a '\(CodingKeys.bundleIdentifier.stringValue)' key. 
+                    """))
+            }
+            
+            self.identifier = try container.decodeIfPresent(DocumentationBundle.Identifier.self, forKey: .identifier)
+            ?? container.decode(DocumentationBundle.Identifier.self, forKey: .bundleIdentifier)
+            
+            self.capabilities = try container.decodeIfPresent(Capabilities.self, forKey: .capabilities)
+        }
     }
     
     // MARK: External Reference Resolver
     
     public func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
-        switch reference {
-        case .resolved(let resolved):
-            return resolved
-            
-        case let .unresolved(unresolvedReference):
-            guard unresolvedReference.bundleID == bundleID else {
-                fatalError("""
-                    Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
-                    DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
-                    """)
-            }
-            do {
-                guard let unresolvedTopicURL = unresolvedReference.topicURL.components.url else {
-                    // Return the unresolved reference if the underlying URL is not valid
-                    return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid."))
-                }
-                let resolvedInformation = try resolveInformationForTopicURL(unresolvedTopicURL)
-                return .success( resolvedReference(for: resolvedInformation) )
-            } catch let error {
-                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo(error))
-            }
-        }
+        implementation.resolve(reference)
     }
     
     @_spi(ExternalLinks)  // LinkResolver.ExternalEntity isn't stable API yet
     public func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-        guard let resolvedInformation = referenceCache[reference.url] else {
-            fatalError("A topic reference that has already been resolved should always exist in the cache.")
-        }
-        return makeEntity(with: resolvedInformation, reference: reference.absoluteString)
+        implementation.entity(with: reference)
     }
     
     @_spi(ExternalLinks)  // LinkResolver.ExternalEntity isn't stable API yet
     public func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
-        guard let resolvedInformation = try? resolveInformationForSymbolIdentifier(preciseIdentifier) else { return nil }
-        
-        let reference = ResolvedTopicReference(
-            bundleID: "com.externally.resolved.symbol",
-            path: "/\(preciseIdentifier)",
-            sourceLanguages: sourceLanguages(for: resolvedInformation)
-        )
-        let entity =  makeEntity(with: resolvedInformation, reference: reference.absoluteString)
-        return (reference, entity)
-    }
-    
-    private func makeEntity(with resolvedInformation: ResolvedInformation, reference: String) -> LinkResolver.ExternalEntity {
-        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(resolvedInformation.kind, semantic: nil)
-        
-        var renderReference = TopicRenderReference(
-            identifier: .init(reference),
-            title: resolvedInformation.title,
-            // The resolved information only stores the plain text abstract https://github.com/swiftlang/swift-docc/issues/802
-            abstract: [.text(resolvedInformation.abstract)],
-            url: resolvedInformation.url.path,
-            kind: kind,
-            role: role,
-            fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
-            isBeta: resolvedInformation.isBeta,
-            isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
-            images: resolvedInformation.topicImages ?? []
-        )
-        for variant in resolvedInformation.variants ?? [] {
-            if let title = variant.title {
-                renderReference.titleVariants.variants.append(
-                    .init(traits: variant.traits, patch: [.replace(value: title)])
-                )
-            }
-            if let abstract = variant.abstract {
-                renderReference.abstractVariants.variants.append(
-                    .init(traits: variant.traits, patch: [.replace(value: [.text(abstract)])])
-                )
-            }
-            if let declarationFragments = variant.declarationFragments {
-                renderReference.fragmentsVariants.variants.append(
-                    .init(traits: variant.traits, patch: [.replace(value: declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) })])
-                )
-            }
-        }
-        let dependencies = RenderReferenceDependencies(
-            topicReferences: [],
-            linkReferences: (resolvedInformation.references ?? []).compactMap { $0 as? LinkReference },
-            imageReferences: (resolvedInformation.references ?? []).compactMap { $0 as? ImageReference }
-        )
-        
-        return LinkResolver.ExternalEntity(topicRenderReference: renderReference, renderReferenceDependencies: dependencies, sourceLanguages: resolvedInformation.availableLanguages)
-    }
-    
-    // MARK: Implementation
-    
-    private var referenceCache: [URL: ResolvedInformation] = [:]
-    private var symbolCache: [String: ResolvedInformation] = [:]
-    private var assetCache: [AssetReference: DataAsset] = [:]
-    
-    /// Makes a call to the other process to resolve information about a page based on its URL.
-    func resolveInformationForTopicURL(_ topicURL: URL) throws -> ResolvedInformation {
-        if let cachedInformation = referenceCache[topicURL] {
-            return cachedInformation
-        }
-        
-        let response: Response = try externalLinkResolvingClient.sendAndWait(request: Request.topic(topicURL))
-        
-        switch response {
-        case .bundleIdentifier:
-            throw Error.executableSentBundleIdentifierAgain
-            
-        case .errorMessage(let errorMessage):
-            throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
-            
-        case .resolvedInformation(let resolvedInformation):
-            // Cache the information for the resolved reference, that's what's will be used when returning the entity later.
-            let resolvedReference = resolvedReference(for: resolvedInformation)
-            referenceCache[resolvedReference.url] = resolvedInformation
-            return resolvedInformation
-            
-        default:
-            throw Error.unexpectedResponse(response: response, requestDescription: "topic URL")
-        }
-    }
-    
-    /// Makes a call to the other process to resolve information about a symbol based on its precise identifier.
-    private func resolveInformationForSymbolIdentifier(_ preciseIdentifier: String) throws -> ResolvedInformation {
-        if let cachedInformation = symbolCache[preciseIdentifier] {
-            return cachedInformation
-        }
-        
-        let response: Response = try externalLinkResolvingClient.sendAndWait(request: Request.symbol(preciseIdentifier))
-        
-        switch response {
-        case .bundleIdentifier:
-            throw Error.executableSentBundleIdentifierAgain
-            
-        case .errorMessage(let errorMessage):
-            throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
-            
-        case .resolvedInformation(let resolvedInformation):
-             symbolCache[preciseIdentifier] = resolvedInformation
-             return resolvedInformation
-            
-        default:
-            throw Error.unexpectedResponse(response: response, requestDescription: "symbol ID")
-        }
-    }
-    
-    private func resolvedReference(for resolvedInformation: ResolvedInformation) -> ResolvedTopicReference {
-        return ResolvedTopicReference(
-            bundleID: bundleID,
-            path: resolvedInformation.url.path,
-            fragment: resolvedInformation.url.fragment,
-            sourceLanguages: sourceLanguages(for: resolvedInformation)
-        )
-    }
-    
-    private func sourceLanguages(for resolvedInformation: ResolvedInformation) -> Set<SourceLanguage> {
-        // It is expected that the available languages contains the main language
-        return resolvedInformation.availableLanguages.union(CollectionOfOne(resolvedInformation.language))
+        implementation.symbolReferenceAndEntity(withPreciseIdentifier: preciseIdentifier)
     }
 }
 
+// MARK: Implementations
+
+private protocol _Implementation: ExternalDocumentationSource, GlobalExternalSymbolResolver {
+    var bundleID: DocumentationBundle.Identifier { get }
+    var longRunningProcess: any ExternalLinkResolving { get }
+    
+    //
+    func resolve(unresolvedReference: UnresolvedTopicReference) throws -> TopicReferenceResolutionResult
+}
+
+private extension _Implementation {
+    // Avoid some common boilerplate between implementations.
+    func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
+        switch reference {
+            case .resolved(let resolved):
+                return resolved
+                
+            case let .unresolved(unresolvedReference):
+                guard unresolvedReference.bundleID == bundleID else {
+                    fatalError("""
+                    Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
+                    DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
+                    """)
+                }
+                do {
+                    // This is where each implementation differs
+                    return try resolve(unresolvedReference: unresolvedReference)
+                } catch let error {
+                    return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo(error))
+                }
+        }
+    }
+}
+
+// This private protocol allows the out-of-process resolver to create ImplementationV1 without deprecation warnings
+private protocol _ImplementationProviding {
+    func makeImplementation(for handshake: OutOfProcessReferenceResolver.InitialHandshakeMessage, longRunningProcess: any ExternalLinkResolving) -> any _Implementation
+}
+
+private extension OutOfProcessReferenceResolver {
+    // A concrete type with a deprecated implementation that can be cast to `_ImplementationProviding` to avoid deprecation warnings.
+    struct _ImplementationProvider: _ImplementationProviding {
+        @available(*, deprecated) // The V1 implementation is built around several now-deprecated types. This deprecation silences those depreciation warnings.
+        func makeImplementation(for handshake: OutOfProcessReferenceResolver.InitialHandshakeMessage, longRunningProcess: any ExternalLinkResolving) -> any _Implementation {
+            if let capabilities = handshake.capabilities {
+                return ImplementationV2(longRunningProcess: longRunningProcess, bundleID: handshake.identifier, executableCapabilities: capabilities)
+            } else {
+                return ImplementationV1(longRunningProcess: longRunningProcess, bundleID: handshake.identifier)
+            }
+        }
+    }
+}
+
+// MARK: Version 1 (deprecated)
+
+extension OutOfProcessReferenceResolver {
+    /// The original—no longer recommended—version of the out-of-process resolver implementation.
+    ///
+    /// This implementation uses ``Request`` and ``Response`` which aren't extensible and have restrictions on the details of the response payloads.
+    @available(*, deprecated) // The V1 implementation is built around several now-deprecated types. This deprecation silences those depreciation warnings.
+    private final class ImplementationV1: _Implementation {
+        let bundleID: DocumentationBundle.Identifier
+        let longRunningProcess: any ExternalLinkResolving
+        
+        init(longRunningProcess: any ExternalLinkResolving, bundleID: DocumentationBundle.Identifier) {
+            self.longRunningProcess = longRunningProcess
+            self.bundleID = bundleID
+        }
+        
+        // This is fileprivate so that the ConvertService conformance below can access it.
+        fileprivate private(set) var referenceCache: [URL: ResolvedInformation] = [:]
+        private var symbolCache: [String: ResolvedInformation] = [:]
+        
+        func resolve(unresolvedReference: UnresolvedTopicReference) throws -> TopicReferenceResolutionResult {
+            guard let unresolvedTopicURL = unresolvedReference.topicURL.components.url else {
+                // Return the unresolved reference if the underlying URL is not valid
+                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid."))
+            }
+            let resolvedInformation = try resolveInformationForTopicURL(unresolvedTopicURL)
+            return .success( resolvedReference(for: resolvedInformation) )
+        }
+        
+        func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+            guard let resolvedInformation = referenceCache[reference.url] else {
+                fatalError("A topic reference that has already been resolved should always exist in the cache.")
+            }
+            return makeEntity(with: resolvedInformation, reference: reference.absoluteString)
+        }
+        
+        func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+            guard let resolvedInformation = try? resolveInformationForSymbolIdentifier(preciseIdentifier) else { return nil }
+            
+            let reference = ResolvedTopicReference(
+                bundleID: "com.externally.resolved.symbol",
+                path: "/\(preciseIdentifier)",
+                sourceLanguages: sourceLanguages(for: resolvedInformation)
+            )
+            let entity =  makeEntity(with: resolvedInformation, reference: reference.absoluteString)
+            return (reference, entity)
+        }
+        
+        /// Makes a call to the other process to resolve information about a page based on its URL.
+        private func resolveInformationForTopicURL(_ topicURL: URL) throws -> ResolvedInformation {
+            if let cachedInformation = referenceCache[topicURL] {
+                return cachedInformation
+            }
+            
+            let response: Response = try longRunningProcess.sendAndWait(request: Request.topic(topicURL))
+            
+            switch response {
+                case .bundleIdentifier:
+                    throw Error.executableSentBundleIdentifierAgain
+                    
+                case .errorMessage(let errorMessage):
+                    throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
+                    
+                case .resolvedInformation(let resolvedInformation):
+                    // Cache the information for the resolved reference, that's what's will be used when returning the entity later.
+                    let resolvedReference = resolvedReference(for: resolvedInformation)
+                    referenceCache[resolvedReference.url] = resolvedInformation
+                    return resolvedInformation
+                    
+                default:
+                    throw Error.unexpectedResponse(response: response, requestDescription: "topic URL")
+            }
+        }
+        
+        /// Makes a call to the other process to resolve information about a symbol based on its precise identifier.
+        private func resolveInformationForSymbolIdentifier(_ preciseIdentifier: String) throws -> ResolvedInformation {
+            if let cachedInformation = symbolCache[preciseIdentifier] {
+                return cachedInformation
+            }
+            
+            let response: Response = try longRunningProcess.sendAndWait(request: Request.symbol(preciseIdentifier))
+            
+            switch response {
+                case .bundleIdentifier:
+                    throw Error.executableSentBundleIdentifierAgain
+                    
+                case .errorMessage(let errorMessage):
+                    throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
+                    
+                case .resolvedInformation(let resolvedInformation):
+                    symbolCache[preciseIdentifier] = resolvedInformation
+                    return resolvedInformation
+                    
+                default:
+                    throw Error.unexpectedResponse(response: response, requestDescription: "symbol ID")
+            }
+        }
+        
+        private func resolvedReference(for resolvedInformation: ResolvedInformation) -> ResolvedTopicReference {
+            return ResolvedTopicReference(
+                bundleID: bundleID,
+                path: resolvedInformation.url.path,
+                fragment: resolvedInformation.url.fragment,
+                sourceLanguages: sourceLanguages(for: resolvedInformation)
+            )
+        }
+        
+        private func sourceLanguages(for resolvedInformation: ResolvedInformation) -> Set<SourceLanguage> {
+            // It is expected that the available languages contains the main language
+            return resolvedInformation.availableLanguages.union(CollectionOfOne(resolvedInformation.language))
+        }
+        
+        private func makeEntity(with resolvedInformation: ResolvedInformation, reference: String) -> LinkResolver.ExternalEntity {
+            return LinkResolver.ExternalEntity(
+                kind: resolvedInformation.kind,
+                language: resolvedInformation.language,
+                relativePresentationURL: resolvedInformation.url.withoutHostAndPortAndScheme(),
+                referenceURL: URL(string: reference)!,
+                title: resolvedInformation.title,
+                // The resolved information only stores the plain text abstract and can't be changed. Use the version 2 communication protocol to support rich abstracts.
+                abstract: [.text(resolvedInformation.abstract)],
+                availableLanguages: resolvedInformation.availableLanguages,
+                platforms: resolvedInformation.platforms,
+                taskGroups: nil,
+                usr: nil,
+                declarationFragments: resolvedInformation.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+                redirects: nil,
+                topicImages: resolvedInformation.topicImages,
+                references: resolvedInformation.references,
+                variants: (resolvedInformation.variants ?? []).map { variant in
+                    .init(
+                        traits: variant.traits,
+                        kind: variant.kind,
+                        language: variant.language,
+                        relativePresentationURL: variant.url?.withoutHostAndPortAndScheme(),
+                        title: variant.title,
+                        abstract: variant.abstract.map { [.text($0)] },
+                        taskGroups: nil,
+                        usr: nil,
+                        declarationFragments: variant.declarationFragments.map { fragments in
+                            fragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) }
+                        }
+                    )
+                }
+            )
+        }
+    }
+}
+
+// MARK: Version 2
+
+extension OutOfProcessReferenceResolver {
+    private final class ImplementationV2: _Implementation {
+        let longRunningProcess: any ExternalLinkResolving
+        let bundleID: DocumentationBundle.Identifier
+        let executableCapabilities: Capabilities
+        
+        init(
+            longRunningProcess: any ExternalLinkResolving,
+            bundleID: DocumentationBundle.Identifier,
+            executableCapabilities: Capabilities
+        ) {
+            self.longRunningProcess = longRunningProcess
+            self.bundleID = bundleID
+            self.executableCapabilities = executableCapabilities
+        }
+        
+        private var linkCache: [String /* either a USR or an absolute UnresolvedTopicReference */: LinkDestinationSummary] = [:]
+        
+        func resolve(unresolvedReference: UnresolvedTopicReference) throws -> TopicReferenceResolutionResult {
+            let linkString = unresolvedReference.topicURL.absoluteString
+            if let cachedSummary = linkCache[linkString] {
+                return .success( makeReference(for: cachedSummary) )
+            }
+            
+            let response: ResponseV2 = try longRunningProcess.sendAndWait(request: RequestV2.link(linkString))
+            
+            switch response {
+                case .identifierAndCapabilities:
+                    throw Error.executableSentBundleIdentifierAgain
+                    
+                case .failure(let diagnosticMessage):
+                    let solutions: [Solution] = (diagnosticMessage.solutions ?? []).map {
+                        Solution(summary: $0.summary, replacements: $0.replacement.map { replacement in
+                            [Replacement(
+                                // The replacement ranges are relative to the link itself.
+                                // To replace the entire link, we create a range from 0 to the original length, both offset by -4 (the "doc:" length)
+                                range: SourceLocation(line: 0, column: -4, source: nil) ..< SourceLocation(line: 0, column: linkString.utf8.count - 4, source: nil),
+                                replacement: replacement
+                            )]
+                        } ?? [])
+                    }
+                    return .failure(
+                        unresolvedReference,
+                        TopicReferenceResolutionErrorInfo(diagnosticMessage.summary, solutions: solutions)
+                    )
+                    
+                case .resolved(let linkSummary):
+                    // Cache the information for the original authored link
+                    linkCache[linkString] = linkSummary
+                    // Cache the information for the resolved reference. That's what's will be used when returning the entity later.
+                    let reference = makeReference(for: linkSummary)
+                    linkCache[reference.absoluteString] = linkSummary
+                    if let usr = linkSummary.usr {
+                        // If the page is a symbol, cache its information for the USR as well.
+                        linkCache[usr] = linkSummary
+                    }
+                    return .success(reference)
+                    
+                default:
+                    throw Error.unexpectedResponse(response: response, requestDescription: "topic link")
+            }
+        }
+        
+        func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+            guard let linkSummary = linkCache[reference.url.standardized.absoluteString] else {
+                fatalError("A topic reference that has already been resolved should always exist in the cache.")
+            }
+            return linkSummary
+        }
+        
+        func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+            if let cachedSummary = linkCache[preciseIdentifier] {
+                return (makeReference(for: cachedSummary), cachedSummary)
+            }
+            
+            guard case ResponseV2.resolved(let linkSummary)? = try? longRunningProcess.sendAndWait(request: RequestV2.symbol(preciseIdentifier)) else {
+                return nil
+            }
+            
+            // Cache the information for the USR
+            linkCache[preciseIdentifier] = linkSummary
+            
+            // Cache the information for the resolved reference.
+            let reference = makeReference(for: linkSummary)
+            linkCache[reference.absoluteString] = linkSummary
+            
+            return (reference, linkSummary)
+        }
+        
+        private func makeReference(for linkSummary: LinkDestinationSummary) -> ResolvedTopicReference {
+            ResolvedTopicReference(
+                bundleID: linkSummary.referenceURL.host.map { .init(rawValue: $0) } ?? "unknown",
+                path: linkSummary.referenceURL.path,
+                fragment: linkSummary.referenceURL.fragment,
+                sourceLanguages: linkSummary.availableLanguages
+            )
+        }
+    }
+}
+
+// MARK: Cross process communication
+
 private protocol ExternalLinkResolving {
-    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response
+    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response
 }
 
 private class LongRunningService: ExternalLinkResolving {
@@ -268,7 +485,7 @@ private class LongRunningService: ExternalLinkResolving {
             server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
     
-    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
+    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response {
         let responseData = try client.sendAndWait(request)
         return try JSONDecoder().decode(Response.self, from: responseData)
     }
@@ -285,6 +502,7 @@ private class LongRunningProcess: ExternalLinkResolving {
     init(location: URL, errorOutputHandler: @escaping (String) -> Void) throws {
         let process = Process()
         process.executableURL = location
+        process.arguments = ["--capabilities", "\(OutOfProcessReferenceResolver.Capabilities().rawValue)"]
         
         process.standardInput = input
         process.standardOutput = output
@@ -296,7 +514,7 @@ private class LongRunningProcess: ExternalLinkResolving {
         errorReadSource.setEventHandler { [errorOutput] in
             let data = errorOutput.fileHandleForReading.availableData
             let errorMessage = String(data: data, encoding: .utf8)
-                ?? "<\(ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .memory)) of non-utf8 data>"
+            ?? "<\(ByteCountFormatter.string(fromByteCount: Int64(data.count), countStyle: .memory)) of non-utf8 data>"
             
             errorOutputHandler(errorMessage)
         }
@@ -314,16 +532,25 @@ private class LongRunningProcess: ExternalLinkResolving {
     private let output = Pipe()
     private let errorOutput = Pipe()
     private let errorReadSource: any DispatchSourceRead
-        
-    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
-        if let request {
-            guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
-                  let requestData = requestString.data(using: .utf8)
-            else {
-                throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: request.description)
-            }
-            input.fileHandleForWriting.write(requestData)
+    
+    func readInitialHandshakeMessage<Response: Decodable>() throws -> Response {
+        return try _readResponse()
+    }
+    
+    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response {
+        // Send
+        guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
+              let requestData = requestString.data(using: .utf8)
+        else {
+            throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: "\(request)")
         }
+        input.fileHandleForWriting.write(requestData)
+        
+        // Receive
+        return try _readResponse()
+    }
+    
+    private func _readResponse<Response: Decodable>() throws -> Response {
         var response = output.fileHandleForReading.availableData
         guard !response.isEmpty else {
             throw OutOfProcessReferenceResolver.Error.processDidExit(code: Int(process.terminationStatus))
@@ -336,8 +563,8 @@ private class LongRunningProcess: ExternalLinkResolving {
                 // To avoid blocking forever we check if the response can be decoded after each chunk of data.
                 return try JSONDecoder().decode(Response.self, from: response)
             } catch {
-                if case DecodingError.dataCorrupted = error,     // If the data wasn't valid JSON, read more data and try to decode it again.
-                    response.count.isMultiple(of: Int(PIPE_BUF)) // To reduce the risk of deadlocking, check that bytes so far is a multiple of the pipe buffer size.
+                if case DecodingError.dataCorrupted = error,    // If the data wasn't valid JSON, read more data and try to decode it again.
+                   response.count.isMultiple(of: Int(PIPE_BUF)) // To reduce the risk of deadlocking, check that bytes so far is a multiple of the pipe buffer size.
                 {
                     let moreResponseData = output.fileHandleForReading.availableData
                     guard !moreResponseData.isEmpty else {
@@ -346,7 +573,7 @@ private class LongRunningProcess: ExternalLinkResolving {
                     response += moreResponseData
                     continue
                 }
-            
+                
                 // Other errors are re-thrown as wrapped errors.
                 throw OutOfProcessReferenceResolver.Error.unableToDecodeResponseFromClient(response, error)
             }
@@ -359,12 +586,18 @@ private class LongRunningProcess: ExternalLinkResolving {
         fatalError("Cannot initialize an out of process resolver outside of macOS or Linux platforms.")
     }
     
-    func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
+    func readInitialHandshakeMessage<Response: Decodable>() throws -> Response {
+        fatalError("Cannot call sendAndWait in non macOS/Linux platform.")
+    }
+    
+    func sendAndWait<Request: Codable, Response: Codable>(request: Request) throws -> Response {
         fatalError("Cannot call sendAndWait in non macOS/Linux platform.")
     }
     
     #endif
 }
+
+// MARK: Error
 
 extension OutOfProcessReferenceResolver {
     /// Errors that may occur when communicating with an external reference resolver.
@@ -395,7 +628,7 @@ extension OutOfProcessReferenceResolver {
         /// The request type was not known (neither 'topic' nor 'symbol').
         case unknownTypeOfRequest
         /// Received an unknown type of response to sent request.
-        case unexpectedResponse(response: Response, requestDescription: String)
+        case unexpectedResponse(response: Any, requestDescription: String)
         
         /// A plain text representation of the error message.
         var errorDescription: String {
@@ -430,360 +663,46 @@ extension OutOfProcessReferenceResolver {
     }
 }
 
-extension OutOfProcessReferenceResolver {
-    
-    // MARK: Request & Response
-    
-    /// A request message to send to the external link resolver.
-    ///
-    /// This can either be a request to resolve a topic URL or to resolve a symbol based on its precise identifier.
-    public enum Request: Codable, CustomStringConvertible {
-        /// A request to resolve a topic URL
-        case topic(URL)
-        /// A request to resolve a symbol based on its precise identifier.
-        case symbol(String)
-        /// A request to resolve an asset.
-        case asset(AssetReference)
-        
-        private enum CodingKeys: CodingKey {
-            case topic
-            case symbol
-            case asset
-        }
-        
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            switch self {
-            case .topic(let url):
-                try container.encode(url, forKey: .topic)
-            case .symbol(let identifier):
-                try container.encode(identifier, forKey: .symbol)
-            case .asset(let assetReference):
-                try container.encode(assetReference, forKey: .asset)
-            }
-        }
-        
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            switch container.allKeys.first {
-            case .topic?:
-                self = .topic(try container.decode(URL.self, forKey: .topic))
-            case .symbol?:
-                self = .symbol(try container.decode(String.self, forKey: .symbol))
-            case .asset?:
-                self = .asset(try container.decode(AssetReference.self, forKey: .asset))
-            case nil:
-                throw OutOfProcessReferenceResolver.Error.unknownTypeOfRequest
-            }
-        }
-        
-        /// A plain text representation of the request message.
-        public var description: String {
-            switch self {
-            case .topic(let url):
-                return "topic: \(url.absoluteString.singleQuoted)"
-            case .symbol(let identifier):
-                return "symbol: \(identifier.singleQuoted)"
-            case .asset(let asset):
-                return "asset with name: \(asset.assetName), bundle identifier: \(asset.bundleID)"
-            }
-        }
-    }
-
-    /// A response message from the external link resolver.
-    public enum Response: Codable {
-        /// A bundle identifier response.
-        ///
-        /// This message should only be sent once, after the external link resolver has launched.
-        case bundleIdentifier(String)
-        /// The error message of the problem that the external link resolver encountered while resolving the requested topic or symbol.
-        case errorMessage(String)
-        /// A response with the resolved information about the requested topic or symbol.
-        case resolvedInformation(ResolvedInformation)
-        /// A response with information about the resolved asset.
-        case asset(DataAsset)
-        
-        enum CodingKeys: String, CodingKey {
-            case bundleIdentifier
-            case errorMessage
-            case resolvedInformation
-            case asset
-        }
-        
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            switch container.allKeys.first {
-            case .bundleIdentifier?:
-                self = .bundleIdentifier(try container.decode(String.self, forKey: .bundleIdentifier))
-            case .errorMessage?:
-                self = .errorMessage(try container.decode(String.self, forKey: .errorMessage))
-            case .resolvedInformation?:
-                self = .resolvedInformation(try container.decode(ResolvedInformation.self, forKey: .resolvedInformation))
-            case .asset?:
-                self = .asset(try container.decode(DataAsset.self, forKey: .asset))
-            case nil:
-                throw OutOfProcessReferenceResolver.Error.invalidResponseKindFromClient
-            }
-        }
-        
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            switch self {
-            case .bundleIdentifier(let bundleIdentifier):
-                try container.encode(bundleIdentifier, forKey: .bundleIdentifier)
-            case .errorMessage(let errorMessage):
-                try container.encode(errorMessage, forKey: .errorMessage)
-            case .resolvedInformation(let resolvedInformation):
-                try container.encode(resolvedInformation, forKey: .resolvedInformation)
-            case .asset(let assetReference):
-                try container.encode(assetReference, forKey: .asset)
-            }
-        }
-    }
-    
-    // MARK: Resolved Information
-    
-    /// A type used to transfer information about a resolved reference to DocC from from a reference resolver in another executable.
-    public struct ResolvedInformation: Codable {
-        // This type is duplicating the information from LinkDestinationSummary with some minor differences.
-        // Changes generally need to be made in both places. It would be good to replace this with LinkDestinationSummary.
-        // FIXME: https://github.com/swiftlang/swift-docc/issues/802
-        
-        /// Information about the resolved kind.
-        public let kind: DocumentationNode.Kind
-        /// Information about the resolved URL.
-        public let url: URL
-        /// Information about the resolved title.
-        public let title: String // DocumentationNode.Name
-        /// Information about the resolved abstract.
-        public let abstract: String // Markup
-        /// Information about the resolved language.
-        public let language: SourceLanguage
-        /// Information about the languages where the resolved node is available.
-        public let availableLanguages: Set<SourceLanguage>
-        /// Information about the platforms and their versions where the resolved node is available, if any.
-        public let platforms: [PlatformAvailability]?
-        /// Information about the resolved declaration fragments, if any.
-        public let declarationFragments: DeclarationFragments?
-        
-        // We use the real types here because they're Codable and don't have public member-wise initializers.
-        
-        /// Platform availability for a resolved symbol reference.
-        public typealias PlatformAvailability = AvailabilityRenderItem
-        
-        /// The declaration fragments for a resolved symbol reference.
-        public typealias DeclarationFragments = SymbolGraph.Symbol.DeclarationFragments
-        
-        /// The platform names, derived from the platform availability.
-        public var platformNames: Set<String>? {
-            return platforms.map { platforms in Set(platforms.compactMap { $0.name }) }
-        }
-        
-        /// Images that are used to represent the summarized element.
-        public var topicImages: [TopicImage]?
-                
-        /// References used in the content of the summarized element.
-        public var references: [any RenderReference]?
-        
-        /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
-        public var variants: [Variant]?
-       
-        /// A value that indicates whether this symbol is under development and likely to change.
-        var isBeta: Bool {
-            guard let platforms, !platforms.isEmpty else {
-                return false
-            }
-            
-            return platforms.allSatisfy { $0.isBeta == true }
-        }
-        
-        /// Creates a new resolved information value with all its values.
-        ///
-        /// - Parameters:
-        ///   - kind: The resolved kind.
-        ///   - url: The resolved URL.
-        ///   - title: The resolved title
-        ///   - abstract: The resolved (plain text) abstract.
-        ///   - language: The resolved language.
-        ///   - availableLanguages: The languages where the resolved node is available.
-        ///   - platforms: The platforms and their versions where the resolved node is available, if any.
-        ///   - declarationFragments: The resolved declaration fragments, if any.
-        ///   - topicImages: Images that are used to represent the summarized element.
-        ///   - references: References used in the content of the summarized element.
-        ///   - variants: The variants of content for this resolver information.
-        public init(
-            kind: DocumentationNode.Kind,
-            url: URL,
-            title: String,
-            abstract: String,
-            language: SourceLanguage,
-            availableLanguages: Set<SourceLanguage>,
-            platforms: [PlatformAvailability]? = nil,
-            declarationFragments: DeclarationFragments? = nil,
-            topicImages: [TopicImage]? = nil,
-            references: [any RenderReference]? = nil,
-            variants: [Variant]? = nil
-        ) {
-            self.kind = kind
-            self.url = url
-            self.title = title
-            self.abstract = abstract
-            self.language = language
-            self.availableLanguages = availableLanguages
-            self.platforms = platforms
-            self.declarationFragments = declarationFragments
-            self.topicImages = topicImages
-            self.references = references
-            self.variants = variants
-        }
-        
-        /// A variant of content for the resolved information.
-        ///
-        /// - Note: All properties except for ``traits`` are optional. If a property is `nil` it means that the value is the same as the resolved information's value.
-        public struct Variant: Codable {
-            /// The traits of the variant.
-            public let traits: [RenderNode.Variant.Trait]
-            
-            /// A wrapper for variant values that can either be specified, meaning the variant has a custom value, or not, meaning the variant has the same value as the resolved information.
-            ///
-            /// This alias is used to make the property declarations more explicit while at the same time offering the convenient syntax of optionals.
-            public typealias VariantValue = Optional
-            
-            /// The kind of the variant or `nil` if the kind is the same as the resolved information.
-            public let kind: VariantValue<DocumentationNode.Kind>
-            /// The url of the variant or `nil` if the url is the same as the resolved information.
-            public let url: VariantValue<URL>
-            /// The title of the variant or `nil` if the title is the same as the resolved information.
-            public let title: VariantValue<String>
-            /// The abstract of the variant or `nil` if the abstract is the same as the resolved information.
-            public let abstract: VariantValue<String>
-            /// The language of the variant or `nil` if the language is the same as the resolved information.
-            public let language: VariantValue<SourceLanguage>
-            /// The declaration fragments of the variant or `nil` if the declaration is the same as the resolved information.
-            ///
-            /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
-            public let declarationFragments: VariantValue<DeclarationFragments?>
-            
-            /// Creates a new resolved information variant with the values that are different from the resolved information values.
-            ///
-            /// - Parameters:
-            ///   - traits: The traits of the variant.
-            ///   - kind: The resolved kind.
-            ///   - url: The resolved URL.
-            ///   - title: The resolved title
-            ///   - abstract: The resolved (plain text) abstract.
-            ///   - language: The resolved language.
-            ///   - declarationFragments: The resolved declaration fragments, if any.
-            public init(
-                traits: [RenderNode.Variant.Trait],
-                kind: VariantValue<DocumentationNode.Kind> = nil,
-                url: VariantValue<URL> = nil,
-                title: VariantValue<String> = nil,
-                abstract: VariantValue<String> = nil,
-                language: VariantValue<SourceLanguage> = nil,
-                declarationFragments: VariantValue<DeclarationFragments?> = nil
-            ) {
-                self.traits = traits
-                self.kind = kind
-                self.url = url
-                self.title = title
-                self.abstract = abstract
-                self.language = language
-                self.declarationFragments = declarationFragments
-            }
-        }
-    }
-}
-
-extension OutOfProcessReferenceResolver.ResolvedInformation {
-    enum CodingKeys: CodingKey {
-        case kind
-        case url
-        case title
-        case abstract
-        case language
-        case availableLanguages
-        case platforms
-        case declarationFragments
-        case topicImages
-        case references
-        case variants
-    }
-    
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
-        url = try container.decode(URL.self, forKey: .url)
-        title = try container.decode(String.self, forKey: .title)
-        abstract = try container.decode(String.self, forKey: .abstract)
-        language = try container.decode(SourceLanguage.self, forKey: .language)
-        availableLanguages = try container.decode(Set<SourceLanguage>.self, forKey: .availableLanguages)
-        platforms = try container.decodeIfPresent([OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability].self, forKey: .platforms)
-        declarationFragments = try container.decodeIfPresent(OutOfProcessReferenceResolver.ResolvedInformation.DeclarationFragments.self, forKey: .declarationFragments)
-        topicImages = try container.decodeIfPresent([TopicImage].self, forKey: .topicImages)
-        references = try container.decodeIfPresent([CodableRenderReference].self, forKey: .references).map { decodedReferences in
-            decodedReferences.map(\.reference)
-        }
-        variants = try container.decodeIfPresent([OutOfProcessReferenceResolver.ResolvedInformation.Variant].self, forKey: .variants)
-        
-    }
-    
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(self.kind, forKey: .kind)
-        try container.encode(self.url, forKey: .url)
-        try container.encode(self.title, forKey: .title)
-        try container.encode(self.abstract, forKey: .abstract)
-        try container.encode(self.language, forKey: .language)
-        try container.encode(self.availableLanguages, forKey: .availableLanguages)
-        try container.encodeIfPresent(self.platforms, forKey: .platforms)
-        try container.encodeIfPresent(self.declarationFragments, forKey: .declarationFragments)
-        try container.encodeIfPresent(self.topicImages, forKey: .topicImages)
-        try container.encodeIfPresent(references?.map { CodableRenderReference($0) }, forKey: .references)
-        try container.encodeIfPresent(self.variants, forKey: .variants)
-    }
-}
+// MARK: Convert Service
 
 extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
     @_spi(ExternalLinks)
+    @available(*, deprecated, message: "The ConvertService is implicitly reliant on the deprecated `Request` and `Response` types.")
     public func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
-        guard referenceCache.keys.contains(reference.url) else { return nil }
+        guard let implementation = implementation as? ImplementationV1 else {
+            assertionFailure("ConvertServiceFallbackResolver expects V1 requests and responses")
+            return nil
+        }
+        
+        guard implementation.referenceCache.keys.contains(reference.url) else { return nil }
         
         var entity = entity(with: reference)
         // The entity response doesn't include the assets that it references.
         // Before returning the entity, make sure that its references assets are included among the image dependencies.
-        for image in entity.topicRenderReference.images {
+        var references = entity.references ?? []
+        
+        for image in entity.topicImages ?? [] {
             if let asset = resolve(assetNamed: image.identifier.identifier) {
-                entity.renderReferenceDependencies.imageReferences.append(ImageReference(identifier: image.identifier, imageAsset: asset))
+                references.append(ImageReference(identifier: image.identifier, imageAsset: asset))
             }
         }
+        if !references.isEmpty {
+            entity.references = references
+        }
+        
         return entity
     }
     
+    @available(*, deprecated, message: "The ConvertService is implicitly reliant on the deprecated `Request` and `Response` types.")
     func resolve(assetNamed assetName: String) -> DataAsset? {
-        return try? resolveInformationForAsset(named: assetName)
-    }
-    
-    func resolveInformationForAsset(named assetName: String) throws -> DataAsset {
         let assetReference = AssetReference(assetName: assetName, bundleID: bundleID)
         if let asset = assetCache[assetReference] {
             return asset
         }
         
-        let response = try externalLinkResolvingClient.sendAndWait(
-            request: Request.asset(AssetReference(assetName: assetName, bundleID: bundleID))
-        ) as Response
-        
-        switch response {
-        case .asset(let asset):
-            assetCache[assetReference] = asset
-            return asset
-        case .errorMessage(let errorMessage):
-            throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
-        default:
-            throw Error.unexpectedResponse(response: response, requestDescription: "asset")
+        guard case .asset(let asset)? = try? implementation.longRunningProcess.sendAndWait(request: Request.asset(assetReference)) as Response else {
+            return nil
         }
+        return asset
     }
 }

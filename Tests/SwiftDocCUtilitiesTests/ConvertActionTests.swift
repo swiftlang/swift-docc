@@ -3219,7 +3219,7 @@ private extension LinkDestinationSummary {
             platforms: platforms,
             taskGroups: taskGroups,
             usr: usr,
-            declarationFragments: nil,
+            subheadingDeclarationFragments: nil,
             redirects: redirects,
             topicImages: topicImages,
             references: references,

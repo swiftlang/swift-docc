@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -90,7 +90,24 @@ public struct RenderContext {
         
         // Add all the external content to the topic store
         for (reference, entity) in documentationContext.externalCache {
-            topics[reference] = entity.topicContent()
+            topics[reference] = entity.makeTopicContent()
+            
+            // Also include transitive dependencies in the store, so that the external entity can reference them.
+            for case let dependency as TopicRenderReference in (entity.references ?? []) {
+                guard let url = URL(string: dependency.identifier.identifier), let rawBundleID = url.host else {
+                    // This dependency doesn't have a valid topic reference, skip adding it to the render context.
+                    continue
+                }
+                
+                let dependencyReference = ResolvedTopicReference(
+                    bundleID: .init(rawValue: rawBundleID),
+                    path: url.path,
+                    fragment: url.fragment,
+                    // TopicRenderReference doesn't have language information. Also, the reference's languages _doesn't_ specify the languages of the linked entity.
+                    sourceLanguages: reference.sourceLanguages
+                )
+                topics[dependencyReference] = .init(renderReference: dependency, canonicalPath: nil, taskGroups: nil, source: nil, isDocumentationExtensionContent: false)
+            }
         }
         
         self.store = RenderReferenceStore(topics: topics, assets: assets)
