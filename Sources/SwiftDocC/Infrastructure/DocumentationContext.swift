@@ -268,7 +268,6 @@ public class DocumentationContext {
     ///   - source: The location of the document.
     private func check(_ document: Document, at source: URL) {
         var checker = CompositeChecker([
-            AbstractContainsFormattedTextOnly(sourceFile: source).any(),
             DuplicateTopicsSections(sourceFile: source).any(),
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
@@ -2744,7 +2743,7 @@ public class DocumentationContext {
         knownEntityValue(
             reference: reference,
             valueInLocalEntity: \.availableSourceLanguages,
-            valueInExternalEntity: \.sourceLanguages
+            valueInExternalEntity: \.availableLanguages
         )
     }
     
@@ -2752,9 +2751,9 @@ public class DocumentationContext {
     func isSymbol(reference: ResolvedTopicReference) -> Bool {
         knownEntityValue(
             reference: reference,
-            valueInLocalEntity: { node in node.kind.isSymbol },
-            valueInExternalEntity: { entity in entity.topicRenderReference.kind == .symbol }
-        )
+            valueInLocalEntity: \.kind,
+            valueInExternalEntity: \.kind
+        ).isSymbol
     }
 
     // MARK: - Relationship queries

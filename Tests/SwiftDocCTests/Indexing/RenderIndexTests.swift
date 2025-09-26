@@ -89,7 +89,7 @@ final class RenderIndexTests: XCTestCase {
                       },
                       {
                         "path": "/documentation/mixedlanguageframework/bar",
-                        "title": "Bar",
+                        "title": "Bar (objective c)",
                         "type": "class",
                         "children": [
                           {
