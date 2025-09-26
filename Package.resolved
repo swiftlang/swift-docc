@@ -68,7 +68,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-docc-symbolkit.git",
       "state" : {
-        "branch" : "release/6.2",
+        "branch" : "release/6.2.1",
         "revision" : "467084cd380d352abcd128b27927ecdc8cb5bae8"
       }
     },
@@ -77,7 +77,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-lmdb.git",
       "state" : {
-        "branch" : "release/6.2",
+        "branch" : "release/6.2.1",
         "revision" : "1ad9a2d80b6fcde498c2242f509bd1be7d667ff8"
       }
     },
@@ -86,7 +86,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-markdown.git",
       "state" : {
-        "branch" : "release/6.2",
+        "branch" : "release/6.2.1",
         "revision" : "3be4e1a09cef425602f11bdb4b4de252e4badd11"
       }
     },
