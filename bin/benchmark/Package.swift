@@ -1,4 +1,4 @@
-// swift-tools-version: 5.5
+// swift-tools-version: 6.0
 /*
  This source file is part of the Swift.org open source project
 
@@ -14,7 +14,7 @@ import PackageDescription
 let package = Package(
     name: "benchmark",
     platforms: [
-        .macOS(.v12)
+        .macOS(.v13)
     ],
     products: [
         .executable(
