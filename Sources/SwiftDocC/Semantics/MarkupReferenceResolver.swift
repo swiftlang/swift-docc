@@ -166,8 +166,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
         let source = blockDirective.range?.source
         switch blockDirective.name {
         case Snippet.directiveName:
-            var problems = [Problem]() // ???: DAVID IS IGNORED?
-            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, problems: &problems) else {
+            var ignoredParsingProblems = [Problem]() // Any argument parsing problems have already been reported elsewhere
+            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, problems: &ignoredParsingProblems) else {
                 return blockDirective
             }
             
@@ -176,11 +176,11 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 if let requestedSlice = snippet.slice,
                    let errorInfo = context.snippetResolver.validate(slice: requestedSlice, for: resolvedSnippet)
                 {
-                    self.problems.append(SnippetResolver.unknownSnippetSliceProblem(source: source, range: blockDirective.arguments()["slice"]?.valueRange, errorInfo: errorInfo))
+                    problems.append(SnippetResolver.unknownSnippetSliceProblem(source: source, range: blockDirective.arguments()["slice"]?.valueRange, errorInfo: errorInfo))
                 }
                 return blockDirective
             case .failure(let errorInfo):
-                self.problems.append(SnippetResolver.unresolvedSnippetPathProblem(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
+                problems.append(SnippetResolver.unresolvedSnippetPathProblem(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
                 return blockDirective
             }
         case ImageMedia.directiveName:
