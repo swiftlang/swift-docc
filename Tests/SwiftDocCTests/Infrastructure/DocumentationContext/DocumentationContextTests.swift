@@ -2229,7 +2229,7 @@ let expected = """
             """),
         ])
         
-        let (bundle, context) = try await loadBundle(catalog: catalog, diagnosticEngine: .init(filterLevel: .information))
+        let (bundle, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
         XCTAssertNil(context.soleRootModuleReference)
         
         let curationDiagnostics = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
