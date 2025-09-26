@@ -58,7 +58,7 @@ extension XCTestCase {
         let catalogURL = URL(fileURLWithPath: "/\(catalog.name)")
         
         let diagnosticEngine = DiagnosticEngine(filterLevel: diagnosticFilterLevel)
-        diagnosticEngine.add(DiagnosticConsoleWriter(logOutput, formattingOptions: [], baseURL: catalogURL, highlight: false, dataProvider: fileSystem))
+        diagnosticEngine.add(DiagnosticConsoleWriter(logOutput, formattingOptions: [], baseURL: catalogURL, highlight: true, dataProvider: fileSystem))
         
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: catalogURL, options: .init())

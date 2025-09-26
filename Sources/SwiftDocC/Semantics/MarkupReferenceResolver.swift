@@ -21,39 +21,6 @@ private func disabledLinkDestinationProblem(reference: ResolvedTopicReference, r
     return Problem(diagnostic: Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.disabledLinkDestination", summary: "The topic \(reference.path.singleQuoted) cannot be linked to."), possibleSolutions: [])
 }
 
-private func unknownSnippetSliceProblem(snippetPath: String, slice: String, range: SourceRange?) -> Problem {
-    let diagnostic = Diagnostic(source: range?.source, severity: .warning, range: range, identifier: "org.swift.docc.unknownSnippetSlice", summary: "Snippet slice \(slice.singleQuoted) does not exist in snippet \(snippetPath.singleQuoted); this directive will be ignored")
-    return Problem(diagnostic: diagnostic, possibleSolutions: [])
-}
-
-private func unresolvedSnippetPathProblem(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Problem {
-    var solutions: [Solution] = []
-    var notes: [DiagnosticNote] = []
-    if let range {
-        if let note = errorInfo.note, let source {
-            notes.append(DiagnosticNote(source: source, range: range, message: note))
-        }
-        
-        solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: range))
-    }
-    
-    let diagnosticRange: SourceRange?
-    if var rangeAdjustment = errorInfo.rangeAdjustment, let range {
-        rangeAdjustment.offsetWithRange(range)
-        assert(rangeAdjustment.lowerBound.column >= 0, """
-            Unresolved snippet reference range adjustment created range with negative column.
-            Source: \(source?.absoluteString ?? "nil")
-            Range: \(rangeAdjustment.lowerBound.description):\(rangeAdjustment.upperBound.description)
-            Summary: \(errorInfo.message)
-            """)
-        diagnosticRange = rangeAdjustment
-    } else {
-        diagnosticRange = range
-    }
-    
-    let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: "org.swift.docc.unresolvedSnippetPath", summary: errorInfo.message, notes: notes)
-    return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
-}
 private func removedLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     var solutions = [Solution]()
     if let range, reference.pathComponents.count > 3 {
@@ -206,15 +173,14 @@ struct MarkupReferenceResolver: MarkupRewriter {
             
             switch context.snippetResolver.resolveSnippet(path: snippet.path) {
             case .success(let resolvedSnippet):
-                if let requestedSlice = snippet.slice {
-                    guard resolvedSnippet.mixin.slices[requestedSlice] != nil else {
-                        self.problems.append(unknownSnippetSliceProblem(snippetPath: snippet.path, slice: requestedSlice, range: blockDirective.nameRange))
-                        return blockDirective
-                    }
+                if let requestedSlice = snippet.slice,
+                   let errorInfo = context.snippetResolver.validate(slice: requestedSlice, for: resolvedSnippet)
+                {
+                    self.problems.append(SnippetResolver.unknownSnippetSliceProblem(source: source, range: blockDirective.arguments()["slice"]?.valueRange, errorInfo: errorInfo))
                 }
                 return blockDirective
             case .failure(let errorInfo):
-                self.problems.append(unresolvedSnippetPathProblem(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
+                self.problems.append(SnippetResolver.unresolvedSnippetPathProblem(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
                 return blockDirective
             }
         case ImageMedia.directiveName:

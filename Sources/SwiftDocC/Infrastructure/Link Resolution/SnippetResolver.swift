@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Foundation
 import SymbolKit
 import Markdown
 
@@ -18,6 +19,7 @@ final class SnippetResolver {
     
     /// Information about a resolved snippet
     struct ResolvedSnippet {
+        fileprivate var path: String // For use in diagnostics
         var mixin: SnippetMixin
         var explanation: Explanation?
     }
@@ -42,7 +44,7 @@ final class SnippetResolver {
                     symbol.pathComponents.joined(separator: "/")
                 }
                 
-                snippets[path] = .init(mixin: snippetMixin, explanation: symbol.docComment.map {
+                snippets[path] = .init(path: path, mixin: snippetMixin, explanation: symbol.docComment.map {
                     Document(parsing: $0.lines.map(\.text).joined(separator: "\n"), options: .parseBlockDirectives)
                 })
             }
@@ -72,8 +74,56 @@ final class SnippetResolver {
         if let found = snippets[path] {
             return .success(found)
         } else {
-            return .failure(.init("Snippet named '\(path)' couldn't be found."))
+            return .failure(.init("Snippet named '\(path)' couldn't be found"))
         }
+    }
+    
+    func validate(slice: String, for resolvedSnippet: ResolvedSnippet) -> TopicReferenceResolutionErrorInfo? {
+        guard resolvedSnippet.mixin.slices[slice] == nil else {
+            return nil
+        }
+            
+        return .init("Slice named '\(slice)' doesn't exist in snippet '\(resolvedSnippet.path)'")
     }
 }
 
+// MARK: Diagnostics
+
+extension SnippetResolver {
+    static func unknownSnippetSliceProblem(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Problem {
+        _problem(source: source, range: range, errorInfo: errorInfo, id: "org.swift.docc.unknownSnippetPath")
+    }
+
+    static func unresolvedSnippetPathProblem(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo) -> Problem {
+        _problem(source: source, range: range, errorInfo: errorInfo, id: "org.swift.docc.unresolvedSnippetPath")
+    }
+    
+    private static func _problem(source: URL?, range: SourceRange?, errorInfo: TopicReferenceResolutionErrorInfo, id: String) -> Problem {
+        var solutions: [Solution] = []
+        var notes: [DiagnosticNote] = []
+        if let range {
+            if let note = errorInfo.note, let source {
+                notes.append(DiagnosticNote(source: source, range: range, message: note))
+            }
+            
+            solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: range))
+        }
+        
+        let diagnosticRange: SourceRange?
+        if var rangeAdjustment = errorInfo.rangeAdjustment, let range {
+            rangeAdjustment.offsetWithRange(range)
+            assert(rangeAdjustment.lowerBound.column >= 0, """
+                Unresolved snippet reference range adjustment created range with negative column.
+                Source: \(source?.absoluteString ?? "nil")
+                Range: \(rangeAdjustment.lowerBound.description):\(rangeAdjustment.upperBound.description)
+                Summary: \(errorInfo.message)
+                """)
+            diagnosticRange = rangeAdjustment
+        } else {
+            diagnosticRange = range
+        }
+        
+        let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: id, summary: errorInfo.message, notes: notes)
+        return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
+    }
+}

@@ -123,7 +123,7 @@ class SnippetResolverTests: XCTestCase {
     }
     
     func testWarningsAboutMisspelledSnippetPathsAndMisspelledSlice() async throws {
-        for pathPrefix in optionalPathPrefixes.prefix(1) {
+        for pathPrefix in optionalPathPrefixes {
             let (problems, logOutput, snippetRenderBlocks) = try await makeSnippetContext(
                 snippets: [
                     makeSnippet(
@@ -148,26 +148,26 @@ class SnippetResolverTests: XCTestCase {
                 """
             )
             
-            // These links should all resolve, regardless of optional prefix
-            XCTAssertEqual(problems.map(\.diagnostic.summary).sorted(), [
-                "Snippet named 'Frst' couldn't be found.",
-                "Snippet slice 'cmmnt' does not exist in snippet '/ModuleName/Snippets/First'; this directive will be ignored",
+            // The first snippet has a misspelled path and the second has a misspelled slice
+            XCTAssertEqual(problems.map(\.diagnostic.summary), [
+                "Snippet named 'Frst' couldn't be found",
+                "Slice named 'cmmnt' doesn't exist in snippet 'First'",
             ])
             
             XCTAssertEqual(logOutput, """
-            warning: Snippet named 'Frst' couldn't be found.
+            \u{001B}[1;33mwarning: Snippet named 'Frst' couldn't be found\u{001B}[0;0m
              --> ModuleName.md:7:16-7:41
             5 | ## Overview
             6 |
-            7 + @Snippet(path: /ModuleName/Snippets/Frst)
+            7 + @Snippet(path: \u{001B}[1;32m/ModuleName/Snippets/Frst\u{001B}[0;0m)
             8 |
             9 | @Snippet(path: /ModuleName/Snippets/First, slice: cmmnt)
 
-            warning: Snippet slice 'cmmnt' does not exist in snippet '/ModuleName/Snippets/First'; this directive will be ignored
-             --> ModuleName.md:9:1-9:8
+            \u{001B}[1;33mwarning: Slice named 'cmmnt' doesn't exist in snippet 'First'\u{001B}[0;0m
+             --> ModuleName.md:9:51-9:56
             7 | @Snippet(path: /ModuleName/Snippets/Frst)
             8 |
-            9 + @Snippet(path: /ModuleName/Snippets/First, slice: cmmnt)
+            9 + @Snippet(path: /ModuleName/Snippets/First, slice: \u{001B}[1;32mcmmnt\u{001B}[0;0m)
             
             """)
             
@@ -218,7 +218,7 @@ class SnippetResolverTests: XCTestCase {
             XCTFail("The rendered page is missing the 'Overview' heading. Something unexpected is happening with the page content.", file: file, line: line)
         }
         
-        return (context.problems, logStore.text, renderBlocks.dropFirst())
+        return (context.problems.sorted(by: \.diagnostic.range!.lowerBound.line), logStore.text, renderBlocks.dropFirst())
     }
     
     private func makeSnippet(
