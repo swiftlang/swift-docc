@@ -144,30 +144,58 @@ class SnippetResolverTests: XCTestCase {
                 rootContent: """
                 @Snippet(path: \(pathPrefix)Frst)
                 
-                @Snippet(path: \(pathPrefix)First, slice: cmmnt)
+                @Snippet(path: \(pathPrefix)First, slice: commt)
                 """
             )
             
             // The first snippet has a misspelled path and the second has a misspelled slice
             XCTAssertEqual(problems.map(\.diagnostic.summary), [
                 "Snippet named 'Frst' couldn't be found",
-                "Slice named 'cmmnt' doesn't exist in snippet 'First'",
+                "Slice named 'commt' doesn't exist in snippet 'First'",
             ])
             
+            // Verify that the suggested solutions correct the issues.
+            let rootMarkupContent = """
+            # Heading
+            
+            Abstract 
+            
+            ## Subheading 
+            
+            @Snippet(path: \(pathPrefix)Frst)
+            
+            @Snippet(path: \(pathPrefix)First, slice: commt)
+            """
+            do {
+                let snippetPathProblem = try XCTUnwrap(problems.first)
+                let solution = try XCTUnwrap(snippetPathProblem.possibleSolutions.first)
+                let modifiedLines = try solution.applyTo(rootMarkupContent).components(separatedBy: "\n")
+                XCTAssertEqual(modifiedLines[6], "@Snippet(path: \(pathPrefix)First)")
+            }
+            do {
+                let snippetSliceProblem = try XCTUnwrap(problems.last)
+                let solution = try XCTUnwrap(snippetSliceProblem.possibleSolutions.first)
+                let modifiedLines = try solution.applyTo(rootMarkupContent).components(separatedBy: "\n")
+                XCTAssertEqual(modifiedLines[8], "@Snippet(path: \(pathPrefix)First, slice: comment)")
+            }
+            
+            let prefixLength = pathPrefix.count
             XCTAssertEqual(logOutput, """
             \u{001B}[1;33mwarning: Snippet named 'Frst' couldn't be found\u{001B}[0;0m
-             --> ModuleName.md:7:16-7:41
+             --> ModuleName.md:7:16-7:\(20 + prefixLength)
             5 | ## Overview
             6 |
-            7 + @Snippet(path: \u{001B}[1;32m/ModuleName/Snippets/Frst\u{001B}[0;0m)
+            7 + @Snippet(path: \u{001B}[1;32m\(pathPrefix)Frst\u{001B}[0;0m)
+              | \(String(repeating: " ", count: prefixLength))               ╰─\u{001B}[1;39msuggestion: Replace 'Frst' with 'First'\u{001B}[0;0m
             8 |
-            9 | @Snippet(path: /ModuleName/Snippets/First, slice: cmmnt)
+            9 | @Snippet(path: \(pathPrefix)First, slice: commt)
 
-            \u{001B}[1;33mwarning: Slice named 'cmmnt' doesn't exist in snippet 'First'\u{001B}[0;0m
-             --> ModuleName.md:9:51-9:56
-            7 | @Snippet(path: /ModuleName/Snippets/Frst)
+            \u{001B}[1;33mwarning: Slice named 'commt' doesn't exist in snippet 'First'\u{001B}[0;0m
+             --> ModuleName.md:9:\(30 + prefixLength)-9:\(35 + prefixLength)
+            7 | @Snippet(path: \(pathPrefix)Frst)
             8 |
-            9 + @Snippet(path: /ModuleName/Snippets/First, slice: \u{001B}[1;32mcmmnt\u{001B}[0;0m)
+            9 + @Snippet(path: \(pathPrefix)First, slice: \u{001B}[1;32mcommt\u{001B}[0;0m)
+              | \(String(repeating: " ", count: prefixLength))                             ╰─\u{001B}[1;39msuggestion: Replace 'commt' with 'comment'\u{001B}[0;0m
             
             """)
             

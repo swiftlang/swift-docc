@@ -74,7 +74,16 @@ final class SnippetResolver {
         if let found = snippets[path] {
             return .success(found)
         } else {
-            return .failure(.init("Snippet named '\(path)' couldn't be found"))
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: authoredPath.utf8.count - path.utf8.count, length: path.utf8.count)
+            
+            let nearMisses = NearMiss.bestMatches(for: snippets.keys, against: path)
+            let solutions = nearMisses.map { candidate in
+                Solution(summary: "\(Self.replacementOperationDescription(from: path, to: candidate))", replacements: [
+                    Replacement(range: replacementRange, replacement: candidate)
+                ])
+            }
+            
+            return .failure(.init("Snippet named '\(path)' couldn't be found", solutions: solutions))
         }
     }
     
@@ -82,8 +91,16 @@ final class SnippetResolver {
         guard resolvedSnippet.mixin.slices[slice] == nil else {
             return nil
         }
-            
-        return .init("Slice named '\(slice)' doesn't exist in snippet '\(resolvedSnippet.path)'")
+        let replacementRange = SourceRange.makeRelativeRange(startColumn: 0, length: slice.utf8.count)
+        
+        let nearMisses = NearMiss.bestMatches(for: resolvedSnippet.mixin.slices.keys, against: slice)
+        let solutions = nearMisses.map { candidate in
+            Solution(summary: "\(Self.replacementOperationDescription(from: slice, to: candidate))", replacements: [
+                Replacement(range: replacementRange, replacement: candidate)
+            ])
+        }
+        
+        return .init("Slice named '\(slice)' doesn't exist in snippet '\(resolvedSnippet.path)'", solutions: solutions)
     }
 }
 
@@ -125,5 +142,15 @@ extension SnippetResolver {
         
         let diagnostic = Diagnostic(source: source, severity: .warning, range: diagnosticRange, identifier: id, summary: errorInfo.message, notes: notes)
         return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
+    }
+    
+    private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol) -> String {
+        if from.isEmpty {
+            return "Insert \(to.singleQuoted)"
+        }
+        if to.isEmpty {
+            return "Remove \(from.singleQuoted)"
+        }
+        return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
     }
 }
