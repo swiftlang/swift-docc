@@ -129,18 +129,28 @@ extension MarkdownOutputSemanticVisitor {
         )
         manifest = MarkdownOutputManifest(title: bundle.displayName, documents: [document])
         
-        // Availability
+        // Availability - defaults, overridden with symbol, overriden with metadata
         
-        let symbolAvailability = symbol.availability?.availability.map {
-            MarkdownOutputNode.Metadata.Availability($0)
+        var availabilities: [String: MarkdownOutputNode.Metadata.Availability] = [:]
+        if let primaryModule = metadata.symbol?.modules.first {
+            bundle.info.defaultAvailability?.modules[primaryModule]?.forEach {
+                let meta = MarkdownOutputNode.Metadata.Availability($0)
+                availabilities[meta.platform] = meta
+            }
+        }
+         
+        symbol.availability?.availability.forEach {
+            let meta = MarkdownOutputNode.Metadata.Availability($0)
+            availabilities[meta.platform] = meta
         }
         
-        if let availability = symbolAvailability, availability.isEmpty == false {
-            metadata.availability = availability
-        } else if let primaryModule = metadata.symbol?.modules.first, let defaultAvailability = bundle.info.defaultAvailability?.modules[primaryModule] {
-            metadata.availability = defaultAvailability.map { .init($0) }
+        documentationNode.metadata?.availability.forEach {
+            let meta = MarkdownOutputNode.Metadata.Availability($0)
+            availabilities[meta.platform] = meta
         }
         
+        metadata.availability = availabilities.values.sorted(by: \.platform)
+         
         // Content
         
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
@@ -221,8 +231,9 @@ extension MarkdownOutputNode.Metadata.Availability {
         self.unavailable = item.obsoletedVersion != nil
     }
     
+    // From the info.plist of the module
     init(_ availability: DefaultAvailability.ModuleAvailability) {
-        self.platform = availability.platformName.displayName
+        self.platform = availability.platformName.rawValue
         self.introduced = availability.introducedVersion
         self.deprecated = nil
         self.unavailable = availability.versionInformation == .unavailable

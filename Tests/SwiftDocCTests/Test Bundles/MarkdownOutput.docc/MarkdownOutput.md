@@ -1,5 +1,9 @@
 # ``MarkdownOutput``
 
+@Metadata {
+    @Available(iPadOS, introduced: "13.1")
+}
+
 This catalog contains various documents to test aspects of markdown output functionality
 
 ## Overview

@@ -41,35 +41,73 @@ extension MarkdownOutputNode {
             let introduced: String?
             let deprecated: String?
             let unavailable: Bool
-            
-            public enum CodingKeys: String, CodingKey {
-                case platform, introduced, deprecated, unavailable
-            }
-            
+                        
             public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
                 self.platform = platform
-                self.introduced = introduced
+                // Can't have deprecated without an introduced
+                self.introduced = introduced ?? deprecated
                 self.deprecated = deprecated
-                self.unavailable = unavailable
+                // If no introduced, we are unavailable
+                self.unavailable = unavailable || introduced == nil
             }
             
+            // For a compact representation on-disk and for human and machine readers, availability is stored as a single string:
+            // platform: introduced -               (not deprecated)
+            // platform: introduced - deprecated    (deprecated)
+            // platform: -                          (unavailable)
             public func encode(to encoder: any Encoder) throws {
-                var container = encoder.container(keyedBy: CodingKeys.self)
-                try container.encode(platform, forKey: .platform)
-                try container.encodeIfPresent(introduced, forKey: .introduced)
-                try container.encodeIfPresent(deprecated, forKey: .deprecated)
-                if unavailable {
-                    try container.encode(unavailable, forKey: .unavailable)
-                }
+                var container = encoder.singleValueContainer()
+                try container.encode(stringRepresentation)
             }
             
             public init(from decoder: any Decoder) throws {
-                let container = try decoder.container(keyedBy: CodingKeys.self)
-                platform = try container.decode(String.self, forKey: .platform)
-                introduced = try container.decodeIfPresent(String.self, forKey: .introduced)
-                deprecated = try container.decodeIfPresent(String.self, forKey: .deprecated)
-                unavailable = try container.decodeIfPresent(Bool.self, forKey: .unavailable) ?? false
+                let container = try decoder.singleValueContainer()
+                let stringRepresentation = try container.decode(String.self)
+                self.init(stringRepresentation: stringRepresentation)
             }
+            
+            var stringRepresentation: String {
+                var stringRepresentation = "\(platform): "
+                if unavailable {
+                    stringRepresentation += "-"
+                } else {
+                    if let introduced, introduced.isEmpty == false {
+                        stringRepresentation += "\(introduced) -"
+                        if let deprecated, deprecated.isEmpty == false {
+                            stringRepresentation += " \(deprecated)"
+                        }
+                    } else {
+                        stringRepresentation += "-"
+                    }
+                }
+                return stringRepresentation
+            }
+            
+            init(stringRepresentation: String) {
+                let words = stringRepresentation.split(separator: ":", maxSplits: 1)
+                if words.count != 2 {
+                    platform = stringRepresentation
+                    unavailable = true
+                    introduced = nil
+                    deprecated = nil
+                    return
+                }
+                platform = String(words[0])
+                let available = words[1]
+                    .split(separator: "-")
+                    .map { $0.trimmingCharacters(in: .whitespaces) }
+                    .filter { $0.isEmpty == false }
+                
+                introduced = available.first
+                if available.count > 1 {
+                    deprecated = available.last
+                } else {
+                    deprecated = nil
+                }
+                
+                unavailable = available.isEmpty
+            }
+
         }
         
         public struct Symbol: Codable, Sendable {

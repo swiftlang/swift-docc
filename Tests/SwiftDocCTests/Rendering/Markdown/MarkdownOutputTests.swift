@@ -182,9 +182,66 @@ final class MarkdownOutputTests: XCTestCase {
     func testSymbolDefaultAvailabilityWhenNothingPresent() async throws {
         let node = try await generateMarkdown(path: "MarkdownSymbol")
         let availability = try XCTUnwrap(node.metadata.availability)
-        XCTAssertEqual(availability[0], .init(platform: "iOS", introduced: "1.0.0", deprecated: nil, unavailable: false))
+        XCTAssert(availability.contains(.init(platform: "iOS", introduced: "1.0.0", deprecated: nil, unavailable: false)))
     }
     
+    func testSymbolAvailabilityFromMetadataBlock() async throws {
+        let node = try await generateMarkdown(path: "/documentation/MarkdownOutput")
+        let availability = try XCTUnwrap(node.metadata.availability)
+        XCTAssert(availability.contains(where: { $0.platform == "iPadOS" && $0.introduced == "13.1.0" }))
+    }
+    
+    func testAvailabilityStringRepresentationIntroduced() async throws {
+        let a = "iOS: 14.0"
+        let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: a)
+        XCTAssertEqual(availability.platform, "iOS")
+        XCTAssertEqual(availability.introduced, "14.0")
+        XCTAssertNil(availability.deprecated)
+        XCTAssertFalse(availability.unavailable)
+    }
+    
+    func testAvailabilityStringRepresentationDeprecated() async throws {
+        let a = "iOS: 14.0 - 15.0"
+        let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: a)
+        XCTAssertEqual(availability.platform, "iOS")
+        XCTAssertEqual(availability.introduced, "14.0")
+        XCTAssertEqual(availability.deprecated, "15.0")
+        XCTAssertFalse(availability.unavailable)
+    }
+    
+    func testAvailabilityStringRepresentationUnavailable() async throws {
+        let a = "iOS: -"
+        let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: a)
+        XCTAssertEqual(availability.platform, "iOS")
+        XCTAssertNil(availability.introduced)
+        XCTAssertNil(availability.deprecated)
+        XCTAssert(availability.unavailable)
+    }
+    
+    func testAvailabilityCreateStringRepresentationIntroduced() async throws {
+        let availability = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", unavailable: false)
+        let expected = "iOS: 14.0 -"
+        XCTAssertEqual(availability.stringRepresentation, expected)
+    }
+    
+    func testAvailabilityCreateStringRepresentationDeprecated() async throws {
+        let availability = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "14.0", deprecated: "15.0", unavailable: false)
+        let expected = "iOS: 14.0 - 15.0"
+        XCTAssertEqual(availability.stringRepresentation, expected)
+    }
+    
+    func testAvailabilityCreateStringRepresentationUnavailable() async throws {
+        let availability = MarkdownOutputNode.Metadata.Availability(platform: "iOS", unavailable: true)
+        let expected = "iOS: -"
+        XCTAssertEqual(availability.stringRepresentation, expected)
+    }
+    
+    func testAvailabilityCreateStringRepresentationEmptyAvailability() async throws {
+        let availability = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: "", unavailable: false)
+        let expected = "iOS: -"
+        XCTAssertEqual(availability.stringRepresentation, expected)
+    }
+            
     func testSymbolModuleDefaultAvailability() async throws {
         let node = try await generateMarkdown(path: "/documentation/MarkdownOutput")
         let availability = try XCTUnwrap(node.metadata.availability(for: "iOS"))
