@@ -1611,8 +1611,7 @@ class SymbolTests: XCTestCase {
             )
         }
         
-        let diagnosticEngine = DiagnosticEngine(filterLevel: diagnosticEngineFilterLevel)
-        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: catalogContent), diagnosticEngine: diagnosticEngine)
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: catalogContent), diagnosticFilterLevel: diagnosticEngineFilterLevel)
         
         let node = try XCTUnwrap(context.documentationCache[methodUSR], file: file, line: line)
         

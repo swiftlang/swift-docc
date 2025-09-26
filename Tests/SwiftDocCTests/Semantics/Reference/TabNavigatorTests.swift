@@ -160,15 +160,11 @@ class TabNavigatorTests: XCTestCase {
         
         XCTAssertNotNil(tabNavigator)
 
-        // UnresolvedTopicReference warning expected since the reference to the snippet "Snippets/Snippets/MySnippet" 
-        // should fail to resolve here and then nothing would be added to the content.
-        XCTAssertEqual(
-            problems,
-            ["23: warning – org.swift.docc.unresolvedTopicReference"]
-        )
+        // One warning is expected. This empty context has no snippets so the "Snippets/Snippets/MySnippet" path should fail to resolve.
+        XCTAssertEqual(problems, [
+            "23: warning – org.swift.docc.unresolvedSnippetPath"
+        ])
 
-        
-        
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
             renderBlockContent.first,
@@ -202,6 +198,8 @@ class TabNavigatorTests: XCTestCase {
                             "Hey there.",
     
                             .small(RenderBlockContent.Small(inlineContent: [.text("Hey but small.")])),
+                            
+                            // Because the the "Snippets/Snippets/MySnippet" snippet failed to resolve, we're not including any snippet content here.
                         ]
                     ),
                 ]

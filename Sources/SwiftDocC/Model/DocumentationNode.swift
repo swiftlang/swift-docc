@@ -903,7 +903,7 @@ private extension BlockDirective {
     }
 }
 
-extension [String] {
+extension Collection<String> {
 
     /// Strip the minimum leading whitespace from all the strings in this array, as follows:
     /// - Find the line with least amount of leading whitespace. Ignore blank lines during this search.
