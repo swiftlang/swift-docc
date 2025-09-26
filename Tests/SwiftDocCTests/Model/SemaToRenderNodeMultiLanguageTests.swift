@@ -556,7 +556,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "myStringFunction:error:",
             ],
             referenceFragments: [
-                "typedef enum Foo : NSString {\n    ...\n} Foo;",
+                "+ myStringFunction:error:",
             ],
             failureMessage: { fieldName in
                 "Objective-C variant of 'MyArticle' article has unexpected content for '\(fieldName)'."

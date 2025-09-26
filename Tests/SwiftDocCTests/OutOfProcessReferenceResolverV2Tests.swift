@@ -85,7 +85,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 .init(name: "secondOS", introduced: "4.5.6", isBeta: false),
             ],
             usr: "some-unique-symbol-id",
-            declarationFragments: .init([
+            subheadingDeclarationFragments: .init([
                 .init(text: "struct", kind: .keyword, preciseIdentifier: nil),
                 .init(text: " ", kind: .text, preciseIdentifier: nil),
                 .init(text: "declaration fragment", kind: .identifier, preciseIdentifier: nil),
@@ -127,7 +127,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                         .text(" and a link: "),
                         .reference(identifier: linkedVariantReference, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
                     ],
-                    declarationFragments: .init([
+                    subheadingDeclarationFragments: .init([
                         .init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)
                     ])
                 )
@@ -341,12 +341,6 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 .text("."),
             ],
             availableLanguages: [.swift],
-            platforms: nil,
-            taskGroups: nil,
-            usr: nil,
-            declarationFragments: nil,
-            redirects: nil,
-            topicImages: nil,
             references: [originalLinkedImage, originalLinkedTopic],
             variants: []
         )

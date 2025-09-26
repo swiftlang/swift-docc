@@ -45,7 +45,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                 referenceURL: reference.url,
                 title: resolvedEntityTitle,
                 availableLanguages: [resolvedEntityLanguage],
-                declarationFragments: resolvedEntityDeclarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+                subheadingDeclarationFragments: resolvedEntityDeclarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
                 variants: []
             )
         }
