@@ -111,11 +111,6 @@ extension AutomaticDirectiveConvertible {
         )
     }
     
-    @available(*, deprecated, renamed: "init(from:source:for:)", message: "Use 'init(from:source:for:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init?(from directive: BlockDirective, source: URL? = nil, for bundle: DocumentationBundle, in _: DocumentationContext) {
-        self.init(from: directive, source: source, for: bundle)
-    }
-    
     public init?(
         from directive: BlockDirective,
         source: URL?,

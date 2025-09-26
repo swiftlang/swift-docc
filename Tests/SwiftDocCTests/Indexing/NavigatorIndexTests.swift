@@ -138,6 +138,66 @@ Root
         XCTAssertEqual(item, fromData)
     }
     
+    func testNavigatorEquality() {
+        // Test for equal
+        var item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true, isBeta: true)
+        var item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true, isBeta: true)
+        XCTAssertEqual(item1, item2)
+
+        // Tests for not equal
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isBeta: true)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isBeta: false)
+        XCTAssertNotEqual(item1, item2)
+
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: false)
+        XCTAssertNotEqual(item1, item2)
+        
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 2, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        XCTAssertNotEqual(item1, item2)
+
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 1, languageID: 5, title: "My Title", platformMask: 256, availabilityID: 1024)
+        XCTAssertNotEqual(item1, item2)
+        
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Other Title", platformMask: 256, availabilityID: 1024)
+        XCTAssertNotEqual(item1, item2)
+        
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 257, availabilityID: 1024)
+        XCTAssertNotEqual(item1, item2)
+
+        item1 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        item2 = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1025)
+        XCTAssertNotEqual(item1, item2)
+    }
+    
+    func testNavigatorItemRawDumpWithExtraProperties() {
+        let item = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024, isExternal: true, isBeta: true)
+        let data = item.rawValue
+        let fromData = NavigatorItem(rawValue: data)
+        XCTAssertEqual(item, fromData)
+    }
+    
+    func testNavigatorItemRawDumpBackwardCompatibility() {
+        let item = NavigatorItem(pageType: 1, languageID: 4, title: "My Title", platformMask: 256, availabilityID: 1024)
+        var data = Data()
+        data.append(packedDataFromValue(item.pageType))
+        data.append(packedDataFromValue(item.languageID))
+        data.append(packedDataFromValue(item.platformMask))
+        data.append(packedDataFromValue(item.availabilityID))
+        data.append(packedDataFromValue(UInt64(item.title.utf8.count)))
+        data.append(packedDataFromValue(UInt64(item.path.utf8.count)))
+        data.append(Data(item.title.utf8))
+        data.append(Data(item.path.utf8))
+        // Note: NOT adding isBeta and isExternal flags to simulate when they were not supported
+
+        let fromData = NavigatorItem(rawValue: data)
+        XCTAssertEqual(item, fromData)
+    }
+    
     func testObjCLanguage() {
         let root = generateLargeTree()
         var objcFiltered: Node?
@@ -1975,6 +2035,61 @@ Root
                   ┗╸func firstTestMemberName(_:)
             """
         )
+    }
+
+    func testNavigatorIndexCapturesBetaStatus() async throws {
+        // Set up configuration with beta platforms
+        let platformMetadata = [
+            "macOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
+            "watchOS": PlatformVersion(VersionTriplet(2, 0, 0), beta: true),
+            "tvOS": PlatformVersion(VersionTriplet(3, 0, 0), beta: true),
+            "iOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+            "Mac Catalyst": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+            "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+        ]
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = platformMetadata
+        
+        let (_, bundle, context) = try await testBundleAndContext(named: "AvailabilityBetaBundle", configuration: configuration)
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true)
+        builder.setup()
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+        }
+        builder.finalize()
+        let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+        
+        // Find nodes that should have beta status
+        let swiftNodes = renderIndex.interfaceLanguages["swift"] ?? []
+        let betaNodes = findNodesWithBetaStatus(in: swiftNodes, isBeta: true)
+        let nonBetaNodes = findNodesWithBetaStatus(in: swiftNodes, isBeta: false)
+
+        // Verify that beta status was captured in the render index
+        XCTAssertEqual(betaNodes.map(\.title), ["MyClass"])
+        XCTAssert(betaNodes.allSatisfy(\.isBeta))  // Sanity check
+        XCTAssertEqual(nonBetaNodes.map(\.title).sorted(), ["Classes", "MyOtherClass", "MyThirdClass"])
+        XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false }) // Sanity check
+    }
+    
+    private func findNodesWithBetaStatus(in nodes: [RenderIndex.Node], isBeta: Bool) -> [RenderIndex.Node] {
+        var betaNodes: [RenderIndex.Node] = []
+        
+        for node in nodes {
+            if node.isBeta == isBeta {
+                betaNodes.append(node)
+            }
+            
+            if let children = node.children {
+                betaNodes.append(contentsOf: findNodesWithBetaStatus(in: children, isBeta: isBeta))
+            }
+        }
+        
+        return betaNodes
     }
 
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) async throws -> NavigatorIndex {

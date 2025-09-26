@@ -38,21 +38,15 @@ class ExternalReferenceResolverTests: XCTestCase {
                 fatalError("It is a programming mistake to retrieve an entity for a reference that the external resolver didn't resolve.")
             }
             
-            let (kind, role) = DocumentationContentRenderer.renderKindAndRole(resolvedEntityKind, semantic: nil)
             return LinkResolver.ExternalEntity(
-                topicRenderReference: TopicRenderReference(
-                    identifier: .init(reference.absoluteString),
-                    title: resolvedEntityTitle,
-                    abstract: [.text("Externally Resolved Markup Content")],
-                    url: "/example" + reference.path + (reference.fragment.map { "#\($0)" } ?? ""),
-                    kind: kind,
-                    role: role,
-                    fragments: resolvedEntityDeclarationFragments?.declarationFragments.map { fragment in
-                        return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
-                    }
-                ),
-                renderReferenceDependencies: RenderReferenceDependencies(),
-                sourceLanguages: [resolvedEntityLanguage]
+                kind: resolvedEntityKind,
+                language: resolvedEntityLanguage,
+                relativePresentationURL: URL(string: "/example" + reference.path + (reference.fragment.map { "#\($0)" } ?? ""))!,
+                referenceURL: reference.url,
+                title: resolvedEntityTitle,
+                availableLanguages: [resolvedEntityLanguage],
+                subheadingDeclarationFragments: resolvedEntityDeclarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+                variants: []
             )
         }
     }
@@ -151,72 +145,6 @@ class ExternalReferenceResolverTests: XCTestCase {
             externalReferencesTopicSection.identifiers.first,
             externalRenderReference.identifier.identifier
         )
-    }
-    
-    // This test verifies the behavior of a deprecated functionality (changing external documentation sources after registering the documentation)
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() async throws {
-        let workspace = DocumentationWorkspace()
-        let bundle = try await testBundle(named: "LegacyBundle_DoNotUseInNewTests")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundleIdentifier = bundle.identifier
-        
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://\(bundleIdentifier)/ArticleThatDoesNotExistInLocally")!)
-        let parent = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "", sourceLanguage: .swift)
-        
-        do {
-            context.configuration.externalDocumentationConfiguration.sources = [:]
-            context.configuration.convertServiceConfiguration.fallbackResolver = nil
-            
-            if case .success = context.resolve(.unresolved(unresolved), in: parent) {
-                XCTFail("The reference was unexpectedly resolved.")
-            }
-        }
-        
-        do {
-            class TestFallbackResolver: ConvertServiceFallbackResolver {
-                init(bundleID: DocumentationBundle.Identifier) {
-                    resolver.bundleID = bundleID
-                }
-                var bundleID: DocumentationBundle.Identifier {
-                    resolver.bundleID
-                }
-                private var resolver = TestExternalReferenceResolver()
-                func resolve(_ reference: SwiftDocC.TopicReference) -> TopicReferenceResolutionResult {
-                    TestExternalReferenceResolver().resolve(reference)
-                }
-                func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
-                    nil
-                }
-                func resolve(assetNamed assetName: String) -> DataAsset? {
-                    nil
-                }
-            }
-            
-            context.configuration.externalDocumentationConfiguration.sources = [:]
-            context.configuration.convertServiceConfiguration.fallbackResolver = TestFallbackResolver(bundleID: "org.swift.docc.example")
-            
-            guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
-                XCTFail("The reference was unexpectedly unresolved.")
-                return
-            }
-            
-            XCTAssertEqual("com.external.testbundle", resolved.bundleIdentifier)
-            XCTAssertEqual("/externally/resolved/path", resolved.path)
-            
-            let expectedURL = URL(string: "doc://com.external.testbundle/externally/resolved/path")
-            XCTAssertEqual(expectedURL, resolved.url)
-            
-            try workspace.unregisterProvider(dataProvider)
-            context.configuration.externalDocumentationConfiguration.sources = [:]
-            guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
-                XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
-                return
-            }
-        }
     }
     
     func testLoadEntityForExternalReference() async throws {
@@ -510,7 +438,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         XCTAssertEqual(firstExternalRenderReference.identifier.identifier, "doc://com.test.external/path/to/external-page-with-topic-image-1")
         XCTAssertEqual(firstExternalRenderReference.title, "First external page with topic image")
-        XCTAssertEqual(firstExternalRenderReference.url, "/example/path/to/external-page-with-topic-image-1")
+        XCTAssertEqual(firstExternalRenderReference.url, "/path/to/external-page-with-topic-image-1")
         XCTAssertEqual(firstExternalRenderReference.kind, .article)
         
         XCTAssertEqual(firstExternalRenderReference.images, [
@@ -522,7 +450,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         XCTAssertEqual(secondExternalRenderReference.identifier.identifier, "doc://com.test.external/path/to/external-page-with-topic-image-2")
         XCTAssertEqual(secondExternalRenderReference.title, "Second external page with topic image")
-        XCTAssertEqual(secondExternalRenderReference.url, "/example/path/to/external-page-with-topic-image-2")
+        XCTAssertEqual(secondExternalRenderReference.url, "/path/to/external-page-with-topic-image-2")
         XCTAssertEqual(secondExternalRenderReference.kind, .article)
         
         XCTAssertEqual(secondExternalRenderReference.images, [
@@ -696,18 +624,15 @@ class ExternalReferenceResolverTests: XCTestCase {
             func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
                 referencesCreatingEntityFor.insert(reference)
                 
-                // Return an empty node
+                // Return an "empty" node
                 return .init(
-                    topicRenderReference: TopicRenderReference(
-                        identifier: .init(reference.absoluteString),
-                        title: "Resolved",
-                        abstract: [],
-                        url: reference.absoluteString,
-                        kind: .symbol,
-                        estimatedTime: nil
-                    ),
-                    renderReferenceDependencies: RenderReferenceDependencies(),
-                    sourceLanguages: [.swift]
+                    kind: .instanceProperty,
+                    language: .swift,
+                    relativePresentationURL: reference.url.withoutHostAndPortAndScheme(),
+                    referenceURL: reference.url,
+                    title: "Resolved",
+                    availableLanguages: [.swift],
+                    variants: []
                 )
             }
         }

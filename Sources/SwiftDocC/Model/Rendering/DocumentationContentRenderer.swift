@@ -154,7 +154,6 @@ public class DocumentationContentRenderer {
         case .chapter: return .collectionGroup
         case .collection: return .collection
         case .collectionGroup: return .collectionGroup
-        case ._technologyOverview: fallthrough // This case is deprecated and will be removed after 6.2 is released.
         case .tutorialTableOfContents: return .overview
         case .landingPage: return .article
         case .module, .extendedModule: return .collection
@@ -310,11 +309,13 @@ public class DocumentationContentRenderer {
             // try resolving that way as a fallback after looking up `documentationCache`.
             titleVariants = .init(defaultVariantValue: topicGraphOnlyNode.title)
         } else if let external = documentationContext.externalCache[reference] {
-            dependencies.topicReferences.append(contentsOf: external.renderReferenceDependencies.topicReferences)
-            dependencies.linkReferences.append(contentsOf: external.renderReferenceDependencies.linkReferences)
-            dependencies.imageReferences.append(contentsOf: external.renderReferenceDependencies.imageReferences)
+            let renderDependencies = external.makeRenderDependencies()
             
-            return external.topicRenderReference
+            dependencies.topicReferences.append(contentsOf: renderDependencies.topicReferences)
+            dependencies.linkReferences.append(contentsOf:  renderDependencies.linkReferences)
+            dependencies.imageReferences.append(contentsOf: renderDependencies.imageReferences)
+            
+            return external.makeTopicRenderReference()
         } else {
             titleVariants = .init(defaultVariantValue: reference.absoluteString)
         }

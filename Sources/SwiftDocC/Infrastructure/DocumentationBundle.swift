@@ -57,24 +57,9 @@ public struct DocumentationBundle {
         info.displayName
     }
     
-    @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
-    public var identifier: String {
-        id.rawValue
-    }
-    
     /// The documentation bundle's stable and locally unique identifier.
     public var id: DocumentationBundle.Identifier {
         info.id
-    }
-
-    /**
-     The documentation bundle's version.
-
-     It's not safe to make computations based on assumptions about the format of bundle's version. The version can be in any format.
-     */
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    public var version: String? {
-        info.version
     }
     
     /// Symbol graph JSON input files for the module that's represented by this unit of documentation.
@@ -152,18 +137,8 @@ public struct DocumentationBundle {
     /// Default path to resolve symbol links.
     public private(set) var documentationRootReference: ResolvedTopicReference
 
-    @available(*, deprecated, renamed: "tutorialTableOfContentsContainer", message: "Use 'tutorialTableOfContentsContainer' instead. This deprecated API will be removed after 6.2 is released")
-    public var tutorialsRootReference: ResolvedTopicReference {
-        tutorialTableOfContentsContainer
-    }
-
     /// Default path to resolve tutorial table-of-contents links.
     public var tutorialTableOfContentsContainer: ResolvedTopicReference
-
-    @available(*, deprecated, renamed: "tutorialsContainerReference", message: "Use 'tutorialsContainerReference' instead. This deprecated API will be removed after 6.2 is released")
-    public var technologyTutorialsRootReference: ResolvedTopicReference {
-        tutorialsContainerReference
-    }
 
     /// Default path to resolve tutorial links.
     public var tutorialsContainerReference: ResolvedTopicReference

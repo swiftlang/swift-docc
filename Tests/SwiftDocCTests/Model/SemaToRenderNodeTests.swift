@@ -1178,17 +1178,13 @@ class SemaToRenderNodeTests: XCTestCase {
                 let reference = ResolvedTopicReference(bundleID: "com.test.external.symbols", path: "/\(preciseIdentifier)", sourceLanguage: .objectiveC)
                 
                 let entity = LinkResolver.ExternalEntity(
-                    topicRenderReference: TopicRenderReference(
-                        identifier: .init(reference.absoluteString),
-                        title: "SymbolName ( \(preciseIdentifier) )",
-                        abstract: [],
-                        url: "/documentation/FrameworkName/path/to/symbol/\(preciseIdentifier)",
-                        kind: .symbol,
-                        role: "ExternalResolvedSymbolRoleHeading",
-                        estimatedTime: nil
-                    ),
-                    renderReferenceDependencies: .init(),
-                    sourceLanguages: [.objectiveC]
+                    kind: .class,
+                    language: .objectiveC,
+                    relativePresentationURL: URL(string: "/documentation/FrameworkName/path/to/symbol/\(preciseIdentifier)")!,
+                    referenceURL: reference.url,
+                    title: "SymbolName ( \(preciseIdentifier) )",
+                    availableLanguages: [.objectiveC],
+                    variants: []
                 )
                 return (reference, entity)
             }
@@ -1206,19 +1202,15 @@ class SemaToRenderNodeTests: XCTestCase {
             }
             
             func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-                let (kind, role) = DocumentationContentRenderer.renderKindAndRole(.collection, semantic: nil)
-                return LinkResolver.ExternalEntity(
-                    topicRenderReference: TopicRenderReference(
-                        identifier: .init(reference.absoluteString),
-                        title: "Title for \(reference.url.path)",
-                        abstract: [.text("Abstract for \(reference.url.path)")],
-                        url: reference.url.path,
-                        kind: kind,
-                        role: role,
-                        estimatedTime: nil
-                    ),
-                    renderReferenceDependencies: .init(),
-                    sourceLanguages: [.swift]
+                LinkResolver.ExternalEntity(
+                    kind: .collection,
+                    language: .swift,
+                    relativePresentationURL: reference.url.withoutHostAndPortAndScheme(),
+                    referenceURL: reference.url,
+                    title: "Title for \(reference.url.path)",
+                    abstract: [.text("Abstract for \(reference.url.path)")],
+                    availableLanguages: [.swift],
+                    variants: []
                 )
             }
         }
