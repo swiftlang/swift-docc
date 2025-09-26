@@ -83,7 +83,7 @@ final class SnippetResolver {
                 ])
             }
             
-            return .failure(.init("Snippet named '\(path)' couldn't be found", solutions: solutions))
+            return .failure(.init("Snippet named '\(path)' couldn't be found", solutions: solutions, rangeAdjustment: replacementRange))
         }
     }
     
