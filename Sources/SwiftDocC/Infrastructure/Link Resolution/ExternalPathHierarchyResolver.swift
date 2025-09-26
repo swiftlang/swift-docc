@@ -44,12 +44,10 @@ final class ExternalPathHierarchyResolver {
             }
             
             return .success(foundReference)
-        } catch let error as PathHierarchy.Error {
+        } catch {
             return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo() { collidingNode in
                 self.fullName(of: collidingNode) // If the link was ambiguous, determine the full name of each colliding node to be presented in the link diagnostic.
             })
-        } catch {
-            fatalError("Only PathHierarchy.Error errors are raised from the symbol link resolution code above.")
         }
     }
     

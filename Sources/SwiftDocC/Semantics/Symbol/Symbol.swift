@@ -461,14 +461,14 @@ extension Symbol {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, alternateSymbols: SymbolGraph.Symbol.AlternateSymbols?, selector: UnifiedSymbolGraph.Selector) throws {
+    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, alternateSymbols: SymbolGraph.Symbol.AlternateSymbols?, selector: UnifiedSymbolGraph.Selector) throws(DocumentationContext.ContextError) {
         let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
         func merge<Value: Equatable>(
             _ mergingValue: Value,
             into variants: inout DocumentationDataVariants<[[PlatformName?] : Value]>
-        ) throws {
+        ) throws(DocumentationContext.ContextError) {
             guard let platformName else {
                 variants[trait]?[[nil]] = mergingValue
                 return

@@ -67,7 +67,7 @@ public class LinkResolver {
         
         do {
             return try localResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink)
-        } catch let error as PathHierarchy.Error {
+        } catch {
             // Check if there's a known external resolver for this module.
             if case .moduleNotFound(_, let remainingPathComponents, _) = error, let resolver = externalResolvers[remainingPathComponents.first!.full] {
                 let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
@@ -86,8 +86,6 @@ public class LinkResolver {
             } else {
                 return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo() { localResolver.fullName(of: $0, in: context) })
             }
-        } catch {
-            fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
         }
     }
     
