@@ -160,11 +160,6 @@ public enum RenderBlockContent: Equatable {
             var character: Int?
         }
 
-        //public struct Range: Equatable, Codable {
-        //    var start: Position
-        //    var end: Position
-        //}
-
         public struct LineAnnotation: Equatable, Codable {
             var style: String
             var range: Range<Position>

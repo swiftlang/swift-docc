@@ -789,18 +789,10 @@
                         "enum": ["highlight", "strikeout"]
                     },
                     "range": {
-                        "$ref": "#/components/schemas/CharacterRange"
-                    }
-                }
-            },
-            "CharacterRange": {
-                "type": "object",
-                "properties": {
-                    "start": {
-                        "$ref": "#/components/schemas/Position"
-                    },
-                    "end": {
-                        "$ref": "#/components/schemas/Position"
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Position"
+                        }
                     }
                 }
             },
