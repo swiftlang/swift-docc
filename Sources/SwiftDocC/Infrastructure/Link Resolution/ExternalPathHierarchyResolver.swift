@@ -58,13 +58,13 @@ final class ExternalPathHierarchyResolver {
             return collidingNode.name
         }
         if let symbolID = collidingNode.symbol?.identifier {
-            if symbolID.interfaceLanguage == summary.language.id, let fragments = summary.declarationFragments {
-                return fragments.plainTextDeclaration()
+            if symbolID.interfaceLanguage == summary.language.id, let plainTextDeclaration = summary.plainTextDeclaration {
+                return plainTextDeclaration
             }
             if let variant = summary.variants.first(where: { $0.traits.contains(.interfaceLanguage(symbolID.interfaceLanguage)) }),
-               let fragments = variant.declarationFragments ?? summary.declarationFragments
+               let plainTextDeclaration = variant.plainTextDeclaration ?? summary.plainTextDeclaration
             {
-                return fragments.plainTextDeclaration()
+                return plainTextDeclaration
             }
         }
         return summary.title
@@ -153,12 +153,6 @@ final class ExternalPathHierarchyResolver {
     }
 }
 
-private extension Sequence<DeclarationRenderSection.Token> {
-    func plainTextDeclaration() -> String {
-        return self.map(\.text).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
-    }
-}
-
 // MARK: ExternalEntity
 
 extension LinkDestinationSummary {
@@ -177,7 +171,8 @@ extension LinkDestinationSummary {
         
         var titleVariants = VariantCollection(defaultValue: title)
         var abstractVariants = VariantCollection(defaultValue: abstract ?? [])
-        var fragmentVariants = VariantCollection(defaultValue: declarationFragments)
+        var fragmentVariants = VariantCollection(defaultValue: subheadingDeclarationFragments)
+        var navigatorTitleVariants = VariantCollection(defaultValue: navigatorDeclarationFragments)
         
         for variant in variants {
             let traits = variant.traits
@@ -187,8 +182,11 @@ extension LinkDestinationSummary {
             if let abstract = variant.abstract {
                 abstractVariants.variants.append(.init(traits: traits, patch: [.replace(value: abstract ?? [])]))
             }
-            if let fragment = variant.declarationFragments {
+            if let fragment = variant.subheadingDeclarationFragments {
                 fragmentVariants.variants.append(.init(traits: traits, patch: [.replace(value: fragment)]))
+            }
+            if let navigatorTitle = variant.navigatorDeclarationFragments {
+                navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle)]))
             }
         }
         
@@ -201,7 +199,7 @@ extension LinkDestinationSummary {
             required: false,
             role: role,
             fragmentsVariants: fragmentVariants,
-            navigatorTitleVariants: .init(defaultValue: nil),
+            navigatorTitleVariants: navigatorTitleVariants,
             estimatedTime: nil,
             conformance: nil,
             isBeta: isBeta,
