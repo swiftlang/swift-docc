@@ -39,7 +39,7 @@ class SnippetResolverTests: XCTestCase {
     
     func testRenderingSnippetsWithOptionalPathPrefixes() async throws {
         for pathPrefix in optionalPathPrefixes {
-            let (problems, snippetRenderBlocks) = try await makeSnippetContext(
+            let (problems, _, snippetRenderBlocks) = try await makeSnippetContext(
                 snippets: [
                     makeSnippet(
                         pathComponents: ["Snippets", "First"],
@@ -122,12 +122,66 @@ class SnippetResolverTests: XCTestCase {
         }
     }
     
+    func testWarningsAboutMisspelledSnippetPathsAndMisspelledSlice() async throws {
+        for pathPrefix in optionalPathPrefixes.prefix(1) {
+            let (problems, logOutput, snippetRenderBlocks) = try await makeSnippetContext(
+                snippets: [
+                    makeSnippet(
+                        pathComponents: ["Snippets", "First"],
+                        explanation: """
+                        Some _formatted_ **content** that provides context to the snippet.
+                        """,
+                        code: """
+                        // Some code comment
+                        print("Hello, world!")
+                        """,
+                        slices: [
+                            "comment": 0..<1,
+                            "print":   1..<2,
+                        ]
+                    ),
+                ],
+                rootContent: """
+                @Snippet(path: \(pathPrefix)Frst)
+                
+                @Snippet(path: \(pathPrefix)First, slice: cmmnt)
+                """
+            )
+            
+            // These links should all resolve, regardless of optional prefix
+            XCTAssertEqual(problems.map(\.diagnostic.summary).sorted(), [
+                "Snippet named 'Frst' couldn't be found.",
+                "Snippet slice 'cmmnt' does not exist in snippet '/ModuleName/Snippets/First'; this directive will be ignored",
+            ])
+            
+            XCTAssertEqual(logOutput, """
+            warning: Snippet named 'Frst' couldn't be found.
+             --> ModuleName.md:7:16-7:41
+            5 | ## Overview
+            6 |
+            7 + @Snippet(path: /ModuleName/Snippets/Frst)
+            8 |
+            9 | @Snippet(path: /ModuleName/Snippets/First, slice: cmmnt)
+
+            warning: Snippet slice 'cmmnt' does not exist in snippet '/ModuleName/Snippets/First'; this directive will be ignored
+             --> ModuleName.md:9:1-9:8
+            7 | @Snippet(path: /ModuleName/Snippets/Frst)
+            8 |
+            9 + @Snippet(path: /ModuleName/Snippets/First, slice: cmmnt)
+            
+            """)
+            
+            // Because the snippet links failed to resolve, their content shouldn't render on the page.
+            XCTAssertTrue(snippetRenderBlocks.isEmpty, "There's no more content after the snippets")
+        }
+    }
+    
     private func makeSnippetContext(
         snippets: [SymbolGraph.Symbol],
         rootContent: String,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) async throws -> ([Problem], some Collection<RenderBlockContent>) {
+    ) async throws -> ([Problem], logOutput: String, some Collection<RenderBlockContent>) {
         let catalog = Folder(name: "Something.docc", content: [
             JSONFile(name: "something-snippets.symbols.json", content: makeSymbolGraph(moduleName: "Snippets", symbols: snippets)),
             // Include a "real" module that's separate from the snippet symbol graph.
@@ -138,11 +192,16 @@ class SnippetResolverTests: XCTestCase {
                 
             Always include an abstract here before the custom markup
             
+            ## Overview
+            
             \(rootContent)
             """)
         ])
+        // We make the "Overview" heading explicit above so that the rendered page will always have a `primaryContentSections`.
+        // This makes it easier for the test to then
         
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let logStore = LogHandle.LogStorage()
+        let (_, context) = try await loadBundle(catalog: catalog, logOutput: LogHandle.memory(logStore))
         
         XCTAssertEqual(context.knownIdentifiers.count, 1, "The snippets don't have their own identifiers", file: file, line: line)
         
@@ -156,10 +215,10 @@ class SnippetResolverTests: XCTestCase {
             XCTAssertEqual(heading.level, 2, file: file, line: line)
             XCTAssertEqual(heading.text, "Overview", file: file, line: line)
         } else {
-            XCTFail("The rendered page didn't have a synthesized 'Overview' heading. It might be missing all its content.", file: file, line: line)
+            XCTFail("The rendered page is missing the 'Overview' heading. Something unexpected is happening with the page content.", file: file, line: line)
         }
         
-        return (context.problems, renderBlocks.dropFirst())
+        return (context.problems, logStore.text, renderBlocks.dropFirst())
     }
     
     private func makeSnippet(

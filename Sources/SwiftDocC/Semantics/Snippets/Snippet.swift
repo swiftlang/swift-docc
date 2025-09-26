@@ -70,7 +70,11 @@ extension Snippet: RenderableDirectiveConvertible {
         }
         let mixin = resolvedSnippet.mixin
         
-        if let sliceRange = slice.flatMap({ mixin.slices[$0] }) {
+        if let slice {
+            guard let sliceRange = mixin.slices[slice] else {
+                // The warning says that unrecognized snippet slices will ignore the entire snippet.
+                return []
+            }
             // Render only this slice without the explanatory content.
             let lines = mixin.lines
                 // Trim the lines
