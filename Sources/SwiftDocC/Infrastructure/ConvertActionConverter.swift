@@ -81,6 +81,7 @@ package enum ConvertActionConverter {
         var assets = [RenderReferenceType : [any RenderReference]]()
         var coverageInfo = [CoverageDataEntry]()
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
+        var markdownManifest = MarkdownOutputManifest(title: bundle.displayName, documents: [])
         
         // An inner function to gather problems for errors encountered during the conversion.
         //
@@ -124,9 +125,25 @@ package enum ConvertActionConverter {
                 do {
                     let entity = try context.entity(with: identifier)
 
-                    guard let renderNode = converter.renderNode(for: entity) else {
+                    guard var renderNode = converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
                         return
+                    }
+                    
+                    if
+                        FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
+                        let markdownNode = converter.markdownNode(for: entity) {
+                        try outputConsumer.consume(markdownNode: markdownNode)
+                        renderNode.metadata.hasGeneratedMarkdown = true
+                        if
+                            FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+                            let manifest = markdownNode.manifest
+                        {
+                            resultsGroup.async(queue: resultsSyncQueue) {
+                                markdownManifest.documents.formUnion(manifest.documents)
+                                markdownManifest.relationships.formUnion(manifest.relationships)
+                            }
+                        }
                     }
                     
                     try outputConsumer.consume(renderNode: renderNode)
@@ -212,6 +229,10 @@ package enum ConvertActionConverter {
                     recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
                 }
             }
+        }
+        
+        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled {
+            try outputConsumer.consume(markdownManifest: markdownManifest)
         }
 
         switch documentationCoverageOptions.level {
