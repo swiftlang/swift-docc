@@ -55,7 +55,7 @@ final class SnippetResolver {
  
     func resolveSnippet(path authoredPath: String) -> SnippetResolutionResult {
         // Snippet paths are relative to the root of the Swift Package.
-        // The first to components are always the same (the package name followed by "Snippets").
+        // The first two components are always the same (the package name followed by "Snippets").
         // The later components can either be subdirectories of the "Snippets" directory or the base name of a snippet '.swift' file (without the extension).
           
         // Drop the common package name + "Snippets" prefix (that's always the same), if the authored path includes it.
