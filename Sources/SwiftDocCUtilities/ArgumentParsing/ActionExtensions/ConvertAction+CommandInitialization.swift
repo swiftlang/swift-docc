@@ -21,7 +21,7 @@ extension ConvertAction {
         let outOfProcessResolver: OutOfProcessReferenceResolver?
         
         FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
-        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.enableExperimentalLinkHierarchySerialization
+        FeatureFlags.current.isLinkHierarchySerializationEnabled = convert.enableLinkHierarchySerialization
         FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.enableExperimentalOverloadedSymbolPresentation
         FeatureFlags.current.isMentionedInEnabled = convert.enableMentionedIn
         FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.enableParametersAndReturnsValidation

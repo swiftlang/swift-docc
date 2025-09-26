@@ -77,7 +77,6 @@ package enum ConvertActionConverter {
         
         // Arrays to gather additional metadata if `emitDigest` is `true`.
         var indexingRecords = [IndexingRecord]()
-        var linkSummaries = [LinkDestinationSummary]()
         var assets = [RenderReferenceType : [any RenderReference]]()
         var coverageInfo = [CoverageDataEntry]()
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
@@ -111,6 +110,22 @@ package enum ConvertActionConverter {
             // Otherwise, the node will be considered as a separate root node and displayed separately.
             let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
             try outputConsumer.consume(externalRenderNode: externalRenderNode)
+        }
+        
+        let linkHierarchySerializationProblems = Synchronized<[Problem]>([])
+        if FeatureFlags.current.isLinkHierarchySerializationEnabled {
+            resultsGroup.async(queue: resultsSyncQueue) {
+                signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
+                    do {
+                        let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
+                        try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+                    } catch {
+                        linkHierarchySerializationProblems.sync {
+                            recordProblem(from: error, in: &$0, withIdentifier: "link-resolver")
+                        }
+                    }
+                }
+            }
         }
         
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
@@ -151,16 +166,18 @@ package enum ConvertActionConverter {
                         let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: true)
                         let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
                         
+                        for linkSummary in nodeLinkSummaries {
+                            try outputConsumer.consumeIncremental(linkableElementSummary: linkSummary)
+                        }
                         resultsGroup.async(queue: resultsSyncQueue) {
                             assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
-                            linkSummaries.append(contentsOf: nodeLinkSummaries)
                             indexingRecords.append(contentsOf: nodeIndexingRecords)
                         }
-                    } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                    } else if FeatureFlags.current.isLinkHierarchySerializationEnabled {
                         let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
                         
-                        resultsGroup.async(queue: resultsSyncQueue) {
-                            linkSummaries.append(contentsOf: nodeLinkSummaries)
+                        for linkSummary in nodeLinkSummaries {
+                            try outputConsumer.consumeIncremental(linkableElementSummary: linkSummary)
                         }
                     }
                 } catch {
@@ -172,44 +189,25 @@ package enum ConvertActionConverter {
         // Wait for any concurrent updates to complete.
         resultsGroup.wait()
         
+        conversionProblems += linkHierarchySerializationProblems.sync { $0 }
+        
         signposter.endInterval("Render", renderSignpostHandle)
         
         guard !Task.isCancelled else { return [] }
         
         // Write various metadata
-        if emitDigest {
+        if emitDigest || FeatureFlags.current.isLinkHierarchySerializationEnabled {
             signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
                 do {
-                    try outputConsumer.consume(linkableElementSummaries: linkSummaries)
-                    try outputConsumer.consume(indexingRecords: indexingRecords)
-                    try outputConsumer.consume(assets: assets)
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
-                }
-            }
-        }
-        
-        if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-            signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
-                do {
-                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
-                    try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
-                    
-                    if !emitDigest {
-                        try outputConsumer.consume(linkableElementSummaries: linkSummaries)
+                    try outputConsumer.finishedConsumingLinkElementSummaries()
+                    if emitDigest {
+                        // Only emit the other digest files if `--emit-digest` is passed
+                        try outputConsumer.consume(indexingRecords: indexingRecords)
+                        try outputConsumer.consume(assets: assets)
+                        try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + conversionProblems)
                     }
                 } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
-                }
-            }
-        }
-        
-        if emitDigest {
-            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                do {
-                    try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + conversionProblems)
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
+                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
                 }
             }
         }

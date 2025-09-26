@@ -925,6 +925,8 @@ class MergeActionTests: XCTestCase {
             │     ╰─ \(name.lowercased())-card.png
             ├─ index/
             │  ╰─ index.json
+            ├─ link-hierarchy.json
+            ├─ linkable-entities.json
             ├─ metadata.json
             ╰─ videos/
                ╰─ \(name)
@@ -971,6 +973,8 @@ class MergeActionTests: XCTestCase {
         │     ╰─ second-card.png
         ├─ index/
         │  ╰─ index.json
+        ├─ link-hierarchy.json
+        ├─ linkable-entities.json
         ├─ metadata.json
         ╰─ videos/
            ├─ First/

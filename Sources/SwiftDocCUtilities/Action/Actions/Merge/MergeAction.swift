@@ -78,6 +78,8 @@ struct MergeAction: AsyncAction {
             }
             let renderIndex = try JSONDecoder().decode(RenderIndex.self, from: jsonIndexData)
             
+            // TODO: Combine link-hierarchy.json, linkable-entities.json, and metadata.json
+            
             try combinedJSONIndex.merge(renderIndex)
         }
         
