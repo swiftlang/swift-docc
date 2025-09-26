@@ -14,31 +14,40 @@ import SymbolKit
 
 /// Embeds a code example from the project's code snippets.
 ///
+/// Use a `Snippet` directive to embed a code example from the project's "Snippets" directory on the page.
+/// The `path` argument is the relative path from the package's top-level "Snippets" directory to your snippet file without the `.swift` extension.
+///
 /// ```markdown
-/// @Snippet(path: "my-package/Snippets/example-snippet", slice: "setup")
+/// @Snippet(path: "example-snippet", slice: "setup")
 /// ```
 ///
-/// Place the `Snippet` directive to embed a code example from the project's snippet directory.
-/// The path that references the snippet is identified with three parts:
+/// If you prefer, you can specify the relative path from the package's _root_ directory (by including a "Snippets/" prefix).
+/// You can also include the package name---as defined in `Package.swift`---before the "Snippets/" prefix.
+/// Neither of these leading path components are necessary because all your snippet code files are always located in your package's "Snippets" directory.
 ///
-/// 1. The package name as defined in `Package.swift`
+/// > Earlier Versions:
+/// > Before Swift-DocC 6.2, the `@Snippet` path needed to include both the package name component and the "Snippets" component:
+/// >
+/// > ```markdown
+/// > @Snippet(path: "my-package/Snippets/example-snippet")
+/// > ```
 ///
-/// 2. The directory path to the snippet file, starting with "Snippets".
+/// You can define named slices of your snippet by annotating the snippet file with `// snippet.<name>` and `// snippet.end` lines.
+/// A named slice automatically ends at the start of the next named slice, without an explicit `snippet.end` annotation.
 ///
-/// 3. The name of your snippet file without the `.swift` extension
-///
-/// If the snippet had slices annotated within it, an individual slice of the snippet can be referenced with the `slice` option.
-/// Without the option defined, the directive embeds the entire snippet.
+/// If the referenced snippet includes annotated slices, you can limit the embedded code example to a certain line range by specifying a `slice` name.
+/// By default, the embedded code example includes the full snippet. For more information, see <doc:adding-code-snippets-to-your-content#Slice-up-your-snippet-to-break-it-up-in-your-content>.
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.7"
     public let originalMarkup: BlockDirective
     
-    /// The path components of a symbol link that would be used to resolve a reference to a snippet,
-    /// only occurring as a block directive argument.
+    /// The relative path from your package's top-level "Snippets" directory to the snippet file that you want to embed in the page, without the `.swift` file extension.
     @DirectiveArgumentWrapped
     public var path: String
     
-    /// An optional named range to limit the lines shown.
+    /// The name of a snippet slice to limit the embedded code example to a certain line range.
+    ///
+    /// By default, the embedded code example includes the full snippet.
     @DirectiveArgumentWrapped
     public var slice: String? = nil
     

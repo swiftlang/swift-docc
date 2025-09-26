@@ -91,16 +91,21 @@ swift run example-snippet
 
 To embed your snippet in an article or within the symbol reference pages, use the `@Snippet` directive.
 ```markdown
-@Snippet(path: "my-package/Snippets/example-snippet")
+@Snippet(path: "example-snippet")
 ```
 
-The `path` argument has three parts:
+The `path` argument is the relative path from the package's top-level "Snippets" directory to your snippet file without the `.swift` extension.
 
-1. The package name as defined in `Package.swift`
+If you prefer, you can specify the relative path from the package's _root_ directory (by including a "Snippets/" prefix).
+You can also include the package name---as defined in `Package.swift`---before the "Snippets/" prefix. 
+Neither of these leading path components are necessary because all your snippet code files are always located in your package's "Snippets" directory.  
 
-2. The directory path to the snippet file, starting with "Snippets".
-
-3. The name of your snippet file without the `.swift` extension
+> Earlier Versions:
+> Before Swift-DocC 6.2, the `@Snippet` path needed to include both the package name component and the "Snippets" component:
+>
+> ```markdown
+> @Snippet(path: "my-package/Snippets/example-snippet")
+> ```
 
 A snippet reference displays as a block between other paragraphs.
 In the example package above, the `YourProject.md` file might contain this markdown:
@@ -114,7 +119,7 @@ Add a single sentence or sentence fragment, which DocC uses as the page’s abst
 
 Add one or more paragraphs that introduce your content overview.
 
-@Snippet(path: "YourProject/Snippets/example-snippet")
+@Snippet(path: "example-snippet")
 ```
 
 If your snippet code requires setup — like imports or variable definitions — that distract from the snippet's main focus, you can add `// snippet.hide` and `// snippet.show` lines in the snippet code to exclude the lines in between from displaying in your documentation.
@@ -145,12 +150,12 @@ Replace `YourTarget` with a target from your package to preview:
 swift package --disable-sandbox preview-documentation --target YourTarget
 ```
 
-### Slice up your snippet to break it up in your content.
+### Slice up your snippet to break it up in your content
 
 Long snippets dropped into documentation can result in a wall of text that is harder to parse and understand.
 Instead, annotate non-overlapping slices in the snippet, which allows you to reference and embed the slice portion of the example code.
 
-Annotating slices in a snippet looks similiar to annotating `snippet.show` and `snippet.hide`.
+Annotating slices in a snippet looks similar to annotating `snippet.show` and `snippet.hide`.
 You define the slice's identity in the comment, and that slice continues until the next instance of `// snippet.end` appears on a new line.
 When selecting your identifiers, use URL-compatible path characters.
 
@@ -174,7 +179,7 @@ For example, the follow code examples are effectively the same:
 var item = MyObject.init()
 // snippet.end
 
-// snipppet.configure
+// snippet.configure
 item.size = 3
 // snippet.end
 ```
@@ -183,7 +188,7 @@ item.size = 3
 // snippet.setup
 var item = MyObject.init()
 
-// snipppet.configure
+// snippet.configure
 item.size = 3
 ```
 
@@ -191,7 +196,7 @@ Use the `@Snippet` directive with the `slice` parameter to embed that slice as s
 Extending the earlier snippet example, the slice `setup` would be referenced with 
 
 ```markdown
-@Snippet(path: "my-package/Snippets/example-snippet", slice: "setup")
+@Snippet(path: "example-snippet", slice: "setup")
 ```
 
 ## Topics
