@@ -26,7 +26,7 @@ import SymbolKit
 /// Neither of these leading path components are necessary because all your snippet code files are always located in your package's "Snippets" directory.
 ///
 /// > Earlier Versions:
-/// > Before Swift-DocC 6.2, the `@Snippet` path needed to include both the package name component and the "Snippets" component:
+/// > Before Swift-DocC 6.2.1, the `@Snippet` path needed to include both the package name component and the "Snippets" component:
 /// >
 /// > ```markdown
 /// > @Snippet(path: "my-package/Snippets/example-snippet")

@@ -5353,7 +5353,7 @@
             "text" : "> Earlier Versions:"
           },
           {
-            "text" : "> Before Swift-DocC 6.2, the `@Snippet` path needed to include both the package name component and the \"Snippets\" component:"
+            "text" : "> Before Swift-DocC 6.2.1, the `@Snippet` path needed to include both the package name component and the \"Snippets\" component:"
           },
           {
             "text" : ">"
