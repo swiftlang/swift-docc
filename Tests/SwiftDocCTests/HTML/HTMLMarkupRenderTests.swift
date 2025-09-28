@@ -384,6 +384,86 @@ final class HTMLMarkupRenderTests: XCTestCase {
         )
     }
     
+    func testRelativeLinksToImages() async throws {
+        // Only a single image representation
+        try await assert(
+            rendering: "![Some alt text](some-image.png)",
+            assetToReturn: .init(images: [
+                .light: [1: try XCTUnwrap(URL(string: "images/com.test.example/some-image.png"))]
+            ]),
+            prettyFormatted: true,
+            matches: """
+            <p>
+            <picture>
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../../images/com.test.example/some-image.png"/>
+            </picture>
+            </p>
+            """
+        )
+        
+        // Only light mode image representations
+        try await assert(
+            rendering: "![Some alt text](some-image.png)",
+            assetToReturn: .init(images: [
+                .light: [
+                    1: try XCTUnwrap(URL(string: "images/com.test.example/some-image.png")),
+                    2: try XCTUnwrap(URL(string: "images/com.test.example/some-image@2x.png")),
+                ]
+            ]),
+            prettyFormatted: true,
+            matches: """
+            <p>
+            <picture>
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../../images/com.test.example/some-image@2x.png 2x, ../../../../../images/com.test.example/some-image.png 1x"/>
+            </picture>
+            </p>
+            """
+        )
+        
+        // Only a single scale factor
+        try await assert(
+            rendering: "![Some alt text](some-image.png)",
+            assetToReturn: .init(images: [
+                .light: [1: try XCTUnwrap(URL(string: "images/com.test.example/some-image.png"))],
+                .dark:  [1: try XCTUnwrap(URL(string: "images/com.test.example/some-image~dark.png"))],
+            ]),
+            prettyFormatted: true,
+            matches: """
+            <p>
+            <picture>
+                <source media="(prefers-color-scheme: light)" src="../../../../../images/com.test.example/some-image.png"/>
+                <source media="(prefers-color-scheme: dark)" src="../../../../../images/com.test.example/some-image~dark.png"/>
+                <img alt="Some alt text" decoding="async" loading="lazy"/>
+            </picture>
+            </p>
+            """
+        )
+        
+        // Multiple styles and scale factors
+        try await assert(
+            rendering: "![Some alt text](some-image.png)",
+            assetToReturn: .init(images: [
+                .light: [
+                    1: try XCTUnwrap(URL(string: "images/com.test.example/some-image.png")),
+                    2: try XCTUnwrap(URL(string: "images/com.test.example/some-image@2x.png")),
+                ],
+                .dark: [
+                    1: try XCTUnwrap(URL(string: "images/com.test.example/some-image~dark.png")),
+                    2: try XCTUnwrap(URL(string: "images/com.test.example/some-image~dark@2x.png")),
+                ],
+            ]),
+            prettyFormatted: true,
+            matches: """
+            <p>
+            <picture>
+                <source media="(prefers-color-scheme: light)" srcset="../../../../../images/com.test.example/some-image@2x.png 2x, ../../../../../images/com.test.example/some-image.png 1x"/>
+                <source media="(prefers-color-scheme: dark)" srcset="../../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../../images/com.test.example/some-image~dark.png 1x"/>
+                <img alt="Some alt text" decoding="async" loading="lazy"/>
+            </picture>
+            </p>
+            """
+        )
+    }
     
     private func assert(
         rendering markdownContent: String,

@@ -261,8 +261,6 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
             return .text("") // ???: What do we return for images that won't display anything?
         }
         
-        var children = [XMLNode]()
-        
         func srcAttributes(for images: [Int: URL]) -> [String: String] {
             switch images.count {
                 case 0: [:]
@@ -274,21 +272,27 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
             }
         }
         
-        // Add light and dark sources
-        for (style, images) in asset.images {
-            var attributes = srcAttributes(for: images)
-            attributes["media"] = "(prefers-color-scheme: \(style.rawValue))"
-            children.append(.element(named: "source", attributes: attributes))
-        }
-        
         var imgAttributes = [
             "decoding": "async",
             "loading": "lazy",
-            // ???: Does the image need a src/srcset for compatibility?
         ]
         if let altText = image.altText {
             imgAttributes["alt"] = altText
         }
+        
+        var children = [XMLNode]()
+        if asset.images.count == 1 {
+            // When all image are either dark/light mode, add them directly on the "img" element
+            imgAttributes.merge(srcAttributes(for: asset.images.first!.value), uniquingKeysWith: { _, new in new })
+        } else {
+            // Define a "source" element for each dark/light style
+            for (style, images) in asset.images.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // order light images before dark images
+                var attributes = srcAttributes(for: images)
+                attributes["media"] = "(prefers-color-scheme: \(style.rawValue))"
+                children.append(.element(named: "source", attributes: attributes))
+            }
+        }
+        
         children.append(.element(named: "img", attributes: imgAttributes))
         
         return .element(named: "picture", children: children)
