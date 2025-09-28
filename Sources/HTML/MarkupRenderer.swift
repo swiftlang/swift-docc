@@ -8,11 +8,11 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+package import Foundation
 import Markdown
 
 /// A type that provides information about other pages, and on-page elements, that the rendered page references.
-protocol LinkProvider {
+package protocol LinkProvider {
     /// Provide information about another page or on-page element, or `nil` if the other page can't be found.
     func element(for path: URL) -> LinkedElement?
     
@@ -20,15 +20,21 @@ protocol LinkProvider {
     func assetNamed(_ assetName: String) -> LinkedAsset?
 }
 
-struct LinkedElement {
+package struct LinkedElement {
     /// The path within the output archive to the linked element.
-    var path: URL
+    package var path: URL
     /// The names of the linked element.
     ///
     /// Articles, headings, tutorials, and similar pages have a ``Names/single/conceptual(_:)`` name.
-    ///
-    var names: Names
-    enum Names {
+    /// Symbols can either have a ``Names/single/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol``).
+    package var names: Names
+    
+    package init(path: URL, names: Names) {
+        self.path = path
+        self.names = names
+    }
+    
+    package enum Names {
         /// This element has the same name in all language representations
         case single(Name)
         /// This element is a symbol with different names in different languages.
@@ -36,7 +42,7 @@ struct LinkedElement {
         /// Because `@DisplayName` applies to all language representations, these language specific names are always the symbol's subheading declaration and should display in a monospaced font.
         case languageSpecificSymbol([String /* Language ID */: String])
     }
-    enum Name {
+    package enum Name {
         /// The name refers to an article, heading, or custom `@DisplayName` and should display as regular text.
         case conceptual(String)
         /// The name refers to a symbol's subheading declaration and should display in a monospaced font.
@@ -44,22 +50,26 @@ struct LinkedElement {
     }
 }
 
-struct LinkedAsset {
+package struct LinkedAsset {
     /// The path within the output archive to each image variant, by their light/dark style.
-    var images: [ColorStyle: [Int /* display scale*/: URL]]
+    package var images: [ColorStyle: [Int /* display scale*/: URL]]
     
-    enum ColorStyle: String {
+    package init(images: [ColorStyle : [Int : URL]]) {
+        self.images = images
+    }
+    
+    package enum ColorStyle: String {
         case light, dark
     }
 }
 
-struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
+package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
     /// The path within the output archive to the page that this renderer renders.
     let path: URL
     /// A type that provides information about other pages that the rendered page references.
     let linkProvider: Provider
     
-    init(path: URL, linkProvider: Provider) {
+    package init(path: URL, linkProvider: Provider) {
         self.path = path
         self.linkProvider = linkProvider
     }
@@ -69,7 +79,6 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
     }
     
     //
-    
     
     mutating func visitParagraph(_ paragraph: Paragraph) -> XMLNode {
         .element(named: "p", children: visit(paragraph.children))
@@ -172,7 +181,7 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
             return .text("")
         }
         
-        if link.hasChildren {
+        if link.childCount > 0 {
             var customTitle = [XMLNode]()
             for child in link.inlineChildren {
                 customTitle.append(visit(child))
@@ -200,7 +209,7 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
                     }
                     
                 case .languageSpecificSymbol(let namesByLanguageID):
-                    namesByLanguageID.sorted(by: \.key).map { languageID, name in
+                    namesByLanguageID.sorted(by: { $0.key < $1.key }).map { languageID, name in
                             .element(named: "code", children: [.text(name)], attributes: ["class": "\(languageID)-only"])
                     }
             }
@@ -218,8 +227,10 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
                 attributes: ["href": destination.absoluteString]
             )
         } else {
-            // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
-            return .text(LinkCompletionTools.parse(linkString: destination.path).last?.name ?? "")
+            // FIXME: Add this to the protocol
+//            // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
+//            return .text(LinkCompletionTools.parse(linkString: destination.path).last?.name ?? "")
+            return .text(destination.path)
         }
     }
     
@@ -227,9 +238,11 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
         guard let destination = symbolLink.destination.flatMap({ URL(string: $0) }),
               let linkedElement = linkProvider.element(for: destination)
         else {
-            // If this is an unresolved symbol link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
-            let name = symbolLink.destination.flatMap { LinkCompletionTools.parse(linkString: $0).last?.name } ?? ""
-            return .element(named: "code", children: [.text(name)])
+            // FIXME: Add this to the protocol
+//            // If this is an unresolved symbol link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
+//            let name = symbolLink.destination.flatMap { LinkCompletionTools.parse(linkString: $0).last?.name } ?? ""
+//            return .element(named: "code", children: [.text(name)])
+            return .element(named: "code", children: [.text(symbolLink.destination ?? "")])
         }
         
         let children: [XMLNode] = switch linkedElement.names {
@@ -240,7 +253,7 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
                 }
                 
             case .languageSpecificSymbol(let namesByLanguageID):
-                namesByLanguageID.sorted(by: \.key).map { languageID, name in
+                namesByLanguageID.sorted(by: { $0.key < $1.key }).map { languageID, name in
                     .element(named: "code", children: [.text(name)], attributes: ["class": "\(languageID)-only"])
                 }
         }
@@ -252,8 +265,21 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
         )
     }
     
-    private func path(to otherElement: URL) -> String {
-        (otherElement.relative(to: path)?.path ?? otherElement.path)
+    private func path(to other: URL) -> String {
+        let from = path
+        let to   = other
+        
+        guard from != to else { return to.withoutHostAndPortAndScheme().absoluteString }
+
+        // To be able to compare the components of the two URLs they both need to be absolute and standardized.
+        let fromComponents = from.absoluteURL.standardizedFileURL.pathComponents
+        let toComponents   = to.absoluteURL.standardizedFileURL.pathComponents
+
+        let commonPrefixLength = Array(zip(fromComponents, toComponents).prefix { lhs, rhs in lhs == rhs }).count
+
+        let relativeComponents = repeatElement("..", count: fromComponents.count - commonPrefixLength) + toComponents.dropFirst(commonPrefixLength)
+       
+        return relativeComponents.joined(separator: "/")
     }
     
     func visitImage(_ image: Image) -> XMLNode {
@@ -473,11 +499,13 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
         return children
     }
     
-    // MARK: Blah
+    // MARK: Directives
     
     func visitBlockDirective(_ blockDirective: BlockDirective) -> XMLNode {
         .text("") // Do nothing for now
     }
+    
+    // FIXME: It would be nice if DocC processed these before rendering
     
     mutating func visitDoxygenNote(_ doxygenNote: DoxygenNote) -> XMLNode {
         .element(named: "p", children: visit(doxygenNote.children))
@@ -497,6 +525,28 @@ struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
     
     mutating func visitDoxygenDiscussion(_ doxygenDiscussion: DoxygenDiscussion) -> XMLNode {
         .element(named: "p", children: visit(doxygenDiscussion.children))
-        
+    }
+}
+
+// MARK: Helpers
+
+private extension Image {
+    /// The first element's text if it is a `Markdown.Text` element, otherwise `nil`.
+    var altText: String? {
+        guard let firstText = child(at: 0) as? Text else {
+            return nil
+        }
+        return firstText.string
+    }
+}
+
+private extension URL {
+    /// Returns a copy of the URL without the scheme, host, and port components.
+    func withoutHostAndPortAndScheme() -> URL {
+        var components = URLComponents(url: self, resolvingAgainstBaseURL: false)!
+        components.scheme = nil
+        components.host = nil
+        components.port = nil
+        return components.url!
     }
 }

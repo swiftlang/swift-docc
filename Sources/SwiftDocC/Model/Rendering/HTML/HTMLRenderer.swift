@@ -13,14 +13,15 @@ import Foundation
 // FIXME: See if we can avoid depending on XMLNode/XMLParser to avoid needing to import FoundationXML
 import FoundationXML
 #endif
+import HTML
 import Markdown
 import SymbolKit
 
-struct ContextLinkProvider: LinkProvider {
+struct ContextLinkProvider: HTML.LinkProvider {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
     
-    func element(for url: URL) -> LinkedElement? {
+    func element(for url: URL) -> HTML.LinkedElement? {
         guard url.scheme == "doc",
               let rawBundleID = url.host,
               let node = context.documentationCache[ResolvedTopicReference(bundleID: .init(rawValue: rawBundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift /* The reference's language doesn't matter */)]
@@ -28,7 +29,7 @@ struct ContextLinkProvider: LinkProvider {
             return nil
         }
         
-        let names: LinkedElement.Names
+        let names: HTML.LinkedElement.Names
         if let symbol = node.semantic as? Symbol,
            case .symbol(let primaryTitle) = node.name
         {
@@ -49,7 +50,7 @@ struct ContextLinkProvider: LinkProvider {
                 names = .single(.symbol(primaryTitle))
             }
         } else {
-            let name: LinkedElement.Name = switch node.name {
+            let name: HTML.LinkedElement.Name = switch node.name {
                 case .conceptual(let title):   .conceptual(title)
                 case .symbol(name: let title): .symbol(title)
             }
@@ -62,12 +63,12 @@ struct ContextLinkProvider: LinkProvider {
         )
     }
     
-    func assetNamed(_ assetName: String) -> LinkedAsset? {
+    func assetNamed(_ assetName: String) -> HTML.LinkedAsset? {
         guard let asset = context.resolveAsset(named: assetName, in: reference) else {
             return nil
         }
         
-        var images = [LinkedAsset.ColorStyle: [Int: URL]]()
+        var images = [HTML.LinkedAsset.ColorStyle: [Int: URL]]()
         for (traits, url) in asset.variants {
             let scale = (traits.displayScale ?? .standard).scaleFactor
             
@@ -76,7 +77,6 @@ struct ContextLinkProvider: LinkProvider {
         
         return .init(images: images)
     }
-    
 }
 
 struct HTMLRenderer {
@@ -157,7 +157,7 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = article.abstract {
-            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
+            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
             let paragraph = renderer.visitParagraph(abstract) as! XMLElement
             
             paragraph.addAttribute(
@@ -309,7 +309,7 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = symbol.abstract {
-            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
+            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
             let paragraph = renderer.visitParagraph(abstract) as! XMLElement
             
             paragraph.addAttribute(
@@ -406,7 +406,7 @@ struct HTMLRenderer {
         
         // Deprecation message
         if let deprecationSummary = symbol.deprecatedSummary {
-            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
+            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
             var children: [XMLNode] = [
                 .element(named: "p", children: [.text("Deprecated")], attributes: ["class": "label"])
             ]
@@ -437,7 +437,7 @@ struct HTMLRenderer {
                 )
             }
             
-            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
+            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
             
             let list = XMLElement(name: "dl") // list
             section.addChild(list)
@@ -472,7 +472,7 @@ struct HTMLRenderer {
                 )
             }
             
-            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
+            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
             
             for markup in returnsSection.content {
                 section.addChild(
@@ -614,7 +614,7 @@ struct HTMLRenderer {
             )
         }
         
-        var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
+        var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
         
         var remaining = discussion.content[...]
         if let heading = discussion.content.first as? Heading, heading.level == 2 {
@@ -667,7 +667,7 @@ struct HTMLRenderer {
     }
     
     private func makeTopicSectionItem(for reference: ResolvedTopicReference) -> XMLNode? {
-        var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
+        var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
         
         if let local = context.documentationCache[reference] {
             let container = XMLNode.element(named: "div")//, attributes: ["class": className])
@@ -847,34 +847,6 @@ struct HTMLRenderer {
         return document
     }
     
-}
-
-// FIXME: Move these extensions to a file or maybe write our own html nodes
-extension XMLNode {
-    static func element(
-        named name: String,
-        children: [XMLNode]? = nil,
-        attributes: [String: String]? = nil,
-    ) -> XMLElement {
-        let attributeNodes: [XMLNode]?
-        if let attributes, !attributes.isEmpty {
-            attributeNodes = attributes.sorted(by: \.key).map {
-                XMLNode.attribute(withName: $0.key, stringValue: $0.value) as! XMLNode
-            }
-        } else {
-            attributeNodes = nil
-        }
-        
-        return XMLNode.element(
-            withName: name,
-            children: children,
-            attributes: attributeNodes
-        ) as! XMLElement
-    }
-    
-    static func text(_ value: some StringProtocol) -> XMLNode {
-        XMLNode.text(withStringValue: String(value)) as! XMLNode
-    }
 }
 
 extension XMLNode {

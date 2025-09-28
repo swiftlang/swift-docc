@@ -43,6 +43,7 @@ let package = Package(
         .target(
             name: "SwiftDocC",
             dependencies: [
+                .target(name: "HTML"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
@@ -84,6 +85,24 @@ let package = Package(
             resources: [
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
+            ],
+            swiftSettings: swiftSettings
+        ),
+        
+        .target(
+            name: "HTML",
+            dependencies: [
+                .product(name: "Markdown", package: "swift-markdown"),
+            ],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "HTMLTests",
+            dependencies: [
+                .target(name: "HTML"),
+                .target(name: "SwiftDocC"),
+                .product(name: "Markdown", package: "swift-markdown"),
+                .target(name: "SwiftDocCTestUtilities"),
             ],
             swiftSettings: swiftSettings
         ),

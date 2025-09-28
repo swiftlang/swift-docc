@@ -10,10 +10,11 @@
 
 import Foundation
 import XCTest
+import HTML
 @testable import SwiftDocC
 import Markdown
 
-final class HTMLMarkupRenderTests: XCTestCase {
+final class MarkupRendererTests: XCTestCase {
  
     func testRenderParagraphsWithFormattedText() async throws {
         try await assert(
@@ -334,13 +335,13 @@ final class HTMLMarkupRenderTests: XCTestCase {
         try await assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
             elementToReturn: .init(
-                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/OtherPage/index.html")),
+                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeArticle/index.html")),
                 names: .single(.conceptual("Some Article Title"))
             ),
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../../OtherPage/index.html">Some Article Title</a>
+            <a href="../../SomeArticle/index.html">Some Article Title</a>
             </p>
             """
         )
@@ -474,7 +475,7 @@ final class HTMLMarkupRenderTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
-        var renderer = HTMLMarkupRender(
+        var renderer = MarkupRenderer(
             path: try XCTUnwrap(URL(string: "/documentation/Something/ThisPage/index.html"), file: file, line: line),
             linkProvider: TestLinkProvider(
                 elementToReturn: elementToReturn,
