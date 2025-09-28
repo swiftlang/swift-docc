@@ -494,7 +494,7 @@ final class MarkupRendererTests: XCTestCase {
     }
 }
 
-private struct TestLinkProvider: LinkProvider {
+struct TestLinkProvider: LinkProvider {
     var elementToReturn: LinkedElement?
     func element(for path: URL) -> LinkedElement? {
         elementToReturn
