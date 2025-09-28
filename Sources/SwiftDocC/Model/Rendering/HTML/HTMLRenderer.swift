@@ -16,10 +16,84 @@ import FoundationXML
 import Markdown
 import SymbolKit
 
+struct ContextLinkProvider: LinkProvider {
+    let reference: ResolvedTopicReference
+    let context: DocumentationContext
+    
+    func element(for url: URL) -> LinkedElement? {
+        guard url.scheme == "doc",
+              let rawBundleID = url.host,
+              let node = context.documentationCache[ResolvedTopicReference(bundleID: .init(rawValue: rawBundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift /* The reference's language doesn't matter */)]
+        else {
+            return nil
+        }
+        
+        let names: LinkedElement.Names
+        if let symbol = node.semantic as? Symbol,
+           case .symbol(let primaryTitle) = node.name
+        {
+            let titles = symbol.titleVariants.allValues
+            
+            if titles.contains(where: { _, title in title != primaryTitle }) {
+               // This symbol has multiple unique names
+                let titles = [String: String](
+                    titles.map { trait, title in
+                        ((trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift).id, title)
+                    },
+                    uniquingKeysWith: { _, new in new }
+                )
+                
+                names = .languageSpecificSymbol(titles)
+            } else {
+                // There are multiple names, but the're all the same
+                names = .single(.symbol(primaryTitle))
+            }
+        } else {
+            let name: LinkedElement.Name = switch node.name {
+                case .conceptual(let title):   .conceptual(title)
+                case .symbol(name: let title): .symbol(title)
+            }
+            names = .single(name)
+        }
+        
+        return .init(
+            path: node.reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html"),
+            names: names
+        )
+    }
+    
+    func assetNamed(_ assetName: String) -> LinkedAsset? {
+        guard let asset = context.resolveAsset(named: assetName, in: reference) else {
+            return nil
+        }
+        
+        var images = [LinkedAsset.ColorStyle: [Int: URL]]()
+        for (traits, url) in asset.variants {
+            let scale = (traits.displayScale ?? .standard).scaleFactor
+            
+            images[traits.userInterfaceStyle == .dark ? .dark : .light, default: [:]][scale] = url
+        }
+        
+        return .init(images: images)
+    }
+    
+}
+
 struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
     let renderContext: RenderContext
+    
+    private let linkProvider: ContextLinkProvider
+    private let filePath: URL
+    
+    init(reference: ResolvedTopicReference, context: DocumentationContext, renderContext: RenderContext) {
+        self.reference = reference
+        self.context = context
+        self.renderContext = renderContext
+        self.linkProvider = .init(reference: reference, context: context)
+        self.filePath = reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html")
+    }
     
     private func path(to destination: ResolvedTopicReference) -> String {
         (destination.url.relative(to: reference.url)?.path
@@ -83,7 +157,7 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = article.abstract {
-            var renderer = HTMLMarkupRender(reference: reference, context: context)
+            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
             let paragraph = renderer.visitParagraph(abstract) as! XMLElement
             
             paragraph.addAttribute(
@@ -235,7 +309,7 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = symbol.abstract {
-            var renderer = HTMLMarkupRender(reference: reference, context: context)
+            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
             let paragraph = renderer.visitParagraph(abstract) as! XMLElement
             
             paragraph.addAttribute(
@@ -332,7 +406,7 @@ struct HTMLRenderer {
         
         // Deprecation message
         if let deprecationSummary = symbol.deprecatedSummary {
-            var renderer = HTMLMarkupRender(reference: reference, context: context)
+            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
             var children: [XMLNode] = [
                 .element(named: "p", children: [.text("Deprecated")], attributes: ["class": "label"])
             ]
@@ -363,7 +437,7 @@ struct HTMLRenderer {
                 )
             }
             
-            var renderer = HTMLMarkupRender(reference: reference, context: context)
+            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
             
             let list = XMLElement(name: "dl") // list
             section.addChild(list)
@@ -398,7 +472,7 @@ struct HTMLRenderer {
                 )
             }
             
-            var renderer = HTMLMarkupRender(reference: reference, context: context)
+            var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
             
             for markup in returnsSection.content {
                 section.addChild(
@@ -540,7 +614,7 @@ struct HTMLRenderer {
             )
         }
         
-        var renderer = HTMLMarkupRender(reference: reference, context: context)
+        var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
         
         var remaining = discussion.content[...]
         if let heading = discussion.content.first as? Heading, heading.level == 2 {
@@ -593,7 +667,7 @@ struct HTMLRenderer {
     }
     
     private func makeTopicSectionItem(for reference: ResolvedTopicReference) -> XMLNode? {
-        var renderer = HTMLMarkupRender(reference: reference, context: context)
+        var renderer = HTMLMarkupRender(path: filePath, linkProvider: linkProvider)
         
         if let local = context.documentationCache[reference] {
             let container = XMLNode.element(named: "div")//, attributes: ["class": className])

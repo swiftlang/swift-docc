@@ -329,20 +329,79 @@ final class HTMLMarkupRenderTests: XCTestCase {
         )
     }
     
+    func testRelativeLinksToOtherPages() async throws {
+        // Link to article
+        try await assert(
+            rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
+            elementToReturn: .init(
+                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/OtherPage/index.html")),
+                names: .single(.conceptual("Some Article Title"))
+            ),
+            prettyFormatted: true,
+            matches: """
+            <p>
+            <a href="../../OtherPage/index.html">Some Article Title</a>
+            </p>
+            """
+        )
+        
+        // Link to single-language symbol
+        try await assert(
+            rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
+            elementToReturn: .init(
+                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
+                names: .single(.symbol("someMethod(_:_:)"))
+            ),
+            prettyFormatted: true,
+            matches: """
+            <p>
+            <a href="../../SomeClass/someMethod(_:_:)/index.html">
+                <code>someMethod(_:_:)</code>
+            </a>
+            </p>
+            """
+        )
+        
+        // Link to symbol with multiple language representation
+        try await assert(
+            rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
+            elementToReturn: .init(
+                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
+                names: .languageSpecificSymbol([
+                    SourceLanguage.swift.id : "doSomething(with:and:)",
+                    SourceLanguage.objectiveC.id: "doSomethingWithFirst:andSecond:",
+                ])
+            ),
+            prettyFormatted: true,
+            matches: """
+            <p>
+            <a href="../../SomeClass/someMethod(_:_:)/index.html">
+                <code class="occ-only">doSomethingWithFirst:andSecond:</code>
+                <code class="swift-only">doSomething(with:and:)</code>
+            </a>
+            </p>
+            """
+        )
+    }
+    
+    
     private func assert(
         rendering markdownContent: String,
+        elementToReturn: LinkedElement? = nil,
+        assetToReturn: LinkedAsset? = nil,
         prettyFormatted: Bool = false,
         matches expectedHTML: String,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws {
-        let markup = Document(parsing: markdownContent)
-        
-        let (_, context) = try await testBundleAndContext()
-        let reference = ResolvedTopicReference(bundleID: "com.test", path: "/something", sourceLanguage: .swift)
-        var renderer = HTMLMarkupRender(reference: reference, context: context)
-        
-        let htmlNodes = markup.children.map { renderer.visit($0) }
+        var renderer = HTMLMarkupRender(
+            path: try XCTUnwrap(URL(string: "/documentation/Something/ThisPage/index.html"), file: file, line: line),
+            linkProvider: TestLinkProvider(
+                elementToReturn: elementToReturn,
+                assetToReturn: assetToReturn
+            )
+        )
+        let htmlNodes = Document(parsing: markdownContent).children.map { renderer.visit($0) }
         
         let htmlString = if prettyFormatted {
             htmlNodes.map { $0.xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement]) }.joined(separator: "\n")
@@ -351,5 +410,17 @@ final class HTMLMarkupRenderTests: XCTestCase {
         }
         
         XCTAssertEqual(htmlString, expectedHTML, file: file, line: line)
+    }
+}
+
+private struct TestLinkProvider: LinkProvider {
+    var elementToReturn: LinkedElement?
+    func element(for path: URL) -> LinkedElement? {
+        elementToReturn
+    }
+    
+    var assetToReturn: LinkedAsset?
+    func assetNamed(_ assetName: String) -> LinkedAsset? {
+        assetToReturn
     }
 }

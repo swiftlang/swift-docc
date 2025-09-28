@@ -11,9 +11,58 @@
 import Foundation
 import Markdown
 
-struct HTMLMarkupRender: MarkupVisitor {
-    let reference: ResolvedTopicReference
-    let context: DocumentationContext
+/// A type that provides information about other pages, and on-page elements, that the rendered page references.
+protocol LinkProvider {
+    /// Provide information about another page or on-page element, or `nil` if the other page can't be found.
+    func element(for path: URL) -> LinkedElement?
+    
+    /// Provide information about an asset, or `nil` if the asset can't be found.
+    func assetNamed(_ assetName: String) -> LinkedAsset?
+}
+
+struct LinkedElement {
+    /// The path within the output archive to the linked element.
+    var path: URL
+    /// The names of the linked element.
+    ///
+    /// Articles, headings, tutorials, and similar pages have a ``Names/single/conceptual(_:)`` name.
+    ///
+    var names: Names
+    enum Names {
+        /// This element has the same name in all language representations
+        case single(Name)
+        /// This element is a symbol with different names in different languages.
+        ///
+        /// Because `@DisplayName` applies to all language representations, these language specific names are always the symbol's subheading declaration and should display in a monospaced font.
+        case languageSpecificSymbol([String /* Language ID */: String])
+    }
+    enum Name {
+        /// The name refers to an article, heading, or custom `@DisplayName` and should display as regular text.
+        case conceptual(String)
+        /// The name refers to a symbol's subheading declaration and should display in a monospaced font.
+        case symbol(String)
+    }
+}
+
+struct LinkedAsset {
+    /// The path within the output archive to each image variant, by their light/dark style.
+    var images: [ColorStyle: [Int /* display scale*/: URL]]
+    
+    enum ColorStyle: String {
+        case light, dark
+    }
+}
+
+struct HTMLMarkupRender<Provider: LinkProvider>: MarkupVisitor {
+    /// The path within the output archive to the page that this renderer renders.
+    let path: URL
+    /// A type that provides information about other pages that the rendered page references.
+    let linkProvider: Provider
+    
+    init(path: URL, linkProvider: Provider) {
+        self.path = path
+        self.linkProvider = linkProvider
+    }
     
     mutating func defaultVisit(_ markup: any Markdown.Markup) -> XMLNode {
         fatalError("A placeholder node also crashes here so we might as well make it explicit")
@@ -119,161 +168,130 @@ struct HTMLMarkupRender: MarkupVisitor {
     }
     
     mutating func visitLink(_ link: Link) -> XMLNode {
-        guard let destination = link.destination else {
+        guard let destination = link.destination.flatMap({ URL(string: $0) }) else {
             return .text("")
         }
         
-        let customTitle: [XMLNode]?
         if link.hasChildren {
-            var a = [XMLNode]()
+            var customTitle = [XMLNode]()
             for child in link.inlineChildren {
-                a.append(visit(child))
+                customTitle.append(visit(child))
             }
             
-            if a == [.text(destination)] {
-                customTitle = nil
-            } else {
-                customTitle = a
+            if customTitle != [.text(destination.absoluteString)] {
+                return .element(
+                    named: "a",
+                    children: customTitle,
+                    attributes: [
+                        // Use relative links for DocC elements, and the full link otherwise.
+                        "href": linkProvider.element(for: destination).flatMap { path(to: $0.path) } ?? destination.absoluteString
+                    ]
+                )
             }
-        } else {
-            customTitle = nil
         }
         
         // Make a relative link
-        if let resolved = context.referenceIndex[destination],
-           let node = context.documentationCache[resolved]
-        {
-            
-            let children = customTitle ?? {
-                switch node.name {
-                    case .conceptual(let title):
-                        [ .text(title) ]
-                    case .symbol(let name):
-                        [ .element(named: "code", children: [.text(name)]) ]
-                }
-            }()
+        if let linkedElement = linkProvider.element(for: destination) {
+            let children: [XMLNode] = switch linkedElement.names {
+                case .single(let name):
+                    switch name {
+                        case .conceptual(let name): [ .text(name) ]
+                        case .symbol(let name):     [ .element(named: "code", children: [.text(name)]) ]
+                    }
+                    
+                case .languageSpecificSymbol(let namesByLanguageID):
+                    namesByLanguageID.sorted(by: \.key).map { languageID, name in
+                            .element(named: "code", children: [.text(name)], attributes: ["class": "\(languageID)-only"])
+                    }
+            }
             
             return .element(
                 named: "a",
                 children: children,
-                attributes: ["href": path(to: resolved)]
+                attributes: ["href": path(to: linkedElement.path)]
             )
-        } else if !destination.hasPrefix("doc:") {
+        } else if destination.scheme != "doc" {
             // This could be a http link
-            
-            let children = customTitle ?? [.text(destination)]
-            
             return .element(
                 named: "a",
-                children: children,
-                attributes: ["href": destination]
+                children: [.text(destination.absoluteString)],
+                attributes: ["href": destination.absoluteString]
             )
-        }
-        else {
-            let name = LinkCompletionTools.parse(linkString: destination).last?.name ?? ""
-            return .text(name)
+        } else {
+            // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
+            return .text(LinkCompletionTools.parse(linkString: destination.path).last?.name ?? "")
         }
     }
     
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> XMLNode {
-        guard let destination = symbolLink.destination,
-              let resolved = context.referenceIndex[destination],
-              let node = context.documentationCache[resolved],
-              let symbol = node.semantic as? Symbol
+        guard let destination = symbolLink.destination.flatMap({ URL(string: $0) }),
+              let linkedElement = linkProvider.element(for: destination)
         else {
+            // If this is an unresolved symbol link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
             let name = symbolLink.destination.flatMap { LinkCompletionTools.parse(linkString: $0).last?.name } ?? ""
             return .element(named: "code", children: [.text(name)])
         }
         
-        if case .conceptual(let title) = node.name {
-            // Custom title is same in all languages
-            return .element(
-                named: "a",
-                children: [.text(title)],
-                attributes: ["href": path(to: resolved)]
-            )
+        let children: [XMLNode] = switch linkedElement.names {
+            case .single(let name):
+                switch name {
+                    case .conceptual(let name): [ .text(name) ]
+                    case .symbol(let name):     [ .element(named: "code", children: [.text(name)]) ]
+                }
+                
+            case .languageSpecificSymbol(let namesByLanguageID):
+                namesByLanguageID.sorted(by: \.key).map { languageID, name in
+                    .element(named: "code", children: [.text(name)], attributes: ["class": "\(languageID)-only"])
+                }
         }
         
-        let link = XMLNode.element(
+        return .element(
             named: "a",
-            children: [],
-            attributes: ["href": path(to: resolved)]
+            children: children,
+            attributes: ["href": path(to: linkedElement.path)]
         )
-        
-        for (trait, variant) in symbol.titleVariants.allValues {
-            guard let lang = trait.interfaceLanguage else { continue }
-            
-            var attributes: [String: String] = [:]
-            if symbol.titleVariants.allValues.count > 1 {
-                attributes["class"] = "\(lang)-only"
-            }
-            
-            link.addChild(
-                .element(named: "code", children: [.text(variant)], attributes: attributes)
-            )
-        }
-        return link
-//
-//        let hasMultipleLanguages = Set(symbol.titleVariants.allValues.map(\.variant)).count > 1
-//        guard hasMultipleLanguages else {
-//            // Same spelling in all languages
-//            return .element(
-//                named: "a",
-//                children: [.element(named: "code", children: [symbol.title])],
-//                attributes: ["href": path(to: resolved)]
-//            )
-//        }
-//        
-//        let titles = symbol.titleVariants.map {
-//            
-//        }
-//        
-//        let titles = symbol.titleVariants.allValues
-//        
-//        let spelling: XMLNode = switch node.name {
-//            case .conceptual(let title): .text(title)
-//            case .symbol(let name):
-//        }
-//        
-//        return .element(
-//            named: "a",
-//            children: [spelling],
-//            attributes: ["href": path(to: resolved)]
-//        )
     }
     
-    private func path(to destination: ResolvedTopicReference) -> String {
-        (destination.url.relative(to: reference.url)?.path
-            ?? destination.path) + "/index.html"
+    private func path(to otherElement: URL) -> String {
+        (otherElement.relative(to: path)?.path ?? otherElement.path)
     }
-    
     
     func visitImage(_ image: Image) -> XMLNode {
-        guard let source = image.source,
-              let asset = context.resolveAsset(named: source, in: reference)
-        else {
-            return .text("") // ???: What do we return here?
+        guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.images.isEmpty else {
+            return .text("") // ???: What do we return for images that won't display anything?
         }
         
-        let data = asset.data(bestMatching: .init(userInterfaceStyle: .light, displayScale: .double))
+        var children = [XMLNode]()
         
-        let finalImageURL = URL(string: "\(String(repeating: "../", count: reference.pathComponents.count - 1))images/\(reference.bundleID.rawValue)/\(data.url.lastPathComponent)")!
+        func srcAttributes(for images: [Int: URL]) -> [String: String] {
+            switch images.count {
+                case 0: [:]
+                case 1: ["src": path(to: images.first!.value)]
+                default: ["srcset": images.sorted(by: { $0.key > $1.key }) // large scale factors first
+                    .map { scale, url in "\(path(to: url)) \(scale)x" }
+                    .joined(separator: ", ")
+                ]
+            }
+        }
         
-        var attributes = [
-            "src": finalImageURL.path,
+        // Add light and dark sources
+        for (style, images) in asset.images {
+            var attributes = srcAttributes(for: images)
+            attributes["media"] = "(prefers-color-scheme: \(style.rawValue))"
+            children.append(.element(named: "source", attributes: attributes))
+        }
+        
+        var imgAttributes = [
             "decoding": "async",
             "loading": "lazy",
+            // ???: Does the image need a src/srcset for compatibility?
         ]
-        if let scale = data.traitCollection?.displayScale {
-            attributes["srcset"] = "\(finalImageURL.path) \(scale.rawValue)"
-        }
         if let altText = image.altText {
-            attributes["alt"] = altText
+            imgAttributes["alt"] = altText
         }
+        children.append(.element(named: "img", attributes: imgAttributes))
         
-        return .element(named: "picture", children: [
-            .element(named: "img", attributes: attributes)
-        ])
+        return .element(named: "picture", children: children)
     }
     
     func visitCodeBlock(_ codeBlock: CodeBlock) -> XMLNode {
@@ -310,7 +328,7 @@ struct HTMLMarkupRender: MarkupVisitor {
     mutating func visitTable(_ table: Table) -> XMLNode {
         let element = XMLElement(name: "table")
         
-        var renderer = HTMLMarkupRender(reference: reference, context: context)
+        var renderer = self // ???: Do we need to use a copy here?
         
         if !table.head.isEmpty {
             var column = 0
