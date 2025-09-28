@@ -656,16 +656,15 @@ struct HTMLRenderer {
         } else if let external = context.externalCache[reference] {
             let container = XMLNode.element(named: "div", attributes: ["class": "link-block"])
             
-            let renderReference = external.topicRenderReference
             let title: XMLNode
-            if renderReference.kind == .symbol, let fragments = renderReference.fragments {
+            if external.kind.isSymbol, let fragments = external.subheadingDeclarationFragments {
                 title = .element(named: "code", children: fragments.map { fragment in
                     let className = fragment.kind == .identifier ? "identifier" : "decorator"
                     return .element(named: "span", children: [.text(fragment.text)], attributes: ["class": className])
                 })
             } else {
                 // FIXME: What element and class should this be?
-                title = .element(named: "span", children: [.text(renderReference.title)])
+                title = .element(named: "span", children: [.text(external.title)])
             }
             
             container.addChild(
