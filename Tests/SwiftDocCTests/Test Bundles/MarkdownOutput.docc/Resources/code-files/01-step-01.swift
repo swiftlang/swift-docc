@@ -1,3 +1,0 @@
-struct StartCode {
-    // STEP ONE
-}

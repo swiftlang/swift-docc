@@ -10,30 +10,17 @@
 
 import Foundation
 import XCTest
+import SwiftDocCTestUtilities
+import SymbolKit
+
 @testable import SwiftDocC
 
 final class MarkdownOutputTests: XCTestCase {
-
-    static var loadingTask: Task<(DocumentationBundle, DocumentationContext), any Error>?
     
-    func bundleAndContext() async throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
-                
-        if let task = Self.loadingTask {
-            return try await task.value
-        } else {
-            let task = Task {
-                try await testBundleAndContext(named: "MarkdownOutput")
-            }
-            Self.loadingTask = task
-            return try await task.value
-        }
-    }
-      
-    /// Generates a writable markdown node from a given path
-    /// - Parameter path: The path. If you just supply a name (no leading slash), it will prepend `/documentation/MarkdownOutput/`, otherwise the path will be used
-    /// - Returns: The generated writable markdown output node
-    private func generateWritableMarkdown(path: String) async throws -> WritableMarkdownOutputNode {
-        let (bundle, context) = try await bundleAndContext()
+    // MARK: - Test conveniences
+    
+    private func markdownOutput(catalog: Folder, path: String) async throws -> (MarkdownOutputNode, MarkdownOutputManifest) {
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         var path = path
         if !path.hasPrefix("/") {
             path = "/documentation/MarkdownOutput/\(path)"
@@ -41,152 +28,405 @@ final class MarkdownOutputTests: XCTestCase {
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
         let node = try XCTUnwrap(context.entity(with: reference))
         var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, node: node)
-        return try XCTUnwrap(translator.createOutput())
-    }
-    /// Generates a markdown node from a given path
-    /// - Parameter path: The path. If you just supply a name (no leading slash), it will prepend `/documentation/MarkdownOutput/`, otherwise the path will be used
-    /// - Returns: The generated markdown output node
-    private func generateMarkdown(path: String) async throws -> MarkdownOutputNode {
-        let outputNode = try await generateWritableMarkdown(path: path)
-        return outputNode.node
+        let output = try XCTUnwrap(translator.createOutput())
+        let manifest = try XCTUnwrap(output.manifest)
+        return (output.node, manifest)
     }
     
-    /// Generates a markdown manifest document (with relationships) from a given path
-    /// - Parameter path: The path. If you just supply a name (no leading slash), it will prepend `/documentation/MarkdownOutput/`, otherwise the path will be used
-    /// - Returns: The generated markdown output manifest document
-    private func generateMarkdownManifest(path: String) async throws -> MarkdownOutputManifest {
-        let outputNode = try await generateWritableMarkdown(path: path)
-        return try XCTUnwrap(outputNode.manifest)
-    }
+    private func catalog(files: [any File] = []) -> Folder {
+        Folder(name: "MarkdownOutput.docc", content: [
+            TextFile(name: "Article.md", utf8Content: """
+                # Article
 
+                A mostly empty article to make sure paths are formatted correctly
+                
+                ## Overview
+                
+                Nothing to see here
+                """)
+            ] + files
+        )
+    }
+    
     // MARK: Directive special processing
     
     func testRowsAndColumns() async throws {
-        let node = try await generateMarkdown(path: "RowsAndColumns")
+        
+        let catalog = catalog(files: [
+            TextFile(name: "RowsAndColumns.md", utf8Content: """
+                # Rows and Columns
+
+                Demonstrates how row and column directives are rendered as markdown
+
+                ## Overview
+
+                @Row {
+                    @Column {
+                        I am the content of column one
+                    }
+                    @Column {
+                        I am the content of column two
+                    }
+                }
+                """)
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "RowsAndColumns")
         let expected = "I am the content of column one\n\nI am the content of column two"
         XCTAssert(node.markdown.contains(expected))
     }
     
-    func testInlineDocumentLinkArticleFormatting() async throws {
-        let node = try await generateMarkdown(path: "Links")
-        let expected = "inline link: [Rows and Columns](doc://org.swift.MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)"
-        XCTAssert(node.markdown.contains(expected))
+    func testLinkArticleFormatting() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "RowsAndColumns.md", utf8Content: """
+                # Rows and Columns
+                
+                Just here for the links
+                """),
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                Tests the appearance of inline and linked lists
+
+                ## Overview
+
+                This is an inline link: <doc:RowsAndColumns>
+
+                ## Topics
+
+                ### Links with abstracts
+
+                - <doc:RowsAndColumns>
+                """)
+            ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
+        let expectedInline = "inline link: [Rows and Columns](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)"
+        XCTAssert(node.markdown.contains(expectedInline))
+        
+        let expectedLinkList = "[Rows and Columns](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)\n\nJust here for the links"
+        XCTAssert(node.markdown.contains(expectedLinkList))
     }
-    
-    func testTopicListLinkArticleFormatting() async throws {
-        let node = try await generateMarkdown(path: "Links")
-        let expected = "[Rows and Columns](doc://org.swift.MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)\n\nDemonstrates how row and column directives are rendered as markdown"
-        XCTAssert(node.markdown.contains(expected))
+       
+    func testLinkSymbolFormatting() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                Tests the appearance of inline and linked lists
+
+                ## Overview
+
+                This is an inline link: ``MarkdownSymbol``
+
+                ## Topics
+
+                ### Links with abstracts
+
+                - ``MarkdownSymbol``
+                """),
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
+        let expectedInline = "inline link: [`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)"
+        XCTAssert(node.markdown.contains(expectedInline))
+        
+        let expectedLinkList = "[`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output"
+        XCTAssert(node.markdown.contains(expectedLinkList))
     }
-    
-    func testInlineDocumentLinkSymbolFormatting() async throws {
-        let node = try await generateMarkdown(path: "Links")
-        let expected = "inline link: [`MarkdownSymbol`](doc://org.swift.MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)"
-        XCTAssert(node.markdown.contains(expected))
-    }
-    
-    func testTopicListLinkSymbolFormatting() async throws {
-        let node = try await generateMarkdown(path: "Links")
-        let expected = "[`MarkdownSymbol`](doc://org.swift.MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output."
-        XCTAssert(node.markdown.contains(expected))
-    }
-    
+        
     func testLanguageTabOnlyIncludesPrimaryLanguage() async throws {
-        let node = try await generateMarkdown(path: "Tabs")
+        let catalog = catalog(files: [
+            TextFile(name: "Tabs.md", utf8Content: """
+                # Tabs
+
+                Showing how language tabs only render the primary language
+
+                ## Overview
+
+                @TabNavigator {
+                    @Tab("Objective-C") {
+                        ```objc
+                        I am an Objective-C code block
+                        ```
+                    }
+                    @Tab("Swift") {
+                        ```swift
+                        I am a Swift code block
+                        ```
+                    }
+                }
+                """)
+        ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Tabs")
         XCTAssertFalse(node.markdown.contains("I am an Objective-C code block"))
         XCTAssertTrue(node.markdown.contains("I am a Swift code block"))
     }
     
     func testNonLanguageTabIncludesAllEntries() async throws {
-        let node = try await generateMarkdown(path: "Tabs")
+        let catalog = catalog(files: [
+            TextFile(name: "Tabs.md", utf8Content: """
+                # Tabs
+
+                Showing how non-language tabs render all instances.
+
+                ## Overview
+
+                @TabNavigator {
+                    @Tab("Left") {
+                        Left text
+                    }
+                    @Tab("Right") {
+                        Right text
+                    }
+                }
+                """)
+        ])
+
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Tabs")
         XCTAssertTrue(node.markdown.contains("**Left:**\n\nLeft text"))
         XCTAssertTrue(node.markdown.contains("**Right:**\n\nRight text"))
     }
     
-    func testTutorialCodeIsOnlyTheFinalVersion() async throws {
-        let node = try await generateMarkdown(path: "/tutorials/MarkdownOutput/Tutorial")
-        XCTAssertFalse(node.markdown.contains("// STEP ONE"))
-        XCTAssertFalse(node.markdown.contains("// STEP TWO"))
-        XCTAssertTrue(node.markdown.contains("// STEP THREE"))
-    }
-    
-    func testTutorialCodeAddedAtFinalReferencedStep() async throws {
-        let node = try await generateMarkdown(path: "/tutorials/MarkdownOutput/Tutorial")
-        let codeIndex = try XCTUnwrap(node.markdown.firstRange(of: "// STEP THREE"))
+    func testTutorialCode() async throws {
+        
+        let tutorial = TextFile(name: "Tutorial.tutorial", utf8Content: """
+            @Tutorial(time: 30) {
+                @Intro(title: "Tutorial Title") {
+                    A tutorial for testing markdown output.
+                    
+                    @Image(source: placeholder.png, alt: "Alternative text")
+                }
+                
+                @Section(title: "The first section") {
+                    
+                    Here is some free floating content
+                    
+                    @Steps {
+                        @Step {
+                            Do the first set of things
+                            @Code(name: "File.swift", file: 01-step-01.swift)
+                        }
+                        
+                        Inter-step content 
+                        
+                        @Step {
+                            Do the second set of things
+                            @Code(name: "File.swift", file: 01-step-02.swift)
+                        }
+                        
+                        @Step {
+                            Do the third set of things
+                            @Code(name: "File.swift", file: 01-step-03.swift)
+                        }
+                        
+                        @Step {
+                            Do the fourth set of things
+                            @Code(name: "File2.swift", file: 02-step-01.swift)
+                        }
+                    }
+                }
+            }
+            """
+        )
+        
+        let codeOne = TextFile(name: "01-step-01.swift", utf8Content: """
+            struct StartCode {
+                // STEP ONE
+            }
+            """)
+        
+        let codeTwo = TextFile(name: "01-step-02.swift", utf8Content: """
+            struct StartCode {
+                // STEP TWO
+                let property1: Int
+            }
+            """)
+        
+        let codeThree = TextFile(name: "01-step-03.swift", utf8Content: """
+            struct StartCode {
+                // STEP THREE
+                let property1: Int
+                let property2: Int
+            }
+            """)
+        
+        let codeFour = TextFile(name: "02-step-01.swift", utf8Content: """
+            struct StartCodeAgain {
+                
+            }
+            """)
+        
+        let codeFolder = Folder(name: "code-files", content: [codeOne, codeTwo, codeThree, codeFour])
+        let resourceFolder = Folder(name: "Resources", content: [codeFolder])
+                
+        let catalog = catalog(files: [
+            tutorial,
+            resourceFolder
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/tutorials/MarkdownOutput/Tutorial")
+        XCTAssertFalse(node.markdown.contains("// STEP ONE"), "Non-final code versions are not included")
+        XCTAssertFalse(node.markdown.contains("// STEP TWO"), "Non-final code versions are not included")
+        let codeIndex = try XCTUnwrap(node.markdown.firstRange(of: "// STEP THREE"), "Final code version is included")
         let step4Index = try XCTUnwrap(node.markdown.firstRange(of: "### Step 4"))
-        XCTAssert(codeIndex.lowerBound < step4Index.lowerBound)
+        XCTAssert(codeIndex.lowerBound < step4Index.lowerBound, "Code reference is added after the last step that references it")
+        XCTAssertTrue(node.markdown.contains("struct StartCodeAgain {"), "New file reference is included")
     }
-    
-    func testTutorialCodeWithNewFileIsAdded() async throws {
-        let node = try await generateMarkdown(path: "/tutorials/MarkdownOutput/Tutorial")
-        XCTAssertTrue(node.markdown.contains("struct StartCodeAgain {"))
-    }
-    
+        
     // MARK: - Metadata
     
-    func testArticleDocumentType() async throws {
-        let node = try await generateMarkdown(path: "Links")
+    func testArticleMetadata() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "ArticleRole.md", utf8Content: """
+                # Article Role
+                
+                This article will have the correct document type and role
+                
+                ## Overview
+                
+                Content
+                """)
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "ArticleRole")
         XCTAssert(node.metadata.documentType == .article)
-    }
-    
-    func testArticleRole() async throws {
-        let node = try await generateMarkdown(path: "RowsAndColumns")
         XCTAssert(node.metadata.role == RenderMetadata.Role.article.rawValue)
+        XCTAssert(node.metadata.title == "Article Role")
+        XCTAssert(node.metadata.uri == "/documentation/MarkdownOutput/ArticleRole")
+        XCTAssert(node.metadata.framework == "MarkdownOutput")
     }
     
     func testAPICollectionRole() async throws {
-        let node = try await generateMarkdown(path: "APICollection")
+        let catalog = catalog(files: [
+            TextFile(name: "APICollection.md", utf8Content: """
+                # API Collection
+
+                This is an API collection
+
+                ## Topics
+
+                ### Topic subgroup
+
+                -<doc:Links>
+                -<doc:RowsAndColumns>
+
+                """),
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                An article to be linked to
+                """),
+            TextFile(name: "RowsAndColumns.md", utf8Content: """
+                # Rows and Columns
+
+                An article to be linked to
+                """)
+            
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "APICollection")
         XCTAssert(node.metadata.role == RenderMetadata.Role.collectionGroup.rawValue)
     }
-    
-    func testArticleTitle() async throws {
-        let node = try await generateMarkdown(path: "RowsAndColumns")
-        XCTAssert(node.metadata.title == "Rows and Columns")
-    }
-    
+        
     func testArticleAvailability() async throws {
-        let node = try await generateMarkdown(path: "AvailabilityArticle")
+        let catalog = catalog(files: [
+            TextFile(name: "AvailabilityArticle.md", utf8Content: """
+                # Availability Demonstration
+
+                @Metadata {
+                    @PageKind(sampleCode)
+                    @Available(Xcode, introduced: "14.3")
+                    @Available(macOS, introduced: "13.0")
+                }
+
+                This article demonstrates platform availability defined in metadata
+
+                ## Overview
+
+                Some stuff
+                """)
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "AvailabilityArticle")
         XCTAssert(node.metadata.availability(for: "Xcode")?.introduced == "14.3.0")
         XCTAssert(node.metadata.availability(for: "macOS")?.introduced == "13.0.0")
     }
     
     func testSymbolDocumentType() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+            ]))
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         XCTAssert(node.metadata.documentType == .symbol)
     }
     
-    func testSymbolTitle() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol/init(name:)")
+    func testSymbolMetadata() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                makeSymbol(id: "MarkdownSymbol_init_name", kind: .`init`, pathComponents: ["MarkdownSymbol", "init(name:)"])
+            ]))
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/init(name:)")
         XCTAssert(node.metadata.title == "init(name:)")
-    }
-    
-    func testSymbolKind() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol/init(name:)")
         XCTAssert(node.metadata.symbol?.kind == "init")
         XCTAssert(node.metadata.role == "Initializer")
-    }
-    
-    func testSymbolSingleModule() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol")
         XCTAssertEqual(node.metadata.symbol?.modules, ["MarkdownOutput"])
     }
-    
+        
     func testSymbolExtendedModule() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "ModuleWithSingleExtension")
-        let entity = try XCTUnwrap(context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
-        var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, node: entity)
-        let node = try XCTUnwrap(translator.createOutput())
-        XCTAssertEqual(node.node.metadata.symbol?.modules, ["ModuleWithSingleExtension", "Swift"])
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "Array_asdf", kind: .property, pathComponents: ["Swift", "Array", "asdf"], otherMixins: [SymbolGraph.Symbol.Swift.Extension(extendedModule: "Swift", constraints: [])])
+                ])
+             )
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Swift/Array/asdf")
+        XCTAssertEqual(node.metadata.symbol?.modules, ["MarkdownOutput", "Swift"])
     }
     
     func testSymbolDefaultAvailabilityWhenNothingPresent() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+            ])),
+            InfoPlist(defaultAvailability: [
+                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+            ])
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try XCTUnwrap(node.metadata.availability)
         XCTAssert(availability.contains(.init(platform: "iOS", introduced: "1.0.0", deprecated: nil, unavailable: false)))
     }
     
     func testSymbolAvailabilityFromMetadataBlock() async throws {
-        let node = try await generateMarkdown(path: "/documentation/MarkdownOutput")
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+            ])),
+            InfoPlist(defaultAvailability: [
+                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+            ]),
+            TextFile(name: "MarkdownSymbol.md", utf8Content: """
+                # ``MarkdownSymbol``
+                
+                @Metadata {
+                    @Available(iPadOS, introduced: "13.1")
+                }
+                
+                A basic symbol to test markdown output
+                
+                ## Overview
+                
+                Overview goes here
+                """)
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try XCTUnwrap(node.metadata.availability)
         XCTAssert(availability.contains(where: { $0.platform == "iPadOS" && $0.introduced == "13.1.0" }))
     }
@@ -242,15 +482,51 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssertEqual(availability.stringRepresentation, expected)
     }
             
-    func testSymbolModuleDefaultAvailability() async throws {
-        let node = try await generateMarkdown(path: "/documentation/MarkdownOutput")
-        let availability = try XCTUnwrap(node.metadata.availability(for: "iOS"))
-        XCTAssertEqual(availability.introduced, "1.0")
-        XCTAssertFalse(availability.unavailable)
-    }
-    
     func testSymbolDeprecation() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol/fullName")
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+                makeSymbol(
+                    id: "MarkdownSymbol_fullName",
+                    kind: .property,
+                    pathComponents: ["MarkdownSymbol", "fullName"],
+                    docComment: "A basic property to test markdown output",
+                    availability: [
+                        .init(domain: .init(rawValue: "iOS"),
+                              introducedVersion: .init(string: "1.0.0"),
+                              deprecatedVersion: .init(string: "4.0.0"),
+                              obsoletedVersion: nil,
+                              message: nil,
+                              renamed: nil,
+                              isUnconditionallyDeprecated: false,
+                              isUnconditionallyUnavailable: false,
+                              willEventuallyBeDeprecated: false
+                             ),
+                        .init(domain: .init(rawValue: "macOS"),
+                              introducedVersion: .init(string: "2.0.0"),
+                              deprecatedVersion: .init(string: "4.0.0"),
+                              obsoletedVersion: nil,
+                              message: nil,
+                              renamed: nil,
+                              isUnconditionallyDeprecated: false,
+                              isUnconditionallyUnavailable: false,
+                              willEventuallyBeDeprecated: false
+                             ),
+                        .init(domain: .init(rawValue: "visionOS"),
+                              introducedVersion: .init(string: "2.0.0"),
+                              deprecatedVersion: .init(string: "4.0.0"),
+                              obsoletedVersion: .init(string: "5.0.0"),
+                              message: nil,
+                              renamed: nil,
+                              isUnconditionallyDeprecated: false,
+                              isUnconditionallyUnavailable: false,
+                              willEventuallyBeDeprecated: false
+                             )
+                    ])
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/fullName")
         let availability = try XCTUnwrap(node.metadata.availability(for: "iOS"))
         XCTAssertEqual(availability.introduced, "1.0.0")
         XCTAssertEqual(availability.deprecated, "4.0.0")
@@ -260,42 +536,74 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssertEqual(macAvailability.introduced, "2.0.0")
         XCTAssertEqual(macAvailability.deprecated, "4.0.0")
         XCTAssertEqual(macAvailability.unavailable, false)
+        
+        let visionAvailability = try XCTUnwrap(node.metadata.availability(for: "visionOS"))
+        XCTAssert(visionAvailability.unavailable)
     }
     
-    func testSymbolObsolete() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol/otherName")
-        let availability = try XCTUnwrap(node.metadata.availability(for: "iOS"))
-        XCTAssert(availability.unavailable)
-    }
     
     func testSymbolIdentifier() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol")
-        XCTAssertEqual(node.metadata.symbol?.preciseIdentifier, "s:14MarkdownOutput0A6SymbolV")
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol_Identifier", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
+        XCTAssertEqual(node.metadata.symbol?.preciseIdentifier, "MarkdownSymbol_Identifier")
     }
     
-    func testTutorialDocumentType() async throws {
-        let node = try await generateMarkdown(path: "/tutorials/MarkdownOutput/Tutorial")
+    func testTutorialMetadata() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "Tutorial.tutorial", utf8Content: """
+            @Tutorial(time: 30) {
+                @Intro(title: "Tutorial Title") {
+                    A tutorial for testing markdown output.
+                    
+                    @Image(source: placeholder.png, alt: "Alternative text")
+                }
+                
+                @Section(title: "The first section") {
+                                        
+                    @Steps {
+                        @Step {
+                            Do the first set of things
+                        }
+                    }
+                }
+            }
+            """
+            )
+        ])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/tutorials/MarkdownOutput/Tutorial")
         XCTAssert(node.metadata.documentType == .tutorial)
-    }
-    
-    func testTutorialTitle() async throws {
-        let node = try await generateMarkdown(path: "/tutorials/MarkdownOutput/Tutorial")
         XCTAssert(node.metadata.title == "Tutorial Title")
     }
-    
-    func testURI() async throws {
-        let node = try await generateMarkdown(path: "Links")
-        XCTAssert(node.metadata.uri == "/documentation/MarkdownOutput/Links")
-    }
-    
-    func testFramework() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol")
-        XCTAssert(node.metadata.framework == "MarkdownOutput")
-    }
-    
+          
     // MARK: - Encoding / Decoding
     func testMarkdownRoundTrip() async throws {
-        let node = try await generateMarkdown(path: "MarkdownSymbol")
+        let catalog = catalog(files: [
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                Tests the appearance of inline and linked lists
+
+                ## Overview
+
+                This is an inline link: ``MarkdownSymbol``
+
+                ## Topics
+
+                ### Links with abstracts
+
+                - ``MarkdownSymbol``
+                """),
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let data = try node.data
         let fromData = try MarkdownOutputNode(data)
         XCTAssertEqual(node.markdown, fromData.markdown)
@@ -304,7 +612,46 @@ final class MarkdownOutputTests: XCTestCase {
     
     // MARK: - Manifest
     func testArticleManifestLinks() async throws {
-        let manifest = try await generateMarkdownManifest(path: "Links")
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol_Identifier", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
+            ])),
+            TextFile(name: "RowsAndColumns.md", utf8Content: """
+                # Rows and Columns
+                
+                Just here for the links
+                """),
+            TextFile(name: "APICollection.md", utf8Content: """
+                # API Collection
+                
+                An API collection
+                
+                ## Topics
+                
+                - <doc:RowsAndColumns>
+                """),
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                Tests the appearance of inline and linked lists
+
+                ## Overview
+
+                This is an inline link: <doc:RowsAndColumns>
+                This is an inline link: ``MarkdownSymbol``
+                This is a link that isn't curated in a topic so shouldn't come up in the manifest: <doc:APICollection>.
+
+                ## Topics
+
+                ### Links with abstracts
+
+                - <doc:RowsAndColumns>
+                - ``MarkdownSymbol``
+                """)
+        ])
+        
+        let (_, manifest) = try await markdownOutput(catalog: catalog, path: "Links")
         let rows = MarkdownOutputManifest.Relationship(
             sourceURI: "/documentation/MarkdownOutput/RowsAndColumns",
             relationshipType: .belongsToTopic,
@@ -349,41 +696,68 @@ final class MarkdownOutputTests: XCTestCase {
     }
     
     func testSymbolManifestInheritance() async throws {
-        let manifest = try await generateMarkdownManifest(path: "LocalSubclass")
+        
+        let symbols = [
+            makeSymbol(id: "MO_Subclass", kind: .class, pathComponents: ["LocalSubclass"]),
+            makeSymbol(id: "MO_Superclass", kind: .class, pathComponents: ["LocalSuperclass"])
+        ]
+        
+        let relationships = [
+            SymbolGraph.Relationship(source: "MO_Subclass", target: "MO_Superclass", kind: .inheritsFrom, targetFallback: nil)
+        ]
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content:
+                    makeSymbolGraph(moduleName: "MarkdownOutput", symbols: symbols, relationships: relationships))
+        ])
+        
+        
+        let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalSubclass")
         let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         XCTAssert(related.contains(where: {
             $0.targetURI == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == "inheritsFrom"
         }))
-    }
-    
-    func testSymbolManifestInheritedBy() async throws {
-        let manifest = try await generateMarkdownManifest(path: "LocalSuperclass")
-        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        XCTAssert(related.contains(where: {
+        
+        let (_, parentManifest) = try await markdownOutput(catalog: catalog, path: "LocalSuperclass")
+        let parentRelated = parentManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        XCTAssert(parentRelated.contains(where: {
             $0.targetURI == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == "inheritedBy"
         }))
     }
-    
-    func testSymbolManifestConformsTo() async throws {
-        let manifest = try await generateMarkdownManifest(path: "LocalConformer")
+        
+    func testSymbolManifestConformance() async throws {
+        
+        let symbols = [
+            makeSymbol(id: "MO_Conformer", kind: .struct, pathComponents: ["LocalConformer"]),
+            makeSymbol(id: "MO_Protocol", kind: .protocol, pathComponents: ["LocalProtocol"]),
+            makeSymbol(id: "MO_ExternalConformer", kind: .struct, pathComponents: ["ExternalConformer"])
+        ]
+        
+        let relationships = [
+            SymbolGraph.Relationship(source: "MO_Conformer", target: "MO_Protocol", kind: .conformsTo, targetFallback: nil),
+            SymbolGraph.Relationship(source: "MO_ExternalConformer", target: "s:SH", kind: .conformsTo, targetFallback: "Swift.Hashable")
+        ]
+        
+        let catalog = catalog(files: [
+            JSONFile(name: "MarkdownOutput.symbols.json", content:
+                    makeSymbolGraph(moduleName: "MarkdownOutput", symbols: symbols, relationships: relationships))
+        ])
+        
+        let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
         let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         XCTAssert(related.contains(where: {
             $0.targetURI == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == "conformsTo"
         }))
-    }
-    
-    func testSymbolManifestConformingTypes() async throws {
-        let manifest = try await generateMarkdownManifest(path: "LocalProtocol")
-        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        XCTAssert(related.contains(where: {
+        
+        let (_, protocolManifest) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
+        let protocolRelated = protocolManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        XCTAssert(protocolRelated.contains(where: {
             $0.targetURI == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == "conformingTypes"
         }))
-    }
-    
-    func testSymbolManifestExternalConformsTo() async throws {
-        let manifest = try await generateMarkdownManifest(path: "ExternalConformer")
-        let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
-        XCTAssert(related.contains(where: {
+        
+        let (_, externalManifest) = try await markdownOutput(catalog: catalog, path: "ExternalConformer")
+        let externalRelated = externalManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
+        XCTAssert(externalRelated.contains(where: {
             $0.targetURI == "/documentation/Swift/Hashable" && $0.subtype == "conformsTo"
         }))
     }
