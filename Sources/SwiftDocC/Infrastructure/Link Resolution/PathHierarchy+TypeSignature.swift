@@ -230,7 +230,7 @@ extension PathHierarchy {
     }
     
     /// A small helper type that tracks the scope of nested brackets; `()`, `[]`, or `<>`.
-    private struct SwiftBracketsStack {
+    private struct SwiftBracketsStack: ~Copyable {
         enum Bracket {
             case angle  // <>
             case square // []
@@ -522,7 +522,7 @@ extension PathHierarchy.PathParser {
 
 // MARK: Scanning a substring
 
-private struct StringScanner {
+private struct StringScanner: ~Copyable {
     private var remaining: Substring
     
     init(_ original: Substring) {

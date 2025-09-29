@@ -81,6 +81,9 @@ public class DocumentationContext {
     /// > Important: The topic graph has no awareness of source language specific edges.
     var topicGraph = TopicGraph()
     
+    /// Will be assigned during context initialization
+    var snippetResolver: SnippetResolver!
+    
     /// User-provided global options for this documentation conversion.
     var options: Options?
     
@@ -265,7 +268,6 @@ public class DocumentationContext {
     ///   - source: The location of the document.
     private func check(_ document: Document, at source: URL) {
         var checker = CompositeChecker([
-            AbstractContainsFormattedTextOnly(sourceFile: source).any(),
             DuplicateTopicsSections(sourceFile: source).any(),
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
@@ -2038,6 +2040,8 @@ public class DocumentationContext {
                         knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
                     ))
                 }
+                
+                self.snippetResolver = SnippetResolver(symbolGraphLoader: symbolGraphLoader)
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2739,7 +2743,7 @@ public class DocumentationContext {
         knownEntityValue(
             reference: reference,
             valueInLocalEntity: \.availableSourceLanguages,
-            valueInExternalEntity: \.sourceLanguages
+            valueInExternalEntity: \.availableLanguages
         )
     }
     
@@ -2747,9 +2751,9 @@ public class DocumentationContext {
     func isSymbol(reference: ResolvedTopicReference) -> Bool {
         knownEntityValue(
             reference: reference,
-            valueInLocalEntity: { node in node.kind.isSymbol },
-            valueInExternalEntity: { entity in entity.topicRenderReference.kind == .symbol }
-        )
+            valueInLocalEntity: \.kind,
+            valueInExternalEntity: \.kind
+        ).isSymbol
     }
 
     // MARK: - Relationship queries

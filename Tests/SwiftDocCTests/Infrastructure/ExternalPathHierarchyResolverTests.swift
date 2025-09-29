@@ -950,7 +950,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
                 switch result {
                 case .success(let resolved):
                     let entity = externalResolver.entity(resolved)
-                    XCTAssertEqual(entity.topicRenderReference.isBeta, isBeta, file: file, line: line)
+                    XCTAssertEqual(entity.makeTopicRenderReference().isBeta, isBeta, file: file, line: line)
                 case .failure(_, let errorInfo):
                     XCTFail("Unexpectedly failed to resolve \(label) link: \(errorInfo.message) \(errorInfo.solutions.map(\.summary).joined(separator: ", "))", file: file, line: line)
                 }
