@@ -12,16 +12,42 @@ import Foundation
 public import Markdown
 import SymbolKit
 
+/// Embeds a code example from the project's code snippets.
+///
+/// Use a `Snippet` directive to embed a code example from the project's "Snippets" directory on the page.
+/// The `path` argument is the relative path from the package's top-level "Snippets" directory to your snippet file without the `.swift` extension.
+///
+/// ```markdown
+/// @Snippet(path: "example-snippet", slice: "setup")
+/// ```
+///
+/// If you prefer, you can specify the relative path from the package's _root_ directory (by including a "Snippets/" prefix).
+/// You can also include the package name---as defined in `Package.swift`---before the "Snippets/" prefix.
+/// Neither of these leading path components are necessary because all your snippet code files are always located in your package's "Snippets" directory.
+///
+/// > Earlier Versions:
+/// > Before Swift-DocC 6.2.1, the `@Snippet` path needed to include both the package name component and the "Snippets" component:
+/// >
+/// > ```markdown
+/// > @Snippet(path: "my-package/Snippets/example-snippet")
+/// > ```
+///
+/// You can define named slices of your snippet by annotating the snippet file with `// snippet.<name>` and `// snippet.end` lines.
+/// A named slice automatically ends at the start of the next named slice, without an explicit `snippet.end` annotation.
+///
+/// If the referenced snippet includes annotated slices, you can limit the embedded code example to a certain line range by specifying a `slice` name.
+/// By default, the embedded code example includes the full snippet. For more information, see <doc:adding-code-snippets-to-your-content#Slice-up-your-snippet-to-break-it-up-in-your-content>.
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.6"
     public let originalMarkup: BlockDirective
     
-    /// The path components of a symbol link that would be used to resolve a reference to a snippet,
-    /// only occurring as a block directive argument.
+    /// The relative path from your package's top-level "Snippets" directory to the snippet file that you want to embed in the page, without the `.swift` file extension.
     @DirectiveArgumentWrapped
     public var path: String
     
-    /// An optional named range to limit the lines shown.
+    /// The name of a snippet slice to limit the embedded code example to a certain line range.
+    ///
+    /// By default, the embedded code example includes the full snippet.
     @DirectiveArgumentWrapped
     public var slice: String? = nil
     
@@ -50,30 +76,33 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
 
 extension Snippet: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
-        guard let snippet = Snippet(from: originalMarkup, for: contentCompiler.bundle) else {
+        guard case .success(let resolvedSnippet) = contentCompiler.context.snippetResolver.resolveSnippet(path: path) else {
+            return []
+        }
+        let mixin = resolvedSnippet.mixin
+        
+        if let slice {
+            guard let sliceRange = mixin.slices[slice] else {
+                // The warning says that unrecognized snippet slices will ignore the entire snippet.
                 return []
             }
+            // Render only this slice without the explanatory content.
+            let lines = mixin.lines
+                // Trim the lines
+                .dropFirst(sliceRange.startIndex).prefix(sliceRange.endIndex - sliceRange.startIndex)
+                // Trim the whitespace
+                .linesWithoutLeadingWhitespace()
+                // Make dedicated copies of each line because the RenderBlockContent.codeListing requires it.
+                .map { String($0) }
             
-            guard let snippetReference = contentCompiler.resolveSymbolReference(destination: snippet.path),
-                  let snippetEntity = try? contentCompiler.context.entity(with: snippetReference),
-                  let snippetSymbol = snippetEntity.symbol,
-                  let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
-                return []
-            }
+            return [RenderBlockContent.codeListing(.init(syntax: mixin.language, code: lines, metadata: nil))]
+        } else {
+            // Render the full snippet and its explanatory content.
+            let fullCode = RenderBlockContent.codeListing(.init(syntax: mixin.language, code: mixin.lines, metadata: nil))
             
-            if let requestedSlice = snippet.slice,
-               let requestedLineRange = snippetMixin.slices[requestedSlice] {
-                // Render only the slice.
-                let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
-                let lines = snippetMixin.lines[lineRange]
-                let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
-                let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
-                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
-            } else {
-                // Render the whole snippet with its explanation content.
-                let docCommentContent = snippetEntity.markup.children.flatMap { contentCompiler.visit($0) }
-                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
-                return docCommentContent + [code]
-            }
+            var content: [any RenderContent] = resolvedSnippet.explanation?.children.flatMap { contentCompiler.visit($0) } ?? []
+            content.append(fullCode)
+            return content
+        }
     }
 }

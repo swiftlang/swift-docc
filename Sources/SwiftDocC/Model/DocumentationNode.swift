@@ -853,7 +853,7 @@ private extension BlockDirective {
     }
 }
 
-extension [String] {
+extension Collection<String> {
 
     /// Strips the minimum leading whitespace from all the strings in the array.
     ///
