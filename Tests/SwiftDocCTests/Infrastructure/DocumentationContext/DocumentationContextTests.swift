@@ -2184,7 +2184,7 @@ let expected = """
             """),
         ])
         
-        let (bundle, context) = try loadBundle(catalog: catalog, diagnosticEngine: .init(filterLevel: .information))
+        let (bundle, context) = try loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
         XCTAssertNil(context.soleRootModuleReference)
         
         let curationDiagnostics = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
@@ -4890,7 +4890,11 @@ let expected = """
     func testContextDoesNotRecognizeNonOverloadableSymbolKinds() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
+        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter {
+            !$0.isOverloadableKind &&
+            !$0.isSnippetKind      && // avoid mixing snippets with "real" symbols
+            $0 != .module             // avoid creating multiple modules
+        }
         // Generate a 4 symbols with the same name for every non overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
             makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
@@ -5270,7 +5274,7 @@ let expected = """
     func testContextDiagnosesInsufficientDisambiguationWithCorrectRange() throws {
         // This test deliberately does not turn on the overloads feature
         // to ensure the symbol link below does not accidentally resolve correctly.
-        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind && !symbolKindID.isSnippetKind {
             // Generate a 4 symbols with the same name for every non overloadable symbol kind
             let symbols: [SymbolGraph.Symbol] = [
                 makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
@@ -5324,7 +5328,7 @@ let expected = """
     func testContextDiagnosesIncorrectDisambiguationWithCorrectRange() throws {
         // This test deliberately does not turn on the overloads feature
         // to ensure the symbol link below does not accidentally resolve correctly.
-        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind && !symbolKindID.isSnippetKind {
             // Generate a 4 symbols with the same name for every non overloadable symbol kind
             let symbols: [SymbolGraph.Symbol] = [
                 makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
@@ -5376,7 +5380,7 @@ let expected = """
     func testContextDiagnosesIncorrectSymbolNameWithCorrectRange() throws {
         // This test deliberately does not turn on the overloads feature
         // to ensure the symbol link below does not accidentally resolve correctly.
-        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind && !symbolKindID.isSnippetKind {
             // Generate a 4 symbols with the same name for every non overloadable symbol kind
             let symbols: [SymbolGraph.Symbol] = [
                 makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),

@@ -167,6 +167,9 @@ public class DocumentationContext {
     /// > Important: The topic graph has no awareness of source language specific edges.
     var topicGraph = TopicGraph()
     
+    /// Will be assigned during context initialization
+    var snippetResolver: SnippetResolver!
+    
     /// User-provided global options for this documentation conversion.
     var options: Options?
     
@@ -2235,6 +2238,8 @@ public class DocumentationContext {
                         knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
                     ))
                 }
+                
+                self.snippetResolver = SnippetResolver(symbolGraphLoader: symbolGraphLoader)
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({

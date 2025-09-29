@@ -2337,31 +2337,6 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    func testSnippets() throws {
-        let (_, context) = try testBundleAndContext(named: "Snippets")
-        let tree = context.linkResolver.localResolver.pathHierarchy
-        
-        try assertFindsPath("/Snippets/Snippets/MySnippet", in: tree, asSymbolID: "$snippet__Test.Snippets.MySnippet")
-        
-        let paths = tree.caseInsensitiveDisambiguatedPaths()
-        XCTAssertEqual(paths["$snippet__Test.Snippets.MySnippet"],
-                       "/Snippets/Snippets/MySnippet")
-        
-        // Test relative links from the article that overlap with the snippet's path
-        let snippetsArticleID = try tree.find(path: "/Snippets/Snippets", onlyFindSymbols: false)
-        XCTAssertEqual(try tree.findSymbol(path: "MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "Snippets/Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "/Snippets/Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        
-        // Test relative links from another article (which doesn't overlap with the snippet's path)
-        let sliceArticleID = try tree.find(path: "/Snippets/SliceIndentation", onlyFindSymbols: false)
-        XCTAssertThrowsError(try tree.findSymbol(path: "MySnippet", parent: sliceArticleID))
-        XCTAssertEqual(try tree.findSymbol(path: "Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "Snippets/Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "/Snippets/Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-    }
-    
     func testInheritedOperators() throws {
         let (_, context) = try testBundleAndContext(named: "InheritedOperators")
         let tree = context.linkResolver.localResolver.pathHierarchy
