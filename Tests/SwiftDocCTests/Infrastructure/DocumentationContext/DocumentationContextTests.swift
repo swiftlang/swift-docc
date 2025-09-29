@@ -4935,7 +4935,11 @@ let expected = """
     func testContextDoesNotRecognizeNonOverloadableSymbolKinds() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
+        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter {
+            !$0.isOverloadableKind &&
+            !$0.isSnippetKind      && // avoid mixing snippets with "real" symbols
+            $0 != .module             // avoid creating multiple modules
+        }
         // Generate a 4 symbols with the same name for every non overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
             makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
