@@ -43,21 +43,30 @@ extension XCTestCase {
     /// - Parameters:
     ///   - catalog: The directory structure of the documentation catalog
     ///   - otherFileSystemDirectories: Any other directories in the test file system.
-    ///   - diagnosticEngine: The diagnostic engine for the created context.
+    ///   - diagnosticFilterLevel: The minimum severity for diagnostics to emit.
+    ///   - logOutput: An output stream to capture log output from creating the context.
     ///   - configuration: Configuration for the created context.
     /// - Returns: The loaded documentation bundle and context for the given catalog input.
     func loadBundle(
         catalog: Folder,
         otherFileSystemDirectories: [Folder] = [],
-        diagnosticEngine: DiagnosticEngine = .init(),
+        diagnosticFilterLevel: DiagnosticSeverity = .warning,
+        logOutput: some TextOutputStream = LogHandle.none,
         configuration: DocumentationContext.Configuration = .init()
     ) async throws -> (DocumentationBundle, DocumentationContext) {
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
+        let catalogURL = URL(fileURLWithPath: "/\(catalog.name)")
+        
+        let diagnosticEngine = DiagnosticEngine(filterLevel: diagnosticFilterLevel)
+        diagnosticEngine.add(DiagnosticConsoleWriter(logOutput, formattingOptions: [], baseURL: catalogURL, highlight: true, dataProvider: fileSystem))
         
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
-            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
+            .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
 
         let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        
+        diagnosticEngine.flush() // Write to the logOutput
+        
         return (bundle, context)
     }
     
