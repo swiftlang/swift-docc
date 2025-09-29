@@ -203,7 +203,7 @@ func aBlackListedFunc() {
             ])
             var configuration = DocumentationContext.Configuration()
             configuration.externalMetadata.diagnosticLevel = severity
-            let (_, context) = try loadBundle(catalog: catalog, diagnosticEngine: .init(filterLevel: severity), configuration: configuration)
+            let (_, context) = try loadBundle(catalog: catalog, diagnosticFilterLevel: severity, configuration: configuration)
             
             // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
             XCTAssertEqual(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }), enabled)
