@@ -1228,11 +1228,7 @@ public class DocumentationContext {
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
 
             // Create inherited API collections
-            try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
-                relationships: uniqueRelationships,
-                context: self,
-                bundle: bundle
-            )
+            try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(relationships: uniqueRelationships, context: self)
 
             // Parse and prepare the nodes' content concurrently.
             let updatedNodes = signposter.withIntervalSignpost("Parse symbol markup", id: signposter.makeSignpostID()) {
