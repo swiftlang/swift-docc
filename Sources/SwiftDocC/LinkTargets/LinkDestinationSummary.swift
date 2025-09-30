@@ -431,7 +431,7 @@ public extension DocumentationNode {
         renderNode: RenderNode,
         includeTaskGroups: Bool = true
     ) -> [LinkDestinationSummary] {
-        let bundle = context.bundle
+        let bundle = context.inputs
         guard bundle.id == reference.bundleID else {
             // Don't return anything for external references that don't have a bundle in the context.
             return []

@@ -243,7 +243,7 @@ public struct ConvertService: DocumentationService {
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
                 
-                let bundle = context.bundle
+                let bundle = context.inputs
                 guard bundle.id == topicReference.bundleID else { return nil }
                 let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
                 

@@ -3286,7 +3286,7 @@ let expected = """
         ])
         
         // Verify that the links are resolved in the render model.
-        let bundle = try XCTUnwrap(context.bundle)
+        let bundle = try XCTUnwrap(context.inputs)
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let renderNode = converter.convert(entity)
         

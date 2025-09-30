@@ -235,7 +235,7 @@ class SnippetResolverTests: XCTestCase {
         
         let reference = try XCTUnwrap(context.soleRootModuleReference, file: file, line: line)
         let moduleNode = try context.entity(with: reference)
-        let renderNode = DocumentationNodeConverter(bundle: context.bundle, context: context).convert(moduleNode)
+        let renderNode = DocumentationNodeConverter(bundle: context.inputs, context: context).convert(moduleNode)
         
         let renderBlocks = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection, file: file, line: line).content
         

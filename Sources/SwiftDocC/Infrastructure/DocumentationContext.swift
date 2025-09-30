@@ -70,8 +70,8 @@ public class DocumentationContext {
     /// The data provider that the context can use to read the contents of files that belong to ``bundle``.
     let dataProvider: any DataProvider
 
-    /// The documentation bundle that is registered with the context.
-    let bundle: DocumentationBundle
+    /// The collection of input files that the context was created from.
+    let inputs: DocumentationContext.Inputs
 
     /// A collection of configuration for this context.
     public let configuration: Configuration
@@ -211,7 +211,7 @@ public class DocumentationContext {
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
     ) async throws {
-        self.bundle = bundle
+        self.inputs = bundle
         self.dataProvider = dataProvider
         self.diagnosticEngine = diagnosticEngine
         self.configuration = configuration
@@ -219,19 +219,6 @@ public class DocumentationContext {
 
         ResolvedTopicReference.enableReferenceCaching(for: bundle.id)
         try register(bundle)
-    }
-    
-    // Remove these  when removing `registeredBundles` and `bundle(identifier:)`.
-    // These exist so that internal code that need to be compatible with legacy data providers can access the bundles without deprecation warnings.
-    @available(*, deprecated, renamed: "bundle", message: "REMOVE THIS")
-    var _registeredBundles: [DocumentationBundle] {
-        [bundle]
-    }
-    
-    @available(*, deprecated, renamed: "bundle", message: "REMOVE THIS")
-    func _bundle(identifier: String) -> DocumentationBundle? {
-        assert(bundle.id.rawValue == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
-        return bundle.id.rawValue == identifier ? bundle : nil
     }
         
     /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
