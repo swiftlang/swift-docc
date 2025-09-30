@@ -2626,21 +2626,6 @@ public class DocumentationContext {
         analyzeTopicGraph()
     }
 
-    /**
-     Unregister a documentation bundle with this context and clear any cached resources associated with it.
-     */
-    private func unregister(_ bundle: DocumentationBundle) {
-        let referencesToRemove = topicGraph.nodes.keys.filter {
-            $0.bundleID == bundle.id
-        }
-        
-        for reference in referencesToRemove {
-            topicGraph.edges[reference]?.removeAll(where: { $0.bundleID == bundle.id })
-            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleID == bundle.id })
-            topicGraph.nodes[reference] = nil
-        }
-    }
-
     // MARK: - Getting documentation relationships
 
     /**
