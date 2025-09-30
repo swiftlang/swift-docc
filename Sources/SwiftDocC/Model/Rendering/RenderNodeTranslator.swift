@@ -806,7 +806,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
-                bundle: context.inputs,
                 renderContext: renderContext,
                 renderer: contentRenderer
             ) {
@@ -1648,7 +1647,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
-                bundle: context.inputs,
                 renderContext: renderContext,
                 renderer: contentRenderer
             ), !seeAlso.references.isEmpty {
