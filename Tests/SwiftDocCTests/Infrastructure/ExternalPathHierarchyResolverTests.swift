@@ -713,7 +713,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             let entity = try dependencyContext.entity(with: reference)
             let renderNode = try XCTUnwrap(dependencyConverter.renderNode(for: entity))
             
-            return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
+            return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode)
         }
         let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.id)
         
@@ -1004,7 +1004,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
             let renderNode = converter.convert(node)
-            entitySummaries.append(contentsOf: node.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false))
+            entitySummaries.append(contentsOf: node.externallyLinkableElementSummaries(context: context, renderNode: renderNode))
         }
         
         let externalResolver = ExternalPathHierarchyResolver(
