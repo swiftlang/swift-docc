@@ -17,19 +17,21 @@ import SymbolKit
 /// converting nodes in bulk, i.e. when converting a complete documentation model for example.
 public struct RenderContext {
     let documentationContext: DocumentationContext
-    let bundle: DocumentationBundle
     let renderer: DocumentationContentRenderer
     
     /// Creates a new render context.
     /// - Warning: Creating a render context pre-renders all content that the context provides.
     /// - Parameters:
     ///   - documentationContext: A documentation context.
-    ///   - bundle: A documentation bundle.
-    public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
+    public init(documentationContext: DocumentationContext) {
         self.documentationContext = documentationContext
-        self.bundle = bundle
         self.renderer = DocumentationContentRenderer(context: documentationContext)
         createRenderedContent()
+    }
+    
+    @available(*, deprecated, renamed: "init(context:)", message: "Use 'init(context:)' instead. This deprecated API will be removed after 6.4 is released.")
+    public init(documentationContext: DocumentationContext, bundle _: DocumentationBundle) {
+        self.init(documentationContext: documentationContext)
     }
     
     /// The pre-rendered content per node reference.
@@ -40,10 +42,8 @@ public struct RenderContext {
     private mutating func createRenderedContent() {
         let references = documentationContext.knownIdentifiers
         var topics = [ResolvedTopicReference: RenderReferenceStore.TopicContent]()
-        let renderer = self.renderer
-        let documentationContext = self.documentationContext
         
-        let renderContentFor: (ResolvedTopicReference) -> RenderReferenceStore.TopicContent = { reference in
+        let renderContentFor: (ResolvedTopicReference) -> RenderReferenceStore.TopicContent = { [renderer, documentationContext] reference in
             var dependencies = RenderReferenceDependencies()
             let renderReference = renderer.renderReference(for: reference, dependencies: &dependencies)
             let canonicalPath = documentationContext.shortestFinitePath(to: reference).flatMap { $0.isEmpty ? nil : $0 }

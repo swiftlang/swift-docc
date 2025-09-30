@@ -530,7 +530,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
         
     public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> (any RenderTree)? {
-        switch context.resolve(tutorialReference.topic, in: bundle.rootReference) {
+        switch context.resolve(tutorialReference.topic, in: context.inputs.rootReference) {
         case let .failure(reference, _):
             return RenderReferenceIdentifier(reference.topicURL.absoluteString)
         case let .success(resolved):
@@ -806,7 +806,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
-                bundle: bundle,
+                bundle: context.inputs,
                 renderContext: renderContext,
                 renderer: contentRenderer
             ) {
@@ -1029,7 +1029,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: bundle)?.language
+                SupportedLanguage(from: $0, source: nil, for: context.inputs)?.language
             }
             
             // If the task group has a set of supported languages, see if it should render for the allowed traits.
@@ -1241,7 +1241,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
-        let defaultAvailability = defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
+        let defaultAvailability = defaultAvailability(for: context.inputs, moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
             .filter { $0.unconditionallyUnavailable != true }
             .sorted(by: AvailabilityRenderOrder.compare)
         
@@ -1648,7 +1648,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
-                bundle: bundle,
+                bundle: context.inputs,
                 renderContext: renderContext,
                 renderer: contentRenderer
             ), !seeAlso.references.isEmpty {
@@ -1774,7 +1774,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     var context: DocumentationContext
-    var bundle: DocumentationBundle
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
     var videoReferences: [String: VideoReference] = [:]
@@ -1851,7 +1850,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
-        let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+        let generator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
         
         var allVariants: [SourceLanguage: ResolvedTopicReference] = documentationNode.availableSourceLanguages.reduce(into: [:]) { partialResult, language in
             partialResult[language] = identifier
@@ -2002,7 +2001,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     init(
         context: DocumentationContext,
-        bundle: DocumentationBundle,
         identifier: ResolvedTopicReference,
         renderContext: RenderContext? = nil,
         emitSymbolSourceFileURIs: Bool = false,
@@ -2011,7 +2009,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
         self.context = context
-        self.bundle = bundle
         self.identifier = identifier
         self.renderContext = renderContext
         self.contentRenderer = DocumentationContentRenderer(context: context)

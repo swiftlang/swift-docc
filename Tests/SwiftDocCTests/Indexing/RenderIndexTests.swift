@@ -742,7 +742,7 @@ final class RenderIndexTests: XCTestCase {
     }
     
     func generatedRenderIndex(for bundle: DocumentationBundle, withIdentifier bundleIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let indexDirectory = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(

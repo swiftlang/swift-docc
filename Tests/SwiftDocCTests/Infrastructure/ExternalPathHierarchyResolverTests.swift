@@ -707,7 +707,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
         
         // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
-        let dependencyConverter = DocumentationContextConverter(bundle: dependencyBundle, context: dependencyContext, renderContext: .init(documentationContext: dependencyContext, bundle: dependencyBundle))
+        let dependencyConverter = DocumentationContextConverter(bundle: dependencyBundle, context: dependencyContext, renderContext: .init(documentationContext: dependencyContext))
         
         let linkSummaries: [LinkDestinationSummary] = try dependencyContext.knownPages.flatMap { reference in
             let entity = try dependencyContext.entity(with: reference)
@@ -794,7 +794,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         XCTAssertEqual(mainContext.knownPages.count, 3 /* 2 symbols & 1 module*/)
         
-        let mainConverter = DocumentationContextConverter(bundle: mainBundle, context: mainContext, renderContext: .init(documentationContext: mainContext, bundle: mainBundle))
+        let mainConverter = DocumentationContextConverter(bundle: mainBundle, context: mainContext, renderContext: .init(documentationContext: mainContext))
         
         // Check the relationships of 'SomeClass'
         do {

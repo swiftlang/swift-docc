@@ -91,7 +91,6 @@ public class DocumentationContextConverter {
 
         var translator = RenderNodeTranslator(
             context: context,
-            bundle: bundle,
             identifier: node.reference,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,

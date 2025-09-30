@@ -61,7 +61,7 @@ package enum ConvertActionConverter {
         
         // Precompute the render context
         let renderContext = signposter.withIntervalSignpost("Build RenderContext", id: signposter.makeSignpostID()) {
-            RenderContext(documentationContext: context, bundle: bundle)
+            RenderContext(documentationContext: context)
         }
         try outputConsumer.consume(renderReferenceStore: renderContext.store)
 

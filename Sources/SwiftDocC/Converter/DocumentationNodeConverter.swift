@@ -37,7 +37,7 @@ public struct DocumentationNodeConverter {
     ///   - node: The documentation node to convert.
     /// - Returns: The render node representation of the documentation node.
     public func convert(_ node: DocumentationNode) -> RenderNode {
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         return translator.visit(node.semantic) as! RenderNode
     }
 }

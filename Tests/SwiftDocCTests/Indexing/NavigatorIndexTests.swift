@@ -458,7 +458,7 @@ Root
     
     func testNavigatorIndexGeneration() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
@@ -648,7 +648,7 @@ Root
         
         let (bundle, context) = try await loadBundle(catalog: catalog)
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
@@ -695,7 +695,7 @@ Root
     
     func testNavigatorWithDifferentSwiftAndObjectiveCHierarchies() async throws {
         let (_, bundle, context) = try await testBundleAndContext(named: "GeometricalShapes")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
@@ -956,7 +956,7 @@ Root
     
     func testNavigatorIndexUsingPageTitleGeneration() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
@@ -1082,7 +1082,7 @@ Root
     
     func testNavigatorIndexGenerationWithCuratedFragment() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
@@ -1145,7 +1145,7 @@ Root
     
     func testNavigatorIndexAvailabilityGeneration() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
@@ -1249,7 +1249,7 @@ Root
     
     func testCustomIconsInNavigator() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "BookLikeContent") // This content has a @PageImage with the "icon" purpose
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
@@ -1275,7 +1275,7 @@ Root
     
     func testNavigatorIndexDifferentHasherGeneration() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
@@ -2051,7 +2051,7 @@ Root
         configuration.externalMetadata.currentPlatforms = platformMetadata
         
         let (_, bundle, context) = try await testBundleAndContext(named: "AvailabilityBetaBundle", configuration: configuration)
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true)
@@ -2094,7 +2094,7 @@ Root
 
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) async throws -> NavigatorIndex {
         let (bundle, context) = try await testBundleAndContext(named: testBundleName)
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
 
         let targetURL = try createTemporaryDirectory()

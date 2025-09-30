@@ -285,7 +285,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
     
     func testNoDiffsWhenReconvertingSameBundle() async throws {
         let (bundle, context) = try await testBundleAndContext(named: testBundleName)
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         for identifier in context.knownPages {
@@ -307,7 +307,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
-        var renderContext = RenderContext(documentationContext: contextOriginal, bundle: bundleOriginal)
+        var renderContext = RenderContext(documentationContext: contextOriginal)
         var converter = DocumentationContextConverter(bundle: bundleOriginal, context: contextOriginal, renderContext: renderContext)
         
         let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal))
@@ -319,7 +319,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
-        renderContext = RenderContext(documentationContext: contextModified, bundle: bundleModified)
+        renderContext = RenderContext(documentationContext: contextModified)
         converter = DocumentationContextConverter(bundle: bundleModified, context: contextModified, renderContext: renderContext)
         
         let renderNodeModified = try XCTUnwrap(converter.renderNode(for: nodeModified))

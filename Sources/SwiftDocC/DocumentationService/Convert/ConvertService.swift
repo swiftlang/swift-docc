@@ -158,7 +158,7 @@ public struct ConvertService: DocumentationService {
             let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
             
             // Precompute the render context
-            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            let renderContext = RenderContext(documentationContext: context)
             
             let symbolIdentifiersMeetingRequirementsForExpandedDocumentation: [String]? = request.symbolIdentifiersWithExpandedDocumentation?.compactMap { identifier, expandedDocsRequirement in
                 guard let documentationNode = context.documentationCache[identifier] else {

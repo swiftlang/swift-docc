@@ -393,10 +393,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         let converter = DocumentationContextConverter(
             bundle: context.inputs,
             context: context,
-            renderContext: RenderContext(
-                documentationContext: context,
-                bundle: context.inputs
-            )
+            renderContext: RenderContext(documentationContext: context)
         )
         let renderNode = try XCTUnwrap(converter.renderNode(for: context.entity(with: reference)))
         

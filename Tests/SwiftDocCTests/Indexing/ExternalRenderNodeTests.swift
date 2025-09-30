@@ -247,7 +247,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
@@ -337,7 +337,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
@@ -415,7 +415,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)

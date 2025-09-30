@@ -38,7 +38,7 @@ class HeadingAnchorTests: XCTestCase {
         
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let renderNode = try XCTUnwrap(converter.renderNode(for: node))
 

@@ -20,7 +20,7 @@ class DocumentationContextConverterTests: XCTestCase {
         let perNodeConverter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         // We'll use these to convert nodes in bulk
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         let bulkNodeConverter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let encoder = JSONEncoder()
         
@@ -42,7 +42,7 @@ class DocumentationContextConverterTests: XCTestCase {
     
     func testSymbolLocationsAreOnlyIncludedWhenRequested() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
             context.documentationCache["s:14FillIntroduced19macOSOnlyDeprecatedyyF"]
@@ -72,7 +72,7 @@ class DocumentationContextConverterTests: XCTestCase {
     
     func testSymbolAccessLevelsAreOnlyIncludedWhenRequested() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
             context.documentationCache["s:14FillIntroduced19macOSOnlyDeprecatedyyF"]

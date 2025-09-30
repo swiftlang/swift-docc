@@ -449,7 +449,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testSymbolLinkWorkInMultipleLanguages() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # ``MixedLanguageFramework/Bar``
             
@@ -466,12 +466,12 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
