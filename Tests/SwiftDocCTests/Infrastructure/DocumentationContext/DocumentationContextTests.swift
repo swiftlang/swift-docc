@@ -3286,8 +3286,7 @@ let expected = """
         ])
         
         // Verify that the links are resolved in the render model.
-        let bundle = try XCTUnwrap(context.inputs)
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(entity)
         
         XCTAssertEqual(renderNode.topicSections.map(\.anchor), [
@@ -5480,7 +5479,7 @@ let expected = """
         let externalModuleName = "ExternalModuleName"
         
         func makeExternalDependencyFiles() async throws -> (SerializableLinkResolutionInformation, [LinkDestinationSummary]) {
-            let (bundle, context) = try await loadBundle(
+            let (_, context) = try await loadBundle(
                 catalog: Folder(name: "Dependency.docc", content: [
                     JSONFile(name: "\(externalModuleName).symbols.json", content: makeSymbolGraph(moduleName: externalModuleName)),
                     TextFile(name: "Extension.md", utf8Content: """
@@ -5492,14 +5491,14 @@ let expected = """
             )
             
             // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
-            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let converter = DocumentationNodeConverter(context: context)
             let linkSummaries: [LinkDestinationSummary] = try context.knownPages.flatMap { reference in
                 let entity = try context.entity(with: reference)
                 let renderNode = try XCTUnwrap(converter.convert(entity))
                 
                 return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
             }
-            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
+            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
             
             return (linkResolutionInformation, linkSummaries)
         }
@@ -5521,7 +5520,7 @@ let expected = """
             URL(fileURLWithPath: "/path/to/SomeDependency.doccarchive")
         ]
         
-        let (bundle, context) = try await loadBundle(
+        let (_, context) = try await loadBundle(
             catalog: catalog,
             otherFileSystemDirectories: [
                 Folder(name: "path", content: [
@@ -5540,7 +5539,7 @@ let expected = """
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(node)
         
         let externalReference = "doc://Dependency/documentation/ExternalModuleName"

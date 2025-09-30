@@ -93,14 +93,14 @@ class RenderMetadataTests: XCTestCase {
     /// Test that a bystanders symbol graph is loaded, symbols are merged into the main module
     /// and the bystanders are included in the render node metadata.
     func testRendersBystandersFromSymbolGraph() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
         }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
@@ -108,7 +108,7 @@ class RenderMetadataTests: XCTestCase {
         XCTAssertEqual(symbol.crossImportOverlayModule?.bystanderModules, ["Foundation"])
         
         // Verify the rendered metadata contains the bystanders
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(entity)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "MyKit")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Foundation"])
@@ -137,7 +137,7 @@ class RenderMetadataTests: XCTestCase {
         XCTAssertEqual(symbol.crossImportOverlayModule?.bystanderModules, ["BaseKit"])
 
         // Verify the rendered metadata contains the bystanders
-        let converter = DocumentationNodeConverter(bundle: context.inputs, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(entity)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "OverlayTest")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["BaseKit"])

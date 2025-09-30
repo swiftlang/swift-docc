@@ -228,7 +228,7 @@ class DocumentationCuratorTests: XCTestCase {
                 - ``NotFound``
                 """),
             ])
-            let (bundle, context) = try await loadBundle(catalog: catalog)
+            let (_, context) = try await loadBundle(catalog: catalog)
             XCTAssertEqual(
                 context.problems.map(\.diagnostic.summary),
                 [
@@ -266,7 +266,7 @@ class DocumentationCuratorTests: XCTestCase {
             )
             
             // Verify that the rendered top-level page doesn't have an automatic "Classes" topic section anymore.
-            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let converter = DocumentationNodeConverter(context: context)
             let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
             let rootRenderNode = converter.convert(try context.entity(with: moduleReference))
             
@@ -319,7 +319,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCuratorDoesNotRelateNodesWhenArticleLinksContainExtraPathComponents() async throws {
-        let (bundle, context) = try await loadBundle(catalog:
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "CatalogName.docc", content: [
                 TextFile(name: "Root.md", utf8Content: """
                 # Root
@@ -395,7 +395,7 @@ class DocumentationCuratorTests: XCTestCase {
         ])
         
         let rootPage = try context.entity(with: rootReference)
-        let renderer = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderer = DocumentationNodeConverter(context: context)
         let renderNode = renderer.convert(rootPage)
         
         XCTAssertEqual(renderNode.topicSections.map(\.title), [
@@ -661,16 +661,16 @@ class DocumentationCuratorTests: XCTestCase {
     ///        +-- MyArticle ( <--- This should be crawled even if we've mixed manual and automatic curation)
     /// ```
     func testMixedManualAndAutomaticCuration() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let (_, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
         // Verify the link was resolved and it's found in the node's topics task group.
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", symbol.topics?.taskGroups.first?.links.first?.destination)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(entity)
         
         // Verify the article identifier is included in the task group for the render node.
@@ -678,7 +678,7 @@ class DocumentationCuratorTests: XCTestCase {
         
         // Verify that the ONLY curation for `TopClass/name` is the manual curation under `MyArticle`
         // and the automatic curation under `TopClass` is not present.
-        let nameReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
+        let nameReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
         XCTAssertEqual(context.finitePaths(to: nameReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass-API-Collection"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
@@ -686,7 +686,7 @@ class DocumentationCuratorTests: XCTestCase {
 
         // Verify that the BOTH manual curations for `TopClass/age` are preserved
         // even if one of the manual curations overlaps with the inheritance edge from the symbol graph.
-        let ageReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
+        let ageReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
         XCTAssertEqual(context.finitePaths(to: ageReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass-API-Collection"],

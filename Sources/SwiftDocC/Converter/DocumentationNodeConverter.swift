@@ -15,19 +15,18 @@ public struct DocumentationNodeConverter {
     /// The context the converter uses to resolve references it finds in the documentation node's content.
     let context: DocumentationContext
     
-    /// The bundle that contains the content from which the documentation node originated.
-    let bundle: DocumentationBundle
-    
-    /// Creates a new node converter for the given bundle and context.
+    /// Creates a new node converter for the given context.
     ///
-    /// The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.
+    /// The converter uses context to resolve references to other documentation and describe the documentation hierarchy.
     ///
     /// - Parameters:
-    ///   - bundle: The bundle that contains the content from which the documentation node originated.
     ///   - context: The context that the converter uses to to resolve references it finds in the documentation node's content.
-    public init(bundle: DocumentationBundle, context: DocumentationContext) {
-        self.bundle = bundle
+    public init(context: DocumentationContext) {
         self.context = context
+    }
+    @available(*, deprecated, renamed: "init(context:)", message: "Use 'init(context:)' instead. This deprecated API will be removed after 6.4 is released.")
+    public init(bundle _: DocumentationBundle, context: DocumentationContext) {
+        self.init(context: context)
     }
     
     /// Converts a documentation node to a render node.

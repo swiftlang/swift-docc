@@ -1004,8 +1004,8 @@ Root
     }
     
     func testNavigatorIndexGenerationNoPaths() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
@@ -1723,8 +1723,8 @@ Root
     }
     
     func testNavigatorIndexAsReadOnlyFile() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
         
         let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: "org.swift.docc.test", sortRootChildrenByName: true)

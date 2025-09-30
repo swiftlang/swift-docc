@@ -56,7 +56,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         
         let (_, context) = try await loadBundle(catalog: catalog)
         let reference = try XCTUnwrap(context.soleRootModuleReference)
-        let converter = DocumentationNodeConverter(bundle: context.inputs, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         
         let renderNode = converter.convert(try context.entity(with: reference))
         let renderSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)

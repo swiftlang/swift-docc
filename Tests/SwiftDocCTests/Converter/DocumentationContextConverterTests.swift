@@ -14,14 +14,14 @@ import XCTest
 
 class DocumentationContextConverterTests: XCTestCase {
     func testRenderNodesAreIdentical() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         // We'll use this to convert nodes ad-hoc
-        let perNodeConverter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let perNodeConverter = DocumentationNodeConverter(context: context)
         
         // We'll use these to convert nodes in bulk
         let renderContext = RenderContext(documentationContext: context)
-        let bulkNodeConverter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let bulkNodeConverter = DocumentationContextConverter(bundle: context.inputs, context: context, renderContext: renderContext)
         let encoder = JSONEncoder()
         
         for identifier in context.knownPages {

@@ -272,8 +272,7 @@ class ListItemExtractorTests: XCTestCase {
         line: UInt = #line
     ) async throws {
         // Build documentation for a module page with one tagged item with a lot of different
-        
-        let (bundle, context) = try await loadBundle(
+        let (_, context) = try await loadBundle(
             catalog: Folder(name: "Something.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
                 TextFile(name: "Extension.md", utf8Content: """
@@ -303,7 +302,7 @@ class ListItemExtractorTests: XCTestCase {
             ])
         )
         
-        try _assertExtractsRichContentFor(tagName: tagName, findModelContent: findModelContent, renderVerification: renderVerification, isAside: isAside, bundle: bundle, context: context, expectedLogText: """
+        try _assertExtractsRichContentFor(tagName: tagName, findModelContent: findModelContent, renderVerification: renderVerification, isAside: isAside, context: context, expectedLogText: """
         \u{001B}[1;33mwarning: 'FirstNotFoundSymbol' doesn't exist at '/ModuleName'\u{001B}[0;0m
          --> /Something.docc/Extension.md:5:\(49+tagName.count)-5:\(68+tagName.count)
         3 | Some description of this module.
@@ -338,8 +337,7 @@ class ListItemExtractorTests: XCTestCase {
         line: UInt = #line
     ) async throws {
         // Build documentation for a module page with one tagged item with a lot of different
-        
-        let (bundle, context) = try await loadBundle(
+        let (_, context) = try await loadBundle(
             catalog: Folder(name: "Something.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
                 TextFile(name: "Extension.md", utf8Content: """
@@ -370,7 +368,7 @@ class ListItemExtractorTests: XCTestCase {
             ])
         )
         
-        try _assertExtractsRichContentFor(tagName: tagName, findModelContent: findModelContent, renderVerification: renderVerification, isAside: false, bundle: bundle, context: context, expectedLogText: """
+        try _assertExtractsRichContentFor(tagName: tagName, findModelContent: findModelContent, renderVerification: renderVerification, isAside: false, context: context, expectedLogText: """
         \u{001B}[1;33mwarning: 'FirstNotFoundSymbol' doesn't exist at '/ModuleName'\u{001B}[0;0m
          --> /Something.docc/Extension.md:6:60-6:79
         4 |
@@ -401,7 +399,6 @@ class ListItemExtractorTests: XCTestCase {
         findModelContent: (Symbol) -> [any Markup]?,
         renderVerification: RenderVerification,
         isAside: Bool,
-        bundle: DocumentationBundle,
         context: DocumentationContext,
         expectedLogText: String,
         file: StaticString = #filePath,
@@ -457,7 +454,7 @@ class ListItemExtractorTests: XCTestCase {
             return
         }
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(node)
         
         let renderContent = try XCTUnwrap(findRenderContent(renderNode), "Didn't find any rendered content", file: file, line: line)

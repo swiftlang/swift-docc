@@ -991,16 +991,16 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     
     private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try await loadBundle(from: bundleURL, configuration: configuration)
+        let (_, _, context) = try await loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.id)
+        let resolverInfo = try localResolver.prepareForSerialization(bundleID: context.inputs.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
         var entitySummaries = [LinkDestinationSummary]()
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
             let renderNode = converter.convert(node)

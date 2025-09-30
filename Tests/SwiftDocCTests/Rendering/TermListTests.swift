@@ -86,12 +86,12 @@ class TermListTests: XCTestCase {
         
         var configuration = DocumentationContext.Configuration()
         configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle": resolver]
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(entity)
         
         let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
