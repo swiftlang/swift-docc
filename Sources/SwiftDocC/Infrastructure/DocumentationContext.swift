@@ -1014,7 +1014,7 @@ public class DocumentationContext {
             
             // Build references for all symbols in all of this module's symbol graphs.
             let symbolReferences = signposter.withIntervalSignpost("Disambiguate references") {
-                linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+                linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, context: self)
             }
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
