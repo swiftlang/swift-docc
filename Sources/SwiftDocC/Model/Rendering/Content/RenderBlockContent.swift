@@ -161,8 +161,13 @@ public enum RenderBlockContent: Equatable {
         }
 
         public struct LineAnnotation: Equatable, Codable {
-            var style: String
-            var range: Range<Position>
+            public var style: String
+            public var range: Range<Position>
+            
+            public init(style: String, range: Range<Position>) {
+                self.style = style
+                self.range = range
+            }
         }
 
         public enum OptionName: String, CaseIterable {
