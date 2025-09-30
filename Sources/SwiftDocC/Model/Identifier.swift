@@ -1,16 +1,16 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import SymbolKit
-import Markdown
+public import Markdown
 
 /// A resolved or unresolved reference to a piece of documentation.
 ///
@@ -88,8 +88,8 @@ public struct TopicReferenceResolutionErrorInfo: Hashable {
 }
 
 extension TopicReferenceResolutionErrorInfo {
-    init(_ error: Error, solutions: [Solution] = []) {
-        if let describedError = error as? DescribedError {
+    init(_ error: any Error, solutions: [Solution] = []) {
+        if let describedError = error as? (any DescribedError) {
             self.message = describedError.errorDescription
             self.note = describedError.recoverySuggestion
         } else {
@@ -176,11 +176,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// The storage for the resolved topic reference's state.
     let _storage: Storage
     
-    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
-    public var bundleIdentifier: String {
-        bundleID.rawValue
-    }
-    
     /// The identifier of the bundle that owns this documentation topic.
     public var bundleID: DocumentationBundle.Identifier {
         _storage.bundleID
@@ -223,14 +218,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             urlReadableFragment: fragment.map(urlReadableFragment(_:)),
             sourceLanguages: sourceLanguages
         )
-    }
-    @available(*, deprecated, renamed: "init(id:path:fragment:sourceLanguage:)", message: "Use 'init(id:path:fragment:sourceLanguage:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
-        self.init(bundleIdentifier: bundleIdentifier, path: path, fragment: fragment, sourceLanguages: [sourceLanguage])
-    }
-    @available(*, deprecated, renamed: "init(id:path:fragment:sourceLanguages:)", message: "Use 'init(id:path:fragment:sourceLanguages:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
-        self.init(bundleID: .init(rawValue: bundleIdentifier), path: path, fragment: fragment, sourceLanguages: sourceLanguages)
     }
     
     private init(bundleID: DocumentationBundle.Identifier, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
@@ -276,7 +263,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         case url, interfaceLanguage
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         enum TopicReferenceDeserializationError: Error {
             case unexpectedURLScheme(url: URL, scheme: String)
             case missingBundleIdentifier(url: URL)
@@ -417,7 +404,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         return url.lastPathComponent
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(url.absoluteString, forKey: .url)
         
@@ -541,11 +528,6 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     /// The URL as originally spelled.
     public let topicURL: ValidatedURL
     
-    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
-    public var bundleIdentifier: String? {
-        bundleID?.rawValue
-    }
-    
     /// The bundle identifier, if one was provided in the host name component of the original URL.
     public var bundleID: DocumentationBundle.Identifier? {
         topicURL.components.host.map { .init(rawValue: $0) }
@@ -607,11 +589,6 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
 
 /// A reference to an auxiliary resource such as an image.
 public struct ResourceReference: Hashable {
-    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
-    public var bundleIdentifier: String {
-        bundleID.rawValue
-    }
-    
     /// The documentation bundle identifier for the bundle in which this resource resides.
     public let bundleID: DocumentationBundle.Identifier
 

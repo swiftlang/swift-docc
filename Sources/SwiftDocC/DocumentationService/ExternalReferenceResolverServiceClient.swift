@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,6 +10,13 @@
 
 import Foundation
 import SymbolKit
+
+#if canImport(os)
+    import os
+    private let logger = Logger(subsystem: "org.swift.docc", category: "ExternalReferenceResolverServiceClient")
+#else
+    private let logger = NoOpLoggerShim()
+#endif
 
 /// A client for performing link resolution requests to a documentation server.
 class ExternalReferenceResolverServiceClient {
@@ -35,7 +42,7 @@ class ExternalReferenceResolverServiceClient {
         self.convertRequestIdentifier = convertRequestIdentifier
     }
     
-    func sendAndWait(_ request: some Codable) throws -> Data {
+    func sendAndWait(_ request: some Codable & SendableMetatype) throws -> Data {
         let resultGroup = DispatchGroup()
         
         var result: Result<Data?, Error>?
@@ -73,7 +80,7 @@ class ExternalReferenceResolverServiceClient {
         }
         
         guard resultGroup.wait(timeout: .now() + .seconds(Self.responseTimeout)) == .success else {
-            logError(.timeout)
+            logger.log("Timed out when resolving request.")
             throw Error.timeout
         }
         
@@ -81,13 +88,28 @@ class ExternalReferenceResolverServiceClient {
         case .success(let data?)?:
             return data
         case .success?:
-            logError(.missingPayload)
+            logger.log("Received nil payload when resolving request.")
             throw Error.missingPayload
         case .failure(let error):
-            logError(error)
+            switch error {
+            case .failedToEncodeRequest(let underlyingError):
+                logger.log("Unable to encode request for request: \(underlyingError.localizedDescription)")
+            case .invalidResponse(let underlyingError):
+                logger.log("Received invalid response when resolving request: \(underlyingError.localizedDescription)")
+            case .invalidResponseType(let receivedType):
+                logger.log("Received unknown response type when resolving request: '\(receivedType)'")
+            case .missingPayload:
+                logger.log("Received nil payload when resolving request.")
+            case .timeout:
+                logger.log("Timed out when resolving request.")
+            case .receivedErrorFromServer(let message):
+                logger.log("Received error from server when resolving request: \(message)")
+            case .unknownError:
+                logger.log("Unknown error when resolving request.")
+            }
             throw error
         case nil:
-            logError(.unknownError)
+            logger.log("Unknown error when resolving request.")
             throw Error.unknownError
         }
     }
@@ -103,29 +125,10 @@ class ExternalReferenceResolverServiceClient {
                 .failure(.invalidResponseType(receivedType: message.type.rawValue))
         }
     }
-    
-    private func logError(_ error: Error) {
-        switch error {
-        case .failedToEncodeRequest(let underlyingError):
-            xlog("Unable to encode request for request: \(underlyingError.localizedDescription)")
-        case .invalidResponse(let underlyingError):
-            xlog("Received invalid response when resolving request: \(underlyingError.localizedDescription)")
-        case .invalidResponseType(let receivedType):
-            xlog("Received unknown response type when resolving request: '\(receivedType)'")
-        case .missingPayload:
-            xlog("Received nil payload when resolving request.")
-        case .timeout:
-            xlog("Timed out when resolving request.")
-        case .receivedErrorFromServer(let message):
-            xlog("Received error from server when resolving request: \(message)")
-        case .unknownError:
-            xlog("Unknown error when resolving request.")
-        }
-    }
 
     enum Error: Swift.Error {
-        case failedToEncodeRequest(underlyingError: Swift.Error)
-        case invalidResponse(underlyingError: Swift.Error)
+        case failedToEncodeRequest(underlyingError: any Swift.Error)
+        case invalidResponse(underlyingError: any Swift.Error)
         case invalidResponseType(receivedType: String)
         case missingPayload
         case timeout

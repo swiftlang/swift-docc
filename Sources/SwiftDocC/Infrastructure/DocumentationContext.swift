@@ -1,66 +1,16 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import Markdown
 import SymbolKit
-
-/// A type that provides information about documentation bundles and their content.
-@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-public protocol DocumentationContextDataProvider {
-    /// An object to notify when bundles are added or removed.
-    var delegate: DocumentationContextDataProviderDelegate? { get set }
-    
-    /// The documentation bundles that this data provider provides.
-    var bundles: [BundleIdentifier: DocumentationBundle] { get }
-    
-    /// Returns the data for the specified `url` in the provided `bundle`.
-    ///
-    /// - Parameters:
-    ///   - url: The URL of the file to read.
-    ///   - bundle: The bundle that the file is a part of.
-    ///
-    /// - Throws: When the file cannot be found in the workspace.
-    func contentsOfURL(_ url: URL, in bundle: DocumentationBundle) throws -> Data
-}
-
-/// An object that responds to changes in available documentation bundles for a specific provider.
-@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-public protocol DocumentationContextDataProviderDelegate: AnyObject {
-    
-    /// Called when the `dataProvider` has added a new documentation bundle to its list of `bundles`.
-    ///
-    /// - Parameters:
-    ///   - dataProvider: The provider that added this bundle.
-    ///   - bundle: The bundle that was added.
-    ///
-    /// - Note: This method is called after the `dataProvider` has been added the bundle to its `bundles` property.
-    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle:  DocumentationBundle) throws
-    
-    /// Called when the `dataProvider` has removed a documentation bundle from its list of `bundles`.
-    ///
-    /// - Parameters:
-    ///   - dataProvider: The provider that removed this bundle.
-    ///   - bundle: The bundle that was removed.
-    ///
-    /// - Note: This method is called after the `dataProvider` has been removed the bundle from its `bundles` property.
-    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle:  DocumentationBundle) throws
-}
-
-/// Documentation bundles use a string value as a unique identifier.
-///
-/// This value is typically a reverse host name, for example: `com.<organization-name>.<product-name>`.
-///
-/// Documentation links may include the bundle identifier---as a host component of the URL---to reference content in a specific documentation bundle.
-@available(*, deprecated, renamed: "DocumentationBundle.Identifier", message: "Use 'DocumentationBundle.Identifier' instead. This deprecated API will be removed after 6.2 is released")
-public typealias BundleIdentifier = String
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///
@@ -116,67 +66,29 @@ public class DocumentationContext {
     
     /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
     public var linkResolver: LinkResolver
-    
-    private enum _Provider {
-        @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
-        case legacy(DocumentationContextDataProvider)
-        case new(DataProvider)
-    }
-    private var dataProvider: _Provider
 
-    /// The provider of documentation bundles for this context.
-    @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
-    private var _legacyDataProvider: DocumentationContextDataProvider! {
-        get {
-            switch dataProvider {
-            case .legacy(let legacyDataProvider):
-                legacyDataProvider
-            case .new:
-                nil
-            }
-        }
-        set {
-            dataProvider = .legacy(newValue)
-        }
-    }
-    
-    func contentsOfURL(_ url: URL, in bundle: DocumentationBundle) throws -> Data {
-        switch dataProvider {
-        case .legacy(let legacyDataProvider):
-            return try legacyDataProvider.contentsOfURL(url, in: bundle)
-        case .new(let dataProvider):
-            assert(self.bundle?.id == bundle.id, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
-            return try dataProvider.contents(of: url)
-        }
-    }
+    /// The data provider that the context can use to read the contents of files that belong to ``bundle``.
+    let dataProvider: any DataProvider
 
     /// The documentation bundle that is registered with the context.
-    var bundle: DocumentationBundle?
+    let bundle: DocumentationBundle
 
     /// A collection of configuration for this context.
-    public package(set) var configuration: Configuration {
-        get { _configuration }
-        @available(*, deprecated, message: "Pass a configuration at initialization. This property will become read-only after Swift 6.2 is released.")
-        set { _configuration = newValue }
-    }
-    // Having a deprecated setter above requires a computed property.
-    private var _configuration: Configuration
+    public let configuration: Configuration
     
     /// The graph of all the documentation content and their relationships to each other.
     ///
     /// > Important: The topic graph has no awareness of source language specific edges.
     var topicGraph = TopicGraph()
     
+    /// Will be assigned during context initialization
+    var snippetResolver: SnippetResolver!
+    
     /// User-provided global options for this documentation conversion.
     var options: Options?
     
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
-
-    @available(*, deprecated, renamed: "tutorialTableOfContentsReferences", message: "Use 'tutorialTableOfContentsReferences' This deprecated API will be removed after 6.2 is released")
-    public var rootTechnologies: [ResolvedTopicReference] {
-        tutorialTableOfContentsReferences
-    }
 
     /// The tutorial table-of-contents nodes in the topic graph.
     public var tutorialTableOfContentsReferences: [ResolvedTopicReference] {
@@ -285,31 +197,6 @@ public class DocumentationContext {
     /// Mentions of symbols within articles.
     var articleSymbolMentions = ArticleSymbolMentions()
 
-    /// Initializes a documentation context with a given `dataProvider` and registers all the documentation bundles that it provides.
-    ///
-    /// - Parameters:
-    ///   - dataProvider: The data provider to register bundles from.
-    ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
-    ///   - configuration: A collection of configuration for the created context.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
-    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-    public init(
-        dataProvider: DocumentationContextDataProvider,
-        diagnosticEngine: DiagnosticEngine = .init(),
-        configuration: Configuration = .init()
-    ) throws {
-        self.dataProvider = .legacy(dataProvider)
-        self.diagnosticEngine = diagnosticEngine
-        self._configuration = configuration
-        self.linkResolver = LinkResolver(dataProvider: FileManager.default)
-        
-        _legacyDataProvider.delegate = self
-        
-        for bundle in dataProvider.bundles.values {
-            try register(bundle)
-        }
-    }
-
     /// Initializes a documentation context with a given `bundle`.
     ///
     /// - Parameters:
@@ -320,82 +207,31 @@ public class DocumentationContext {
     /// - Throws: If an error is encountered while registering a documentation bundle.
     package init(
         bundle: DocumentationBundle,
-        dataProvider: DataProvider,
+        dataProvider: any DataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
-    ) throws {
+    ) async throws {
         self.bundle = bundle
-        self.dataProvider = .new(dataProvider)
+        self.dataProvider = dataProvider
         self.diagnosticEngine = diagnosticEngine
-        self._configuration = configuration
+        self.configuration = configuration
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
         ResolvedTopicReference.enableReferenceCaching(for: bundle.id)
         try register(bundle)
     }
-
-    /// Respond to a new `bundle` being added to the `dataProvider` by registering it.
-    ///
-    /// - Parameters:
-    ///   - dataProvider: The provider that added this bundle.
-    ///   - bundle: The bundle that was added.
-    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
-        try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
-            // Enable reference caching for this documentation bundle.
-            ResolvedTopicReference.enableReferenceCaching(for: bundle.id)
-            
-            try self.register(bundle)
-        }
-    }
-    
-    /// Respond to a new `bundle` being removed from the `dataProvider` by unregistering it.
-    ///
-    /// - Parameters:
-    ///   - dataProvider: The provider that removed this bundle.
-    ///   - bundle: The bundle that was removed.
-    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
-    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
-        linkResolver.localResolver?.unregisterBundle(identifier: bundle.id)
-        
-        // Purge the reference cache for this bundle and disable reference caching for
-        // this bundle moving forward.
-        ResolvedTopicReference.purgePool(for: bundle.id)
-        
-        unregister(bundle)
-    }
-    
-    /// The documentation bundles that are currently registered with the context.
-    @available(*, deprecated, message: "Use 'bundle' instead. This deprecated API will be removed after 6.2 is released")
-    public var registeredBundles: some Collection<DocumentationBundle> {
-        _registeredBundles
-    }
-    
-    /// Returns the `DocumentationBundle` with the given `identifier` if it's registered with the context, otherwise `nil`.
-    @available(*, deprecated, message: "Use 'bundle' instead. This deprecated API will be removed after 6.2 is released")
-    public func bundle(identifier: String) -> DocumentationBundle? {
-        _bundle(identifier: identifier)
-    }
     
     // Remove these  when removing `registeredBundles` and `bundle(identifier:)`.
     // These exist so that internal code that need to be compatible with legacy data providers can access the bundles without deprecation warnings.
+    @available(*, deprecated, renamed: "bundle", message: "REMOVE THIS")
     var _registeredBundles: [DocumentationBundle] {
-        switch dataProvider {
-        case .legacy(let legacyDataProvider):
-            Array(legacyDataProvider.bundles.values)
-        case .new:
-            bundle.map { [$0] } ?? []
-        }
+        [bundle]
     }
     
+    @available(*, deprecated, renamed: "bundle", message: "REMOVE THIS")
     func _bundle(identifier: String) -> DocumentationBundle? {
-        switch dataProvider {
-        case .legacy(let legacyDataProvider):
-            return legacyDataProvider.bundles[identifier]
-        case .new:
-            assert(bundle?.id.rawValue == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
-            return bundle?.id.rawValue == identifier ? bundle : nil
-        }
+        assert(bundle.id.rawValue == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
+        return bundle.id.rawValue == identifier ? bundle : nil
     }
         
     /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
@@ -407,7 +243,7 @@ public class DocumentationContext {
     ///   - problems: A mutable collection of problems to update with any problem encountered during the semantic analysis.
     /// - Returns: The result of the semantic analysis.
     private func analyze(_ document: Document, at source: URL, in bundle: DocumentationBundle, engine: DiagnosticEngine) -> Semantic? {
-        var analyzer = SemanticAnalyzer(source: source, context: self, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: source, bundle: bundle)
         let result = analyzer.visit(document)
         engine.emit(analyzer.problems)
         return result
@@ -432,7 +268,6 @@ public class DocumentationContext {
     ///   - source: The location of the document.
     private func check(_ document: Document, at source: URL) {
         var checker = CompositeChecker([
-            AbstractContainsFormattedTextOnly(sourceFile: source).any(),
             DuplicateTopicsSections(sourceFile: source).any(),
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
@@ -681,7 +516,7 @@ public class DocumentationContext {
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
 
-            if FeatureFlags.current.isExperimentalMentionedInEnabled {
+            if FeatureFlags.current.isMentionedInEnabled {
                 // Record symbol links as symbol "mentions" for automatic cross references
                 // on rendered symbol documentation.
                 if let article = result.node.semantic as? Article,
@@ -893,14 +728,14 @@ public class DocumentationContext {
         
         var references: [ResolvedTopicReference: URL] = [:]
 
-        let decodeError = Synchronized<Error?>(nil)
+        let decodeError = Synchronized<(any Error)?>(nil)
         
         // Load and analyze documents concurrently
         let analyzedDocuments: [(URL, Semantic)] = bundle.markupURLs.concurrentPerform { url, results in
             guard decodeError.sync({ $0 == nil }) else { return }
             
             do {
-                let data = try contentsOfURL(url, in: bundle)
+                let data = try dataProvider.contents(of: url)
                 let source = String(decoding: data, as: UTF8.self)
                 let document = Document(parsing: source, source: url, options: [.parseBlockDirectives, .parseSymbolLinks])
                 
@@ -943,7 +778,7 @@ public class DocumentationContext {
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
-            let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is AnyLink
+            let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is (any AnyLink)
             
             if let firstFoundAtURL = references[reference], !isDocumentationExtension {
                 let problem = Problem(
@@ -1039,7 +874,7 @@ public class DocumentationContext {
         return (tutorialTableOfContentsResults, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
-    private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
+    private func insertLandmarks(_ landmarks: some Sequence<any Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
         for landmark in landmarks {
             guard let range = landmark.range else {
                 continue
@@ -1074,8 +909,7 @@ public class DocumentationContext {
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
             engine: diagnosticEngine,
-            bundle: bundle,
-            context: self
+            bundle: bundle
         )
 
         // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
@@ -1328,7 +1162,7 @@ public class DocumentationContext {
             // Track the symbols that have multiple matching documentation extension files for diagnostics.
             var symbolsWithMultipleDocumentationExtensionMatches = [ResolvedTopicReference: [SemanticResult<Article>]]()
             for documentationExtension in documentationExtensions {
-                guard let link = documentationExtension.value.title?.child(at: 0) as? AnyLink else {
+                guard let link = documentationExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
                 
@@ -1469,9 +1303,6 @@ public class DocumentationContext {
 
     private func shouldContinueRegistration() throws {
         try Task.checkCancellation()
-        guard isRegistrationEnabled.sync({ $0 }) else {
-            throw ContextError.registrationDisabled
-        }
     }
 
     /// Builds in-memory relationships between symbols based on the relationship information in a given symbol graph file.
@@ -1736,7 +1567,7 @@ public class DocumentationContext {
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
     func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], moduleReference: ResolvedTopicReference, fileURL otherSymbolGraphURL: URL?) throws {
-        let mergeError = Synchronized<Error?>(nil)
+        let mergeError = Synchronized<(any Error)?>(nil)
         
         let results: [AddSymbolResultWithProblems] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
             guard let defaultSymbol = symbol.defaultSymbol, let swiftSelector = symbol.defaultSelector, let module = symbol.modules[swiftSelector] else {
@@ -1848,11 +1679,6 @@ public class DocumentationContext {
         registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: bundleID)
     }
     
-    @available(*, deprecated, renamed: "registeredImageAssets(for:)", message: "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
-    public func registeredImageAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        registeredImageAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
-    }
-    
     /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return video assets for.
@@ -1861,11 +1687,6 @@ public class DocumentationContext {
         registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: bundleID)
     }
     
-    @available(*, deprecated, renamed: "registeredVideoAssets(for:)", message: "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
-    public func registeredVideoAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        registeredVideoAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
-    }
-
     /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
     ///
     /// - Parameter bundleID: The identifier of the bundle to return download assets for.
@@ -1874,11 +1695,6 @@ public class DocumentationContext {
         registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleID)
     }
     
-    @available(*, deprecated, renamed: "registeredDownloadsAssets(for:)", message: "registeredDownloadsAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
-    public func registeredDownloadsAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        registeredDownloadsAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
-    }
-
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
     private typealias ArticlesTuple = (articles: Articles, rootPageArticles: Articles)
 
@@ -1914,18 +1730,6 @@ public class DocumentationContext {
             // Remove the article from the context
             uncuratedArticles.removeValue(forKey: article.topicGraphNode.reference)
         }
-    }
-    
-    /// When `true` bundle registration will be cancelled asap.
-    private var isRegistrationEnabled = Synchronized<Bool>(true)
-    
-    /// Enables or disables bundle registration.
-    ///
-    /// When given `false` the context will try to cancel as quick as possible
-    /// any ongoing bundle registrations.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    public func setRegistrationEnabled(_ value: Bool) {
-        isRegistrationEnabled.sync({ $0 = value })
     }
     
     /// Adds articles that are not root pages to the documentation cache.
@@ -2010,7 +1814,7 @@ public class DocumentationContext {
             }
             let article = Article(
                 markup: articleResult.value.markup,
-                metadata: Metadata(from: metadataMarkup, for: bundle, in: self),
+                metadata: Metadata(from: metadataMarkup, for: bundle),
                 redirects: articleResult.value.redirects,
                 options: articleResult.value.options
             )
@@ -2043,7 +1847,7 @@ public class DocumentationContext {
                 Heading(level: 1, Text(title)),
                 metadataDirectiveMarkup
             )
-            let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
+            let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle)
             let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
             let documentationNode = DocumentationNode(
                 reference: reference,
@@ -2127,7 +1931,7 @@ public class DocumentationContext {
     ///   - otherArticles: Non-root articles to curate.
     ///   - rootNode: The node that will serve as the source of any topic graph edges created by this method.
     /// - Throws: If looking up a `DocumentationNode` for the root module reference fails.
-    /// - Returns: An array of resolved references to the articles that were automatically curated.
+    /// - Returns: An array of resolved references to the articles that were automatically curated, sorted by their titles.
     private func autoCurateArticles(_ otherArticles: DocumentationContext.Articles, startingFrom rootNode: TopicGraph.Node) throws -> [ResolvedTopicReference] {
         let articlesToAutoCurate = otherArticles.filter { article in
             let reference = article.topicGraphNode.reference
@@ -2141,8 +1945,14 @@ public class DocumentationContext {
             topicGraph.addEdge(from: rootNode, to: article.topicGraphNode)
             uncuratedArticles.removeValue(forKey: article.topicGraphNode.reference)
         }
+
+        // Sort the articles by their titles to ensure a deterministic order
+        let sortedArticles = articlesToAutoCurate.sorted {
+            $0.topicGraphNode.title.lowercased() < $1.topicGraphNode.title.lowercased()
+        }
+
+        let articleReferences = sortedArticles.map(\.topicGraphNode.reference)
         
-        let articleReferences = articlesToAutoCurate.map(\.topicGraphNode.reference)
         let automaticTaskGroup = AutomaticTaskGroupSection(
             title: "Articles",
             references: articleReferences,
@@ -2157,7 +1967,7 @@ public class DocumentationContext {
             for sourceLanguage in node.availableSourceLanguages {
                 symbol.automaticTaskGroupsVariants[.init(interfaceLanguage: sourceLanguage.id)] = [automaticTaskGroup]
             }
-        } else if var taskGroupProviding = node.semantic as? AutomaticTaskGroupsProviding {
+        } else if var taskGroupProviding = node.semantic as? (any AutomaticTaskGroupsProviding) {
             taskGroupProviding.automaticTaskGroups = [automaticTaskGroup]
         }
         
@@ -2206,7 +2016,7 @@ public class DocumentationContext {
         let discoveryGroup = DispatchGroup()
         let discoveryQueue = DispatchQueue(label: "org.swift.docc.Discovery", qos: .unspecified, attributes: .concurrent, autoreleaseFrequency: .workItem)
         
-        let discoveryError = Synchronized<Error?>(nil)
+        let discoveryError = Synchronized<(any Error)?>(nil)
 
         // Load all bundle symbol graphs into the loader.
         var symbolGraphLoader: SymbolGraphLoader!
@@ -2215,7 +2025,7 @@ public class DocumentationContext {
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             symbolGraphLoader = SymbolGraphLoader(
                 bundle: bundle,
-                dataLoader: { try self.contentsOfURL($0, in: $1) },
+                dataProvider: dataProvider,
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
             )
             
@@ -2230,6 +2040,8 @@ public class DocumentationContext {
                         knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
                     ))
                 }
+                
+                self.snippetResolver = SnippetResolver(symbolGraphLoader: symbolGraphLoader)
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -2423,18 +2235,17 @@ public class DocumentationContext {
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
         allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), bundle: bundle, initial: allCuratedReferences)
-
-        // Remove curation paths that have been created automatically above
-        // but we've found manual curation for in the second crawl pass.
-        removeUnneededAutomaticCuration(automaticallyCurated)
         
         // Automatically curate articles that haven't been manually curated
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, startingFrom: rootNode)
-            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.id)
-            resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
+            allCuratedReferences = try crawlSymbolCuration(in: articleReferences, bundle: bundle, initial: allCuratedReferences)
         }
+        
+        // Remove curation paths that have been created automatically above
+        // but we've found manual curation for in the second crawl pass.
+        removeUnneededAutomaticCuration(automaticallyCurated)
 
         // Remove any empty "Extended Symbol" pages whose children have been curated elsewhere.
         for module in rootModules {
@@ -2650,14 +2461,6 @@ public class DocumentationContext {
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
     
-    /// Adds new checks to be run during the global topic analysis; after a bundle has been fully registered and its topic graph has been fully built.
-    ///
-    /// - Parameter newChecks: The new checks to add.
-    @available(*, deprecated, message: "Use 'TopicAnalysisConfiguration.additionalChecks' instead. This deprecated API will be removed after 6.2 is released")
-    public func addGlobalChecks(_ newChecks: [ReferenceCheck]) {
-        configuration.topicAnalysisConfiguration.additionalChecks.append(contentsOf: newChecks)
-    }
-    
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
     /// - Parameters:
     ///   - references: A list of references to crawl.
@@ -2784,12 +2587,12 @@ public class DocumentationContext {
             let symbolPath = reference.url.pathComponents.dropFirst(2).joined(separator: "/")
             let firstExtension = documentationExtensions.first!
             
-            guard let link = firstExtension.value.title?.child(at: 0) as? AnyLink else {
+            guard let link = firstExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                 fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(firstExtension.source.absoluteString.singleQuoted)")
             }
             let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
             let notes: [DiagnosticNote] = documentationExtensions.dropFirst().map { documentationExtension in
-                guard let link = documentationExtension.value.title?.child(at: 0) as? AnyLink else {
+                guard let link = documentationExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
                 return DiagnosticNote(source: documentationExtension.source, range: link.range ?? zeroRange, message: "\(symbolPath.singleQuoted) is also documented here.")
@@ -2867,15 +2670,13 @@ public class DocumentationContext {
      - Throws: ``ContextError/notFound(_:)` if a resource with the given was not found.
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
-        guard let bundle,
-              let assetManager = assetManagers[identifier.bundleID],
-              let asset = assetManager.allData(named: identifier.path) else {
+        guard let asset = assetManagers[identifier.bundleID]?.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
         }
         
         let resource = asset.data(bestMatching: trait)
         
-        return try contentsOfURL(resource.url, in: bundle)
+        return try dataProvider.contents(of: resource.url)
     }
     
     /// Returns true if a resource with the given identifier exists in the registered bundle.
@@ -2906,7 +2707,7 @@ public class DocumentationContext {
      - Returns: A ``DocumentationNode`` with the given identifier.
      - Throws: ``ContextError/notFound(_:)`` if a documentation node with the given identifier was not found.
      */
-    public func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
+    public func entity(with reference: ResolvedTopicReference) throws(ContextError) -> DocumentationNode {
         if let cached = documentationCache[reference] {
             return cached
         }
@@ -2942,7 +2743,7 @@ public class DocumentationContext {
         knownEntityValue(
             reference: reference,
             valueInLocalEntity: \.availableSourceLanguages,
-            valueInExternalEntity: \.sourceLanguages
+            valueInExternalEntity: \.availableLanguages
         )
     }
     
@@ -2950,9 +2751,9 @@ public class DocumentationContext {
     func isSymbol(reference: ResolvedTopicReference) -> Bool {
         knownEntityValue(
             reference: reference,
-            valueInLocalEntity: { node in node.kind.isSymbol },
-            valueInExternalEntity: { entity in entity.topicRenderReference.kind == .symbol }
-        )
+            valueInLocalEntity: \.kind,
+            valueInExternalEntity: \.kind
+        ).isSymbol
     }
 
     // MARK: - Relationship queries
@@ -3126,21 +2927,6 @@ public class DocumentationContext {
             return nil
         } else {
             return nil
-        }
-    }
-
-    /// Attempt to resolve an unresolved code listing.
-    ///
-    /// - Parameters:
-    ///   - unresolvedCodeListingReference: The code listing reference to resolve.
-    ///   - parent: The topic the code listing reference appears in.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-    public func resolveCodeListing(_ unresolvedCodeListingReference: UnresolvedCodeListingReference, in parent: ResolvedTopicReference) -> AttributedCodeListing? {
-        switch dataProvider {
-        case .legacy(let legacyDataProvider):
-            legacyDataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
-        case .new:
-            nil
         }
     }
     
@@ -3360,6 +3146,3 @@ extension DataAsset {
         }
     }
 }
-
-@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-extension DocumentationContext: DocumentationContextDataProviderDelegate {}

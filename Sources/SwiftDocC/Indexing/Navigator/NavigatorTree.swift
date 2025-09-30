@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// Defines an object that can be represented as raw Data and therefore serialized to/deserialized from disk.
 public protocol Serializable: LMDBData, RawRepresentable where RawValue == Data {}
@@ -119,7 +119,12 @@ public class NavigatorTree {
         
         func __read() {
             let deadline = DispatchTime.now() + timeout
+#if swift(>=5.10)
+            // Access to this local variable is synchronized using the DispatchQueue `queue`, passed as an argument.
+            nonisolated(unsafe) var processedNodes = [NavigatorTree.Node]()
+#else
             var processedNodes = [NavigatorTree.Node]()
+#endif
             
             while readingCursor.cursor < readingCursor.data.count {
                 let length = MemoryLayout<UInt32>.stride
@@ -175,11 +180,6 @@ public class NavigatorTree {
         }
         
         self.root = root
-    }
-    
-    @available(*, deprecated, renamed: "read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)", message: "Use 'read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)' instead. This deprecated API will be removed after 6.1 is released")
-    public func read(from url: URL, bundleIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
-        try self.read(from: url, bundleIdentifier: bundleIdentifier, timeout: timeout, delay: delay, queue: queue, presentationIdentifier: presentationIdentifier, broadcast: broadcast)
     }
         
     /**

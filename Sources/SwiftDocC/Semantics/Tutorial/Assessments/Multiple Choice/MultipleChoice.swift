@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// A multiple-choice question.
 ///
@@ -51,12 +51,12 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         self.choices = choices
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == MultipleChoice.directiveName)
         
-        _ = Semantic.Analyses.HasOnlyKnownArguments<MultipleChoice>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<MultipleChoice>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<MultipleChoice>(severityIfFound: .warning, allowedDirectives: [Choice.directiveName, ImageMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<MultipleChoice>(severityIfFound: .warning, allowedDirectives: [Choice.directiveName, ImageMedia.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
         var remainder = MarkupContainer(directive.children)
         let requiredPhrasing: Paragraph?
@@ -70,7 +70,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         }
         
         let choices: [Choice]
-        (choices, remainder) = Semantic.Analyses.ExtractAll<Choice>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (choices, remainder) = Semantic.Analyses.ExtractAll<Choice>().analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         if choices.count < 2 || choices.count > 4 {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).CorrectNumberOfChoices", summary: "`\(MultipleChoice.directiveName)` should contain 2-4 `\(Choice.directiveName)` child directives")
@@ -115,7 +115,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         }
         
         let images: [ImageMedia]
-        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>().analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         if images.count > 1 {
             for extraneousImage in images.suffix(from: 1) {

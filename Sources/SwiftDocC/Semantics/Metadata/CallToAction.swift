@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// A directive that adds a prominent button or link to a page's header.
 ///
@@ -97,12 +97,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         }
     }
 
-    func validate(
-        source: URL?,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
-        problems: inout [Problem]
-    ) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         var isValid = true
 
         if self.url == nil && self.file == nil {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,6 @@
 #if canImport(NIOHTTP1)
 import Foundation
 import XCTest
-@testable import SwiftDocC
 @testable import SwiftDocCUtilities
 import SwiftDocCTestUtilities
 
@@ -19,9 +18,7 @@ import NIO
 import NIOHTTP1
 
 class FileRequestHandlerTests: XCTestCase {
-    let fileIO = NonBlockingFileIO(threadPool: NIOThreadPool(numberOfThreads: 2))
-
-    private func verifyAsset(root: URL, path: String, body: String, type: String, file: StaticString = #file, line: UInt = #line) throws {
+    private func verifyAsset(root: URL, path: String, body: String, type: String, file: StaticString = #filePath, line: UInt = #line) throws {
         let request = makeRequestHead(uri: path)
         let factory = FileRequestHandler(rootURL: root)
         let response = try responseWithPipeline(request: request, handler: factory)

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -26,12 +26,7 @@ protocol AutomaticDirectiveConvertible: DirectiveConvertible, Semantic {
     ///
     /// Return false if a serious enough error is encountered such that the directive
     /// should not be initialized.
-    func validate(
-        source: URL?,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
-        problems: inout [Problem]
-    ) -> Bool
+    func validate(source: URL?, problems: inout [Problem]) -> Bool
     
     /// The key paths to any property wrapped directive arguments, child directives,
     /// or child markup properties.
@@ -80,12 +75,7 @@ extension AutomaticDirectiveConvertible {
         String(describing: self)
     }
     
-    func validate(
-        source: URL?,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
-        problems: inout [Problem]
-    ) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         return true
     }
     
@@ -98,7 +88,7 @@ extension AutomaticDirectiveConvertible {
     /// Performs some semantic analyses to determine whether a valid directive can be created
     /// and returns nils upon failure.
     ///
-    /// > Tip: ``DirectiveConvertible/init(from:source:for:in:problems:)`` performs
+    /// > Tip: ``DirectiveConvertible/init(from:source:for:problems:)`` performs
     /// the same function but supports collecting an array of problems for diagnostics.
     ///
     /// - Parameters:
@@ -109,8 +99,7 @@ extension AutomaticDirectiveConvertible {
     public init?(
         from directive: BlockDirective,
         source: URL? = nil,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext
+        for bundle: DocumentationBundle
     ) {
         var problems = [Problem]()
         
@@ -118,7 +107,6 @@ extension AutomaticDirectiveConvertible {
             from: directive,
             source: source,
             for: bundle,
-            in: context,
             problems: &problems
         )
     }
@@ -127,7 +115,6 @@ extension AutomaticDirectiveConvertible {
         from directive: BlockDirective,
         source: URL?,
         for bundle: DocumentationBundle,
-        in context: DocumentationContext,
         problems: inout [Problem]
     ) {
         precondition(directive.name == Self.directiveName)
@@ -143,8 +130,6 @@ extension AutomaticDirectiveConvertible {
             directive,
             children: directive.children,
             source: source,
-            for: bundle,
-            in: context,
             problems: &problems
         )
         
@@ -181,8 +166,6 @@ extension AutomaticDirectiveConvertible {
             directive,
             children: directive.children,
             source: source,
-            for: bundle,
-            in: context,
             problems: &problems
         )
         
@@ -195,21 +178,19 @@ extension AutomaticDirectiveConvertible {
             children: remainder,
             source: source,
             for: bundle,
-            in: context,
             problems: &problems
         )
         
         for childDirective in reflectedDirective.childDirectives {
             switch childDirective.requirements {
             case .one:
-                let parsedDirective: DirectiveConvertible?
+                let parsedDirective: (any DirectiveConvertible)?
                 (parsedDirective, remainder) = Semantic.Analyses.extractExactlyOne(
                     childType: childDirective.type,
                     parentDirective: directive,
                     children: remainder,
                     source: source,
                     for: bundle,
-                    in: context,
                     problems: &problems
                 )
                 
@@ -227,20 +208,19 @@ extension AutomaticDirectiveConvertible {
                     childDirective.setValue(on: self, to: parsedDirective)
                 }
             case .zeroOrOne:
-                let parsedDirective: DirectiveConvertible?
+                let parsedDirective: (any DirectiveConvertible)?
                 (parsedDirective, remainder) = Semantic.Analyses.extractAtMostOne(
                     childType: childDirective.type,
                     parentDirective: directive,
                     children: remainder,
                     source: source,
                     for: bundle,
-                    in: context,
                     problems: &problems
                 )
                 
                 guard let parsedDirective else {
                     if childDirective.storedAsArray && !childDirective.storedAsOptional {
-                        childDirective.setValue(on: self, to: [DirectiveConvertible.Type]())
+                        childDirective.setValue(on: self, to: [any DirectiveConvertible.Type]())
                     }
                     
                     continue
@@ -252,13 +232,12 @@ extension AutomaticDirectiveConvertible {
                     childDirective.setValue(on: self, to: parsedDirective)
                 }
             case .zeroOrMore:
-                let parsedDirectives: [DirectiveConvertible]
+                let parsedDirectives: [any DirectiveConvertible]
                 (parsedDirectives, remainder) = Semantic.Analyses.extractAll(
                     childType: childDirective.type,
                     children: remainder,
                     source: source,
                     for: bundle,
-                    in: context,
                     problems: &problems
                 )
                 
@@ -266,14 +245,13 @@ extension AutomaticDirectiveConvertible {
                     childDirective.setValue(on: self, to: parsedDirectives)
                 }
             case .oneOrMore:
-                let parsedDirectives: [DirectiveConvertible]
+                let parsedDirectives: [any DirectiveConvertible]
                 (parsedDirectives, remainder) = Semantic.Analyses.extractAtLeastOne(
                     childType: childDirective.type,
                     parentDirective: directive,
                     children: remainder,
                     source: source,
                     for: bundle,
-                    in: context,
                     problems: &problems
                 )
                 
@@ -301,8 +279,6 @@ extension AutomaticDirectiveConvertible {
                     directive,
                     children: remainder,
                     source: source,
-                    for: bundle,
-                    in: context,
                     problems: &problems
                 )
             } else if !remainder.isEmpty {
@@ -367,7 +343,7 @@ extension AutomaticDirectiveConvertible {
             return nil
         }
         
-        guard validate(source: source, for: bundle, in: context, problems: &problems) else {
+        guard validate(source: source, problems: &problems) else {
             return nil
         }
     }

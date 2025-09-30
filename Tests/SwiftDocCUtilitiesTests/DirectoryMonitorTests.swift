@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocCUtilities
 
-#if !os(Linux) && !os(Android) && !os(Windows)
+#if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
 fileprivate extension NSNotification.Name {
     static let testNodeUpdated = NSNotification.Name(rawValue: "testNodeUpdated")
     static let testDirectoryReloaded = NSNotification.Name(rawValue: "testDirectoryReloaded")
@@ -24,12 +24,12 @@ func fileURLsAreEqual(_ url1: URL, _ url2: URL) -> Bool {
 #endif
 
 class DirectoryMonitorTests: XCTestCase {
-    #if !os(Linux) && !os(Android) && !os(Windows)
+    #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
     // - MARK: Directory watching test infra
     
     /// Method that automates setting up a directory monitor, setting up the relevant expectations for a test,
     /// then executing a given trigger block and wait for the expectations to fullfill.
-    private func monitor(url rootURL: URL, forChangeAtURL expectedChangeOrigin: URL?, withDirectoryTreeReload isTreeReloadExpected: Bool, triggerBlock: () throws -> Void, file: StaticString = #file, line: UInt = #line) throws {
+    private func monitor(url rootURL: URL, forChangeAtURL expectedChangeOrigin: URL?, withDirectoryTreeReload isTreeReloadExpected: Bool, triggerBlock: () throws -> Void, file: StaticString = #filePath, line: UInt = #line) throws {
         // Creating a file will generate multiple fs events, we're interested in the fist one only
         // so we're using a Bool flag and a lock.
         let lock = NSLock()
@@ -89,9 +89,9 @@ class DirectoryMonitorTests: XCTestCase {
     }
     
     /// - Warning: Please do not overuse this method as it takes 10s of wait time and can potentially slow down running the test suite.
-    private func monitorNoUpdates(url: URL, testBlock: @escaping () throws -> Void, file: StaticString = #file, line: UInt = #line) throws {
+    private func monitorNoUpdates(url: URL, testBlock: @escaping () throws -> Void, file: StaticString = #filePath, line: UInt = #line) throws {
         let monitor = try DirectoryMonitor(root: url) { rootURL, url in
-            XCTFail("Did produce file update event for a hidden file")
+            XCTFail("Did produce file update event for a hidden file", file: file, line: line)
         }
         
         try monitor.start()
@@ -118,7 +118,7 @@ class DirectoryMonitorTests: XCTestCase {
     /// Tests a succession of file system changes and verifies that they produce
     /// the expected monitor events.
     func testMonitorUpdates() throws {
-        #if !os(Linux) && !os(Android) && !os(Windows)
+        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
 
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
@@ -167,7 +167,7 @@ class DirectoryMonitorTests: XCTestCase {
     }
     
     func testMonitorDoesNotTriggerUpdates() throws {
-        #if !os(Linux) && !os(Android) && !os(Windows)
+        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
         
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
@@ -200,7 +200,7 @@ class DirectoryMonitorTests: XCTestCase {
     
     /// Tests a zero sum change aggregation triggers an event.
     func testMonitorZeroSumSizeChangesUpdates() throws {
-        #if !os(Linux) && !os(Android) && !os(Windows)
+        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
 
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")

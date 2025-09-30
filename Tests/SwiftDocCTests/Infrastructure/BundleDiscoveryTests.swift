@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -26,101 +26,10 @@ class BundleDiscoveryTests: XCTestCase {
         return files
     }
     
-    // This tests registration of multiple catalogs which is deprecated
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    func testFirstBundle() throws {
-        let url = try createTemporaryDirectory()
-        // Create 3 minimal doc bundles
-        for i in 1 ... 3 {
-            let nestedBundle = Folder(name: "TestBundle\(i).docc", content: [
-                InfoPlist(displayName: "Test Bundle \(i)", identifier: "com.example.bundle\(i)"),
-                TextFile(name: "Root.md", utf8Content: """
-                # Test Bundle \(i)
-                @Metadata {
-                   @TechnologyRoot
-                }
-                Abstract.
-                
-                Content.
-                """),
-            ])
-            _ = try nestedBundle.write(inside: url)
-        }
-        
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: url)
-        try workspace.registerProvider(dataProvider)
-        
-        // Verify all bundles are loaded
-        XCTAssertEqual(context.registeredBundles.map { $0.identifier }.sorted(),
-            ["com.example.bundle1", "com.example.bundle2", "com.example.bundle3"]
-        )
-        
-        // Verify the first one is bundle1
-        let converter = DocumentationConverter(documentationBundleURL: url, emitDigest: false, documentationCoverageOptions: .noCoverage, currentPlatforms: nil, workspace: workspace, context: context, dataProvider: dataProvider, bundleDiscoveryOptions: .init())
-        XCTAssertEqual(converter.firstAvailableBundle()?.identifier, "com.example.bundle1")
-    }
-    
-    // This test registration more than once data provider which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-    func testLoadComplexWorkspace() throws {
-        let allFiles = try flatListOfFiles()
-        let workspace = Folder(name: "TestWorkspace", content: [
-            CopyOfFolder(original: testBundleLocation),
-            Folder(name: "nested", content: [
-                Folder(name: "irrelevant", content: [
-                    TextFile(name: "irrelevant.txt", utf8Content: "distraction"),
-                ]),
-                TextFile(name: "irrelevant.txt", utf8Content: "distraction"),
-                Folder(name: "TestBundle2.docc", content: [
-                    InfoPlist(displayName: "Test Bundle", identifier: "com.example.bundle2"),
-                    Folder(name: "Subfolder", content: // All files flattened into one folder
-                        allFiles.map { CopyOfFile(original: $0) }
-                    ),
-                ]),
-            ]),
-        ])
-        
-        let tempURL = try createTemporaryDirectory()
-        
-        let workspaceURL = try workspace.write(inside: tempURL)
-
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
-
-        let bundles = (try dataProvider.bundles()).sorted { (bundle1, bundle2) -> Bool in
-            return bundle1.identifier < bundle2.identifier
-        }
-
-        XCTAssertEqual(bundles.count, 2)
-        
-        guard bundles.count == 2 else { return }
-        
-        XCTAssertEqual(bundles[0].identifier, "com.example.bundle2")
-        XCTAssertEqual(bundles[1].identifier, "org.swift.docc.example")
-        
-        func checkBundle(_ bundle: DocumentationBundle) {
-            XCTAssertEqual(bundle.displayName, "Test Bundle")
-            XCTAssertEqual(bundle.symbolGraphURLs.count, 4)
-            XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("mykit-iOS.symbols.json"))
-            XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("MyKit@SideKit.symbols.json"))
-            XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("sidekit.symbols.json"))
-            XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("FillIntroduced.symbols.json"))
-            XCTAssertFalse(bundle.markupURLs.isEmpty)
-            XCTAssertTrue(bundle.miscResourceURLs.map { $0.lastPathComponent }.sorted().contains("intro.png"))
-        }
-        
-        for bundle in bundles {
-            checkBundle(bundle)
-        }
-    }
-    
     func testBundleFormat() throws {
         let allFiles = try flatListOfFiles()
         
-        func parsedBundle(from folder: File) throws -> DocumentationBundle {
+        func parsedBundle(from folder: any File) throws -> DocumentationBundle {
             let fileSystem = try TestFileSystem(folders: [
                 Folder(name: "path", content: [
                     Folder(name: "to", content: [
@@ -136,13 +45,13 @@ class BundleDiscoveryTests: XCTestCase {
         
         let expectedBundle = try parsedBundle(from: CopyOfFolder(original: testBundleLocation))
         
-        func checkExpectedFilesFoundIn(_ folder: File, file: StaticString = #file, line: UInt = #line) throws {
+        func checkExpectedFilesFoundIn(_ folder: any File, file: StaticString = #filePath, line: UInt = #line) throws {
             let bundle = try parsedBundle(from: folder)
             
             XCTAssertEqual(bundle.id, expectedBundle.id)
             XCTAssertEqual(bundle.displayName, expectedBundle.displayName)
             
-            func assertEqualFiles(_ got: [URL], _ expected: [URL], file: StaticString = #file, line: UInt = #line) {
+            func assertEqualFiles(_ got: [URL], _ expected: [URL], file: StaticString = #filePath, line: UInt = #line) {
                 let gotFileNames = Set(got.map { $0.lastPathComponent })
                 let expectedFileNames = Set(expected.map { $0.lastPathComponent })
                 

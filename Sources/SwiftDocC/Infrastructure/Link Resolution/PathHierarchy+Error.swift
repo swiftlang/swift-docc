@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -223,13 +223,27 @@ extension PathHierarchy.Error {
             
         case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):
             let nextPathComponent = remaining.first!
-            let (pathPrefix, _, solutions) = makeCollisionSolutions(from: collisions, nextPathComponent: nextPathComponent, partialResultPrefix: partialResult.pathPrefix)
-            
+            let (pathPrefix, foundDisambiguation, solutions) = makeCollisionSolutions(
+                from: collisions,
+                nextPathComponent: nextPathComponent,
+                partialResultPrefix: partialResult.pathPrefix)
+
+            let rangeAdjustment: SourceRange
+            if !foundDisambiguation.isEmpty {
+                rangeAdjustment = .makeRelativeRange(
+                    startColumn: pathPrefix.count - foundDisambiguation.count,
+                    length: foundDisambiguation.count)
+            } else {
+                rangeAdjustment = .makeRelativeRange(
+                    startColumn: pathPrefix.count - nextPathComponent.full.count,
+                    length: nextPathComponent.full.count)
+            }
+
             return TopicReferenceResolutionErrorInfo("""
                 \(nextPathComponent.full.singleQuoted) is ambiguous at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
-                rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count - nextPathComponent.full.count, length: nextPathComponent.full.count)
+                rangeAdjustment: rangeAdjustment
             )
         }
     }
@@ -271,7 +285,7 @@ private extension PathHierarchy.Node {
     }
 }
 
-private extension SourceRange {
+extension SourceRange {
     static func makeRelativeRange(startColumn: Int, endColumn: Int) -> SourceRange {
         return SourceLocation(line: 0, column: startColumn, source: nil) ..< SourceLocation(line: 0, column: endColumn, source: nil)
     }

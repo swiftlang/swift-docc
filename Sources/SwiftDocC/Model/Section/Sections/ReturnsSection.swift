@@ -8,12 +8,12 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /// A section that contains return value information for a function.
 public struct ReturnsSection: Section {
     public static var title: String? {
         return "Return Value"
     }
-    public var content: [Markup]
+    public var content: [any Markup]
 }

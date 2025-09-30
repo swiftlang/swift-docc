@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,8 +17,8 @@ import SwiftDocCTestUtilities
 class DefaultAvailabilityTests: XCTestCase {
 
     // Test whether missing default availability key correctly produces nil availability
-    func testBundleWithoutDefaultAvailability() throws {
-        let bundle = try testBundle(named: "BundleWithoutAvailability")
+    func testBundleWithoutDefaultAvailability() async throws {
+        let bundle = try await testBundle(named: "BundleWithoutAvailability")
         XCTAssertNil(bundle.info.defaultAvailability)
     }
 
@@ -32,9 +32,9 @@ class DefaultAvailabilityTests: XCTestCase {
     ]
     
     // Test whether the default availability is loaded from Info.plist and applied during render time
-    func testBundleWithDefaultAvailability() throws {
+    func testBundleWithDefaultAvailability() async throws {
         // Copy an Info.plist with default availability
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { (url) in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
             
@@ -101,9 +101,9 @@ class DefaultAvailabilityTests: XCTestCase {
     }
     
     // Test whether the default availability is merged with beta status from the command line
-    func testBundleWithDefaultAvailabilityInBetaDocs() throws {
+    func testBundleWithDefaultAvailabilityInBetaDocs() async throws {
         // Beta status for the docs (which would normally be set via command line argument)
-        try assertRenderedPlatformsFor(currentPlatforms: [
+        try await assertRenderedPlatformsFor(currentPlatforms: [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 1), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ], equal: [
@@ -112,7 +112,7 @@ class DefaultAvailabilityTests: XCTestCase {
         ])
         
         // Repeat the assertions, but use an earlier platform version this time
-        try assertRenderedPlatformsFor(currentPlatforms: [
+        try await assertRenderedPlatformsFor(currentPlatforms: [
             "macOS": PlatformVersion(VersionTriplet(10, 14, 1), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ], equal: [
@@ -121,7 +121,7 @@ class DefaultAvailabilityTests: XCTestCase {
         ])
     }
 
-    private func assertRenderedPlatformsFor(currentPlatforms: [String : PlatformVersion], equal expected: [String], file: StaticString = #file, line: UInt = #line) throws {
+    private func assertRenderedPlatformsFor(currentPlatforms: [String : PlatformVersion], equal expected: [String], file: StaticString = #filePath, line: UInt = #line) async throws {
         var configuration = DocumentationContext.Configuration()
         configuration.externalMetadata.currentPlatforms = currentPlatforms
         
@@ -131,7 +131,7 @@ class DefaultAvailabilityTests: XCTestCase {
             JSONFile(name: "MyKit.symbols.json", content: makeSymbolGraph(moduleName: "MyKit")),
         ])
         
-        let (bundle, context) = try loadBundle(catalog: catalog, configuration: configuration)
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         let reference = try XCTUnwrap(context.soleRootModuleReference, file: file, line: line)
         
         // Test whether we:
@@ -146,9 +146,9 @@ class DefaultAvailabilityTests: XCTestCase {
     
     // Test whether when Mac Catalyst availability is missing we fall back on
     // Mac Catalyst info.plist availability and not on iOS availability.
-    func testBundleWithMissingCatalystAvailability() throws {
+    func testBundleWithMissingCatalystAvailability() async throws {
         // Beta status for both iOS and Mac Catalyst
-        try assertRenderedPlatformsFor(currentPlatforms: [
+        try await assertRenderedPlatformsFor(currentPlatforms: [
             "iOS": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ], equal: [
@@ -157,7 +157,7 @@ class DefaultAvailabilityTests: XCTestCase {
         ])
         
         // Public status for Mac Catalyst
-        try assertRenderedPlatformsFor(currentPlatforms: [
+        try await assertRenderedPlatformsFor(currentPlatforms: [
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: false),
         ], equal: [
             "Mac Catalyst 13.5",
@@ -165,19 +165,19 @@ class DefaultAvailabilityTests: XCTestCase {
         ])
 
         // Verify that a bug rendering availability as beta when no platforms are provided is fixed.
-        try assertRenderedPlatformsFor(currentPlatforms: [:], equal: [
+        try await assertRenderedPlatformsFor(currentPlatforms: [:], equal: [
             "Mac Catalyst 13.5",
             "macOS 10.15.1",
         ])
     }
     
     // Test whether the default availability is not beta when not matching current target platform
-    func testBundleWithDefaultAvailabilityNotInBetaDocs() throws {
+    func testBundleWithDefaultAvailabilityNotInBetaDocs() async throws {
         var configuration = DocumentationContext.Configuration()
         // Set a beta status for the docs (which would normally be set via command line argument)
         configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configuration: configuration) { (url) in
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", configuration: configuration) { (url) in
             // Copy an Info.plist with default availability of macOS 10.15.1
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
@@ -198,11 +198,11 @@ class DefaultAvailabilityTests: XCTestCase {
     }
 
     // Test that a symbol is unavailable and default availability does not precede the "unavailable" attribute.
-    func testUnavailableAvailability() throws {
+    func testUnavailableAvailability() async throws {
         var configuration = DocumentationContext.Configuration()
         // Set a beta status for the docs (which would normally be set via command line argument)
         configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
-        let (_, bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", configuration: configuration)
+        let (_, bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests", configuration: configuration)
         
         do {
             let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
@@ -328,8 +328,8 @@ class DefaultAvailabilityTests: XCTestCase {
     
     // Test that setting default availability doesn't prevent symbols with "universal" deprecation
     // (i.e. a platform of '*' and unconditional deprecation) from showing up as deprecated.
-    func testUniversalDeprecationWithDefaultAvailability() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: []) { (url) in
+    func testUniversalDeprecationWithDefaultAvailability() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
@@ -545,7 +545,7 @@ class DefaultAvailabilityTests: XCTestCase {
         )
     }
     
-    func testInheritDefaultAvailabilityOptions() throws {
+    func testInheritDefaultAvailabilityOptions() async throws {
         func makeInfoPlist(
             defaultAvailability: String
         ) -> String {
@@ -565,7 +565,7 @@ class DefaultAvailabilityTests: XCTestCase {
         }
         func setupContext(
             defaultAvailability: String
-        ) throws -> (DocumentationBundle, DocumentationContext) {
+        ) async throws -> (DocumentationBundle, DocumentationContext) {
             // Create an empty bundle
             let targetURL = try createTemporaryDirectory(named: "test.docc")
             // Create symbol graph
@@ -576,7 +576,7 @@ class DefaultAvailabilityTests: XCTestCase {
             let infoPlist = makeInfoPlist(defaultAvailability: defaultAvailability)
             try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
             // Load the bundle & reference resolve symbol graph docs
-            let (_, bundle, context) = try loadBundle(from: targetURL)
+            let (_, bundle, context) = try await loadBundle(from: targetURL)
             return (bundle, context)
         }
         
@@ -641,7 +641,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Don't use default availability version.
         
-        var (bundle, context) = try setupContext(
+        var (bundle, context) = try await setupContext(
             defaultAvailability: """
                <dict>
                    <key>name</key>
@@ -674,7 +674,7 @@ class DefaultAvailabilityTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, nil)
         
         // Add an extra default availability to test behaviour when mixin in source with default behaviour.
-        (bundle, context) = try setupContext(defaultAvailability: """
+        (bundle, context) = try await setupContext(defaultAvailability: """
                <dict>
                    <key>name</key>
                    <string>iOS</string>

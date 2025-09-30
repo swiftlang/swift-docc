@@ -33,11 +33,11 @@ final class MockHandler: ChannelInboundHandler {
     typealias OutboundOut = HTTPServerResponsePart
 
     let requestHead: HTTPRequestHead
-    let requestHandler: RequestHandlerFactory
+    let requestHandler: any RequestHandlerFactory
     
     var requestError: RequestError?
     
-    init(requestHead: HTTPRequestHead, requestHandler: RequestHandlerFactory) {
+    init(requestHead: HTTPRequestHead, requestHandler: any RequestHandlerFactory) {
         self.requestHead = requestHead
         self.requestHandler = requestHandler
     }
@@ -86,16 +86,14 @@ final class Response: ChannelOutboundHandler {
 }
 
 /// Builds up a local host server channel pipeline, fire the preset request and returns the response.
-func responseWithPipeline(request: HTTPRequestHead, handler factory: RequestHandlerFactory, file: StaticString = #file, line: UInt = #line) throws -> Response {
+func responseWithPipeline(request: HTTPRequestHead, handler factory: any RequestHandlerFactory, file: StaticString = #filePath, line: UInt = #line) throws -> Response {
     let channel = EmbeddedChannel()
     let channelHandler = MockHandler(requestHead: request, requestHandler: factory)
 
     let response = Response()
     
-    XCTAssertNoThrow(try channel.pipeline.addHandler(HTTPResponseEncoder()).wait(), file: (file), line: line)
     XCTAssertNoThrow(try channel.pipeline.addHandler(response).wait(), file: (file), line: line)
     XCTAssertNoThrow(try channel.pipeline.addHandler(channelHandler).wait(), file: (file), line: line)
-    XCTAssertNoThrow(try channel.pipeline.addHandler(HTTPServerPipelineHandler()).wait(), file: (file), line: line)
 
     XCTAssertNoThrow(try channel.connect(to: SocketAddress(ipAddress: "127.0.0.1", port: 1)).wait(), file: (file), line: line)
 

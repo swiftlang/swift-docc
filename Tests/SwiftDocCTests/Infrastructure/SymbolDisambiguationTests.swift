@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,8 +14,8 @@ import SymbolKit
 
 class SymbolDisambiguationTests: XCTestCase {
     
-    func testPathCollisionWithDifferentTypesInSameLanguage() throws {
-        let references = try disambiguatedReferencesForSymbols(
+    func testPathCollisionWithDifferentTypesInSameLanguage() async throws {
+        let references = try await disambiguatedReferencesForSymbols(
             swift: [
                 TestSymbolData(preciseID: "first", pathComponents: ["Something", "first"], kind: .property),
                 TestSymbolData(preciseID: "second", pathComponents: ["Something", "First"], kind: .struct),
@@ -36,8 +36,8 @@ class SymbolDisambiguationTests: XCTestCase {
         )
     }
     
-    func testPathCollisionWithDifferentArgumentTypesInSameLanguage() throws {
-        let references = try disambiguatedReferencesForSymbols(
+    func testPathCollisionWithDifferentArgumentTypesInSameLanguage() async throws {
+        let references = try await disambiguatedReferencesForSymbols(
             swift: [
                 // The argument type isn't represented in the symbol name in the path components
                 TestSymbolData(preciseID: "first", pathComponents: ["Something", "first(_:)"], kind: .method),
@@ -59,8 +59,8 @@ class SymbolDisambiguationTests: XCTestCase {
         )
     }
     
-    func testSameSymbolWithDifferentKindsInDifferentLanguages() throws {
-        let references = try disambiguatedReferencesForSymbols(
+    func testSameSymbolWithDifferentKindsInDifferentLanguages() async throws {
+        let references = try await disambiguatedReferencesForSymbols(
             swift: [
                 TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .enum),
             ],
@@ -77,8 +77,8 @@ class SymbolDisambiguationTests: XCTestCase {
         )
     }
     
-    func testDifferentSymbolsWithDifferentKindsInDifferentLanguages() throws {
-        let references = try disambiguatedReferencesForSymbols(
+    func testDifferentSymbolsWithDifferentKindsInDifferentLanguages() async throws {
+        let references = try await disambiguatedReferencesForSymbols(
             swift: [
                 TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .struct),
             ],
@@ -98,8 +98,8 @@ class SymbolDisambiguationTests: XCTestCase {
         )
     }
     
-    func testSameSymbolWithDifferentNamesInDifferentLanguages() throws {
-        let references = try disambiguatedReferencesForSymbols(
+    func testSameSymbolWithDifferentNamesInDifferentLanguages() async throws {
+        let references = try await disambiguatedReferencesForSymbols(
             swift: [
                 TestSymbolData(preciseID: "first", pathComponents: ["Something", "first(one:two:)"], kind: .method),
             ],
@@ -116,8 +116,8 @@ class SymbolDisambiguationTests: XCTestCase {
         )
     }
     
-    func testOneVariantOfMultiLanguageSymbolCollidesWithDifferentTypeSymbol() throws {
-        let references = try disambiguatedReferencesForSymbols(
+    func testOneVariantOfMultiLanguageSymbolCollidesWithDifferentTypeSymbol() async throws {
+        let references = try await disambiguatedReferencesForSymbols(
             swift: [
                 TestSymbolData(preciseID: "instance-method", pathComponents: ["Something", "first(one:two:)"], kind: .method),
                 TestSymbolData(preciseID: "type-method", pathComponents: ["Something", "first(one:two:)"], kind: .typeMethod),
@@ -139,8 +139,8 @@ class SymbolDisambiguationTests: XCTestCase {
         )
     }
     
-    func testStructAndEnumAndTypeAliasCollisionOfSameSymbol() throws {
-        let references = try disambiguatedReferencesForSymbols(
+    func testStructAndEnumAndTypeAliasCollisionOfSameSymbol() async throws {
+        let references = try await disambiguatedReferencesForSymbols(
             swift: [
                 TestSymbolData(preciseID: "first", pathComponents: ["Something", "First"], kind: .struct),
             ],
@@ -161,8 +161,8 @@ class SymbolDisambiguationTests: XCTestCase {
         )
     }
     
-    func testTripleCollisionWithBothSameTypeAndDifferentType() throws {
-        let references = try disambiguatedReferencesForSymbols(
+    func testTripleCollisionWithBothSameTypeAndDifferentType() async throws {
+        let references = try await disambiguatedReferencesForSymbols(
             swift: [
                 TestSymbolData(preciseID: "first", pathComponents: ["Something", "first(_:_:)"], kind: .method),
                 TestSymbolData(preciseID: "second", pathComponents: ["Something", "first(_:_:)"], kind: .typeMethod),
@@ -188,10 +188,10 @@ class SymbolDisambiguationTests: XCTestCase {
         )
     }
     
-    func testMixedLanguageFramework() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+    func testMixedLanguageFramework() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
         
-        var loader = SymbolGraphLoader(bundle: bundle, dataLoader: { try context.contentsOfURL($0, in: $1) })
+        var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
         try loader.loadAll()
         
         let references = context.linkResolver.localResolver.referencesForSymbols(in: loader.unifiedGraphs, bundle: bundle, context: context).mapValues(\.path)
@@ -265,7 +265,7 @@ class SymbolDisambiguationTests: XCTestCase {
         let kind: SymbolGraph.Symbol.KindIdentifier
     }
     
-    private func disambiguatedReferencesForSymbols(swift swiftSymbols: [TestSymbolData], objectiveC objectiveCSymbols: [TestSymbolData]) throws -> [SymbolGraph.Symbol.Identifier : ResolvedTopicReference] {
+    private func disambiguatedReferencesForSymbols(swift swiftSymbols: [TestSymbolData], objectiveC objectiveCSymbols: [TestSymbolData]) async throws -> [SymbolGraph.Symbol.Identifier : ResolvedTopicReference] {
         let graph = SymbolGraph(
             metadata: SymbolGraph.Metadata(
                 formatVersion: SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1),
@@ -335,7 +335,7 @@ class SymbolDisambiguationTests: XCTestCase {
             objcSymbolGraphURL: try JSONEncoder().encode(graph2),
         ], fallback: nil)
         
-        let context = try DocumentationContext(bundle: bundle, dataProvider: provider)
+        let context = try await DocumentationContext(bundle: bundle, dataProvider: provider)
         
         return context.linkResolver.localResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], bundle: bundle, context: context)
     }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,24 +22,21 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
             let reference = ResolvedTopicReference(bundleID: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift)
             let entity = LinkResolver.ExternalEntity(
-                topicRenderReference: TopicRenderReference(
-                    identifier: .init(preciseIdentifier),
-                    title: preciseIdentifier,
-                    abstract: [],
-                    url: "/" + preciseIdentifier,
-                    kind: .symbol,
-                    estimatedTime: nil
-                ),
-                renderReferenceDependencies: .init(),
-                sourceLanguages: [.swift]
+                kind: .class,
+                language: .swift,
+                relativePresentationURL: URL(string: "/\(preciseIdentifier)")!,
+                referenceURL: reference.url,
+                title: preciseIdentifier,
+                availableLanguages: [.swift],
+                variants: []
             )
             return (reference, entity)
         }
     }
     
-    func testNoMetricAddedIfNoExternalTopicsAreResolved() throws {
+    func testNoMetricAddedIfNoExternalTopicsAreResolved() async throws {
         // Load bundle without using external resolvers
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         XCTAssertTrue(context.externallyResolvedLinks.isEmpty)
         
         // Try adding external topics metrics
@@ -50,12 +47,12 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         XCTAssertNil(testBenchmark.metrics.first?.result, "Metric was added but there was no external links or symbols")
     }
     
-    func testExternalLinksSameHash() throws {
+    func testExternalLinksSameHash() async throws {
         let externalResolver = self.externalResolver
         
         // Add external links and verify the checksum is always the same
-        let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
+            let (_, _, context) = try await self.testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -74,26 +71,24 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.ExternalTopicsHash(context: context), benchmarkLog: testBenchmark)
             
-            // Verify that a metric was added
-            XCTAssertNotNil(testBenchmark.metrics[0].result)
-            return testBenchmark.metrics[0].result
-        }
-        .compactMap { value -> String? in
-            guard let value,
-                case MetricValue.checksum(let hash) = value else { return nil }
-            return hash
+            return try TopicAnchorHashTests.extractChecksumHash(from: testBenchmark)
         }
         
+        let expectedHash = try await computeTopicHash()
+        
         // Verify the produced topic graph hash is repeatedly the same
-        XCTAssertTrue(hashes.allSatisfy({ $0 == hashes.first }))
+        for _ in 0 ..< 10 {
+            let hash = try await computeTopicHash()
+            XCTAssertEqual(hash, expectedHash)
+        }
     }
 
-    func testLinksAndSymbolsSameHash() throws {
+    func testLinksAndSymbolsSameHash() async throws {
         let externalResolver = self.externalResolver
         
         // Add external links and verify the checksum is always the same
-        let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
+        func computeTopicHash(file: StaticString = #filePath, line: UInt = #line) async throws -> String {
+            let (_, _, context) = try await self.testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver], externalSymbolResolver: self.externalSymbolResolver) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -113,25 +108,23 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.ExternalTopicsHash(context: context), benchmarkLog: testBenchmark)
             
-            // Verify that a metric was added
-            XCTAssertNotNil(testBenchmark.metrics[0].result)
-            return testBenchmark.metrics[0].result
-        }
-        .compactMap { value -> String? in
-            guard let value,
-                case MetricValue.checksum(let hash) = value else { return nil }
-            return hash
+            return try TopicAnchorHashTests.extractChecksumHash(from: testBenchmark)
         }
         
+        let expectedHash = try await computeTopicHash()
+        
         // Verify the produced topic graph hash is repeatedly the same
-        XCTAssertTrue(hashes.allSatisfy({ $0 == hashes.first }))
+        for _ in 0 ..< 10 {
+            let hash = try await computeTopicHash()
+            XCTAssertEqual(hash, expectedHash)
+        }
     }
     
-    func testExternalTopicsDetectsChanges() throws {
+    func testExternalTopicsDetectsChanges() async throws {
         let externalResolver = self.externalResolver
 
         // Load a bundle with external links
-        let (_, _, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
         try """
         # ``SideKit/SideClass``
 

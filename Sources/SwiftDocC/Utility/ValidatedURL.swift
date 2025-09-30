@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// An RFC 3986 compliant URL.
 ///
@@ -55,10 +55,21 @@ public struct ValidatedURL: Hashable, Equatable {
     ///
     /// Use this to parse author provided documentation links that may contain links to on-page subsections. Escaping the fragment allows authors
     /// to write links to subsections using characters that wouldn't otherwise be allowed in a fragment of a URL.
+    ///
+    /// - Important: Documentation links don't include query items but "?" may appear in the link's path.
     init?(parsingAuthoredLink string: String) {
         // Try to parse the string without escaping anything
-        if let parsed = ValidatedURL(parsingExact: string) {
-            self.components = parsed.components
+        if var parsedComponents = ValidatedURL(parsingExact: string)?.components {
+            // Documentation links don't include query items but "?" may appear in the link's path.
+            // If `URLComponents` decoded a `query`, that's correct from a general URL standpoint but incorrect from a documentation link standpoint.
+            // To create a valid documentation link, we move the `query` component and its "?" separator into the `path` component.
+            if let query = parsedComponents.query {
+                parsedComponents.path += "?\(query)"
+                parsedComponents.query = nil
+            }
+            
+            assert(parsedComponents.string != nil, "Failed to parse authored link \(string.singleQuoted)")
+            self.components = parsedComponents
             return
         }
         
@@ -85,12 +96,13 @@ public struct ValidatedURL: Hashable, Equatable {
             remainder = remainder.dropFirst("\(ResolvedTopicReference.urlScheme):".count)
             
             if remainder.hasPrefix("//") {
+                remainder = remainder.dropFirst(2) // Don't include the "//" prefix in the `host` component.
                 // The authored link includes a bundle ID
-                guard let startOfPath = remainder.dropFirst(2).firstIndex(of: "/") else {
+                guard let startOfPath = remainder.firstIndex(of: "/") else {
                     // The link started with "doc://" but didn't contain another "/" to start of the path.
                     return nil
                 }
-                components.percentEncodedHost = String(remainder[..<startOfPath]).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+                components.percentEncodedHost = String(remainder[..<startOfPath]).addingPercentEncodingIfNeeded(withAllowedCharacters: .urlHostAllowed)
                 remainder = remainder[startOfPath...]
             }
         }
@@ -100,19 +112,20 @@ public struct ValidatedURL: Hashable, Equatable {
         // by documentation links and symbol links.
         if let fragmentSeparatorIndex = remainder.firstIndex(of: "#") {
             // Encode the path substring and fragment substring separately
-            guard let path = String(remainder[..<fragmentSeparatorIndex]).addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            guard let path = String(remainder[..<fragmentSeparatorIndex]).addingPercentEncodingIfNeeded(withAllowedCharacters: .urlPathAllowed) else {
                 return nil
             }
             components.percentEncodedPath = path
-            components.percentEncodedFragment = String(remainder[fragmentSeparatorIndex...].dropFirst()).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
+            components.percentEncodedFragment = remainder[fragmentSeparatorIndex...].dropFirst().addingPercentEncodingIfNeeded(withAllowedCharacters: .urlFragmentAllowed)
         } else {
             // Since the link didn't include a fragment, the rest of the string is the path.
-            guard let path = String(remainder).addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            guard let path = remainder.addingPercentEncodingIfNeeded(withAllowedCharacters: .urlPathAllowed) else {
                 return nil
             }
             components.percentEncodedPath = path
         }
         
+        assert(components.string != nil, "Failed to parse authored link \(string.singleQuoted)")
         self.components = components
     }
     
@@ -158,5 +171,45 @@ public struct ValidatedURL: Hashable, Equatable {
     /// The URL as an RFC 3986 compliant `URL` value.
     var url: URL {
         return components.url!
+    }
+}
+
+private extension StringProtocol {
+    /// Returns a percent encoded version of the string or the original string if it is already percent encoded.
+    func addingPercentEncodingIfNeeded(withAllowedCharacters allowedCharacters: CharacterSet) -> String? {
+        var needsPercentEncoding: Bool {
+            for (index, character) in unicodeScalars.indexed() where !allowedCharacters.contains(character) {
+                // Check if the character "%" represents a percent encoded URL.
+                // Any other disallowed character is an indication that this substring needs percent encoding.
+                if character == "%" {
+                    // % isn't allowed in a URL fragment but it is also the escape character for percent encoding.
+                    guard self.distance(from: index, to: self.endIndex) >= 2 else {
+                        // There's not two characters after the "%". This "%" can't represent a percent encoded character.
+                        return true
+                    }
+                    let firstFollowingIndex  = self.index(after: index)
+                    let secondFollowingIndex = self.index(after: firstFollowingIndex)
+                    
+                    // Check if the next two characthers represent a percent encoded
+                    // URL.
+                    // If either of the two following characters aren't hex digits,
+                    // the "%" doesn't represent a percent encoded character.
+                    if Character(unicodeScalars[firstFollowingIndex]).isHexDigit,
+                       Character(unicodeScalars[secondFollowingIndex]).isHexDigit
+                    {
+                        // Later characters in the string might require percentage encoding.
+                        continue
+                    }
+                }
+                return true
+            }
+            return false
+        }
+        
+        return if needsPercentEncoding {
+            addingPercentEncoding(withAllowedCharacters: allowedCharacters)
+        } else {
+            String(self)
+        }
     }
 }

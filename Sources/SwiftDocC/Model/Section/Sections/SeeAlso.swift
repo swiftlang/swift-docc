@@ -8,13 +8,13 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+public import Markdown
 
 /// A section that contains groups of related symbols or external links.
 public struct SeeAlsoSection: GroupedSection {
     public private(set) static var title: String? = "See Also"
     
-    public var content: [Markup]
+    public var content: [any Markup]
 
     /// The list of groups for the section.
     public var taskGroups: [TaskGroup] {

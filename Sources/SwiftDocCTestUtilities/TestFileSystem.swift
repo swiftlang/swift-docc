@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+package import Foundation
 import XCTest
 import SwiftDocC
 
@@ -64,7 +64,7 @@ package class TestFileSystem: FileManagerProtocol {
         files["/tmp"] = Self.folderFixtureData
  
         for folder in folders {
-            try addFolder(folder)
+            try addFolder(folder, basePath: URL(fileURLWithPath: "/"))
         }
     }
 
@@ -93,7 +93,7 @@ package class TestFileSystem: FileManagerProtocol {
                     result[at.appendingPathComponent(folder.name).path] = Self.folderFixtureData
                     result.merge(try filesIn(folder: folder, at: at.appendingPathComponent(folder.name)), uniquingKeysWith: +)
                 
-                case let file as File & DataRepresentable:
+                case let file as any (File & DataRepresentable):
                     result[at.appendingPathComponent(file.name).path] = try file.data()
                     if let copy = file as? CopyOfFile {
                         result[copy.original.path] = try file.data()
@@ -127,13 +127,13 @@ package class TestFileSystem: FileManagerProtocol {
     }
     
     @discardableResult
-    func addFolder(_ folder: Folder) throws -> [String] {
+    package func addFolder(_ folder: Folder, basePath: URL) throws -> [String] {
         guard !disableWriting else { return [] }
         
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        let rootURL = URL(fileURLWithPath: "/\(folder.name)")
+        let rootURL = basePath.appendingPathComponent(folder.name)
         files[rootURL.path] = Self.folderFixtureData
         let fileList = try filesIn(folder: folder, at: rootURL)
         files.merge(fileList, uniquingKeysWith: +)
@@ -160,7 +160,7 @@ package class TestFileSystem: FileManagerProtocol {
         return files.keys.contains(path)
     }
     
-    package func copyItem(at source: URL, to destination: URL) throws {
+    package func _copyItem(at source: URL, to destination: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -185,7 +185,7 @@ package class TestFileSystem: FileManagerProtocol {
 
         let srcPath = srcURL.path
 
-        try copyItem(at: srcURL, to: dstURL)
+        try _copyItem(at: srcURL, to: dstURL)
         files.removeValue(forKey: srcPath)
         
         for (path, _) in files where path.hasPrefix(srcPath) {
@@ -317,15 +317,6 @@ package class TestFileSystem: FileManagerProtocol {
         URL(fileURLWithPath: "/tmp/\(ProcessInfo.processInfo.globallyUniqueString)", isDirectory: true)
     }
     
-    enum Errors: DescribedError {
-        case invalidPath(String)
-        var errorDescription: String {
-            switch self { 
-                case .invalidPath(let path): return "Invalid path '\(path)'"
-            }
-        }
-    }
-    
     /// Returns a stable string representation of the file system from a given subpath.
     ///
     /// - Parameter path: The path to the sub hierarchy to dump to a string representation.
@@ -370,7 +361,7 @@ package class TestFileSystem: FileManagerProtocol {
         }
     }
     
-    private func makeFileNotFoundError(_ url: URL) -> Error {
+    private func makeFileNotFoundError(_ url: URL) -> any Error {
         return CocoaError(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: url.path])
     }
 }

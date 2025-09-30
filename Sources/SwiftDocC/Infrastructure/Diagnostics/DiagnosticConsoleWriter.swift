@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import Markdown
 
 /// Writes diagnostic messages to a text output stream.
@@ -16,9 +16,9 @@ import Markdown
 /// By default, this type writes to `stderr`.
 public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 
-    var outputStream: TextOutputStream
+    var outputStream: any TextOutputStream
     public var formattingOptions: DiagnosticFormattingOptions
-    private var diagnosticFormatter: DiagnosticConsoleFormatter
+    private var diagnosticFormatter: any DiagnosticConsoleFormatter
     private var problems: [Problem] = []
 
     /// Creates a new instance of this class with the provided output stream.
@@ -28,7 +28,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     ///   - baseURL: A url to be used as a base url when formatting diagnostic source path.
     ///   - highlight: Whether or not to highlight the default diagnostic formatting output.
     public convenience init(
-        _ stream: TextOutputStream = LogHandle.standardError,
+        _ stream: any TextOutputStream = LogHandle.standardError,
         formattingOptions options: DiagnosticFormattingOptions = [],
         baseURL: URL? = nil,
         highlight: Bool? = nil
@@ -37,11 +37,11 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     }
     
     package init(
-        _ stream: TextOutputStream = LogHandle.standardError,
+        _ stream: any TextOutputStream = LogHandle.standardError,
         formattingOptions options: DiagnosticFormattingOptions = [],
         baseURL: URL? = nil,
         highlight: Bool? = nil,
-        dataProvider: DataProvider = FileManager.default
+        dataProvider: any DataProvider = FileManager.default
     ) {
         outputStream = stream
         formattingOptions = options
@@ -79,8 +79,8 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         _ options: DiagnosticFormattingOptions,
         baseURL: URL?,
         highlight: Bool,
-        dataProvider: DataProvider
-    ) -> DiagnosticConsoleFormatter {
+        dataProvider: any DataProvider
+    ) -> any DiagnosticConsoleFormatter {
         if options.contains(.formatConsoleOutputForTools) {
             return IDEDiagnosticConsoleFormatter(options: options)
         } else {
@@ -95,14 +95,14 @@ extension DiagnosticConsoleWriter {
     public static func formattedDescription(for problems: some Sequence<Problem>, options: DiagnosticFormattingOptions = []) -> String {
         formattedDescription(for: problems, options: options, fileManager: FileManager.default)
     }
-    package static func formattedDescription(for problems: some Sequence<Problem>, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String {
+    package static func formattedDescription(for problems: some Sequence<Problem>, options: DiagnosticFormattingOptions = [], fileManager: any FileManagerProtocol) -> String {
         return problems.map { formattedDescription(for: $0, options: options, fileManager: fileManager) }.joined(separator: "\n")
     }
     
     public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
         formattedDescription(for: problem, options: options, fileManager: FileManager.default)
     }
-    package static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
+    package static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: any FileManagerProtocol = FileManager.default) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, dataProvider: fileManager)
         return diagnosticFormatter.formattedDescription(for: problem)
     }
@@ -110,7 +110,7 @@ extension DiagnosticConsoleWriter {
     public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
         formattedDescription(for: diagnostic, options: options, fileManager: FileManager.default)
     }
-    package static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String {
+    package static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: any FileManagerProtocol) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, dataProvider: fileManager)
         return diagnosticFormatter.formattedDescription(for: diagnostic)
     }
@@ -220,7 +220,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     private let baseUrl: URL?
     private let highlight: Bool
     private var sourceLines: [URL: [String]] = [:]
-    private var dataProvider: DataProvider
+    private var dataProvider: any DataProvider
 
     /// The number of additional lines from the source file that should be displayed both before and after the diagnostic source line.
     private static let contextSize = 2
@@ -229,7 +229,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         baseUrl: URL?,
         highlight: Bool,
         options: DiagnosticFormattingOptions,
-        dataProvider: DataProvider
+        dataProvider: any DataProvider
     ) {
         self.baseUrl = baseUrl
         self.highlight = highlight

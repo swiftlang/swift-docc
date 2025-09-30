@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,15 +13,15 @@ import XCTest
 import Markdown
 
 class ChapterTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @Chapter
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(chapter)
         XCTAssertEqual(3, problems.count)
         XCTAssertEqual("org.swift.docc.HasArgument.name", problems[0].diagnostic.identifier)
@@ -31,7 +31,7 @@ class ChapterTests: XCTestCase {
         XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
     }
     
-    func testMultipleMedia() throws {
+    func testMultipleMedia() async throws {
         let chapterName = "Chapter 1"
         let source = """
 @Chapter(name: "\(chapterName)") {
@@ -42,9 +42,9 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertEqual(1, problems.count)
         problems.first.map { problem in
             XCTAssertEqual("org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.DuplicateChildren", problem.diagnostic.identifier)
@@ -61,7 +61,7 @@ class ChapterTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let chapterName = "Chapter 1"
         let source = """
 @Chapter(name: "\(chapterName)") {
@@ -71,9 +71,9 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let chapter = Chapter(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
         XCTAssertNotNil(chapter)
         chapter.map { chapter in
@@ -82,8 +82,8 @@ class ChapterTests: XCTestCase {
         }
     }
     
-    func testDuplicateTutorialReferences() throws {
-        let (_, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testDuplicateTutorialReferences() async throws {
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         /*
          The test bundle contains the duplicate tutorial references in TestOverview:

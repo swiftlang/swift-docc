@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -532,6 +532,9 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testConvertPageWithLinkResolvingAndKnownPathComponents() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "mykit-one-symbol",
@@ -827,7 +830,9 @@ class ConvertServiceTests: XCTestCase {
             )
         }
     }
-
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testConvertTutorialWithCode() throws {
         let tutorialContent = """
         @Tutorial(time: 99) {
@@ -998,6 +1003,9 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testConvertArticleWithImageReferencesAndDetailedGridLinks() throws {
         let articleData = try XCTUnwrap("""
             # First article
@@ -1487,14 +1495,14 @@ class ConvertServiceTests: XCTestCase {
         )
     }
     
-    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithUncuratedArticles() throws {
+    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithUncuratedArticles() async throws {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
+        let (testBundleURL, _, _) = try await testBundleAndContext(
             copying: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "sidekit.symbols.json",
@@ -1616,14 +1624,14 @@ class ConvertServiceTests: XCTestCase {
         #endif
     }
     
-    func testNoRenderReferencesToNonLinkableNodes() throws {
+    func testNoRenderReferencesToNonLinkableNodes() async throws {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
+        let (testBundleURL, _, _) = try await testBundleAndContext(
             copying: "LegacyBundle_DoNotUseInNewTests",
             excludingPaths: [
                 "mykit-iOS.symbols.json",
@@ -1658,14 +1666,14 @@ class ConvertServiceTests: XCTestCase {
         #endif
     }
     
-    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithCuratedArticles() throws {
+    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithCuratedArticles() async throws {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
+        let (testBundleURL, _, _) = try await testBundleAndContext(
             // Use a bundle that contains only articles, one of which is declared as the TechnologyRoot and curates the
             // other articles.
             copying: "BundleWithTechnologyRoot"
@@ -1718,6 +1726,9 @@ class ConvertServiceTests: XCTestCase {
         #endif
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testConvertPageWithLinkResolving() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "mykit-one-symbol",
@@ -2007,6 +2018,9 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testConvertTopLevelSymbolWithLinkResolving() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "one-symbol-top-level",
@@ -2114,6 +2128,9 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testOrderOfLinkResolutionRequestsForDocLink() throws {
         let symbolGraphFile = try XCTUnwrap(
             Bundle.module.url(
@@ -2152,6 +2169,9 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testOrderOfLinkResolutionRequestsForDeeplyNestedSymbol() throws {
         let symbolGraphFile = try XCTUnwrap(
             Bundle.module.url(
@@ -2191,6 +2211,9 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testOrderOfLinkResolutionRequestsForSymbolLink() throws {
         let symbolGraphFile = try XCTUnwrap(
             Bundle.module.url(
@@ -2226,7 +2249,10 @@ class ConvertServiceTests: XCTestCase {
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
     }
     
-    func linkResolutionRequestsForConvertRequest(_ request: ConvertRequest) throws -> [String] {
+    // This test helper uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
+    private func linkResolutionRequestsForConvertRequest(_ request: ConvertRequest) throws -> [String] {
         var receivedLinkResolutionRequests = [String]()
         let mockLinkResolvingService = LinkResolvingService { message in
             do {
@@ -2314,6 +2340,9 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    // This test uses `OutOfProcessReferenceResolver/Request` and `OutOfProcessReferenceResolver.Response` which are deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testDoesNotResolveLinksUnlessBundleIDMatches() throws {
         let tempURL = try createTempFolder(content: [
             Folder(name: "unit-test.docc", content: [
@@ -2396,7 +2425,7 @@ class ConvertServiceTests: XCTestCase {
         source: URL,
         title: String?,
         isDocumentationExtensionContent: Bool,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws {
         let topicContentKey = try XCTUnwrap(referenceStore.topics.keys.first { $0.path == topicPath })

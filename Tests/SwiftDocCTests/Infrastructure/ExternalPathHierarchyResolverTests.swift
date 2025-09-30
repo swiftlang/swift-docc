@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,8 +23,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     
     // These tests resolve absolute symbol links in both a local and external context to verify that external links work the same local links.
     
-    func testUnambiguousAbsolutePaths() throws {
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
+    func testUnambiguousAbsolutePaths() async throws {
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework")
         
@@ -408,8 +408,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
     }
     
-    func testAmbiguousPaths() throws {
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
+    func testAmbiguousPaths() async throws {
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
         // public enum CollisionsWithDifferentKinds {
         //     case something
@@ -577,8 +577,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
     }
     
-    func testRedundantDisambiguations() throws {
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
+    func testRedundantDisambiguations() async throws {
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework")
         
@@ -685,7 +685,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
     }
     
-    func testSymbolLinksInDeclarationsAndRelationships() throws {
+    func testSymbolLinksInDeclarationsAndRelationships() async throws {
         // Build documentation for the dependency first
         let symbols = [("First", .class), ("Second", .protocol), ("Third", .struct), ("Fourth", .enum)].map { (name: String, kind: SymbolGraph.Symbol.KindIdentifier) in
             return SymbolGraph.Symbol(
@@ -699,7 +699,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             )
         }
         
-        let (dependencyBundle, dependencyContext) = try loadBundle(
+        let (dependencyBundle, dependencyContext) = try await loadBundle(
             catalog: Folder(name: "Dependency.docc", content: [
                 InfoPlist(identifier: "com.example.dependency"), // This isn't necessary but makes it easier to distinguish the identifier from the module name in the external references.
                 JSONFile(name: "Dependency.symbols.json", content: makeSymbolGraph(moduleName: "Dependency", symbols: symbols))
@@ -724,7 +724,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
         
         // After building the dependency,
-        let (mainBundle, mainContext) = try loadBundle(
+        let (mainBundle, mainContext) = try await loadBundle(
             catalog: Folder(name: "Main.docc", content: [
                 JSONFile(name: "Main.symbols.json", content: makeSymbolGraph(
                     moduleName: "Main",
@@ -851,10 +851,10 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
 
-    func testOverloadGroupSymbolsResolveWithoutHash() throws {
+    func testOverloadGroupSymbolsResolveWithoutHash() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "OverloadedSymbols")
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "OverloadedSymbols")
 
         // The enum case should continue to resolve by kind, since it has no hash collision
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.enum.case")
@@ -872,7 +872,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
     }
     
-    func testBetaInformationPreserved() throws {
+    func testBetaInformationPreserved() async throws {
         let platformMetadata = [
             "macOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(2, 0, 0), beta: true),
@@ -884,7 +884,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
 
         configuration.externalMetadata.currentPlatforms = platformMetadata
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle", configuration: configuration)
+        let linkResolvers = try await makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle", configuration: configuration)
         
         // MyClass is only available on beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=4.0.0)
         try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyClass", isBeta: true)
@@ -920,7 +920,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         func assertSuccessfullyResolves(
             authoredLink: String,
             to absoluteReferenceString: String? = nil,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
             let expectedAbsoluteReferenceString = absoluteReferenceString ?? {
@@ -943,14 +943,14 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         func assertBetaStatus(
             authoredLink: String,
             isBeta: Bool,
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
             try assertResults(authoredLink: authoredLink) { result, label in
                 switch result {
                 case .success(let resolved):
                     let entity = externalResolver.entity(resolved)
-                    XCTAssertEqual(entity.topicRenderReference.isBeta, isBeta, file: file, line: line)
+                    XCTAssertEqual(entity.makeTopicRenderReference().isBeta, isBeta, file: file, line: line)
                 case .failure(_, let errorInfo):
                     XCTFail("Unexpectedly failed to resolve \(label) link: \(errorInfo.message) \(errorInfo.solutions.map(\.summary).joined(separator: ", "))", file: file, line: line)
                 }
@@ -961,7 +961,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: String,
             errorMessage: String,
             solutions: [Solution],
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
            try assertResults(authoredLink: authoredLink) { result, label in
@@ -989,9 +989,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-    private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) throws -> LinkResolvers {
+    private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
+        let (_, bundle, context) = try await loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,10 +11,10 @@
 import Foundation
 import SwiftDocC
 
-struct ConvertFileWritingConsumer: ConvertOutputConsumer {
+struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     var targetFolder: URL
     var bundleRootFolder: URL?
-    var fileManager: FileManagerProtocol
+    var fileManager: any FileManagerProtocol
     var context: DocumentationContext
     var renderNodeWriter: JSONEncodingRenderNodeWriter
     var indexer: ConvertAction.Indexer?
@@ -29,7 +29,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     init(
         targetFolder: URL,
         bundleRootFolder: URL?,
-        fileManager: FileManagerProtocol,
+        fileManager: any FileManagerProtocol,
         context: DocumentationContext,
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
@@ -50,7 +50,8 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         self.assetPrefixComponent = bundleID?.rawValue.split(separator: "/").joined(separator: "-")
     }
     
-    func consume(problems: [Problem]) throws {
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
+    func _deprecated_consume(problems: [Problem]) throws {
         let diagnostics = problems.map { problem in
             Digest.Diagnostic(diagnostic: problem.diagnostic, rootURL: bundleRootFolder)
         }
@@ -67,18 +68,22 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         indexer?.index(renderNode)
     }
     
+    func consume(externalRenderNode: ExternalRenderNode) throws {
+        // Index the external node, if indexing is enabled.
+        indexer?.index(externalRenderNode)
+    }
+    
     func consume(assetsInBundle bundle: DocumentationBundle) throws {
         func copyAsset(_ asset: DataAsset, to destinationFolder: URL) throws {
             for sourceURL in asset.variants.values where !sourceURL.isAbsoluteWebURL {
                 let assetName = sourceURL.lastPathComponent
-                try fileManager.copyItem(
+                try fileManager._copyItem(
                     at: sourceURL,
                     to: destinationFolder.appendingPathComponent(assetName, isDirectory: false)
                 )
             }
         }
 
-        // TODO: Supporting a single bundle for the moment.
         let bundleID = bundle.id
         assert(bundleID.rawValue == self.assetPrefixComponent, "Unexpectedly encoding assets for a bundle other than the one this output consumer was created for.")
         
@@ -143,7 +148,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
             if fileManager.fileExists(atPath: targetFile.path) {
                 try fileManager.removeItem(at: targetFile)
             }
-            try fileManager.copyItem(at: themeSettings, to: targetFile)
+            try fileManager._copyItem(at: themeSettings, to: targetFile)
         }
     }
     
@@ -159,7 +164,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         try fileManager.createFile(at: recordsURL, contents: data)
     }
     
-    func consume(assets: [RenderReferenceType : [RenderReference]]) throws {
+    func consume(assets: [RenderReferenceType : [any RenderReference]]) throws {
         let uniqueAssets = assets.mapValues({ referencesForTypeOfAsset in referencesForTypeOfAsset.uniqueElements(by: { $0.identifier }) })
         
         let digest = Digest.Assets(
@@ -245,6 +250,7 @@ enum Digest {
         let downloads: [DownloadReference]
     }
     
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
     struct Diagnostic: Codable {
         struct Location: Codable {
             let line: Int
@@ -263,6 +269,7 @@ enum Digest {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
 private extension Digest.Diagnostic {
     init(diagnostic: Diagnostic, rootURL: URL?) {
         self.start = (diagnostic.range?.lowerBound).map { Location(line: $0.line, column: $0.column) }

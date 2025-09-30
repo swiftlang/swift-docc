@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,10 +27,10 @@ class DocumentationCuratorTests: XCTestCase {
         }
     }
     
-    func testCrawl() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testCrawl() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context, bundle: bundle)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
 
         var symbolsWithCustomCuration = [ResolvedTopicReference]()
@@ -74,8 +74,8 @@ class DocumentationCuratorTests: XCTestCase {
         )
     }
     
-    func testCrawlDiagnostics() throws {
-        let (tempCatalogURL, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+    func testCrawlDiagnostics() async throws {
+        let (tempCatalogURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = url.appendingPathComponent("documentation/myfunction.md")
             
             try """
@@ -136,8 +136,8 @@ class DocumentationCuratorTests: XCTestCase {
             """)
     }
     
-    func testCyclicCurationDiagnostic() throws {
-        let (_, context) = try loadBundle(catalog:
+    func testCyclicCurationDiagnostic() async throws {
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 // A number of articles with this cyclic curation:
                 //
@@ -201,8 +201,92 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual(curationProblem.possibleSolutions.map(\.summary), ["Remove '- <doc:First>'"])
     }
     
-    func testModuleUnderTechnologyRoot() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+    func testCurationInUncuratedAPICollection() async throws {
+        // Everything should behave the same when an API Collection is automatically curated as when it is explicitly curated
+        for shouldCurateAPICollection in [true, false] {
+            let assertionMessageDescription = "when the API collection is \(shouldCurateAPICollection ? "explicitly curated" : "auto-curated as an article under the module")."
+            
+            let catalog = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                    makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
+                ])),
+                
+                TextFile(name: "ModuleName.md", utf8Content: """
+                # ``ModuleName``
+                
+                \(shouldCurateAPICollection ? "## Topics\n\n### Explicit curation\n\n- <doc:API-Collection>" : "")
+                """),
+                
+                TextFile(name: "API-Collection.md", utf8Content: """
+                # Some API collection
+                
+                Curate the only symbol
+                
+                ## Topics
+                    
+                - ``SomeClass``
+                - ``NotFound``
+                """),
+            ])
+            let (bundle, context) = try await loadBundle(catalog: catalog)
+            XCTAssertEqual(
+                context.problems.map(\.diagnostic.summary),
+                [
+                    // There should only be a single problem about the unresolvable link in the API collection.
+                    "'NotFound' doesn't exist at '/unit-test/API-Collection'"
+                ],
+                "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n")) \(assertionMessageDescription)"
+            )
+            
+            // Verify that the topic graph paths to the symbol (although not used for its breadcrumbs) doesn't have the automatic edge anymore.
+            let symbolReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }))
+            XCTAssertEqual(
+                context.finitePaths(to: symbolReference).map { $0.map(\.path) },
+                [
+                    // The automatic default `["/documentation/ModuleName"]` curation _shouldn't_ be here.
+                    
+                    // The authored curation in the uncurated API collection
+                    ["/documentation/ModuleName", "/documentation/unit-test/API-Collection"],
+                ],
+                "Unexpected 'paths' to the symbol page \(assertionMessageDescription)"
+            )
+            
+            // Verify that the symbol page shouldn't auto-curate in its canonical location.
+            let symbolTopicNode = try XCTUnwrap(context.topicGraph.nodeWithReference(symbolReference))
+            XCTAssertFalse(symbolTopicNode.shouldAutoCurateInCanonicalLocation, "Symbol node is unexpectedly configured to auto-curate \(assertionMessageDescription)")
+            
+            // Verify that the topic graph doesn't have the automatic edge anymore.
+            XCTAssertEqual(context.dumpGraph(), """
+                 doc://unit-test/documentation/ModuleName
+                 ╰ doc://unit-test/documentation/unit-test/API-Collection
+                   ╰ doc://unit-test/documentation/ModuleName/SomeClass
+                
+                """,
+                "Unexpected topic graph \(assertionMessageDescription)"
+            )
+            
+            // Verify that the rendered top-level page doesn't have an automatic "Classes" topic section anymore.
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+            let rootRenderNode = converter.convert(try context.entity(with: moduleReference))
+            
+            XCTAssertEqual(
+                rootRenderNode.topicSections.map(\.title),
+                [shouldCurateAPICollection ? "Explicit curation" : "Articles"],
+                "Unexpected rendered topic sections on the module page \(assertionMessageDescription)"
+            )
+            XCTAssertEqual(
+                rootRenderNode.topicSections.map(\.identifiers),
+                [
+                    ["doc://unit-test/documentation/unit-test/API-Collection"],
+                ],
+                "Unexpected rendered topic sections on the module page \(assertionMessageDescription)"
+            )
+        }
+    }
+    
+    func testModuleUnderTechnologyRoot() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "SourceLocations") { url in
             try """
             # Root curating a module
 
@@ -219,7 +303,7 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
         }
         
-        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        let crawler = DocumentationCurator(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
@@ -232,11 +316,109 @@ class DocumentationCuratorTests: XCTestCase {
         
         XCTAssertEqual(root.path, "/documentation/Root")
         XCTAssertEqual(crawler.problems.count, 0)
-            
+    }
+    
+    func testCuratorDoesNotRelateNodesWhenArticleLinksContainExtraPathComponents() async throws {
+        let (bundle, context) = try await loadBundle(catalog:
+            Folder(name: "CatalogName.docc", content: [
+                TextFile(name: "Root.md", utf8Content: """
+                # Root
+                
+                @Metadata {
+                  @TechnologyRoot
+                }
+                
+                Add an API Collection of indirection to more easily detect the failed curation.
+                
+                ## Topics
+                - <doc:API-Collection>  
+                """),
+                
+                TextFile(name: "API-Collection.md", utf8Content: """
+                # Some API Collection
+                
+                Fail to curate all 4 articles because of extra incorrect path components.
+                
+                ## Topics
+                
+                ### No links will resolve in this section
+                
+                - <doc:WrongModuleName/First>
+                - <doc:documentation/WrongModuleName/Second>
+                - <doc:documentation/CatalogName/ExtraPathComponent/Third>
+                - <doc:CatalogName/ExtraPathComponent/Forth>
+                """),
+                
+                TextFile(name: "First.md",  utf8Content: "# First"),
+                TextFile(name: "Second.md", utf8Content: "# Second"),
+                TextFile(name: "Third.md",  utf8Content: "# Third"),
+                TextFile(name: "Forth.md",  utf8Content: "# Forth"),
+            ])
+        )
+        let (linkResolutionProblems, otherProblems) = context.problems.categorize(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" })
+        XCTAssert(otherProblems.isEmpty, "Unexpected problems: \(otherProblems.map(\.diagnostic.summary).sorted())")
+        
+        XCTAssertEqual(
+            linkResolutionProblems.map(\.diagnostic.source?.lastPathComponent),
+            ["API-Collection.md", "API-Collection.md", "API-Collection.md", "API-Collection.md"],
+            "Every unresolved link is in the API collection"
+        )
+        XCTAssertEqual(
+            linkResolutionProblems.map({ $0.diagnostic.range?.lowerBound.line }), [9, 10, 11, 12],
+            "There should be one warning about an unresolved reference for each link in the API collection's top"
+        )
+        
+        let rootReference = try XCTUnwrap(context.soleRootModuleReference)
+        
+        for articleName in ["First", "Second", "Third", "Forth"] {
+            let reference = try XCTUnwrap(context.documentationCache.allReferences.first(where: { $0.lastPathComponent == articleName }))
+            XCTAssertEqual(
+                context.topicGraph.nodeWithReference(reference)?.shouldAutoCurateInCanonicalLocation, true,
+                "Article '\(articleName)' isn't (successfully) manually curated and should therefore automatically curate."
+            )
+            XCTAssertEqual(
+                context.topicGraph.reverseEdges[reference]?.map(\.path), [rootReference.path],
+                "Article '\(articleName)' should only have a reverse edge to the root page where it will be automatically curated."
+            )
+        }
+        
+        let apiCollectionReference = try XCTUnwrap(context.documentationCache.allReferences.first(where: { $0.lastPathComponent == "API-Collection" }))
+        let apiCollectionSemantic = try XCTUnwrap(try context.entity(with: apiCollectionReference).semantic as? Article)
+        XCTAssertEqual(apiCollectionSemantic.topics?.taskGroups.count, 1, "The API Collection has one topic section")
+        let topicSection = try XCTUnwrap(apiCollectionSemantic.topics?.taskGroups.first)
+        XCTAssertEqual(topicSection.links.map(\.destination), [
+            // All these links are the same as they were authored which means that they didn't resolve.
+            "doc:WrongModuleName/First",
+            "doc:documentation/WrongModuleName/Second",
+            "doc:documentation/CatalogName/ExtraPathComponent/Third",
+            "doc:CatalogName/ExtraPathComponent/Forth",
+        ])
+        
+        let rootPage = try context.entity(with: rootReference)
+        let renderer = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = renderer.convert(rootPage)
+        
+        XCTAssertEqual(renderNode.topicSections.map(\.title), [
+            nil,        // An unnamed topic section
+            "Articles", // The automatic topic section
+        ])
+        XCTAssertEqual(renderNode.topicSections.map { $0.identifiers.sorted() }, [
+            // The unnamed topic section curates the API collection
+            [
+                "doc://CatalogName/documentation/CatalogName/API-Collection"
+            ],
+            // The automatic "Articles" section curates all 4 articles
+            [
+                "doc://CatalogName/documentation/CatalogName/First",
+                "doc://CatalogName/documentation/CatalogName/Forth",
+                "doc://CatalogName/documentation/CatalogName/Second",
+                "doc://CatalogName/documentation/CatalogName/Third",
+            ],
+        ])
     }
         
-    func testModuleUnderAncestorOfTechnologyRoot() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+    func testModuleUnderAncestorOfTechnologyRoot() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "SourceLocations") { url in
             try """
             # Root with ancestor curating a module
             
@@ -263,7 +445,6 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
         }
         
-        let _ = DocumentationCurator.init(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
@@ -277,10 +458,10 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual(root.path, "/documentation/Root")
     }
 
-    func testSymbolLinkResolving() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testSymbolLinkResolving() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        let crawler = DocumentationCurator(in: context, bundle: bundle)
         
         // Resolve top-level symbol in module parent
         do {
@@ -330,10 +511,10 @@ class DocumentationCuratorTests: XCTestCase {
         }
     }
     
-    func testLinkResolving() throws {
-        let (sourceRoot, bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testLinkResolving() async throws {
+        let (sourceRoot, bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context, bundle: bundle)
         
         // Resolve and curate an article in module root (absolute link)
         do {
@@ -385,8 +566,8 @@ class DocumentationCuratorTests: XCTestCase {
         }
     }
     
-    func testGroupLinkValidation() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
+    func testGroupLinkValidation() async throws {
+        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
             // Create a sidecar with invalid group links
             try! """
             # ``SideKit``
@@ -426,7 +607,7 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: root.appendingPathComponent("documentation").appendingPathComponent("api-collection.md"), atomically: true, encoding: .utf8)
         }
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context, bundle: bundle)
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift)
         
         try crawler.crawlChildren(of: reference, prepareForCuration: {_ in }) { (_, _) in }
@@ -479,8 +660,8 @@ class DocumentationCuratorTests: XCTestCase {
     ///      +-- SecondLevelNesting (Manually curated)
     ///        +-- MyArticle ( <--- This should be crawled even if we've mixed manual and automatic curation)
     /// ```
-    func testMixedManualAndAutomaticCuration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
+    func testMixedManualAndAutomaticCuration() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
         
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
@@ -515,8 +696,8 @@ class DocumentationCuratorTests: XCTestCase {
     
     /// In case a symbol has automatically curated children and is manually curated multiple times,
     /// the hierarchy should be created as it's authored. rdar://75453839
-    func testMultipleManualCurationIsPreserved() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
+    func testMultipleManualCurationIsPreserved() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "MixedManualAutomaticCuration")
         
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
         

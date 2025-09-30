@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,9 +13,9 @@ import SymbolKit
 import Markdown
 
 public struct RenderReferenceDependencies {
-    var topicReferences = [ResolvedTopicReference]()
-    var linkReferences = [LinkReference]()
-    var imageReferences = [ImageReference]()
+    public var topicReferences = [ResolvedTopicReference]()
+    public var linkReferences = [LinkReference]()
+    public var imageReferences = [ImageReference]()
     
     public init(topicReferences: [ResolvedTopicReference] = [], linkReferences: [LinkReference] = [], imageReferences: [ImageReference] = []) {
         self.topicReferences = topicReferences
@@ -29,14 +29,14 @@ extension RenderReferenceDependencies: Codable {
         case topicReferences, linkReferences, imageReferences
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(topicReferences, forKey: .topicReferences)
         try container.encode(linkReferences, forKey: .linkReferences)
         try container.encodeIfNotEmpty(imageReferences, forKey: .imageReferences)
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         topicReferences = try container.decode([ResolvedTopicReference].self, forKey: .topicReferences)
         linkReferences = try container.decode([LinkReference].self, forKey: .linkReferences)
@@ -154,7 +154,6 @@ public class DocumentationContentRenderer {
         case .chapter: return .collectionGroup
         case .collection: return .collection
         case .collectionGroup: return .collectionGroup
-        case ._technologyOverview: fallthrough // This case is deprecated and will be removed after 6.2 is released.
         case .tutorialTableOfContents: return .overview
         case .landingPage: return .article
         case .module, .extendedModule: return .collection
@@ -310,11 +309,13 @@ public class DocumentationContentRenderer {
             // try resolving that way as a fallback after looking up `documentationCache`.
             titleVariants = .init(defaultVariantValue: topicGraphOnlyNode.title)
         } else if let external = documentationContext.externalCache[reference] {
-            dependencies.topicReferences.append(contentsOf: external.renderReferenceDependencies.topicReferences)
-            dependencies.linkReferences.append(contentsOf: external.renderReferenceDependencies.linkReferences)
-            dependencies.imageReferences.append(contentsOf: external.renderReferenceDependencies.imageReferences)
+            let renderDependencies = external.makeRenderDependencies()
             
-            return external.topicRenderReference
+            dependencies.topicReferences.append(contentsOf: renderDependencies.topicReferences)
+            dependencies.linkReferences.append(contentsOf:  renderDependencies.linkReferences)
+            dependencies.imageReferences.append(contentsOf: renderDependencies.imageReferences)
+            
+            return external.makeTopicRenderReference()
         } else {
             titleVariants = .init(defaultVariantValue: reference.absoluteString)
         }
@@ -360,7 +361,7 @@ public class DocumentationContentRenderer {
                 extractAbstract(from: abstract)
             } ?? .init(defaultValue: [])
         } else {
-            abstractContent = .init(defaultValue: extractAbstract(from: (abstractedNode?.semantic as? Abstracted)?.abstract))
+            abstractContent = .init(defaultValue: extractAbstract(from: (abstractedNode?.semantic as? (any Abstracted))?.abstract))
         }
         
         // Collect the reference dependencies.
@@ -369,7 +370,7 @@ public class DocumentationContentRenderer {
 
         let isRequired = (node?.semantic as? Symbol)?.isRequired ?? false
 
-        let estimatedTime = (node?.semantic as? Timed)?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
+        let estimatedTime = (node?.semantic as? (any Timed))?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
         
         // Add key information for property lists.
         // If the symbol overrides the title with a custom name, display the symbol key.
@@ -517,7 +518,7 @@ public class DocumentationContentRenderer {
             }
             
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: bundle, in: documentationContext)?.language
+                SupportedLanguage(from: $0, source: nil, for: bundle)?.language
             }
             
             return ReferenceGroup(

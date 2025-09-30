@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
 A code file to display alongside a ``Step``.
@@ -32,7 +32,7 @@ public final class Code: Semantic, DirectiveConvertible {
     /// Whether a diff should be shown. See ``Code/fileName`` for more information.
     public let shouldResetDiff: Bool
     /// A preview image or video overlay.
-    public let preview: Media?
+    public let preview: (any Media)?
     
     enum Semantics {
         enum File: DirectiveArgument {
@@ -50,7 +50,7 @@ public final class Code: Semantic, DirectiveConvertible {
         }
     }
     
-    init(originalMarkup: BlockDirective, fileReference: ResourceReference, fileName: String, previousFileReference: ResourceReference?, shouldResetDiff: Bool, preview: Media?) {
+    init(originalMarkup: BlockDirective, fileReference: ResourceReference, fileName: String, previousFileReference: ResourceReference?, shouldResetDiff: Bool, preview: (any Media)?) {
         self.originalMarkup = originalMarkup
         self.fileReference = fileReference
         self.fileName = fileName
@@ -59,12 +59,12 @@ public final class Code: Semantic, DirectiveConvertible {
         self.preview = preview
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == Code.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
         guard let requiredFileReference = Semantic.Analyses.HasArgument<Code, Semantics.File>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
         let fileReference = ResourceReference(bundleID: bundle.id, path: requiredFileReference)
@@ -80,7 +80,7 @@ public final class Code: Semantic, DirectiveConvertible {
             shouldResetDiff = false
         }
        
-        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
         
         let optionalPreviousFileReference = Semantic.Analyses.HasArgument<Code, Semantics.PreviousFile>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems).map { argument in
             ResourceReference(bundleID: bundle.id, path: argument)

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -78,5 +78,83 @@ class ValidatedURLTests: XCTestCase {
             .forEach { url in
                 XCTAssertNotNil(ValidatedURL(parsingExact: url)?.components.fragment)
             }
+    }
+    
+    func testQueryIsPartOfPathForAuthoredLinks() throws {
+        
+        func validate(linkText: String, expectedPath: String, expectedFragment: String? = nil,file: StaticString = #filePath, line: UInt = #line) throws {
+            let validated = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
+            XCTAssertNil(validated.components.queryItems, "Authored documentation links don't include query items", file: file, line: line)
+            XCTAssertEqual(validated.components.path, expectedPath, file: file, line: line)
+            XCTAssertEqual(validated.components.fragment, expectedFragment, file: file, line: line)
+        }
+        
+        // Test return type disambiguation
+        for linkText in [
+            "SymbolName/memberName()->Int?",
+            "doc:SymbolName/memberName()->Int?",
+            "doc://com.example.test/SymbolName/memberName()->Int?",
+        ] {
+            let expectedPath = linkText.hasPrefix("doc://")
+                ? "/SymbolName/memberName()->Int?"
+                :  "SymbolName/memberName()->Int?"
+            
+            try validate(linkText: linkText, expectedPath: expectedPath)
+            try validate(linkText: linkText + "#Heading-Name", expectedPath: expectedPath, expectedFragment: "Heading-Name")
+        }
+        
+        // Test parameter type disambiguation
+        for linkText in [
+            "SymbolName/memberName(with:and:)-(Int?,_)",
+            "doc:SymbolName/memberName(with:and:)-(Int?,_)",
+            "doc://com.example.test/SymbolName/memberName(with:and:)-(Int?,_)",
+        ] {
+            let expectedPath = linkText.hasPrefix("doc://")
+                ? "/SymbolName/memberName(with:and:)-(Int?,_)"
+                :  "SymbolName/memberName(with:and:)-(Int?,_)"
+            
+            try validate(linkText: linkText, expectedPath: expectedPath)
+            try validate(linkText: linkText + "#Heading-Name", expectedPath: expectedPath, expectedFragment: "Heading-Name")
+        }
+        
+        // Test parameter with percent encoding
+        var linkText = "doc://com.example.test/docc=Whats%20New&version=DocC&Title=[Update]"
+        var expectedPath = "/docc=Whats%20New&version=DocC&Title=[Update]"
+        try validate(linkText: linkText, expectedPath: expectedPath)
+        
+        // Test parameter with percent encoding at the end of the URL
+        linkText = "doc://com.example.test/docc=Whats%20New&version=DocC&Title=[Update]%20"
+        expectedPath = "/docc=Whats%20New&version=DocC&Title=[Update]%20"
+        try validate(linkText: linkText, expectedPath: expectedPath)
+        
+        // Test parameter without percent encoding
+        linkText = "doc://com.example.test/docc=WhatsNew&version=DocC&Title=[Update]"
+        expectedPath = "/docc=WhatsNew&version=DocC&Title=[Update]"
+        try validate(linkText: linkText, expectedPath: expectedPath)
+        
+        // Test parameter with special characters
+        linkText = "doc://com.example.test/テスト"
+        expectedPath = "/テスト"
+        try validate(linkText: linkText, expectedPath: expectedPath)
+    }
+    
+    func testEscapedFragment() throws {
+        let escapedFragment = try XCTUnwrap("💻".addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed))
+        XCTAssertEqual(escapedFragment, "%F0%9F%92%BB")
+        
+        for linkText in [
+            "SymbolName#\(escapedFragment)",
+            "doc:SymbolName#\(escapedFragment)",
+            "doc://com.example.test/SymbolName#\(escapedFragment)",
+        ] {
+            let expectedPath = linkText.hasPrefix("doc://")
+                ? "/SymbolName"
+                :  "SymbolName"
+            
+            let validated = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
+            
+            XCTAssertEqual(validated.components.path, expectedPath)
+            XCTAssertEqual(validated.components.fragment, "💻")
+        }
     }
 }

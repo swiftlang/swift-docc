@@ -1,19 +1,20 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
  A document's abstract may only contain formatted text. Images and links are not allowed.
  */
+@available(*, deprecated, message: "This check is no longer applicable. This deprecated API will be removed after 6.3 is released")
 public struct AbstractContainsFormattedTextOnly: Checker {
     public var problems: [Problem] = [Problem]()
     private var sourceFile: URL?
@@ -43,7 +44,7 @@ public struct AbstractContainsFormattedTextOnly: Checker {
         }
     }
     
-    private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: Markup) {
+    private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: any Markup) {
         let explanation = """
             Summary should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
             """

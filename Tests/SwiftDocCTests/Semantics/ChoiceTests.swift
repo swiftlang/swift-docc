@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,18 +14,18 @@ import Markdown
 import SwiftDocCTestUtilities
 
 class ChoiceTests: XCTestCase {
-    func testInvalidEmpty() throws {
+    func testInvalidEmpty() async throws {
         let source = "@Choice"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(choice)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
             XCTAssertEqual(2, problems.count)
@@ -35,7 +35,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidMissingContent() throws {
+    func testInvalidMissingContent() async throws {
         let source = """
 @Choice(isCorrect: true) {
    @Justification {
@@ -47,12 +47,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(choice)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
             XCTAssertEqual(1, problems.count)
@@ -60,7 +60,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidMissingJustification() throws {
+    func testInvalidMissingJustification() async throws {
         let source = """
 @Choice(isCorrect: true) {
    This is some content.
@@ -70,12 +70,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(choice)
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
@@ -84,7 +84,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidMissingIsCorrect() throws {
+    func testInvalidMissingIsCorrect() async throws {
         let source = """
 @Choice {
    This is some content.
@@ -96,12 +96,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(choice)
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
@@ -110,7 +110,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testInvalidIsCorrect() throws {
+    func testInvalidIsCorrect() async throws {
         let source = """
 @Choice(isCorrect: blah) {
    This is some content.
@@ -122,12 +122,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(choice)
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
@@ -139,7 +139,7 @@ class ChoiceTests: XCTestCase {
         }
     }
     
-    func testValidParagraph() throws {
+    func testValidParagraph() async throws {
         let source = """
 @Choice(isCorrect: true) {
    This is some content.
@@ -152,12 +152,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(choice)
             XCTAssertTrue(problems.isEmpty)
             choice.map { choice in
@@ -172,7 +172,7 @@ Choice @1:1-6:2 isCorrect: true
         }
     }
     
-    func testValidCode() throws {
+    func testValidCode() async throws {
         let source = """
 @Choice(isCorrect: true) {
    ```swift
@@ -188,12 +188,12 @@ Choice @1:1-6:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(choice)
             XCTAssertTrue(problems.isEmpty)
             choice.map { choice in
@@ -208,7 +208,7 @@ Choice @1:1-9:2 isCorrect: true
         }
     }
     
-    func testValidImage() throws {
+    func testValidImage() async throws {
         let source = """
 @Choice(isCorrect: true) {
    @Image(source: blah.png, alt: blah)
@@ -222,7 +222,7 @@ Choice @1:1-9:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+        let (bundle, _) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
             InfoPlist(identifier: "org.swift.docc.example"),
             DataFile(name: "blah.png", data: Data()),
         ]))
@@ -230,7 +230,7 @@ Choice @1:1-9:2 isCorrect: true
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(choice)
             XCTAssertTrue(problems.isEmpty)
             choice.map { choice in

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,15 +14,15 @@ import Markdown
 import SwiftDocCTestUtilities
 
 class VolumeTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @Volume
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let volume = Volume(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(volume)
         XCTAssertEqual(4, problems.count)
         XCTAssertEqual([
@@ -33,7 +33,7 @@ class VolumeTests: XCTestCase {
         ], problems.map { $0.diagnostic.identifier })
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let name = "Always Be Voluming"
         let expectedContent = "Here is some content explaining what this volume is."
         let source = """
@@ -51,9 +51,9 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let volume = Volume(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(volume)
         XCTAssertTrue(problems.isEmpty)
         volume.map { volume in
@@ -62,7 +62,7 @@ class VolumeTests: XCTestCase {
         }
     }
 
-    func testChapterWithSameName() throws {
+    func testChapterWithSameName() async throws {
         let name = "Always Be Voluming"
 
         let catalog = Folder(name: "unit-test.docc", content: [
@@ -97,7 +97,7 @@ class VolumeTests: XCTestCase {
             """)
         ])
         
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         let node = try context.entity(
             with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         )

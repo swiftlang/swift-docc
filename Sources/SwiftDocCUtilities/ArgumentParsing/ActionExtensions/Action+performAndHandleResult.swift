@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SwiftDocC
+package import SwiftDocC
 import Foundation
 
 extension AsyncAction {

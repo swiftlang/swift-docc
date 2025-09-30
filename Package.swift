@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 /*
  This source file is part of the Swift.org open source project
 
@@ -14,13 +14,19 @@ import class Foundation.ProcessInfo
 
 let swiftSettings: [SwiftSetting] = [
     .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
+    
+    .swiftLanguageMode(.v5),
+    
+    .enableUpcomingFeature("ConciseMagicFile"), // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
+    .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
+    .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
 ]
 
 let package = Package(
     name: "SwiftDocC",
     platforms: [
-        .macOS(.v12),
-        .iOS(.v15)
+        .macOS(.v13),
+        .iOS(.v16)
     ],
     products: [
         .library(
@@ -130,12 +136,12 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
     // Building standalone, so fetch all dependencies remotely.
     package.dependencies += [
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.53.0"),
-        .package(url: "https://github.com/apple/swift-markdown.git", branch: "main"),
-        .package(url: "https://github.com/apple/swift-lmdb.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),
-        .package(url: "https://github.com/apple/swift-docc-symbolkit.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-docc-symbolkit.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
-        .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.2.0"),
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.2.0"),
     ]
 } else {
     // Building in the Swift.org CI system, so rely on local versions of dependencies.

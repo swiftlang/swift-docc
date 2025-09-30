@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,8 +9,8 @@
 */
 
 import Foundation
-import Markdown
-import SymbolKit
+public import Markdown
+public import SymbolKit
 
 /// A programming symbol semantic type.
 ///
@@ -208,59 +208,24 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// Any dictionary keys of the symbol, if the symbol accepts keys.
     public var dictionaryKeysSection: DictionaryKeysSection?
-    @available(*, deprecated, renamed: "dictionaryKeysSection", message: "Use 'dictionaryKeysSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection> {
-        get { .init(defaultVariantValue: dictionaryKeysSection) }
-        set { dictionaryKeysSection = newValue.firstValue }
-    }
     
     /// The symbol's possible values, if the symbol is a property list element with possible values.
     public var possibleValuesSection: PropertyListPossibleValuesSection?
-    @available(*, deprecated, renamed: "possibleValuesSection", message: "Use 'possibleValuesSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var possibleValuesSectionVariants: DocumentationDataVariants<PropertyListPossibleValuesSection> {
-        get { .init(defaultVariantValue: possibleValuesSection) }
-        set { possibleValuesSection = newValue.firstValue }
-    }
 
     /// The HTTP endpoint of an HTTP request.
     public var httpEndpointSection: HTTPEndpointSection?
-    @available(*, deprecated, renamed: "httpEndpointSection", message: "Use 'httpEndpointSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection> {
-        get { .init(defaultVariantValue: httpEndpointSection) }
-        set { httpEndpointSection = newValue.firstValue }
-    }
-
+    
     /// The upload body of an HTTP request.
     public var httpBodySection: HTTPBodySection?
-    @available(*, deprecated, renamed: "httpBodySection", message: "Use 'httpBodySection' instead. This deprecated API will be removed after 6.2 is released")
-    public var httpBodySectionVariants: DocumentationDataVariants<HTTPBodySection> {
-        get { .init(defaultVariantValue: httpBodySection) }
-        set { httpBodySection = newValue.firstValue }
-    }
-
+    
     /// The parameters of an HTTP request.
     public var httpParametersSection: HTTPParametersSection?
-    @available(*, deprecated, renamed: "httpParametersSection", message: "Use 'httpParametersSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var httpParametersSectionVariants: DocumentationDataVariants<HTTPParametersSection> {
-        get { .init(defaultVariantValue: httpParametersSection) }
-        set { httpParametersSection = newValue.firstValue }
-    }
 
     /// The responses of an HTTP request.
     public var httpResponsesSection: HTTPResponsesSection?
-    @available(*, deprecated, renamed: "httpResponsesSection", message: "Use 'httpResponsesSection' instead. This deprecated API will be removed after 6.2 is released")
-    public var httpResponsesSectionVariants: DocumentationDataVariants<HTTPResponsesSection> {
-        get { .init(defaultVariantValue: httpResponsesSection) }
-        set { httpResponsesSection = newValue.firstValue }
-    }
     
     /// Any redirect information of the symbol, if the symbol has been moved from another location.
     public var redirects: [Redirect]?
-    @available(*, deprecated, renamed: "redirects", message: "Use 'redirects' instead. This deprecated API will be removed after 6.2 is released")
-    public var redirectsVariants: DocumentationDataVariants<[Redirect]> {
-        get { .init(defaultVariantValue: redirects) }
-        set { redirects = newValue.firstValue }
-    }
     
     /// The symbol's abstract summary as a single paragraph, in each language variant the symbol is available in.
     public var abstractVariants: DocumentationDataVariants<Paragraph> {
@@ -276,7 +241,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     public var isSPIVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
     
     /// The mixins of the symbol, in each language variant the symbol is available in.
-    var mixinsVariants: DocumentationDataVariants<[String: Mixin]>
+    var mixinsVariants: DocumentationDataVariants<[String: any Mixin]>
     
     /// Any automatically created task groups of the symbol, in each language variant the symbol is available in.
     var automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]>
@@ -305,7 +270,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         accessLevelVariants: DocumentationDataVariants<String>,
         availabilityVariants: DocumentationDataVariants<SymbolGraph.Symbol.Availability>,
         deprecatedSummaryVariants: DocumentationDataVariants<DeprecatedSection>,
-        mixinsVariants: DocumentationDataVariants<[String: Mixin]>,
+        mixinsVariants: DocumentationDataVariants<[String: any Mixin]>,
         declarationVariants: DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
         alternateDeclarationVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]> = .init(defaultVariantValue: [:]),
         alternateSignatureVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.FunctionSignature]]> = .init(defaultVariantValue: [:]),
@@ -496,14 +461,14 @@ extension Symbol {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, alternateSymbols: SymbolGraph.Symbol.AlternateSymbols?, selector: UnifiedSymbolGraph.Selector) throws {
+    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, alternateSymbols: SymbolGraph.Symbol.AlternateSymbols?, selector: UnifiedSymbolGraph.Selector) throws(DocumentationContext.ContextError) {
         let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
         func merge<Value: Equatable>(
             _ mergingValue: Value,
             into variants: inout DocumentationDataVariants<[[PlatformName?] : Value]>
-        ) throws {
+        ) throws(DocumentationContext.ContextError) {
             guard let platformName else {
                 variants[trait]?[[nil]] = mergingValue
                 return
@@ -752,7 +717,7 @@ extension Symbol {
     }
     
     /// The mixins of the first variant of the symbol.
-    var mixins: [String: Mixin]? {
+    var mixins: [String: any Mixin]? {
         get { mixinsVariants.firstValue }
         set { mixinsVariants.firstValue = newValue }
     }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,6 @@
 #if canImport(NIOHTTP1)
 import Foundation
 import XCTest
-@testable import SwiftDocC
 @testable import SwiftDocCUtilities
 import SwiftDocCTestUtilities
 
@@ -33,10 +32,8 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         let response = Response()
         
-        XCTAssertNoThrow(try channel.pipeline.addHandler(HTTPResponseEncoder()).wait())
         XCTAssertNoThrow(try channel.pipeline.addHandler(response).wait())
         XCTAssertNoThrow(try channel.pipeline.addHandler(channelHandler).wait())
-        XCTAssertNoThrow(try channel.pipeline.addHandler(HTTPServerPipelineHandler()).wait())
 
         XCTAssertNoThrow(try channel.connect(to: SocketAddress(ipAddress: "127.0.0.1", port: 1)).wait())
 

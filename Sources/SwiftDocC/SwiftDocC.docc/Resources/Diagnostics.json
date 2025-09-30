@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "description": "Specification of the DocC diagnostics.json digest file.",
+        "description": "Specification of the deprecated DocC diagnostics.json digest file. This deprecated file will be removed after 6.3 is released.",
         "version": "0.1.0",
         "title": "Diagnostics"
     },

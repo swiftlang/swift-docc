@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// Additional resources that help users learn a technology.
 ///
@@ -54,10 +54,10 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
         self.redirects = redirects
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == Resources.directiveName)
         
-        var remainder: [Markup]
+        var remainder: [any Markup]
         let requiredParagraph: Paragraph?
         if let firstParagraph = directive.child(at: 0) as? Paragraph {
             requiredParagraph = firstParagraph
@@ -69,14 +69,14 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             requiredParagraph = nil
         }
 
-        Semantic.Analyses.HasOnlyKnownDirectives<Resources>(severityIfFound: .warning, allowedDirectives: Tile.DirectiveNames.allCases.map { $0.rawValue } + [Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Resources>(severityIfFound: .warning, allowedDirectives: Tile.DirectiveNames.allCases.map { $0.rawValue } + [Redirect.directiveName]).analyze(directive, children: directive.children, source: source, problems: &problems)
         
         let redirects: [Redirect]
         (redirects, remainder) = remainder.categorize { child -> Redirect? in
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Redirect(from: childDirective, source: source, for: bundle, problems: &problems)
         }
         
         let tiles: [Tile]
@@ -84,7 +84,7 @@ public final class Resources: Semantic, DirectiveConvertible, Abstracted, Redire
             guard let childDirective = child as? BlockDirective, Tile.DirectiveNames(rawValue: childDirective.name) != nil else {
                 return nil
             }
-            return Tile(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Tile(from: childDirective, source: source, for: bundle, problems: &problems)
         }
         
         var seenTileDirectiveNames = Set<String>()

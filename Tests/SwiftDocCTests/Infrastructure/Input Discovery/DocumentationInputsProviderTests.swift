@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,9 +14,6 @@ import SwiftDocCTestUtilities
 
 class DocumentationInputsProviderTests: XCTestCase {
     
-    // After 6.2 we can update this test to verify that the input provider discovers the same inputs regardless of FileManagerProtocol
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This test uses `LocalFileSystemDataProvider` as a `DocumentationWorkspaceDataProvider` which is deprecated and will be removed after 6.2 is released")
     func testDiscoversSameFilesAsPreviousImplementation() throws {
         let folderHierarchy = Folder(name: "one", content: [
             Folder(name: "two", content: [
@@ -68,38 +65,26 @@ class DocumentationInputsProviderTests: XCTestCase {
             Folder(name: "OutsideSearchScope.docc", content: []),
         ])
         
+        // Prepare the real on-disk file system
         let tempDirectory = try createTempFolder(content: [folderHierarchy])
-        let realProvider = DocumentationContext.InputsProvider(fileManager: FileManager.default)
         
-        let testFileSystem = try TestFileSystem(folders: [folderHierarchy])
-        let testProvider = DocumentationContext.InputsProvider(fileManager: testFileSystem)
-
-        let options = BundleDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
-            tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")
-        ])
+        // Prepare the test file system
+        let testFileSystem = try TestFileSystem(folders: [])
+        try testFileSystem.addFolder(folderHierarchy, basePath: tempDirectory)
         
-        let foundPrevImplBundle = try XCTUnwrap(LocalFileSystemDataProvider(rootURL: tempDirectory.appendingPathComponent("/one/two")).bundles(options: options).first)
-        let (foundRealBundle, _) = try XCTUnwrap(realProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
-
-        let (foundTestBundle, _) = try XCTUnwrap(testProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/one/two"), options: .init(
-            infoPlistFallbacks: options.infoPlistFallbacks,
-            // The test file system has a default base URL and needs different URLs for the symbol graph files
-            additionalSymbolGraphFiles: [
-                URL(fileURLWithPath: "/path/to/SomethingAdditional.symbols.json")
+        for fileManager in [FileManager.default as FileManagerProtocol, testFileSystem as FileManagerProtocol] {
+            let inputsProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
+            let options = BundleDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
+                tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")
             ])
-        ))
-
-        for (bundle, relativeBase) in [
-            (foundPrevImplBundle, tempDirectory.appendingPathComponent("/one/two/three")),
-            (foundRealBundle,     tempDirectory.appendingPathComponent("/one/two/three")),
-            (foundTestBundle,     URL(fileURLWithPath: "/one/two/three")),
-        ] {
+            let (bundle, _) = try XCTUnwrap(inputsProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
+            
             func relativePathString(_ url: URL) -> String {
-                url.relative(to: relativeBase)!.path
+                url.relative(to: tempDirectory.appendingPathComponent("/one/two/three"))!.path
             }
             
             XCTAssertEqual(bundle.displayName, "CustomDisplayName")
-            XCTAssertEqual(bundle.identifier, "com.example.test")
+            XCTAssertEqual(bundle.id, "com.example.test")
             XCTAssertEqual(bundle.markupURLs.map(relativePathString).sorted(), [
                 "Found.docc/CCC.md",
                 "Found.docc/Inner/DDD.md",

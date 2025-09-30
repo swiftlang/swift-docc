@@ -11,7 +11,7 @@
 import Foundation
 import SwiftDocC
 
-#if !os(Linux) && !os(Android) && !os(Windows)
+#if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
 import Darwin
 
 /// A throttle object to filter events that come too fast.
@@ -59,7 +59,7 @@ class DirectoryMonitor {
     
     /// An observed directory structure including the file handler and dispatch source.
     private struct WatchedDirectory {
-        let sources: [DispatchSourceFileSystemObject]
+        let sources: [any DispatchSourceFileSystemObject]
     }
     
     /// A list of the directories that the monitor observes for changes.
@@ -147,7 +147,7 @@ class DirectoryMonitor {
     private let shouldReloadDirectoryTree = Synchronized(false)
 
     /// Starts monitoring the given URL for changes and returns the dispatch source object for this operation.
-    private func watch(url: URL, for events: DispatchSource.FileSystemEvent, on queue: DispatchQueue) throws -> (descriptor: Int32, source: DispatchSourceFileSystemObject) {
+    private func watch(url: URL, for events: DispatchSource.FileSystemEvent, on queue: DispatchQueue) throws -> (descriptor: Int32, source: any DispatchSourceFileSystemObject) {
         let fileDescriptor = open(url.path, O_EVTONLY)
         if fileDescriptor == -1 {
             throw Error.openFileHandleFailed(url, code: Darwin.errno)

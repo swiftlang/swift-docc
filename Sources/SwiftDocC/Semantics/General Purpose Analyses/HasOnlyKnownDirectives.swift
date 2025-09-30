@@ -1,19 +1,19 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 extension Semantic.Analyses {
     /// Checks for any directives that are not valid as direct children of the parent directive.
-    public struct HasOnlyKnownDirectives<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasOnlyKnownDirectives<Parent: Semantic & DirectiveConvertible> {
         let severityIfFound: DiagnosticSeverity?
         let allowedDirectives: [String]
         let allowsMarkup: Bool
@@ -38,7 +38,7 @@ extension Semantic.Analyses {
             self.allowsMarkup = allowsMarkup
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems: inout [Problem]) {
             if let severity = severityIfFound {
                 let allowedDirectivesList = allowedDirectives.sorted().map { "'\($0)'" }.joined(separator: ", ")
                 

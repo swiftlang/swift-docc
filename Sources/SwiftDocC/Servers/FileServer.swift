@@ -8,16 +8,23 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import SymbolKit
 #if canImport(FoundationNetworking)
-import FoundationNetworking
+public import FoundationNetworking
 #endif
 #if canImport(UniformTypeIdentifiers)
 import UniformTypeIdentifiers
 #endif
 #if os(Windows)
 import WinSDK
+#endif
+
+#if canImport(os)
+    import os
+    private let logger = Logger(subsystem: "org.swift.docc", category: "FileServer")
+#else
+    private let logger = NoOpLoggerShim()
 #endif
 
 fileprivate let slashCharSet = CharacterSet(charactersIn: "/")
@@ -33,7 +40,7 @@ public class FileServer {
     public let baseURL: URL
     
     /// The list of providers from which files are served.
-    private var providers: [String: FileServerProvider] = [:]
+    private var providers: [String: any FileServerProvider] = [:]
     
     /**
      Initialize a FileServer instance with a base URL.
@@ -52,7 +59,7 @@ public class FileServer {
     ///   - subPath: The sub-path in which the `FileServerProvider` will be queried for content.
     /// - Returns: A boolean indicating if the registration succeeded or not.
     @discardableResult
-    public func register(provider: FileServerProvider, subPath: String = "/") -> Bool {
+    public func register(provider: any FileServerProvider, subPath: String = "/") -> Bool {
         guard !subPath.isEmpty else { return false }
         let trimmed = subPath.trimmingCharacters(in: slashCharSet)
         providers[trimmed] = provider
@@ -95,7 +102,7 @@ public class FileServer {
             mimeType = FileServer.mimeType(for: url.pathExtension)
         } else { // request is for a path, we need to fake a redirect here
             if url.pathComponents.isEmpty {
-                xlog("Tried to load an invalid URL: \(url.absoluteString).\nFalling back to serve index.html.")
+                logger.log("Tried to load an invalid URL: \(url.absoluteString).\nFalling back to serve index.html.")
             }
             mimeType = "text/html"
             data = self.data(for: baseURL.appendingPathComponent("/index.html"))

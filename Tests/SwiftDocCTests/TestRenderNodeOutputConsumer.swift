@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,7 @@ import Foundation
 @testable import SwiftDocC
 import XCTest
 
-class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
+class TestRenderNodeOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     var renderNodes = Synchronized<[RenderNode]>([])
     
     func consume(renderNode: RenderNode) throws {
@@ -21,16 +21,16 @@ class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
         }
     }
     
-    func consume(problems: [Problem]) throws { }
     func consume(assetsInBundle bundle: DocumentationBundle) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
-    func consume(assets: [RenderReferenceType: [RenderReference]]) throws { }
+    func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }
     func consume(benchmarks: Benchmark) throws { }
     func consume(documentationCoverageInfo: [CoverageDataEntry]) throws { }
     func consume(renderReferenceStore: RenderReferenceStore) throws { }
     func consume(buildMetadata: BuildMetadata) throws { }
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
+    func consume(externalRenderNode: ExternalRenderNode) throws { }
 }
 
 extension TestRenderNodeOutputConsumer {
@@ -88,8 +88,8 @@ extension XCTestCase {
         for bundleName: String,
         sourceRepository: SourceRepository? = nil,
         configureBundle: ((URL) throws -> Void)? = nil
-    ) throws -> TestRenderNodeOutputConsumer {
-        let (_, bundle, context) = try testBundleAndContext(
+    ) async throws -> TestRenderNodeOutputConsumer {
+        let (_, bundle, context) = try await testBundleAndContext(
             copying: bundleName,
             configureBundle: configureBundle
         )

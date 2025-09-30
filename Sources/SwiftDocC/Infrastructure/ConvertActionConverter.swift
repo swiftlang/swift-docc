@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import Foundation
 
 #if canImport(os)
-import os
+package import os
 #endif
 
 package enum ConvertActionConverter {
@@ -34,7 +34,7 @@ package enum ConvertActionConverter {
     package static func convert(
         bundle: DocumentationBundle,
         context: DocumentationContext,
-        outputConsumer: some ConvertOutputConsumer,
+        outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
@@ -54,7 +54,7 @@ package enum ConvertActionConverter {
         
         guard !context.problems.containsErrors else {
             if emitDigest {
-                try outputConsumer.consume(problems: context.problems)
+                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
             return []
         }
@@ -78,7 +78,7 @@ package enum ConvertActionConverter {
         // Arrays to gather additional metadata if `emitDigest` is `true`.
         var indexingRecords = [IndexingRecord]()
         var linkSummaries = [LinkDestinationSummary]()
-        var assets = [RenderReferenceType : [RenderReference]]()
+        var assets = [RenderReferenceType : [any RenderReference]]()
         var coverageInfo = [CoverageDataEntry]()
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
         
@@ -90,7 +90,7 @@ package enum ConvertActionConverter {
         // FIXME: In the future we could simplify this control flow by not catching these errors and turning them into diagnostics.
         // Since both error-level diagnostics and thrown errors fail the documentation build,
         // the only practical different this would have is that we stop on the first unexpected error instead of processing all pages and gathering all unexpected errors.
-        func recordProblem(from error: Swift.Error, in problems: inout [Problem], withIdentifier identifier: String) {
+        func recordProblem(from error: any Swift.Error, in problems: inout [Problem], withIdentifier identifier: String) {
             let problem = Problem(diagnostic: Diagnostic(
                 severity: .error,
                 identifier: "org.swift.docc.documentation-converter.\(identifier)",
@@ -103,6 +103,15 @@ package enum ConvertActionConverter {
         
         let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
         let resultsGroup = DispatchGroup()
+        
+        // Consume external links and add them into the sidebar.
+        for externalLink in context.externalCache {
+            // Here we're associating the external node with the **current** bundle's bundle ID.
+            // This is needed because nodes are only considered children if the parent and child's bundle ID match.
+            // Otherwise, the node will be considered as a separate root node and displayed separately.
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+            try outputConsumer.consume(externalRenderNode: externalRenderNode)
+        }
         
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
@@ -198,7 +207,7 @@ package enum ConvertActionConverter {
         if emitDigest {
             signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
                 do {
-                    try outputConsumer.consume(problems: context.problems + conversionProblems)
+                    try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + conversionProblems)
                 } catch {
                     recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
                 }

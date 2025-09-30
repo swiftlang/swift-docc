@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -237,7 +237,7 @@ final class SwiftLMDBTests: XCTestCase {
     }
     
     func testArrayOfInt() throws {
-#if !os(Linux) && !os(Android) && !os(Windows)
+#if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
         let database = try environment.openDatabase()
         
         var array: [UInt32] = []
@@ -258,10 +258,6 @@ final class SwiftLMDBTests: XCTestCase {
         XCTAssertEqual(value, [1,2,3,4,5,6,7,8,9,10,11,12,13,14])
 #endif
     }
-
-    static var allTests = [
-        ("testVersion", testVersion),
-    ]
 }
 
 // MARK: - Custom Objects

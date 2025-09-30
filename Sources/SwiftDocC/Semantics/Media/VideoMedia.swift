@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A block filled with a video.
 public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
@@ -57,7 +57,7 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
         "deviceFrame" : \VideoMedia._deviceFrame,
     ]
     
-    func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         if !FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled && deviceFrame != nil {
             let diagnostic = Diagnostic(
                 source: source,
@@ -85,7 +85,7 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
 }
 
 extension VideoMedia: RenderableDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         var renderedCaption: [RenderInlineContent]?
         if let caption = caption.first {
             let blockContent = contentCompiler.visit(caption)

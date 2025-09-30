@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,29 +23,14 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental support for combining overloaded symbol pages is enabled.
     public var isExperimentalOverloadedSymbolPresentationEnabled = false
     
-    /// Whether experimental support for automatically rendering links on symbol documentation to articles
-    /// that mention that symbol.
-    public var isExperimentalMentionedInEnabled = false
+    /// Whether support for automatically rendering links on symbol documentation to articles that mention that symbol is enabled.
+    public var isMentionedInEnabled = true
     
     /// Whether or not support for validating parameters and return value documentation is enabled.
     public var isParametersAndReturnsValidationEnabled = true
     
-    @available(*, deprecated, renamed: "isParametersAndReturnsValidationEnabled", message: "Use 'isParametersAndReturnsValidationEnabled' instead. This deprecated API will be removed after 6.1 is released")
-    public var isExperimentalParametersAndReturnsValidationEnabled: Bool {
-        get { isParametersAndReturnsValidationEnabled }
-        set { isParametersAndReturnsValidationEnabled = newValue }
-    }
-    
-    /// Creates a set of feature flags with the given values.
-    ///
-    /// - Parameters:
-    ///   - additionalFlags: Any additional flags to set.
-    ///
-    ///     This field allows clients to set feature flags without adding new API.
-    public init(
-        additionalFlags: [String : Bool] = [:]
-    ) {
-    }
+    /// Creates a set of feature flags with all default values.
+    public init() {}
 
     /// Set feature flags that were loaded from a bundle's Info.plist.
     internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationBundle.Info.BundleFeatureFlags) {

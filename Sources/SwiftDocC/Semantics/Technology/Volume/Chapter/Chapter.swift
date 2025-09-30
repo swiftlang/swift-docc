@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A chapter containing ``Tutorial``s to complete.
 public final class Chapter: Semantic, AutomaticDirectiveConvertible, Abstracted, Redirected {

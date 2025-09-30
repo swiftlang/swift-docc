@@ -204,20 +204,20 @@ class DocumentationMarkupTests: XCTestCase {
 
     func testCertainDirectivesAreRemovedFromContent() throws {
 
-        func checkSectionContent(expectedContent: String?, section: Section?, file: StaticString = #file, line: UInt = #line) {
+        func checkSectionContent(expectedContent: String?, section: (any Section)?, file: StaticString = #filePath, line: UInt = #line) {
             if let desc = section?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n") {
                 XCTAssertEqual(expectedContent, desc, "Found unexpected content: \n\(desc)", file: file, line: line)
             }
         }
 
 
-        func checkAbstractAndDiscussion(source: String, expectedAbstract: String, expectedDiscussion: String, file: StaticString = #file, line: UInt = #line) {
+        func checkAbstractAndDiscussion(source: String, expectedAbstract: String, expectedDiscussion: String, file: StaticString = #filePath, line: UInt = #line) {
             let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
             checkSectionContent(expectedContent: expectedAbstract, section: model.abstractSection, file: file, line: line)
             checkSectionContent(expectedContent: expectedDiscussion, section: model.discussionSection, file: file, line: line)
         }
 
-        func checkDirectiveIsRemoved(_ directiveSource: String, file: StaticString = #file, line: UInt = #line) {
+        func checkDirectiveIsRemoved(_ directiveSource: String, file: StaticString = #filePath, line: UInt = #line) {
             let expectedAbstract = """
                                    Text "My abstract "
                                    Strong

@@ -18,7 +18,7 @@ public struct TopicImage: Codable, Hashable {
     public let type: TopicImageType
     
     /// The reference identifier for the image.
-    public let identifier: RenderReferenceIdentifier
+    public var identifier: RenderReferenceIdentifier
     
     /// Create a new topic image with the given type and reference identifier.
     public init(

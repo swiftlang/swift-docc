@@ -166,6 +166,16 @@ def get_swiftpm_options(action, args):
       # is not available.
       '-Xlinker', '-rpath', '-Xlinker', '@executable_path/../lib/swift/macosx',
     ]
+  elif build_os.startswith('freebsd'):
+    # FreeBSD triples include the OS version number.
+    # The swift runtime library install location does not, resulting in a docc
+    # that fails to launch.
+    swiftpm_args += [
+      # Library rpath for swift, dispatch, Foundation, etc. when installing
+      '-Xlinker', '-rpath', '-Xlinker', '$ORIGIN/../lib/swift/freebsd',
+    ]
+    if action == 'install':
+      swiftpm_args += ['--disable-local-rpath']
   else:
     swiftpm_args += [
       # Library rpath for swift, dispatch, Foundation, etc. when installing

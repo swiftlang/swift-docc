@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive for authoring authoring embedded
 /// previews of documentation links (similar to how links are currently
@@ -76,19 +76,17 @@ public final class Links: Semantic, AutomaticDirectiveConvertible, MarkupContain
         return [content]
     }
     
-    var childMarkup: [Markup] {
+    var childMarkup: [any Markup] {
         return content.elements
     }
     
-    func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
-        _ = Semantic.Analyses.HasExactlyOneUnorderedList<Links, AnyLink>(
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
+        _ = Semantic.Analyses.HasExactlyOneUnorderedList<Links, any AnyLink>(
             severityIfNotFound: .warning
         ).analyze(
             originalMarkup,
             children: originalMarkup.children,
             source: source,
-            for: bundle,
-            in: context,
             problems: &problems
         )
         
@@ -104,7 +102,7 @@ public final class Links: Semantic, AutomaticDirectiveConvertible, MarkupContain
 }
 
 extension Links: RenderableDirectiveConvertible {
-    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [any RenderContent] {
         guard let firstList = originalMarkup.children.first(where: { child in
             child is UnorderedList
         }) else {

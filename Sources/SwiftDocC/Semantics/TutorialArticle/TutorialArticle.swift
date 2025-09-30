@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
 An article alongside tutorial content, with the following structure:
@@ -52,7 +52,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
     /// The linkable parts of the tutorial article.
     ///
     /// Use these elements to create direct links to discrete sections within the tutorial.
-    public var landmarks: [Landmark]
+    public var landmarks: [any Landmark]
     
     override var children: [Semantic] {
         var semanticContent: [Semantic] = []
@@ -91,7 +91,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
     
     public let redirects: [Redirect]?
     
-    init(originalMarkup: BlockDirective, durationMinutes: Int?, intro: Intro?, content: [MarkupLayout], assessments: Assessments?, callToActionImage: ImageMedia?, landmarks: [Landmark], redirects: [Redirect]?) {
+    init(originalMarkup: BlockDirective, durationMinutes: Int?, intro: Intro?, content: [MarkupLayout], assessments: Assessments?, callToActionImage: ImageMedia?, landmarks: [any Landmark], redirects: [Redirect]?) {
         self.originalMarkup = originalMarkup
         self.durationMinutes = durationMinutes
         self.intro = intro
@@ -102,34 +102,34 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         self.redirects = redirects
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == TutorialArticle.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialArticle>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, problems: &problems)
             
         Semantic.Analyses.HasOnlyKnownDirectives<TutorialArticle>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Stack.directiveName, ContentAndMedia.directiveName, Assessments.directiveName, ImageMedia.directiveName, Redirect.directiveName])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, problems: &problems)
         
         let optionalTime = Semantic.Analyses.HasArgument<TutorialArticle, Semantics.Time>(severityIfNotFound: .warning)
             .analyze(directive, arguments: arguments, problems: &problems)
             
         var remainder: MarkupContainer
         let optionalIntro: Intro?
-        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, problems: &problems)
         
-        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
-        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, in: context, problems: &problems)
+        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, problems: &problems)
         
         let optionalAssessments: Assessments?
-        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>().analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         let optionalCallToActionImage: ImageMedia?
-        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         let redirects: [Redirect]
-            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, problems: &problems)
         
         self.init(originalMarkup: directive, durationMinutes: optionalTime, intro: optionalIntro, content: content, assessments: optionalAssessments, callToActionImage: optionalCallToActionImage, landmarks: headings, redirects: redirects.isEmpty ? nil : redirects)
     }
@@ -152,14 +152,14 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent(from markup: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [MarkupLayout] {
+    static func topLevelContent(from markup: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> [MarkupLayout] {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,
-                    let stack = Stack(from: directive, source: source, for: bundle, in: context, problems: &problems) {
+                    let stack = Stack(from: directive, source: source, for: bundle, problems: &problems) {
                     accumulation.append(.stack(stack))
                 } else if directive.name == ContentAndMedia.directiveName,
-                    let contentAndMedia = ContentAndMedia(from: directive, source: source, for: bundle, in: context, problems: &problems) {
+                    let contentAndMedia = ContentAndMedia(from: directive, source: source, for: bundle, problems: &problems) {
                     accumulation.append(.contentAndMedia(contentAndMedia))
                 }
             } else {

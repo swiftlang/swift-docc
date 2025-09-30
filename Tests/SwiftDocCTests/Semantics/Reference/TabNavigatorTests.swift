@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,8 +15,8 @@ import XCTest
 import Markdown
 
 class TabNavigatorTests: XCTestCase {
-    func testNoTabs() throws {
-        let (renderBlockContent, problems, tabNavigator) = try parseDirective(TabNavigator.self) {
+    func testNoTabs() async throws {
+        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator
             """
@@ -36,8 +36,8 @@ class TabNavigatorTests: XCTestCase {
         )
     }
     
-    func testEmptyTab() throws {
-        let (renderBlockContent, problems, tabNavigator) = try parseDirective(TabNavigator.self) {
+    func testEmptyTab() async throws {
+        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator {
                 @Tab("hiya") {
@@ -63,8 +63,8 @@ class TabNavigatorTests: XCTestCase {
         
     }
     
-    func testInvalidParametersAndContent() throws {
-        let (renderBlockContent, problems, tabNavigator) = try parseDirective(TabNavigator.self) {
+    func testInvalidParametersAndContent() async throws {
+        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator(tabs: 3) {
                 @Tab("hi") {
@@ -127,8 +127,8 @@ class TabNavigatorTests: XCTestCase {
         )
     }
     
-    func testNestedStructuredMarkup() throws {
-        let (renderBlockContent, problems, tabNavigator) = try parseDirective(TabNavigator.self) {
+    func testNestedStructuredMarkup() async throws {
+        let (renderBlockContent, problems, tabNavigator) = try await parseDirective(TabNavigator.self) {
             """
             @TabNavigator {
                 @Tab("hi") {
@@ -160,15 +160,11 @@ class TabNavigatorTests: XCTestCase {
         
         XCTAssertNotNil(tabNavigator)
 
-        // UnresolvedTopicReference warning expected since the reference to the snippet "Snippets/Snippets/MySnippet" 
-        // should fail to resolve here and then nothing would be added to the content.
-        XCTAssertEqual(
-            problems,
-            ["23: warning – org.swift.docc.unresolvedTopicReference"]
-        )
+        // One warning is expected. This empty context has no snippets so the "Snippets/Snippets/MySnippet" path should fail to resolve.
+        XCTAssertEqual(problems, [
+            "23: warning – org.swift.docc.unresolvedSnippetPath"
+        ])
 
-        
-        
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
             renderBlockContent.first,
@@ -202,6 +198,8 @@ class TabNavigatorTests: XCTestCase {
                             "Hey there.",
     
                             .small(RenderBlockContent.Small(inlineContent: [.text("Hey but small.")])),
+                            
+                            // Because the the "Snippets/Snippets/MySnippet" snippet failed to resolve, we're not including any snippet content here.
                         ]
                     ),
                 ]

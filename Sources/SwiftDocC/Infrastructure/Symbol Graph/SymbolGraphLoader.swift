@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,25 +17,25 @@ import SymbolKit
 /// which makes detecting symbol collisions and overloads easier.
 struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
+    private(set) var snippetSymbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
-    // FIXME: After 6.2, when we no longer have `DocumentationContextDataProvider` we can simply this code to not use a closure to read data.
-    private var dataLoader: (URL, DocumentationBundle) throws -> Data
-    private var bundle: DocumentationBundle
-    private var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
+    private let dataProvider: any DataProvider
+    private let bundle: DocumentationBundle
+    private let symbolGraphTransformer: ((inout SymbolGraph) -> ())?
     
     /// Creates a new symbol graph loader
     /// - Parameters:
     ///   - bundle: The documentation bundle from which to load symbol graphs.
-    ///   - dataLoader: A closure that the loader uses to read symbol graph data.
+    ///   - dataProvider: A provider that the loader uses to read symbol graph data.
     ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
         bundle: DocumentationBundle,
-        dataLoader: @escaping (URL, DocumentationBundle) throws -> Data,
+        dataProvider: any DataProvider,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
-        self.dataLoader = dataLoader
+        self.dataProvider = dataProvider
         self.symbolGraphTransformer = symbolGraphTransformer
     }
 
@@ -58,16 +58,16 @@ struct SymbolGraphLoader {
         
         let loadingLock = Lock()
 
-        var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
-        var loadError: Error?
+        var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, isSnippetGraph: Bool, graph: SymbolKit.SymbolGraph)]()
+        var loadError: (any Error)?
 
-        let loadGraphAtURL: (URL) -> Void = { [dataLoader, bundle] symbolGraphURL in
+        let loadGraphAtURL: (URL) -> Void = { [dataProvider] symbolGraphURL in
             // Bail out in case a symbol graph has already errored
             guard loadingLock.sync({ loadError == nil }) else { return }
             
             do {
                 // Load and decode a single symbol graph file
-                let data = try dataLoader(symbolGraphURL, bundle)
+                let data = try dataProvider.contents(of: symbolGraphURL)
 
                 var symbolGraph: SymbolGraph
                 
@@ -99,9 +99,13 @@ struct SymbolGraphLoader {
                     usesExtensionSymbolFormat = symbolGraph.symbols.isEmpty ? nil : containsExtensionSymbols
                 }
                 
+                // If the graph doesn't have any symbols we treat it as a regular, but empty, graph.
+                //                                                   v
+                let isSnippetGraph = symbolGraph.symbols.values.first?.kind.identifier.isSnippetKind == true
+                
                 // Store the decoded graph in `loadedGraphs`
                 loadingLock.sync {
-                    loadedGraphs[symbolGraphURL] = (usesExtensionSymbolFormat, symbolGraph)
+                    loadedGraphs[symbolGraphURL] = (usesExtensionSymbolFormat, isSnippetGraph, symbolGraph)
                 }
             } catch {
                 // If the symbol graph was invalid, store the error
@@ -141,8 +145,9 @@ struct SymbolGraphLoader {
         let mergeSignpostHandle = signposter.beginInterval("Build unified symbol graph", id: signposter.makeSignpostID())
         let graphLoader = GraphCollector(extensionGraphAssociationStrategy: usingExtensionSymbolFormat ? .extendingGraph : .extendedGraph)
         
-        // feed the loaded graphs into the `graphLoader`
-        for (url, (_, graph)) in loadedGraphs {
+        
+        // feed the loaded non-snippet graphs into the `graphLoader`
+        for (url, (_, isSnippets, graph)) in loadedGraphs where !isSnippets {
             graphLoader.mergeSymbolGraph(graph, at: url)
         }
         
@@ -152,7 +157,8 @@ struct SymbolGraphLoader {
             throw loadError
         }
         
-        self.symbolGraphs = loadedGraphs.mapValues(\.graph)
+        self.symbolGraphs        = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? nil   : graph })
+        self.snippetSymbolGraphs = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? graph : nil   })
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
             createOverloadGroups: FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
         )
@@ -188,33 +194,7 @@ struct SymbolGraphLoader {
     }
     
     // Alias to declutter code
-    typealias AvailabilityItem = SymbolGraph.Symbol.Availability.AvailabilityItem
-    
-    /// Cache default availability items as we create them on demand.
-    private var cachedAvailabilityItems = [DefaultAvailability.ModuleAvailability: AvailabilityItem]()
-    
-    /// Returns a symbol graph availability item, given a module availability.
-    /// - returns: An availability item, or `nil` if the input data is invalid.
-    private func availabilityItem(for defaultAvailability: DefaultAvailability.ModuleAvailability) -> AvailabilityItem? {
-        if let cached = cachedAvailabilityItems[defaultAvailability] {
-            return cached
-        }
-        return AvailabilityItem(defaultAvailability)
-    }
-    
-    private func loadSymbolGraph(at url: URL) throws -> (SymbolGraph, isMainSymbolGraph: Bool) {
-        // This is a private method, the `url` key is known to exist
-        var symbolGraph = symbolGraphs[url]!
-        let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: url)
-        
-        if !isMainSymbolGraph && symbolGraph.module.bystanders == nil {
-            // If this is an extending another module, change the module name to match the extended module.
-            // This makes the symbols in this graph have a path that starts with the extended module's name.
-            symbolGraph.module.name = moduleName
-        }
-
-        return (symbolGraph, isMainSymbolGraph)
-    }
+    private typealias AvailabilityItem = SymbolGraph.Symbol.Availability.AvailabilityItem
     
     /// Adds the missing fallback and default availability information to the unified symbol graph
     /// in case it didn't exists in the loaded symbol graphs.
@@ -317,9 +297,10 @@ struct SymbolGraphLoader {
             
                 // Fill introduced versions when missing.
                 availability.availability = availability.availability.map {
-                    $0.fillingMissingIntroducedVersion(
+                    let availabilityPlatformName = $0.domain.map { PlatformName(operatingSystemName: $0.rawValue) } ?? platformName
+                    return $0.fillingMissingIntroducedVersion(
                         from: defaultAvailabilityVersionByPlatform,
-                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
+                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[availabilityPlatformName]?.rawValue
                     )
                 }
                 // Add the module availability information to each of the symbols availability mixin.
@@ -543,5 +524,11 @@ private extension SymbolGraph.Symbol.Availability {
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     func matches(_ platform: PlatformName) -> Bool {
         domain?.rawValue.lowercased() == platform.rawValue.lowercased()
+    }
+}
+
+extension SymbolGraph.Symbol.KindIdentifier {
+    var isSnippetKind: Bool {
+        self == .snippet || self == .snippetGroup
     }
 }

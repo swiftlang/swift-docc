@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /// A semantic model for a view that links to a content type that you specify.
 ///
@@ -110,7 +110,7 @@ public final class Tile: Semantic, DirectiveConvertible {
         self.content = content
     }
     
-    fileprivate static func firstParagraph(of directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Paragraph?, remainder: MarkupContainer) {
+    private static func firstParagraph(of directive: BlockDirective, source: URL?, problems: inout [Problem]) -> (Paragraph?, remainder: MarkupContainer) {
         var remainder: MarkupContainer
         let paragraph: Paragraph?
         if let firstChild = directive.child(at: 0) {
@@ -147,11 +147,11 @@ public final class Tile: Semantic, DirectiveConvertible {
         return (list, remainder: remainder)
     }
     
-    convenience init?(genericTile directive: BlockDirective, title: String, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem], shouldContainLinks: Bool = false) {
+    convenience init?(genericTile directive: BlockDirective, title: String, source: URL?, problems: inout [Problem], shouldContainLinks: Bool = false) {
         let arguments = directive.arguments(problems: &problems)
         let destination = Semantic.Analyses.HasArgument<Tile, Semantics.Destination>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems)
 
-        let _ = Tile.firstParagraph(of: directive, source: source, for: bundle, in: context, problems: &problems)
+        let _ = Tile.firstParagraph(of: directive, source: source, problems: &problems)
         let (list, remainder: _) = Tile.list(in: directive, source: source, problems: &problems)
 
         if shouldContainLinks, list == nil {
@@ -166,44 +166,34 @@ public final class Tile: Semantic, DirectiveConvertible {
         self.init(originalMarkup: directive, identifier: tileIdentifier, title: title, destination: destination, content: MarkupContainer(directive.children))
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for _: DocumentationBundle, problems: inout [Problem]) {
         switch directive.name {
         case Tile.DirectiveNames.documentation.rawValue:
             self.init(genericTile: directive,
                       title: Tile.Semantics.Title.documentation.rawValue,
                       source: source,
-                      for: bundle,
-                      in: context,
                       problems: &problems,
                       shouldContainLinks: true)
         case Tile.DirectiveNames.sampleCode.rawValue:
             self.init(genericTile: directive,
                       title: Tile.Semantics.Title.sampleCode.rawValue,
                       source: source,
-                      for: bundle,
-                      in: context,
                       problems: &problems,
                       shouldContainLinks: true)
         case Tile.DirectiveNames.downloads.rawValue:
             self.init(genericTile: directive,
                       title: Tile.Semantics.Title.downloads.rawValue,
                       source: source,
-                      for: bundle,
-                      in: context,
                       problems: &problems)
         case Tile.DirectiveNames.videos.rawValue:
             self.init(genericTile: directive,
                       title: Tile.Semantics.Title.videos.rawValue,
                       source: source,
-                      for: bundle,
-                      in: context,
                       problems: &problems)
         case Tile.DirectiveNames.forums.rawValue:
             self.init(genericTile: directive,
                       title: Tile.Semantics.Title.forums.rawValue,
                       source: source,
-                      for: bundle,
-                      in: context,
                       problems: &problems)
         default:
             let possibleTileDirectiveNames = Tile.DirectiveNames.allCases

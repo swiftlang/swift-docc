@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A reference to a resource.
 ///
@@ -43,12 +43,12 @@ public struct RenderReferenceIdentifier: Codable, Hashable, Equatable {
         self.identifier = identifier
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         identifier = try container.decode(String.self)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(identifier)
     }
@@ -65,6 +65,27 @@ public protocol URLReference {
 }
 
 extension URLReference {
+    /// Transforms the given URL to ensure that it is relative to the base URL of the conforming type.
+    ///
+    /// The converter that writes the built documentation to the file system is responsible for copying the referenced file to this destination.
+    /// - Parameters:
+    ///   - url: The URL of the file.
+    ///   - prefixComponent: An optional path component to add before the path of the file.
+    /// - Returns: The transformed URL for the given file path.
+    func renderURL(for url: URL, prefixComponent: String?) -> URL {
+        // Web URLs should be left as-is
+        guard !url.isAbsoluteWebURL else {
+            return url
+        }
+        
+        // URLs which are already relative to the base URL should be left as-is
+        guard !url.pathComponents.starts(with: Self.baseURL.pathComponents) else {
+            return url
+        }
+
+        return destinationURL(for: url.lastPathComponent, prefixComponent: prefixComponent)
+    }
+    
     /// Returns the URL for a given file path relative to the base URL of the conforming type.
     ///
     /// The converter that writes the built documentation to the file system is responsible for copying the referenced file to this destination.

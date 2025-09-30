@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive that controls what programming languages an article is available in.
 ///

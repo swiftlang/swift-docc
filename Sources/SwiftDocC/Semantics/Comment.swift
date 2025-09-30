@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
  A general purpose comment directive. All contents inside are stripped from
@@ -33,7 +33,7 @@ public final class Comment: Semantic, DirectiveConvertible {
         self.content = content
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for _: DocumentationBundle, problems: inout [Problem]) {
         precondition(directive.name == Comment.directiveName)
         self.init(originalMarkup: directive, content: MarkupContainer(directive.children))
     }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
     let testBundleName = "LegacyBundle_DoNotUseInNewTests"
     let testBundleID: DocumentationBundle.Identifier = "org.swift.docc.example"
     
-    func testDiffSymbolFromBundleWithDiscussionSectionRemoved() throws {
+    func testDiffSymbolFromBundleWithDiscussionSectionRemoved() async throws {
         let pathToSymbol = "/documentation/MyKit"
         
         let modification = { (url: URL) in
@@ -28,7 +28,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+        let differences = try await getDiffsFromModifiedDocument(bundleName: testBundleName,
                                                            bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
@@ -41,7 +41,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                           valueType: RenderInlineContent.self)
     }
     
-    func testDiffArticleFromBundleWithTopicSectionAdded() throws {
+    func testDiffArticleFromBundleWithTopicSectionAdded() async throws {
         let pathToArticle = "/documentation/Test-Bundle/article"
         
         let modification = { (url: URL) in
@@ -56,7 +56,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: articleURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+        let differences = try await getDiffsFromModifiedDocument(bundleName: testBundleName,
                                                            bundleID: testBundleID,
                                                            topicReferencePath: pathToArticle,
                                                            modification: modification)
@@ -76,7 +76,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                           valueType: TaskGroupRenderSection.self)
     }
     
-    func testDiffArticleFromBundleWithSeeAlsoSectionRemoved() throws {
+    func testDiffArticleFromBundleWithSeeAlsoSectionRemoved() async throws {
         let pathToArticle = "/documentation/Test-Bundle/article"
         
         let modification = { (url: URL) in
@@ -89,7 +89,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: articleURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+        let differences = try await getDiffsFromModifiedDocument(bundleName: testBundleName,
                                                            bundleID: testBundleID,
                                                            topicReferencePath: pathToArticle,
                                                            modification: modification)
@@ -108,7 +108,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                           valueType: RenderInlineContent.self)
     }
     
-    func testDiffSymbolFromBundleWithTopicSectionRemoved() throws {
+    func testDiffSymbolFromBundleWithTopicSectionRemoved() async throws {
         let pathToSymbol = "/documentation/MyKit"
         
         let modification = { (url: URL) in
@@ -121,7 +121,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+        let differences = try await getDiffsFromModifiedDocument(bundleName: testBundleName,
                                                            bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
@@ -140,7 +140,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                           valueType: RenderInlineContent.self)
     }
     
-    func testDiffSymbolFromBundleWithAbstractUpdated() throws {
+    func testDiffSymbolFromBundleWithAbstractUpdated() async throws {
         let pathToSymbol = "/documentation/MyKit/MyClass"
         let newAbstractValue = "MyClass new abstract."
         
@@ -150,7 +150,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+        let differences = try await getDiffsFromModifiedDocument(bundleName: testBundleName,
                                                            bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
@@ -172,7 +172,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                           valueType: AnyRenderReference.self)
     }
     
-    func testDiffSymbolFromBundleWithDeprecationAdded() throws {
+    func testDiffSymbolFromBundleWithDeprecationAdded() async throws {
         let pathToSymbol = "/documentation/MyKit/MyProtocol"
         let newDeprecationValue = "This protocol has been deprecated."
         
@@ -188,7 +188,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+        let differences = try await getDiffsFromModifiedDocument(bundleName: testBundleName,
                                                            bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
@@ -211,7 +211,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                           valueType: Bool.self)
     }
     
-    func testDiffSymbolFromBundleWithDisplayNameDirectiveAdded() throws {
+    func testDiffSymbolFromBundleWithDisplayNameDirectiveAdded() async throws {
         let pathToSymbol = "/documentation/MyKit"
         let newTitleValue = "My Kit"
         
@@ -227,7 +227,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+        let differences = try await getDiffsFromModifiedDocument(bundleName: testBundleName,
                                                            bundleID: testBundleID,
                                                            topicReferencePath: pathToSymbol,
                                                            modification: modification)
@@ -247,7 +247,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                           valueType: RenderMetadata.Module.self)
     }
     
-    func testDiffArticleFromBundleWithDownloadDirectiveAdded() throws {
+    func testDiffArticleFromBundleWithDownloadDirectiveAdded() async throws {
         let pathToArticle = "/documentation/Test-Bundle/article"
         
         let modification = { (url: URL) in
@@ -263,7 +263,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: articleURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+        let differences = try await getDiffsFromModifiedDocument(bundleName: testBundleName,
                                                            bundleID: testBundleID,
                                                            topicReferencePath: pathToArticle,
                                                            modification: modification)
@@ -283,8 +283,8 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                           valueType: String.self)
     }
     
-    func testNoDiffsWhenReconvertingSameBundle() throws {
-        let (bundle, context) = try testBundleAndContext(named: testBundleName)
+    func testNoDiffsWhenReconvertingSameBundle() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: testBundleName)
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
@@ -302,8 +302,8 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                       bundleID: DocumentationBundle.Identifier,
                                       topicReferencePath: String,
                                       modification: @escaping (URL) throws -> ()
-    ) throws -> JSONPatchDifferences {
-        let (bundleOriginal, contextOriginal) = try testBundleAndContext(named: bundleName)
+    ) async throws -> JSONPatchDifferences {
+        let (bundleOriginal, contextOriginal) = try await testBundleAndContext(named: bundleName)
         let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
@@ -313,7 +313,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal))
         
         // Make copy of the bundle on disk, modify the document, and write it
-        let (_, bundleModified, contextModified) = try testBundleAndContext(copying: bundleName) { url in
+        let (_, bundleModified, contextModified) = try await testBundleAndContext(copying: bundleName) { url in
             try modification(url)
         }
         let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleID: bundleID,
@@ -333,7 +333,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         _ differences: JSONPatchDifferences,
         contains expectedDiff: JSONPatchOperation,
         valueType: Value.Type,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         guard let foundDiff = differences.first(where: { $0.pointer == expectedDiff.pointer &&

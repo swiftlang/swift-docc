@@ -45,7 +45,7 @@ extension PathHierarchy {
         }
         let spelling = utf8TypeSpelling(for: fragments, isSwift: isSwift)
         
-        guard isSwift, spelling[...].isTuple() else {
+        guard isSwift, spelling[...].shapeOfSwiftTypeSpelling() == .tuple else {
             return [String(decoding: spelling, as: UTF8.self)]
         }
         
@@ -129,10 +129,18 @@ extension PathHierarchy {
                     // Accumulate all of the identifier tokens' spelling.
                     accumulated.append(contentsOf: fragment.spelling.utf8)
                     
+                case .keyword where fragment.spelling == "Any":
+                    accumulated.append(contentsOf: fragment.spelling.utf8)
+                    
                 case .text: // In Swift, we're only want some `text` tokens characters in the type disambiguation.
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
                     let utf8Spelling = fragment.spelling.utf8
+                    guard !utf8Spelling.elementsEqual(".Type".utf8) else {
+                        // Once exception to that is "Name.Type" which is different from just "Name" (and we don't want a trailing ".")
+                        accumulated.append(contentsOf: utf8Spelling)
+                        continue
+                    }
                     for index in utf8Spelling.indices {
                         let char = utf8Spelling[index]
                         switch char {
@@ -186,14 +194,14 @@ extension PathHierarchy {
         }
         
         // Check if the type names are wrapped in redundant parenthesis and remove them
-        if accumulated.first == openParen, accumulated.last == closeParen, !accumulated[...].isTuple() {
+        if accumulated.first == openParen, accumulated.last == closeParen, accumulated[...].shapeOfSwiftTypeSpelling() == .scalar {
             // In case there are multiple
             // Use a temporary slice until all the layers of redundant parenthesis have been removed.
             var temp = accumulated[...]
             
             repeat {
                 temp = temp.dropFirst().dropLast()
-            } while temp.first == openParen && temp.last == closeParen && !temp.isTuple()
+            } while temp.first == openParen && temp.last == closeParen && temp.shapeOfSwiftTypeSpelling() == .scalar
             
             // Adjust the markers so that they align with the expected characters
             let difference = (accumulated.count - temp.count) / 2
@@ -222,7 +230,7 @@ extension PathHierarchy {
     }
     
     /// A small helper type that tracks the scope of nested brackets; `()`, `[]`, or `<>`.
-    private struct SwiftBracketsStack {
+    private struct SwiftBracketsStack: ~Copyable {
         enum Bracket {
             case angle  // <>
             case square // []
@@ -274,26 +282,48 @@ private let question    = UTF8.CodeUnit(ascii: "?")
 private let colon       = UTF8.CodeUnit(ascii: ":")
 private let hyphen      = UTF8.CodeUnit(ascii: "-")
 
+/// A guesstimate of the "shape" of a Swift type based on its spelling.
+private enum ShapeOfSwiftTypeSpelling {
+    /// This type spelling looks like a scalar.
+    ///
+    /// For example `Name` or `(Name)`.
+    /// - Note: We treat `(Name)` as a non-tuple so that we can remove the redundant leading and trailing parenthesis.
+    case scalar
+    /// This type spelling looks like a tuple.
+    ///
+    /// For example `(First, Second)`.
+    case tuple
+    /// This type spelling looks like a closure.
+    ///
+    /// For example `(First)->Second` or `(First, Second)->()` or `()->()`.
+    case closure
+}
+
 private extension ContiguousArray<UTF8.CodeUnit>.SubSequence {
-     /// Checks if the UTF-8 string looks like a tuple with comma separated values.
+     /// Checks if the UTF-8 string looks like a tuple, scalar, or closure.
     ///
     /// This is used to remove redundant parenthesis around expressions.
-    func isTuple() -> Bool {
-        guard first == openParen, last == closeParen else { return false }
+    func shapeOfSwiftTypeSpelling() -> ShapeOfSwiftTypeSpelling {
+        guard first == openParen, last == closeParen else { return .scalar }
         var depth = 0
-        for char in self {
-            switch char {
+        for index in indices {
+            switch self[index] {
             case openParen:
                 depth += 1
             case closeParen:
                 depth -= 1
             case comma where depth == 1:
-                return true
+                // If we find "," in one level of parenthesis, we've found a tuple.
+                return .tuple
+            case closeAngle where depth == 0 && index > startIndex && self[index - 1] == hyphen:
+                // If we find "->" outside any parentheses, we've found a closure.
+                return .closure
             default:
                 continue
             }
         }
-        return false
+        // If we traversed the entire type name without finding a tuple or a closure we treat the type name as a scalar.
+        return .scalar
     }
 }
 
@@ -474,20 +504,14 @@ extension PathHierarchy.PathParser {
                 return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: parameterTypes, returnTypes: nil))
             } else if scanner.hasPrefix("->") {
                 _ = scanner.take(2)
-                let returnTypes = scanner.scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
+                let returnTypes = scanner.scanReturnTypes()
                 return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: parameterTypes, returnTypes: returnTypes))
             }
         } else if let parameterStartRange = possibleDisambiguationText.range(of: "->") {
             let name = original[..<parameterStartRange.lowerBound]
             var scanner = StringScanner(original[parameterStartRange.upperBound...])
             
-            let returnTypes: [Substring]
-            if scanner.peek() == "(" {
-                _ = scanner.take() // the leading parenthesis
-                returnTypes = scanner.scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
-            } else {
-                returnTypes = [scanner.takeAll()]
-            }
+            let returnTypes = scanner.scanReturnTypes()
             return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: nil, returnTypes: returnTypes))
         }
         
@@ -498,7 +522,7 @@ extension PathHierarchy.PathParser {
 
 // MARK: Scanning a substring
 
-private struct StringScanner {
+private struct StringScanner: ~Copyable {
     private var remaining: Substring
     
     init(_ original: Substring) {
@@ -541,6 +565,15 @@ private struct StringScanner {
 
     // MARK: Parsing argument types by scanning
     
+    mutating func scanReturnTypes() -> [Substring] {
+        if peek() == "(" {
+            _ = take() // the leading parenthesis
+            return scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
+        } else {
+            return [takeAll()]
+        }
+    }
+        
     mutating func scanArguments() -> [Substring] {
         guard peek() != ")" else {
             _ = take() // drop the ")"

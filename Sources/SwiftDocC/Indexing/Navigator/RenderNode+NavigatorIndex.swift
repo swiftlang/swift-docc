@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,9 +16,9 @@ protocol NavigatorIndexableRenderNodeRepresentation<Metadata> {
     
     // Information that's the same for all language variants
     var identifier: ResolvedTopicReference { get }
-    var references: [String: RenderReference] { get }
+    var references: [String: any RenderReference] { get }
     var kind: RenderNode.Kind { get }
-    var sections: [RenderSection] { get }
+    var sections: [any RenderSection] { get }
     
     // Information that's different for each language variant
     var metadata: Metadata { get }
@@ -40,6 +40,7 @@ protocol NavigatorIndexableRenderMetadataRepresentation {
     var roleHeading: String? { get }
     var symbolKind: String? { get }
     var platforms: [AvailabilityRenderItem]? { get }
+    var isBeta: Bool { get }
 }
 
 extension NavigatorIndexableRenderNodeRepresentation {
@@ -119,6 +120,16 @@ struct RenderNodeVariantView: NavigatorIndexableRenderNodeRepresentation {
     }
     var defaultImplementationsSections: [TaskGroupRenderSection] {
         wrapped.defaultImplementationsSectionsVariants.value(for: traits)
+    }
+}
+
+extension NavigatorIndexableRenderMetadataRepresentation {
+    var isBeta: Bool {
+        guard let platforms, !platforms.isEmpty else {
+            return false
+        }
+        
+        return platforms.allSatisfy { $0.isBeta == true }
     }
 }
 

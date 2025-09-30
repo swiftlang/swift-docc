@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,15 +13,15 @@ import XCTest
 import Markdown
 
 class ImageMediaTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @Image
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(image)
         XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -30,7 +30,7 @@ class ImageMediaTests: XCTestCase {
         ], problems.map { $0.diagnostic.identifier })
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let imageSource = "/path/to/image"
         let alt = "This is an image"
         let source = """
@@ -38,9 +38,9 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(image)
         XCTAssertTrue(problems.isEmpty)
         image.map { image in
@@ -49,7 +49,7 @@ class ImageMediaTests: XCTestCase {
         }
     }
 
-    func testSpacesInSource() throws {
+    func testSpacesInSource() async throws {
         for imageSource in ["my image.png", "my%20image.png"] {
             let alt = "This is an image"
             let source = """
@@ -57,9 +57,9 @@ class ImageMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, context) = try testBundleAndContext()
+            let (bundle, _) = try await testBundleAndContext()
             var problems = [Problem]()
-            let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(image)
             XCTAssertTrue(problems.isEmpty)
             image.map { image in
@@ -69,15 +69,15 @@ class ImageMediaTests: XCTestCase {
         }
     }
     
-    func testIncorrectArgumentLabels() throws {
+    func testIncorrectArgumentLabels() async throws {
         let source = """
         @Image(imgSource: "/img/path", altText: "Text")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(image)
         XCTAssertEqual(3, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -94,9 +94,9 @@ class ImageMediaTests: XCTestCase {
         }
     }
     
-    func testRenderImageDirectiveInReferenceMarkup() throws {
+    func testRenderImageDirectiveInReferenceMarkup() async throws {
         do {
-            let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, in: "BookLikeContent") {
                 """
                 @Image(source: "figure1")
                 """
@@ -120,7 +120,7 @@ class ImageMediaTests: XCTestCase {
         }
         
         do {
-            let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, in: "BookLikeContent") {
                 """
                 @Image(source: "unknown-image")
                 """
@@ -133,8 +133,8 @@ class ImageMediaTests: XCTestCase {
         }
     }
     
-    func testRenderImageDirectiveWithCaption() throws {
-        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+    func testRenderImageDirectiveWithCaption() async throws {
+        let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, in: "BookLikeContent") {
             """
             @Image(source: "figure1") {
                 This is my caption.
@@ -159,8 +159,8 @@ class ImageMediaTests: XCTestCase {
         )
     }
     
-    func testImageDirectiveDiagnosesDeviceFrameByDefault() throws {
-        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+    func testImageDirectiveDiagnosesDeviceFrameByDefault() async throws {
+        let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, in: "BookLikeContent") {
             """
             @Image(source: "figure1", deviceFrame: phone)
             """
@@ -183,10 +183,10 @@ class ImageMediaTests: XCTestCase {
         )
     }
     
-    func testRenderImageDirectiveWithDeviceFrame() throws {
+    func testRenderImageDirectiveWithDeviceFrame() async throws {
         enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
         
-        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+        let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, in: "BookLikeContent") {
             """
             @Image(source: "figure1", deviceFrame: phone)
             """
@@ -209,10 +209,10 @@ class ImageMediaTests: XCTestCase {
         )
     }
     
-    func testRenderImageDirectiveWithDeviceFrameAndCaption() throws {
+    func testRenderImageDirectiveWithDeviceFrameAndCaption() async throws {
         enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
         
-        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+        let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, in: "BookLikeContent") {
             """
             @Image(source: "figure1", deviceFrame: laptop) {
                 This is my caption.
@@ -237,9 +237,9 @@ class ImageMediaTests: XCTestCase {
         )
     }
     
-    func testImageDirectiveDoesNotResolveVideoReference() throws {
+    func testImageDirectiveDoesNotResolveVideoReference() async throws {
         // First check that the Video exists
-        let (_, videoProblems, _) = try parseDirective(VideoMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
+        let (_, videoProblems, _) = try await parseDirective(VideoMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
             """
             @Video(source: "introvideo")
             """
@@ -248,7 +248,7 @@ class ImageMediaTests: XCTestCase {
         XCTAssertEqual(videoProblems, [])
         
         // Then check that it doesn't resolve as an image
-        let (renderedContent, imageProblems, image) = try parseDirective(ImageMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
+        let (renderedContent, imageProblems, image) = try await parseDirective(ImageMedia.self, in: "LegacyBundle_DoNotUseInNewTests") {
             """
             @Image(source: "introvideo")
             """

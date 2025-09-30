@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SwiftDocC
-import Foundation
+package import SwiftDocC
+public import Foundation
 
 extension ConvertAction {
     /// Creates a convert action from the options in the given convert command.
@@ -23,7 +23,7 @@ extension ConvertAction {
         FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
         FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.enableExperimentalLinkHierarchySerialization
         FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.enableExperimentalOverloadedSymbolPresentation
-        FeatureFlags.current.isExperimentalMentionedInEnabled = convert.enableExperimentalMentionedIn
+        FeatureFlags.current.isMentionedInEnabled = convert.enableMentionedIn
         FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.enableParametersAndReturnsValidation
         
         // If the user-provided a URL for an external link resolver, attempt to

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,8 +17,8 @@ import SwiftDocCTestUtilities
 
 class ParametersAndReturnValidatorTests: XCTestCase {
     
-    func testFiltersParameters() throws {
-        let (bundle, context) = try testBundleAndContext(named: "ErrorParameters")
+    func testFiltersParameters() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "ErrorParameters")
         
         // /// - Parameters:
         // ///   - someValue: Some value.
@@ -111,7 +111,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
-    func testExtendsReturnValueDocumentation() throws {
+    func testExtendsReturnValueDocumentation() async throws {
         for (returnValueDescription, expectsExtendedDocumentation) in [
             // Expects to extend the documentation
             ("Returns some value.", true),
@@ -153,7 +153,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 ])
             ])
             
-            let (bundle, context) = try loadBundle(catalog: catalog)
+            let (bundle, context) = try await loadBundle(catalog: catalog)
             
             XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
             
@@ -177,8 +177,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
-    func testParametersWithAlternateSignatures() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "AlternateDeclarations") { url in
+    func testParametersWithAlternateSignatures() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "AlternateDeclarations") { url in
             try """
             # ``MyClass/present(completion:)``
             
@@ -207,8 +207,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(swiftReturnsContent, "Description of the return value that’s available for some other alternatives.")
     }
     
-    func testParameterDiagnosticsInDocumentationExtension() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "ErrorParameters") { url in
+    func testParameterDiagnosticsInDocumentationExtension() async throws {
+        let (url, _, context) = try await testBundleAndContext(copying: "ErrorParameters") { url in
             try """
             # ``MyClassInObjectiveC/doSomethingWith:error:``
             
@@ -292,8 +292,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
-    func testFunctionsThatCorrespondToPropertiesInAnotherLanguage() throws {
-        let (_, _, context) = try testBundleAndContext(named: "GeometricalShapes")
+    func testFunctionsThatCorrespondToPropertiesInAnotherLanguage() async throws {
+        let (_, _, context) = try await testBundleAndContext(named: "GeometricalShapes")
         XCTAssertEqual(context.problems.map(\.diagnostic.summary), [])
         
         let reference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "isEmpty" }))
@@ -320,8 +320,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(objcReturnsContent, "`YES` if the specified circle is empty; otherwise, `NO`.")
     }
     
-    func testCanDocumentInitializerReturnValue() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "GeometricalShapes") { url in
+    func testCanDocumentInitializerReturnValue() async throws {
+        let (_, _, context) = try await testBundleAndContext(copying: "GeometricalShapes") { url in
             try """
             # ``Circle/init(center:radius:)``
             
@@ -351,7 +351,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         ])
     }
     
-    func testNoParameterDiagnosticWithoutFunctionSignature() throws {
+    func testNoParameterDiagnosticWithoutFunctionSignature() async throws {
         var symbolGraph = makeSymbolGraph(docComment: """
             Some function description
             
@@ -365,12 +365,12 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
     }
     
-    func testNoParameterDiagnosticWithoutDocumentationComment() throws {
+    func testNoParameterDiagnosticWithoutDocumentationComment() async throws {
         let symbolGraph = makeSymbolGraph(docComment: """
             Some function description
             
@@ -380,12 +380,12 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
     }
     
-    func testMissingParametersInDocCommentDiagnostics() throws {
+    func testMissingParametersInDocCommentDiagnostics() async throws {
         let symbolGraph = makeSymbolGraph(docComment: """
             Some function description
             
@@ -396,7 +396,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 2)
         let endOfParameterSectionLocation = SourceLocation(line: start.line + 5, column: start.character + 40, source: symbolURL)
@@ -425,7 +425,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "\n///  - fourthParameter: <#parameter description#>")
     }
     
-    func testMissingSeparateParametersInDocCommentDiagnostics() throws {
+    func testMissingSeparateParametersInDocCommentDiagnostics() async throws {
         let symbolGraph = makeSymbolGraph(docComment: """
             Some function description
             
@@ -435,7 +435,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (_, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 2)
         let endOfParameterSectionLocation = SourceLocation(line: start.line + 4, column: start.character + 48, source: symbolURL)
@@ -464,7 +464,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "\n///- Parameter fourthParameter: <#parameter description#>")
     }
     
-    func testFunctionWithOnlyErrorParameter() throws {
+    func testFunctionWithOnlyErrorParameter() async throws {
         let catalog =
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
@@ -490,7 +490,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     ))
                 ])
             ])
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -508,7 +508,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some return value description.")
     }
     
-    func testFunctionWithDifferentSignaturesOnDifferentPlatforms() throws {
+    func testFunctionWithDifferentSignaturesOnDifferentPlatforms() async throws {
         let catalog =
             Folder(name: "unit-test.docc", content: [
                 // One parameter, void return
@@ -550,7 +550,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 """)
             ])
         
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -567,7 +567,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(returnSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some description of the return value that is only available on platform 3.")
     }
     
-    func testFunctionWithErrorParameterButVoidType() throws {
+    func testFunctionWithErrorParameterButVoidType() async throws {
         let catalog =
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
@@ -594,7 +594,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 ])
             ])
         
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -613,8 +613,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertNil(returnsSections[.objectiveC])
     }
     
-    func testWarningForDocumentingExternalParameterNames() throws {
-        let warningOutput = try warningOutputRaisedFrom(
+    func testWarningForDocumentingExternalParameterNames() async throws {
+        let warningOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -633,8 +633,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         """)
     }
     
-    func testWarningForDocumentingVoidReturn() throws {
-        let warningOutput = try warningOutputRaisedFrom(
+    func testWarningForDocumentingVoidReturn() async throws {
+        let warningOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -654,8 +654,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         """)
     }
     
-    func testWarningForParameterDocumentedTwice() throws {
-        let warningOutput = try warningOutputRaisedFrom(
+    func testWarningForParameterDocumentedTwice() async throws {
+        let warningOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -676,8 +676,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         """)
     }
     
-    func testWarningForExtraDocumentedParameter() throws {
-        let warningOutput = try warningOutputRaisedFrom(
+    func testWarningForExtraDocumentedParameter() async throws {
+        let warningOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -697,8 +697,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         """)
     }
     
-    func testWarningForUndocumentedParameter() throws {
-        let missingFirstWarningOutput = try warningOutputRaisedFrom(
+    func testWarningForUndocumentedParameter() async throws {
+        let missingFirstWarningOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -717,7 +717,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         """)
         
         
-        let missingSecondWarningOutput = try warningOutputRaisedFrom(
+        let missingSecondWarningOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -736,8 +736,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         """)
     }
     
-    func testDoesNotWarnAboutInheritedDocumentation() throws {
-        let warningOutput = try warningOutputRaisedFrom(
+    func testDoesNotWarnAboutInheritedDocumentation() async throws {
+        let warningOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -751,7 +751,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(warningOutput, "")
     }
     
-    func testDocumentingTwoUnnamedParameters() throws {
+    func testDocumentingTwoUnnamedParameters() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 docComment: """
@@ -768,7 +768,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             ))
         ])
         
-        let (bundle, context) = try loadBundle(catalog: catalog)
+        let (bundle, context) = try await loadBundle(catalog: catalog)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -787,7 +787,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertNil(returnsSections[.objectiveC])
     }
     
-    func testDocumentingMixedNamedAndUnnamedParameters() throws {
+    func testDocumentingMixedNamedAndUnnamedParameters() async throws {
         // This test verifies the behavior of documenting two named parameters and one unnamed parameter.
         //
         // It checks different combinations of which parameter is unnamed:
@@ -828,7 +828,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                         returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
                     ))
                 ])
-                let (bundle, context) = try loadBundle(catalog: catalog)
+                let (bundle, context) = try await loadBundle(catalog: catalog)
                 
                 XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
                 
@@ -852,10 +852,10 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
-    func testWarningsForMissingOrExtraUnnamedParameters() throws {
+    func testWarningsForMissingOrExtraUnnamedParameters() async throws {
         let returnValue = SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
         
-        let tooFewParametersOutput = try warningOutputRaisedFrom(
+        let tooFewParametersOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -882,7 +882,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
            |                                                    ╰─suggestion: Document unnamed parameter #3
         """)
         
-        let tooManyParametersOutput = try warningOutputRaisedFrom(
+        let tooManyParametersOutput = try await warningOutputRaisedFrom(
             docComment: """
             Some function description
             
@@ -910,10 +910,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         docComment: String,
         docCommentModuleName: String? = "ModuleName",
         parameters: [(name: String, externalName: String?)],
-        returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment,
-        file: StaticString = #file,
-        line: UInt = #line
-    ) throws -> String {
+        returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment
+    ) async throws -> String {
         let fileSystem = try TestFileSystem(folders: [
             Folder(name: "path", content: [
                 Folder(name: "to", content: [
@@ -941,7 +939,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/unit-test.docc"), options: .init())
 
-        _ = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine)
+        _ = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine)
         
         diagnosticEngine.flush()
         return logStorage.text.trimmingCharacters(in: .newlines)

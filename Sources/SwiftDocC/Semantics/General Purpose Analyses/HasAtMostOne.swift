@@ -1,45 +1,42 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 extension Semantic.Analyses {
     /**
      Checks to see if a parent directive has at most one child directive of a specified type. If so, return that child and the remainder.
      */
-    public struct HasAtMostOne<Parent: Semantic & DirectiveConvertible, Child: Semantic & DirectiveConvertible>: SemanticAnalysis {
-        
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
+    public struct HasAtMostOne<Parent: Semantic & DirectiveConvertible, Child: Semantic & DirectiveConvertible> {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
             return Semantic.Analyses.extractAtMostOne(
                 childType: Child.self,
                 parentDirective: directive,
                 children: children,
                 source: source,
                 for: bundle,
-                in: context,
                 problems: &problems
             ) as! (Child?, MarkupContainer)
         }
     }
     
     static func extractAtMostOne(
-        childType: DirectiveConvertible.Type,
+        childType: any DirectiveConvertible.Type,
         parentDirective: BlockDirective,
-        children: some Sequence<Markup>,
+        children: some Sequence<any Markup>,
         source: URL?,
         for bundle: DocumentationBundle,
-        in context: DocumentationContext,
         severityIfNotFound: DiagnosticSeverity = .warning,
         problems: inout [Problem]
-    ) -> (DirectiveConvertible?, remainder: MarkupContainer) {
+    ) -> ((any DirectiveConvertible)?, remainder: MarkupContainer) {
         let (matches, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
                   childType.canConvertDirective(childDirective) else {
@@ -70,7 +67,7 @@ extension Semantic.Analyses {
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
         }
         
-        return (childType.init(from: match, source: source, for: bundle, in: context, problems: &problems), MarkupContainer(remainder))
+        return (childType.init(from: match, source: source, for: bundle, problems: &problems), MarkupContainer(remainder))
     }
 }
 

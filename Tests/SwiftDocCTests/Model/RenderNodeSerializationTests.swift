@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -91,8 +91,8 @@ class RenderNodeSerializationTests: XCTestCase {
         checkRoundTrip(inputNode)
     }
     
-    func testBundleRoundTrip() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testBundleRoundTrip() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
@@ -101,7 +101,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -114,8 +114,8 @@ class RenderNodeSerializationTests: XCTestCase {
         checkRoundTrip(renderNode)
     }
     
-    func testTutorialArticleRoundTrip() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testTutorialArticleRoundTrip() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
@@ -124,7 +124,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create article from markup: \(problems)")
             return
         }
@@ -137,10 +137,10 @@ class RenderNodeSerializationTests: XCTestCase {
         checkRoundTrip(renderNode)
     }
     
-    func testAssetReferenceDictionary() throws {
+    func testAssetReferenceDictionary() async throws {
         typealias JSONDictionary = [String: Any]
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
@@ -149,7 +149,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -191,8 +191,8 @@ class RenderNodeSerializationTests: XCTestCase {
         }
     }
 
-    func testDiffAvailability() throws {
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+    func testDiffAvailability() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
@@ -201,7 +201,7 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: bundle, problems: &problems) else {
             XCTFail("Couldn't create article from markup: \(problems)")
             return
         }
@@ -297,7 +297,7 @@ class RenderNodeSerializationTests: XCTestCase {
     
     // MARK: - Utility functions
 
-    func checkRoundTrip(_ inputNode: RenderNode, file: StaticString = #file, line: UInt = #line) {
+    func checkRoundTrip(_ inputNode: RenderNode, file: StaticString = #filePath, line: UInt = #line) {
         // Make sure we're not using a shared encoder
         let testEncoder = JSONEncoder()
         let testDecoder = JSONDecoder()

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,11 +19,6 @@ private func invalidLinkDestinationProblem(destination: String, range: SourceRan
 
 private func disabledLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     return Problem(diagnostic: Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.disabledLinkDestination", summary: "The topic \(reference.path.singleQuoted) cannot be linked to."), possibleSolutions: [])
-}
-
-private func unknownSnippetSliceProblem(snippetPath: String, slice: String, range: SourceRange?) -> Problem {
-    let diagnostic = Diagnostic(source: range?.source, severity: .warning, range: range, identifier: "org.swift.docc.unknownSnippetSlice", summary: "Snippet slice \(slice.singleQuoted) does not exist in snippet \(snippetPath.singleQuoted); this directive will be ignored")
-    return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
 private func removedLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
@@ -90,28 +85,28 @@ struct MarkupReferenceResolver: MarkupRewriter {
         }
     }
 
-    mutating func visitImage(_ image: Image) -> Markup? {
+    mutating func visitImage(_ image: Image) -> (any Markup)? {
         if let reference = image.reference(in: bundle), !context.resourceExists(with: reference) {
             problems.append(unresolvedResourceProblem(resource: reference, source: image.range?.source, range: image.range, severity: .warning))
         }
 
         var image = image
         let newChildren = image.children.compactMap {
-            visit($0) as? InlineMarkup
+            visit($0) as? (any InlineMarkup)
         }
         image.replaceChildrenInRange(0..<image.childCount, with: newChildren)
         return image
     }
     
-    mutating func visitInlineHTML(_ inlineHTML: InlineHTML) -> Markup? {
+    mutating func visitInlineHTML(_ inlineHTML: InlineHTML) -> (any Markup)? {
         return inlineHTML
     }
     
-    mutating func visitLineBreak(_ lineBreak: LineBreak) -> Markup? {
+    mutating func visitLineBreak(_ lineBreak: LineBreak) -> (any Markup)? {
         return lineBreak
     }
 
-    mutating func visitLink(_ link: Link) -> Markup? {
+    mutating func visitLink(_ link: Link) -> (any Markup)? {
         guard let destination = link.destination else {
             return link
         }
@@ -150,7 +145,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         return resolve(reference: .unresolved(.init(topicURL: url)), range: range, severity: .warning, fromSymbolLink: true)
     }
     
-    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> Markup? {
+    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> (any Markup)? {
         guard let destination = symbolLink.destination else {
             return symbolLink
         }
@@ -163,36 +158,33 @@ struct MarkupReferenceResolver: MarkupRewriter {
         return symbolLink
     }
     
-    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> Markup? {
+    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> (any Markup)? {
         return thematicBreak
     }
 
-    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> Markup? {
+    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> (any Markup)? {
         let source = blockDirective.range?.source
         switch blockDirective.name {
         case Snippet.directiveName:
-            var problems = [Problem]()
-            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, in: context, problems: &problems) else {
+            var ignoredParsingProblems = [Problem]() // Any argument parsing problems have already been reported elsewhere
+            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, problems: &ignoredParsingProblems) else {
                 return blockDirective
             }
             
-            if let resolved = resolveAbsoluteSymbolLink(unresolvedDestination: snippet.path, elementRange: blockDirective.range) {
-                var argumentText = "path: \"\(resolved.absoluteString)\""
+            switch context.snippetResolver.resolveSnippet(path: snippet.path) {
+            case .success(let resolvedSnippet):
                 if let requestedSlice = snippet.slice,
-                   let snippetMixin = try? context.entity(with: resolved).symbol?
-                    .mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet {
-                    guard snippetMixin.slices[requestedSlice] != nil else {
-                        problems.append(unknownSnippetSliceProblem(snippetPath: snippet.path, slice: requestedSlice, range: blockDirective.nameRange))
-                        return blockDirective
-                    }
-                    argumentText.append(", slice: \"\(requestedSlice)\"")
+                   let errorInfo = context.snippetResolver.validate(slice: requestedSlice, for: resolvedSnippet)
+                {
+                    problems.append(SnippetResolver.unknownSnippetSliceProblem(source: source, range: blockDirective.arguments()["slice"]?.valueRange, errorInfo: errorInfo))
                 }
-                return BlockDirective(name: Snippet.directiveName, argumentText: argumentText, children: [])
-            } else {
+                return blockDirective
+            case .failure(let errorInfo):
+                problems.append(SnippetResolver.unresolvedSnippetPathProblem(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
                 return blockDirective
             }
         case ImageMedia.directiveName:
-            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: bundle, in: context) else {
+            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: bundle) else {
                 return blockDirective
             }
             
@@ -210,7 +202,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             
             return blockDirective
         case VideoMedia.directiveName:
-            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: bundle, in: context) else {
+            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: bundle) else {
                 return blockDirective
             }
             

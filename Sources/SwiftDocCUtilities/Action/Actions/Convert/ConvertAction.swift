@@ -1,17 +1,17 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+package import Foundation
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
-import SwiftDocC
+public import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: AsyncAction {
@@ -34,7 +34,7 @@ public struct ConvertAction: AsyncAction {
     
     let sourceRepository: SourceRepository?
     
-    private var fileManager: FileManagerProtocol
+    private var fileManager: any FileManagerProtocol
     private let temporaryDirectory: URL
     
     private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
@@ -78,7 +78,7 @@ public struct ConvertAction: AsyncAction {
         emitDigest: Bool,
         currentPlatforms: [String : PlatformVersion]?,
         buildIndex: Bool = false,
-        fileManager: FileManagerProtocol = FileManager.default,
+        fileManager: any FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
         bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
@@ -184,7 +184,7 @@ public struct ConvertAction: AsyncAction {
     
     let configuration: DocumentationContext.Configuration
     private let bundle: DocumentationBundle
-    private let dataProvider: DataProvider
+    private let dataProvider: any DataProvider
     
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
     var _extraTestWork: (() async -> Void)?
@@ -288,9 +288,9 @@ public struct ConvertAction: AsyncAction {
 
         let indexer = try Indexer(outputURL: temporaryFolder, bundleID: bundle.id)
 
-        let context = try signposter.withIntervalSignpost("Register", id: signposter.makeSignpostID()) {
-            try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
-        }
+        let registerInterval = signposter.beginInterval("Register", id: signposter.makeSignpostID())
+        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+        signposter.endInterval("Register", registerInterval)
         
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
@@ -329,8 +329,8 @@ public struct ConvertAction: AsyncAction {
             analysisProblems = context.problems
         } catch {
             if emitDigest {
-                let problem = Problem(description: (error as? DescribedError)?.errorDescription ?? error.localizedDescription, source: nil)
-                try outputConsumer.consume(problems: context.problems + [problem])
+                let problem = Problem(description: (error as? (any DescribedError))?.errorDescription ?? error.localizedDescription, source: nil)
+                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + [problem])
                 try moveOutput(from: temporaryFolder, to: targetDirectory)
             }
             throw error

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -74,7 +74,11 @@ struct PathHierarchy {
             .sorted(by: { lhs, rhs in
                 return !lhs.url.lastPathComponent.contains("@")
             })
-        
+                
+        // To try to handle certain invalid symbol graph files gracefully, we track symbols that don't have a place in the hierarchy so that we can look for a place for those symbols.
+        // Because this is a last resort, we only want to do this processing after all the symbol graphs have already been processed.
+        var symbolNodesOutsideOfHierarchyByModule: [String: [Node]] = [:]
+
         for (url, graph, language) in symbolGraphs {
             let moduleName = graph.module.name
             let moduleNode: Node
@@ -108,14 +112,20 @@ struct PathHierarchy {
             var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
-                if let existingNode = allNodes[id]?.first(where: {
-                    // If both identifiers are in the same language, they are the same symbol.
-                    $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
-                    // If both have the same path components and kind, their differences don't matter for link resolution purposes.
-                    || ($0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier)
-                }) {
+                if let possibleNodes = allNodes[id],
+                   let existingNode = possibleNodes.first(where: {
+                       // If both identifiers are in the same language, they are the same symbol.
+                       $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
+                   }) ?? possibleNodes.first(where: {
+                       // Otherwise, if both have the same path components and kind, their differences don't matter for link resolution purposes.
+                       $0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier
+                   })
+                {
                     nodes[id] = existingNode
-                    existingNode.languages.insert(language!) // If we have symbols in this graph we have a language as well
+                    if existingNode.counterpart?.languages.contains(language!) != true {
+                        // Unless this symbol is already split into language counterparts, add the languages to this node.
+                        existingNode.languages.insert(language!)
+                    }
                 } else {
                     assert(!symbol.pathComponents.isEmpty, "A symbol should have at least its own name in its path components.")
 
@@ -148,14 +158,34 @@ struct PathHierarchy {
                 // would require that we redundantly create multiple nodes for the same symbol in many common cases and then merge them. To avoid doing that, we instead check
                 // the source symbol's path components to find the correct target symbol by matching its name.
                 if let targetNode = nodes[relationship.target], targetNode.name == expectedContainerName {
-                    targetNode.add(symbolChild: sourceNode)
+                    if sourceNode.parent == nil {
+                        targetNode.add(symbolChild: sourceNode)
+                    } else if sourceNode.parent !== targetNode && sourceNode.counterpart?.parent !== targetNode {
+                        // If the source node already exist in a different location in the hierarchy we need to split it into separate nodes for each language representation.
+                        // This ensures that each node has a single parent, so that the hierarchy can be unambiguously walked upwards to expand the "scope" of a search.
+                        let clonedSourceNode = sourceNode.deepClone(
+                            separating: language!,
+                            keeping: sourceNode.languages.subtracting([language!]),
+                            symbolsByUSR: graph.symbols,
+                            didCloneNode: { newNode, newSymbol in
+                                nodes[newSymbol.identifier.precise] = newNode
+                                allNodes[newSymbol.identifier.precise, default: []].append(newNode)
+                            }
+                        )
+                        targetNode.add(symbolChild: clonedSourceNode)
+                    }
                     topLevelCandidates.removeValue(forKey: relationship.source)
                 } else if var targetNodes = allNodes[relationship.target] {
                     // If the source was added in an extension symbol graph file, then its target won't be found in the same symbol graph file (in `nodes`).
                     
                     // We may have encountered multiple language representations of the target symbol. Try to find the best matching representation of the target to add the source to.
-                    // Remove any targets that don't match the source symbol's path components (see comment above for more details).
-                    targetNodes.removeAll(where: { $0.name != expectedContainerName })
+                    // Remove any targets that don't match the source symbol's path components (see comment above for more details) and languages (see comments below).
+                    targetNodes.removeAll(where: { $0.name != expectedContainerName || $0.languages.isDisjoint(with: sourceNode.languages) })
+                    guard !targetNodes.isEmpty else {
+                        // If none of the symbol graphs contain a matching node it's likely a bug in the tool that generated the symbol graph.
+                        // If this happens we leave the source node in `topLevelCandidates` to try and let a later fallback code path recover from the symbol graph issue.
+                        continue
+                    }
                     
                     // Prefer the symbol that matches the relationship's language.
                     if let targetNode = targetNodes.first(where: { $0.symbol!.identifier.interfaceLanguage == language?.id }) {
@@ -164,7 +194,7 @@ struct PathHierarchy {
                         // It's not clear which target to add the source to, so we add it to all of them.
                         // This will likely hit a _debug_ assertion (later in this initializer) about inconsistent traversal through the hierarchy,
                         // but in release builds DocC will "repair" the inconsistent hierarchy.
-                        for targetNode in targetNodes {
+                        for targetNode in targetNodes where !sourceNode.languages.isDisjoint(with: targetNode.languages) {
                             targetNode.add(symbolChild: sourceNode)
                         }
                     }
@@ -212,14 +242,17 @@ struct PathHierarchy {
                 moduleNode.add(symbolChild: topLevelNode)
             }
             
-            assert(
-                topLevelCandidates.values.filter({ $0.symbol!.pathComponents.count > 1 }).allSatisfy({ $0.parent == nil }), """
-                Top-level candidates shouldn't already exist in the hierarchy. \
-                This wasn't true for \(topLevelCandidates.filter({ $0.value.symbol!.pathComponents.count > 1 && $0.value.parent != nil }).map(\.key).sorted())
-                """
-            )
+            assertAllNodes(in: topLevelCandidates.values.filter { $0.symbol!.pathComponents.count > 1 }, satisfy: { $0.parent == nil },
+                           "Top-level candidates shouldn't already exist in the hierarchy.")
             
             for node in topLevelCandidates.values where node.symbol!.pathComponents.count > 1 && node.parent == nil {
+                symbolNodesOutsideOfHierarchyByModule[moduleNode.symbol!.identifier.precise, default: []].append(node)
+            }
+        }
+        
+        for (moduleID, nodes) in symbolNodesOutsideOfHierarchyByModule {
+            let moduleNode = roots[moduleID]!
+            for node in nodes where node.parent == nil {
                 var parent = moduleNode
                 var components = { (symbol: SymbolGraph.Symbol) -> [String] in
                     let original = symbol.pathComponents
@@ -232,15 +265,36 @@ struct PathHierarchy {
                         return original
                     }
                 }(node.symbol!)[...].dropLast()
-                while !components.isEmpty, let child = try? parent.children[components.first!]?.find(nil) {
+                while !components.isEmpty, let child = parent.children[components.first!]?.singleMatch() {
                     parent = child
                     components = components.dropFirst()
                 }
                 for component in components {
+                    // FIXME:
+                    // This code path is both expected (when `knownDisambiguatedPathComponents` is non-nil) and unexpected (when the symbol graph is missing data or contains extra relationships).
+                    // It would be good to restructure this code to better distinguish what's supported behavior and what's a best-effort attempt at gracefully handle invalid symbol graphs.
+                    if let existing = parent.children[component] {
+                        // This code tries to repair incomplete symbol graph files by guessing that the symbol with the most overlapping languages is the intended container.
+                        // Valid symbol graph files we should never end up here.
+                        var bestLanguageMatch: (node: Node, count: Int)?
+                        for element in existing.storage {
+                            let numberOfMatchingLanguages = node.languages.intersection(element.node.languages).count
+                            if (bestLanguageMatch?.count ?? .min) < numberOfMatchingLanguages {
+                                bestLanguageMatch = (node: element.node, count: numberOfMatchingLanguages)
+                            }
+                        }
+                        if let bestLanguageMatch {
+                            // If there's a real symbol that matches this node's languages, use that node instead of creating a placeholder node
+                            parent = bestLanguageMatch.node
+                            continue
+                        }
+                    }
+                    
                     assert(
-                        parent.children[components.first!] == nil,
+                        parent.children[component] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
+                    
                     guard knownDisambiguatedPathComponents != nil else {
                         // If the path hierarchy wasn't passed any "known disambiguated path components" then the sparse/placeholder nodes won't contain any disambiguation.
                         let nodeWithoutSymbol = Node(name: component)
@@ -308,21 +362,11 @@ struct PathHierarchy {
             }
         }
 
-        assert(
-            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }), """
-            Every node should either have a parent node or be a root node. \
-            This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())
-            """
-        )
+        assertAllNodes(in: allNodes, satisfy: { $0.parent != nil || roots[$0.symbol!.identifier.precise] != nil },
+                       "Every node should either have a parent node or be a root node.")
         
-        assert(
-            allNodes.values.allSatisfy({ nodesWithSameUSR in nodesWithSameUSR.allSatisfy({ node in
-                Array(sequence(first: node, next: \.parent)).last!.symbol!.kind.identifier == .module })
-            }), """
-            Every node should reach a root node by following its parents up. \
-            This wasn't true for \(allNodes.filter({ $0.value.allSatisfy({ Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier == .module }) }).map(\.key).sorted())
-            """
-        )
+        assertAllNodes(in: allNodes, satisfy: { Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier == .module },
+                       "Every node should reach a root node by following its parents up.")
         
         allNodes.removeAll()
         
@@ -363,12 +407,11 @@ struct PathHierarchy {
             descend(module)
         }
         
-        assert(
-            lookup.allSatisfy({ $0.value.parent != nil || roots[$0.value.name] != nil }), """
-            Every node should either have a parent node or be a root node. \
-            This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())
-            """
-        )
+        assertAllNodes(in: lookup.values, satisfy: { $0.parent != nil || roots[$0.name] != nil },
+                       "Every node should either have a parent node or be a root node.")
+        
+        assertAllNodes(in: lookup.values, satisfy: { $0.counterpart == nil || lookup[$0.counterpart!.identifier] != nil },
+                       "Every counterpart node should exist in the hierarchy.")
         
         func newNode(_ name: String) -> Node {
             let id = ResolvedIdentifier()
@@ -386,12 +429,8 @@ struct PathHierarchy {
             "Every node lookup should match a node with that identifier."
         )
         
-        assert(
-            lookup.values.allSatisfy({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }), """
-            Every node's findable parent should exist in the lookup. \
-            This wasn't true for \(lookup.values.filter({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }).map(\.symbol!.identifier.precise).sorted())
-            """
-        )
+        assertAllNodes(in: lookup.values, satisfy: { $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil },
+                       "Every node's findable parent should exist in the lookup.")
         
         self.modules = Array(roots.values)
         self.lookup = lookup
@@ -533,6 +572,82 @@ extension PathHierarchy {
             self.specialBehaviors = []
         }
         
+        fileprivate func deepClone(
+            separating separatedLanguage: SourceLanguage,
+            keeping otherLanguages: Set<SourceLanguage>,
+            symbolsByUSR: borrowing [String: SymbolGraph.Symbol],
+            didCloneNode: (Node, SymbolGraph.Symbol) -> Void
+        ) -> Node {
+            assert(!otherLanguages.contains(separatedLanguage), "The caller should have already removed '\(separatedLanguage.id)' from '\(languages.sorted().map(\.id).joined(separator: ", "))'")
+            
+            let clone: Node
+            if let currentSymbol = symbol {
+                // If a representation of the symbol exist in the current local symbol graph, prefer that for more correct disambiguation information.
+                let symbol = symbolsByUSR[currentSymbol.identifier.precise] ?? currentSymbol
+                clone = Node(symbol: symbol, name: name)
+                didCloneNode(clone, symbol)
+            } else {
+                assertionFailure("Unexpectedly cloned a non-symbol node '\(name)' into separate language representations ('\(separatedLanguage.id)' vs '\(otherLanguages.sorted().map(\.id).joined(separator: ", "))').")
+                clone = Node(name: name)
+            }
+            // Update languages and counterparts
+            clone.languages = [separatedLanguage]
+            languages.remove(separatedLanguage)
+            assert(!languages.isEmpty, """
+                Unexpectedly cloned '\(symbol?.identifier.precise ?? "non-symbol named \(name)")' for '\(separatedLanguage.id)' when it was already the only language it was available for.
+                """)
+            
+            clone.counterpart = self
+            self.counterpart = clone
+            
+            // Assign all the children to either the original, the clone, or both.
+            let originalChildren = children
+            children.removeAll(keepingCapacity: true)
+            
+            func addOrMove(_ node: Node, to containerNode: Node) {
+                if node.symbol != nil {
+                    containerNode.add(symbolChild: node)
+                } else {
+                    containerNode.add(child: node, kind: nil, hash: nil)
+                }
+                assert(!containerNode.languages.isDisjoint(with: node.languages), """
+                    Unexpectedly added a node to a container without any overlapping languages.
+                    Child node languages:  \(node.languages.sorted().map(\.id).joined(separator: ", "))
+                    Parent node languages: \(node.languages.sorted().map(\.id).joined(separator: ", "))
+                    """)
+            }
+            
+            for elements in originalChildren.values {
+                for element in elements.storage {
+                    let node = element.node
+                    node.parent = nil // Remove the association with the original container. This node will be added to either the original (again) or to the clone.
+                    let nodeLanguages = node.languages
+                    
+                    switch (nodeLanguages.contains(separatedLanguage), !nodeLanguages.isDisjoint(with: languages)) {
+                        case (true, false):
+                            // This node only exist for the separated language, so it only belongs in the clone. No recursive copying needed.
+                            addOrMove(node, to: clone)
+                            
+                        case (false, true):
+                            // This node doesn't exist for the separated language, so it only belongs in the original. No recursive copying needed.
+                            addOrMove(node, to: self)
+                            
+                        case (true, true):
+                            // This node needs to have deep copies for both the original and the clone.
+                            let innerClone = node.deepClone(separating: separatedLanguage, keeping: otherLanguages, symbolsByUSR: symbolsByUSR, didCloneNode: didCloneNode)
+                            addOrMove(node, to: self)
+                            addOrMove(innerClone, to: clone)
+                            
+                        case (false, false):
+                            assertionFailure("Node \(node.name) (\(node.languages.sorted().map(\.id).joined(separator: ","))) doesn't belong in either '\(separatedLanguage.id)' or '\(otherLanguages.sorted().map(\.id).joined(separator: ", "))'.")
+                            continue
+                    }
+                }
+            }
+            
+            return clone
+        }
+
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
         fileprivate func add(symbolChild: Node) {
             precondition(symbolChild.symbol != nil)
@@ -558,6 +673,8 @@ extension PathHierarchy {
                 )
                 return
             }
+
+            assert(child.parent == nil, "Nodes that already have a parent should not be added to a different parent.")
             // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
             children[child.name, default: .init()].add(child, kind: kind, hash: hash, parameterTypes: parameterTypes, returnTypes: returnTypes)
@@ -598,23 +715,6 @@ extension PathHierarchy {
             }
         }
         return Array(result) + modules.map { $0.identifier }
-    }
-}
-
-// MARK: Removing nodes
-
-extension PathHierarchy {
-    // When unregistering a documentation bundle from a context, entries for that bundle should no longer be findable.
-    // The below implementation marks nodes as "not findable" while leaving them in the hierarchy so that they can be
-    // traversed.
-    // This would be problematic if it happened repeatedly but in practice the path hierarchy will only be in this state
-    // after unregistering a data provider until a new data provider is registered.
-    
-    /// Removes a node from the path hierarchy so that it can no longer be found.
-    /// - Parameter id: The unique identifier for the node.
-    mutating func removeNodeWithID(_ id: ResolvedIdentifier) {
-        // Remove the node from the lookup and unset its identifier
-        lookup.removeValue(forKey: id)!.identifier = nil
     }
 }
 
@@ -799,7 +899,7 @@ private extension SymbolGraph.Relationship.Kind {
     /// Whether or not this relationship kind forms a hierarchical relationship between the source and the target.
     var formsHierarchy: Bool {
         switch self {
-        case .memberOf, .optionalMemberOf, .requirementOf, .optionalRequirementOf, .extensionTo, .declaredIn:
+        case .memberOf, .optionalMemberOf, .requirementOf, .optionalRequirementOf, .extensionTo, .inContextOf, .declaredIn:
             return true
         default:
             return false
@@ -823,4 +923,36 @@ extension LinkCompletionTools {
         node.identifier = id
         return (node, id)
     }
+}
+
+// MARK: Assertion
+
+private func assertAllNodes(
+    in collection: @autoclosure () -> some Sequence<PathHierarchy.Node>,
+    satisfy condition: (PathHierarchy.Node) -> Bool,
+    _ message: @autoclosure () -> String,
+    file: StaticString = #file,
+    line: UInt = #line
+) {
+    assert(
+        collection().allSatisfy(condition),
+        "\(message()) This wasn't true for \(collection().filter { !condition($0) }.map(\.symbol!.identifier.precise).sorted())",
+        file: file,
+        line: line
+    )
+}
+
+private func assertAllNodes(
+    in collectionsByStringKey: @autoclosure () -> [String: some Collection<PathHierarchy.Node>],
+    satisfy condition: (PathHierarchy.Node) -> Bool,
+    _ message: @autoclosure () -> String,
+    file: StaticString = #file,
+    line: UInt = #line
+) {
+    assert(
+        collectionsByStringKey().values.allSatisfy { $0.allSatisfy(condition) },
+        "\(message()) This wasn't true for \(collectionsByStringKey().filter { $0.value.contains(where: { !condition($0)}) }.map(\.key).sorted())",
+        file: file,
+        line: line
+    )
 }

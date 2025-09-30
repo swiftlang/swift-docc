@@ -1,26 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 import Crypto
-
-/// A protocol to provide data to be indexed.
-@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released.")
-public protocol RenderNodeProvider {
-    /// Get an instance of `RenderNode` to be processed by the index.
-    /// - Note: Returning `nil` will end the indexing process.
-    func getRenderNode() -> RenderNode?
-    
-    /// Returns an array of `Problem` indicating which problems the `Provider` encountered.
-    func getProblems() -> [Problem]
-}
 
 /**
  A `NavigatorIndex` contains all the necessary information to display the data inside a navigator.
@@ -477,10 +466,6 @@ extension NavigatorIndex {
      */
     open class Builder {
         
-        /// The data provider.
-        @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-        public let renderNodeProvider: RenderNodeProvider?
-        
         /// The documentation archive to build an index from.
         public let archiveURL: URL?
         
@@ -575,20 +560,6 @@ extension NavigatorIndex {
         ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
         public init(archiveURL: URL? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.archiveURL = archiveURL
-            self.renderNodeProvider = nil
-            self.outputURL = outputURL
-            self.bundleIdentifier = bundleIdentifier
-            self.sortRootChildrenByName = sortRootChildrenByName
-            self.groupByLanguage = groupByLanguage
-            self.writePathsOnDisk = writePathsOnDisk
-            self.usePageTitle = usePageTitle
-        }
-        
-        @available(*, deprecated, renamed: "init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)", message: "Use 'init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)' instead. This deprecated API will be removed after 6.2 is released")
-        @_disfavoredOverload
-        public init(renderNodeProvider: RenderNodeProvider? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
-            self.renderNodeProvider = renderNodeProvider
-            self.archiveURL = nil
             self.outputURL = outputURL
             self.bundleIdentifier = bundleIdentifier
             self.sortRootChildrenByName = sortRootChildrenByName
@@ -624,6 +595,28 @@ extension NavigatorIndex {
             for platformName in Platform.Name.apple {
                 nameToPlatform[platformName.name.lowercased()] = platformName
             }
+        }
+        
+        /// Index a single render `ExternalRenderNode`.
+        /// - Parameter renderNode: The render node to be indexed.
+        package func index(renderNode: ExternalRenderNode, ignoringLanguage: Bool = false) throws {
+            let navigatorRenderNode = NavigatorExternalRenderNode(renderNode: renderNode)
+            _ = try index(navigatorRenderNode, traits: nil, isExternal: true)
+            guard renderNode.identifier.sourceLanguage != .objectiveC else {
+                return
+            }
+            // Check if the render node has an Objective-C representation
+            guard let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first(where: { trait in
+                switch trait {
+                case .interfaceLanguage(let language):
+                    return InterfaceLanguage.from(string: language) == .objc
+                }
+            }) else {
+                return
+            }
+            // If this external render node has a variant, we create a "view" into its Objective-C specific data and index that.
+            let objVariantView = NavigatorExternalRenderNode(renderNode: renderNode, trait: objCVariantTrait)
+            _ = try index(objVariantView, traits: [objCVariantTrait], isExternal: true)
         }
         
         /// Index a single render `RenderNode`.
@@ -680,7 +673,7 @@ extension NavigatorIndex {
         }
         
         // The private index implementation which indexes a given render node representation
-        private func index(_ renderNode: any NavigatorIndexableRenderNodeRepresentation, traits: [RenderNode.Variant.Trait]?) throws -> InterfaceLanguage? {
+        private func index(_ renderNode: any NavigatorIndexableRenderNodeRepresentation, traits: [RenderNode.Variant.Trait]?, isExternal external: Bool = false) throws -> InterfaceLanguage? {
             guard let navigatorIndex else {
                 throw Error.navigatorIndexIsNil
             }
@@ -777,7 +770,9 @@ extension NavigatorIndex {
                 title: title,
                 platformMask: platformID,
                 availabilityID: UInt64(availabilityID),
-                icon: renderNode.icon
+                icon: renderNode.icon,
+                isExternal: external,
+                isBeta: renderNode.metadata.isBeta
             )
             navigationItem.path = identifierPath
             
@@ -808,7 +803,8 @@ extension NavigatorIndex {
                         languageID: language.mask,
                         title: title,
                         platformMask: platformID,
-                        availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities)
+                        availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities),
+                        isExternal: external
                     )
                     
                     groupItem.path = identifier.path + "#" + fragment
@@ -972,7 +968,8 @@ extension NavigatorIndex {
                 // curation, then they should not be in the navigator. In addition, treat unknown
                 // page types as symbol nodes on the assumption that an unknown page type is a
                 // symbol kind added in a future version of Swift-DocC.
-                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false {
+                // Finally, don't add external references to the root; if they are not referenced within the navigation tree, they should be dropped altogether.
+                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false , !node.item.isExternal {
 
                     // If an uncurated page has been curated in another language, don't add it to the top-level.
                     if curatedReferences.contains(where: { curatedNodeID in
@@ -1263,17 +1260,12 @@ extension NavigatorIndex {
         
         /// Build the index using the render nodes files in the provided documentation archive.
         /// - Returns: A list containing all the errors encountered during indexing.
-        /// - Precondition: Either ``archiveURL`` or ``renderNodeProvider`` is set.
+        /// - Precondition: ``archiveURL`` is set.
         public func build() -> [Problem] {
-            if let archiveURL {
-                return _build(archiveURL: archiveURL)
-            } else {
-                return (self as _DeprecatedRenderNodeProviderAccess)._legacyBuild()
+            guard let archiveURL else {
+                fatalError("Calling `build()` requires that `archiveURL` is set.")
             }
-        }
-        
-        // After 6.2 is released, move this into `build()`.
-        private func _build(archiveURL: URL) -> [Problem] {
+            
             setup()
             
             let dataDirectory = archiveURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName, isDirectory: true)
@@ -1284,27 +1276,6 @@ extension NavigatorIndex {
                     try index(renderNode: renderNode)
                 } catch {
                     problems.append(error.problem(source: file,
-                                                  severity: .warning,
-                                                  summaryPrefix: "RenderNode indexing process failed"))
-                }
-            }
-            
-            finalize()
-            
-            return problems
-        }
-        
-        @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
-        fileprivate func _legacyBuild() -> [Problem] {
-            precondition(renderNodeProvider != nil, "Calling `build()` without an `archiveURL` or `renderNodeProvider` set is not permitted.")
-            
-            setup()
-            
-            while let renderNode = renderNodeProvider!.getRenderNode() {
-                do {
-                    try index(renderNode: renderNode)
-                } catch {
-                    problems.append(error.problem(source: renderNode.identifier.url,
                                                   severity: .warning,
                                                   summaryPrefix: "RenderNode indexing process failed"))
                 }
@@ -1338,7 +1309,7 @@ fileprivate extension Error {
 extension LMDB.Database {
     enum NodeError: Error {
         /// A database error that includes the path of a specific node and the original database error.
-        case errorForPath(String, Error)
+        case errorForPath(String, any Error)
     }
     
     /**
@@ -1387,9 +1358,3 @@ enum PathHasher: String {
         }
     }
 }
-
-private protocol _DeprecatedRenderNodeProviderAccess {
-    // This private function accesses the deprecated RenderNodeProvider
-    func _legacyBuild() -> [Problem]
-}
-extension NavigatorIndex.Builder: _DeprecatedRenderNodeProviderAccess {}

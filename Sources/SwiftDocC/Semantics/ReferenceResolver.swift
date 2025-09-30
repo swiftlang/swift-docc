@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -44,6 +44,12 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
     let diagnosticRange: SourceRange?
     if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange {
         rangeAdjustment.offsetWithRange(referenceSourceRange)
+        assert(rangeAdjustment.lowerBound.column >= 0, """
+            Unresolved topic reference range adjustment created range with negative column.
+            Source: \(source?.absoluteString ?? "nil")
+            Range: \(rangeAdjustment.lowerBound.description):\(rangeAdjustment.upperBound.description)
+            Summary: \(errorInfo.message)
+            """)
         diagnosticRange = rangeAdjustment
     } else {
         diagnosticRange = referenceSourceRange
@@ -241,14 +247,9 @@ struct ReferenceResolver: SemanticVisitor {
         return MarkupContainer(newElements)
     }
     
-    mutating func visitMarkup(_ markup: Markup) -> Markup {
+    mutating func visitMarkup(_ markup: any Markup) -> any Markup {
         // Wrap in a markup container and the first child of the result.
         return (visitMarkupContainer(MarkupContainer(markup)) as! MarkupContainer).elements.first!
-    }
-
-    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released.
-    mutating func visitTechnology(_ technology: TutorialTableOfContents) -> Semantic {
-        visitTutorialTableOfContents(technology)
     }
 
     mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Semantic {
@@ -274,7 +275,7 @@ struct ReferenceResolver: SemanticVisitor {
     
     mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> Semantic {
         let newContent = visit(contentAndMedia.content) as! MarkupContainer
-        let newMedia = contentAndMedia.media.map { visit($0) } as! Media?
+        let newMedia = contentAndMedia.media.map { visit($0) } as! (any Media)?
         return ContentAndMedia(originalMarkup: contentAndMedia.originalMarkup, title: contentAndMedia.title, layout: contentAndMedia.layout, eyebrow: contentAndMedia.eyebrow, content: newContent, media: newMedia, mediaPosition: contentAndMedia.mediaPosition)
     }
     

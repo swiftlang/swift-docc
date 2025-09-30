@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -54,14 +54,14 @@ class SemanticAnalyzerTests: XCTestCase {
         InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
     ])
     
-    func testDoNotCrashOnInvalidContent() throws {
-        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
+    func testDoNotCrashOnInvalidContent() async throws {
+        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
         
         XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/Oops", sourceLanguage: .swift)))
     }
     
-    func testWarningsAboutDirectiveSupport() throws {
-        func problemsConvertingTestContent(withFileExtension fileExtension: String) throws -> (unsupportedTopLevelChildProblems: [Problem], missingTopLevelChildProblems: [Problem]) {
+    func testWarningsAboutDirectiveSupport() async throws {
+        func problemsConvertingTestContent(withFileExtension fileExtension: String) async throws -> (unsupportedTopLevelChildProblems: [Problem], missingTopLevelChildProblems: [Problem]) {
             let catalogHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
                 TextFile(name: "FileWithDirective.\(fileExtension)", utf8Content: """
                 @Article
@@ -73,7 +73,7 @@ class SemanticAnalyzerTests: XCTestCase {
                 """),
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
-            let (_, context) = try loadBundle(catalog: catalogHierarchy)
+            let (_, context) = try await loadBundle(catalog: catalogHierarchy)
             
             return (
                 context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unsupportedTopLevelChild" }),
@@ -82,7 +82,7 @@ class SemanticAnalyzerTests: XCTestCase {
         }
         
         do {
-            let problems = try problemsConvertingTestContent(withFileExtension: "md")
+            let problems = try await problemsConvertingTestContent(withFileExtension: "md")
             
             XCTAssertEqual(problems.missingTopLevelChildProblems.count, 0)
             XCTAssertEqual(problems.unsupportedTopLevelChildProblems.count, 1)
@@ -95,7 +95,7 @@ class SemanticAnalyzerTests: XCTestCase {
         }
         
         do {
-            let problems = try problemsConvertingTestContent(withFileExtension: "tutorial")
+            let problems = try await problemsConvertingTestContent(withFileExtension: "tutorial")
             
             XCTAssertEqual(problems.missingTopLevelChildProblems.count, 1)
             XCTAssertEqual(problems.unsupportedTopLevelChildProblems.count, 0)
@@ -109,11 +109,11 @@ class SemanticAnalyzerTests: XCTestCase {
         }
     }
     
-    func testDoesNotWarnOnEmptyTutorials() throws {
-        let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
+    func testDoesNotWarnOnEmptyTutorials() async throws {
+        let (bundle, _) = try await loadBundle(catalog: catalogHierarchy)
         
         let document = Document(parsing: "", options: .parseBlockDirectives)
-        var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), context: context, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), bundle: bundle)
         let semantic = analyzer.visitDocument(document)
         XCTAssertNil(semantic)
         XCTAssert(analyzer.problems.isEmpty)

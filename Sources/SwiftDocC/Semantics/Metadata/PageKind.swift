@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 extension Metadata {
     /// A directive that allows you to set a page's kind, which affects its default title heading and page icon.

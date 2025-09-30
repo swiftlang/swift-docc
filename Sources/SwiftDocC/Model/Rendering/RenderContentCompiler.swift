@@ -34,7 +34,7 @@ struct RenderContentCompiler: MarkupVisitor {
         self.identifier = identifier
     }
     
-    mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> [RenderContent] {
+    mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> [any RenderContent] {
         let aside = Aside(blockQuote)
         
         let newAside = RenderBlockContent.Aside(
@@ -45,16 +45,16 @@ struct RenderContentCompiler: MarkupVisitor {
         return [RenderBlockContent.aside(newAside.capitalizingFirstWord())]
     }
     
-    mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
+    mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [any RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
         return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
     }
     
-    mutating func visitHeading(_ heading: Heading) -> [RenderContent] {
+    mutating func visitHeading(_ heading: Heading) -> [any RenderContent] {
         return [RenderBlockContent.heading(.init(level: heading.level, text: heading.plainText, anchor: urlReadableFragment(heading.plainText).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)))]
     }
     
-    mutating func visitListItem(_ listItem: ListItem) -> [RenderContent] {
+    mutating func visitListItem(_ listItem: ListItem) -> [any RenderContent] {
         let renderListItems = listItem.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
         let checked: Bool?
         switch listItem.checkbox {
@@ -65,7 +65,7 @@ struct RenderContentCompiler: MarkupVisitor {
         return [RenderBlockContent.ListItem(content: renderListItems as! [RenderBlockContent], checked: checked)]
     }
     
-    mutating func visitOrderedList(_ orderedList: OrderedList) -> [RenderContent] {
+    mutating func visitOrderedList(_ orderedList: OrderedList) -> [any RenderContent] {
         let renderListItems = orderedList.listItems.reduce(into: [], { result, item in result.append(contentsOf: visitListItem(item))})
         return [RenderBlockContent.orderedList(.init(
             items: renderListItems as! [RenderBlockContent.ListItem],
@@ -73,20 +73,20 @@ struct RenderContentCompiler: MarkupVisitor {
         ))]
     }
     
-    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> [RenderContent] {
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> [any RenderContent] {
         let renderListItems = unorderedList.listItems.reduce(into: [], { result, item in result.append(contentsOf: visitListItem(item))}) as! [RenderBlockContent.ListItem]
         return renderListItems.unorderedAndTermLists()
     }
     
-    mutating func visitParagraph(_ paragraph: Paragraph) -> [RenderContent] {
+    mutating func visitParagraph(_ paragraph: Paragraph) -> [any RenderContent] {
         return [RenderBlockContent.paragraph(.init(inlineContent: paragraph.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent]))]
     }
     
-    mutating func visitInlineCode(_ inlineCode: InlineCode) -> [RenderContent] {
+    mutating func visitInlineCode(_ inlineCode: InlineCode) -> [any RenderContent] {
         return [RenderInlineContent.codeVoice(code: inlineCode.code)]
     }
     
-    mutating func visitImage(_ image: Image) -> [RenderContent] {
+    mutating func visitImage(_ image: Image) -> [any RenderContent] {
         return visitImage(
             source: image.source ?? "",
             altText: image.altText,
@@ -100,7 +100,7 @@ struct RenderContentCompiler: MarkupVisitor {
         altText: String?,
         caption: [RenderInlineContent]?,
         deviceFrame: String?
-    ) -> [RenderContent] {
+    ) -> [any RenderContent] {
         guard let imageIdentifier = resolveImage(source: source, altText: altText) else {
             return []
         }
@@ -133,7 +133,7 @@ struct RenderContentCompiler: MarkupVisitor {
         return imageIdentifier
     }
     
-    mutating func visitLink(_ link: Link) -> [RenderContent] {
+    mutating func visitLink(_ link: Link) -> [any RenderContent] {
         let destination = link.destination ?? ""
         // Before attempting to resolve the link, we confirm that is has a ResolvedTopicReference urlScheme
         guard ResolvedTopicReference.urlHasResolvedTopicScheme(URL(string: destination)) else {
@@ -258,7 +258,7 @@ struct RenderContentCompiler: MarkupVisitor {
         return nil
     }
     
-    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> [RenderContent] {
+    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> [any RenderContent] {
         guard let destination = symbolLink.destination else {
             return []
         }
@@ -275,27 +275,27 @@ struct RenderContentCompiler: MarkupVisitor {
         return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
     }
     
-    mutating func visitSoftBreak(_ softBreak: SoftBreak) -> [RenderContent] {
+    mutating func visitSoftBreak(_ softBreak: SoftBreak) -> [any RenderContent] {
         return [RenderInlineContent.text(" ")]
     }
     
-    mutating func visitLineBreak(_ lineBreak: LineBreak) -> [RenderContent] {
+    mutating func visitLineBreak(_ lineBreak: LineBreak) -> [any RenderContent] {
         return [RenderInlineContent.text("\n")]
     }
     
-    mutating func visitEmphasis(_ emphasis: Emphasis) -> [RenderContent] {
+    mutating func visitEmphasis(_ emphasis: Emphasis) -> [any RenderContent] {
         return [RenderInlineContent.emphasis(inlineContent: emphasis.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent])]
     }
     
-    mutating func visitStrong(_ strong: Strong) -> [RenderContent] {
+    mutating func visitStrong(_ strong: Strong) -> [any RenderContent] {
         return [RenderInlineContent.strong(inlineContent: strong.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent])]
     }
     
-    mutating func visitText(_ text: Text) -> [RenderContent] {
+    mutating func visitText(_ text: Text) -> [any RenderContent] {
         return [RenderInlineContent.text(text.string)]
     }
     
-    mutating func visitTable(_ table: Table) -> [RenderContent] {
+    mutating func visitTable(_ table: Table) -> [any RenderContent] {
         var extendedData = Set<RenderBlockContent.TableCellExtendedData>()
 
         var headerCells = [RenderBlockContent.TableRow.Cell]()
@@ -346,11 +346,11 @@ struct RenderContentCompiler: MarkupVisitor {
         return [RenderBlockContent.table(.init(header: .row, rawAlignments: alignments, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
     }
 
-    mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [RenderContent] {
+    mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [any RenderContent] {
         return [RenderInlineContent.strikethrough(inlineContent: strikethrough.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent])]
     }
 
-    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> [RenderContent] {
+    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> [any RenderContent] {
 
         guard let renderableDirective = DirectiveIndex.shared.renderableDirectives[blockDirective.name] else {
             return []
@@ -359,11 +359,15 @@ struct RenderContentCompiler: MarkupVisitor {
         return renderableDirective.render(blockDirective, with: &self)
     }
 
-    mutating func visitDoxygenDiscussion(_ doxygenDiscussion: DoxygenDiscussion) -> [RenderContent] {
+    mutating func visitDoxygenAbstract(_ doxygenAbstract: DoxygenAbstract) -> [any RenderContent] {
+        doxygenAbstract.children.flatMap { self.visit($0)}
+    }
+
+    mutating func visitDoxygenDiscussion(_ doxygenDiscussion: DoxygenDiscussion) -> [any RenderContent] {
         doxygenDiscussion.children.flatMap { self.visit($0) }
     }
 
-    mutating func visitDoxygenNote(_ doxygenNote: DoxygenNote) -> [RenderContent] {
+    mutating func visitDoxygenNote(_ doxygenNote: DoxygenNote) -> [any RenderContent] {
         let content: [RenderBlockContent] = doxygenNote.children
             .flatMap { self.visit($0) }
             .map {
@@ -382,11 +386,11 @@ struct RenderContentCompiler: MarkupVisitor {
         ))]
     }
     
-    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> [RenderContent] {
+    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> [any RenderContent] {
         return [RenderBlockContent.thematicBreak]
     }
 
-    func defaultVisit(_ markup: Markup) -> [RenderContent] {
+    func defaultVisit(_ markup: any Markup) -> [any RenderContent] {
         return []
     }
 }

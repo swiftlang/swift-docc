@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,6 +9,7 @@
 */
 
 import Foundation
+public import SymbolKit
 
 /// A collection of API for link completion.
 ///
@@ -20,7 +21,6 @@ import Foundation
 /// - Third, determine the minimal unique disambiguation for each completion suggestion using ``suggestedDisambiguation(forCollidingSymbols:)``
 ///
 /// > Tip: You can use ``SymbolInformation/hash(uniqueSymbolID:)`` to compute the hashed symbol identifiers needed for steps 2 and 3 above.
-@_spi(LinkCompletion)  // LinkCompletionTools isn't stable API yet
 public enum LinkCompletionTools {
     
     // MARK: Parsing
@@ -74,6 +74,39 @@ public enum LinkCompletionTools {
                 self = .none
             }
         }
+        
+        /// A string representation of the disambiguation.
+        public var suffix: String {
+            typealias Disambiguation = PathHierarchy.DisambiguationContainer.Disambiguation
+            
+            switch self {
+            case .kindAndOrHash(let kind?, nil):
+                return Disambiguation.kind(kind).makeSuffix()
+            case .kindAndOrHash(nil,       let hash?):
+                return Disambiguation.hash(hash).makeSuffix()
+            case .kindAndOrHash(let kind?, let hash?): // This is never necessary but a developer could redundantly write it in a parsed link
+                return Disambiguation.kind(kind).makeSuffix() + Disambiguation.hash(hash).makeSuffix()
+                
+            case .typeSignature(let parameterTypes?, nil):
+                return Disambiguation.parameterTypes(parameterTypes).makeSuffix()
+            case .typeSignature(nil,                 let returnTypes?):
+                return Disambiguation.returnTypes(returnTypes).makeSuffix()
+            case .typeSignature(let parameterTypes?, let returnTypes?):
+                return Disambiguation.mixedTypes(parameterTypes: parameterTypes, returnTypes: returnTypes).makeSuffix()
+                
+            // Unexpected error cases
+            case .kindAndOrHash(kind: nil, hash: nil):
+                assertionFailure("Parsed `.kindAndOrHash` disambiguation missing both kind and hash should use `.none` instead. This is a logic bug.")
+                return Disambiguation.none.makeSuffix()
+            case .typeSignature(parameterTypes: nil, returnTypes: nil):
+                assertionFailure("Parsed `.typeSignature` disambiguation missing both parameter types and return types should use `.none` instead. This is a logic bug.")
+                return Disambiguation.none.makeSuffix()
+                
+            // Since this is within DocC we want to have an error if we don't handle new future cases.
+            case .none, ._nonFrozenEnum_useDefaultCase:
+                return Disambiguation.none.makeSuffix()
+            }
+        }
     }
     
     /// Suggests the minimal most readable disambiguation string for each symbol with the same name.
@@ -98,8 +131,8 @@ public enum LinkCompletionTools {
                 node,
                 kind: symbol.kind,
                 hash: symbol.symbolIDHash,
-                parameterTypes: symbol.parameterTypes,
-                returnTypes: symbol.returnTypes
+                parameterTypes: symbol.parameterTypes?.map { $0.withoutWhitespace() },
+                returnTypes: symbol.returnTypes?.map { $0.withoutWhitespace() }
             )
         }
         
@@ -151,6 +184,15 @@ public enum LinkCompletionTools {
             self.parameterTypes = parameterTypes
             self.returnTypes = returnTypes
         }
+
+        public init(symbol: SymbolGraph.Symbol) {
+            self.kind = symbol.kind.identifier.identifier
+            self.symbolIDHash = Self.hash(uniqueSymbolID: symbol.identifier.precise)
+            if let signature = PathHierarchy.functionSignatureTypeNames(for: symbol) {
+                self.parameterTypes = signature.parameterTypeNames
+                self.returnTypes = signature.returnTypeNames
+            }
+        }
         
         /// Creates a hashed representation of a symbol's unique identifier.
         ///
@@ -201,5 +243,11 @@ private extension PathHierarchy.PathComponent.Disambiguation {
         case .none, ._nonFrozenEnum_useDefaultCase:
             return nil
         }
+    }
+}
+
+private extension String {
+    func withoutWhitespace() -> String {
+        filter { !$0.isWhitespace }
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,18 +13,18 @@ import XCTest
 import Markdown
 
 class XcodeRequirementTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@XcodeRequirement"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(XcodeRequirement.directiveName, directive.name)
-            let requirement = XcodeRequirement(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let requirement = XcodeRequirement(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNil(requirement)
             XCTAssertEqual(2, problems.count)
             XCTAssertEqual(
@@ -38,7 +38,7 @@ class XcodeRequirementTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let title = "Xcode 10.2 Beta 3"
         let destination = "https://www.example.com/download"
         let source = """
@@ -48,12 +48,12 @@ class XcodeRequirementTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext()
+        let (bundle, _) = try await testBundleAndContext()
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(XcodeRequirement.directiveName, directive.name)
-            let requirement = XcodeRequirement(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let requirement = XcodeRequirement(from: directive, source: nil, for: bundle, problems: &problems)
             XCTAssertNotNil(requirement)
             XCTAssertTrue(problems.isEmpty)
             requirement.map { requirement in

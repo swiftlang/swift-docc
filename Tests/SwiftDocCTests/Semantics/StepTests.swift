@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,15 +13,15 @@ import XCTest
 import Markdown
 
 class StepTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = """
 @Step
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertEqual([
             "org.swift.docc.HasContent",
         ], problems.map { $0.diagnostic.identifier })
@@ -32,7 +32,7 @@ class StepTests: XCTestCase {
         }
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
 @Step {
    This is the step's content.
@@ -46,9 +46,9 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
         XCTAssertNotNil(step)
         
@@ -83,7 +83,7 @@ Step @1:1-9:2
         }
     }
     
-    func testExtraneousContent() throws {
+    func testExtraneousContent() async throws {
         let source = """
 @Step {
    This is the step's content.
@@ -104,9 +104,9 @@ Step @1:1-9:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let step = Step(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertEqual(2, problems.count)
         
         XCTAssertEqual([

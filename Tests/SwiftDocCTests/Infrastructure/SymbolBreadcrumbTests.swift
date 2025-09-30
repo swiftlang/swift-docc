@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,8 +12,8 @@ import XCTest
 @testable import SwiftDocC
 
 class SymbolBreadcrumbTests: XCTestCase {
-    func testLanguageSpecificBreadcrumbs() throws {
-        let (bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+    func testLanguageSpecificBreadcrumbs() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "GeometricalShapes")
         let resolver = try XCTUnwrap(context.linkResolver.localResolver)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
@@ -96,8 +96,8 @@ class SymbolBreadcrumbTests: XCTestCase {
         }
     }
     
-    func testMixedLanguageSpecificBreadcrumbs() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+    func testMixedLanguageSpecificBreadcrumbs() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
         let resolver = try XCTUnwrap(context.linkResolver.localResolver)
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         
@@ -137,7 +137,7 @@ class SymbolBreadcrumbTests: XCTestCase {
         _ reference: ResolvedTopicReference,
         _ context: DocumentationContext,
         _ bundle: DocumentationBundle,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
@@ -151,7 +151,7 @@ class SymbolBreadcrumbTests: XCTestCase {
         _ reference: ResolvedTopicReference,
         _ context: DocumentationContext,
         _ bundle: DocumentationBundle,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) {
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)

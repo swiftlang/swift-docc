@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,10 +15,10 @@ import Markdown
 @testable import SwiftDocC
 
 class MetadataAvailabilityTests: XCTestCase {
-    func testInvalidWithNoArguments() throws {
+    func testInvalidWithNoArguments() async throws {
         let source = "@Available"
         
-        try assertDirective(Metadata.Availability.self, source: source) { directive, problems in
+        try await assertDirective(Metadata.Availability.self, source: source) { directive, problems in
             XCTAssertNil(directive)
             
             XCTAssertEqual(2, problems.count)
@@ -32,7 +32,7 @@ class MetadataAvailabilityTests: XCTestCase {
         }
     }
 
-    func testInvalidDuplicateIntroduced() throws {
+    func testInvalidDuplicateIntroduced() async throws {
         for platform in Metadata.Availability.Platform.defaultCases {
             let source = """
             @Metadata {
@@ -40,7 +40,7 @@ class MetadataAvailabilityTests: XCTestCase {
                 @Available(\(platform.rawValue), introduced: \"2.0\")
             }
             """
-            try assertDirective(Metadata.self, source: source) { directive, problems in
+            try await assertDirective(Metadata.self, source: source) { directive, problems in
                 XCTAssertEqual(2, problems.count)
                 let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
                 XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced"])
@@ -48,7 +48,7 @@ class MetadataAvailabilityTests: XCTestCase {
         }
     }
     
-    func testInvalidIntroducedFormat() throws {
+    func testInvalidIntroducedFormat() async throws {
         let source = """
         @Metadata {
             @TechnologyRoot
@@ -63,7 +63,7 @@ class MetadataAvailabilityTests: XCTestCase {
         }
         """
 
-        try assertDirective(Metadata.self, source: source) { directive, problems in
+        try await assertDirective(Metadata.self, source: source) { directive, problems in
             XCTAssertEqual(8, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
             let diagnosticExplanations = Set(problems.map { $0.diagnostic.explanation })
@@ -74,7 +74,7 @@ class MetadataAvailabilityTests: XCTestCase {
         }
     }
     
-    func testValidSemanticVersionFormat() throws {
+    func testValidSemanticVersionFormat() async throws {
         let source = """
         @Metadata {
             @Available(iOS, introduced: \"3.5.2\", deprecated: \"5.6.7\")
@@ -83,7 +83,7 @@ class MetadataAvailabilityTests: XCTestCase {
         }
         """
 
-        try assertDirective(Metadata.self, source: source) { directive, problems in
+        try await assertDirective(Metadata.self, source: source) { directive, problems in
             XCTAssertEqual(0, problems.count)
 
             let directive = try XCTUnwrap(directive)
@@ -113,7 +113,7 @@ class MetadataAvailabilityTests: XCTestCase {
         }
     }
 
-    func testValidIntroducedDirective() throws {
+    func testValidIntroducedDirective() async throws {
         // Assemble all the combinations of arguments you could give
         let validArguments: [String] = [
           "deprecated: \"1.0\"",
@@ -135,13 +135,13 @@ class MetadataAvailabilityTests: XCTestCase {
         
         for platform in checkPlatforms {
             for args in validArgumentsWithVersion {
-                try assertValidAvailability(source: "@Available(\(platform), \(args))")
+                try await assertValidAvailability(source: "@Available(\(platform), \(args))")
             }
         }
     }
         
     /// Basic validity test for giving several directives.
-    func testMultipleAvailabilityDirectives() throws {
+    func testMultipleAvailabilityDirectives() async throws {
         let source = """
         @Metadata {
             @Available(macOS, introduced: "11.0")
@@ -150,36 +150,36 @@ class MetadataAvailabilityTests: XCTestCase {
             @Available("My Package", introduced: "0.1", deprecated: "1.0")
         }
         """
-        try assertValidMetadata(source: source)
+        try await assertValidMetadata(source: source)
     }
     
-    func assertDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String, assertion assert: (Directive?, [Problem]) throws -> Void) throws {
+    func assertDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String, assertion assert: (Directive?, [Problem]) throws -> Void) async throws {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
+        let (bundle, _) = try await testBundleAndContext(named: "AvailabilityBundle")
 
         try directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Directive.directiveName, directive.name)
-            let converted = Directive(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let converted = Directive(from: directive, source: nil, for: bundle, problems: &problems)
             try assert(converted, problems)
         }
     }
 
-    func assertValidDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String) throws {
-        try assertDirective(type, source: source) { directive, problems in
+    func assertValidDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String) async throws {
+        try await assertDirective(type, source: source) { directive, problems in
             XCTAssertNotNil(directive)
             XCTAssert(problems.isEmpty)
         }
     }
 
-    func assertValidAvailability(source: String) throws {
-        try assertValidDirective(Metadata.Availability.self, source: source)
+    func assertValidAvailability(source: String) async throws {
+        try await assertValidDirective(Metadata.Availability.self, source: source)
     }
 
-    func assertValidMetadata(source: String) throws {
-        try assertValidDirective(Metadata.self, source: source)
+    func assertValidMetadata(source: String) async throws {
+        try await assertValidDirective(Metadata.self, source: source)
     }
 }

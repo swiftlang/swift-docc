@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A tutorial to complete in order to gain knowledge of a technology.
 public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted, Titled, Timed, Redirected {
@@ -43,7 +43,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
     /// The linkable parts of the tutorial.
     ///
     /// Allows you to direct link to discrete sections within a tutorial.
-    public var landmarks: [Landmark] {
+    public var landmarks: [any Landmark] {
         return sections
     }
     
@@ -102,12 +102,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
         self.originalMarkup = originalMarkup
     }
     
-    func validate(
-        source: URL?,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
-        problems: inout [Problem]
-    ) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         var seenSectionTitles = [String: SourceRange]()
         sections = sections.filter { section -> Bool in
             let arguments = section.originalMarkup.arguments()

@@ -45,7 +45,7 @@ extension GroupedSection {
         return ranges.compactMap { range in
             
             let heading: Heading?
-            let content: ArraySlice<Markup>
+            let content: ArraySlice<any Markup>
             
             if range.startIndex == phantomH3Index {
                 // If we're processing a range of topic links that isn't preceded by a topic group heading, create

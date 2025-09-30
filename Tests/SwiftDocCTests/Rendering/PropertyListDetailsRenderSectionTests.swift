@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,9 +16,9 @@ import SwiftDocCTestUtilities
 
 class PropertyListDetailsRenderSectionTests: XCTestCase {
 
-    func testDecoding() throws {
+    func testDecoding() async throws {
         
-        func getPlistDetailsSection(arrayMode: CustomStringConvertible, baseType: CustomStringConvertible, rawKey: CustomStringConvertible) throws -> PropertyListDetailsRenderSection {
+        func getPlistDetailsSection(arrayMode: any CustomStringConvertible, baseType: any CustomStringConvertible, rawKey: any CustomStringConvertible) async throws -> PropertyListDetailsRenderSection {
             let symbolJSON = """
             {
               "accessLevel" : "public",
@@ -55,7 +55,7 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
             let catalog = Folder(name: "unit-test.docc", content: [
                 TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
             ])
-            let (bundle, context) = try loadBundle(catalog: catalog)
+            let (bundle, context) = try await loadBundle(catalog: catalog)
             let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
             let renderNode = converter.convert(node)
@@ -63,8 +63,9 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
         }
         
         // Assert that the Details section is correctly generated when passing valid values into the plistDetails JSON object.
+        let withArrayMode = try await getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: "\"property-list-key\"")
         XCTAssertEqual(
-            try getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: "\"property-list-key\""),
+            withArrayMode,
             PropertyListDetailsRenderSection(
                details: PropertyListDetailsRenderSection.Details(
                    rawKey: "property-list-key",
@@ -76,8 +77,9 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
            )
        )
         
+        let withoutArrayMode = try await getPlistDetailsSection(arrayMode: false, baseType: "\"string\"", rawKey: "\"property-list-key\"")
         XCTAssertEqual(
-            try getPlistDetailsSection(arrayMode: false, baseType: "\"string\"", rawKey: "\"property-list-key\""),
+            withoutArrayMode,
             PropertyListDetailsRenderSection(
                details: PropertyListDetailsRenderSection.Details(
                    rawKey: "property-list-key",
@@ -91,12 +93,14 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
         
         // Assert that the Details section does not decode unsupported values.
         do {
-            _ = try getPlistDetailsSection(arrayMode: true, baseType: true, rawKey: "\"property-list-key\"")
+            _ = try await getPlistDetailsSection(arrayMode: true, baseType: true, rawKey: "\"property-list-key\"")
+            XCTFail("Didn't raise an error")
         } catch {
             XCTAssertTrue(error.localizedDescription.contains("isn’t in the correct format"))
         }
         do {
-            _ = try getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: 1)
+            _ = try await getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: 1)
+            XCTFail("Didn't raise an error")
         } catch {
             XCTAssertTrue(error.localizedDescription.contains("isn’t in the correct format"))
         }

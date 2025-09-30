@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,14 +10,14 @@
 
 import Foundation
 import XCTest
-@_spi(LinkCompletion) @testable import SwiftDocC
+@testable import SwiftDocC
 
 class LinkCompletionToolsTests: XCTestCase {
     func testParsingLinkStrings() {
         func assertParsing(
             _ linkString: String,
             equal expected: [(name: String, disambiguation: LinkCompletionTools.ParsedDisambiguation)],
-            file: StaticString = #file,
+            file: StaticString = #filePath,
             line: UInt = #line
         ) {
             let got = LinkCompletionTools.parse(linkString: linkString)
@@ -159,6 +159,103 @@ class LinkCompletionToolsTests: XCTestCase {
             operator1, operator2, operator3,
         ]), [
             "-(_,String)", "->Wrapped", "-(_,Double)",
+        ])
+    }
+    
+    func testDisambiguationSuffixStrings() {
+        typealias Disambiguation = LinkCompletionTools.ParsedDisambiguation
+        
+        XCTAssertEqual(Disambiguation.none.suffix,"")
+        
+        XCTAssertEqual(Disambiguation.kindAndOrHash(kind: "class", hash: nil).suffix,
+                       "-class")
+        XCTAssertEqual(Disambiguation.kindAndOrHash(kind: nil, hash: "z3jl").suffix,
+                       "-z3jl")
+        
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: [], returnTypes: nil).suffix,
+                       "-()")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["Int"], returnTypes: nil).suffix,
+                       "-(Int)")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["Int", "_", "String"], returnTypes: nil).suffix,
+                       "-(Int,_,String)")
+        
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: []).suffix,
+                       "->()")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: ["Int"]).suffix,
+                       "->Int")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: nil, returnTypes: ["Int", "_", "String"]).suffix,
+                       "->(Int,_,String)")
+        
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: []).suffix,
+                       "-(_,Bool)->()")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int"]).suffix,
+                       "-(_,Bool)->Int")
+        XCTAssertEqual(Disambiguation.typeSignature(parameterTypes: ["_", "Bool"], returnTypes: ["Int", "_", "String"]).suffix,
+                       "-(_,Bool)->(Int,_,String)")
+    }
+    
+    func testParsingDisambiguationSuffixStrings() throws {
+        for disambiguationSuffixString in [
+            "",
+            "-class",
+            "-z3jl",
+            
+            "-()",
+            "-(Int)",
+            "-(Int,_,String)",
+            
+            "->()",
+            "->Int",
+            "->(Int,_,String)",
+            
+            "-(_,Bool)->()",
+            "-(_,Bool)->Int",
+            "-(_,Bool)->(Int,_,String)",
+        ] {
+            let parsedLinkComponent = try XCTUnwrap(LinkCompletionTools.parse(linkString: "SymbolName\(disambiguationSuffixString)").first)
+            XCTAssertEqual(parsedLinkComponent.disambiguation.suffix, disambiguationSuffixString)
+        }
+    }
+
+    func testSuggestingBothParameterAndReturnTypesInTheSameDisambiguation() {
+        let overloads = [
+            (parameters: ["Int"],  returns: []),      // (Int)  -> Void
+            (parameters: ["Bool"], returns: []),      // (Bool) -> Void
+            (parameters: ["Int"],  returns: ["Int"]), // (Int)  -> Int
+        ].map {
+            LinkCompletionTools.SymbolInformation(
+                kind: "func",
+                symbolIDHash: "\($0)".stableHashString,
+                parameterTypes: $0.parameters,
+                returnTypes: $0.returns
+            )
+        }
+        
+        XCTAssertEqual(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: overloads), [
+            "-(Int)->()", // Only parameter type would be ambiguous with 3rd overload & only return type would be ambiguous with 2nd overload.
+            "-(Bool)",    // The only overload with a `Bool` value
+            "->_",        // The only overload that returns something
+        ])
+    }
+    
+    func testRemovesWhitespaceFromTypeSignatureDisambiguation() {
+        let overloads = [
+            // The caller included whitespace in these closure type spellings but the DocC disambiguation won't include this whitespace.
+            (parameters: ["(Int) -> Int"],  returns: []), // ((Int)  -> Int)  -> Void
+            (parameters: ["(Bool) -> ()"], returns: []),  // ((Bool) -> () )  -> Void
+        ].map {
+            LinkCompletionTools.SymbolInformation(
+                kind: "func",
+                symbolIDHash: "\($0)".stableHashString,
+                parameterTypes: $0.parameters,
+                returnTypes: $0.returns
+            )
+        }
+        
+        XCTAssertEqual(LinkCompletionTools.suggestedDisambiguation(forCollidingSymbols: overloads), [
+            // Both parameters require the only parameter type as disambiguation. The suggested disambiguation shouldn't contain extra whitespace.
+            "-((Int)->Int)",
+            "-((Bool)->())",
         ])
     }
 }

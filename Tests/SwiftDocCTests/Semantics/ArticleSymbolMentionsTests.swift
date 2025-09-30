@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import XCTest
-@testable import SwiftDocC
+@testable @preconcurrency import SwiftDocC
 import Markdown
 import SwiftDocCTestUtilities
 import SymbolKit
@@ -36,11 +36,58 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertEqual(gottenArticle, article)
     }
 
-    /// If the `--enable-mentioned-in` flag is passed, symbol mentions in the test bundle's
-    /// articles should be recorded.
-    func testSymbolLinkCollectorEnabled() throws {
-        enableFeatureFlag(\.isExperimentalMentionedInEnabled)
-        let (bundle, context) = try createMentionedInTestBundle()
+    // Test the sorting of articles mentioning a given symbol
+    func testArticlesMentioningSorting() throws {
+        let bundleID: DocumentationBundle.Identifier = "org.swift.test"
+        let articles = ["a", "b", "c", "d", "e", "f"].map { letter in
+            ResolvedTopicReference(
+                bundleID: bundleID,
+                path: "/\(letter)",
+                sourceLanguage: .swift
+            )
+        }
+        let symbol = ResolvedTopicReference(
+            bundleID: bundleID,
+            path: "/z",
+            sourceLanguage: .swift
+        )
+
+        var mentions = ArticleSymbolMentions()
+        XCTAssertTrue(mentions.articlesMentioning(symbol).isEmpty)
+
+        // test that mentioning articles are sorted by weight
+        mentions.article(articles[0], didMention: symbol, weight: 10)
+        mentions.article(articles[1], didMention: symbol, weight: 42)
+        mentions.article(articles[2], didMention: symbol, weight: 1)
+        mentions.article(articles[3], didMention: symbol, weight: 14)
+        mentions.article(articles[4], didMention: symbol, weight: 2)
+        mentions.article(articles[5], didMention: symbol, weight: 6)
+        XCTAssertEqual(mentions.articlesMentioning(symbol), [
+            articles[1],
+            articles[3],
+            articles[0],
+            articles[5],
+            articles[4],
+            articles[2],
+        ])
+
+        // test that mentioning articles w/ same weights are sorted alphabetically
+        //
+        // note: this test is done multiple times with a shuffled list to ensure
+        // that it isn't just passing by pure chance due to the unpredictable
+        // order of Swift dictionaries
+        for _ in 1...10 {
+            mentions = ArticleSymbolMentions()
+            XCTAssertTrue(mentions.articlesMentioning(symbol).isEmpty)
+            for article in articles.shuffled() {
+                mentions.article(article, didMention: symbol, weight: 1)
+            }
+            XCTAssertEqual(mentions.articlesMentioning(symbol), articles)
+        }
+    }
+
+    func testSymbolLinkCollectorEnabled() async throws {
+        let (bundle, context) = try await createMentionedInTestBundle()
 
         // The test bundle currently only has one article with symbol mentions
         // in the abstract/discussion.
@@ -61,10 +108,15 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertEqual(mentioningArticle, gottenArticle)
     }
 
-    /// If the `--enable-experimental-mentioned-in` flag is not passed, symbol mentions in the test bundle's
-    /// articles should not be recorded.
-    func testSymbolLinkCollectorDisabled() throws {
-        let (bundle, context) = try createMentionedInTestBundle()
+    func testSymbolLinkCollectorDisabled() async throws {
+        let currentFeatureFlags = FeatureFlags.current
+        addTeardownBlock {
+            FeatureFlags.current = currentFeatureFlags
+        }
+        FeatureFlags.current.isMentionedInEnabled = false
+        
+        
+        let (bundle, context) = try await createMentionedInTestBundle()
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 
         let mentionedSymbol = ResolvedTopicReference(

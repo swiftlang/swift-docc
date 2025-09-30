@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -177,17 +177,17 @@ func aBlackListedFunc() {
      - item three
     """
 
-    func testDisabledByDefault() throws {
+    func testDisabledByDefault() async throws {
         // Create a test bundle with some non-inclusive content.
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
         ])
-        let (_, context) = try loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
     }
 
-    func testEnablingTheChecker() throws {
+    func testEnablingTheChecker() async throws {
         // The expectations of the checker being run, depending on the diagnostic level
         // set to to the documentation context for the compilation.
         let expectations: [(DiagnosticSeverity, Bool)] = [
@@ -203,7 +203,7 @@ func aBlackListedFunc() {
             ])
             var configuration = DocumentationContext.Configuration()
             configuration.externalMetadata.diagnosticLevel = severity
-            let (_, context) = try loadBundle(catalog: catalog, diagnosticEngine: .init(filterLevel: severity), configuration: configuration)
+            let (_, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: severity, configuration: configuration)
             
             // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
             XCTAssertEqual(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }), enabled)

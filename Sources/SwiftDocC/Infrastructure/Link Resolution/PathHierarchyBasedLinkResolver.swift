@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,19 +22,6 @@ final class PathHierarchyBasedLinkResolver {
     /// Initializes a link resolver with a given path hierarchy.
     init(pathHierarchy: PathHierarchy) {
         self.pathHierarchy = pathHierarchy
-    }
-    
-    /// Remove all matches from a given documentation bundle from the link resolver.
-    func unregisterBundle(identifier: DocumentationBundle.Identifier) {
-        var newMap = BidirectionalMap<ResolvedIdentifier, ResolvedTopicReference>()
-        for (id, reference) in resolvedReferenceMap {
-            if reference.bundleID == identifier {
-                pathHierarchy.removeNodeWithID(id)
-            } else {
-                newMap[id] = reference
-            }
-        }
-        resolvedReferenceMap = newMap
     }
     
     /// Creates a path string---that can be used to find documentation in the path hierarchy---from an unresolved topic reference,
@@ -147,7 +134,7 @@ final class PathHierarchyBasedLinkResolver {
         )
     }
     
-    private func addTutorial(reference: ResolvedTopicReference, source: URL, landmarks: [Landmark]) {
+    private func addTutorial(reference: ResolvedTopicReference, source: URL, landmarks: [any Landmark]) {
         let tutorialID = pathHierarchy.addTutorial(name: linkName(filename: source.deletingPathExtension().lastPathComponent))
         resolvedReferenceMap[tutorialID] = reference
         
@@ -241,7 +228,7 @@ final class PathHierarchyBasedLinkResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
-    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) throws -> TopicReferenceResolutionResult {
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) throws(PathHierarchy.Error) -> TopicReferenceResolutionResult {
         let parentID = resolvedReferenceMap[parent]
         let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
         guard let foundReference = resolvedReferenceMap[found] else {

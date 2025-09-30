@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,58 +12,7 @@ import XCTest
 @testable import SwiftDocC
 
 class RenderNodeTransformerTests: XCTestCase {
-    // This test uses ``RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation`` which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-    func testRemovesAutomaticallyCuratedSeeAlsoSections() throws {
-        let symbolJSON = try String(contentsOf: Bundle.module.url(
-            forResource: "symbol-with-automatic-see-also-section", withExtension: "json",
-            subdirectory: "Converter Fixtures")!)
-
-        let renderNode = try RenderNodeTransformer(renderNodeData: symbolJSON.data(using: .utf8)!)
-            .apply(transformation: RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation())
-
-        XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
-        XCTAssertFalse(renderNode.seeAlsoSections[0].generated)
-
-        XCTAssertNotNil(renderNode.references["doc://org.swift.docc.example/documentation/Reference-In-Automatic-SeeAlso-And-Fragments"])
-        XCTAssertNil(renderNode.references["doc://org.swift.docc.example/documentation/Reference-From-Automatic-SeeAlso-Section-Only"])
-        XCTAssertEqual(renderNode.references.count, 11)
-    }
     
-    // This test uses ``RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation`` which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-    func testRemovesAutomaticallyCuratedSeeAlsoSectionsPreservingReferences() throws {
-        let symbolJSON = try String(contentsOf: Bundle.module.url(
-            forResource: "symbol-auto-see-also-fragments-and-relationships", withExtension: "json",
-            subdirectory: "Converter Fixtures")!)
-        
-        let originalRenderNode = try RenderNode.decode(fromJSON: Data(symbolJSON.utf8))
-        XCTAssertEqual(originalRenderNode.primaryContentSections.mapFirst { $0 as? DeclarationsRenderSection }?.declarations.first?.tokens.last?.identifier,
-                       "doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest")
-        
-        let renderNode = try RenderNodeTransformer(renderNodeData: symbolJSON.data(using: .utf8)!)
-            .apply(transformation: RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation())
-
-        XCTAssertEqual(renderNode.seeAlsoSections.count, 0)
-
-        XCTAssertNotNil(renderNode.references["doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest"])
-        XCTAssertNil(renderNode.references["doc://org.swift.docc.example/documentation/backgroundtasks/bgprocessingtaskrequest"])
-        XCTAssertEqual(renderNode.references.count, 7)
-        XCTAssertEqual(renderNode.primaryContentSections.mapFirst { $0 as? DeclarationsRenderSection }?.declarations.first?.tokens.last?.identifier,
-                       "doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest")
-        
-        let encoder = JSONEncoder()
-        let output = try encoder.encode(renderNode)
-        let roundTripped = try RenderNode.decode(fromJSON: output)
-        
-        XCTAssertEqual(output.count, try encoder.encode(roundTripped).count)
-        XCTAssertEqual(roundTripped.references.count, 7)
-        XCTAssertEqual(roundTripped.primaryContentSections.mapFirst { $0 as? DeclarationsRenderSection }?.declarations.first?.tokens.last?.identifier,
-                       "doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest")
-    }
-
     func testCombinationTransformation() throws {
         let symbolJSON = try String(contentsOf: Bundle.module.url(
             forResource: "symbol-with-automatic-see-also-section", withExtension: "json",

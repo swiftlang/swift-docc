@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
-import Foundation
+public import ArgumentParser
+public import Foundation
 
 /// Resolves and validates the arguments needed to run the init catalog actions.
 ///

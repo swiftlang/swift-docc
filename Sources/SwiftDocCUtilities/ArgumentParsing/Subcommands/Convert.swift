@@ -1,16 +1,16 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
+public import ArgumentParser
 import SwiftDocC
-import Foundation
+public import Foundation
 
 extension Docc {
     /// Converts documentation markup, assets, and symbol information into a documentation archive.
@@ -503,12 +503,19 @@ extension Docc {
             var enableExperimentalOverloadedSymbolPresentation = false
             
             @Flag(
-                name: .customLong("enable-experimental-mentioned-in"),
+                name: .customLong("mentioned-in"),
+                inversion: .prefixedEnableDisable,
                 help: ArgumentHelp("Render a section on symbol documentation which links to articles that mention that symbol", discussion: """
                 Validates and filters symbols' parameter and return value documentation based on the symbol's function signature in each language representation.
                 """)
             )
-            var enableExperimentalMentionedIn = false
+            var enableMentionedIn = true
+            
+            // This flag only exist to allow developers to pass the previous '--enable-experimental-...' flag without errors.
+            // The last release to support this spelling was 6.2.
+            @Flag(name: .customLong("enable-experimental-mentioned-in"), help: .hidden)
+            @available(*, deprecated, message: "This flag is unused and only exist for backwards compatibility")
+            var _unusedExperimentalMentionedInFlagForBackwardsCompatibility = false
 
             @Flag(
                 name: .customLong("parameters-and-returns-validation"),
@@ -536,6 +543,7 @@ extension Docc {
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-json-index", message: "This flag has no effect. The JSON render is emitted by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "This flag has no effect. Doxygen support is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-parameters-and-returns-validation", message: "This flag has no effect. Parameter and return value validation is enabled by default.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-mentioned-in", message: "This flag has no effect. Automatic mentioned in sections is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "Use '--emit-lmdb-index' indead.")
                 emitLMDBIndex = emitLMDBIndex
             }
@@ -598,9 +606,9 @@ extension Docc {
 
         /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in"
         /// links on symbols.
-        public var enableExperimentalMentionedIn: Bool {
-            get { featureFlags.enableExperimentalMentionedIn }
-            set { featureFlags.enableExperimentalMentionedIn = newValue }
+        public var enableMentionedIn: Bool {
+            get { featureFlags.enableMentionedIn }
+            set { featureFlags.enableMentionedIn = newValue }
         }
         
         /// A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.

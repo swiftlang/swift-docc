@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,13 +13,13 @@ import XCTest
 import Markdown
 
 class ResourcesTests: XCTestCase {
-    func testEmpty() throws {
+    func testEmpty() async throws {
         let source = "@\(Resources.directiveName)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNil(resources)
         XCTAssertEqual(1, problems.count)
       
@@ -33,7 +33,7 @@ class ResourcesTests: XCTestCase {
         XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
     }
     
-    func testValid() throws {
+    func testValid() async throws {
         let source = """
 @\(Resources.directiveName) {
    Find the tools and a comprehensive set of resources for creating AR experiences on iOS.
@@ -67,9 +67,9 @@ class ResourcesTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(resources)
         XCTAssertTrue(problems.isEmpty, "Unexpected problems: \(problems)")
         
@@ -92,7 +92,7 @@ Resources @1:1-29:2
         }
     }
 
-    func testMissingLinksWarning() throws {
+    func testMissingLinksWarning() async throws {
         let source = """
 @\(Resources.directiveName) {
    Find the tools and a comprehensive set of resources for creating AR experiences on iOS.
@@ -120,9 +120,9 @@ Resources @1:1-29:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: bundle, problems: &problems)
         XCTAssertNotNil(resources)
         XCTAssertFalse(problems.containsErrors)
         

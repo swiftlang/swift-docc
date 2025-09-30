@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+public import Markdown
 
 /// A directive that contains various metadata about a page.
 ///
@@ -103,7 +103,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         self.originalMarkup = originalMarkup
     }
     
-    func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
         if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty {
             let diagnostic = Diagnostic(
@@ -224,18 +224,25 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         
         problems.append(
             contentsOf: namesAndRanges.map { (name, range) in
-                Problem(
-                    diagnostic: Diagnostic(
-                        source: symbolSource,
-                        severity: .warning,
-                        range: range,
-                        identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
-                        summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
-                        explanation: "Specify this configuration in a documentation extension file"
-                        
-                        // TODO: It would be nice to offer a solution here that removes the directive for you (#1111, rdar://140846407)
-                    )
+                let diagnostic = Diagnostic(
+                    source: symbolSource,
+                    severity: .warning,
+                    range: range,
+                    identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
+                    summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
+                    explanation: "Specify this configuration in a documentation extension file"
                 )
+                
+                let solutions: [Solution] = range.map { range in
+                    [Solution(
+                        summary: "Remove invalid \(name.singleQuoted) directive",
+                        replacements: [
+                            Replacement(range: range, replacement: "")
+                        ]
+                    )]
+                } ?? []
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
             }
         )
         

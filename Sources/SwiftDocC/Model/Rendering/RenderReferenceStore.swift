@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A storage for render reference information.
 ///
@@ -41,18 +41,13 @@ public struct RenderReferenceStore: Codable {
     public func content(forAssetNamed assetName: String, bundleID: DocumentationBundle.Identifier) -> DataAsset? {
         assets[AssetReference(assetName: assetName, bundleID: bundleID)]
     }
-    
-    @available(*, deprecated, renamed: "content(forAssetNamed:bundleID:)", message: "Use 'content(forAssetNamed:bundleID:)' instead. This deprecated API will be removed after 6.2 is released")
-    public func content(forAssetNamed assetName: String, bundleIdentifier: String) -> DataAsset? {
-        content(forAssetNamed: assetName, bundleID: .init(rawValue: bundleIdentifier))
-    }
 }
 
 public extension RenderReferenceStore {
     /// Pre-rendered pieces of content for a given node.
     struct TopicContent: Codable {
         /// The topic render reference.
-        public let renderReference: RenderReference
+        public let renderReference: any RenderReference
         /// Render reference dependencies.
         public let renderReferenceDependencies: RenderReferenceDependencies
         /// The canonical path to a node.
@@ -77,7 +72,7 @@ public extension RenderReferenceStore {
         ///   - isDocumentationExtensionContent: Whether the topic is a documentation extension.
         ///   - renderReferenceDependencies: Render reference dependencies.
         public init(
-            renderReference: RenderReference,
+            renderReference: any RenderReference,
             canonicalPath: [ResolvedTopicReference]?,
             taskGroups: [DocumentationContentRenderer.ReferenceGroup]?,
             source: URL?,
@@ -92,7 +87,7 @@ public extension RenderReferenceStore {
             self.renderReferenceDependencies = renderReferenceDependencies
         }
         
-        public init(from decoder: Decoder) throws {
+        public init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             
             renderReference = try container.decode(
@@ -111,7 +106,7 @@ public extension RenderReferenceStore {
             renderReferenceDependencies = try container.decodeIfPresent(RenderReferenceDependencies.self, forKey: .renderReferenceDependencies) ?? RenderReferenceDependencies()
         }
         
-        public func encode(to encoder: Encoder) throws {
+        public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(CodableRenderReference(renderReference), forKey: .renderReference)
             try container.encodeIfPresent(canonicalPath, forKey: .canonicalPath)

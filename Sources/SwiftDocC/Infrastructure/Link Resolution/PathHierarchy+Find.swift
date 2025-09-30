@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,11 +20,11 @@ extension PathHierarchy {
     ///   - onlyFindSymbols: Whether or not only symbol matches should be found.
     /// - Returns: Returns the unique identifier for the found match or raises an error if no match can be found.
     /// - Throws: Raises a ``PathHierarchy/Error`` if no match can be found.
-    func find(path rawPath: String, parent: ResolvedIdentifier? = nil, onlyFindSymbols: Bool) throws -> ResolvedIdentifier {
+    func find(path rawPath: String, parent: ResolvedIdentifier? = nil, onlyFindSymbols: Bool) throws(Error) -> ResolvedIdentifier {
         return try findNode(path: rawPath, parentID: parent, onlyFindSymbols: onlyFindSymbols).identifier
     }
     
-    private func findNode(path rawPath: String, parentID: ResolvedIdentifier?, onlyFindSymbols: Bool) throws -> Node {
+    private func findNode(path rawPath: String, parentID: ResolvedIdentifier?, onlyFindSymbols: Bool) throws(Error) -> Node {
         // The search for a documentation element can be though of as 3 steps:
         // - First, parse the path into structured path components.
         // - Second, find nodes that match the beginning of the path as starting points for the search
@@ -79,7 +79,7 @@ extension PathHierarchy {
         }
         
         // A function to avoid repeating the
-        func searchForNodeInModules() throws -> Node {
+        func searchForNodeInModules() throws(Error) -> Node {
             // Note: This captures `parentID`, `remaining`, and `rawPathForError`.
             if let moduleMatch = modules.first(where: { $0.matches(firstComponent) }) {
                 return try searchForNode(descendingFrom: moduleMatch, pathComponents: remaining.dropFirst(), onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
@@ -87,7 +87,7 @@ extension PathHierarchy {
             if modules.count == 1 {
                 do {
                     return try searchForNode(descendingFrom: modules.first!, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
-                } catch let error as PathHierarchy.Error {
+                } catch {
                     switch error {
                     case .notFound:
                         // Ignore this error and raise an error about not finding the module instead.
@@ -129,7 +129,7 @@ extension PathHierarchy {
         }
         
         // A recursive function to traverse up the path hierarchy searching for the matching node
-        func searchForNodeUpTheHierarchy(from startingPoint: Node?, path: ArraySlice<PathComponent>) throws -> Node {
+        func searchForNodeUpTheHierarchy(from startingPoint: Node?, path: ArraySlice<PathComponent>) throws(Error) -> Node {
             guard let possibleStartingPoint = startingPoint else {
                 // If the search has reached the top of the hierarchy, check the modules as a base case to break the recursion.
                 do {
@@ -147,7 +147,7 @@ extension PathHierarchy {
             let firstComponent = path.first!
             
             // Keep track of the inner most error and raise that if no node is found.
-            var innerMostError: Swift.Error?
+            var innerMostError: Error?
             
             // If the starting point's children match this component, descend the path hierarchy from there.
             if possibleStartingPoint.anyChildMatches(firstComponent) {
@@ -211,7 +211,7 @@ extension PathHierarchy {
         pathComponents: ArraySlice<PathComponent>,
         onlyFindSymbols: Bool,
         rawPathForError: String
-    ) throws -> Node {
+    ) throws(Error) -> Node {
         // All code paths through this function wants to perform extra verification on the return value before returning it to the caller.
         // To accomplish that, the core implementation happens in `_innerImplementation`, which is called once, right below its definition.
         
@@ -220,7 +220,7 @@ extension PathHierarchy {
             pathComponents: ArraySlice<PathComponent>,
             onlyFindSymbols: Bool,
             rawPathForError: String
-        ) throws -> Node {
+        ) throws(Error) -> Node {
             var node = startingPoint
             var remaining = pathComponents[...]
             
@@ -234,21 +234,13 @@ extension PathHierarchy {
             while true {
                 let (children, pathComponent) = try findChildContainer(node: &node, remaining: remaining, rawPathForError: rawPathForError)
                 
+                let child: PathHierarchy.Node?
                 do {
-                    guard let child = try children.find(pathComponent.disambiguation) else {
-                        // The search has ended with a node that doesn't have a child matching the next path component.
-                        throw makePartialResultError(node: node, remaining: remaining, rawPathForError: rawPathForError)
-                    }
-                    node = child
-                    remaining = remaining.dropFirst()
-                    if remaining.isEmpty {
-                        // If all path components are consumed, then the match is found.
-                        return child
-                    }
-                } catch DisambiguationContainer.Error.lookupCollision(let collisions) {
-                    func handleWrappedCollision() throws -> Node {
-                        let match = try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
-                        return match
+                    child = try children.find(pathComponent.disambiguation)
+                } catch {
+                    let collisions = error.collisions
+                    func handleWrappedCollision() throws(Error) -> Node {
+                        try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
                     }
                     
                     // When there's a collision, use the remaining path components to try and narrow down the possible collisions.
@@ -314,6 +306,17 @@ extension PathHierarchy {
                     // Couldn't resolve the collision by look ahead.
                     return try handleWrappedCollision()
                 }
+                
+                guard let child else {
+                    // The search has ended with a node that doesn't have a child matching the next path component.
+                    throw makePartialResultError(node: node, remaining: remaining, rawPathForError: rawPathForError)
+                }
+                node = child
+                remaining = remaining.dropFirst()
+                if remaining.isEmpty {
+                    // If all path components are consumed, then the match is found.
+                    return child
+                }
             }
         }
         
@@ -336,7 +339,7 @@ extension PathHierarchy {
         collisions: [(node: PathHierarchy.Node, disambiguation: String)],
         onlyFindSymbols: Bool,
         rawPathForError: String
-    ) throws -> Node {
+    ) throws(Error) -> Node {
         if let favoredMatch = collisions.singleMatch({ !$0.node.isDisfavoredInLinkCollisions }) {
             return favoredMatch.node
         }
@@ -421,7 +424,7 @@ extension PathHierarchy {
         node: inout Node,
         remaining: ArraySlice<PathComponent>,
         rawPathForError: String
-    ) throws -> (DisambiguationContainer, PathComponent) {
+    ) throws(Error) -> (DisambiguationContainer, PathComponent) {
         var pathComponent = remaining.first!
         if let match = node.children[pathComponent.full] {
             // The path component parsing may treat dash separated words as disambiguation information.
@@ -439,27 +442,32 @@ extension PathHierarchy {
 // MARK: Disambiguation Container
 
 extension PathHierarchy.DisambiguationContainer {
-    /// Errors finding values in the disambiguation tree
-    enum Error: Swift.Error {
-        /// Multiple matches found.
-        ///
-        /// Includes a list of values paired with their missing disambiguation suffixes.
-        case lookupCollision([(node: PathHierarchy.Node, disambiguation: String)])
+    /// Multiple matches found.
+    struct LookupCollisionError: Swift.Error {
+        /// A list of values paired with their missing disambiguation suffixes.
+        let collisions: [(node: PathHierarchy.Node, disambiguation: String)]
     }
     
-    /// Attempts to find a value in the disambiguation tree based on partial disambiguation information.
+    /// Attempts to find the only element in the disambiguation container without using any disambiguation information.
+    ///
+    /// - Returns: The only element in the container or `nil` if the container has more than one element.
+    func singleMatch() -> PathHierarchy.Node? {
+        if storage.count <= 1 {
+            return storage.first?.node
+        } else {
+            return storage.singleMatch({ !$0.node.isDisfavoredInLinkCollisions })?.node
+        }
+    }
+    
+    /// Attempts to find a value in the disambiguation container based on partial disambiguation information.
     ///
     /// There are 3 possible results:
     ///  - No match is found; indicated by a `nil` return value.
     ///  - Exactly one match is found; indicated by a non-nil return value.
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
-    func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws -> PathHierarchy.Node? {
-        if disambiguation == nil {
-            if storage.count <= 1 {
-                return storage.first?.node
-            } else if let favoredMatch = storage.singleMatch({ !$0.node.isDisfavoredInLinkCollisions }) {
-                return favoredMatch.node
-            }
+    func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws(LookupCollisionError) -> PathHierarchy.Node? {
+        if disambiguation == nil, let match = singleMatch() {
+            return match
         }
         
         switch disambiguation {
@@ -471,13 +479,13 @@ extension PathHierarchy.DisambiguationContainer {
                 let matches = storage.filter({ $0.kind == kind })
                 guard matches.count <= 1 else {
                     // Suggest not only hash disambiguation, but also type signature disambiguation.
-                    throw Error.lookupCollision(Self.disambiguatedValues(for: matches).map { ($0.value, $0.disambiguation.makeSuffix()) })
+                    throw LookupCollisionError(collisions: Self.disambiguatedValues(for: matches).map { ($0.value, $0.disambiguation.makeSuffix()) })
                 }
                 return matches.first?.node
             case (nil, let hash?):
                 let matches = storage.filter({ $0.hash == hash })
                 guard matches.count <= 1 else {
-                    throw Error.lookupCollision(matches.map { ($0.node, "-" + $0.kind!) }) // An element wouldn't match if it didn't have kind disambiguation.
+                    throw LookupCollisionError(collisions: matches.map { ($0.node, "-" + $0.kind!) }) // An element wouldn't match if it didn't have kind disambiguation.
                 }
                 return matches.first?.node
             case (nil, nil):
@@ -491,13 +499,13 @@ extension PathHierarchy.DisambiguationContainer {
             case (let parameterTypes?, nil):
                 let matches = storage.filter({ typesMatch(provided: parameterTypes, actual: $0.parameterTypes) })
                 guard matches.count <= 1 else {
-                    throw Error.lookupCollision(matches.map { ($0.node, "->" + formattedTypes($0.parameterTypes)!) }) // An element wouldn't match if it didn't have parameter type disambiguation.
+                    throw LookupCollisionError(collisions: matches.map { ($0.node, "->" + formattedTypes($0.parameterTypes)!) }) // An element wouldn't match if it didn't have parameter type disambiguation.
                 }
                 return matches.first?.node
             case (nil, let returnTypes?):
                 let matches = storage.filter({ typesMatch(provided: returnTypes, actual: $0.returnTypes) })
                 guard matches.count <= 1 else {
-                    throw Error.lookupCollision(matches.map { ($0.node, "-" + formattedTypes($0.returnTypes)!) }) // An element wouldn't match if it didn't have return type disambiguation.
+                    throw LookupCollisionError(collisions: matches.map { ($0.node, "-" + formattedTypes($0.returnTypes)!) }) // An element wouldn't match if it didn't have return type disambiguation.
                 }
                 return matches.first?.node
             case (nil, nil):
@@ -508,7 +516,7 @@ extension PathHierarchy.DisambiguationContainer {
         }
 
         // Disambiguate by a mix of kinds and USRs
-        throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, $0.disambiguation.makeSuffix()) })
+        throw LookupCollisionError(collisions: self.disambiguatedValues().map { ($0.value, $0.disambiguation.makeSuffix()) })
     }
 }
 

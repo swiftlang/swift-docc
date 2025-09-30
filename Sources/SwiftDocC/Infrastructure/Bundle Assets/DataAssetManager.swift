@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+public import Foundation
 
 /// A container for a collection of data. Each data can have multiple variants.
 struct DataAssetManager {
@@ -346,10 +346,6 @@ fileprivate extension NSRegularExpression {
 public struct AssetReference: Hashable, Codable {
     /// The name of the asset.
     public var assetName: String
-    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
-    public var bundleIdentifier: String {
-        bundleID.rawValue
-    }
     
     /// The identifier of the bundle the asset is apart of.
     public let bundleID: DocumentationBundle.Identifier
@@ -358,12 +354,5 @@ public struct AssetReference: Hashable, Codable {
     public init(assetName: String, bundleID: DocumentationBundle.Identifier) {
         self.assetName = assetName
         self.bundleID = bundleID
-    }
-    @available(*, deprecated, renamed: "init(assetName:bundleID:)", message: "Use 'init(assetName:bundleID:)' instead. This deprecated API will be removed after 6.2 is released")
-    public init(assetName: String, bundleIdentifier: String) {
-        self.init(
-            assetName: assetName,
-            bundleID: .init(rawValue: bundleIdentifier)
-        )
     }
 }

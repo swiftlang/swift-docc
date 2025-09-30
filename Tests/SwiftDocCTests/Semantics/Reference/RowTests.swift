@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,12 +11,12 @@
 import Foundation
 
 import XCTest
-@testable import SwiftDocC
+@testable public import SwiftDocC
 import Markdown
 
 class RowTests: XCTestCase {
-    func testNoColumns() throws {
-        let (renderBlockContent, problems, row) = try parseDirective(Row.self) {
+    func testNoColumns() async throws {
+        let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
             """
             @Row
             """
@@ -36,9 +36,9 @@ class RowTests: XCTestCase {
         )
     }
     
-    func testInvalidParameters() throws {
+    func testInvalidParameters() async throws {
         do {
-            let (renderBlockContent, problems, row) = try parseDirective(Row.self) {
+            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
                 """
                 @Row(columns: 3) {
                     @Column(what: true) {
@@ -81,7 +81,7 @@ class RowTests: XCTestCase {
         }
         
         do {
-            let (_, problems, row) = try parseDirective(Row.self) {
+            let (_, problems, row) = try await parseDirective(Row.self) {
                 """
                 @Row(numberOfColumns: 3) {
                     @Column(size: 3) {
@@ -107,9 +107,9 @@ class RowTests: XCTestCase {
         }
     }
     
-    func testInvalidChildren() throws {
+    func testInvalidChildren() async throws {
         do {
-            let (renderBlockContent, problems, row) = try parseDirective(Row.self) {
+            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
                 """
                 @Row {
                     @Row {
@@ -142,7 +142,7 @@ class RowTests: XCTestCase {
         }
         
         do {
-            let (renderBlockContent, problems, row) = try parseDirective(Row.self) {
+            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
                 """
                 @Row {
                     @Column {
@@ -175,7 +175,7 @@ class RowTests: XCTestCase {
         }
         
         do {
-            let (renderBlockContent, problems, row) = try parseDirective(Row.self) {
+            let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
                 """
                 @Row {
 
@@ -199,8 +199,8 @@ class RowTests: XCTestCase {
         }
     }
     
-    func testEmptyColumn() throws {
-        let (renderBlockContent, problems, row) = try parseDirective(Row.self) {
+    func testEmptyColumn() async throws {
+        let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
             """
             @Row {
                 @Column
@@ -236,8 +236,8 @@ class RowTests: XCTestCase {
         )
     }
     
-    func testNestedRowAndColumns() throws {
-        let (renderBlockContent, problems, row) = try parseDirective(Row.self) {
+    func testNestedRowAndColumns() async throws {
+        let (renderBlockContent, problems, row) = try await parseDirective(Row.self) {
             """
             @Row {
                 @Column {

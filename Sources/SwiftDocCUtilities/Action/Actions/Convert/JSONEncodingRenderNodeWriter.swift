@@ -18,7 +18,7 @@ class JSONEncodingRenderNodeWriter {
     private let renderNodeURLGenerator: NodeURLGenerator
     private let targetFolder: URL
     private let transformForStaticHostingIndexHTML: URL?
-    private let fileManager: FileManagerProtocol
+    private let fileManager: any FileManagerProtocol
     private let renderReferenceCache = RenderReferenceCache([:])
     
     /// Creates a writer object that write render node JSON into a given folder.
@@ -26,7 +26,7 @@ class JSONEncodingRenderNodeWriter {
     /// - Parameters:
     ///   - targetFolder: The folder to which the writer object writes the files.
     ///   - fileManager: The file manager with which the writer object writes data to files.
-    init(targetFolder: URL, fileManager: FileManagerProtocol, transformForStaticHostingIndexHTML: URL?) {
+    init(targetFolder: URL, fileManager: any FileManagerProtocol, transformForStaticHostingIndexHTML: URL?) {
         self.renderNodeURLGenerator = NodeURLGenerator(
             baseURL: targetFolder.appendingPathComponent("data", isDirectory: true)
         )
@@ -104,7 +104,7 @@ class JSONEncodingRenderNodeWriter {
         )
         
         do {
-            try fileManager.copyItem(at: indexHTML, to: htmlTargetFileURL)
+            try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
         } catch let error as NSError where error.code == NSFileWriteFileExistsError {
             // We already have an 'index.html' file at this path. This could be because
             // we're writing to an output directory that already contains built documentation
@@ -112,7 +112,7 @@ class JSONEncodingRenderNodeWriter {
             // have the same path on the filesystem. Either way, we don't want this to error out
             // so just remove the destination item and try the copy operation again.
             try fileManager.removeItem(at: htmlTargetFileURL)
-            try fileManager.copyItem(at: indexHTML, to: htmlTargetFileURL)
+            try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
         }
     }
 }

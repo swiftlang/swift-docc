@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -44,12 +44,10 @@ final class ExternalPathHierarchyResolver {
             }
             
             return .success(foundReference)
-        } catch let error as PathHierarchy.Error {
+        } catch {
             return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo() { collidingNode in
                 self.fullName(of: collidingNode) // If the link was ambiguous, determine the full name of each colliding node to be presented in the link diagnostic.
             })
-        } catch {
-            fatalError("Only PathHierarchy.Error errors are raised from the symbol link resolution code above.")
         }
     }
     
@@ -58,13 +56,13 @@ final class ExternalPathHierarchyResolver {
             return collidingNode.name
         }
         if let symbolID = collidingNode.symbol?.identifier {
-            if symbolID.interfaceLanguage == summary.language.id, let fragments = summary.declarationFragments {
-                return fragments.plainTextDeclaration()
+            if symbolID.interfaceLanguage == summary.language.id, let plainTextDeclaration = summary.plainTextDeclaration {
+                return plainTextDeclaration
             }
             if let variant = summary.variants.first(where: { $0.traits.contains(.interfaceLanguage(symbolID.interfaceLanguage)) }),
-               let fragments = variant.declarationFragments ?? summary.declarationFragments
+               let plainTextDeclaration = variant.plainTextDeclaration ?? summary.plainTextDeclaration
             {
-                return fragments.plainTextDeclaration()
+                return plainTextDeclaration
             }
         }
         return summary.title
@@ -87,30 +85,10 @@ final class ExternalPathHierarchyResolver {
     ///
     /// - Precondition: The `reference` was previously resolved by this resolver.
     func entity(_ reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-        guard let resolvedInformation = content[reference] else {
+        guard let alreadyResolvedSummary = content[reference] else {
             fatalError("The resolver should only be asked for entities that it resolved.")
         }
-        
-        let topicReferences: [ResolvedTopicReference] = (resolvedInformation.references ?? []).compactMap {
-            guard let renderReference = $0 as? TopicRenderReference,
-                  let url = URL(string: renderReference.identifier.identifier),
-                  let bundleID = url.host
-            else {
-                return nil
-            }
-            return ResolvedTopicReference(bundleID: .init(rawValue: bundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift)
-        }
-        let dependencies = RenderReferenceDependencies(
-            topicReferences: topicReferences,
-            linkReferences: (resolvedInformation.references ?? []).compactMap { $0 as? LinkReference },
-            imageReferences: (resolvedInformation.references ?? []).compactMap { $0 as? ImageReference }
-        )
-        
-        return .init(
-            topicRenderReference: resolvedInformation.topicRenderReference(),
-            renderReferenceDependencies: dependencies,
-            sourceLanguages: resolvedInformation.availableLanguages
-        )
+        return alreadyResolvedSummary
     }
     
     // MARK: Deserialization
@@ -161,7 +139,7 @@ final class ExternalPathHierarchyResolver {
         }
     }
     
-    convenience init(dependencyArchive: URL, dataProvider: DataProvider) throws {
+    convenience init(dependencyArchive: URL, dataProvider: any DataProvider) throws {
         // ???: Should it be the callers responsibility to pass both these URLs?
         let linkHierarchyFile = dependencyArchive.appendingPathComponent("link-hierarchy.json")
         let entityURL = dependencyArchive.appendingPathComponent("linkable-entities.json")
@@ -173,17 +151,11 @@ final class ExternalPathHierarchyResolver {
     }
 }
 
-private extension Sequence<DeclarationRenderSection.Token> {
-    func plainTextDeclaration() -> String {
-        return self.map(\.text).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
-    }
-}
-
 // MARK: ExternalEntity
 
-private extension LinkDestinationSummary {
+extension LinkDestinationSummary {
     /// A value that indicates whether this symbol is under development and likely to change.
-    var isBeta: Bool {
+    private var isBeta: Bool {
         guard let platforms, !platforms.isEmpty else {
             return false
         }
@@ -192,12 +164,13 @@ private extension LinkDestinationSummary {
     }
     
     /// Create a topic render render reference for this link summary and its content variants.
-    func topicRenderReference() -> TopicRenderReference {
+    func makeTopicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
         
         var titleVariants = VariantCollection(defaultValue: title)
         var abstractVariants = VariantCollection(defaultValue: abstract ?? [])
-        var fragmentVariants = VariantCollection(defaultValue: declarationFragments)
+        var fragmentVariants = VariantCollection(defaultValue: subheadingDeclarationFragments)
+        var navigatorTitleVariants = VariantCollection(defaultValue: navigatorDeclarationFragments)
         
         for variant in variants {
             let traits = variant.traits
@@ -207,8 +180,11 @@ private extension LinkDestinationSummary {
             if let abstract = variant.abstract {
                 abstractVariants.variants.append(.init(traits: traits, patch: [.replace(value: abstract ?? [])]))
             }
-            if let fragment = variant.declarationFragments {
+            if let fragment = variant.subheadingDeclarationFragments {
                 fragmentVariants.variants.append(.init(traits: traits, patch: [.replace(value: fragment)]))
+            }
+            if let navigatorTitle = variant.navigatorDeclarationFragments {
+                navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle)]))
             }
         }
         
@@ -221,7 +197,7 @@ private extension LinkDestinationSummary {
             required: false,
             role: role,
             fragmentsVariants: fragmentVariants,
-            navigatorTitleVariants: .init(defaultValue: nil),
+            navigatorTitleVariants: navigatorTitleVariants,
             estimatedTime: nil,
             conformance: nil,
             isBeta: isBeta,

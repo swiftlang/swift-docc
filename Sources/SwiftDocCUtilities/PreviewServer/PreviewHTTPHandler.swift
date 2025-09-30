@@ -70,7 +70,7 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
         
         switch (requestPart, state) {
         case (.head(let head), _):
-            let handler: RequestHandlerFactory
+            let handler: any RequestHandlerFactory
             if FileRequestHandler.isAssetPath(head.uri) {
                 // Serve a static asset file.
                 handler = FileRequestHandler(rootURL: rootURL)
@@ -111,6 +111,7 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
         
         // If we don't need to keep the connection alive, close `context` after flushing the response
         if !self.keepAlive {
+            // When we can update to Swift NIO 2.78.0 we can call `assumeIsolated()` on the future result and avoid this 'capture of non-sendable type' warning.
             promise.futureResult.whenComplete { _ in context.close(promise: nil) }
         }
 

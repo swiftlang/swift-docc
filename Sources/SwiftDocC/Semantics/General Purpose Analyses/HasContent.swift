@@ -1,21 +1,21 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 extension Semantic.Analyses {
     /**
      Checks to see if a directive has child markup content.
      */
-    public struct HasContent<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
+    public struct HasContent<Parent: Semantic & DirectiveConvertible> {
         let additionalContext: String
         public init(additionalContext: String? = nil) {
             if let additionalContext,
@@ -26,7 +26,7 @@ extension Semantic.Analyses {
             }
         }
         
-        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> MarkupContainer {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<any Markup>, source: URL?, problems: inout [Problem]) -> MarkupContainer {
             let children = Array(children)
             guard children.isEmpty else {
                 return MarkupContainer(children)

@@ -193,6 +193,8 @@ extension PathHierarchy.DisambiguationContainer {
         includeLanguage: Bool = false,
         allowAdvancedDisambiguation: Bool = true
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
+        assert(elements.allSatisfy({ $0.node.identifier != nil }), "All nodes should have been assigned an identifier before their disambiguation can be computed.")
+        
         var collisions = _disambiguatedValues(for: elements, includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
         
         // If all but one of the collisions are disfavored, remove the disambiguation for the only favored element.
@@ -266,8 +268,7 @@ extension PathHierarchy.DisambiguationContainer {
                 types: { element in
                     guard let parameterTypes = element.parameterTypes,
                           !parameterTypes.isEmpty,
-                          let returnTypes = element.returnTypes,
-                          !returnTypes.isEmpty
+                          let returnTypes = element.returnTypes
                     else {
                         return nil
                     }

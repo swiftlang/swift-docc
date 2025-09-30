@@ -53,7 +53,7 @@ import Markdown
 /// ```
 struct DocumentationMarkup {
     /// The original markup.
-    private let markup: Markup
+    private let markup: any Markup
 
     /// The various sections that are expected in documentation markup.
     ///
@@ -107,7 +107,7 @@ struct DocumentationMarkup {
     /// - Parameters:
     ///   - markup: The source markup.
     ///   - parseUpToSection: Documentation past this section will be ignored.
-    init(markup: Markup, parseUpToSection: ParserSection = .end) {
+    init(markup: any Markup, parseUpToSection: ParserSection = .end) {
         self.markup = markup
         
         // The current documentation section being parsed.
@@ -173,10 +173,10 @@ struct DocumentationMarkup {
             }
             
             // Parse content into a discussion section and assorted tags
-            let parseDiscussion: ([Markup])-> (discussion: DiscussionSection, tags: TaggedListItemExtractor) = { children in
+            let parseDiscussion: ([any Markup])-> (discussion: DiscussionSection, tags: TaggedListItemExtractor) = { children in
                 // Extract tags
                 var extractor = TaggedListItemExtractor()
-                let content: [Markup]
+                let content: [any Markup]
                 
                 if let remainder = extractor.visit(markup.withUncheckedChildren(children)) {
                     content = Array(remainder.children)
@@ -300,10 +300,10 @@ extension Markup {
     /// Returns a sub-sequence of the children sequence.
     /// - Parameter range: A closed range.
     /// - Returns: A children sub-sequence.
-    func children(at range: ClosedRange<Int>) -> [Markup] {
+    func children(at range: ClosedRange<Int>) -> [any Markup] {
         var iterator = children.makeIterator()
         var counter = 0
-        var result = [Markup]()
+        var result = [any Markup]()
         
         while let next = iterator.next() {
             defer { counter += 1 }
@@ -317,10 +317,10 @@ extension Markup {
     /// Returns a sub-sequence of the children sequence.
     /// - Parameter range: A half-closed range.
     /// - Returns: A children sub-sequence.
-    func children(at range: Range<Int>) -> [Markup] {
+    func children(at range: Range<Int>) -> [any Markup] {
         var iterator = children.makeIterator()
         var counter = 0
-        var result = [Markup]()
+        var result = [any Markup]()
         
         while let next = iterator.next() {
             defer { counter += 1 }

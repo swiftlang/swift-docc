@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,8 +12,8 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 
-public class ExternalLinkTitleTests: XCTestCase {
-    private func getTranslatorAndBlockContentForMarkup(_ markupSource: String) throws -> (translator: RenderNodeTranslator, content: [RenderBlockContent]) {
+class ExternalLinkTitleTests: XCTestCase {
+    private func getTranslatorAndBlockContentForMarkup(_ markupSource: String) async throws -> (translator: RenderNodeTranslator, content: [RenderBlockContent]) {
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
         let testReference = ResolvedTopicReference(bundleID: "org.swift.docc", path: "/test", sourceLanguage: .swift)
         let node = DocumentationNode(reference: testReference,
@@ -24,21 +24,21 @@ public class ExternalLinkTitleTests: XCTestCase {
                                      semantic: Semantic())
         
         
-        let (bundle, context) = try testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let result = translator.visit(MarkupContainer(document.children)) as! [RenderBlockContent]
         
         return (translator, result)
     }
     
-    func testPlainTextExternalLinkTitle() throws {
+    func testPlainTextExternalLinkTitle() async throws {
         let markupSource = """
         # Test
 
         This is a plain text link: [Example](https://www.example.com).
         """
         
-        let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
+        let (translator, content) = try await getTranslatorAndBlockContentForMarkup(markupSource)
         
         guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
@@ -58,14 +58,14 @@ public class ExternalLinkTitleTests: XCTestCase {
         XCTAssertEqual(linkReference?.titleInlineContent, expectedLinkTitle, "Plain text title should have been rendered.")
     }
     
-    func testEmphasisExternalLinkTitle() throws {
+    func testEmphasisExternalLinkTitle() async throws {
         let markupSource = """
         # Test
 
         This is an emphasized text link: [*Apple*](https://www.example.com).
         """
         
-        let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
+        let (translator, content) = try await getTranslatorAndBlockContentForMarkup(markupSource)
         
         guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
@@ -85,14 +85,14 @@ public class ExternalLinkTitleTests: XCTestCase {
         XCTAssertEqual(linkReference?.titleInlineContent, expectedLinkTitle, "Emphasized text title should have been rendered.")
     }
     
-    func testStrongExternalLinkTitle() throws {
+    func testStrongExternalLinkTitle() async throws {
         let markupSource = """
         # Test
 
         This is a strong text link: [**Apple**](https://www.example.com).
         """
         
-        let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
+        let (translator, content) = try await getTranslatorAndBlockContentForMarkup(markupSource)
         
         guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
@@ -112,14 +112,14 @@ public class ExternalLinkTitleTests: XCTestCase {
         XCTAssertEqual(linkReference?.titleInlineContent, expectedLinkTitle, "Strong text title should have been rendered.")
     }
     
-    func testCodeVoiceExternalLinkTitle() throws {
+    func testCodeVoiceExternalLinkTitle() async throws {
         let markupSource = """
         # Test
 
         This is a code voice text link: [`Apple`](https://www.example.com).
         """
         
-        let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
+        let (translator, content) = try await getTranslatorAndBlockContentForMarkup(markupSource)
         
         guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
@@ -139,14 +139,14 @@ public class ExternalLinkTitleTests: XCTestCase {
         XCTAssertEqual(linkReference?.titleInlineContent, expectedLinkTitle, "Code voice text title should have been rendered.")
     }
     
-    func testMixedExternalLinkTitle() throws {
+    func testMixedExternalLinkTitle() async throws {
         let markupSource = """
         # Test
 
         This is a mixed text link: [**This** *is* a `fancy` _link_ title.](https://www.example.com).
         """
         
-        let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
+        let (translator, content) = try await getTranslatorAndBlockContentForMarkup(markupSource)
         
         guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
@@ -174,7 +174,7 @@ public class ExternalLinkTitleTests: XCTestCase {
     }
     
     
-    func testMultipleLinksWithEqualURL() throws {
+    func testMultipleLinksWithEqualURL() async throws {
         let markupSource = """
         # Test
 
@@ -182,7 +182,7 @@ public class ExternalLinkTitleTests: XCTestCase {
         This is an emphasized text link: [*Apple*](https://www.example.com).
         """
         
-        let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
+        let (translator, content) = try await getTranslatorAndBlockContentForMarkup(markupSource)
         
         guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")

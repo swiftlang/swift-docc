@@ -1,15 +1,15 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+public import Foundation
+public import Markdown
 
 /**
  A semantic object formed from a directive after a series of semantic analysis checks.
@@ -34,10 +34,9 @@ public protocol DirectiveConvertible {
     /// - Parameters:
     ///   -  directive: The parsed block directive to create a semantic object from.
     ///   -  source: The location of the source file that contains the markup for the parsed block directive.
-    ///   -  bundle: The documentation bundle that owns the directive.
-    ///   -  context: The documentation context in which the bundle resides.
+    ///   -  bundle: The documentation bundle that the source file belongs to.
     ///   -  problems: An inout array of ``Problem`` to be collected for later diagnostic reporting.
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem])
+    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem])
     
     /// Returns a Boolean value indicating whether the `DirectiveConvertible` recognizes the given directive.
     ///

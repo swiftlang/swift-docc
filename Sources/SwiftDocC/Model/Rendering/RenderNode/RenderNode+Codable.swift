@@ -16,7 +16,7 @@ extension RenderNode: Codable {
         case abstract, topicSections, topicSectionsStyle, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         schemaVersion = try container.decode(SemanticVersion.self, forKey: .schemaVersion)
         
@@ -74,7 +74,7 @@ extension RenderNode: Codable {
         variantOverrides = try container.decodeIfPresent(VariantOverrides.self, forKey: .variantOverrides)
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(schemaVersion, forKey: .schemaVersion)
         try container.encode(identifier, forKey: .identifier)
