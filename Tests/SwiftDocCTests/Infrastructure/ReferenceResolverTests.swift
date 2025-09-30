@@ -24,11 +24,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: context.inputs, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context)
         _ = resolver.visitIntro(intro)
         XCTAssertEqual(resolver.problems.count, 1)
     }
@@ -43,11 +43,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, problems: &problems)!
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: context.inputs, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context)
         _ = resolver.visit(contentAndMedia)
         XCTAssertEqual(resolver.problems.count, 1)
     }
@@ -60,11 +60,11 @@ class ReferenceResolverTests: XCTestCase {
     """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: context.inputs, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context)
         
         guard let container = resolver.visit(intro).children.first as? MarkupContainer,
               let firstElement = container.elements.first,
@@ -560,11 +560,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         var problems = [Problem]()
 
-        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: bundle, problems: &problems))
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: context.inputs, problems: &problems))
+        var resolver = ReferenceResolver(context: context)
         _ = resolver.visitChapter(chapter)
         XCTAssertFalse(resolver.problems.containsErrors)
         XCTAssertEqual(resolver.problems.count, 1)
@@ -580,11 +580,11 @@ class ReferenceResolverTests: XCTestCase {
         Discussion link to ``SideKit``.
         """
         
-        let (bundle, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:]))
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context)
         let resolvedArticle = try XCTUnwrap(resolver.visitArticle(article) as? Article)
         let abstractSection = try XCTUnwrap(resolvedArticle.abstractSection)
         
@@ -612,9 +612,9 @@ class ReferenceResolverTests: XCTestCase {
     }
     
     func testForwardsSymbolPropertiesThatAreUnmodifiedDuringLinkResolution() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context)
         
         let symbol = try XCTUnwrap(context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)
         
@@ -768,7 +768,7 @@ class ReferenceResolverTests: XCTestCase {
             mixins: [:]
         )
         
-        let (bundle, context) = try await testBundleAndContext()
+        let (_, context) = try await testBundleAndContext()
         
         let documentationExtensionContent = """
         # ``Something``
@@ -785,7 +785,7 @@ class ReferenceResolverTests: XCTestCase {
         let article = Article(
             from: Document(parsing: documentationExtensionContent, source: documentationExtensionURL, options: [.parseSymbolLinks, .parseBlockDirectives]),
             source: documentationExtensionURL,
-            for: bundle,
+            for: context.inputs,
             problems: &ignoredProblems
         )
         XCTAssert(ignoredProblems.isEmpty, "Unexpected problems creating article")
@@ -801,7 +801,7 @@ class ReferenceResolverTests: XCTestCase {
         
         XCTAssertEqual(node.docChunks.count, 2, "This node has content from both the in-source comment and the documentation extension file.")
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle)
+        var resolver = ReferenceResolver(context: context)
         _ = resolver.visitSymbol(node.semantic as! Symbol)
         
         let problems = resolver.problems.sorted(by: \.diagnostic.summary)
