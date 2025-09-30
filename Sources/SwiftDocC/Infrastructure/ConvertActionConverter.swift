@@ -21,10 +21,9 @@ package enum ConvertActionConverter {
     static package let signposter = NoOpSignposterShim()
 #endif
     
-    /// Converts the documentation bundle in the given context and passes its output to a given consumer.
+    /// Converts the documentation in the given context and passes its output to a given consumer.
     ///
     /// - Parameters:
-    ///   - bundle: The documentation bundle to convert.
     ///   - context: The context that the bundle is a part of.
     ///   - outputConsumer: The consumer that the conversion passes outputs of the conversion to.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
@@ -32,7 +31,6 @@ package enum ConvertActionConverter {
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
     /// - Returns: A list of problems that occurred during the conversion (excluding the problems that the context already encountered).
     package static func convert(
-        bundle: DocumentationBundle,
         context: DocumentationContext,
         outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
         sourceRepository: SourceRepository?,
@@ -66,7 +64,7 @@ package enum ConvertActionConverter {
         try outputConsumer.consume(renderReferenceStore: renderContext.store)
 
         // Copy images, sample files, and other static assets.
-        try outputConsumer.consume(assetsInBundle: bundle)
+        try outputConsumer.consume(assetsInBundle: context.inputs)
         
         let converter = DocumentationContextConverter(
             context: context,
@@ -108,7 +106,7 @@ package enum ConvertActionConverter {
             // Here we're associating the external node with the **current** bundle's bundle ID.
             // This is needed because nodes are only considered children if the parent and child's bundle ID match.
             // Otherwise, the node will be considered as a separate root node and displayed separately.
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
             try outputConsumer.consume(externalRenderNode: externalRenderNode)
         }
         
@@ -191,7 +189,7 @@ package enum ConvertActionConverter {
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
             signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
                 do {
-                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
+                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
                     try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
                     
                     if !emitDigest {
@@ -224,7 +222,7 @@ package enum ConvertActionConverter {
             break
         }
         
-        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: bundle.displayName, bundleID: bundle.id))
+        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: context.inputs.displayName, bundleID: context.inputs.id))
         
         // Log the finalized topic graph checksum.
         benchmark(add: Benchmark.TopicGraphHash(context: context))
