@@ -156,8 +156,8 @@ public enum RenderBlockContent: Equatable {
                 self.character = character
             }
 
-            var line: Int
-            var character: Int?
+            public var line: Int
+            public var character: Int?
         }
 
         public struct LineAnnotation: Equatable, Codable {
