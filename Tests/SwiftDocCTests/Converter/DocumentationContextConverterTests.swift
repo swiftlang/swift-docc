@@ -21,7 +21,7 @@ class DocumentationContextConverterTests: XCTestCase {
         
         // We'll use these to convert nodes in bulk
         let renderContext = RenderContext(documentationContext: context)
-        let bulkNodeConverter = DocumentationContextConverter(bundle: context.inputs, context: context, renderContext: renderContext)
+        let bulkNodeConverter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let encoder = JSONEncoder()
         
         for identifier in context.knownPages {
@@ -41,7 +41,7 @@ class DocumentationContextConverterTests: XCTestCase {
     }
     
     func testSymbolLocationsAreOnlyIncludedWhenRequested() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
@@ -50,7 +50,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: true)
@@ -61,7 +60,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext)
             
@@ -71,7 +69,7 @@ class DocumentationContextConverterTests: XCTestCase {
     }
     
     func testSymbolAccessLevelsAreOnlyIncludedWhenRequested() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let renderContext = RenderContext(documentationContext: context)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
@@ -80,7 +78,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolAccessLevels: true
@@ -92,7 +89,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext)
             

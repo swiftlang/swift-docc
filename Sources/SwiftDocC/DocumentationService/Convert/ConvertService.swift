@@ -168,7 +168,6 @@ public struct ConvertService: DocumentationService {
                 return documentationNode.meetsExpandedDocumentationRequirements(expandedDocsRequirement) ? identifier : nil
             }
             let converter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,

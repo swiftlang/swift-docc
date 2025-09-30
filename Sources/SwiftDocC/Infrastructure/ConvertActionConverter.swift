@@ -69,7 +69,6 @@ package enum ConvertActionConverter {
         try outputConsumer.consume(assetsInBundle: bundle)
         
         let converter = DocumentationContextConverter(
-            bundle: bundle,
             context: context,
             renderContext: renderContext,
             sourceRepository: sourceRepository

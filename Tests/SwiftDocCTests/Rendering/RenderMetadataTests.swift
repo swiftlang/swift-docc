@@ -73,10 +73,10 @@ class RenderMetadataTests: XCTestCase {
         var typesOfPages = [Tutorial.self, TutorialTableOfContents.self, Article.self, TutorialArticle.self, Symbol.self]
         
         for bundleName in ["LegacyBundle_DoNotUseInNewTests"] {
-            let (bundle, context) = try await testBundleAndContext(named: bundleName)
+            let (_, context) = try await testBundleAndContext(named: bundleName)
             
             let renderContext = RenderContext(documentationContext: context)
-            let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+            let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
             for identifier in context.knownPages {
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity))

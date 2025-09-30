@@ -3466,7 +3466,6 @@ Document
         assertExpectedTopicSections(nodeConverter.convert(documentationNode))
         
         let contextConverter = DocumentationContextConverter(
-            bundle: context.inputs,
             context: context,
             renderContext: RenderContext(documentationContext: context)
         )

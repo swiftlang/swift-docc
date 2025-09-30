@@ -699,7 +699,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             )
         }
         
-        let (dependencyBundle, dependencyContext) = try await loadBundle(
+        let (_ , dependencyContext) = try await loadBundle(
             catalog: Folder(name: "Dependency.docc", content: [
                 InfoPlist(identifier: "com.example.dependency"), // This isn't necessary but makes it easier to distinguish the identifier from the module name in the external references.
                 JSONFile(name: "Dependency.symbols.json", content: makeSymbolGraph(moduleName: "Dependency", symbols: symbols))
@@ -707,7 +707,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         )
         
         // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
-        let dependencyConverter = DocumentationContextConverter(bundle: dependencyBundle, context: dependencyContext, renderContext: .init(documentationContext: dependencyContext))
+        let dependencyConverter = DocumentationContextConverter(context: dependencyContext, renderContext: .init(documentationContext: dependencyContext))
         
         let linkSummaries: [LinkDestinationSummary] = try dependencyContext.knownPages.flatMap { reference in
             let entity = try dependencyContext.entity(with: reference)
@@ -715,7 +715,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.id)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyContext.inputs.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -724,7 +724,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
         
         // After building the dependency,
-        let (mainBundle, mainContext) = try await loadBundle(
+        let (_, mainContext) = try await loadBundle(
             catalog: Folder(name: "Main.docc", content: [
                 JSONFile(name: "Main.symbols.json", content: makeSymbolGraph(
                     moduleName: "Main",
@@ -794,11 +794,11 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         XCTAssertEqual(mainContext.knownPages.count, 3 /* 2 symbols & 1 module*/)
         
-        let mainConverter = DocumentationContextConverter(bundle: mainBundle, context: mainContext, renderContext: .init(documentationContext: mainContext))
+        let mainConverter = DocumentationContextConverter(context: mainContext, renderContext: .init(documentationContext: mainContext))
         
         // Check the relationships of 'SomeClass'
         do {
-            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainContext.inputs.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -822,7 +822,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the declaration of 'someFunction'
         do {
-            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainContext.inputs.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             

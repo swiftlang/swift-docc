@@ -1328,13 +1328,13 @@ class DocumentationContextTests: XCTestCase {
                 """),
             ] + testData.symbolGraphFiles)
             
-            let (bundle, context) = try await loadBundle(catalog: testCatalog)
+            let (_, context) = try await loadBundle(catalog: testCatalog)
             let renderContext = RenderContext(documentationContext: context)
             
-            let identifier = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             
-            let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+            let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
             let renderNode = try XCTUnwrap(converter.renderNode(for: node))
             
             XCTAssertEqual(
@@ -2425,7 +2425,7 @@ let expected = """
     }
 
     func testPrefersNonSymbolsInDocLink() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
             // This bundle has a top-level struct named "Wrapper". Adding an article named "Wrapper.md" introduces a possibility for a link collision
             try """
             # An article
@@ -2452,7 +2452,7 @@ let expected = """
         let moduleNode = try context.entity(with: moduleReference)
         
         let renderContext = RenderContext(documentationContext: context)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode))
         let curatedTopic = try XCTUnwrap(renderNode.topicSections.first?.identifiers.first)
