@@ -313,9 +313,8 @@ extension XCTestCase {
         
         var contentCompiler = RenderContentCompiler(
             context: context,
-            bundle: bundle,
             identifier: ResolvedTopicReference(
-                bundleID: bundle.id,
+                bundleID: context.inputs.id,
                 path: "/test-path-123",
                 sourceLanguage: .swift
             )

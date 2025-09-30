@@ -315,7 +315,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
     // Visits a container and expects the elements to be block level elements
     public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> (any RenderTree)? {
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         let content = markupContainer.elements.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderBlockContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references found in the markup container.
@@ -327,7 +327,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     // Visits a collection of inline markup elements.
     public mutating func visitMarkup(_ markup: [any Markup]) -> (any RenderTree)? {
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         let content = markup.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderInlineContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references.
@@ -600,7 +600,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     public mutating func visitArticle(_ article: Article) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .article)
         // Contains symbol references declared in the Topics section.
-        var topicSectionContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var topicSectionContentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
         node.metadata.title = article.title!.plainText
         
@@ -1201,7 +1201,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let identifier = identifier.addingSourceLanguages(documentationNode.availableSourceLanguages)
         
         var node = RenderNode(identifier: identifier, kind: .symbol)
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
         /*
          FIXME: We shouldn't be doing this kind of crawling here.
