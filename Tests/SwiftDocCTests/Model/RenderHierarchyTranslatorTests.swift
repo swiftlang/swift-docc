@@ -16,7 +16,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         let technologyReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
-        var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var translator = RenderHierarchyTranslator(context: context)
         let renderHierarchyVariants = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchyVariants
         XCTAssertEqual(renderHierarchyVariants?.variants, [], "Unexpected variant hierarchies for tutorial table of content page")
         let renderHierarchy = renderHierarchyVariants?.defaultValue
