@@ -208,8 +208,8 @@ extension XCTestCase {
         directive: Directive?,
         collectedReferences: [String : any RenderReference]
     ) {
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-        return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
+        let (_, context) = try await loadBundle(catalog: catalog)
+        return try parseDirective(directive, context: context, content: content, file: file, line: line)
     }
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
@@ -242,20 +242,17 @@ extension XCTestCase {
         directive: Directive?,
         collectedReferences: [String : any RenderReference]
     ) {
-        let bundle: DocumentationBundle
         let context: DocumentationContext
-        
         if let bundleName {
-            (bundle, context) = try await testBundleAndContext(named: bundleName)
+            (_, context) = try await testBundleAndContext(named: bundleName)
         } else {
-            (bundle, context) = try await testBundleAndContext()
+            (_, context) = try await testBundleAndContext()
         }
-        return try parseDirective(directive, bundle: bundle, context: context, content: content, file: file, line: line)
+        return try parseDirective(directive, context: context, content: content, file: file, line: line)
     }
     
     private func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
-        bundle: DocumentationBundle,
         context: DocumentationContext,
         content: () -> String,
         file: StaticString = #filePath,
@@ -273,15 +270,11 @@ extension XCTestCase {
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var analyzer = SemanticAnalyzer(source: source, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: source, bundle: context.inputs)
         let result = analyzer.visit(blockDirectiveContainer)
         context.diagnosticEngine.emit(analyzer.problems)
         
-        var referenceResolver = MarkupReferenceResolver(
-            context: context,
-            bundle: bundle,
-            rootReference: bundle.rootReference
-        )
+        var referenceResolver = MarkupReferenceResolver(context: context, rootReference: context.inputs.rootReference)
         
         _ = referenceResolver.visit(blockDirectiveContainer)
         context.diagnosticEngine.emit(referenceResolver.problems)

@@ -215,7 +215,7 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> Semantic {
-        var markupResolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: rootReference)
+        var markupResolver = MarkupReferenceResolver(context: context, rootReference: rootReference)
         let parent = inheritanceParentReference
         let context = self.context
         
