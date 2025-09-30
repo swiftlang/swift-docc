@@ -1240,7 +1240,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
-        let defaultAvailability = defaultAvailability(for: context.inputs, moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
+        let defaultAvailability = defaultAvailability(moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
             .filter { $0.unconditionallyUnavailable != true }
             .sorted(by: AvailabilityRenderOrder.compare)
         
@@ -1805,8 +1805,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     /// The default availability for modules in a given bundle and module.
-    mutating func defaultAvailability(for bundle: DocumentationBundle, moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [AvailabilityRenderItem]? {
-        let identifier = BundleModuleIdentifier(bundle: bundle, moduleName: moduleName)
+    private mutating func defaultAvailability(moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [AvailabilityRenderItem]? {
+        let identifier = BundleModuleIdentifier(bundle: context.inputs, moduleName: moduleName)
         
         // Cached availability
         if let availability = bundleAvailability[identifier] {
@@ -1814,7 +1814,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Find default module availability if existing
-        guard let bundleDefaultAvailability = bundle.info.defaultAvailability,
+        guard let bundleDefaultAvailability = context.inputs.info.defaultAvailability,
             let moduleAvailability = bundleDefaultAvailability.modules[moduleName] else {
             return nil
         }
