@@ -2457,7 +2457,7 @@ public class DocumentationContext {
             signposter.endInterval("Curate symbols", signpostHandle)
         }
         
-        var crawler = DocumentationCurator(in: self, bundle: bundle, initial: initial)
+        var crawler = DocumentationCurator(in: self, initial: initial)
 
         for reference in references {
             try crawler.crawlChildren(

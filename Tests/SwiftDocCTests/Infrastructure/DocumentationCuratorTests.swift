@@ -28,9 +28,9 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCrawl() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var crawler = DocumentationCurator(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
 
         var symbolsWithCustomCuration = [ResolvedTopicReference]()
@@ -75,7 +75,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testCrawlDiagnostics() async throws {
-        let (tempCatalogURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (tempCatalogURL, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = url.appendingPathComponent("documentation/myfunction.md")
             
             try """
@@ -97,7 +97,7 @@ class DocumentationCuratorTests: XCTestCase {
         }
         let extensionFile = tempCatalogURL.appendingPathComponent("documentation/myfunction.md")
         
-        var crawler = DocumentationCurator(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
         
         XCTAssertNoThrow(try crawler.crawlChildren(of: mykit.reference, prepareForCuration: { _ in }, relateNodes: { _, _ in }))
@@ -286,7 +286,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testModuleUnderTechnologyRoot() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "SourceLocations") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "SourceLocations") { url in
             try """
             # Root curating a module
 
@@ -303,7 +303,7 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
         }
         
-        let crawler = DocumentationCurator(in: context, bundle: bundle)
+        let crawler = DocumentationCurator(in: context)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
@@ -459,9 +459,9 @@ class DocumentationCuratorTests: XCTestCase {
     }
 
     func testSymbolLinkResolving() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        let crawler = DocumentationCurator(in: context, bundle: bundle)
+        let crawler = DocumentationCurator(in: context)
         
         // Resolve top-level symbol in module parent
         do {
@@ -512,9 +512,9 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testLinkResolving() async throws {
-        let (sourceRoot, bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (sourceRoot, _, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
-        var crawler = DocumentationCurator(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context)
         
         // Resolve and curate an article in module root (absolute link)
         do {
@@ -567,7 +567,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testGroupLinkValidation() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { root in
             // Create a sidecar with invalid group links
             try! """
             # ``SideKit``
@@ -607,7 +607,7 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: root.appendingPathComponent("documentation").appendingPathComponent("api-collection.md"), atomically: true, encoding: .utf8)
         }
         
-        var crawler = DocumentationCurator(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context)
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift)
         
         try crawler.crawlChildren(of: reference, prepareForCuration: {_ in }) { (_, _) in }
