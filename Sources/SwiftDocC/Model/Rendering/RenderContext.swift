@@ -28,7 +28,7 @@ public struct RenderContext {
     public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
         self.documentationContext = documentationContext
         self.bundle = bundle
-        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext, bundle: bundle)
+        self.renderer = DocumentationContentRenderer(context: documentationContext)
         createRenderedContent()
     }
     

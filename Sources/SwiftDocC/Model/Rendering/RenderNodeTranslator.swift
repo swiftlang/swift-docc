@@ -419,7 +419,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     private mutating func createTopicRenderReferences() -> [String: any RenderReference] {
         var renderReferences: [String: any RenderReference] = [:]
-        let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        let renderer = DocumentationContentRenderer(context: context)
         
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
@@ -1330,7 +1330,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         collectedTopicReferences.append(identifier)
         
-        let contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        let contentRenderer = DocumentationContentRenderer(context: context)
         node.metadata.tags = contentRenderer.tags(for: identifier)
 
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
@@ -2014,7 +2014,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         self.bundle = bundle
         self.identifier = identifier
         self.renderContext = renderContext
-        self.contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        self.contentRenderer = DocumentationContentRenderer(context: context)
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
         self.sourceRepository = sourceRepository

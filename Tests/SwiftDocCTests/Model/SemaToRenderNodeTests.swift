@@ -1944,7 +1944,7 @@ Document
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
         }
         
-        // Symbol with an empty set of availbility items.
+        // Symbol with an empty set of availability items.
         
         do {
             
@@ -1953,7 +1953,7 @@ Document
             ], referencePath: "/documentation/MyKit/globalFunction(_:considering:)")
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [])
-            let documentationContentRendered = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+            let documentationContentRendered = DocumentationContentRenderer(context: context)
             let isBeta = documentationContentRendered.isBeta(node)
             // Verify that the symbol is not beta since it does not contains availability info.
             XCTAssertFalse(isBeta)
@@ -2096,12 +2096,12 @@ Document
         
         // Set all platforms as unconditionally unavailable and test that the symbol is not marked as beta.
         do {
-            let (bundle, context, reference) = try await makeTestBundle(currentPlatforms: [
+            let (_, context, reference) = try await makeTestBundle(currentPlatforms: [
                 "iOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
             ], referencePath: "/documentation/MyKit/MyClass")
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [.init(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false)])
-            let documentationContentRendered = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+            let documentationContentRendered = DocumentationContentRenderer(context: context)
             let isBeta = documentationContentRendered.isBeta(node)
             // Verify that the symbol is not beta since it's unavailable in all the platforms.
             XCTAssertFalse(isBeta)

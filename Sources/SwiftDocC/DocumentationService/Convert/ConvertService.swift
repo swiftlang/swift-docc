@@ -245,7 +245,7 @@ public struct ConvertService: DocumentationService {
                 
                 let bundle = context.inputs
                 guard bundle.id == topicReference.bundleID else { return nil }
-                let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+                let renderer = DocumentationContentRenderer(context: context)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
                 let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: bundle)?.node
