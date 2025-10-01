@@ -139,7 +139,7 @@ public enum RenderBlockContent: Equatable {
         }
 
         /// Make a new `CodeListing` with the given data.
-        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool = true) {
+        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled) {
             self.syntax = syntax
             self.code = code
             self.metadata = metadata
