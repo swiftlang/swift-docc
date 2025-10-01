@@ -794,7 +794,11 @@
                             "$ref": "#/components/schemas/Position"
                         }
                     }
-                }
+                },
+                "required": [
+                    "style",
+                    "range"
+                ]
             },
             "Position": {
                 "type": "object",
