@@ -10,8 +10,9 @@
 
 import Foundation
 import SwiftDocC
+@_spi(MarkdownOutput) import SwiftDocC
 
-struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
+struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, ConvertOutputMarkdownConsumer {
     var targetFolder: URL
     var bundleRootFolder: URL?
     var fileManager: any FileManagerProtocol
@@ -72,15 +73,9 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         try renderNodeWriter.write(markdownNode)
     }
     
-    func consume(markdownManifest: MarkdownOutputManifest) throws {
+    func consume(markdownManifest: WritableMarkdownOutputManifest) throws {
         let url = targetFolder.appendingPathComponent("\(markdownManifest.title)-markdown-manifest.json", isDirectory: false)
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-        #if DEBUG
-        encoder.outputFormatting.insert(.prettyPrinted)
-        #endif
-        let data = try encoder.encode(markdownManifest)
-        try fileManager.createFile(at: url, contents: data)
+        try fileManager.createFile(at: url, contents: markdownManifest.manifestData)
     }
     
     func consume(externalRenderNode: ExternalRenderNode) throws {

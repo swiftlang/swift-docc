@@ -13,6 +13,7 @@ public import Foundation
 // Consumers of `MarkdownOutputNode` in other packages should be able to lift this file and be able to use it standalone, without any dependencies from SwiftDocC.
 
 /// A markdown version of a documentation node.
+@_spi(MarkdownOutput)
 public struct MarkdownOutputNode: Sendable {
 
     /// The metadata about this node
@@ -37,10 +38,10 @@ extension MarkdownOutputNode {
         
         public struct Availability: Codable, Equatable, Sendable {
             
-            let platform: String
-            let introduced: String?
-            let deprecated: String?
-            let unavailable: Bool
+            public let platform: String
+            public let introduced: String?
+            public let deprecated: String?
+            public let unavailable: Bool
                         
             public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
                 self.platform = platform
@@ -66,7 +67,7 @@ extension MarkdownOutputNode {
                 self.init(stringRepresentation: stringRepresentation)
             }
             
-            var stringRepresentation: String {
+            public var stringRepresentation: String {
                 var stringRepresentation = "\(platform): "
                 if unavailable {
                     stringRepresentation += "-"
@@ -83,7 +84,7 @@ extension MarkdownOutputNode {
                 return stringRepresentation
             }
             
-            init(stringRepresentation: String) {
+            public init(stringRepresentation: String) {
                 let words = stringRepresentation.split(separator: ":", maxSplits: 1)
                 if words.count != 2 {
                     platform = stringRepresentation

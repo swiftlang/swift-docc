@@ -9,6 +9,7 @@
 */
 
 import Foundation
+@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
 
 #if canImport(os)
 package import os
@@ -125,16 +126,16 @@ package enum ConvertActionConverter {
                 do {
                     let entity = try context.entity(with: identifier)
 
-                    guard var renderNode = converter.renderNode(for: entity) else {
+                    guard let renderNode = converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
                         return
                     }
                     
                     if
                         FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
-                        let markdownNode = converter.markdownNode(for: entity) {
-                        try outputConsumer.consume(markdownNode: markdownNode)
-                        renderNode.metadata.hasGeneratedMarkdown = true
+                        let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
+                        let markdownNode = converter.markdownOutput(for: entity) {
+                        try markdownConsumer.consume(markdownNode: markdownNode.writable)
                         if
                             FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
                             let manifest = markdownNode.manifest
@@ -231,8 +232,10 @@ package enum ConvertActionConverter {
             }
         }
         
-        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled {
-            try outputConsumer.consume(markdownManifest: markdownManifest)
+        if
+            FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer) {
+            try markdownConsumer.consume(markdownManifest: try markdownManifest.writable)
         }
 
         switch documentationCoverageOptions.level {

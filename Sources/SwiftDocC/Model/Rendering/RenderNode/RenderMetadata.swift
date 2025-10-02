@@ -178,8 +178,6 @@ public struct RenderMetadata: VariantContainer {
     /// the ``RenderNode/variants`` property.
     public var hasNoExpandedDocumentation: Bool = false
     
-    /// If a markdown equivalent of this page was generated at render time.
-    public var hasGeneratedMarkdown: Bool = false
 }
 
 extension RenderMetadata: Codable {
@@ -282,7 +280,6 @@ extension RenderMetadata: Codable {
         remoteSourceVariants = try container.decodeVariantCollectionIfPresent(ofValueType: RemoteSource?.self, forKey: .remoteSource)
         tags = try container.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
         hasNoExpandedDocumentation = try container.decodeIfPresent(Bool.self, forKey: .hasNoExpandedDocumentation) ?? false
-        hasGeneratedMarkdown = try container.decodeIfPresent(Bool.self, forKey: .hasGeneratedMarkdown) ?? false
         
         let extraKeys = Set(container.allKeys).subtracting(
             [
@@ -348,7 +345,6 @@ extension RenderMetadata: Codable {
         try container.encodeIfPresent(color, forKey: .color)
         try container.encodeIfNotEmpty(customMetadata, forKey: .customMetadata)
         try container.encodeIfTrue(hasNoExpandedDocumentation, forKey: .hasNoExpandedDocumentation)
-        try container.encodeIfTrue(hasGeneratedMarkdown, forKey: .hasGeneratedMarkdown)
     }
 }
 
@@ -382,7 +378,6 @@ extension RenderMetadata: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.remoteSource, forKey: CodingKeys.remoteSource)
         diffBuilder.addDifferences(atKeyPath: \.tags, forKey: CodingKeys.tags)
         diffBuilder.addDifferences(atKeyPath: \.hasNoExpandedDocumentation, forKey: CodingKeys.hasNoExpandedDocumentation)
-        diffBuilder.addDifferences(atKeyPath: \.hasGeneratedMarkdown, forKey: CodingKeys.hasGeneratedMarkdown)
 
         return diffBuilder.differences
     }

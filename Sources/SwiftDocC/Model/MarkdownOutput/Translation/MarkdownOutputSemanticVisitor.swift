@@ -8,6 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
+
 /// Visits the semantic structure of a documentation node and returns a ``MarkdownOutputNode``
 internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     
@@ -26,7 +28,7 @@ internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
         self.markdownWalker = MarkdownOutputMarkupWalker(context: context, bundle: bundle, identifier: identifier)
     }
     
-    public typealias Result = MarkdownOutputNode?
+    typealias Result = MarkdownOutputNode?
     
     // Tutorial processing
     private var sectionIndex = 0
@@ -39,12 +41,13 @@ internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
 }
 
 extension MarkdownOutputNode.Metadata {
-    public init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference) {
-        self.documentType = documentType
-        self.metadataVersion = Self.version.description
-        self.uri = reference.path
-        self.title = reference.lastPathComponent
-        self.framework = bundle.displayName
+    init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference) {
+        self.init(
+            documentType: documentType,
+            uri: reference.path,
+            title: reference.lastPathComponent,
+            framework: bundle.displayName
+        )
     }
 }
 
@@ -75,7 +78,7 @@ extension MarkdownOutputSemanticVisitor {
 // MARK: Article Output
 extension MarkdownOutputSemanticVisitor {
     
-    public mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
+    mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
         var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: bundle, reference: identifier)
         if let title = article.title?.plainText {
             metadata.title = title
@@ -116,7 +119,7 @@ import Markdown
 // MARK: Symbol Output
 extension MarkdownOutputSemanticVisitor {
     
-    public mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
+    mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
         var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier)
         
         metadata.symbol = .init(symbol, context: context, bundle: bundle)
@@ -203,8 +206,6 @@ import SymbolKit
 
 extension MarkdownOutputNode.Metadata.Symbol {
     init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationBundle) {
-        self.kind = symbol.kind.identifier.identifier
-        self.preciseIdentifier = symbol.externalID ?? ""
                 
         // Gather modules
         var modules = [String]()
@@ -218,43 +219,52 @@ extension MarkdownOutputNode.Metadata.Symbol {
         if let extended = symbol.extendedModuleVariants.firstValue, modules.contains(extended) == false {
             modules.append(extended)
         }
-        
-        self.modules = modules
+        self.init(
+            kind: symbol.kind.identifier.identifier,
+            preciseIdentifier: symbol.externalID ?? "",
+            modules: modules
+        )
     }
 }
 
 extension MarkdownOutputNode.Metadata.Availability {
     init(_ item: SymbolGraph.Symbol.Availability.AvailabilityItem) {
-        self.platform = item.domain?.rawValue ?? "*"
-        self.introduced = item.introducedVersion?.description
-        self.deprecated = item.deprecatedVersion?.description
-        self.unavailable = item.obsoletedVersion != nil
+        self.init(
+            platform: item.domain?.rawValue ?? "*",
+            introduced: item.introducedVersion?.description,
+            deprecated: item.deprecatedVersion?.description,
+            unavailable: item.obsoletedVersion != nil
+        )
     }
     
     // From the info.plist of the module
     init(_ availability: DefaultAvailability.ModuleAvailability) {
-        self.platform = availability.platformName.rawValue
-        self.introduced = availability.introducedVersion
-        self.deprecated = nil
-        self.unavailable = availability.versionInformation == .unavailable
+        self.init(
+            platform: availability.platformName.rawValue,
+            introduced: availability.introducedVersion,
+            deprecated: nil,
+            unavailable: availability.versionInformation == .unavailable
+        )
     }
     
     init(_ availability: Metadata.Availability) {
-        self.platform = availability.platform.rawValue
-        self.introduced = availability.introduced.description
-        self.deprecated = availability.deprecated?.description
-        self.unavailable = false
+        self.init(
+            platform: availability.platform.rawValue,
+            introduced: availability.introduced.description,
+            deprecated: availability.deprecated?.description,
+            unavailable: false
+        )
     }
 }
 
 // MARK: Tutorial Output
 extension MarkdownOutputSemanticVisitor {
     // Tutorial table of contents is not useful as markdown or indexable content
-    public func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> MarkdownOutputNode? {
+    func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
+    mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
         var metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: bundle, reference: identifier)
         
         if tutorial.intro.title.isEmpty == false {
@@ -276,7 +286,7 @@ extension MarkdownOutputSemanticVisitor {
         return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
     }
     
-    public mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> MarkdownOutputNode? {
+    mutating func visitTutorialSection(_ tutorialSection: TutorialSection) -> MarkdownOutputNode? {
         sectionIndex += 1
         
         markdownWalker.visit(Heading(level: 2, Text("Section \(sectionIndex): \(tutorialSection.title)")))
@@ -286,7 +296,7 @@ extension MarkdownOutputSemanticVisitor {
         return nil
     }
     
-    public mutating func visitSteps(_ steps: Steps) -> MarkdownOutputNode? {
+    mutating func visitSteps(_ steps: Steps) -> MarkdownOutputNode? {
         stepIndex = 0
         for child in steps.children {
             _ = visit(child)
@@ -300,7 +310,7 @@ extension MarkdownOutputSemanticVisitor {
         return nil
     }
     
-    public mutating func visitStep(_ step: Step) -> MarkdownOutputNode? {
+    mutating func visitStep(_ step: Step) -> MarkdownOutputNode? {
         
         // Check if the step contains another version of the current code reference
         if let code = lastCode {
@@ -329,7 +339,7 @@ extension MarkdownOutputSemanticVisitor {
         return nil
     }
     
-    public mutating func visitIntro(_ intro: Intro) -> MarkdownOutputNode? {
+    mutating func visitIntro(_ intro: Intro) -> MarkdownOutputNode? {
         
         markdownWalker.visit(Heading(level: 1, Text(intro.title)))
         
@@ -339,31 +349,31 @@ extension MarkdownOutputSemanticVisitor {
         return nil
     }
     
-    public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> MarkdownOutputNode? {
+    mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> MarkdownOutputNode? {
         markdownWalker.withRemoveIndentation(from: markupContainer.elements.first) {
             $0.visit(container: markupContainer)
         }
         return nil
     }
     
-    public mutating func visitImageMedia(_ imageMedia: ImageMedia) -> MarkdownOutputNode? {
+    mutating func visitImageMedia(_ imageMedia: ImageMedia) -> MarkdownOutputNode? {
         markdownWalker.visit(imageMedia)
         return nil
     }
     
-    public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> MarkdownOutputNode? {
+    mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> MarkdownOutputNode? {
         markdownWalker.visit(videoMedia)
         return nil
     }
     
-    public mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> MarkdownOutputNode? {
+    mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> MarkdownOutputNode? {
         for child in contentAndMedia.children {
             _ = visit(child)
         }
         return nil
     }
     
-    public mutating func visitCode(_ code: Code) -> MarkdownOutputNode? {
+    mutating func visitCode(_ code: Code) -> MarkdownOutputNode? {
         // Code rendering is handled in visitStep(_:)
         return nil
     }
@@ -373,63 +383,63 @@ extension MarkdownOutputSemanticVisitor {
 // MARK: Visitors not currently used for markdown output
 extension MarkdownOutputSemanticVisitor {
         
-    public mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) -> MarkdownOutputNode? {
+    mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitAssessments(_ assessments: Assessments) -> MarkdownOutputNode? {
+    mutating func visitAssessments(_ assessments: Assessments) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) -> MarkdownOutputNode? {
+    mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitJustification(_ justification: Justification) -> MarkdownOutputNode? {
+    mutating func visitJustification(_ justification: Justification) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitChoice(_ choice: Choice) -> MarkdownOutputNode? {
+    mutating func visitChoice(_ choice: Choice) -> MarkdownOutputNode? {
         return nil
     }
         
-    public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> MarkdownOutputNode? {
+    mutating func visitTechnology(_ technology: TutorialTableOfContents) -> MarkdownOutputNode? {
         return nil
     }
         
-    public mutating func visitVolume(_ volume: Volume) -> MarkdownOutputNode? {
+    mutating func visitVolume(_ volume: Volume) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitChapter(_ chapter: Chapter) -> MarkdownOutputNode? {
+    mutating func visitChapter(_ chapter: Chapter) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> MarkdownOutputNode? {
+    mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitResources(_ resources: Resources) -> MarkdownOutputNode? {
+    mutating func visitResources(_ resources: Resources) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitTile(_ tile: Tile) -> MarkdownOutputNode? {
+    mutating func visitTile(_ tile: Tile) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitComment(_ comment: Comment) -> MarkdownOutputNode? {
+    mutating func visitComment(_ comment: Comment) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitTutorialArticle(_ article: TutorialArticle) -> MarkdownOutputNode? {
+    mutating func visitTutorialArticle(_ article: TutorialArticle) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitStack(_ stack: Stack) -> MarkdownOutputNode? {
+    mutating func visitStack(_ stack: Stack) -> MarkdownOutputNode? {
         return nil
     }
     
-    public mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> MarkdownOutputNode? {
+    mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> MarkdownOutputNode? {
         return nil
     }
 }

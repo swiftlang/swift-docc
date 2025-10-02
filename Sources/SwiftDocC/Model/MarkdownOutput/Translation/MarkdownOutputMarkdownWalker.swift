@@ -9,6 +9,7 @@
 */
 
 import Markdown
+@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
 
 /// Performs any markup processing necessary to build the final output markdown
 internal struct MarkdownOutputMarkupWalker: MarkupWalker {

@@ -9,7 +9,7 @@
 */
 
 import Foundation
-
+@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
 /// A consumer for output produced by a documentation conversion.
 ///
 /// Types that conform to this protocol manage what to do with documentation conversion products, for example persist them to disk
@@ -51,11 +51,16 @@ public protocol ConvertOutputConsumer {
     /// Consumes a file representation of the local link resolution information.
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws
     
+}
+
+// Merge into ConvertOutputMarkdownConsumer when no longer SPI
+@_spi(MarkdownOutput)
+public protocol ConvertOutputMarkdownConsumer {
     /// Consumes a markdown output node
     func consume(markdownNode: WritableMarkdownOutputNode) throws
     
     /// Consumes a markdown output manifest
-    func consume(markdownManifest: MarkdownOutputManifest) throws
+    func consume(markdownManifest: WritableMarkdownOutputManifest) throws
 }
 
 // Default implementations that discard the documentation conversion products, for consumers that don't need these
@@ -64,8 +69,6 @@ public extension ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
-    func consume(markdownNode: WritableMarkdownOutputNode) throws {}
-    func consume(markdownManifest: MarkdownOutputManifest) throws {}
 }
 
 // Default implementation so that conforming types don't need to implement deprecated API.

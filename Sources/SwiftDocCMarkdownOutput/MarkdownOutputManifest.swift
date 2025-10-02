@@ -13,6 +13,7 @@ import Foundation
 // Consumers of `MarkdownOutputManifest` in other packages should be able to lift this file and be able to use it standalone, without any dependencies from SwiftDocC.
 
 /// A manifest of markdown-generated documentation from a single catalog
+@_spi(MarkdownOutput)
 public struct MarkdownOutputManifest: Codable, Sendable {
     public static let version = "0.1.0"
     

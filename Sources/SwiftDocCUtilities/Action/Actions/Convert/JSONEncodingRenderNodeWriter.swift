@@ -10,6 +10,8 @@
 
 import Foundation
 import SwiftDocC
+@_spi(MarkdownOutput) import SwiftDocC
+@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
 
 /// An object that writes render nodes, as JSON files, into a target folder.
 ///
@@ -157,7 +159,6 @@ class JSONEncodingRenderNodeWriter {
             }
         }
         
-        let data = try markdownNode.node.data
-        try fileManager.createFile(at: markdownNodeTargetFileURL, contents: data, options: nil)
+        try fileManager.createFile(at: markdownNodeTargetFileURL, contents: markdownNode.nodeData, options: nil)
     }
 }
