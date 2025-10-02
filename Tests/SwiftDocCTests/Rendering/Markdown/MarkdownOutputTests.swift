@@ -277,7 +277,144 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(codeIndex.lowerBound < step4Index.lowerBound, "Code reference is added after the last step that references it")
         XCTAssertTrue(node.markdown.contains("struct StartCodeAgain {"), "New file reference is included")
     }
+    
+    func testSnippetInclusion() async throws {
+        let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
+            # Snippets
+            
+            Here is an article with some snippets
+            
+            ## Overview
+            
+            @Snippet(path: "MarkdownOutput/SnippetA")
+            
+            Post snippet content
+            """)
         
+        let snippetContent = """
+        import Foundation
+        // I am a code snippet
+        """
+        
+        let snippet = makeSnippet(pathComponents: ["MarkdownOutput", "SnippetA"], explanation: nil, code: snippetContent)
+        let graph = JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [snippet]))
+        
+        let asMarkdown = "```swift\n\(snippetContent)\n```"
+        let catalog = catalog(files: [articleWithSnippet, graph])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
+        XCTAssert(node.markdown.contains(asMarkdown))
+    }
+    
+    func testSnippetInclusionWithSlice() async throws {
+        let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
+            # Snippets
+            
+            Here is an article with some snippets
+            
+            ## Overview
+            
+            @Snippet(path: "MarkdownOutput/SnippetA", slice: "sliceOne")
+            
+            Post snippet content
+            """)
+        
+        let snippetContent = """
+        import Foundation
+        // I am a code snippet
+        
+        // snippet.sliceOne
+        // I am slice one
+        """
+        
+        let snippet = makeSnippet(pathComponents: ["MarkdownOutput", "SnippetA"], explanation: nil, code: snippetContent, slices: ["sliceOne": 4..<5])
+        let graph = JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [snippet]))
+        
+        let catalog = catalog(files: [articleWithSnippet, graph])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
+        XCTAssert(node.markdown.contains("// I am slice one"))
+        XCTAssertFalse(node.markdown.contains("// I am a code snippet"))
+    }
+    
+    func testSnippetInclusionWithHiding() async throws {
+        let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
+            # Snippets
+            
+            Here is an article with some snippets
+            
+            ## Overview
+            
+            @Snippet(path: "MarkdownOutput/SnippetA", slice: "sliceOne")
+            
+            Post snippet content
+            """)
+        
+        let snippetContent = """
+        import Foundation
+        // I am a code snippet
+        
+        // snippet.hide
+        // I am hidden content
+        """
+        
+        let snippet = makeSnippet(pathComponents: ["MarkdownOutput", "SnippetA"], explanation: nil, code: snippetContent)
+        let graph = JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [snippet]))
+        
+        let catalog = catalog(files: [articleWithSnippet, graph])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
+        XCTAssertFalse(node.markdown.contains("// I am hidden content"))
+    }
+    
+    func testSnippetInclusionWithExplanation() async throws {
+        let articleWithSnippet = TextFile(name: "SnippetArticle.md", utf8Content: """
+            # Snippets
+            
+            Here is an article with some snippets
+            
+            ## Overview
+            
+            @Snippet(path: "MarkdownOutput/SnippetA")
+            
+            Post snippet content
+            """)
+        
+        let snippetContent = """
+        import Foundation
+        // I am a code snippet
+        """
+        
+        let explanation = """
+        I am the explanatory text.
+        I am two lines long.
+        """
+        let snippet = makeSnippet(pathComponents: ["MarkdownOutput", "SnippetA"], explanation: explanation, code: snippetContent)
+        let graph = JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [snippet]))
+        
+        let catalog = catalog(files: [articleWithSnippet, graph])
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
+        XCTAssert(node.markdown.contains(explanation))
+    }
+      
+    private func makeSnippet(
+        pathComponents: [String],
+        explanation: String?,
+        code: String,
+        slices: [String: Range<Int>] = [:]
+    ) -> SymbolGraph.Symbol {
+        makeSymbol(
+            id: "$snippet__module-name.\(pathComponents.map { $0.lowercased() }.joined(separator: "."))",
+            kind: .snippet,
+            pathComponents: pathComponents,
+            docComment: explanation,
+            otherMixins: [
+                SymbolGraph.Symbol.Snippet(
+                    language: SourceLanguage.swift.id,
+                    lines: code.components(separatedBy: "\n"),
+                    slices: slices
+                )
+            ]
+        )
+    }
+    
     // MARK: - Metadata
     
     func testArticleMetadata() async throws {

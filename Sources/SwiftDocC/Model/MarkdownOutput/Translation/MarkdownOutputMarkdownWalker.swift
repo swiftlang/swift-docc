@@ -270,7 +270,36 @@ extension MarkdownOutputMarkupWalker {
                     }
                 }
             }
+        case Snippet.directiveName:
+            guard let snippet = Snippet(from: blockDirective, for: bundle) else {
+                return
+            }
+            guard case .success(let resolved) = context.snippetResolver.resolveSnippet(path: snippet.path) else {
+                return
+            }
             
+            let lines: [String]
+            let renderExplanation: Bool
+            if let slice = snippet.slice {
+                renderExplanation = false
+                guard let sliceRange = resolved.mixin.slices[slice] else {
+                    return
+                }
+                let sliceLines = resolved.mixin
+                    .lines[sliceRange]
+                    .linesWithoutLeadingWhitespace()
+                lines = sliceLines.map { String($0) }
+            } else {
+                renderExplanation = true
+                lines = resolved.mixin.lines
+            }
+            
+            if renderExplanation, let explanation = resolved.explanation {
+                visit(explanation)
+            }
+            
+            let code = CodeBlock(language: resolved.mixin.language, lines.joined(separator: "\n"))
+            visit(code)
         default: return
         }
         
