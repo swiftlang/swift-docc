@@ -93,10 +93,10 @@ extension Snippet: RenderableDirectiveConvertible {
                 // Make dedicated copies of each line because the RenderBlockContent.codeListing requires it.
                 .map { String($0) }
             
-            return [RenderBlockContent.codeListing(.init(syntax: mixin.language, code: lines, metadata: nil))]
+            return [RenderBlockContent.codeListing(.init(syntax: mixin.language, code: lines, metadata: nil, options: nil))]
         } else {
             // Render the full snippet and its explanatory content.
-            let fullCode = RenderBlockContent.codeListing(.init(syntax: mixin.language, code: mixin.lines, metadata: nil))
+            let fullCode = RenderBlockContent.codeListing(.init(syntax: mixin.language, code: mixin.lines, metadata: nil, options: nil))
             
             var content: [any RenderContent] = resolvedSnippet.explanation?.children.flatMap { contentCompiler.visit($0) } ?? []
             content.append(fullCode)
