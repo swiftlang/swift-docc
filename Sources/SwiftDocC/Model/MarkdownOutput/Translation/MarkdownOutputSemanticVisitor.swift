@@ -370,46 +370,38 @@ extension MarkdownOutputSemanticVisitor {
 }
 
 
-// MARK: Visitors not used for markdown output
+// MARK: Visitors not currently used for markdown output
 extension MarkdownOutputSemanticVisitor {
         
     public mutating func visitXcodeRequirement(_ xcodeRequirement: XcodeRequirement) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitAssessments(_ assessments: Assessments) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitJustification(_ justification: Justification) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitChoice(_ choice: Choice) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
         
     public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
         
     public mutating func visitVolume(_ volume: Volume) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitChapter(_ chapter: Chapter) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
@@ -418,32 +410,26 @@ extension MarkdownOutputSemanticVisitor {
     }
     
     public mutating func visitResources(_ resources: Resources) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitTile(_ tile: Tile) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitComment(_ comment: Comment) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitTutorialArticle(_ article: TutorialArticle) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitStack(_ stack: Stack) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
     
     public mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> MarkdownOutputNode? {
-        print(#function)
         return nil
     }
 }
