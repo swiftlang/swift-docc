@@ -31,14 +31,14 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     private var lastHeading: String? = nil
     
     /// Perform actions while rendering a link list, which affects the output formatting of links
-    public mutating func withRenderingLinkList(_ process: (inout Self) -> Void) {
+    mutating func withRenderingLinkList(_ process: (inout Self) -> Void) {
         isRenderingLinkList = true
         process(&self)
         isRenderingLinkList = false
     }
     
     /// Perform actions while removing a base level of indentation, typically while processing the contents of block directives.
-    public mutating func withRemoveIndentation(from base: (any Markup)?, process: (inout Self) -> Void) {
+    mutating func withRemoveIndentation(from base: (any Markup)?, process: (inout Self) -> Void) {
         indentationToRemove = nil
         if let toRemove = base?
             .format()
@@ -89,7 +89,7 @@ extension MarkdownOutputMarkupWalker {
 
 extension MarkdownOutputMarkupWalker {
     
-    public mutating func defaultVisit(_ markup: any Markup) -> () {
+    mutating func defaultVisit(_ markup: any Markup) -> () {
         var output = markup.format()
         if let indentationToRemove, output.hasPrefix(indentationToRemove) {
             output.removeFirst(indentationToRemove.count)
@@ -97,7 +97,7 @@ extension MarkdownOutputMarkupWalker {
         markdown.append(output)
     }
         
-    public mutating func visitHeading(_ heading: Heading) -> () {
+    mutating func visitHeading(_ heading: Heading) -> () {
         startNewParagraphIfRequired()
         markdown.append(heading.detachedFromParent.format())
         if heading.level > 1 {
@@ -105,7 +105,7 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    public mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> () {
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> () {
         guard isRenderingLinkList else {
             return defaultVisit(unorderedList)
         }
@@ -117,7 +117,7 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    public mutating func visitImage(_ image: Image) -> () {
+    mutating func visitImage(_ image: Image) -> () {
         guard let source = image.source else {
             return
         }
@@ -131,12 +131,12 @@ extension MarkdownOutputMarkupWalker {
         markdown.append("![\(image.altText ?? "")](images/\(bundle.id)/\(filename))")
     }
        
-    public mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> () {
+    mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> () {
         startNewParagraphIfRequired()
         markdown.append(codeBlock.detachedFromParent.format())
     }
     
-    public mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> () {
+    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> () {
         guard
             let destination = symbolLink.destination,
             let resolved = context.referenceIndex[destination],
@@ -169,7 +169,7 @@ extension MarkdownOutputMarkupWalker {
         visit(linkListAbstract)
     }
     
-    public mutating func visitLink(_ link: Link) -> () {
+    mutating func visitLink(_ link: Link) -> () {
         guard
             link.isAutolink,
             let destination = link.destination,
@@ -206,11 +206,11 @@ extension MarkdownOutputMarkupWalker {
     }
     
     
-    public mutating func visitSoftBreak(_ softBreak: SoftBreak) -> () {
+    mutating func visitSoftBreak(_ softBreak: SoftBreak) -> () {
         markdown.append("\n")
     }
         
-    public mutating func visitParagraph(_ paragraph: Paragraph) -> () {
+    mutating func visitParagraph(_ paragraph: Paragraph) -> () {
         
         startNewParagraphIfRequired()
         
@@ -219,7 +219,7 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    public mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> () {
+    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> () {
         
         switch blockDirective.name {
         case VideoMedia.directiveName:

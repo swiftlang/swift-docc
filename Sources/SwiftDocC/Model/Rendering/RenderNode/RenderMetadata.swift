@@ -249,7 +249,6 @@ extension RenderMetadata: Codable {
         public static let color = CodingKeys(stringValue: "color")
         public static let customMetadata = CodingKeys(stringValue: "customMetadata")
         public static let hasNoExpandedDocumentation = CodingKeys(stringValue: "hasNoExpandedDocumentation")
-        public static let hasGeneratedMarkdown = CodingKeys(stringValue: "hasGeneratedMarkdown")
     }
     
     public init(from decoder: any Decoder) throws {
