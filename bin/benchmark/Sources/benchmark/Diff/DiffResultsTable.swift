@@ -11,18 +11,40 @@
 import Foundation
 
 struct DiffResultsTable {
-    static var columns: [(name: String, width: Int)] = [
-        ("Metric", 40),
-        ("Change", 15),
-        ("Before", 20),
-        ("After", 20),
-    ]
-    static var totalWidth: Int {
-        return columns.reduce(0, { $0 + $1.width + 3 }) - 1
+    struct Columns {
+        typealias Column = (name: String, width: Int)
+        var data: [Column]
+        
+        init() {
+            data = [
+                ("Metric", 40),
+                ("Change", 15),
+                ("Before", 20),
+                ("After", 20),
+            ]
+        }
+        
+        var beforeInfo: Column {
+            get { data[2] }
+            set { data[2] = newValue }
+        }
+        
+        var afterInfo: Column {
+            get { data[3] }
+            set { data[3] = newValue }
+        }
+        
+        var totalWidth: Int {
+            data.reduce(0, { $0 + $1.width + 3 }) - 1
+        }
+        
+        var names: [String] {
+            data.map { $0.name }
+        }
     }
     
     private(set) var output: String
-    init(results: DiffResults) {
+    init(results: DiffResults, columns: Columns) {
         var output = ""
         
         let allWarnings = results.analysis.flatMap { $0.warnings ?? [] }
@@ -30,9 +52,10 @@ struct DiffResultsTable {
             output += "\(warning)\n"
         }
         
-        output += "┌\(String(repeating: "─", count: Self.totalWidth))┐\n"
-        output += Self.formattedRow(columnValues: Self.columns.map { $0.name })
-        output += "├\(String(repeating: "─", count: Self.totalWidth))┤\n"
+        let totalWidth = columns.totalWidth
+        output += "┌\(String(repeating: "─", count: totalWidth))┐\n"
+        output += Self.formattedRow(columns: columns)
+        output += "├\(String(repeating: "─", count: totalWidth))┤\n"
         
         var footnoteCounter = 0
         
@@ -61,10 +84,16 @@ struct DiffResultsTable {
                 footnoteCounter += footnotes.count
             }
             
-            output += Self.formattedRow(columnValues: [analysis.metricName, change, analysis.before ?? "-", analysis.after], colorInfo: colorInfo)
+            var analysisColumns = columns
+            analysisColumns.data[0].name = analysis.metricName
+            analysisColumns.data[1].name = change
+            analysisColumns.data[2].name = analysis.before ?? "-"
+            analysisColumns.data[3].name = analysis.after
+            
+            output += Self.formattedRow(columns: analysisColumns, colorInfo: colorInfo)
         }
                     
-        output += "└\(String(repeating: "─", count: Self.totalWidth))┘\n"
+        output += "└\(String(repeating: "─", count: totalWidth))┘\n"
         
         let allFootnotes = results.analysis.flatMap { $0.footnotes ?? [] }
         if !allFootnotes.isEmpty {
@@ -117,9 +146,9 @@ struct DiffResultsTable {
         let upTo: String.Index
     }
     
-    private static func formattedRow(columnValues: [String], colorInfo: [ColumnColorInfo] = []) -> String {
-        let values: [String] = columnValues.enumerated().map { (index, value) in
-            let row = value.padding(toLength: Self.columns[index].width, withPad: " ", startingAt: 0)
+    private static func formattedRow(columns: Columns, colorInfo: [ColumnColorInfo] = []) -> String {
+        let values: [String] = columns.names.enumerated().map { (index, value) in
+            let row = value.padding(toLength: columns.data[index].width, withPad: " ", startingAt: 0)
             if let colorInfo = colorInfo.first(where: { $0.index == index }) {
                 return String(row[..<colorInfo.upTo]).colored(colorInfo.color) + String(row[colorInfo.upTo...])
             }

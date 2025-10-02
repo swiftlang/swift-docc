@@ -15,8 +15,8 @@ import XCTest
 import Markdown
 
 class SnippetTests: XCTestCase {
-    func testNoPath() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
+    func testWarningAboutMissingPathPath() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         let source = """
         @Snippet()
         """
@@ -29,8 +29,8 @@ class SnippetTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.HasArgument.path", problems[0].diagnostic.identifier)
     }
 
-    func testHasInnerContent() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
+    func testWarningAboutInnerContent() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         let source = """
         @Snippet(path: "path/to/snippet") {
             This content shouldn't be here.
@@ -45,8 +45,8 @@ class SnippetTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.Snippet.NoInnerContentAllowed", problems[0].diagnostic.identifier)
     }
 
-    func testLinkResolves() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
+    func testParsesPath() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         let source = """
         @Snippet(path: "Test/Snippets/MySnippet")
         """
@@ -58,23 +58,50 @@ class SnippetTests: XCTestCase {
         XCTAssertNotNil(snippet)
         XCTAssertTrue(problems.isEmpty)
     }
-    
-    func testUnresolvedSnippetPathDiagnostic() async throws {
+    func testLinkResolvesWithoutOptionalPrefix() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "Snippets")
-        let source = """
-        @Snippet(path: "Test/Snippets/DoesntExist")
-        """
-        let document = Document(parsing: source, options: .parseBlockDirectives)
-        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: context.rootModules[0])
-        _ = resolver.visit(document)
-        XCTAssertEqual(1, resolver.problems.count)
-        resolver.problems.first.map {
-            XCTAssertEqual("org.swift.docc.unresolvedTopicReference", $0.diagnostic.identifier)
+        
+        for snippetPath in [
+            "/Test/Snippets/MySnippet",
+             "Test/Snippets/MySnippet",
+                  "Snippets/MySnippet",
+                           "MySnippet",
+        ] {
+            let source = """
+            @Snippet(path: "\(snippetPath)")
+            """
+            let document = Document(parsing: source, options: .parseBlockDirectives)
+            var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: try XCTUnwrap(context.soleRootModuleReference))
+            _ = resolver.visit(document)
+            XCTAssertTrue(resolver.problems.isEmpty, "Unexpected problems: \(resolver.problems.map(\.diagnostic.summary))")
         }
     }
     
-    func testSliceResolves() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "Snippets")
+    func testWarningAboutUnresolvedSnippetPath() async throws {
+        let (bundle, context) = try await testBundleAndContext(named: "Snippets")
+        
+        for snippetPath in [
+            "/Test/Snippets/DoesNotExist",
+             "Test/Snippets/DoesNotExist",
+                  "Snippets/DoesNotExist",
+                           "DoesNotExist",
+        ] {
+            let source = """
+            @Snippet(path: "\(snippetPath)")
+            """
+            let document = Document(parsing: source, options: .parseBlockDirectives)
+            var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: try XCTUnwrap(context.soleRootModuleReference))
+            _ = resolver.visit(document)
+            XCTAssertEqual(1, resolver.problems.count)
+            let problem = try XCTUnwrap(resolver.problems.first)
+            XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.unresolvedSnippetPath")
+            XCTAssertEqual(problem.diagnostic.summary, "Snippet named 'DoesNotExist' couldn't be found")
+            XCTAssertEqual(problem.possibleSolutions.count, 0)
+        }
+    }
+    
+    func testParsesSlice() async throws {
+        let (bundle, _) = try await testBundleAndContext()
         let source = """
         @Snippet(path: "Test/Snippets/MySnippet", slice: "foo")
         """

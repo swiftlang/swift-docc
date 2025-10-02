@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,23 +30,6 @@ import Foundation
  ```
  */
 public struct LineHighlighter {
-    /**
-     A local utility type to hold incremental results.
-    */
-    private struct IncrementalResult {
-        /// The previous ``Code`` element to compare.
-        /// If this is the first ``Step``'s ``Code``, this will be `nil`.
-        let previousCode: Code?
-        
-        /// The highlight results accumulated so far.
-        let results: [Result]
-        
-        init(previousCode: Code? = nil, results: [Result] = []) {
-            self.previousCode = previousCode
-            self.results = results
-        }
-    }
-    
     /**
      The final resulting highlights for a given file.
      */
@@ -100,7 +83,7 @@ public struct LineHighlighter {
     }
     
     /// The lines in the `resource` file.
-    private func lines(of resource: ResourceReference) -> [String]? {
+    private func lines(of resource: borrowing ResourceReference) -> [String]? {
         let fileContent: String?
         // Check if the file is a local asset that can be read directly from the context
         if let fileData = try? context.resource(with: resource) {
@@ -118,7 +101,7 @@ public struct LineHighlighter {
     }
     
     /// Returns the line highlights between two files.
-    private func lineHighlights(old: ResourceReference, new: ResourceReference) -> Result {
+    private func lineHighlights(old: borrowing ResourceReference, new: ResourceReference) -> Result {
         // Retrieve the contents of the current file and the file we're comparing against.
         guard let oldLines = lines(of: old), let newLines = lines(of: new) else {
             return Result(file: new, highlights: [])
@@ -138,7 +121,7 @@ public struct LineHighlighter {
     }
     
     /// Returns the line highlights between two ``Code`` elements.
-    private func lineHighlights(old: Code?, new: Code) -> Result {
+    private func lineHighlights(old: consuming Code?, new: borrowing Code) -> Result {
         if let previousFileOverride = new.previousFileReference {
             guard !new.shouldResetDiff else {
                 return Result(file: new.fileReference, highlights: [])
@@ -157,11 +140,17 @@ public struct LineHighlighter {
     
     /// The highlights to apply for the given ``TutorialSection``.
     var highlights: [Result] {
-        return tutorialSection.stepsContent?.steps
-            .compactMap { $0.code }
-            .reduce(IncrementalResult(), { (incrementalResult, newCode) -> IncrementalResult in
-                let result = lineHighlights(old: incrementalResult.previousCode, new: newCode)
-                return IncrementalResult(previousCode: newCode, results: incrementalResult.results + [result])
-            }).results ?? []
+        guard let steps = tutorialSection.stepsContent?.steps else { return [] }
+        
+        var previousCode: Code? = nil
+        var results: [Result] = []
+        
+        for step in steps {
+            guard let newCode = step.code else { continue }
+            results.append(lineHighlights(old: previousCode, new: newCode))
+            previousCode = newCode
+        }
+        
+        return results
     }
 }
