@@ -5497,7 +5497,7 @@ let expected = """
                 let entity = try context.entity(with: reference)
                 let renderNode = try XCTUnwrap(converter.convert(entity))
                 
-                return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+                return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
             }
             let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
             

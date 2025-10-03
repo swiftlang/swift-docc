@@ -1003,11 +1003,6 @@ class ConvertActionTests: XCTestCase {
                         title: "TestBed",
                         language: .swift,
                         abstract: "TestBed abstract.",
-                        taskGroups: [
-                            .init(title: "Basics", identifiers: ["doc://com.test.example/documentation/TestBundle/Article"]),
-                            .init(title: "Articles", identifiers: ["doc://com.test.example/documentation/TestBundle/SampleArticle"]),
-                            .init(title: "Structures", identifiers: ["doc://com.test.example/documentation/TestBed/A"]),
-                        ],
                         usr: "TestBed",
                         availableLanguages: [.swift],
                         platforms: nil,
@@ -1025,7 +1020,6 @@ class ConvertActionTests: XCTestCase {
                         title: "A",
                         language: .swift,
                         abstract: "An abstract.",
-                        taskGroups: [],
                         usr: "s:7TestBed1AV",
                         availableLanguages: [.swift],
                         platforms: nil,
@@ -1043,7 +1037,6 @@ class ConvertActionTests: XCTestCase {
                         title: "This is an article",
                         language: .swift,
                         abstract: "Article abstract.",
-                        taskGroups: [],
                         availableLanguages: [.swift],
                         platforms: nil,
                         topicImages: nil,
@@ -1060,7 +1053,6 @@ class ConvertActionTests: XCTestCase {
                         title: "Sample Article",
                         language: .swift,
                         abstract: "Sample abstract.",
-                        taskGroups: [],
                         availableLanguages: [.swift],
                         platforms: nil,
                         topicImages: nil,
@@ -1161,22 +1153,7 @@ class ConvertActionTests: XCTestCase {
         }
 
         // Rather than comparing all the linkable entities in the file, pull out one overload group
-        // and check its task groups
-        let overloadGroupEntity = try XCTUnwrap(resultLikableEntities.first(where: { $0.usr == "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSdSS_tF::OverloadGroup" }))
-
-        let taskGroups = try XCTUnwrap(overloadGroupEntity.taskGroups)
-        guard taskGroups.count == 1, let overloadTaskGroup = taskGroups.first else {
-            XCTFail("Expected one task group, found \(taskGroups.count): \(taskGroups.map(\.title?.singleQuoted))")
-            return
-        }
-
-        XCTAssertEqual(overloadTaskGroup.title, "Overloads")
-        XCTAssertEqual(Set(overloadTaskGroup.identifiers), [
-            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-91hxs",
-            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx",
-            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-8iuz7",
-            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-1h173",
-        ])
+        XCTAssertTrue(resultLikableEntities.contains(where: { $0.usr == "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSdSS_tF::OverloadGroup" }))
     }
 
     func testDownloadMetadataIsWrittenToOutputFolder() async throws {
@@ -1407,7 +1384,6 @@ class ConvertActionTests: XCTestCase {
                         title: "Making an Augmented Reality App",
                         language: .swift,
                         abstract: "This is an abstract for the intro.",
-                        taskGroups: [.init(title: nil, identifiers: [reference.withFragment("Section-Name").absoluteString])],
                         availableLanguages: [.swift],
                         platforms: nil,
                         topicImages: nil,
@@ -1421,7 +1397,6 @@ class ConvertActionTests: XCTestCase {
                         title: "Section Name",
                         language: .swift,
                         abstract: nil,
-                        taskGroups: [],
                         availableLanguages: [.swift],
                         platforms: nil,
                         topicImages: nil,
@@ -1438,7 +1413,6 @@ class ConvertActionTests: XCTestCase {
                         title: "Technology X",
                         language: .swift,
                         abstract: "Learn about some stuff in Technology X.",
-                        taskGroups: [.init(title: nil, identifiers: [reference.appendingPath("Volume-1").absoluteString])],
                         availableLanguages: [.swift],
                         platforms: nil,
                         topicImages: nil,
@@ -3199,7 +3173,6 @@ private extension LinkDestinationSummary {
         title: String,
         language: SourceLanguage,
         abstract: String?,
-        taskGroups: [TaskGroup],
         usr: String? = nil,
         availableLanguages: Set<SourceLanguage>,
         platforms: [PlatformAvailability]?,
@@ -3216,7 +3189,6 @@ private extension LinkDestinationSummary {
             abstract: abstract.map { [.text($0)] },
             availableLanguages: availableLanguages,
             platforms: platforms,
-            taskGroups: taskGroups,
             usr: usr,
             subheadingDeclarationFragments: nil,
             redirects: redirects,
