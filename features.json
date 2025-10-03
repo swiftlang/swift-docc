@@ -1,6 +1,9 @@
 {
   "features": [
     {
+      "name": "code-blocks"
+    },
+    {
       "name": "diagnostics-file"
     },
     {

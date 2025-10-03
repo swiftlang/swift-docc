@@ -124,12 +124,26 @@ public enum RenderBlockContent: Equatable {
         public var code: [String]
         /// Additional metadata for this code block.
         public var metadata: RenderContentMetadata?
+        public var copyToClipboard: Bool
+
+        public enum OptionName: String, CaseIterable {
+            case nocopy
+
+            init?(caseInsensitive raw: some StringProtocol) {
+                self.init(rawValue: raw.lowercased())
+            }
+        }
+
+        public static var knownOptions: Set<String> {
+            Set(OptionName.allCases.map(\.rawValue))
+        }
 
         /// Make a new `CodeListing` with the given data.
-        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?) {
+        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled) {
             self.syntax = syntax
             self.code = code
             self.metadata = metadata
+            self.copyToClipboard = copyToClipboard
         }
     }
 
@@ -697,7 +711,7 @@ extension RenderBlockContent.Table: Codable {
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
         case type
-        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start
+        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start, copyToClipboard
         case request, response
         case header, rows
         case numberOfColumns, columns
@@ -719,11 +733,13 @@ extension RenderBlockContent: Codable {
             }
             self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))
         case .codeListing:
+            let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
             self = try .codeListing(.init(
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
-                metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
-            ))
+                metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata),
+                copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? copy
+                ))
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
         case .orderedList:
@@ -826,6 +842,7 @@ extension RenderBlockContent: Codable {
             try container.encode(l.syntax, forKey: .syntax)
             try container.encode(l.code, forKey: .code)
             try container.encodeIfPresent(l.metadata, forKey: .metadata)
+            try container.encode(l.copyToClipboard, forKey: .copyToClipboard)
         case .heading(let h):
             try container.encode(h.level, forKey: .level)
             try container.encode(h.text, forKey: .text)
