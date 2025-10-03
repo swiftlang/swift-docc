@@ -189,12 +189,12 @@ class SymbolDisambiguationTests: XCTestCase {
     }
     
     func testMixedLanguageFramework() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let (inputs, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
         
-        var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
+        var loader = SymbolGraphLoader(bundle: inputs, dataProvider: context.dataProvider)
         try loader.loadAll()
         
-        let references = context.linkResolver.localResolver.referencesForSymbols(in: loader.unifiedGraphs, bundle: bundle, context: context).mapValues(\.path)
+        let references = context.linkResolver.localResolver.referencesForSymbols(in: loader.unifiedGraphs, context: context).mapValues(\.path)
         XCTAssertEqual(Set(references.keys), [
             SymbolGraph.Symbol.Identifier(precise: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"),
             .init(precise: "c:@E@Foo", interfaceLanguage: "swift"),
@@ -321,7 +321,7 @@ class SymbolDisambiguationTests: XCTestCase {
         let uniqueSymbolCount = Set(swiftSymbols.map(\.preciseID) + objectiveCSymbols.map(\.preciseID)).count
         XCTAssertEqual(unified.symbols.count, uniqueSymbolCount)
         
-        let bundle = DocumentationBundle(
+        let inputs = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "SymbolDisambiguationTests",
                 id: "com.test.SymbolDisambiguationTests"),
@@ -335,8 +335,8 @@ class SymbolDisambiguationTests: XCTestCase {
             objcSymbolGraphURL: try JSONEncoder().encode(graph2),
         ], fallback: nil)
         
-        let context = try await DocumentationContext(bundle: bundle, dataProvider: provider)
+        let context = try await DocumentationContext(bundle: inputs, dataProvider: provider)
         
-        return context.linkResolver.localResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], bundle: bundle, context: context)
+        return context.linkResolver.localResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], context: context)
     }
 }

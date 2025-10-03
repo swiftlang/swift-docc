@@ -88,8 +88,8 @@ class DoxygenTests: XCTestCase {
                 )),
             ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
 
         // Verify the expected content in the in-memory model
         let node = try context.entity(with: reference)
@@ -103,7 +103,7 @@ class DoxygenTests: XCTestCase {
         ])
 
         // Verify the expected content in the render model
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
 
         XCTAssertEqual(renderNode.abstract, [.text("This is an abstract.")])

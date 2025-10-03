@@ -23,12 +23,10 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             An empty root page
             """)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-        
+        let (_, context) = try await loadBundle(catalog: catalog)
         let outputConsumer = TestOutputConsumer()
         
         _ = try ConvertActionConverter.convert(
-            bundle: bundle,
             context: context,
             outputConsumer: outputConsumer,
             sourceRepository: nil,
@@ -49,12 +47,10 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             This link will result in a warning: ``NotFound``.
             """)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-        
+        let (_, context) = try await loadBundle(catalog: catalog)
         let outputConsumer = TestOutputConsumer()
         
         _ = try ConvertActionConverter.convert(
-            bundle: bundle,
             context: context,
             outputConsumer: outputConsumer,
             sourceRepository: nil,

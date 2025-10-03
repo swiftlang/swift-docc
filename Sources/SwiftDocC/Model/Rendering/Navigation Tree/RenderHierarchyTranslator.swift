@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,18 +13,15 @@ import Foundation
 /// A hierarchy translator that converts a part of the topic graph into a hierarchy tree.
 struct RenderHierarchyTranslator {
     var context: DocumentationContext
-    var bundle: DocumentationBundle
     
     var collectedTopicReferences = Set<ResolvedTopicReference>()
     var linkReferences = [String: LinkReference]()
     
-    /// Creates a new translator for the given bundle in the given context.
+    /// Creates a new translator for the given context.
     /// - Parameters:
     ///   - context: The documentation context for the conversion.
-    ///   - bundle: The documentation bundle for the conversion.
-    init(context: DocumentationContext, bundle: DocumentationBundle) {
+    init(context: DocumentationContext) {
         self.context = context
-        self.bundle = bundle
     }
     
     static let assessmentsAnchor = urlReadableFragment(TutorialAssessmentsRenderSection.title)
@@ -164,7 +161,7 @@ struct RenderHierarchyTranslator {
             let assessmentReference = ResolvedTopicReference(bundleID: tutorialReference.bundleID, path: tutorialReference.path, fragment: RenderHierarchyTranslator.assessmentsAnchor, sourceLanguage: .swift)
             renderHierarchyTutorial.landmarks.append(RenderHierarchyLandmark(reference: RenderReferenceIdentifier(assessmentReference.absoluteString), kind: .assessment))
             
-            let urlGenerator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+            let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
             let assessmentLinkReference = LinkReference(
                 identifier: RenderReferenceIdentifier(assessmentReference.absoluteString),
                 title: "Check Your Understanding",

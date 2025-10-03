@@ -391,12 +391,8 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         let reference = try XCTUnwrap(context.soleRootModuleReference, "This example catalog only has a root page")
         
         let converter = DocumentationContextConverter(
-            bundle: context.bundle,
             context: context,
-            renderContext: RenderContext(
-                documentationContext: context,
-                bundle: context.bundle
-            )
+            renderContext: RenderContext(documentationContext: context)
         )
         let renderNode = try XCTUnwrap(converter.renderNode(for: context.entity(with: reference)))
         

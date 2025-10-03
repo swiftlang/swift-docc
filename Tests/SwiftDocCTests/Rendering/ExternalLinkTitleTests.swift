@@ -24,8 +24,8 @@ class ExternalLinkTitleTests: XCTestCase {
                                      semantic: Semantic())
         
         
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let result = translator.visit(MarkupContainer(document.children)) as! [RenderBlockContent]
         
         return (translator, result)
