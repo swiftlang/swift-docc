@@ -275,10 +275,10 @@ class ExternalRenderNodeTests: XCTestCase {
         
         // Verify that the curated external links are part of the index.
         let swiftExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .swift))
-        XCTAssertEqual(swiftExternalNodes.count, 2)
+        XCTAssertEqual(swiftExternalNodes.count, 3)
 
         let objcExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .objectiveC))
-        XCTAssertEqual(objcExternalNodes.count, 2)
+        XCTAssertEqual(objcExternalNodes.count, 3)
 
         let swiftArticleExternalNode = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/swiftarticle" }))
         let swiftSymbolExternalNode = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/swiftsymbol" }))
@@ -300,6 +300,19 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(objcSymbolExternalNode.title, "- (void) ObjCSymbol")
         XCTAssertEqual(objcSymbolExternalNode.isBeta, false)
         XCTAssertEqual(objcSymbolExternalNode.type, "func")
+
+        // External articles curated in the Topics section appear in all language variants. This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
+        // FIXME: This should ideally be solved by making the article language-agnostic rather than accomodating the "Swift" language and special-casing for non-symbols.
+        let swiftArticleInObjcTree = try XCTUnwrap(objcExternalNodes.first(where: { $0.path == "/path/to/external/swiftarticle" }))
+        let objcArticleInSwiftTree = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/objcarticle" }))
+
+        XCTAssertEqual(swiftArticleInObjcTree.title, "SwiftArticle")
+        XCTAssertEqual(swiftArticleInObjcTree.isBeta, false)
+        XCTAssertEqual(swiftArticleInObjcTree.type, "article")
+
+        XCTAssertEqual(objcArticleInSwiftTree.title, "ObjCArticle")
+        XCTAssertEqual(objcArticleInSwiftTree.isBeta, true)
+        XCTAssertEqual(objcArticleInSwiftTree.type, "article")
     }
     
     func testNavigatorWithExternalNodesWithNavigatorTitle() async throws {
@@ -440,11 +453,11 @@ class ExternalRenderNodeTests: XCTestCase {
         let swiftExternalNodes = (renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
         let objcExternalNodes  = (renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
         XCTAssertEqual(swiftExternalNodes.count, 1)
-        XCTAssertEqual(objcExternalNodes.count, 1)
+        XCTAssertEqual(objcExternalNodes.count, 2)
         XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle"])
-        XCTAssertEqual(objcExternalNodes.map(\.title), ["- (void) ObjCSymbol"])
+        XCTAssertEqual(objcExternalNodes.map(\.title), ["- (void) ObjCSymbol", "SwiftArticle"])
         XCTAssertEqual(swiftExternalNodes.map(\.type), ["article"])
-        XCTAssertEqual(objcExternalNodes.map(\.type), ["func"])
+        XCTAssertEqual(objcExternalNodes.map(\.type), ["func", "article"])
     }
 
     func testExternalRenderNodeVariantRepresentationWhenIsBeta() throws {

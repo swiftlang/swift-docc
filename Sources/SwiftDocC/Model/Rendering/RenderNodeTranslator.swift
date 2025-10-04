@@ -1054,10 +1054,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                guard context.isSymbol(reference: reference) else {
-                    // If the reference corresponds to any kind except Symbol
-                    // (e.g., Article, Tutorial, SampleCode...), allow the topic
-                    // to appear independently of the source language it belongs to.
+                // If this is a reference to a non-symbol kind (article, tutorial, sample code, etc.),
+                // and is external to the bundle, then curate the topic irrespective of the source
+                // language of the page or reference, since non-symbol kinds are not tied to a language.
+                // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
+                // FIXME: This should ideally be solved by making the article language-agnostic rather
+                // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+                if !context.isSymbol(reference: reference) && context.isExternal(reference: reference) {
                     return true
                 }
                 
