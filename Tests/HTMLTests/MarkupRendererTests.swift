@@ -91,9 +91,9 @@ final class MarkupRendererTests: XCTestCase {
     func testRenderTables() async throws {
         try await assert(
             rendering: """
-            First  | Second  | 
-            ------ | ------- |
-            One    | Two     | 
+            First   | Second  | 
+            ------- | ------- |
+            **One** | _Two_   | 
             """,
             prettyFormatted: true,
             // It's weird that XMLNode doesn't indent the <table> children
@@ -107,8 +107,12 @@ final class MarkupRendererTests: XCTestCase {
             </thead>
             <tbody>
                 <tr>
-                    <td>One</td>
-                    <td>Two</td>
+                    <td>
+                        <b>One</b>
+                    </td>
+                    <td>
+                        <i>Two</i>
+                    </td>
                 </tr>
             </tbody>
             </table>

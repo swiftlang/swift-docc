@@ -361,9 +361,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
     
     mutating func visitTable(_ table: Table) -> XMLNode {
         let element = XMLElement(name: "table")
-        
-        var renderer = self // ???: Do we need to use a copy here?
-        
+                
         if !table.head.isEmpty {
             var column = 0
             
@@ -394,7 +392,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
                         
                         return .element(
                             named: "th",
-                            children: renderer.visit(cell.children),
+                            children: visit(cell.children),
                             attributes: attributes
                         )
                     })
@@ -431,7 +429,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
                         
                         return .element(
                             named: "td",
-                            children: renderer.visit(cell.children),
+                            children: visit(cell.children),
                             attributes: attributes
                         )
                     })
