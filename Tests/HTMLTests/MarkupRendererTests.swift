@@ -357,7 +357,10 @@ final class MarkupRendererTests: XCTestCase {
             matches: """
             <p>
             <a href="../../SomeClass/someMethod(_:_:)/index.html">
-                <code>someMethod(_:_:)</code>
+                <code>some<wbr/>
+                    Method(<wbr/>
+                    _:<wbr/>
+                    _:)</code>
             </a>
             </p>
             """
@@ -377,10 +380,48 @@ final class MarkupRendererTests: XCTestCase {
             matches: """
             <p>
             <a href="../../SomeClass/someMethod(_:_:)/index.html">
-                <code class="occ-only">doSomethingWithFirst:andSecond:</code>
-                <code class="swift-only">doSomething(with:and:)</code>
+                <code class="occ-only">do<wbr/>
+                    Something<wbr/>
+                    With<wbr/>
+                    First:<wbr/>
+                    and<wbr/>
+                    Second:</code>
+                <code class="swift-only">do<wbr/>
+                    Something(<wbr/>
+                    with:<wbr/>
+                    and:)</code>
             </a>
             </p>
+            """
+        )
+        
+        // Link with custom title
+        try await assert(
+            rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
+            elementToReturn: .init(
+                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
+                names: .languageSpecificSymbol([
+                    SourceLanguage.swift.id : "doSomething(with:and:)",
+                    SourceLanguage.objectiveC.id: "doSomethingWithFirst:andSecond:",
+                ])
+            ),
+            matches: """
+            <p><a href="../../SomeClass/someMethod(_:_:)/index.html">Custom <i>formatted</i> title</a></p>
+            """
+        )
+        
+        // Link with custom symbol-like title
+        try await assert(
+            rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
+            elementToReturn: .init(
+                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
+                names: .languageSpecificSymbol([
+                    SourceLanguage.swift.id : "doSomething(with:and:)",
+                    SourceLanguage.objectiveC.id: "doSomethingWithFirst:andSecond:",
+                ])
+            ),
+            matches: """
+            <p><a href="../../SomeClass/someMethod(_:_:)/index.html">Some <code>Custom<wbr/>Symbol<wbr/>Name</code> title</a></p>
             """
         )
     }

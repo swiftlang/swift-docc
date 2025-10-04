@@ -79,6 +79,8 @@ struct ContextLinkProvider: HTML.LinkProvider {
     }
 }
 
+private typealias MarkupRenderer = HTML.MarkupRenderer<ContextLinkProvider>
+
 struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
@@ -150,14 +152,14 @@ struct HTMLRenderer {
         hero.addChild(
             .element(
                 named: "h1",
-                children: [.text(node.name.plainText.replacingOccurrences(of: ":", with: ":\u{82}"))], // support breaking on parameters
+                children: [.text(node.name.plainText)],
                 attributes: ["class": "title"]
             )
         )
         
         // Abstract
         if let abstract = article.abstract {
-            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
+            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
             let paragraph = renderer.visitParagraph(abstract) as! XMLElement
             
             paragraph.addAttribute(
@@ -194,6 +196,7 @@ struct HTMLRenderer {
             separateCurationIfNeeded()
             articleElement.addChild(makeGroupedSection(topics))
         }
+        // Articles don't have automatic topic sections
         
         // See Also
         if let seeAlso = article.seeAlso {
@@ -210,8 +213,6 @@ struct HTMLRenderer {
                     .selfReferencingHeader(title: title)
                 )
             }
-            
-            
             if let heading = taskGroup.title {
                 section.addChild(
                     .selfReferencingHeader(level: 3, title: heading)
@@ -301,7 +302,7 @@ struct HTMLRenderer {
             hero.addChild(
                 .element(
                     named: "h1",
-                    children: makeWordBreakFor(title: variant),
+                    children: MarkupRenderer.wordBreak(symbolName: variant),
                     attributes: attributes
                 )
             )
@@ -309,7 +310,7 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = symbol.abstract {
-            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
+            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
             let paragraph = renderer.visitParagraph(abstract) as! XMLElement
             
             paragraph.addAttribute(
@@ -406,7 +407,7 @@ struct HTMLRenderer {
         
         // Deprecation message
         if let deprecationSummary = symbol.deprecatedSummary {
-            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
+            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
             var children: [XMLNode] = [
                 .element(named: "p", children: [.text("Deprecated")], attributes: ["class": "label"])
             ]
@@ -437,7 +438,7 @@ struct HTMLRenderer {
                 )
             }
             
-            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
+            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
             
             let list = XMLElement(name: "dl") // list
             section.addChild(list)
@@ -472,7 +473,7 @@ struct HTMLRenderer {
                 )
             }
             
-            var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
+            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
             
             for markup in returnsSection.content {
                 section.addChild(
@@ -580,30 +581,6 @@ struct HTMLRenderer {
         return makePage(main: main, title: symbol.title, plainDescription: symbol.abstract?.plainText)
     }
     
-    private func makeWordBreakFor(title: String) -> [XMLNode] {
-        
-        var result: [XMLNode] = []
-        
-        var remaining = title[...]
-        
-        while let splitIndex = remaining.firstIndex(where: { $0 == ":" || $0 == "(" || $0 == ")" }) {
-            var part = remaining[...splitIndex]
-            if part.first?.isWhitespace == true {
-                part = part.dropFirst()
-            }
-            result.append(.text(part))
-            
-            remaining = remaining[splitIndex...].dropFirst()
-            if !remaining.isEmpty {
-                result.append(.element(named: "wbr"))
-            }
-        }
-        
-        result.append(.text(remaining))
-        
-        return result
-    }
-    
     private func makeDiscussion(_ discussion: DiscussionSection, isSymbol: Bool) -> XMLNode {
         let section = XMLElement(name: "section")
         
@@ -614,7 +591,7 @@ struct HTMLRenderer {
             )
         }
         
-        var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
+        var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
         
         var remaining = discussion.content[...]
         if let heading = discussion.content.first as? Heading, heading.level == 2 {
@@ -667,7 +644,7 @@ struct HTMLRenderer {
     }
     
     private func makeTopicSectionItem(for reference: ResolvedTopicReference) -> XMLNode? {
-        var renderer = HTML.MarkupRenderer(path: filePath, linkProvider: linkProvider)
+        var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
         
         if let local = context.documentationCache[reference] {
             let container = XMLNode.element(named: "div")//, attributes: ["class": className])
@@ -701,7 +678,7 @@ struct HTMLRenderer {
                                             "decorator"
                                     }
                                     
-                                    return .element(named: "span", children: makeWordBreakFor(title: fragment.spelling), attributes: ["class": className])
+                                    return .element(named: "span", children: MarkupRenderer.wordBreak(symbolName: fragment.spelling), attributes: ["class": className])
                                 },
                                 attributes: ["class": "\(lang)-only"]
                             )
