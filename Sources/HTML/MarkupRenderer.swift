@@ -213,8 +213,8 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
                     }
                     
                 case .languageSpecificSymbol(let namesByLanguageID):
-                    namesByLanguageID.sorted(by: { $0.key < $1.key }).map { languageID, name in
-                            .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name), attributes: ["class": "\(languageID)-only"])
+                    RenderHelpers.sortedLanguageSpecificNames(namesByLanguageID).map { languageID, name in
+                        .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name), attributes: ["class": "\(languageID)-only"])
                     }
             }
             
@@ -257,7 +257,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
                 }
                 
             case .languageSpecificSymbol(let namesByLanguageID):
-                namesByLanguageID.sorted(by: { $0.key < $1.key }).map { languageID, name in
+                RenderHelpers.sortedLanguageSpecificNames(namesByLanguageID).map { languageID, name in
                     .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name), attributes: ["class": "\(languageID)-only"])
                 }
         }

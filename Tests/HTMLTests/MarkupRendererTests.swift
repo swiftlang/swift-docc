@@ -384,16 +384,16 @@ final class MarkupRendererTests: XCTestCase {
             matches: """
             <p>
             <a href="../../SomeClass/someMethod(_:_:)/index.html">
+                <code class="swift-only">do<wbr/>
+                    Something(<wbr/>
+                    with:<wbr/>
+                    and:)</code>
                 <code class="occ-only">do<wbr/>
                     Something<wbr/>
                     With<wbr/>
                     First:<wbr/>
                     and<wbr/>
                     Second:</code>
-                <code class="swift-only">do<wbr/>
-                    Something(<wbr/>
-                    with:<wbr/>
-                    and:)</code>
             </a>
             </p>
             """

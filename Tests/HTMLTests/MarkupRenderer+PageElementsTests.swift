@@ -40,8 +40,8 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
             </li>
             <li>
                 <a href="../../index.html">
-                    <span class="occ-only">TLASomething</span>
                     <span class="swift-only">Something</span>
+                    <span class="occ-only">TLASomething</span>
                 </a>
             </li>
             <li>ThisPage</li>

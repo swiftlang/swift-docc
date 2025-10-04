@@ -53,6 +53,20 @@ package enum RenderHelpers {
         
         return result
     }
+    
+    /// Returns the language specific symbol names sorted by the language.
+    package static func sortedLanguageSpecificNames(_ namesByLanguageID: [String /* language ID */: String]) -> some Sequence<(key: String, value: String)> {
+        namesByLanguageID.sorted(by: { lhs, rhs in
+            // Sort Swift before other languages.
+            if lhs.key == "swift" {
+                return true
+            } else if rhs.key == "swift" {
+                return false
+            }
+            // Otherwise, sort by ID for a stable order.
+            return lhs.key < rhs.key
+        })
+    }
 }
 
 private extension UTF8.CodeUnit {
