@@ -17,7 +17,7 @@ import HTML
 import Markdown
 import SymbolKit
 
-struct ContextLinkProvider: HTML.LinkProvider {
+private struct ContextLinkProvider: HTML.LinkProvider {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
     
@@ -58,7 +58,7 @@ struct ContextLinkProvider: HTML.LinkProvider {
         }
         
         return .init(
-            path: node.reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html"),
+            path: Self.filePath(for: node.reference),
             names: names
         )
     }
@@ -77,6 +77,10 @@ struct ContextLinkProvider: HTML.LinkProvider {
         
         return .init(images: images)
     }
+    
+    static func filePath(for reference: ResolvedTopicReference) -> URL {
+        reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html")
+    }
 }
 
 struct HTMLRenderer {
@@ -87,12 +91,17 @@ struct HTMLRenderer {
     private let linkProvider: ContextLinkProvider
     private let filePath: URL
     
+    private var renderer: MarkupRenderer<ContextLinkProvider>
+    
     init(reference: ResolvedTopicReference, context: DocumentationContext, renderContext: RenderContext) {
         self.reference = reference
         self.context = context
         self.renderContext = renderContext
-        self.linkProvider = .init(reference: reference, context: context)
-        self.filePath = reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html")
+        let linkProvider = ContextLinkProvider(reference: reference, context: context)
+        self.linkProvider = linkProvider
+        let filePath = reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html")
+        self.filePath = filePath
+        self.renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
     }
     
     private func path(to destination: ResolvedTopicReference) -> String {
@@ -105,14 +114,6 @@ struct HTMLRenderer {
         let node = context.documentationCache[reference]!
         
         let main = XMLElement(name: "main")
-        
-        let breadcrumbs = context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]
-        let breadcrumbElements: [XMLNode] = breadcrumbs.map {
-            let node = context.documentationCache[$0]!
-            
-            return .element(named: "a", children: [.text(node.name.plainText)], attributes: ["href": path(to: $0)])
-        }
-        
         let articleElement = XMLElement(name: "article")
         main.addChild(articleElement)
         
@@ -124,15 +125,9 @@ struct HTMLRenderer {
         // Breadcrumbs and Eyebrow
         hero.addChild(
             .element(named: "header", children: [
-                .element(named: "nav", children: [
-                    .element(
-                        named: "ul",
-                        children: (breadcrumbElements + [.text(node.name.plainText)]).map {
-                            .element(named: "li", children: [$0])
-                        },
-                        attributes: ["id": "breadcrumbs"]
-                    )
-                ]),
+                renderer.breadcrumbs(
+                    references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { ContextLinkProvider.filePath(for: $0) }
+                ),
                 
                 .element(
                     named: "span",
@@ -235,14 +230,6 @@ struct HTMLRenderer {
         let isDeprecated = symbol.isDeprecated
         
         let main = XMLElement(name: "main")
-        
-        let breadcrumbs = context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []
-        let breadcrumbElements: [XMLNode] = breadcrumbs.map {
-            let node = context.documentationCache[$0]!
-            
-            return .element(named: "a", children: [.text(node.name.plainText)], attributes: ["href": path(to: $0)])
-        }
-        
         let articleElement = XMLElement(name: "article")
         main.addChild(articleElement)
         
@@ -259,15 +246,9 @@ struct HTMLRenderer {
         // Breadcrumbs and Eyebrow
         hero.addChild(
             .element(named: "header", children: [
-                .element(named: "nav", children: [
-                    .element(
-                        named: "ul",
-                        children: (breadcrumbElements + [.text(node.name.plainText)]).map {
-                            .element(named: "li", children: [$0], attributes: isDeprecated ? ["class": "deprecated"] : nil)
-                        },
-                        attributes: ["id": "breadcrumbs"]
-                    )
-                ]),
+                renderer.breadcrumbs(
+                    references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { ContextLinkProvider.filePath(for: $0) }
+                ),
                 
                 .element(
                     named: "span",
