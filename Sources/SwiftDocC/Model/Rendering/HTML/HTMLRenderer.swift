@@ -299,56 +299,19 @@ struct HTMLRenderer {
         }
         
         // Availability
-        if let availability = symbol.availability?.availability {
-            // ???: Do we want a div for this?
-            let container = XMLNode.element(named: "div", attributes: ["class": "availability"])
-            hero.addChild(container)
-            
-            for item in availability.filter({ $0.domain != nil }).sorted(by: \.domain!.rawValue) {
-                let name = item.domain!.rawValue
-                
-                let introducedVersion = item.introducedVersion.map {
-                    "\($0.major).\($0.minor)"
-                }
-                let deprecatedVersion = item.deprecatedVersion.map {
-                    "\($0.major).\($0.minor)"
-                }
-                
-                let short: String
-                let description: String
-                if let introducedVersion {
-                    if let deprecatedVersion {
-                        short = " \(introducedVersion)–\(deprecatedVersion)"
-                        description = "Introduced in \(name) \(introducedVersion) and deprecated in \(name) \(deprecatedVersion)"
-                    } else {
-                        short = " \(introducedVersion)+"
-                        description = "Available on \(introducedVersion) and later"
-                    }
-                } else {
-                    short = ""
-                    description = "Available on \(name)"
-                }
-                let text = "\(name) \(short)"
-                
-                var attributes = [
-                    "role": "text",
-                    "aria-label": "\(text), \(description)",
-                    "title": description
-                ]
-                if isDeprecated {
-                    attributes["class"] = "deprecated"
-                }
-                
-                // TODO: Add deprecated and beta badges
-                container.addChild(
-                    .element(
-                        named: "span",
-                        children: [.text(text)],
-                        attributes: attributes
+        if let availability = symbol.availability?.availability.filter({ $0.domain != nil }).sorted(by: \.domain!.rawValue),
+           !availability.isEmpty
+        {
+            hero.addChild(
+                renderer.availability(availability.map { item in
+                    .init(
+                        name: item.domain!.rawValue, // Verified non-empty above
+                        introduced: item.introducedVersion.map { "\($0.major).\($0.minor)" },
+                        deprecated: item.deprecatedVersion.map { "\($0.major).\($0.minor)" },
+                        isBeta: false // FIXME: Derive and pass beta information
                     )
-                )
-            }
-            
+                })
+            )
         }
         
         // Declaration
