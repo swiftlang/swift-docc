@@ -69,7 +69,7 @@ final class MarkupRenderer_WordBreakTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let withWordBreaks = MarkupRenderer<TestLinkProvider>.wordBreak(symbolName: symbolName)
+        let withWordBreaks = MarkupRenderer<SingleValueLinkProvider>.wordBreak(symbolName: symbolName)
             .map { $0.xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement] )}
             .joined(separator: "\n")
         

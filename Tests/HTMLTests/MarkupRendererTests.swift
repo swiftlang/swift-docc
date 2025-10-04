@@ -522,24 +522,38 @@ final class MarkupRendererTests: XCTestCase {
     ) async throws {
         var renderer = MarkupRenderer(
             path: try XCTUnwrap(URL(string: "/documentation/Something/ThisPage/index.html"), file: file, line: line),
-            linkProvider: TestLinkProvider(
+            linkProvider: SingleValueLinkProvider(
                 elementToReturn: elementToReturn,
                 assetToReturn: assetToReturn
             )
         )
         let htmlNodes = Document(parsing: markdownContent).children.map { renderer.visit($0) }
-        
-        let htmlString = if prettyFormatted {
-            htmlNodes.map { $0.xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement]) }.joined(separator: "\n")
-        } else {
-            htmlNodes.map { $0.xmlString(options: .nodeCompactEmptyElement) }.joined(separator: "")
-        }
+        let htmlString = htmlNodes.rendered(prettyFormatted: prettyFormatted)
         
         XCTAssertEqual(htmlString, expectedHTML, file: file, line: line)
     }
 }
 
-struct TestLinkProvider: LinkProvider {
+// MARK: Helpers
+
+extension XMLNode {
+    func rendered(prettyFormatted: Bool) -> String {
+        if prettyFormatted {
+            xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement])
+        } else {
+            xmlString(options: .nodeCompactEmptyElement)
+        }
+    }
+}
+
+extension Sequence<XMLNode> {
+    func rendered(prettyFormatted: Bool) -> String {
+        map { $0.rendered(prettyFormatted: prettyFormatted) }
+            .joined(separator: prettyFormatted ? "\n" : "")
+    }
+}
+
+struct SingleValueLinkProvider: LinkProvider {
     var elementToReturn: LinkedElement?
     func element(for path: URL) -> LinkedElement? {
         elementToReturn

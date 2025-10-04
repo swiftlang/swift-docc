@@ -269,7 +269,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         )
     }
     
-    private func path(to other: URL) -> String {
+    func path(to other: URL) -> String {
         let from = path
         let to   = other
         
