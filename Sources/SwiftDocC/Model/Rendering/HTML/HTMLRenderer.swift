@@ -79,8 +79,6 @@ struct ContextLinkProvider: HTML.LinkProvider {
     }
 }
 
-private typealias MarkupRenderer = HTML.MarkupRenderer<ContextLinkProvider>
-
 struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
@@ -302,7 +300,7 @@ struct HTMLRenderer {
             hero.addChild(
                 .element(
                     named: "h1",
-                    children: MarkupRenderer.wordBreak(symbolName: variant),
+                    children: RenderHelpers.wordBreak(symbolName: variant),
                     attributes: attributes
                 )
             )
@@ -678,7 +676,7 @@ struct HTMLRenderer {
                                             "decorator"
                                     }
                                     
-                                    return .element(named: "span", children: MarkupRenderer.wordBreak(symbolName: fragment.spelling), attributes: ["class": className])
+                                    return .element(named: "span", children: RenderHelpers.wordBreak(symbolName: fragment.spelling), attributes: ["class": className])
                                 },
                                 attributes: ["class": "\(lang)-only"]
                             )

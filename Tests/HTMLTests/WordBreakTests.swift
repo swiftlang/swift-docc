@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 import HTML
 
-final class MarkupRenderer_WordBreakTests: XCTestCase {
+final class WordBreakTests: XCTestCase {
     func testWordBreaks() {
         assertWordBreaks(for: "doSomething<Generic>(withFirst:andSecond:)", matches: """
         do
@@ -69,7 +69,7 @@ final class MarkupRenderer_WordBreakTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let withWordBreaks = MarkupRenderer<SingleValueLinkProvider>.wordBreak(symbolName: symbolName)
+        let withWordBreaks = RenderHelpers.wordBreak(symbolName: symbolName)
             .map { $0.xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement] )}
             .joined(separator: "\n")
         

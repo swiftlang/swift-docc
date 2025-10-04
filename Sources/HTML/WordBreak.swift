@@ -14,7 +14,7 @@ package import Foundation
 package import FoundationXML
 #endif
 
-extension MarkupRenderer {
+package enum RenderHelpers {
     /// Inserts `<wbr/>` elements into a symbol name so that it can wrap better on the rendered page.
     ///
     /// For example, a method call like this (below), inserts line break elements at the highlighted locations:

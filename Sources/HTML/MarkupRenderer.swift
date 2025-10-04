@@ -185,7 +185,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
             var customTitle = [XMLNode]()
             for child in link.inlineChildren {
                 if let code = child as? InlineCode {
-                    customTitle.append(.element(named: "code", children: Self.wordBreak(symbolName: code.code)))
+                    customTitle.append(.element(named: "code", children: RenderHelpers.wordBreak(symbolName: code.code)))
                 } else {
                     customTitle.append(visit(child))
                 }
@@ -209,12 +209,12 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
                 case .single(let name):
                     switch name {
                         case .conceptual(let name): [ .text(name) ]
-                        case .symbol(let name):     [ .element(named: "code", children: Self.wordBreak(symbolName: name)) ]
+                        case .symbol(let name):     [ .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name)) ]
                     }
                     
                 case .languageSpecificSymbol(let namesByLanguageID):
                     namesByLanguageID.sorted(by: { $0.key < $1.key }).map { languageID, name in
-                            .element(named: "code", children: Self.wordBreak(symbolName: name), attributes: ["class": "\(languageID)-only"])
+                            .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name), attributes: ["class": "\(languageID)-only"])
                     }
             }
             
@@ -253,12 +253,12 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
             case .single(let name):
                 switch name {
                     case .conceptual(let name): [ .text(name) ]
-                    case .symbol(let name):     [ .element(named: "code", children: Self.wordBreak(symbolName: name)) ]
+                    case .symbol(let name):     [ .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name)) ]
                 }
                 
             case .languageSpecificSymbol(let namesByLanguageID):
                 namesByLanguageID.sorted(by: { $0.key < $1.key }).map { languageID, name in
-                    .element(named: "code", children: Self.wordBreak(symbolName: name), attributes: ["class": "\(languageID)-only"])
+                    .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name), attributes: ["class": "\(languageID)-only"])
                 }
         }
         
