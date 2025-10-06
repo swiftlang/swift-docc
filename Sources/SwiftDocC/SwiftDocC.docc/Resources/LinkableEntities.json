@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Specification of the DocC linkable-entities.json digest file.",
-        "version": "0.3.0",
+        "version": "0.3.1",
         "title": "Linkable Entities"
     },
     "paths": { },
@@ -57,12 +57,6 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/PlatformAvailability"
-                        }
-                    },
-                    "taskGroups": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/TaskGroup"
                         }
                     },
                     "usr": {
@@ -182,13 +176,6 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/DeclarationToken"
-                        },
-                        "nullable": true
-                    },
-                    "taskGroups": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/TaskGroup"
                         },
                         "nullable": true
                     }
@@ -514,23 +501,6 @@
                     "beta": {
                         "type": "boolean",
                         "format": "true"
-                    }
-                }
-            },
-            "TaskGroup": {
-                "type": "object",
-                "required": [
-                    "identifiers"
-                ],
-                "properties": {
-                    "title": {
-                        "type": "string"
-                    },
-                    "identifiers": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
                     }
                 }
             },

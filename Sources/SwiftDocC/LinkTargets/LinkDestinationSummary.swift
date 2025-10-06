@@ -109,6 +109,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     //  wouldn't necessarily meet these new requirements.
     
     /// A collection of identifiers that all relate to some common task, as described by the title.
+    @available(*, deprecated, message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
     public struct TaskGroup: Codable, Equatable {
         /// The title of this task group
         public let title: String?
@@ -130,7 +131,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///
     /// - Note: It's possible for more than one task group to have the same title.
     /// - Note: This property represents conceptual children. Since See Also sections conceptually represent siblings they should not be included.
-    public let taskGroups: [TaskGroup]?
+    @available(*, deprecated, message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
+    public let taskGroups: [TaskGroup]? = nil
     
     /// The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     public let usr: String?
@@ -207,7 +209,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///
         /// If the summarized element has task groups but the variant doesn't, this property will be `Optional.some(nil)`.
-        public let taskGroups: VariantValue<[TaskGroup]?>
+        @available(*, deprecated, message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
+        public let taskGroups: VariantValue<[TaskGroup]?> = nil
         
         /// The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///
@@ -253,7 +256,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///   - relativePresentationURL: The relative presentation URL of the variant or `nil` if the relative is the same as the summarized element.
         ///   - title: The title of the variant or `nil` if the title is the same as the summarized element.
         ///   - abstract: The abstract of the variant or `nil` if the abstract is the same as the summarized element.
-        ///   - taskGroups: The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///   - usr: The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///   - plainTextDeclaration: The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the precise symbol identifier is the same as the summarized element.
         ///   - subheadingDeclarationFragments: The simplified "subheading" declaration fragments for this symbol, to display in topic groups, or `nil` if the declaration is the same as the summarized element.
@@ -265,7 +267,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
             relativePresentationURL: VariantValue<URL> = nil,
             title: VariantValue<String> = nil,
             abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
-            taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
             usr: VariantValue<String?> = nil,
             plainTextDeclaration: VariantValue<String?> = nil,
             subheadingDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
@@ -277,11 +278,38 @@ public struct LinkDestinationSummary: Codable, Equatable {
             self.relativePresentationURL = relativePresentationURL
             self.title = title
             self.abstract = abstract
-            self.taskGroups = taskGroups
             self.usr = usr
             self.plainTextDeclaration = plainTextDeclaration
             self.subheadingDeclarationFragments = subheadingDeclarationFragments
             self.navigatorDeclarationFragments = navigatorDeclarationFragments
+        }
+        
+        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
+        public init(
+            traits: [RenderNode.Variant.Trait],
+            kind: VariantValue<DocumentationNode.Kind> = nil,
+            language: VariantValue<SourceLanguage> = nil,
+            relativePresentationURL: VariantValue<URL> = nil,
+            title: VariantValue<String> = nil,
+            abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
+            taskGroups _: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
+            usr: VariantValue<String?> = nil,
+            plainTextDeclaration: VariantValue<String?> = nil,
+            subheadingDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
+            navigatorDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil
+        ) {
+            self.init(
+                traits: traits,
+                kind: kind,
+                language: language,
+                relativePresentationURL: relativePresentationURL,
+                title: title,
+                abstract: abstract,
+                usr: usr,
+                plainTextDeclaration: plainTextDeclaration,
+                subheadingDeclarationFragments: subheadingDeclarationFragments,
+                navigatorDeclarationFragments: navigatorDeclarationFragments
+            )
         }
         
         @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)", message: "Use `init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)` instead. `TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.3 is released")
@@ -329,7 +357,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - abstract: The abstract of the summarized element.
     ///   - availableLanguages: All the languages in which the summarized element is available.
     ///   - platforms: Information about the platforms for which the summarized element is available.
-    ///   - taskGroups: The reference URLs of the summarized element's children, grouped by their task groups.
     ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     ///   - plainTextDeclaration: The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
     ///   - subheadingDeclarationFragments: The simplified "subheading" fragments for this symbol, to display in topic groups, or `nil` if the summarized element isn't a symbol.
@@ -346,7 +373,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         abstract: LinkDestinationSummary.Abstract? = nil,
         availableLanguages: Set<SourceLanguage>,
         platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
-        taskGroups: [LinkDestinationSummary.TaskGroup]? = nil,
         usr: String? = nil,
         plainTextDeclaration: String? = nil,
         subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
@@ -364,7 +390,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.abstract = abstract
         self.availableLanguages = availableLanguages
         self.platforms = platforms
-        self.taskGroups = taskGroups
         self.usr = usr
         self.plainTextDeclaration = plainTextDeclaration
         self.subheadingDeclarationFragments = subheadingDeclarationFragments
@@ -373,6 +398,45 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.topicImages = topicImages
         self.references = references
         self.variants = variants
+    }
+    
+    @available(*, deprecated, renamed: "iinit(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
+    public init(
+        kind: DocumentationNode.Kind,
+        language: SourceLanguage,
+        relativePresentationURL: URL,
+        referenceURL: URL, title: String,
+        abstract: LinkDestinationSummary.Abstract? = nil,
+        availableLanguages: Set<SourceLanguage>,
+        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
+        taskGroups _: [LinkDestinationSummary.TaskGroup]? = nil,
+        usr: String? = nil,
+        plainTextDeclaration: String? = nil,
+        subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        redirects: [URL]? = nil,
+        topicImages: [TopicImage]? = nil,
+        references: [any RenderReference]? = nil,
+        variants: [LinkDestinationSummary.Variant]
+    ) {
+        self.init(
+            kind: kind,
+            language: language,
+            relativePresentationURL: relativePresentationURL,
+            referenceURL: referenceURL,
+            title: title,
+            abstract: abstract,
+            availableLanguages: availableLanguages,
+            platforms: platforms,
+            usr: usr,
+            plainTextDeclaration: plainTextDeclaration,
+            subheadingDeclarationFragments: subheadingDeclarationFragments,
+            navigatorDeclarationFragments: navigatorDeclarationFragments,
+            redirects: redirects,
+            topicImages: topicImages,
+            references: references,
+            variants: variants
+        )
     }
     
     @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Use `init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)` instead. This property will be removed after 6.3 is released")
@@ -424,12 +488,10 @@ public extension DocumentationNode {
     /// - Parameters:
     ///   - context: The context in which references that are found the node's content are resolved in.
     ///   - renderNode: The render node representation of this documentation node.
-    ///   - includeTaskGroups: Whether or not the link summaries should include task groups
     /// - Returns: The list of summary elements, with the node's summary as the first element.
     func externallyLinkableElementSummaries(
         context: DocumentationContext,
-        renderNode: RenderNode,
-        includeTaskGroups: Bool = true
+        renderNode: RenderNode
     ) -> [LinkDestinationSummary] {
         let bundle = context.bundle
         guard bundle.id == reference.bundleID else {
@@ -447,34 +509,11 @@ public extension DocumentationNode {
             LinkDestinationSummary(landmark: $0, relativeParentPresentationURL: relativePresentationURL, page: self, platforms: platforms, compiler: &compiler)
         }
         
-        var taskGroupVariants: [[RenderNode.Variant.Trait]: [LinkDestinationSummary.TaskGroup]] = [:]
-        let taskGroups: [LinkDestinationSummary.TaskGroup]?
-        if includeTaskGroups {
-            switch kind {
-            case .tutorial, .tutorialArticle, .tutorialTableOfContents, .chapter, .volume, .onPageLandmark:
-                taskGroups = [.init(title: nil, identifiers: context.children(of: reference).map { $0.reference.absoluteString })]
-            default:
-                var topicSectionGroups: [LinkDestinationSummary.TaskGroup] = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
-
-                if let overloads = context.linkResolver.localResolver.overloads(ofGroup: reference) {
-                    topicSectionGroups.append(.init(title: "Overloads", identifiers: overloads.map(\.absoluteString)))
-                }
-
-                taskGroups = topicSectionGroups
-                for variant in renderNode.topicSectionsVariants.variants {
-                    taskGroupVariants[variant.traits] = renderNode.topicSectionsVariants.value(for: variant.traits).map { group in .init(title: group.title, identifiers: group.identifiers) }
-                }
-            }
-        } else {
-            taskGroups = nil
-        }
         return [
             LinkDestinationSummary(
                 documentationNode: self,
                 renderNode: renderNode,
                 relativePresentationURL: relativePresentationURL,
-                taskGroups: taskGroups,
-                taskGroupVariants: taskGroupVariants,
                 platforms: platforms,
                 compiler: &compiler
             )
@@ -504,14 +543,11 @@ extension LinkDestinationSummary {
     /// - Parameters:
     ///   - documentationNode: The render node to summarize.
     ///   - relativePresentationURL: The relative presentation URL for this page.
-    ///   - taskGroups: The task groups that lists the children of this page.
     ///   - compiler: The content compiler that's used to render the node's abstract.
     init(
         documentationNode: DocumentationNode,
         renderNode: RenderNode,
         relativePresentationURL: URL,
-        taskGroups: [TaskGroup]?,
-        taskGroupVariants: [[RenderNode.Variant.Trait]: [TaskGroup]],
         platforms: [PlatformAvailability]?,
         compiler: inout RenderContentCompiler
     ) {
@@ -536,7 +572,6 @@ extension LinkDestinationSummary {
                 abstract: (documentationNode.semantic as? (any Abstracted))?.renderedAbstract(using: &compiler),
                 availableLanguages: documentationNode.availableSourceLanguages,
                 platforms: platforms,
-                taskGroups: taskGroups,
                 usr: nil,
                 subheadingDeclarationFragments: nil,
                 redirects: redirects,
@@ -600,7 +635,6 @@ extension LinkDestinationSummary {
                 relativePresentationURL: nil, // The symbol variant uses the same relative path
                 title: nilIfEqual(main: title, variant: symbol.titleVariants[trait]),
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
-                taskGroups: nilIfEqual(main: taskGroups, variant: taskGroupVariants[variantTraits]),
                 usr: nil, // The symbol variant uses the same USR
                 plainTextDeclaration: nilIfEqual(main: plainTextDeclaration, variant: plainTextDeclarationVariant),
                 subheadingDeclarationFragments: nilIfEqual(main: subheadingDeclarationFragments, variant: subheadingDeclarationFragmentsVariant),
@@ -621,7 +655,6 @@ extension LinkDestinationSummary {
             abstract: abstract,
             availableLanguages: documentationNode.availableSourceLanguages,
             platforms: platforms,
-            taskGroups: taskGroups,
             usr: usr,
             plainTextDeclaration: plainTextDeclaration,
             subheadingDeclarationFragments: subheadingDeclarationFragments,
@@ -691,7 +724,6 @@ extension LinkDestinationSummary {
             abstract: abstract,
             availableLanguages: page.availableSourceLanguages,
             platforms: platforms,
-            taskGroups: [], // Landmarks have no children
             usr: nil, // Only symbols have a USR
             subheadingDeclarationFragments: nil, // Only symbols have declarations
             redirects: (landmark as? (any Redirected))?.redirects?.map { $0.oldPath },
@@ -707,7 +739,7 @@ extension LinkDestinationSummary {
 // Add Codable methods—which include an initializer—in an extension so that it doesn't override the member-wise initializer.
 extension LinkDestinationSummary {
     enum CodingKeys: String, CodingKey {
-        case kind, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, topicImages, references, variants, plainTextDeclaration
+        case kind, referenceURL, title, abstract, language, usr, availableLanguages, platforms, redirects, topicImages, references, variants, plainTextDeclaration
         case relativePresentationURL = "path"
         case subheadingDeclarationFragments = "fragments"
         case navigatorDeclarationFragments = "navigatorFragments"
@@ -738,7 +770,6 @@ extension LinkDestinationSummary {
             }
         }
         try container.encodeIfPresent(platforms, forKey: .platforms)
-        try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(subheadingDeclarationFragments, forKey: .subheadingDeclarationFragments)
@@ -796,7 +827,6 @@ extension LinkDestinationSummary {
         availableLanguages = decodedLanguages
         
         platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
-        taskGroups = try container.decodeIfPresent([TaskGroup].self, forKey: .taskGroups)
         usr = try container.decodeIfPresent(String.self, forKey: .usr)
         plainTextDeclaration = try container.decodeIfPresent(String.self, forKey: .plainTextDeclaration)
         subheadingDeclarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .subheadingDeclarationFragments)
@@ -813,7 +843,7 @@ extension LinkDestinationSummary {
 
 extension LinkDestinationSummary.Variant {
     enum CodingKeys: String, CodingKey {
-        case traits, kind, title, abstract, language, usr, taskGroups, plainTextDeclaration
+        case traits, kind, title, abstract, language, usr, plainTextDeclaration
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
         case navigatorDeclarationFragments = "navigatorFragments"
@@ -843,7 +873,6 @@ extension LinkDestinationSummary.Variant {
         try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(subheadingDeclarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(navigatorDeclarationFragments, forKey: .navigatorDeclarationFragments)
-        try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
     }
     
     public init(from decoder: any Decoder) throws {
@@ -887,7 +916,6 @@ extension LinkDestinationSummary.Variant {
         subheadingDeclarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         navigatorDeclarationFragments = try container
             .decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments)
-        taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup]?.self, forKey: .taskGroups)
     }
 }
 
@@ -910,7 +938,6 @@ extension LinkDestinationSummary {
         guard lhs.abstract == rhs.abstract else { return false }
         guard lhs.availableLanguages == rhs.availableLanguages else { return false }
         guard lhs.platforms == rhs.platforms else { return false }
-        guard lhs.taskGroups == rhs.taskGroups else { return false }
         guard lhs.subheadingDeclarationFragments == rhs.subheadingDeclarationFragments else { return false }
         guard lhs.redirects == rhs.redirects else { return false }
         guard lhs.topicImages == rhs.topicImages else { return false }
