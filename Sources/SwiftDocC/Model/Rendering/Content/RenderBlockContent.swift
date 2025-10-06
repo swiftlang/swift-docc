@@ -191,7 +191,7 @@ public enum RenderBlockContent: Equatable {
         // empty initializer with default values
         public init() {
             self.language = ""
-            self.copyToClipboard = true
+            self.copyToClipboard = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
             self.showLineNumbers = false
             self.wrap = 0
             self.lineAnnotations = []
