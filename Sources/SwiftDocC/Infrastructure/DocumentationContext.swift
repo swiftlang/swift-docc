@@ -273,6 +273,7 @@ public class DocumentationContext {
             MissingAbstract(sourceFile: source).any(),
             NonOverviewHeadingChecker(sourceFile: source).any(),
             SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
+            InvalidCodeBlockOption(sourceFile: source).any(),
         ])
         checker.visit(document)
         diagnosticEngine.emit(checker.problems)
@@ -2457,7 +2458,6 @@ public class DocumentationContext {
             }
         }
     }
-    
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
     

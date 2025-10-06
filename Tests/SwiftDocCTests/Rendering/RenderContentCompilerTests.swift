@@ -223,4 +223,97 @@ class RenderContentCompilerTests: XCTestCase {
             XCTAssertEqual(documentThematicBreak, thematicBreak)
         }
     }
+
+    func testCopyToClipboard() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.copyToClipboard, true)
+    }
+
+    func testNoCopyToClipboard() async throws {
+        enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
+
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, nocopy
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.copyToClipboard, false)
+    }
+
+    func testCopyToClipboardNoFeatureFlag() async throws {
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.copyToClipboard, false)
+    }
+
+    func testNoCopyToClipboardNoFeatureFlag() async throws {
+        let (bundle, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        ```swift, nocopy
+        let x = 1
+        ```
+        """#
+        let document = Document(parsing: source)
+
+        let result = document.children.flatMap { compiler.visit($0) }
+
+        let renderCodeBlock = try XCTUnwrap(result[0] as? RenderBlockContent)
+        guard case let .codeListing(codeListing) = renderCodeBlock else {
+            XCTFail("Expected RenderBlockContent.codeListing")
+            return
+        }
+
+        XCTAssertEqual(codeListing.syntax, "swift, nocopy")
+        XCTAssertEqual(codeListing.copyToClipboard, false)
+    }
 }
