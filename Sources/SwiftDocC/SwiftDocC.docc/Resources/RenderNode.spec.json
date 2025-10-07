@@ -781,6 +781,39 @@
                     }
                 }
             },
+            "LineAnnotation": {
+                "type": "object",
+                "properties": {
+                    "style": {
+                        "type": "string",
+                        "enum": ["highlight", "strikeout"]
+                    },
+                    "range": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Position"
+                        }
+                    }
+                },
+                "required": [
+                    "style",
+                    "range"
+                ]
+            },
+            "Position": {
+                "type": "object",
+                "properties": {
+                    "line": {
+                        "type": "integer"
+                    },
+                    "character": {
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "line"
+                ]
+            },
             "CodeListing": {
                 "type": "object",
                 "required": [
@@ -808,6 +841,18 @@
                     },
                     "copyToClipboard": {
                         "type": "boolean"
+                    },
+                    "showLineNumbers": {
+                        "type": "boolean"
+                    },
+                    "wrap": {
+                        "type": "integer"
+                    },
+                    "lineAnnotations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LineAnnotation"
+                        }
                     }
                 }
             },
