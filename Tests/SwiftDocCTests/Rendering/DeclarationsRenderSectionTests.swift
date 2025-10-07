@@ -134,7 +134,6 @@ class DeclarationsRenderSectionTests: XCTestCase {
     }
 
     func testAlternateDeclarations() async throws {
-        throw XCTSkip("TDD: Temporarily disabled while implementing platform expansion")
         let (bundle, context) = try await testBundleAndContext(named: "AlternateDeclarations")
         let reference = ResolvedTopicReference(
             bundleID: bundle.id,
@@ -162,7 +161,6 @@ class DeclarationsRenderSectionTests: XCTestCase {
     }
 
     func testPlatformSpecificDeclarations() async throws {
-        throw XCTSkip("TDD: Temporarily disabled while implementing platform expansion")
         // init(_ content: MyClass) throws
         let declaration1: SymbolGraph.Symbol.DeclarationFragments = .init(declarationFragments: [
             .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),

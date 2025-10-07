@@ -368,7 +368,6 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     }
     
     func testDeclarationsSectionVariants() async throws {
-        throw XCTSkip("TDD: Temporarily disabled while implementing platform expansion")
         func declarationSection(in renderNode: RenderNode) throws -> DeclarationRenderSection {
             try XCTUnwrap(
                 (renderNode.primaryContentSections.first as? DeclarationsRenderSection)?.declarations.first
