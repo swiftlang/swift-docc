@@ -115,6 +115,12 @@ extension OutOfProcessReferenceResolver {
         ///   Your external link resolver still needs to send a response to each request but it doesn't need to include details about the failure when responding to a ``RequestV2/symbol(_:)`` request.
         case failure(DiagnosticInformation)
         /// A response with the resolved information about the requested link or symbol.
+        ///
+        /// The ``LinkDestinationSummary/referenceURL`` can have a "path" and "fragment" components that are different from what DocC sent in the ``RequestV2/link(_:)`` request.
+        /// For example; if your resolver supports different spellings of the link—corresponding to a page's different names in different language representations—you can return the common reference URL identifier for that page for all link spellings.
+        ///
+        /// - Note: DocC expects the resolved ``LinkDestinationSummary/referenceURL`` to have a "host" component that matches the ``DocumentationBundle/Identifier`` that your resolver provided in its initial ``identifierAndCapabilities(_:_:)`` handshake message.
+        ///   Responding with a ``LinkDestinationSummary/referenceURL`` that doesn't match the resolver's provided ``DocumentationBundle/Identifier`` is undefined behavior.
         case resolved(LinkDestinationSummary)
         
         // This empty-marker case is here because non-frozen enums are only available when Library Evolution is enabled,
