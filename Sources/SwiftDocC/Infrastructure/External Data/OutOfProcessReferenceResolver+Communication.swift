@@ -37,7 +37,7 @@ extension OutOfProcessReferenceResolver {
     
     // MARK: Request & Response
     
-    /// Request messages that DocC sends to the external link resolver.
+    /// Request messages that DocC sends to the configured external link resolver.
     ///
     /// ## Topics
     /// ### Base requests
@@ -49,9 +49,17 @@ extension OutOfProcessReferenceResolver {
     public enum RequestV2: Codable {
         /// A request to resolve a link
         ///
-        /// Your external resolver
+        /// Your external resolver should respond with either:
+        /// - a ``ResponseV2/resolved(_:)`` message, with information about the requested link.
+        /// - a ``ResponseV2/failure(_:)`` message, with human-readable information about the problem that the external link resolver encountered while resolving the link.
         case link(String)
         /// A request to resolve a symbol based on its precise identifier.
+        ///
+        /// Your external resolver should respond with either:
+        /// - a ``ResponseV2/resolved(_:)`` message, with information about the requested symbol.
+        /// - an empty ``ResponseV2/failure(_:)`` message.
+        ///   DocC doesn't display any diagnostics about failed symbol requests because they wouldn't be actionable;
+        ///   because they're entirely automatic---based on unique identifiers in the symbol graph files---rather than authored references in the content.
         case symbol(String)
         
         // This empty-marker case is here because non-frozen enums are only available when Library Evolution is enabled,
@@ -88,20 +96,31 @@ extension OutOfProcessReferenceResolver {
         }
     }
 
-    /// A response message from the external link resolver.
+    /// Response messages that the external link resolver sends back to DocC for each received request..
     ///
     /// If your external resolver sends a response that's associated with a capability that DocC hasn't declared support for, then DocC will fail to handle the response.
     public enum ResponseV2: Codable {
-        /// The initial identifier and capabilities message.
+        /// The initial identifier-and-capabilities message.
         ///
         /// Your external link resolver should send this message, exactly once, after it has launched to signal that its ready to receive requests.
         ///
         /// The capabilities that your external link resolver declares in this message determines which optional request messages that DocC will send.
         /// If your resolver doesn't declare _any_ capabilities it only needs to handle the 3 default requests. See <doc:RequestV2#Base-requests>.
         case identifierAndCapabilities(DocumentationBundle.Identifier, Capabilities)
-        /// The error message of the problem that the external link resolver encountered while resolving the requested topic or symbol.
+        /// A response with human-readable information about the problem that the external link resolver encountered while resolving the requested link or symbol.
+        ///
+        /// - Note: DocC doesn't display any diagnostics about failed ``RequestV2/symbol(_:)`` requests because they wouldn't be actionable;
+        ///   because they're entirely automatic---based on unique identifiers in the symbol graph files---rather than authored references in the content.
+        ///
+        ///   Your external link resolver still needs to send a response to each request but it doesn't need to include details about the failure when responding to a ``RequestV2/symbol(_:)`` request.
         case failure(DiagnosticInformation)
-        /// A response with the resolved information about the requested topic or symbol.
+        /// A response with the resolved information about the requested link or symbol.
+        ///
+        /// The ``LinkDestinationSummary/referenceURL`` can have a "path" and "fragment" components that are different from what DocC sent in the ``RequestV2/link(_:)`` request.
+        /// For example; if your resolver supports different spellings of the link---corresponding to a page's different names in different language representations---you can return the common reference URL identifier for that page for all link spellings.
+        ///
+        /// - Note: DocC expects the resolved ``LinkDestinationSummary/referenceURL`` to have a "host" component that matches the ``DocumentationBundle/Identifier`` that your resolver provided in its initial ``identifierAndCapabilities(_:_:)`` handshake message.
+        ///   Responding with a ``LinkDestinationSummary/referenceURL`` that doesn't match the resolver's provided ``DocumentationBundle/Identifier`` is undefined behavior.
         case resolved(LinkDestinationSummary)
         
         // This empty-marker case is here because non-frozen enums are only available when Library Evolution is enabled,
@@ -159,6 +178,11 @@ extension OutOfProcessReferenceResolver {
 
 extension OutOfProcessReferenceResolver.ResponseV2 {
     /// Information about why the external resolver failed to resolve the `link(_:)`, or `symbol(_:)` request.
+    /// 
+    /// - Note: DocC doesn't display any diagnostics about failed ``RequestV2/symbol(_:)`` requests because they wouldn't be actionable;
+    ///   because they're entirely automatic---based on unique identifiers in the symbol graph files---rather than authored references in the content.
+    ///
+    ///   Your external link resolver still needs to send a response to each request but it doesn't need to include details about the failure when responding to a ``RequestV2/symbol(_:)`` request.
     public struct DiagnosticInformation: Codable {
         /// A brief user-facing summary of the issue that caused the external resolver to fail.
         public var summary: String
