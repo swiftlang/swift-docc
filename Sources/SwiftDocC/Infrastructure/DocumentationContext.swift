@@ -259,6 +259,7 @@ public class DocumentationContext {
             MissingAbstract(sourceFile: source).any(),
             NonOverviewHeadingChecker(sourceFile: source).any(),
             SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
+            InvalidCodeBlockOption(sourceFile: source).any(),
         ])
         checker.visit(document)
         diagnosticEngine.emit(checker.problems)
@@ -2414,7 +2415,6 @@ public class DocumentationContext {
             }
         }
     }
-    
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
     
@@ -2695,6 +2695,11 @@ public class DocumentationContext {
             valueInLocalEntity: \.kind,
             valueInExternalEntity: \.kind
         ).isSymbol
+    }
+
+    /// Returns whether the given reference resolves to an external entity.
+    func isExternal(reference: ResolvedTopicReference) -> Bool {
+        externalCache[reference] != nil
     }
 
     // MARK: - Relationship queries

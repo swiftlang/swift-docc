@@ -60,8 +60,24 @@ private import Markdown
 ///
 /// ## Topics
 ///
+/// ### Messages
+///
+/// Requests that DocC sends to your link resolver executable and the responses that it should send back.
+///
 /// - ``RequestV2``
 /// - ``ResponseV2``
+///
+/// ### Finding common capabilities
+///
+/// Ways that your link resolver executable can signal any optional capabilities that it supports.
+///
+/// - ``ResponseV2/identifierAndCapabilities(_:_:)``
+/// - ``Capabilities``
+///
+/// ### Deprecated messages
+///
+/// - ``Request``
+/// - ``Response``
 ///
 /// ## See Also
 /// - ``DocumentationContext/externalDocumentationSources``
