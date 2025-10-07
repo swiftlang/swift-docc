@@ -36,7 +36,10 @@ extension MergeAction {
     
     func readRootNodeRenderReferencesIn(dataDirectory: URL) throws -> RootRenderReferences {
         func inner(url: URL) throws -> [RootRenderReferences.Information] {
-            try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
+            // Path might not exist (e.g. tutorials for a reference-only archive)
+            guard let contents = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [])
+            else { return [] }
+            return try contents
                 .compactMap {
                     guard $0.pathExtension == "json" else {
                         return nil
