@@ -105,7 +105,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && supportedLanguages.isEmpty && titleHeading == nil && redirects == nil && alternateRepresentations.isEmpty {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,

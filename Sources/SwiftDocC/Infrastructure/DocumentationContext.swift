@@ -829,7 +829,13 @@ public class DocumentationContext {
                 
                 insertLandmarks(tutorialArticle.landmarks, from: topicGraphNode, source: url)
             } else if let article = analyzed as? Article {
-                                
+                // If the article contains any `@SupportedLanguage` directives in the metadata,
+                // include those languages in the set of source languages for the reference.
+                let reference = if let supportedLanguages = article.supportedLanguages {
+                    reference.withSourceLanguages(supportedLanguages)
+                } else {
+                    reference
+                }
                 // Here we create a topic graph node with the prepared data but we don't add it to the topic graph just yet
                 // because we don't know where in the hierarchy the article belongs, we will add it later when crawling the manual curation via Topics task groups.
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: url), title: article.title!.plainText)
@@ -1883,17 +1889,7 @@ public class DocumentationContext {
         let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: bundle)
         
         // Use the languages specified by the `@SupportedLanguage` directives if present.
-        let availableSourceLanguages = article.value
-            .metadata
-            .flatMap { metadata in
-                let languages = Set(
-                    metadata.supportedLanguages
-                        .map(\.language)
-                )
-                
-                return languages.isEmpty ? nil : languages
-            }
-        ?? availableSourceLanguages
+        let availableSourceLanguages = article.value.supportedLanguages ?? availableSourceLanguages
         
         // If available source languages are provided and it contains Swift, use Swift as the default language of
         // the article.
