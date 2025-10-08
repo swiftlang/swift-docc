@@ -998,7 +998,7 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(declarations.declarations[0].platforms, [PlatformName(operatingSystemName: "ios")])
+        XCTAssertEqual(Set(declarations.declarations[0].platforms), Set([PlatformName(operatingSystemName: "ios"), PlatformName.iPadOS, PlatformName.catalyst]))
         XCTAssertEqual(declarations.declarations[0].tokens.count, 5)
         XCTAssertEqual(declarations.declarations[0].tokens.map { $0.text }.joined(), "protocol MyProtocol : Hashable")
         XCTAssertEqual(declarations.declarations[0].languages?.first, "swift")
@@ -1257,7 +1257,7 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(declarations.declarations[0].platforms, [PlatformName(operatingSystemName: "ios")])
+        XCTAssertEqual(Set(declarations.declarations[0].platforms), Set([PlatformName(operatingSystemName: "ios"), PlatformName.iPadOS, PlatformName.catalyst]))
         XCTAssertEqual(declarations.declarations[0].tokens.count, 5)
         XCTAssertEqual(declarations.declarations[0].tokens.map { $0.text }.joined(), "protocol MyProtocol : Hashable")
         XCTAssertEqual(declarations.declarations[0].languages?.first, "swift")

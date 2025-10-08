@@ -157,7 +157,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
         let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
 
         XCTAssertEqual(declarationsSection.declarations.count, 2)
-        XCTAssert(declarationsSection.declarations.allSatisfy({ $0.platforms == [.iOS, .macOS] }))
+        XCTAssert(declarationsSection.declarations.allSatisfy({ Set($0.platforms) == Set([.iOS, .iPadOS, .macOS, .catalyst]) }))
     }
 
     func testPlatformSpecificDeclarations() async throws {
@@ -223,7 +223,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
             XCTAssertEqual(declarationsSection.declarations.count, 2)
 
-            XCTAssertEqual(declarationsSection.declarations[0].platforms, [.iOS])
+            XCTAssertEqual(Set(declarationsSection.declarations[0].platforms), Set([.iOS, .iPadOS, .catalyst]))
             XCTAssertEqual(declarationsSection.declarations[0].tokens.map(\.text).joined(),
                            "init(_ content: OtherClass) throws")
             XCTAssertEqual(declarationsSection.declarations[1].platforms, [.macOS])
