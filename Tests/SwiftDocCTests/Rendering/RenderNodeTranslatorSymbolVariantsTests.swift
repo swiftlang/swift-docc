@@ -401,7 +401,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             },
             assertAfterApplyingVariant: { renderNode in
                 let declarationSection = try declarationSection(in: renderNode)
-                XCTAssertEqual(declarationSection.platforms, [.iOS])
+                XCTAssertEqual(Set(declarationSection.platforms), Set([.iOS, .iPadOS, .catalyst]))
                 
                 XCTAssertEqual(
                     declarationSection.tokens,
