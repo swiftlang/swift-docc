@@ -18,7 +18,7 @@ typealias Position = RenderBlockContent.CodeBlockOptions.Position
 class RenderContentCompilerTests: XCTestCase {
     func testLinkOverrideTitle() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
         [Example](http://example.com)
@@ -136,7 +136,7 @@ class RenderContentCompilerTests: XCTestCase {
     
     func testLineBreak() async throws {
         let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         Backslash before new line\
@@ -201,7 +201,7 @@ class RenderContentCompilerTests: XCTestCase {
     
     func testThematicBreak() async throws {
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
 
         let source = #"""
@@ -230,7 +230,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift
@@ -254,7 +254,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, nocopy
@@ -278,7 +278,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```nocopy
@@ -301,7 +301,7 @@ class RenderContentCompilerTests: XCTestCase {
 
     func testCopyToClipboardNoFeatureFlag() async throws {
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift
@@ -322,7 +322,7 @@ class RenderContentCompilerTests: XCTestCase {
 
     func testNoCopyToClipboardNoFeatureFlag() async throws {
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, nocopy
@@ -347,7 +347,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, showLineNumbers
@@ -375,7 +375,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, showlinenumbers
@@ -403,7 +403,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, wrap=20, highlight=[2]
@@ -440,7 +440,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, highlight=[2]
@@ -473,7 +473,7 @@ class RenderContentCompilerTests: XCTestCase {
 
     func testHighlightNoFeatureFlag() async throws {
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, highlight=[2]
@@ -503,7 +503,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, highlight=[1, 2, 3]
@@ -550,7 +550,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```swift, strikeout=[3,5], highlight=[1, 2, 3]
@@ -606,7 +606,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```showLineNumbers, highlight=[1, 2, 3], swift, wrap=20, strikeout=[3]
@@ -660,7 +660,7 @@ class RenderContentCompilerTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalCodeBlockAnnotationsEnabled)
 
         let (bundle, context) = try await testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         ```highlight=[5,3,4], strikeout=[3,1]
