@@ -158,7 +158,7 @@ public struct ConvertService: DocumentationService {
             let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
             
             // Precompute the render context
-            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            let renderContext = RenderContext(documentationContext: context)
             
             let symbolIdentifiersMeetingRequirementsForExpandedDocumentation: [String]? = request.symbolIdentifiersWithExpandedDocumentation?.compactMap { identifier, expandedDocsRequirement in
                 guard let documentationNode = context.documentationCache[identifier] else {
@@ -168,7 +168,6 @@ public struct ConvertService: DocumentationService {
                 return documentationNode.meetsExpandedDocumentationRequirements(expandedDocsRequirement) ? identifier : nil
             }
             let converter = DocumentationContextConverter(
-                bundle: bundle,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
@@ -243,12 +242,11 @@ public struct ConvertService: DocumentationService {
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
                 
-                let bundle = context.bundle
-                guard bundle.id == topicReference.bundleID else { return nil }
-                let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+                guard context.inputs.id == topicReference.bundleID else { return nil }
+                let renderer = DocumentationContentRenderer(context: context)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
-                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: bundle)?.node
+                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: context.inputs)?.node
                 var dependencies = RenderReferenceDependencies()
                 let renderReference = renderer.renderReference(for: topicReference, with: overridingDocumentationNode, dependencies: &dependencies)
                 

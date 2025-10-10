@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -94,11 +94,17 @@ public struct InfoPlist: File, DataRepresentable {
     /// The information that the Into.plist file contains.
     public let content: Content
 
-    public init(displayName: String? = nil, identifier: String? = nil, defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]? = nil) {
+    public init(
+        displayName: String? = nil,
+        identifier: String? = nil,
+        defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]? = nil,
+        defaultCodeListingLanguage: String? = nil
+    ) {
         self.content = Content(
             displayName: displayName,
             identifier: identifier,
-            defaultAvailability: defaultAvailability
+            defaultAvailability: defaultAvailability,
+            defaultCodeListingLanguage: defaultCodeListingLanguage
         )
     }
 
@@ -106,25 +112,29 @@ public struct InfoPlist: File, DataRepresentable {
         public let displayName: String?
         public let identifier: String?
         public let defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?
-
-        fileprivate init(displayName: String?, identifier: String?, defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?) {
+        public let defaultCodeListingLanguage: String?
+        
+        fileprivate init(displayName: String?, identifier: String?, defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?, defaultCodeListingLanguage: String?) {
             self.displayName = displayName
             self.identifier = identifier
             self.defaultAvailability = defaultAvailability
+            self.defaultCodeListingLanguage = defaultCodeListingLanguage
         }
 
         public init(from decoder: any Decoder) throws {
-            let container = try decoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
+            let container = try decoder.container(keyedBy: DocumentationContext.Inputs.Info.CodingKeys.self)
             displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
             identifier = try container.decodeIfPresent(String.self, forKey: .id)
             defaultAvailability = try container.decodeIfPresent([String : [DefaultAvailability.ModuleAvailability]].self, forKey: .defaultAvailability)
+            defaultCodeListingLanguage = try container.decodeIfPresent(String.self, forKey: .defaultCodeListingLanguage)
         }
         
         public func encode(to encoder: any Encoder) throws {
-            var container = encoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
+            var container = encoder.container(keyedBy: DocumentationContext.Inputs.Info.CodingKeys.self)
             try container.encodeIfPresent(displayName, forKey: .displayName)
             try container.encodeIfPresent(identifier, forKey: .id)
             try container.encodeIfPresent(defaultAvailability, forKey: .defaultAvailability)
+            try container.encodeIfPresent(defaultCodeListingLanguage, forKey: .defaultCodeListingLanguage)
         }
     }
 

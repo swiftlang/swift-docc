@@ -449,7 +449,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testSymbolLinkWorkInMultipleLanguages() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # ``MixedLanguageFramework/Bar``
             
@@ -466,12 +466,12 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
@@ -880,7 +880,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func testAutomaticSeeAlsoSectionElementLimit() async throws {
-        let (bundle, context) = try await loadBundle(catalog:
+        let (_, context) = try await loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: (1...50).map {
                     makeSymbol(id: "symbol-id-\($0)", kind: .class, pathComponents: ["SymbolName\($0)"])
@@ -902,7 +902,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
 
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
 
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
 
         let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
         let moduleNode = try converter.convert(context.entity(with: moduleReference))
