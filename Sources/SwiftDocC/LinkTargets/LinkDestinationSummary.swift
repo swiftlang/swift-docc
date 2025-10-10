@@ -431,12 +431,11 @@ public extension DocumentationNode {
         renderNode: RenderNode,
         includeTaskGroups: Bool = true
     ) -> [LinkDestinationSummary] {
-        let bundle = context.inputs
-        guard bundle.id == reference.bundleID else {
+        guard context.inputs.id == reference.bundleID else {
             // Don't return anything for external references that don't have a bundle in the context.
             return []
         }
-        let urlGenerator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+        let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
         let relativePresentationURL = urlGenerator.presentationURLForReference(reference).withoutHostAndPortAndScheme()
         
         var compiler = RenderContentCompiler(context: context, identifier: reference)

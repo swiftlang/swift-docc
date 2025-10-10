@@ -242,12 +242,11 @@ public struct ConvertService: DocumentationService {
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
                 
-                let bundle = context.inputs
-                guard bundle.id == topicReference.bundleID else { return nil }
+                guard context.inputs.id == topicReference.bundleID else { return nil }
                 let renderer = DocumentationContentRenderer(context: context)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
-                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: bundle)?.node
+                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: context.inputs)?.node
                 var dependencies = RenderReferenceDependencies()
                 let renderReference = renderer.renderReference(for: topicReference, with: overridingDocumentationNode, dependencies: &dependencies)
                 
