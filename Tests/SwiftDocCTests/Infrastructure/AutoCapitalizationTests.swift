@@ -60,18 +60,18 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])
         
         let parameterSectionTranslator = ParametersSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
@@ -105,18 +105,18 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])
         
         let parameterSectionTranslator = ParametersSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
@@ -146,16 +146,16 @@ class AutoCapitalizationTests: XCTestCase {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         let returnsSectionTranslator = ReturnsSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedReturns = returnsSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let returnsRenderSection = translatedReturns?.defaultValue?.section as! ContentRenderSection

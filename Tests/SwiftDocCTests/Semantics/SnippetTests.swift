@@ -59,7 +59,7 @@ class SnippetTests: XCTestCase {
         XCTAssertTrue(problems.isEmpty)
     }
     func testLinkResolvesWithoutOptionalPrefix() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "Snippets")
+        let (_, context) = try await testBundleAndContext(named: "Snippets")
         
         for snippetPath in [
             "/Test/Snippets/MySnippet",
@@ -71,14 +71,14 @@ class SnippetTests: XCTestCase {
             @Snippet(path: "\(snippetPath)")
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
-            var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: try XCTUnwrap(context.soleRootModuleReference))
+            var resolver = MarkupReferenceResolver(context: context, rootReference: try XCTUnwrap(context.soleRootModuleReference))
             _ = resolver.visit(document)
             XCTAssertTrue(resolver.problems.isEmpty, "Unexpected problems: \(resolver.problems.map(\.diagnostic.summary))")
         }
     }
     
     func testWarningAboutUnresolvedSnippetPath() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "Snippets")
+        let (_, context) = try await testBundleAndContext(named: "Snippets")
         
         for snippetPath in [
             "/Test/Snippets/DoesNotExist",
@@ -90,7 +90,7 @@ class SnippetTests: XCTestCase {
             @Snippet(path: "\(snippetPath)")
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
-            var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: try XCTUnwrap(context.soleRootModuleReference))
+            var resolver = MarkupReferenceResolver(context: context, rootReference: try XCTUnwrap(context.soleRootModuleReference))
             _ = resolver.visit(document)
             XCTAssertEqual(1, resolver.problems.count)
             let problem = try XCTUnwrap(resolver.problems.first)

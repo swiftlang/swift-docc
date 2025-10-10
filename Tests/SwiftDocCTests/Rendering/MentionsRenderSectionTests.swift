@@ -17,19 +17,19 @@ class MentionsRenderSectionTests: XCTestCase {
     /// pointing to the correct article.
     func testMentionedInSectionFull() async throws {
         enableFeatureFlag(\.isMentionedInEnabled)
-        let (bundle, context) = try await createMentionedInTestBundle()
+        let (_, context) = try await createMentionedInTestBundle()
         let identifier = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift
         )
         let mentioningArticle = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/ArticleMentioningSymbol",
             sourceLanguage: .swift
         )
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         let mentionsSection = try XCTUnwrap(renderNode.primaryContentSections.mapFirst { $0 as? MentionsRenderSection })
         XCTAssertEqual(1, mentionsSection.mentions.count)
@@ -40,14 +40,14 @@ class MentionsRenderSectionTests: XCTestCase {
     /// If there are no qualifying mentions of a symbol, the Mentioned In section should not appear.
     func testMentionedInSectionEmpty() async throws {
         enableFeatureFlag(\.isMentionedInEnabled)
-        let (bundle, context) = try await createMentionedInTestBundle()
+        let (_, context) = try await createMentionedInTestBundle()
         let identifier = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "/documentation/MentionedIn/MyClass/myFunction()",
             sourceLanguage: .swift
         )
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         let mentionsSection = renderNode.primaryContentSections.mapFirst { $0 as? MentionsRenderSection }
         XCTAssertNil(mentionsSection)
