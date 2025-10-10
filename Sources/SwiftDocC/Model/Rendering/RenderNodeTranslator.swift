@@ -630,7 +630,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.hierarchyVariants = hierarchyVariants
         
         // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
-        // advertising the page as "Swift", which is the language DocC assigns to pages in article only pages.
+        // advertising the page as "Swift", which is the language DocC assigns to pages in article only catalogs.
         // (github.com/swiftlang/swift-docc/issues/240).
         if let topLevelModule = context.soleRootModuleReference,
            try! context.entity(with: topLevelModule).kind.isSymbol

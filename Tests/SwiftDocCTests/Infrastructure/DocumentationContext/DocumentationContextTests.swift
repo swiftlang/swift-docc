@@ -5772,6 +5772,44 @@ let expected = """
         XCTAssertEqual(solution.replacements.first?.replacement, "")
     }
 
+    func testSupportedLanguageDirectiveInNonRootArticleWithSymbols() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Root
+
+            @Metadata {
+              @TechnologyRoot
+              @SupportedLanguage(objc)
+              @SupportedLanguage(data)
+            }
+
+            ## Topics
+
+            - <doc:Article>
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            @Metadata {
+              @SupportedLanguage(objc)
+              @SupportedLanguage(data)
+            }
+            """),
+        ])
+        
+        let (bundle, context) = try await loadBundle(catalog: catalog)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+
+        do {
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let supportedLanguages = try XCTUnwrap((node.semantic as? Article)?.metadata?.supportedLanguages)
+            XCTAssertEqual(supportedLanguages.map(\.language), [.objectiveC, .data])
+        }
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #filePath, line: UInt = #line) {
