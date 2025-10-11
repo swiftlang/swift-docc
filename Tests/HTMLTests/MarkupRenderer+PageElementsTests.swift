@@ -66,6 +66,141 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         """)
     }
     
+    func testRenderSingleLanguageParameters() throws {
+        var renderer = makeRenderer()
+        let parameters = renderer.parameters([
+            "swift": [
+                .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
+                .init(name: "Second", content: parseMarkup(string: """
+                Some **other** _formatted_ description
+
+                That spans two paragraphs
+                """)),
+            ]
+        ])
+        XCTAssertEqual(parameters.rendered(prettyFormatted: true), """
+        <section id="parameters">
+        <h2>
+            <a href="#parameters">Parameters</a>
+        </h2>
+        <dl>
+            <dt>
+                <code>First</code>
+            </dt>
+            <dd>
+                <p>Some <i>formatted</i>
+                     description with <code>code</code>
+                </p>
+            </dd>
+            <dt>
+                <code>Second</code>
+            </dt>
+            <dd>
+                <p>Some <b>other</b>
+                     <i>formatted</i>
+                     description</p>
+                <p>That spans two paragraphs</p>
+            </dd>
+        </dl>
+        </section>
+        """)
+    }
+    
+    func testRenderLanguageSpecificParameters() throws {
+        var renderer = makeRenderer()
+        let parameters = renderer.parameters([
+            "swift": [
+                .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
+                .init(name: "SwiftOnly", content: parseMarkup(string: "Only available in Swift")),
+                .init(name: "SecondCommon", content: parseMarkup(string: "Also available in both languages")),
+            ],
+            "occ": [
+                .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
+                .init(name: "SecondCommon", content: parseMarkup(string: "Also available in both languages")),
+                .init(name: "ObjectiveCOnly", content: parseMarkup(string: "Only available in Objective-C")),
+            ],
+        ])
+        XCTAssertEqual(parameters.rendered(prettyFormatted: true), """
+        <section id="parameters">
+        <h2>
+            <a href="#parameters">Parameters</a>
+        </h2>
+        <dl>
+            <dt>
+                <code>FirstCommon</code>
+            </dt>
+            <dd>
+                <p>Available in both languages</p>
+            </dd>
+            <dt class="swift-only">
+                <code>SwiftOnly</code>
+            </dt>
+            <dd class="swift-only">
+                <p>Only available in Swift</p>
+            </dd>
+            <dt>
+                <code>SecondCommon</code>
+            </dt>
+            <dd>
+                <p>Also available in both languages</p>
+            </dd>
+            <dt class="occ-only">
+                <code>ObjectiveCOnly</code>
+            </dt>
+            <dd class="occ-only">
+                <p>Only available in Objective-C</p>
+            </dd>
+        </dl>
+        </section>
+        """)
+    }
+    
+    func testRenderManyLanguageSpecificParameters() throws {
+        var renderer = makeRenderer()
+        let parameters = renderer.parameters([
+            "swift": [
+                .init(name: "First", content: parseMarkup(string: "Some description")),
+            ],
+            "occ": [
+                .init(name: "Second", content: parseMarkup(string: "Some description")),
+            ],
+            "data": [
+                .init(name: "Third", content: parseMarkup(string: "Some description")),
+            ],
+        ])
+        XCTAssertEqual(parameters.rendered(prettyFormatted: true), """
+        <section id="parameters">
+        <h2>
+            <a href="#parameters">Parameters</a>
+        </h2>
+        <dl class="swift-only">
+            <dt>
+                <code>First</code>
+            </dt>
+            <dd>
+                <p>Some description</p>
+            </dd>
+        </dl>
+        <dl class="data-only">
+            <dt>
+                <code>Third</code>
+            </dt>
+            <dd>
+                <p>Some description</p>
+            </dd>
+        </dl>
+        <dl class="occ-only">
+            <dt>
+                <code>Second</code>
+            </dt>
+            <dd>
+                <p>Some description</p>
+            </dd>
+        </dl>
+        </section>
+        """)
+    }
+    
     // MARK: -
     
     private func makeRenderer(
@@ -90,6 +225,11 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
                 assetsToReturn: assetsToReturn
             )
         )
+    }
+    
+    private func parseMarkup(string: String) -> [any Markup] {
+        let document = Document(parsing: string, options: [.parseBlockDirectives, .parseSymbolLinks])
+        return Array(document.children)
     }
 }
 

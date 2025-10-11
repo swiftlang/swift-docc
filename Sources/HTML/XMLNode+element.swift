@@ -40,3 +40,14 @@ extension XMLNode {
         XMLNode.text(withStringValue: String(value)) as! XMLNode
     }
 }
+
+extension XMLElement {
+    func addAttributes(_ attributes: [String: String]) {
+        let attributeNodes = attributes.sorted(by: { $0.key < $1.key }).map {
+            XMLNode.attribute(withName: $0.key, stringValue: $0.value) as! XMLNode
+        }
+        for attributeNode in attributeNodes {
+            self.addAttribute(attributeNode)
+        }
+    }
+}

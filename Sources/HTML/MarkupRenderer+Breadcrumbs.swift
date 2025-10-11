@@ -25,7 +25,7 @@ package extension MarkupRenderer {
                 [.text(name)]
                 
             case .languageSpecificSymbol(let namesByLanguageID):
-                RenderHelpers.sortedLanguageSpecificNames(namesByLanguageID).map { languageID, name in
+                RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { languageID, name in
                     .element(named: "span", children: [
                         .text(name) // Breadcrumbs display symbol names in a default style (no "code voice")
                     ], attributes: ["class": "\(languageID)-only"])

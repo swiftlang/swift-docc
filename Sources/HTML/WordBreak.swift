@@ -55,8 +55,8 @@ package enum RenderHelpers {
     }
     
     /// Returns the language specific symbol names sorted by the language.
-    package static func sortedLanguageSpecificNames(_ namesByLanguageID: [String /* language ID */: String]) -> some Sequence<(key: String, value: String)> {
-        namesByLanguageID.sorted(by: { lhs, rhs in
+    package static func sortedLanguageSpecificValues<Value>(_ valuesByLanguageID: [String /* language ID */: Value]) -> [(key: String, value: Value)] {
+        valuesByLanguageID.sorted(by: { lhs, rhs in
             // Sort Swift before other languages.
             if lhs.key == "swift" {
                 return true
