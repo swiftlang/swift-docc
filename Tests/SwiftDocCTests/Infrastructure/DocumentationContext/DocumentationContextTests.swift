@@ -1328,13 +1328,13 @@ class DocumentationContextTests: XCTestCase {
                 """),
             ] + testData.symbolGraphFiles)
             
-            let (bundle, context) = try await loadBundle(catalog: testCatalog)
-            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            let (_, context) = try await loadBundle(catalog: testCatalog)
+            let renderContext = RenderContext(documentationContext: context)
             
-            let identifier = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             
-            let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+            let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
             let renderNode = try XCTUnwrap(converter.renderNode(for: node))
             
             XCTAssertEqual(
@@ -1898,7 +1898,7 @@ let expected = """
             """),
         ])
         let bundleURL = try catalog.write(inside: createTemporaryDirectory())
-        let (_, bundle, context) = try await loadBundle(from: bundleURL)
+        let (_, _, context) = try await loadBundle(from: bundleURL)
 
         let problems = context.problems
         XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
@@ -1924,7 +1924,7 @@ let expected = """
             )
         }
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
+        var translator = RenderNodeTranslator(context: context, identifier: moduleReference)
         let renderNode = translator.visit(moduleSymbol) as! RenderNode
         
         // Verify that the resolved links rendered as links
@@ -2229,7 +2229,7 @@ let expected = """
             """),
         ])
         
-        let (bundle, context) = try await loadBundle(catalog: catalog, diagnosticEngine: .init(filterLevel: .information))
+        let (bundle, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
         XCTAssertNil(context.soleRootModuleReference)
         
         let curationDiagnostics = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
@@ -2425,7 +2425,7 @@ let expected = """
     }
 
     func testPrefersNonSymbolsInDocLink() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
             // This bundle has a top-level struct named "Wrapper". Adding an article named "Wrapper.md" introduces a possibility for a link collision
             try """
             # An article
@@ -2451,8 +2451,8 @@ let expected = """
         let moduleReference = try XCTUnwrap(context.rootModules.first)
         let moduleNode = try context.entity(with: moduleReference)
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode))
         let curatedTopic = try XCTUnwrap(renderNode.topicSections.first?.identifiers.first)
@@ -2502,7 +2502,7 @@ let expected = """
     }
     
     func testDeclarationTokenKinds() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         
         let myFunc = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
@@ -2516,7 +2516,7 @@ let expected = """
         
         // Render declaration and compare token kinds with symbol graph
         let symbol = myFunc.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myFunc.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: myFunc.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         let declarationTokens = renderNode.primaryContentSections.mapFirst { section -> [String]? in
@@ -2650,13 +2650,13 @@ let expected = """
     }
     
     func testNavigatorTitle() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift)
             let node = try context.entity(with: reference)
 
             let symbol = node.semantic as! Symbol
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            var translator = RenderNodeTranslator(context: context, identifier: reference)
             let renderNode = translator.visitSymbol(symbol) as! RenderNode
 
             return (node, renderNode)
@@ -3286,8 +3286,7 @@ let expected = """
         ])
         
         // Verify that the links are resolved in the render model.
-        let bundle = try XCTUnwrap(context.bundle)
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(entity)
         
         XCTAssertEqual(renderNode.topicSections.map(\.anchor), [
@@ -4935,7 +4934,11 @@ let expected = """
     func testContextDoesNotRecognizeNonOverloadableSymbolKinds() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
+        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter {
+            !$0.isOverloadableKind &&
+            !$0.isSnippetKind      && // avoid mixing snippets with "real" symbols
+            $0 != .module             // avoid creating multiple modules
+        }
         // Generate a 4 symbols with the same name for every non overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
             makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
@@ -5315,7 +5318,7 @@ let expected = """
     func testContextDiagnosesInsufficientDisambiguationWithCorrectRange() async throws {
         // This test deliberately does not turn on the overloads feature
         // to ensure the symbol link below does not accidentally resolve correctly.
-        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind && !symbolKindID.isSnippetKind {
             // Generate a 4 symbols with the same name for every non overloadable symbol kind
             let symbols: [SymbolGraph.Symbol] = [
                 makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
@@ -5369,7 +5372,7 @@ let expected = """
     func testContextDiagnosesIncorrectDisambiguationWithCorrectRange() async throws {
         // This test deliberately does not turn on the overloads feature
         // to ensure the symbol link below does not accidentally resolve correctly.
-        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind && !symbolKindID.isSnippetKind {
             // Generate a 4 symbols with the same name for every non overloadable symbol kind
             let symbols: [SymbolGraph.Symbol] = [
                 makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
@@ -5421,7 +5424,7 @@ let expected = """
     func testContextDiagnosesIncorrectSymbolNameWithCorrectRange() async throws {
         // This test deliberately does not turn on the overloads feature
         // to ensure the symbol link below does not accidentally resolve correctly.
-        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind {
+        for symbolKindID in SymbolGraph.Symbol.KindIdentifier.allCases where !symbolKindID.isOverloadableKind && !symbolKindID.isSnippetKind {
             // Generate a 4 symbols with the same name for every non overloadable symbol kind
             let symbols: [SymbolGraph.Symbol] = [
                 makeSymbol(id: "first-\(symbolKindID.identifier)-id",  kind: symbolKindID, pathComponents: ["SymbolName"]),
@@ -5476,7 +5479,7 @@ let expected = """
         let externalModuleName = "ExternalModuleName"
         
         func makeExternalDependencyFiles() async throws -> (SerializableLinkResolutionInformation, [LinkDestinationSummary]) {
-            let (bundle, context) = try await loadBundle(
+            let (_, context) = try await loadBundle(
                 catalog: Folder(name: "Dependency.docc", content: [
                     JSONFile(name: "\(externalModuleName).symbols.json", content: makeSymbolGraph(moduleName: externalModuleName)),
                     TextFile(name: "Extension.md", utf8Content: """
@@ -5488,14 +5491,14 @@ let expected = """
             )
             
             // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
-            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let converter = DocumentationNodeConverter(context: context)
             let linkSummaries: [LinkDestinationSummary] = try context.knownPages.flatMap { reference in
                 let entity = try context.entity(with: reference)
                 let renderNode = try XCTUnwrap(converter.convert(entity))
                 
                 return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
             }
-            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
+            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
             
             return (linkResolutionInformation, linkSummaries)
         }
@@ -5517,7 +5520,7 @@ let expected = """
             URL(fileURLWithPath: "/path/to/SomeDependency.doccarchive")
         ]
         
-        let (bundle, context) = try await loadBundle(
+        let (_, context) = try await loadBundle(
             catalog: catalog,
             otherFileSystemDirectories: [
                 Folder(name: "path", content: [
@@ -5536,7 +5539,7 @@ let expected = """
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         let node = try context.entity(with: reference)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(node)
         
         let externalReference = "doc://Dependency/documentation/ExternalModuleName"

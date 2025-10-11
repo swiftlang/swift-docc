@@ -55,9 +55,9 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
             let catalog = Folder(name: "unit-test.docc", content: [
                 TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
             ])
-            let (bundle, context) = try await loadBundle(catalog: catalog)
+            let (_, context) = try await loadBundle(catalog: catalog)
             let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
-            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let converter = DocumentationNodeConverter(context: context)
             let renderNode = converter.convert(node)
             return try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PropertyListDetailsRenderSection }))
         }
