@@ -368,38 +368,20 @@ struct HTMLRenderer {
         
         
         // Parameters
-        if let parameters = symbol.parametersSection, !parameters.parameters.isEmpty {
-            let section = XMLElement(name: "section")
-            section.addAttribute(
-                XMLNode.attribute(withName: "class", stringValue: "parameters") as! XMLNode
+        if !symbol.parametersSectionVariants.allValues.isEmpty {
+            articleElement.addChild(
+                renderer.parameters(
+                    .init(
+                        symbol.parametersSectionVariants.allValues.map { trait, parameters in (
+                            key:   trait.interfaceLanguage ?? "swift",
+                            value: parameters.parameters.map {
+                                .init(name: $0.name, content: $0.contents)
+                            }
+                        )},
+                        uniquingKeysWith: { _, new in new }
+                    )
+                )
             )
-            
-            if let title = ParametersSection.title {
-                section.addChild(
-                    .selfReferencingHeader(title: title)
-                )
-            }
-            
-            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
-            
-            let list = XMLElement(name: "dl") // list
-            section.addChild(list)
-            
-            for parameter in parameters.parameters {
-                // name
-                list.addChild(
-                    .element(named: "dt", children: [
-                        .element(named: "code", children: [.text(parameter.name)])
-                    ])
-                )
-                
-                // description
-                list.addChild(
-                    .element(named: "dd", children: parameter.contents.map { renderer.visit($0) })
-                )
-            }
-            
-            articleElement.addChild(section)
         }
         
         // Return value
