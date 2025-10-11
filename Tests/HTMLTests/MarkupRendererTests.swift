@@ -340,7 +340,9 @@ final class MarkupRendererTests: XCTestCase {
             rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
             elementToReturn: .init(
                 path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeArticle/index.html")),
-                names: .single(.conceptual("Some Article Title"))
+                names: .single(.conceptual("Some Article Title")),
+                subheadings: .single(.conceptual("Some Article Title")), // Not relevant for inline links
+                abstract: nil // Not relevant for inline links
             ),
             prettyFormatted: true,
             matches: """
@@ -355,7 +357,13 @@ final class MarkupRendererTests: XCTestCase {
             rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
             elementToReturn: .init(
                 path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
-                names: .single(.symbol("someMethod(_:_:)"))
+                names: .single(.symbol("someMethod(_:_:)")),
+                subheadings: .single(.symbol([ // Not relevant for inline links
+                    .init(text: "func ", kind: .decorator),
+                    .init(text: "someMethod", kind: .identifier),
+                    .init(text: "(_:_:)", kind: .decorator),
+                ])),
+                abstract: nil // Not relevant for inline links
             ),
             prettyFormatted: true,
             matches: """
@@ -373,13 +381,7 @@ final class MarkupRendererTests: XCTestCase {
         // Link to symbol with multiple language representation
         try assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
-            elementToReturn: .init(
-                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
-                names: .languageSpecificSymbol([
-                    SourceLanguage.swift.id : "doSomething(with:and:)",
-                    SourceLanguage.objectiveC.id: "doSomethingWithFirst:andSecond:",
-                ])
-            ),
+            elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             prettyFormatted: true,
             matches: """
             <p>
@@ -402,13 +404,7 @@ final class MarkupRendererTests: XCTestCase {
         // Link with custom title
         try assert(
             rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
-            elementToReturn: .init(
-                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
-                names: .languageSpecificSymbol([
-                    SourceLanguage.swift.id : "doSomething(with:and:)",
-                    SourceLanguage.objectiveC.id: "doSomethingWithFirst:andSecond:",
-                ])
-            ),
+            elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
             <p><a href="../../SomeClass/someMethod(_:_:)/index.html">Custom <i>formatted</i> title</a></p>
             """
@@ -417,13 +413,7 @@ final class MarkupRendererTests: XCTestCase {
         // Link with custom symbol-like title
         try assert(
             rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
-            elementToReturn: .init(
-                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
-                names: .languageSpecificSymbol([
-                    SourceLanguage.swift.id : "doSomething(with:and:)",
-                    SourceLanguage.objectiveC.id: "doSomethingWithFirst:andSecond:",
-                ])
-            ),
+            elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
             <p><a href="../../SomeClass/someMethod(_:_:)/index.html">Some <code>Custom<wbr/>Symbol<wbr/>Name</code> title</a></p>
             """
@@ -531,6 +521,34 @@ final class MarkupRendererTests: XCTestCase {
         let htmlString = htmlNodes.rendered(prettyFormatted: prettyFormatted)
         
         XCTAssertEqual(htmlString, expectedHTML, file: file, line: line)
+    }
+    
+    private func makeExampleMethodWithDifferentLanguageRepresentations()  -> LinkedElement {
+        LinkedElement(
+            path: URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")!,
+            names: .languageSpecificSymbol([
+                SourceLanguage.swift.id : "doSomething(with:and:)",
+                SourceLanguage.objectiveC.id: "doSomethingWithFirst:andSecond:",
+            ]),
+            subheadings: .languageSpecificSymbol([ // Not relevant for inline links
+                SourceLanguage.swift.id: [
+                    .init(text: "func ", kind: .decorator),
+                    .init(text: "doSomething", kind: .identifier),
+                    .init(text: "(", kind: .decorator),
+                    .init(text: "with", kind: .identifier),
+                    .init(text: ":", kind: .decorator),
+                    .init(text: "and", kind: .identifier),
+                    .init(text: ")", kind: .decorator),
+                ],
+                SourceLanguage.objectiveC.id: [
+                    .init(text: "doSomethingWithFirst", kind: .identifier),
+                    .init(text: ":", kind: .decorator),
+                    .init(text: "andSecond", kind: .identifier),
+                    .init(text: ":", kind: .decorator),
+                ]
+            ]),
+            abstract: nil // Not relevant for inline links
+        )
     }
 }
 

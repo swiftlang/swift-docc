@@ -57,9 +57,45 @@ private struct ContextLinkProvider: HTML.LinkProvider {
             names = .single(name)
         }
         
+        func convert(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [LinkedElement.SymbolNameFragment] {
+            // FIXME: Join series of tokens of the same identifier/decorator kind to reduce number of tags in the output
+            fragments.map {
+                let kind: LinkedElement.SymbolNameFragment.Kind = switch $0.kind {
+                    case .identifier, .externalParameter: .identifier
+                    default:                              .decorator
+                }
+                
+                return LinkedElement.SymbolNameFragment(text: $0.spelling, kind: kind)
+            }
+        }
+        
+        let subheadings: HTML.LinkedElement.Subheadings
+        if let symbol = node.semantic as? Symbol {
+            let primarySubheading = symbol.subHeading
+            let allSubheadings = symbol.subHeadingVariants.allValues
+            
+            if allSubheadings.contains(where: { _, title in title != primarySubheading }) {
+                // This symbol has multiple unique names
+                subheadings = .languageSpecificSymbol(.init(
+                    allSubheadings.map { trait, subheading in (
+                        key:   (trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift).id,
+                        value: convert(subheading)
+                    )},
+                    uniquingKeysWith: { _, new in new }
+                ))
+            } else {
+                // There are multiple names, but the're all the same
+                subheadings = .single(.symbol(convert(primarySubheading ?? [])))
+            }
+        } else {
+            subheadings = .single(.conceptual(node.name.plainText))
+        }
+        
         return .init(
             path: Self.filePath(for: node.reference),
-            names: names
+            names: names,
+            subheadings: subheadings,
+            abstract: (node.semantic as? (any Abstracted))?.abstract
         )
     }
     

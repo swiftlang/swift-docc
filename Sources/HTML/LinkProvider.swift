@@ -9,6 +9,7 @@
 */
 
 package import Foundation
+package import Markdown
 
 /// A type that provides information about other pages, and on-page elements, that the rendered page references.
 package protocol LinkProvider {
@@ -22,17 +23,27 @@ package protocol LinkProvider {
 package struct LinkedElement {
     /// The path within the output archive to the linked element.
     package var path: URL
-    /// The names of the linked element.
+    /// The names of the linked element, for display when the element is referenced in inline content.
     ///
     /// Articles, headings, tutorials, and similar pages have a ``Names/single/conceptual(_:)`` name.
     /// Symbols can either have a ``Names/single/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol``).
     package var names: Names
-    
-    package init(path: URL, names: Names) {
+    /// The subheadings of the linked element, for display when the element is referenced in either a Topics section, See Also section, or in a `@Links` directive.
+    ///
+    /// Articles, headings, tutorials, and similar pages have a ``Names/single/conceptual(_:)`` name.
+    /// Symbols can either have a ``Names/single/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol``).
+    package var subheadings: Subheadings
+    /// The abstract of the page—to be displayed in either a Topics section, See Also section, or in a `@Links` directive—or `nil` if the linked element doesn't have an abstract.
+    package var abstract: Paragraph?
+
+    package init(path: URL, names: Names, subheadings: Subheadings, abstract: Paragraph?) {
         self.path = path
         self.names = names
+        self.subheadings = subheadings
+        self.abstract = abstract
     }
     
+    /// The single name or language-specific names to use when referring to a linked element in inline content.
     package enum Names {
         /// This element has the same name in all language representations
         case single(Name)
@@ -46,6 +57,40 @@ package struct LinkedElement {
         case conceptual(String)
         /// The name refers to a symbol's subheading declaration and should display in a monospaced font.
         case symbol(String)
+    }
+    
+    /// The single subheading or language-specific subheadings to use when referring to a linked element in either a Topics section, See Also section, or in a `@Links` directive.
+    package enum Subheadings {
+        /// This element has the same name in all language representations
+        case single(Subheading)
+        /// This element is a symbol with different names in different languages.
+        ///
+        /// Because `@DisplayName` applies to all language representations, these language specific names are always the symbol's subheading declaration and should display in a monospaced font.
+        case languageSpecificSymbol([String /* Language ID */: [SymbolNameFragment]])
+    }
+    package enum Subheading {
+        /// The name refers to an article, heading, or custom `@DisplayName` and should display as regular text.
+        case conceptual(String)
+        /// The name refers to a symbol's subheading declaration and should display in a monospaced font.
+        case symbol([SymbolNameFragment])
+    }
+    
+    /// A fragment in a symbol's name
+    package struct SymbolNameFragment {
+        /// The textual spelling of this fragment
+        package var text: String
+        /// The kind of fragment
+        package var kind: Kind
+        
+        /// The display kind of a single  symbol name fragment
+        package enum Kind: String {
+            case identifier, decorator
+        }
+        
+        package init(text: String, kind: Kind) {
+            self.text = text
+            self.kind = kind
+        }
     }
 }
 

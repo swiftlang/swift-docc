@@ -20,14 +20,27 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         let elements = [
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/index.html")!,
-                names: .single(.symbol("ModuleName"))
+                names: .single(.symbol("ModuleName")),
+                subheadings: .single(.symbol([.init(text: "ModuleName", kind: .identifier)])),
+                abstract: nil
             ),
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/Something/index.html")!,
                 names: .languageSpecificSymbol([
                     "swift": "Something",
                     "occ": "TLASomething",
-                ])
+                ]),
+                subheadings: .languageSpecificSymbol([
+                    "swift": [
+                        .init(text: "class ", kind: .decorator),
+                        .init(text: "Something", kind: .identifier),
+                    ],
+                    "occ": [
+                        .init(text: "class ", kind: .decorator),
+                        .init(text: "TLASomething", kind: .identifier),
+                    ],
+                ]),
+                abstract: nil
             ),
         ]
         let breadcrumbs = makeRenderer(elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path })
@@ -209,7 +222,15 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         let path = URL(string: "/documentation/ModuleName/Something/ThisPage/index.html")!
         
         var elementsByURL = [
-            path: LinkedElement(path: path, names: .single( .symbol("ThisPage") ))
+            path: LinkedElement(
+                path: path,
+                names: .single( .symbol("ThisPage") ),
+                subheadings: .single( .symbol([
+                    .init(text: "class ", kind: .decorator),
+                    .init(text: "ThisPage", kind: .identifier),
+                ])),
+                abstract: nil
+            )
         ]
         for element in elementsToReturn {
             elementsByURL[element.path] = element
