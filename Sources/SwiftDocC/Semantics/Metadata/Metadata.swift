@@ -200,56 +200,64 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     /// Validates the use of this Metadata directive in a documentation comment.
     ///
-    /// Some configuration options of Metadata are invalid in documentation comments. This function
-    /// emits warnings for illegal uses and sets their values to `nil`.
-    func validateForUseInDocumentationComment(
-        symbolSource: URL?,
-        problems: inout [Problem]
-    ) {
-        let invalidDirectives: [(any AutomaticDirectiveConvertible)?] = [
-            documentationOptions,
-            technologyRoot,
-            displayName,
-            callToAction,
-            pageKind,
-            _pageColor,
-            titleHeading,
-        ] + (redirects ?? [])
-          + supportedLanguages
-          + pageImages
-        
-        let namesAndRanges = invalidDirectives
-            .compactMap { $0 }
-            .map { (type(of: $0).directiveName, $0.originalMarkup.range) }
-        
-        problems.append(
-            contentsOf: namesAndRanges.map { (name, range) in
-                let diagnostic = Diagnostic(
-                    source: symbolSource,
-                    severity: .warning,
-                    range: range,
-                    identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
-                    summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
-                    explanation: "Specify this configuration in a documentation extension file"
-                )
-                
-                let solutions: [Solution] = range.map { range in
-                    [Solution(
-                        summary: "Remove invalid \(name.singleQuoted) directive",
-                        replacements: [
-                            Replacement(range: range, replacement: "")
-                        ]
-                    )]
-                } ?? []
-                
-                return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
+    /// Some configuration options of Metadata are not supported in documentation comments.
+    /// This function emits warnings for unsupported uses and resets their values (to `nil` or `[]`) .
+    func validateForUseInDocumentationComment(symbolSource: URL?, problems: inout [Problem]) {
+        func validateUnsupportedMetadataDirective<Directive: AutomaticDirectiveConvertible>(for directives: [Directive]?) {
+            for directive in directives ?? [] {
+                validateUnsupportedMetadataDirective(for: directive)
             }
-        )
+        }
+        
+        func validateUnsupportedMetadataDirective<Directive: AutomaticDirectiveConvertible>(for directive: Directive?) {
+            guard let directive else {
+                return
+            }
+            
+            let name = Directive.directiveName
+            let range = directive.originalMarkup.range
+            
+            let diagnostic = Diagnostic(
+                source: symbolSource,
+                severity: .warning,
+                range: range,
+                identifier: "org.swift.docc.\(Metadata.directiveName).Invalid\(name)InDocumentationComment",
+                summary: "Invalid use of \(name.singleQuoted) directive in documentation comment; configuration will be ignored",
+                explanation: "Specify this configuration in a documentation extension file"
+            )
+            
+            let solutions: [Solution] = range.map { range in
+                [Solution(
+                    summary: "Remove invalid \(name.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )]
+            } ?? []
+            
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+        }
+        
+        validateUnsupportedMetadataDirective(for: documentationOptions)
+        validateUnsupportedMetadataDirective(for: technologyRoot)
+        validateUnsupportedMetadataDirective(for: displayName)
+        validateUnsupportedMetadataDirective(for: callToAction)
+        validateUnsupportedMetadataDirective(for: pageKind)
+        validateUnsupportedMetadataDirective(for: _pageColor)
+        validateUnsupportedMetadataDirective(for: titleHeading)
+        validateUnsupportedMetadataDirective(for: redirects)
+        validateUnsupportedMetadataDirective(for: supportedLanguages)
+        validateUnsupportedMetadataDirective(for: pageImages)
         
         documentationOptions = nil
-        technologyRoot = nil
-        displayName = nil
-        pageKind = nil
-        _pageColor = nil
+        technologyRoot       = nil
+        displayName          = nil
+        callToAction         = nil
+        pageKind             = nil
+        _pageColor           = nil
+        titleHeading         = nil
+        redirects            = nil
+        supportedLanguages   = []
+        pageImages           = []
     }
 }
