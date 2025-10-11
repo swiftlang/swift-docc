@@ -368,6 +368,18 @@ struct HTMLRenderer {
         }
         
         // Declaration
+        if !symbol.declarationVariants.allValues.isEmpty {
+            // FIXME: Display platform specific declarations
+            
+            var fragmentsByLanguageID = [String: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
+            for (trait, variant) in symbol.declarationVariants.allValues {
+                guard let languageID = trait.interfaceLanguage else { continue }
+                fragmentsByLanguageID[languageID] = variant.values.first?.declarationFragments
+            }
+            
+            hero.addChild( renderer.declaration(fragmentsByLanguageID) )
+        }
+        
         for (trait, variant) in symbol.declarationVariants.allValues.sorted(by: { $0.trait < $1.trait}) {
             guard let lang = trait.interfaceLanguage else { continue }
             
