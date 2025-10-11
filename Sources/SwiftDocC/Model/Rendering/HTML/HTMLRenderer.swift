@@ -112,6 +112,12 @@ private struct ContextLinkProvider: HTML.LinkProvider {
         )
     }
     
+    func pathForSymbolID(_ usr: String) -> URL? {
+        context.localOrExternalReference(symbolID: usr).map {
+            Self.filePath(for: $0)
+        }
+    }
+    
     func assetNamed(_ assetName: String) -> HTML.LinkedAsset? {
         guard let asset = context.resolveAsset(named: assetName, in: reference) else {
             return nil
@@ -244,7 +250,7 @@ struct HTMLRenderer {
             separateCurationIfNeeded()
             articleElement.addChild(makeGroupedSection(seeAlso))
         }
-        if let taskGroup = AutomaticCuration.seeAlso(for: node, withTraits: [.swift, .objectiveC], context: context, bundle: context.bundle, renderContext: renderContext, renderer: .init(documentationContext: context, bundle: context.bundle)) {
+        if let taskGroup = AutomaticCuration.seeAlso(for: node, withTraits: [.swift, .objectiveC], context: context, renderContext: renderContext, renderer: .init(context: context)) {
             separateCurationIfNeeded()
             // Automatice SeeAlso
             let section = XMLElement(name: "section")
@@ -520,7 +526,7 @@ struct HTMLRenderer {
             articleElement.addChild(makeGroupedSection(seeAlso))
         }
         
-        if let taskGroup = AutomaticCuration.seeAlso(for: node, withTraits: [.swift, .objectiveC], context: context, bundle: context.bundle, renderContext: renderContext, renderer: .init(documentationContext: context, bundle: context.bundle)) {
+        if let taskGroup = AutomaticCuration.seeAlso(for: node, withTraits: [.swift, .objectiveC], context: context, renderContext: renderContext, renderer: .init(context: context)) {
             // Automatice SeeAlso
             let section = XMLElement(name: "section")
             separateCurationIfNeeded()

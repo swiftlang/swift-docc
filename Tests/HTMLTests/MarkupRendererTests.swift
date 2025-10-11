@@ -577,6 +577,11 @@ struct SingleValueLinkProvider: LinkProvider {
         elementToReturn
     }
     
+    var pathToReturn: URL?
+    func pathForSymbolID(_ usr: String) -> URL? {
+        pathToReturn
+    }
+    
     var assetToReturn: LinkedAsset?
     func assetNamed(_ assetName: String) -> LinkedAsset? {
         assetToReturn

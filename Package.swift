@@ -93,6 +93,7 @@ let package = Package(
             name: "HTML",
             dependencies: [
                 .product(name: "Markdown", package: "swift-markdown"),
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             swiftSettings: swiftSettings
         ),

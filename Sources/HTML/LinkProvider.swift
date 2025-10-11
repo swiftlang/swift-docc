@@ -16,6 +16,9 @@ package protocol LinkProvider {
     /// Provide information about another page or on-page element, or `nil` if the other page can't be found.
     func element(for path: URL) -> LinkedElement?
     
+    /// Provide the path for a symbol based on its unique identifier, or `nil` if the other symbol with that identifier can't be found.
+    func pathForSymbolID(_ usr: String) -> URL?
+    
     /// Provide information about an asset, or `nil` if the asset can't be found.
     func assetNamed(_ assetName: String) -> LinkedAsset?
 }
