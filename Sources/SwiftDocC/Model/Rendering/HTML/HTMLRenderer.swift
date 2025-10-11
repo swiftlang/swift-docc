@@ -58,15 +58,28 @@ private struct ContextLinkProvider: HTML.LinkProvider {
         }
         
         func convert(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [LinkedElement.SymbolNameFragment] {
-            // FIXME: Join series of tokens of the same identifier/decorator kind to reduce number of tags in the output
-            fragments.map {
-                let kind: LinkedElement.SymbolNameFragment.Kind = switch $0.kind {
+            func convert(kind: SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind) -> LinkedElement.SymbolNameFragment.Kind {
+                switch kind {
                     case .identifier, .externalParameter: .identifier
                     default:                              .decorator
                 }
-                
-                return LinkedElement.SymbolNameFragment(text: $0.spelling, kind: kind)
             }
+            guard var current = fragments.first.map({ LinkedElement.SymbolNameFragment(text: $0.spelling, kind: convert(kind: $0.kind)) }) else {
+                return []
+            }
+            
+            var result: [LinkedElement.SymbolNameFragment] = []
+            
+            for fragment in fragments.dropFirst() {
+                let kind = convert(kind: fragment.kind)
+                if kind == current.kind  {
+                    current.text += fragment.spelling
+                } else {
+                    result.append(current)
+                    current = .init(text: fragment.spelling, kind: kind)
+                }
+            }
+            return result
         }
         
         let subheadings: HTML.LinkedElement.Subheadings
