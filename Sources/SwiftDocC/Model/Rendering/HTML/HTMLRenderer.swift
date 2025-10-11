@@ -91,7 +91,7 @@ struct HTMLRenderer {
     private let linkProvider: ContextLinkProvider
     private let filePath: URL
     
-    private var renderer: MarkupRenderer<ContextLinkProvider>
+    private let renderer: MarkupRenderer<ContextLinkProvider>
     
     init(reference: ResolvedTopicReference, context: DocumentationContext, renderContext: RenderContext) {
         self.reference = reference
@@ -152,8 +152,7 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = article.abstract {
-            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
-            let paragraph = renderer.visitParagraph(abstract) as! XMLElement
+            let paragraph = renderer.visit(abstract) as! XMLElement
             
             paragraph.addAttribute(
                 XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode
@@ -289,8 +288,7 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = symbol.abstract {
-            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
-            let paragraph = renderer.visitParagraph(abstract) as! XMLElement
+            let paragraph = renderer.visit(abstract) as! XMLElement
             
             paragraph.addAttribute(
                 XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode
@@ -349,7 +347,6 @@ struct HTMLRenderer {
         
         // Deprecation message
         if let deprecationSummary = symbol.deprecatedSummary {
-            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
             var children: [XMLNode] = [
                 .element(named: "p", children: [.text("Deprecated")], attributes: ["class": "label"])
             ]
@@ -396,8 +393,6 @@ struct HTMLRenderer {
                     .selfReferencingHeader(title: title)
                 )
             }
-            
-            var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
             
             for markup in returnsSection.content {
                 section.addChild(
@@ -515,8 +510,6 @@ struct HTMLRenderer {
             )
         }
         
-        var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
-        
         var remaining = discussion.content[...]
         if let heading = discussion.content.first as? Heading, heading.level == 2 {
             _ = remaining.removeFirst()
@@ -568,8 +561,6 @@ struct HTMLRenderer {
     }
     
     private func makeTopicSectionItem(for reference: ResolvedTopicReference) -> XMLNode? {
-        var renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
-        
         if let local = context.documentationCache[reference] {
             let container = XMLNode.element(named: "div")//, attributes: ["class": className])
             var className = "link-block"
@@ -624,7 +615,7 @@ struct HTMLRenderer {
             
             // Abstract
             if let abstract = (local.semantic as? any Abstracted)?.abstract {
-                container.addChild(renderer.visitParagraph(abstract))
+                container.addChild(renderer.visit(abstract))
             }
             
             return container

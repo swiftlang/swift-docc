@@ -67,8 +67,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
     }
     
     func testRenderSingleLanguageParameters() throws {
-        var renderer = makeRenderer()
-        let parameters = renderer.parameters([
+        let parameters = makeRenderer().parameters([
             "swift": [
                 .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
                 .init(name: "Second", content: parseMarkup(string: """
@@ -107,8 +106,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
     }
     
     func testRenderLanguageSpecificParameters() throws {
-        var renderer = makeRenderer()
-        let parameters = renderer.parameters([
+        let parameters = makeRenderer().parameters([
             "swift": [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
                 .init(name: "SwiftOnly", content: parseMarkup(string: "Only available in Swift")),
@@ -156,8 +154,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
     }
     
     func testRenderManyLanguageSpecificParameters() throws {
-        var renderer = makeRenderer()
-        let parameters = renderer.parameters([
+        let parameters = makeRenderer().parameters([
             "swift": [
                 .init(name: "First", content: parseMarkup(string: "Some description")),
             ],

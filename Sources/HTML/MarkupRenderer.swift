@@ -9,7 +9,7 @@
 */
 
 package import Foundation
-import Markdown
+package import Markdown
 
 /// A type that provides information about other pages, and on-page elements, that the rendered page references.
 package protocol LinkProvider {
@@ -63,7 +63,7 @@ package struct LinkedAsset {
     }
 }
 
-package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
+package struct MarkupRenderer<Provider: LinkProvider> {
     /// The path within the output archive to the page that this renderer renders.
     let path: URL
     /// A type that provides information about other pages that the rendered page references.
@@ -74,17 +74,11 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         self.linkProvider = linkProvider
     }
     
-    mutating func defaultVisit(_ markup: any Markdown.Markup) -> XMLNode {
-        fatalError("A placeholder node also crashes here so we might as well make it explicit")
-    }
-    
-    //
-    
-    mutating func visitParagraph(_ paragraph: Paragraph) -> XMLNode {
+    package func visit(_ paragraph: Paragraph) -> XMLNode {
         .element(named: "p", children: visit(paragraph.children))
     }
     
-    mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> XMLNode {
+    func visit(_ blockQuote: BlockQuote) -> XMLNode {
         let aside = Aside(blockQuote)
         
         var children: [XMLNode] = [
@@ -101,39 +95,39 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         )
     }
     
-    mutating func visitHeading(_ heading: Heading) -> XMLNode {
+    package func visit(_ heading: Heading) -> XMLNode {
         .element(named: "h\(heading.level)", children: visit(heading.children))
     }
     
-    mutating func visitEmphasis(_ emphasis: Emphasis) -> XMLNode {
+    func visit(_ emphasis: Emphasis) -> XMLNode {
         .element(named: "i", children: visit(emphasis.children))
     }
     
-    mutating func visitStrong(_ strong: Strong) -> XMLNode {
+    func visit(_ strong: Strong) -> XMLNode {
         .element(named: "b", children: visit(strong.children))
     }
     
-    mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> XMLNode {
+    func visit(_ strikethrough: Strikethrough) -> XMLNode {
         .element(named: "s", children: visit(strikethrough.children))
     }
     
-    mutating func visitInlineCode(_ inlineCode: InlineCode) -> XMLNode {
+    func visit(_ inlineCode: InlineCode) -> XMLNode {
         .element(named: "code", children: [.text(inlineCode.code)])
     }
     
-    func visitText(_ text: Text) -> XMLNode {
+    func visit(_ text: Text) -> XMLNode {
         .text(text.string)
     }
     
-    func visitLineBreak(_ lineBreak: LineBreak) -> XMLNode {
+    func visit(_ lineBreak: LineBreak) -> XMLNode {
         .element(named: "br")
     }
     
-    func visitSoftBreak(_ softBreak: SoftBreak) -> XMLNode {
+    func visit(_ softBreak: SoftBreak) -> XMLNode {
         .text(" ") // A soft line break doesn't actually break the content
     }
     
-    func visitThematicBreak(_ thematicBreak: ThematicBreak) -> XMLNode {
+    func visit(_ thematicBreak: ThematicBreak) -> XMLNode {
         .element(named: "hr")
     }
     
@@ -152,7 +146,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         }
     }
     
-    func visitHTMLBlock(_ html: HTMLBlock) -> XMLNode {
+    func visit(_ html: HTMLBlock) -> XMLNode {
         do {
             let parsed = try XMLElement(xmlString: html.rawHTML)
             _removeComments(from: parsed)
@@ -162,7 +156,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         }
     }
     
-    func visitInlineHTML(_ html: InlineHTML) -> XMLNode {
+    func visit(_ html: InlineHTML) -> XMLNode {
         // Inline HTML is one tag at a time, meaning that the closing and opening tags are parsed separately
         // Because of this, we can't parse it with `XMLElement` or `XMLParser`.
         
@@ -176,7 +170,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         return .text(html.rawHTML)
     }
     
-    mutating func visitLink(_ link: Link) -> XMLNode {
+    func visit(_ link: Link) -> XMLNode {
         guard let destination = link.destination.flatMap({ URL(string: $0) }) else {
             return .text("")
         }
@@ -238,7 +232,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         }
     }
     
-    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> XMLNode {
+    func visit(_ symbolLink: SymbolLink) -> XMLNode {
         guard let destination = symbolLink.destination.flatMap({ URL(string: $0) }),
               let linkedElement = linkProvider.element(for: destination)
         else {
@@ -286,7 +280,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         return relativeComponents.joined(separator: "/")
     }
     
-    func visitImage(_ image: Image) -> XMLNode {
+    func visit(_ image: Image) -> XMLNode {
         guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.images.isEmpty else {
             return .text("") // ???: What do we return for images that won't display anything?
         }
@@ -328,7 +322,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
         return .element(named: "picture", children: children)
     }
     
-    func visitCodeBlock(_ codeBlock: CodeBlock) -> XMLNode {
+    func visit(_ codeBlock: CodeBlock) -> XMLNode {
         let attributes = codeBlock.language.map {
             ["class": $0]
         }
@@ -345,21 +339,21 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
     
     // MARK: List
     
-    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> XMLNode {
+    func visit(_ unorderedList: UnorderedList) -> XMLNode {
         .element(named: "ul", children: visit(unorderedList.children))
     }
     
-    mutating func visitOrderedList(_ orderedList: OrderedList) -> XMLNode {
+    func visit(_ orderedList: OrderedList) -> XMLNode {
         .element(named: "ol", children: visit(orderedList.children))
     }
     
-    mutating func visitListItem(_ listItem: ListItem) -> XMLNode {
+    func visit(_ listItem: ListItem) -> XMLNode {
         .element(named: "li", children: visit(listItem.children))
     }
     
     // MARK: Tables
     
-    mutating func visitTable(_ table: Table) -> XMLNode {
+    func visit(_ table: Table) -> XMLNode {
         let element = XMLElement(name: "table")
                 
         if !table.head.isEmpty {
@@ -442,7 +436,7 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
     
     // MARK: Markup children
     
-    private mutating func visit(_ container: MarkupChildren) -> [XMLNode] {
+    private func visit(_ container: MarkupChildren) -> [XMLNode] {
         var children: [XMLNode] = []
         children.reserveCapacity(container.underestimatedCount)
         
@@ -503,30 +497,104 @@ package struct MarkupRenderer<Provider: LinkProvider>: MarkupVisitor {
     
     // MARK: Directives
     
-    func visitBlockDirective(_ blockDirective: BlockDirective) -> XMLNode {
+    func visit(_ blockDirective: BlockDirective) -> XMLNode {
         .text("") // Do nothing for now
     }
     
     // FIXME: It would be nice if DocC processed these before rendering
     
-    mutating func visitDoxygenNote(_ doxygenNote: DoxygenNote) -> XMLNode {
+    func visit(_ doxygenNote: DoxygenNote) -> XMLNode {
         .element(named: "p", children: visit(doxygenNote.children))
     }
     
-    mutating func visitDoxygenReturns(_ doxygenReturns: DoxygenReturns) -> XMLNode {
+    func visit(_ doxygenReturns: DoxygenReturns) -> XMLNode {
         .element(named: "p", children: visit(doxygenReturns.children))
     }
     
-    mutating func visitDoxygenAbstract(_ doxygenAbstract: DoxygenAbstract) -> XMLNode {
+    func visit(_ doxygenAbstract: DoxygenAbstract) -> XMLNode {
         .element(named: "p", children: visit(doxygenAbstract.children))
     }
     
-    mutating func visitDoxygenParameter(_ doxygenParam: DoxygenParameter) -> XMLNode {
+    func visit(_ doxygenParam: DoxygenParameter) -> XMLNode {
         .element(named: "p", children: visit(doxygenParam.children))
     }
     
-    mutating func visitDoxygenDiscussion(_ doxygenDiscussion: DoxygenDiscussion) -> XMLNode {
+    func visit(_ doxygenDiscussion: DoxygenDiscussion) -> XMLNode {
         .element(named: "p", children: visit(doxygenDiscussion.children))
+    }
+    
+    // MARK: Default
+    
+    @_disfavoredOverload
+    package func visit(_ markup: some Markup) -> XMLNode {
+        // Check common markup types first
+        if let paragraph = markup as? Paragraph {
+            return visit(paragraph)
+        } else if let text = markup as? Text {
+            return visit(text)
+        } else if let strong = markup as? Strong {
+            return visit(strong)
+        } else if let emphasis = markup as? Emphasis {
+            return visit(emphasis)
+        } else if let symbolLink = markup as? SymbolLink {
+            return visit(symbolLink)
+        } else if let link = markup as? Link {
+            return visit(link)
+        } else if let inlineCode = markup as? InlineCode {
+            return visit(inlineCode)
+        } else if let image = markup as? Image {
+            return visit(image)
+        } else if let listItem = markup as? ListItem {
+            return visit(listItem)
+        } else if let heading = markup as? Heading {
+            return visit(heading)
+        } else if let orderedList = markup as? OrderedList {
+            return visit(orderedList)
+        } else if let unorderedList = markup as? UnorderedList {
+            return visit(unorderedList)
+        } else if let codeBlock = markup as? CodeBlock {
+            return visit(codeBlock)
+        } else if let blockQuote = markup as? BlockQuote {
+            return visit(blockQuote)
+        } else if let table = markup as? Table {
+            return visit(table)
+        } else if let lineBreak = markup as? LineBreak {
+            return visit(lineBreak)
+        } else if let softBreak = markup as? SoftBreak {
+            return visit(softBreak)
+        } else if let thematicBreak = markup as? ThematicBreak {
+            return visit(thematicBreak)
+        } else if let blockDirective = markup as? BlockDirective {
+            return visit(blockDirective)
+        } else if let inlineHTML = markup as? InlineHTML {
+            return visit(inlineHTML)
+        } else if let html = markup as? HTMLBlock {
+            return visit(html)
+        } else if let strikethrough = markup as? Strikethrough {
+            return visit(strikethrough)
+        } else if let customBlock = markup as? CustomBlock {
+            return visit(customBlock)
+        } else if let document = markup as? Document {
+            return visit(document)
+        } else if let customInline = markup as? CustomInline {
+            return visit(customInline)
+        } else if let attributes = markup as? InlineAttributes {
+            return visit(attributes)
+        } else if let doxygenDiscussion = markup as? DoxygenDiscussion {
+            return visit(doxygenDiscussion)
+        } else if let doxygenNote = markup as? DoxygenNote {
+            return visit(doxygenNote)
+        } else if let doxygenAbstract = markup as? DoxygenAbstract {
+            return visit(doxygenAbstract)
+        } else if let doxygenParam = markup as? DoxygenParameter {
+            return visit(doxygenParam)
+        } else if let doxygenReturns = markup as? DoxygenReturns {
+            return visit(doxygenReturns)
+        } else if markup is Table.Head || markup is Table.Body || markup is Table.Row || markup is Table.Cell {
+            fatalError("This renderer is expected to visit the `Table` element, not it's member. It's a programming error to pass one of its member type directly.")
+        } else {
+            fatalError("Encountered unknown markup element. All supported markup elements should already be defined by the Markdown framework")
+        }
     }
 }
 

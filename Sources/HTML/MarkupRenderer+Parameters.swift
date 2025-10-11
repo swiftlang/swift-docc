@@ -27,7 +27,7 @@ package extension MarkupRenderer {
         }
     }
     
-    mutating func parameters(_ info: [String: [ParameterInfo]]) -> XMLNode {
+    func parameters(_ info: [String: [ParameterInfo]]) -> XMLNode {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
         
         // Add a heading that references the section before anything the actual parameter list
@@ -61,11 +61,11 @@ package extension MarkupRenderer {
         return .element(named: "section", children: items, attributes: ["id": "parameters"])
     }
     
-    private mutating func _singleLanguageParameters(_ parameterInfo: [ParameterInfo]) -> XMLElement {
+    private func _singleLanguageParameters(_ parameterInfo: [ParameterInfo]) -> XMLElement {
         .element(named: "dl", children: _singleLanguageParameterItems(parameterInfo))
     }
     
-    private mutating func _singleLanguageParameterItems(_ parameterInfo: [ParameterInfo]) -> [XMLElement] {
+    private func _singleLanguageParameterItems(_ parameterInfo: [ParameterInfo]) -> [XMLElement] {
         var items: [XMLElement] = []
         items.reserveCapacity(parameterInfo.count * 2)
         for parameter in parameterInfo {
@@ -84,7 +84,7 @@ package extension MarkupRenderer {
         return items
     }
     
-    private mutating func _dualLanguageParameters(
+    private func _dualLanguageParameters(
         primary: (key: String, value: [ParameterInfo]),
         secondary: (key: String, value: [ParameterInfo])
     ) -> XMLElement {
