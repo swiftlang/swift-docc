@@ -9,6 +9,7 @@
 */
 
 public import Foundation
+public import Common
 
 /// A thread-safe cache for encoded render references.
 public typealias RenderReferenceCache = Synchronized<[String: (reference: Data, overrides: [VariantOverride])]>

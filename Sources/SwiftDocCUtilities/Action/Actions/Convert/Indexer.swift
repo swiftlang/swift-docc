@@ -10,6 +10,7 @@
 
 import Foundation
 import SwiftDocC
+private import Common
 
 extension ConvertAction {
     

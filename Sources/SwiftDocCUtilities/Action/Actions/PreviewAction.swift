@@ -10,6 +10,7 @@
 
 import Foundation
 public import SwiftDocC
+private import Common
 
 #if canImport(NIOHTTP1)
 /// A preview server instance.

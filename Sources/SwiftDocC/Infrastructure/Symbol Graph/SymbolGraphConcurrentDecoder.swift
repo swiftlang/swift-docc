@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import Common
 
 public extension CodingUserInfoKey {
     /// A user info key to store a symbol counter in the decoder.
@@ -55,8 +56,6 @@ enum SymbolGraphConcurrentDecoder {
     /// so that we can get the best performance out of the concurrent work.
     
     static func decode(_ data: Data, concurrentBatches: Int = 4, using decoder: JSONDecoder = JSONDecoder()) throws -> SymbolGraph {
-        
-        
         var symbolGraph: SymbolGraph!
 
         let decodeError = Synchronized<(any Error)?>(nil)
