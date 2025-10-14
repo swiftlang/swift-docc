@@ -11,6 +11,7 @@
 import Foundation
 import SymbolKit
 import Markdown
+import Common
 
 public struct RenderReferenceDependencies {
     public var topicReferences = [ResolvedTopicReference]()

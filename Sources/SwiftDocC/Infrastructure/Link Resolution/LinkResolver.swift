@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import Common
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {

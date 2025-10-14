@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -157,7 +157,9 @@ public struct SourceLanguage: Hashable, Codable, Comparable {
         
         try container.encode(self.name, forKey: SourceLanguage.CodingKeys.name)
         try container.encode(self.id, forKey: SourceLanguage.CodingKeys.id)
-        try container.encodeIfNotEmpty(self.idAliases, forKey: SourceLanguage.CodingKeys.idAliases)
+        if !self.idAliases.isEmpty {
+            try container.encode(self.idAliases, forKey: SourceLanguage.CodingKeys.idAliases)
+        }
         try container.encode(self.linkDisambiguationID, forKey: SourceLanguage.CodingKeys.linkDisambiguationID)
     }
     

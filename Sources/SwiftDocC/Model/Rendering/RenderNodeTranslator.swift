@@ -11,6 +11,7 @@
 public import Foundation
 public import Markdown
 import SymbolKit
+import Common
 
 /// A visitor which converts a semantic model into a render node.
 ///

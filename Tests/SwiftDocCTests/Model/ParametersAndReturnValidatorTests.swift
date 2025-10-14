@@ -13,6 +13,7 @@ import XCTest
 import Markdown
 @testable import SymbolKit
 @testable import SwiftDocC
+import Common
 import SwiftDocCTestUtilities
 
 class ParametersAndReturnValidatorTests: XCTestCase {

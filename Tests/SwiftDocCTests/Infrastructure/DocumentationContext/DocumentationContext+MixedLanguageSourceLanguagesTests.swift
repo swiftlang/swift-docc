@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import Common
 
 class DocumentationContext_MixedLanguageSourceLanguagesTests: XCTestCase {
     func testArticleAvailableSourceLanguagesIsSwiftInSwiftModule() async throws {

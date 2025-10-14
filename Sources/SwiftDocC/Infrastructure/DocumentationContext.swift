@@ -11,6 +11,7 @@
 public import Foundation
 import Markdown
 import SymbolKit
+public import Common
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///

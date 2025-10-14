@@ -13,6 +13,7 @@ import Foundation
 @testable @_spi(ExternalLinks) import SwiftDocC
 @testable import SwiftDocCUtilities
 import SymbolKit
+import Common
 import Markdown
 @testable import SwiftDocCTestUtilities
 

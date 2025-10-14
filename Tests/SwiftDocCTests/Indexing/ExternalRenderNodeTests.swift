@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
+import Common
 import SwiftDocCTestUtilities
 
 class ExternalRenderNodeTests: XCTestCase {

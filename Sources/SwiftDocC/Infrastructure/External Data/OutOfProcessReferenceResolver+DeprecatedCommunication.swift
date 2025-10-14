@@ -10,6 +10,7 @@
 
 public import Foundation
 public import SymbolKit
+public import Common
 
 extension OutOfProcessReferenceResolver {
     

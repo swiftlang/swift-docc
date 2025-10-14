@@ -10,6 +10,7 @@
 
 import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
+import Common
 import Markdown
 import SymbolKit
 import SwiftDocCTestUtilities

@@ -10,6 +10,7 @@
 
 public import Foundation
 public import Markdown
+public import Common
 
 /// The in-memory representation of an article.
 ///
