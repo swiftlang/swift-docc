@@ -2950,14 +2950,7 @@ extension DocumentationContext {
         var problems = [Problem]()
 
         func listSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> String {
-            sourceLanguages.sorted(by: { language1, language2 in
-                // Emit Swift first, then alphabetically.
-                switch (language1, language2) {
-                case (.swift, _): return true
-                case (_, .swift): return false
-                default: return language1.id < language2.id
-                }
-            }).map(\.name).list(finalConjunction: .and)
+            sourceLanguages.sorted().map(\.name).list(finalConjunction: .and)
         }
         func removeAlternateRepresentationSolution(_ alternateRepresentation: AlternateRepresentation) -> [Solution] {
             [Solution(
