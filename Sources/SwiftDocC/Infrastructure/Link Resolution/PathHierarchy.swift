@@ -149,6 +149,7 @@ struct PathHierarchy {
 
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
             var topLevelCandidates = nodes.filter { _, node in node.parent == nil }
+            let graphLanguageID = language?.id
             for relationship in graph.relationships where relationship.kind.formsHierarchy {
                 guard let sourceNode = nodes[relationship.source], let expectedContainerName = sourceNode.symbol?.pathComponents.dropLast().last else {
                     continue
@@ -188,7 +189,7 @@ struct PathHierarchy {
                     }
                     
                     // Prefer the symbol that matches the relationship's language.
-                    if let targetNode = targetNodes.first(where: { $0.symbol!.identifier.interfaceLanguage == language?.id }) {
+                    if let targetNode = targetNodes.first(where: { $0.symbol!.identifier.interfaceLanguage == graphLanguageID }) {
                         targetNode.add(symbolChild: sourceNode)
                     } else {
                         // It's not clear which target to add the source to, so we add it to all of them.
