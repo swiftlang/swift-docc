@@ -424,7 +424,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             let diagnosticInfo = OutOfProcessReferenceResolver.ResponseV2.DiagnosticInformation(
                 summary: "Some external link issue summary",
                 solutions: [
-                    .init(summary: "Some external solution", replacement: "some-replacement")
+                    .init(summary: "Some external solution", replacement: "/some-replacement")
                 ]
             )
             let encodedDiagnostic = try String(decoding: JSONEncoder().encode(diagnosticInfo), as: UTF8.self)
@@ -473,7 +473,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         let solution = try XCTUnwrap(problem.possibleSolutions.first)
         XCTAssertEqual(solution.summary, "Some external solution")
         XCTAssertEqual(solution.replacements.count, 1)
-        XCTAssertEqual(solution.replacements.first?.range.lowerBound, .init(line: 3, column: 65, source: nil))
+        XCTAssertEqual(solution.replacements.first?.range.lowerBound, .init(line: 3, column: 87, source: nil))
         XCTAssertEqual(solution.replacements.first?.range.upperBound, .init(line: 3, column: 97, source: nil))
         
         // Verify the warning presentation
@@ -493,7 +493,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         1 | # My root page
         2 |
         3 + This page contains an external link that will fail to resolve: <doc:\(highlight)//com.example.test/some-link\(clear)>
-          |                                                                 ╰─\(suggestion)suggestion: Some external solution\(clear)
+          |                                                                                       ╰─\(suggestion)suggestion: Some external solution\(clear)
         
         """)
         
@@ -504,17 +504,81 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         XCTAssertEqual(try solution.applyTo(original), """
         # My root page
 
-        This page contains an external link that will fail to resolve: <some-replacement>
+        This page contains an external link that will fail to resolve: <doc://com.example.test/some-replacement>
+        """)
+    }
+    
+    func testOnlySendsPathAndFragmentInLinkRequest() async throws {
+        let externalBundleID: DocumentationBundle.Identifier = "com.example.test"
+        
+        let resolver: OutOfProcessReferenceResolver
+        let savedRequestsFile: URL
+        do {
+            let temporaryFolder = try createTemporaryDirectory()
+            savedRequestsFile = temporaryFolder.appendingPathComponent("saved-requests.txt")
+            
+            let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
+            try """
+            #!/bin/bash
+            echo '{"identifier":"\(externalBundleID)","capabilities": 0}'  # Write this resolver's identifier & capabilities
+            read                                                           # Wait for docc to send a request
+            echo $REPLY >> \(savedRequestsFile.path)                       # Save the raw request string
+            echo '{"failure":"ignored error message"}'                     # Respond with an error message
+            # Repeat the same read-save-respond steps 2 more times
+            read                                                           # Wait for 2nd request
+            echo $REPLY >> \(savedRequestsFile.path)                       # Save the raw request
+            echo '{"failure":"ignored error message"}'                     # Respond 
+            read                                                           # Wait for 3rd request
+            echo $REPLY >> \(savedRequestsFile.path)                       # Save the raw request
+            echo '{"failure":"ignored error message"}'                     # Respond
+            """.write(to: executableLocation, atomically: true, encoding: .utf8)
+            
+            // `0o0700` is `-rwx------` (read, write, & execute only for owner)
+            try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
+            XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
+             
+            resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Something.md", utf8Content: """
+            # My root page
+            
+            This page contains an 3 external links hat will fail to resolve: 
+            - <doc://\(externalBundleID.rawValue)/some-link>
+            - <doc://\(externalBundleID.rawValue)/path/to/some-link>
+            - <doc://\(externalBundleID.rawValue)/path/to/some-link#some-fragment>
+            """)
+        ])
+        let inputDirectory = Folder(name: "path", content: [Folder(name: "to", content: [catalog])])
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [
+            externalBundleID: resolver
+        ]
+        // Create the context, just to process all the documentation and make the 3 external link requests
+        _ = try await loadBundle(catalog: inputDirectory, configuration: configuration)
+        
+        // The requests can come in any order so we sort the output lines for easier comparison
+        let readRequests = try String(contentsOf: savedRequestsFile, encoding: .utf8)
+            .components(separatedBy: .newlines)
+            .filter { !$0.isEmpty }
+            .sorted(by: \.count)
+            .joined(separator: "\n")
+        XCTAssertEqual(readRequests, """
+        {"link":"/some-link"}
+        {"link":"/path/to/some-link"}
+        {"link":"/path/to/some-link#some-fragment"}
         """)
     }
     
     func testEncodingAndDecodingRequests() throws {
         do {
-            let request = OutOfProcessReferenceResolver.RequestV2.link("doc://com.example/path/to/something")
+            let request = OutOfProcessReferenceResolver.RequestV2.link("/path/to/some-page#some-fragment")
             
             let data = try JSONEncoder().encode(request)
             if case .link(let link) = try JSONDecoder().decode(OutOfProcessReferenceResolver.RequestV2.self, from: data) {
-                XCTAssertEqual(link, "doc://com.example/path/to/something")
+                XCTAssertEqual(link, "/path/to/some-page#some-fragment")
             } else {
                 XCTFail("Decoded the wrong type of request")
             }

@@ -49,6 +49,10 @@ extension OutOfProcessReferenceResolver {
     public enum RequestV2: Codable {
         /// A request to resolve a link
         ///
+        /// DocC omits the "doc:\/\/" and identifier prefix from the link string because it would be the same for every link request.
+        /// For example: if your resolver registers itself for the `"your.resolver.id"` identifier---by sending it in the ``ResponseV2/identifierAndCapabilities(_:_:)`` handshake message---
+        /// and DocC encounters a `doc://your.resolver.id/path/to/some-page#some-fragment` link in any documentation content, DocC sends the `"/path/to/some-page#some-fragment"` link to your resolver.
+        ///
         /// Your external resolver should respond with either:
         /// - a ``ResponseV2/resolved(_:)`` message, with information about the requested link.
         /// - a ``ResponseV2/failure(_:)`` message, with human-readable information about the problem that the external link resolver encountered while resolving the link.
