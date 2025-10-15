@@ -11,14 +11,29 @@
 import Foundation
 import Markdown
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 import XCTest
 
 typealias Position = RenderBlockContent.CodeBlockOptions.Position
 
 class RenderContentCompilerTests: XCTestCase {
     func testLinkOverrideTitle() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "article.md", utf8Content: """
+            # First
+            """),
+            TextFile(name: "article2.md", utf8Content: """
+            # Second
+            """),
+            TextFile(name: "article3.md", utf8Content: """
+            # Third
+            """),
+            
+            InfoPlist(identifier: "org.swift.docc.example")
+        ])
+        
+        let (_, context) = try await loadBundle(catalog: catalog)
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
         [Example](http://example.com)
@@ -89,7 +104,7 @@ class RenderContentCompilerTests: XCTestCase {
                 return
             }
             let link = RenderInlineContent.reference(
-                identifier: .init("doc://org.swift.docc.example/documentation/Test-Bundle/article"),
+                identifier: .init("doc://org.swift.docc.example/documentation/unit-test/article"),
                 isActive: true,
                 overridingTitle: "Custom Title",
                 overridingTitleInlineContent: [.text("Custom Title")])
@@ -101,7 +116,7 @@ class RenderContentCompilerTests: XCTestCase {
                 return
             }
             let link = RenderInlineContent.reference(
-                identifier: .init("doc://org.swift.docc.example/documentation/Test-Bundle/article2"),
+                identifier: .init("doc://org.swift.docc.example/documentation/unit-test/article2"),
                 isActive: true,
                 overridingTitle: "Custom Image Content ",
                 overridingTitleInlineContent: [
@@ -125,7 +140,7 @@ class RenderContentCompilerTests: XCTestCase {
                 return
             }
             let link = RenderInlineContent.reference(
-                identifier: .init("doc://org.swift.docc.example/documentation/Test-Bundle/article3"),
+                identifier: .init("doc://org.swift.docc.example/documentation/unit-test/article3"),
                 isActive: true,
                 overridingTitle: nil,
                 overridingTitleInlineContent: nil
@@ -135,8 +150,8 @@ class RenderContentCompilerTests: XCTestCase {
     }
     
     func testLineBreak() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         Backslash before new line\
