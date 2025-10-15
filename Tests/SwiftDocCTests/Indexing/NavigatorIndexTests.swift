@@ -953,6 +953,77 @@ Root
             """
         )
     }
+
+    // Bug: rdar://160284853
+    // The supported languages of an article need to be stored in the resolved
+    // topic reference that eventually gets serialised into the render node,
+    // which the navigator uses. This must be done when creating the topic
+    // graph node, rather than updating the set of supported languages when
+    // registering the article. If a catalog contains more than one module, any
+    // articles present are not registered in the documentation cache, since it
+    // is not possible to determine what module it is belongs to. This test
+    // ensures that in such cases, the supported languages information is
+    // correctly included in the render node, and that the navigator is built
+    // correctly.
+    func testSupportedLanguageDirectiveForStandaloneArticles() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(identifier: testBundleIdentifier),
+            TextFile(name: "UnitTest.md", utf8Content: """
+            # UnitTest
+
+            @Metadata {
+              @TechnologyRoot
+              @SupportedLanguage(data)
+            }
+
+            ## Topics
+
+            - <doc:Article>
+            - ``Foo``
+            """),
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+
+            Just a random article.
+            """),
+            // The correct way to configure a catalog is to have a single root module. If multiple modules,
+            // are present, it is not possible to determine which module an article is supposed to be
+            // registered with. We include multiple modules to prevent registering the articles in the
+            // documentation cache, to test if the supported languages are attached prior to registration.
+            JSONFile(name: "Foo.symbols.json", content: makeSymbolGraph(moduleName: "Foo", symbols: [
+                makeSymbol(id: "some-symbol", language: SourceLanguage.data, kind: .class, pathComponents: ["SomeSymbol"]),
+            ]))
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
+
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        builder.setup()
+
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+        }
+
+        builder.finalize()
+
+        let navigatorIndex = try XCTUnwrap(builder.navigatorIndex)
+
+        let expectedNavigator = """
+[Root]
+┗╸UnitTest
+  ┣╸Article
+  ┗╸Foo
+    ┣╸Classes
+    ┗╸SomeSymbol
+"""
+        XCTAssertEqual(navigatorIndex.navigatorTree.root.dumpTree(), expectedNavigator)
+    }
     
     func testNavigatorIndexUsingPageTitleGeneration() async throws {
         let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")

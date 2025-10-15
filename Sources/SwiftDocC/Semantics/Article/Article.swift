@@ -66,6 +66,18 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         return abstractSection?.paragraph
     }
 
+    /// The list of supported languages for the article, if present.
+    ///
+    /// This information is available via `@SupportedLanguage` in the `@Metadata` directive.
+    public var supportedLanguages: Set<SourceLanguage>? {
+        guard let metadata = self.metadata else {
+            return nil
+        }
+
+        let langs = metadata.supportedLanguages.map(\.language)
+        return langs.isEmpty ? nil : Set(langs)
+    }
+
     /// An optional custom deprecation summary for a deprecated symbol.
     private(set) public var deprecationSummary: MarkupContainer?
     

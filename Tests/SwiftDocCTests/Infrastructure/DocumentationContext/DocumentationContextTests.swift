@@ -5772,6 +5772,48 @@ let expected = """
         XCTAssertEqual(solution.replacements.first?.replacement, "")
     }
 
+    func testSupportedLanguageDirectiveForStandaloneArticles() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Root
+
+            @Metadata {
+              @TechnologyRoot
+              @SupportedLanguage(objc)
+              @SupportedLanguage(data)
+            }
+
+            ## Topics
+
+            - <doc:Article>
+            """),
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            @Metadata {
+              @SupportedLanguage(objc)
+              @SupportedLanguage(data)
+            }
+            """),
+            // The correct way to configure a catalog is to have a single root module. If multiple modules,
+            // are present, it is not possible to determine which module an article is supposed to be
+            // registered with. We include multiple modules to prevent registering the articles in the
+            // documentation cache, to test if the supported languages are attached prior to registration.
+            JSONFile(name: "Foo.symbols.json", content: makeSymbolGraph(moduleName: "Foo")),
+        ])
+        
+        let (bundle, context) = try await loadBundle(catalog: catalog)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+
+        do {
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .data)
+            // Find the topic graph node for the article
+            let node = context.topicGraph.nodes.first { $0.key == reference }?.value
+            // Ensure that the reference within the topic graph node contains the supported languages
+            XCTAssertEqual(node?.reference.sourceLanguages, [.objectiveC, .data])
+        }
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #filePath, line: UInt = #line) {
