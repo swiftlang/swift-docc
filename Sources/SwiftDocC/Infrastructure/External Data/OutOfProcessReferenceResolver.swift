@@ -424,7 +424,7 @@ extension OutOfProcessReferenceResolver {
                         Solution(summary: $0.summary, replacements: $0.replacement.map { replacement in
                             [Replacement(
                                 // The replacement ranges are relative to the link itself.
-                                // To replace only the path and fragment portion of the link link, we create a range from 0 to the relative link string length, both offset by the bundle ID length
+                                // To replace only the path and fragment portion of the link, we create a range from 0 to the relative link string length, both offset by the bundle ID length
                                 range: SourceLocation(line: 0, column: prefixLength, source: nil) ..< SourceLocation(line: 0, column: linkString.utf8.count + prefixLength, source: nil),
                                 replacement: replacement
                             )]
