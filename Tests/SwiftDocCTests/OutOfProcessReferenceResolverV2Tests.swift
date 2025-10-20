@@ -531,6 +531,9 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             read                                                           # Wait for 3rd request
             echo $REPLY >> \(savedRequestsFile.path)                       # Save the raw request
             echo '{"failure":"ignored error message"}'                     # Respond
+            read                                                           # Wait for 4th request
+            echo $REPLY >> \(savedRequestsFile.path)                       # Save the raw request
+            echo '{"failure":"ignored error message"}'                     # Respond
             """.write(to: executableLocation, atomically: true, encoding: .utf8)
             
             // `0o0700` is `-rwx------` (read, write, & execute only for owner)
@@ -544,10 +547,11 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             TextFile(name: "Something.md", utf8Content: """
             # My root page
             
-            This page contains an 3 external links hat will fail to resolve: 
+            This page contains an 4 external links that will fail to resolve: 
             - <doc://\(externalBundleID.rawValue)/some-link>
             - <doc://\(externalBundleID.rawValue)/path/to/some-link>
             - <doc://\(externalBundleID.rawValue)/path/to/some-link#some-fragment>
+            - <doc://\(externalBundleID.rawValue)//not-parsable-as-url>
             """)
         ])
         let inputDirectory = Folder(name: "path", content: [Folder(name: "to", content: [catalog])])
@@ -568,6 +572,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         XCTAssertEqual(readRequests, """
         {"link":"/some-link"}
         {"link":"/path/to/some-link"}
+        {"link":"//not-parsable-as-url"}
         {"link":"/path/to/some-link#some-fragment"}
         """)
     }
