@@ -411,7 +411,10 @@ extension OutOfProcessReferenceResolver {
                 return .success( makeReference(for: cachedSummary) )
             }
             
-            let linkString = unresolvedReference.topicURL.url.withoutHostAndPortAndScheme().standardized.absoluteString
+            let linkString = String(
+                unresolvedReferenceString.dropFirst(6) // "doc://"
+                    .drop(while: { $0 != "/" })        // the known identifier (host component)
+            )
             let response: ResponseV2 = try longRunningProcess.sendAndWait(request: RequestV2.link(linkString))
             
             switch response {
