@@ -21,11 +21,6 @@ private func disabledLinkDestinationProblem(reference: ResolvedTopicReference, r
     return Problem(diagnostic: Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.disabledLinkDestination", summary: "The topic \(reference.path.singleQuoted) cannot be linked to."), possibleSolutions: [])
 }
 
-private func unknownSnippetSliceProblem(snippetPath: String, slice: String, range: SourceRange?) -> Problem {
-    let diagnostic = Diagnostic(source: range?.source, severity: .warning, range: range, identifier: "org.swift.docc.unknownSnippetSlice", summary: "Snippet slice \(slice.singleQuoted) does not exist in snippet \(snippetPath.singleQuoted); this directive will be ignored")
-    return Problem(diagnostic: diagnostic, possibleSolutions: [])
-}
-
 private func removedLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     var solutions = [Solution]()
     if let range, reference.pathComponents.count > 3 {
@@ -44,13 +39,11 @@ private func removedLinkDestinationProblem(reference: ResolvedTopicReference, ra
  */
 struct MarkupReferenceResolver: MarkupRewriter {
     var context: DocumentationContext
-    var bundle: DocumentationBundle
     var problems = [Problem]()
     var rootReference: ResolvedTopicReference
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, rootReference: ResolvedTopicReference) {
+    init(context: DocumentationContext, rootReference: ResolvedTopicReference) {
         self.context = context
-        self.bundle = bundle
         self.rootReference = rootReference
     }
 
@@ -84,14 +77,14 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 return nil
             }
             
-            let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
+            let uncuratedArticleMatch = context.uncuratedArticles[context.inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
             problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: fromSymbolLink))
             return nil
         }
     }
 
     mutating func visitImage(_ image: Image) -> (any Markup)? {
-        if let reference = image.reference(in: bundle), !context.resourceExists(with: reference) {
+        if let reference = image.reference(in: context.inputs), !context.resourceExists(with: reference) {
             problems.append(unresolvedResourceProblem(resource: reference, source: image.range?.source, range: image.range, severity: .warning))
         }
 
@@ -171,28 +164,25 @@ struct MarkupReferenceResolver: MarkupRewriter {
         let source = blockDirective.range?.source
         switch blockDirective.name {
         case Snippet.directiveName:
-            var problems = [Problem]()
-            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, problems: &problems) else {
+            var ignoredParsingProblems = [Problem]() // Any argument parsing problems have already been reported elsewhere
+            guard let snippet = Snippet(from: blockDirective, source: source, for: context.inputs, problems: &ignoredParsingProblems) else {
                 return blockDirective
             }
             
-            if let resolved = resolveAbsoluteSymbolLink(unresolvedDestination: snippet.path, elementRange: blockDirective.range) {
-                var argumentText = "path: \"\(resolved.absoluteString)\""
+            switch context.snippetResolver.resolveSnippet(path: snippet.path) {
+            case .success(let resolvedSnippet):
                 if let requestedSlice = snippet.slice,
-                   let snippetMixin = try? context.entity(with: resolved).symbol?
-                    .mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet {
-                    guard snippetMixin.slices[requestedSlice] != nil else {
-                        problems.append(unknownSnippetSliceProblem(snippetPath: snippet.path, slice: requestedSlice, range: blockDirective.nameRange))
-                        return blockDirective
-                    }
-                    argumentText.append(", slice: \"\(requestedSlice)\"")
+                   let errorInfo = context.snippetResolver.validate(slice: requestedSlice, for: resolvedSnippet)
+                {
+                    problems.append(SnippetResolver.unknownSnippetSliceProblem(source: source, range: blockDirective.arguments()["slice"]?.valueRange, errorInfo: errorInfo))
                 }
-                return BlockDirective(name: Snippet.directiveName, argumentText: argumentText, children: [])
-            } else {
+                return blockDirective
+            case .failure(let errorInfo):
+                problems.append(SnippetResolver.unresolvedSnippetPathProblem(source: source, range: blockDirective.arguments()["path"]?.valueRange, errorInfo: errorInfo))
                 return blockDirective
             }
         case ImageMedia.directiveName:
-            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: bundle) else {
+            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: context.inputs) else {
                 return blockDirective
             }
             
@@ -210,7 +200,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             
             return blockDirective
         case VideoMedia.directiveName:
-            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: bundle) else {
+            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: context.inputs) else {
                 return blockDirective
             }
             
@@ -248,4 +238,3 @@ struct MarkupReferenceResolver: MarkupRewriter {
         }
     }
 }
-

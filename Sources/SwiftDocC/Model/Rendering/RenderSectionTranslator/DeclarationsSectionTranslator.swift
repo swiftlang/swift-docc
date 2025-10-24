@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -187,6 +187,26 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return declarations
             }
 
+            /// Returns the given platforms with any missing fallback platforms added.
+            ///
+            /// This function uses the centralized `DefaultAvailability.fallbackPlatforms` mapping to ensure
+            /// consistency with platform expansion logic used throughout the codebase.
+            ///
+            /// For example, when iOS is present in the platforms array, this function adds iPadOS and Mac Catalyst
+            /// if they are not already included.
+            ///
+            /// - Parameter platforms: The original platforms array.
+            /// - Returns: The platforms array with fallback platforms added where applicable.
+            func expandPlatformsWithFallbacks(_ platforms: [PlatformName?]) -> [PlatformName?] {
+                guard !platforms.isEmpty else { return platforms }
+
+                // Add fallback platforms if their primary platform is present but the fallback is missing
+                let fallbacks = DefaultAvailability.fallbackPlatforms.compactMap { fallback, primary in
+                    platforms.contains(primary) && !platforms.contains(fallback) ? fallback : nil
+                }
+                return platforms + fallbacks
+            }
+
             func comparePlatformNames(_ lhs: PlatformName?, _ rhs: PlatformName?) -> Bool {
                 guard let lhsValue = lhs, let rhsValue = rhs else {
                     return lhs == nil
@@ -204,6 +224,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             ]
             for pair in declaration {
                 let (platforms, declaration) = pair
+                let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
+                let platformNames = sortPlatformNames(expandedPlatforms)
 
                 let renderedTokens: [DeclarationRenderSection.Token]
                 let otherDeclarations: DeclarationRenderSection.OtherDeclarations?
@@ -242,7 +264,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 declarations.append(
                     DeclarationRenderSection(
                         languages: languages,
-                        platforms: sortPlatformNames(platforms),
+                        platforms: platformNames,
                         tokens: renderedTokens,
                         otherDeclarations: otherDeclarations
                     )
@@ -252,7 +274,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             if let alternateDeclarations = symbol.alternateDeclarationVariants[trait] {
                 for pair in alternateDeclarations {
                     let (platforms, decls) = pair
-                    let platformNames = sortPlatformNames(platforms)
+                    let expandedPlatforms = expandPlatformsWithFallbacks(platforms)
+                    let platformNames = sortPlatformNames(expandedPlatforms)
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 

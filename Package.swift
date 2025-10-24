@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 /*
  This source file is part of the Swift.org open source project
 
@@ -15,6 +15,8 @@ import class Foundation.ProcessInfo
 let swiftSettings: [SwiftSetting] = [
     .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
     
+    .swiftLanguageMode(.v5),
+    
     .enableUpcomingFeature("ConciseMagicFile"), // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
     .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
     .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
@@ -23,8 +25,8 @@ let swiftSettings: [SwiftSetting] = [
 let package = Package(
     name: "SwiftDocC",
     platforms: [
-        .macOS(.v12),
-        .iOS(.v15)
+        .macOS(.v13),
+        .iOS(.v16)
     ],
     products: [
         .library(
