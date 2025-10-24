@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 import SymbolKit
 
 fileprivate let jsonDecoder = JSONDecoder()
@@ -272,6 +273,39 @@ class ConstraintsRenderSectionTests: XCTestCase {
         
         // Verify we've removed the "Self." prefix in the type names
         XCTAssertEqual(renderReference.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol and Index conforms to Equatable.")
+    }
+
+    func testRenderSameShape() async throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "SameShapeConstraint",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "SameShapeConstraint", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile),
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+
+        // Compile docs and verify contents
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SameShapeConstraint/function(_:)", sourceLanguage: .swift))
+        let symbol = node.semantic as! Symbol
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
+        let renderNode = translator.visitSymbol(symbol) as! RenderNode
+
+        guard let renderReference = renderNode.references.first(where: { (key, value) -> Bool in
+            return key.hasSuffix("function(_:)")
+        })?.value as? TopicRenderReference else {
+            XCTFail("Did not find render reference to function(_:)")
+            return
+        }
+
+        // The symbol graph only defines constraints on the `swiftGenerics` mixin,
+        // which docc doesn't load or render.
+        // However, this test should still run without crashing on decoding the symbol graph.
+        XCTAssertEqual(renderReference.conformance?.constraints.map(flattenInlineElements).joined(), nil)
     }
 }
 
