@@ -287,12 +287,12 @@ class ConstraintsRenderSectionTests: XCTestCase {
             CopyOfFile(original: symbolGraphFile),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SameShapeConstraint/function(_:)", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SameShapeConstraint/function(_:)", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
 
         guard let renderReference = renderNode.references.first(where: { (key, value) -> Bool in
