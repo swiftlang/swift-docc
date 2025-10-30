@@ -3126,7 +3126,103 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MainModule/TopLevelProtocol/extensionMember(_:)", in: tree, asSymbolID: "extensionMember1")
         try assertFindsPath("/MainModule/TopLevelProtocol/InnerStruct/extensionMember(_:)", in: tree, asSymbolID: "extensionMember2")
     }
-    
+
+    func testAbsoluteLinksToOtherModuleWithExtensions() async throws {
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+
+        let importedProtocolID = "s:14ImportedModule12BaseProtocolP"
+        let importedTypeID = "s:14ImportedModule12ExtendedTypeV"
+        let extensionSymbolID = "s:e:s:14ImportedModule12ExtendedTypeV04MainC0E15extensionMethodyyF"
+        let extensionMethodID = "s:14ImportedModule12ExtendedTypeV04MainC0E15extensionMethodyyF"
+        let mainModuleTypeID = "s:10MainModule0A4TypeV"
+
+        let extensionMixin = SymbolGraph.Symbol.Swift.Extension(
+            extendedModule: "ImportedModule",
+            typeKind: .struct,
+            constraints: []
+        )
+
+        let catalog = Folder(name: "TestCatalog.docc", content: [
+            JSONFile(name: "MainModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "MainModule",
+                symbols: [
+                    makeSymbol(id: mainModuleTypeID, kind: .struct, pathComponents: ["MainType"])
+                ]
+            )),
+            JSONFile(name: "MainModule@ImportedModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "MainModule",
+                symbols: [
+                    makeSymbol(id: importedProtocolID, kind: .protocol, pathComponents: ["BaseProtocol"]),
+                    makeSymbol(id: importedTypeID, kind: .struct, pathComponents: ["ExtendedType"]),
+                    makeSymbol(
+                        id: extensionSymbolID,
+                        kind: .extension,
+                        pathComponents: ["ExtendedType"],
+                        otherMixins: [extensionMixin]
+                    ),
+                    makeSymbol(
+                        id: extensionMethodID,
+                        kind: .method,
+                        pathComponents: ["ExtendedType", "extensionMethod()"],
+                        otherMixins: [extensionMixin]
+                    )
+                ],
+                relationships: [
+                    .init(
+                        source: extensionMethodID,
+                        target: extensionSymbolID,
+                        kind: .memberOf,
+                        targetFallback: "ImportedModule.ExtendedType"
+                    ),
+                    .init(
+                        source: extensionSymbolID,
+                        target: importedTypeID,
+                        kind: .extensionTo,
+                        targetFallback: "ImportedModule.ExtendedType"
+                    )
+                ]
+            ))
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        XCTAssertEqual(tree.modules.count, 1)
+        XCTAssertEqual(tree.modules.first?.name, "MainModule")
+
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[importedProtocolID], "/MainModule/ImportedModule/BaseProtocol")
+        XCTAssertEqual(paths[importedTypeID], "/MainModule/ImportedModule/ExtendedType-struct")
+        XCTAssertEqual(
+            paths[extensionMethodID],
+            "/MainModule/ImportedModule/ExtendedType/extensionMethod()"
+        )
+
+        // Verify that symbols can be found at their correct paths
+        try assertFindsPath("/MainModule/ImportedModule/BaseProtocol", in: tree, asSymbolID: importedProtocolID)
+        try assertFindsPath("/MainModule/ImportedModule/ExtendedType-struct", in: tree, asSymbolID: importedTypeID)
+        try assertFindsPath(
+            "/MainModule/ImportedModule/ExtendedType/extensionMethod()",
+            in: tree,
+            asSymbolID: extensionMethodID
+        )
+
+        // Verify that absolute paths to non-existent modules throw moduleNotFound error
+        // This is the fix being tested: without it, single-module fallback would trigger incorrectly
+        try assertPathRaisesErrorMessage(
+            "/ImportedModule/BaseProtocol",
+            in: tree,
+            context: context,
+            expectedErrorMessage: "No module named 'ImportedModule'"
+        )
+        try assertPathRaisesErrorMessage(
+            "/ImportedModule/ExtendedType",
+            in: tree,
+            context: context,
+            expectedErrorMessage: "No module named 'ImportedModule'"
+        )
+    }
+
     func testMissingRequiredMemberOfSymbolGraphRelationshipInOneLanguageAcrossManyPlatforms() async throws {
         // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
         
