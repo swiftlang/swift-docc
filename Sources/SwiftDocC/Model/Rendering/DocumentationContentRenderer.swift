@@ -47,18 +47,20 @@ extension RenderReferenceDependencies: Codable {
 /// A collection of functions that render a piece of documentation content.
 public class DocumentationContentRenderer {
 
-    let documentationContext: DocumentationContext
-    let bundle: DocumentationBundle
+    let context: DocumentationContext
     let urlGenerator: PresentationURLGenerator
     
-    /// Creates a new content renderer for the given documentation context and bundle.
+    /// Creates a new content renderer for the given documentation context.
     /// - Parameters:
-    ///   - documentationContext: A documentation context.
-    ///   - bundle: A documentation bundle.
-    public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
-        self.documentationContext = documentationContext
-        self.bundle = bundle
-        self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: bundle.baseURL)
+    ///   - context: A documentation context.
+    public init(context: DocumentationContext) {
+        self.context = context
+        self.urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
+    }
+    
+    @available(*, deprecated, renamed: "init(context:)", message: "Use 'init(context:)' instead. This deprecated API will be removed after 6.4 is released.")
+    public convenience init(documentationContext: DocumentationContext, bundle _: DocumentationBundle) {
+        self.init(context: documentationContext)
     }
     
     /// For symbol nodes, returns the declaration render section if any.
@@ -171,7 +173,7 @@ public class DocumentationContentRenderer {
     
     // Generates a generic conformance section for the given reference.
     func conformanceSectionFor(_ reference: ResolvedTopicReference, collectedConstraints: [TopicReference: [SymbolGraph.Symbol.Swift.GenericConstraint]]) -> ConformanceSection? {
-        guard let node = try? documentationContext.entity(with: reference),
+        guard let node = try? context.entity(with: reference),
             let symbol = node.symbol else {
             // Couldn't find the node for this reference
             return nil
@@ -192,8 +194,8 @@ public class DocumentationContentRenderer {
         }
         
         let isLeaf = SymbolReference.isLeaf(symbol)
-        let parentName = documentationContext.parents(of: reference).first
-            .flatMap { try? documentationContext.entity(with: $0).symbol?.names.title }
+        let parentName = context.parents(of: reference).first
+            .flatMap { try? context.entity(with: $0).symbol?.names.title }
         
         let options = ConformanceSection.ConstraintRenderOptions(
             isLeaf: isLeaf,
@@ -211,7 +213,7 @@ public class DocumentationContentRenderer {
         // We verify that this is a symbol with defined availability
         // and that we're feeding in a current set of platforms to the context.
         guard let symbol = node.semantic as? Symbol,
-              let currentPlatforms = documentationContext.configuration.externalMetadata.currentPlatforms,
+              let currentPlatforms = context.configuration.externalMetadata.currentPlatforms,
               !currentPlatforms.isEmpty,
               let symbolAvailability = symbol.availability?.availability.filter({ !$0.isUnconditionallyUnavailable }), // symbol that's unconditionally unavailable in all the platforms can't be in beta.
               !symbolAvailability.isEmpty // A symbol without availability items can't be in beta.
@@ -230,7 +232,7 @@ public class DocumentationContentRenderer {
             guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
                   // Use the display name of the platform when looking up the current platforms
                   // as we expect that form on the command line.
-                  let current = documentationContext.configuration.externalMetadata.currentPlatforms?[name.displayName]
+                  let current = context.configuration.externalMetadata.currentPlatforms?[name.displayName]
             else {
                 return false
             }
@@ -287,14 +289,14 @@ public class DocumentationContentRenderer {
     ///
     /// - Returns: The rendered documentation node.
     func renderReference(for reference: ResolvedTopicReference, with overridingDocumentationNode: DocumentationNode? = nil, dependencies: inout RenderReferenceDependencies) -> TopicRenderReference {
-        let resolver = LinkTitleResolver(context: documentationContext, source: reference.url)
+        let resolver = LinkTitleResolver(context: context, source: reference.url)
         
         let titleVariants: DocumentationDataVariants<String>
-        let node = try? overridingDocumentationNode ?? documentationContext.entity(with: reference)
+        let node = try? overridingDocumentationNode ?? context.entity(with: reference)
         
         if let node, let resolvedTitle = resolver.title(for: node) {
             titleVariants = resolvedTitle
-        } else if let anchorSection = documentationContext.nodeAnchorSections[reference] {
+        } else if let anchorSection = context.nodeAnchorSections[reference] {
             // No need to continue, return a section topic reference
             return TopicRenderReference(
                 identifier: RenderReferenceIdentifier(reference.absoluteString),
@@ -304,11 +306,11 @@ public class DocumentationContentRenderer {
                 kind: .section,
                 estimatedTime: nil
             )
-        } else if let topicGraphOnlyNode = documentationContext.topicGraph.nodeWithReference(reference) {
+        } else if let topicGraphOnlyNode = context.topicGraph.nodeWithReference(reference) {
             // Some nodes are artificially inserted into the topic graph,
             // try resolving that way as a fallback after looking up `documentationCache`.
             titleVariants = .init(defaultVariantValue: topicGraphOnlyNode.title)
-        } else if let external = documentationContext.externalCache[reference] {
+        } else if let external = context.externalCache[reference] {
             let renderDependencies = external.makeRenderDependencies()
             
             dependencies.topicReferences.append(contentsOf: renderDependencies.topicReferences)
@@ -326,7 +328,7 @@ public class DocumentationContentRenderer {
         // Topic render references require the URLs to be relative, even if they're external.
         let presentationURL = urlGenerator.presentationURLForReference(reference)
         
-        var contentCompiler = RenderContentCompiler(context: documentationContext, bundle: bundle, identifier: reference)
+        var contentCompiler = RenderContentCompiler(context: context, identifier: reference)
         let abstractContent: VariantCollection<[RenderInlineContent]>
         
         var abstractedNode = node
@@ -337,7 +339,7 @@ public class DocumentationContentRenderer {
                 path: reference.path,
                 sourceLanguages: reference.sourceLanguages
             )
-            abstractedNode = try? documentationContext.entity(with: containerReference)
+            abstractedNode = try? context.entity(with: containerReference)
         }
         
         func extractAbstract(from paragraph: Paragraph?) -> [RenderInlineContent] {
@@ -397,13 +399,13 @@ public class DocumentationContentRenderer {
         renderReference.images = node?.metadata?.pageImages.compactMap { pageImage -> TopicImage? in
             guard let image = TopicImage(
                 pageImage: pageImage,
-                with: documentationContext,
+                with: context,
                 in: reference
             ) else {
                 return nil
             }
             
-            guard let asset = documentationContext.resolveAsset(
+            guard let asset = context.resolveAsset(
                 named: image.identifier.identifier,
                 in: reference
             ) else {
@@ -460,7 +462,7 @@ public class DocumentationContentRenderer {
         var result = [RenderNode.Tag]()
         
         /// Add an SPI tag to SPI symbols.
-        if let node = try? documentationContext.entity(with: reference),
+        if let node = try? context.entity(with: reference),
             let symbol = node.semantic as? Symbol,
             symbol.isSPI {
             result.append(.spi)
@@ -479,7 +481,7 @@ public class DocumentationContentRenderer {
 
     /// Returns the task groups for a given node reference.
     func taskGroups(for reference: ResolvedTopicReference) -> [ReferenceGroup]? {
-        guard let node = try? documentationContext.entity(with: reference) else { return nil }
+        guard let node = try? context.entity(with: reference) else { return nil }
         
         let groups: [TaskGroup]?
         switch node.semantic {
@@ -505,7 +507,7 @@ public class DocumentationContentRenderer {
                 
                 // For external links, verify they've resolved successfully and return `nil` otherwise.
                 if linkHost != reference.bundleID.rawValue {
-                    if let url = ValidatedURL(destination), case .success(let externalReference) = documentationContext.externallyResolvedLinks[url] {
+                    if let url = ValidatedURL(destination), case .success(let externalReference) = context.externallyResolvedLinks[url] {
                         return externalReference
                     }
                     return nil
@@ -518,7 +520,7 @@ public class DocumentationContentRenderer {
             }
             
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: bundle)?.language
+                SupportedLanguage(from: $0, source: nil, for: context.inputs)?.language
             }
             
             return ReferenceGroup(

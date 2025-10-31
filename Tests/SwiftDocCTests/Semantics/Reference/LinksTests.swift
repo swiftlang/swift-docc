@@ -17,7 +17,7 @@ import Markdown
 class LinksTests: XCTestCase {
     func testMissingBasicRequirements() async throws {
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self) {
                 """
                 @Links(visualStyle: compactGrid)
                 """
@@ -57,7 +57,7 @@ class LinksTests: XCTestCase {
     
     func testInvalidBodyContent() async throws {
         do {
-            let (renderedContent, problems, links) = try await parseDirective(Links.self, in: "BookLikeContent") {
+            let (renderedContent, problems, links) = try await parseDirective(Links.self) {
                 """
                 @Links(visualStyle: compactGrid) {
                     This is a paragraph of text in 'Links' directive.

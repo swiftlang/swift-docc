@@ -418,10 +418,10 @@ class MetadataTests: XCTestCase {
         line: UInt = #line
     ) async throws -> (problems: [String], metadata: Metadata) {
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (inputs, _) = try await testBundleAndContext()
         
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, problems: &problems)
+        let article = Article(from: document, source: nil, for: inputs, problems: &problems)
         
         let problemIDs = problems.map { problem -> String in
             let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"

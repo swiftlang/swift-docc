@@ -567,7 +567,7 @@ extension Docc {
         /// A user-provided value that is true if the user enables experimental support for code block annotation.
         ///
         /// Defaults to false.
-        public var enableExperimentalCodeBlocAnnotations: Bool {
+        public var enableExperimentalCodeBlockAnnotations: Bool {
             get { featureFlags.enableExperimentalCodeBlockAnnotations }
             set { featureFlags.enableExperimentalCodeBlockAnnotations = newValue}
         }

@@ -4167,13 +4167,43 @@
             "text" : "You can use this directive to set the image used when rendering a user-interface element representing the page."
           },
           {
-            "text" : "For example, use the page image directive to customize the icon used to represent this page in the navigation sidebar,"
+            "text" : ""
           },
           {
-            "text" : "or the card image used to represent this page when using the ``Links`` directive and the ``Links\/VisualStyle\/detailedGrid``"
+            "text" : "Use the \"icon\" purpose to customize the icon that DocC uses to represent this page in the navigation sidebar."
           },
           {
-            "text" : "visual style."
+            "text" : "For article pages, DocC also uses this icon to represent the article in topics sections and in ``Links`` directives that use the `list` visual style."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip: Page images with the \"icon\" purpose work best when they're square and when they have good visual clarity at small sizes (less than 20×20 points)."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use the \"card\" purpose to customize the image that DocC uses to represent this page inside ``Links`` directives that use the either the `detailedGrid` or the `compactGrid` visual style."
+          },
+          {
+            "text" : "For article pages, DocC also incorporates a partially faded out version of the card image in the background of the page itself."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip: Page images with the \"card\" purpose work best when they have a 16:9 aspect ratio. Currently, the largest size that DocC displays a card image is 640×360 points."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If you specify an \"icon\" page image without specifying a \"card\" page image, DocC will use the icon as a fallback in places where the card image is preferred."
+          },
+          {
+            "text" : "To avoid upscaled pixelated icons in these places, either configure a \"card\" page image as well or use a scalable vector image asset for the \"icon\" page image."
           },
           {
             "text" : "- Parameters:"
