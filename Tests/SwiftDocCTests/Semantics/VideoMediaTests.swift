@@ -326,19 +326,19 @@ class VideoMediaTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try await loadBundle(
+        let (_, context) = try await loadBundle(
             catalog: Folder(name: "unit-test.docc", content: [
                 DataFile(name: "introvideo.mov", data: Data())
             ])
         )
         var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let video = VideoMedia(from: directive, source: nil, for: context.inputs, problems: &problems)
         let reference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: "",
             sourceLanguage: .swift
         )
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
         let videoMediaReference = translator.visitVideoMedia(video!) as! RenderReferenceIdentifier
         let videoMedia = translator.videoReferences[videoMediaReference.identifier]
         // Check that the video references in the node translator contains the alt text.

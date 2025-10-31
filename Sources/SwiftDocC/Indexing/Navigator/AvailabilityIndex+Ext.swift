@@ -83,7 +83,7 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
     /// > ``from(string:)`` function.
     public let id: String
     
-    /// A mask to use to identify the interface language..
+    /// A mask to use to identify the interface language.
     public let mask: ID
     
     
