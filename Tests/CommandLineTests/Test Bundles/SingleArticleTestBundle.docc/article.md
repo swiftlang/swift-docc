@@ -11,4 +11,4 @@ This is an article.
 Overview
 
 
-<!-- Copyright (c) 2023-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

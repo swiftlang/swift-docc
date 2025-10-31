@@ -11,7 +11,7 @@
 import XCTest
 import Foundation
 @testable import CommandLine
-import SwiftDocCTestUtilities
+import TestUtilities
 
 class EmitGeneratedCurationsActionTests: XCTestCase {
     

@@ -54,7 +54,7 @@ let package = Package(
             name: "SwiftDocCTests",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "TestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -79,7 +79,7 @@ let package = Package(
             dependencies: [
                 .target(name: "CommandLine"),
                 .target(name: "SwiftDocC"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "TestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -90,7 +90,7 @@ let package = Package(
         
         // Test utility library
         .target(
-            name: "SwiftDocCTestUtilities",
+            name: "TestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),

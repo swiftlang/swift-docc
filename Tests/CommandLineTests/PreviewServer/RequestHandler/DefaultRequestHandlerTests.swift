@@ -12,7 +12,7 @@
 import Foundation
 import XCTest
 @testable import CommandLine
-import SwiftDocCTestUtilities
+import TestUtilities
 
 import NIO
 import NIOHTTP1

@@ -10,7 +10,7 @@
 
 @testable import SwiftDocC
 import XCTest
-import SwiftDocCTestUtilities
+import TestUtilities
 import SymbolKit
 
 extension XCTestCase {

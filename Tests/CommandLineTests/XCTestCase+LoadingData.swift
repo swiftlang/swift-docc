@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 import SwiftDocC
-import SwiftDocCTestUtilities
+import TestUtilities
 
 extension XCTestCase {
     /// Loads a documentation catalog from an in-memory test file system.

@@ -63,4 +63,4 @@ Relatively linked topics
  - ``MyClass/init()-3743d``
  - ``MyKit/MyClass/myFunction()``
 
-<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

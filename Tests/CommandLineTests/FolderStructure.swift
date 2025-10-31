@@ -11,7 +11,7 @@
 @testable import SwiftDocC
 @testable import CommandLine
 import XCTest
-public import SwiftDocCTestUtilities
+public import TestUtilities
 
 /*
  This file contains a test helper API for working with folder hierarchies, with the ability to:

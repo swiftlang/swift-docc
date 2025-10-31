@@ -54,4 +54,4 @@ Further Reading abstract text.
  - [Example!](https://www.example.com)
  - [](https://www.example.com)
 
-<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

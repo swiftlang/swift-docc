@@ -12,7 +12,7 @@
 import XCTest
 @testable import SwiftDocC
 @testable import CommandLine
-import SwiftDocCTestUtilities
+import TestUtilities
 
 class PreviewActionIntegrationTests: XCTestCase {
     private func createMinimalDocsBundle() -> Folder {

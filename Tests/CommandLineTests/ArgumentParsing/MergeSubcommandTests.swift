@@ -11,7 +11,7 @@
 import XCTest
 import ArgumentParser
 @testable import CommandLine
-import SwiftDocCTestUtilities
+import TestUtilities
 
 class MergeSubcommandTests: XCTestCase {
     func testCommandLineArgumentValidation() throws {

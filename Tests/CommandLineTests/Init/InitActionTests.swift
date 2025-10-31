@@ -10,7 +10,7 @@
 
 import XCTest
 import Foundation
-import SwiftDocCTestUtilities
+import TestUtilities
 @testable import CommandLine
 
 final class InitActionTests: XCTestCase {
