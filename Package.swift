@@ -2,7 +2,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -66,7 +66,7 @@ let package = Package(
         ),
         // Command-line tool library
         .target(
-            name: "SwiftDocCUtilities",
+            name: "CommandLine",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
@@ -75,9 +75,9 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "SwiftDocCUtilitiesTests",
+            name: "CommandLineTests",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "CommandLine"),
                 .target(name: "SwiftDocC"),
                 .target(name: "SwiftDocCTestUtilities"),
             ],
@@ -102,16 +102,16 @@ let package = Package(
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "CommandLine"),
             ],
             swiftSettings: swiftSettings
         ),
 
-        // Test app for SwiftDocCUtilities
+        // Test app for CommandLine
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "CommandLine"),
             ],
             path: "Tests/signal-test-app",
             swiftSettings: swiftSettings
