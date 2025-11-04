@@ -361,7 +361,8 @@ CMake requires that the full file list is kept up-to-date. When adding or
 removing files in a given module, the `CMakeLists.txt` list must be updated to
 the file list.
 
-You can use the following 1-line script to enumerate the files in the module:
+The 1-line script below lists all the Swift files in the current directory tree. 
+You can use the script's output to replace the list of files in the CMakeLists.txt file for each target that you added files to or removed files from.
 
 ```bash
 python -c "print('\n'.join((f'{chr(34)}{path}{chr(34)}' if ' ' in path else path) for path in sorted(str(path) for path in __import__('pathlib').Path('.').rglob('*.swift'))))"
