@@ -29,14 +29,13 @@ package enum ConvertActionConverter {
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - emitDigest: Whether the conversion should pass additional metadata output––such as linkable entities information, indexing information, or asset references by asset type––to the consumer.
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
-    /// - Returns: A list of problems that occurred during the conversion (excluding the problems that the context already encountered).
     package static func convert(
         context: DocumentationContext,
         outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
-    ) throws -> [Problem] {
+    ) async throws {
         let signposter = Self.signposter
         
         defer {
@@ -54,7 +53,7 @@ package enum ConvertActionConverter {
             if emitDigest {
                 try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
-            return []
+            return
         }
         
         // Precompute the render context
@@ -71,36 +70,7 @@ package enum ConvertActionConverter {
             renderContext: renderContext,
             sourceRepository: sourceRepository
         )
-        
-        // Arrays to gather additional metadata if `emitDigest` is `true`.
-        var indexingRecords = [IndexingRecord]()
-        var linkSummaries = [LinkDestinationSummary]()
-        var assets = [RenderReferenceType : [any RenderReference]]()
-        var coverageInfo = [CoverageDataEntry]()
-        let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
-        
-        // An inner function to gather problems for errors encountered during the conversion.
-        //
-        // These problems only represent unexpected thrown errors and aren't particularly user-facing.
-        // For now we emit them as diagnostics because `DocumentationConverter.convert(outputConsumer:)` (which this replaced) used to do that.
-        //
-        // FIXME: In the future we could simplify this control flow by not catching these errors and turning them into diagnostics.
-        // Since both error-level diagnostics and thrown errors fail the documentation build,
-        // the only practical different this would have is that we stop on the first unexpected error instead of processing all pages and gathering all unexpected errors.
-        func recordProblem(from error: any Swift.Error, in problems: inout [Problem], withIdentifier identifier: String) {
-            let problem = Problem(diagnostic: Diagnostic(
-                severity: .error,
-                identifier: "org.swift.docc.documentation-converter.\(identifier)",
-                summary: error.localizedDescription
-            ), possibleSolutions: [])
-            
-            context.diagnosticEngine.emit(problem)
-            problems.append(problem)
-        }
-        
-        let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
-        let resultsGroup = DispatchGroup()
-        
+          
         // Consume external links and add them into the sidebar.
         for externalLink in context.externalCache {
             // Here we're associating the external node with the **current** bundle's bundle ID.
@@ -112,112 +82,112 @@ package enum ConvertActionConverter {
         
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
-        var conversionProblems: [Problem] = context.knownPages.concurrentPerform { identifier, results in
-            // If cancelled skip all concurrent conversion work in this block.
-            guard !Task.isCancelled else { return }
+        // Render all pages and gather their supplementary "digest" information if enabled.
+        let supplementaryRenderInfo = try await withThrowingTaskGroup(of: SupplementaryRenderInformation.self) { taskGroup in
+            let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
+            // Iterate over all the known pages in chunks
+            var remaining = context.knownPages[...]
             
-            // Wrap JSON encoding in an autorelease pool to avoid retaining the autoreleased ObjC objects returned by `JSONSerialization`
-            autoreleasepool {
-                do {
-                    let entity = try context.entity(with: identifier)
-
-                    guard let renderNode = converter.renderNode(for: entity) else {
-                        // No render node was produced for this entity, so just skip it.
-                        return
-                    }
+            let numberOfBatches = ProcessInfo.processInfo.processorCount * 4
+            let numberOfElementsPerTask = Int(Double(remaining.count) / Double(numberOfBatches) + 1)
+            
+            while !remaining.isEmpty {
+                let slice = remaining.prefix(numberOfElementsPerTask)
+                remaining = remaining.dropFirst(numberOfElementsPerTask)
+                
+                // Start work of one slice of the known pages
+                taskGroup.addTask {
+                    var supplementaryRenderInfo = SupplementaryRenderInformation()
                     
-                    try outputConsumer.consume(renderNode: renderNode)
+                    for identifier in slice {
+                        try autoreleasepool {
+                            let entity = try context.entity(with: identifier)
 
-                    switch documentationCoverageOptions.level {
-                    case .detailed, .brief:
-                        let coverageEntry = try CoverageDataEntry(
-                            documentationNode: entity,
-                            renderNode: renderNode,
-                            context: context
-                        )
-                        if coverageFilterClosure(coverageEntry) {
-                            resultsGroup.async(queue: resultsSyncQueue) {
-                                coverageInfo.append(coverageEntry)
+                            guard let renderNode = converter.renderNode(for: entity) else {
+                                // No render node was produced for this entity, so just skip it.
+                                return
+                            }
+                            
+                            try outputConsumer.consume(renderNode: renderNode)
+
+                            switch documentationCoverageOptions.level {
+                            case .detailed, .brief:
+                                let coverageEntry = try CoverageDataEntry(
+                                    documentationNode: entity,
+                                    renderNode: renderNode,
+                                    context: context
+                                )
+                                if coverageFilterClosure(coverageEntry) {
+                                    supplementaryRenderInfo.coverageInfo.append(coverageEntry)
+                                }
+                            case .none:
+                                break
+                            }
+                            
+                            if emitDigest {
+                                let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: true)
+                                let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
+                                
+                                supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
+                                supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
+                                supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
+                            } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                                let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+                                
+                                supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                             }
                         }
-                    case .none:
-                        break
                     }
                     
-                    if emitDigest {
-                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: true)
-                        let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
-                        
-                        resultsGroup.async(queue: resultsSyncQueue) {
-                            assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
-                            linkSummaries.append(contentsOf: nodeLinkSummaries)
-                            indexingRecords.append(contentsOf: nodeIndexingRecords)
-                        }
-                    } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
-                        
-                        resultsGroup.async(queue: resultsSyncQueue) {
-                            linkSummaries.append(contentsOf: nodeLinkSummaries)
-                        }
-                    }
-                } catch {
-                    recordProblem(from: error, in: &results, withIdentifier: "render-node")
+                    return supplementaryRenderInfo
                 }
             }
+            
+            var aggregateSupplementaryRenderInfo = SupplementaryRenderInformation()
+            
+            for try await partialInfo in taskGroup {
+                aggregateSupplementaryRenderInfo.assets.merge(partialInfo.assets, uniquingKeysWith: +)
+                aggregateSupplementaryRenderInfo.linkSummaries.append(contentsOf: partialInfo.linkSummaries)
+                aggregateSupplementaryRenderInfo.indexingRecords.append(contentsOf: partialInfo.indexingRecords)
+                aggregateSupplementaryRenderInfo.coverageInfo.append(contentsOf: partialInfo.coverageInfo)
+            }
+            
+            return aggregateSupplementaryRenderInfo
         }
-        
-        // Wait for any concurrent updates to complete.
-        resultsGroup.wait()
         
         signposter.endInterval("Render", renderSignpostHandle)
         
-        guard !Task.isCancelled else { return [] }
+        guard !Task.isCancelled else { return }
         
         // Write various metadata
         if emitDigest {
-            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                do {
-                    try outputConsumer.consume(linkableElementSummaries: linkSummaries)
-                    try outputConsumer.consume(indexingRecords: indexingRecords)
-                    try outputConsumer.consume(assets: assets)
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
-                }
+            try signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
+                try outputConsumer.consume(linkableElementSummaries: supplementaryRenderInfo.linkSummaries)
+                try outputConsumer.consume(indexingRecords: supplementaryRenderInfo.indexingRecords)
+                try outputConsumer.consume(assets: supplementaryRenderInfo.assets)
             }
         }
         
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-            signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
-                do {
-                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
-                    try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
-                    
-                    if !emitDigest {
-                        try outputConsumer.consume(linkableElementSummaries: linkSummaries)
-                    }
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
+            try signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
+                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
+                try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+                
+                if !emitDigest {
+                    try outputConsumer.consume(linkableElementSummaries: supplementaryRenderInfo.linkSummaries)
                 }
             }
         }
         
         if emitDigest {
-            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                do {
-                    try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + conversionProblems)
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
-                }
+            try signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
+                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
         }
 
         switch documentationCoverageOptions.level {
         case .detailed, .brief:
-            do {
-                try outputConsumer.consume(documentationCoverageInfo: coverageInfo)
-            } catch {
-                recordProblem(from: error, in: &conversionProblems, withIdentifier: "coverage")
-            }
+            try outputConsumer.consume(documentationCoverageInfo: supplementaryRenderInfo.coverageInfo)
         case .none:
             break
         }
@@ -232,7 +202,12 @@ package enum ConvertActionConverter {
         benchmark(add: Benchmark.ExternalTopicsHash(context: context))
         // Log the peak memory.
         benchmark(add: Benchmark.PeakMemory())
-        
-        return conversionProblems
     }
+}
+
+private struct SupplementaryRenderInformation {
+    var indexingRecords = [IndexingRecord]()
+    var linkSummaries = [LinkDestinationSummary]()
+    var assets = [RenderReferenceType : [any RenderReference]]()
+    var coverageInfo = [CoverageDataEntry]()
 }
