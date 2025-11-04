@@ -218,7 +218,7 @@ public class DocumentationContext {
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
         ResolvedTopicReference.enableReferenceCaching(for: inputs.id)
-        try register()
+        try await register()
     }
         
     /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
@@ -1931,7 +1931,7 @@ public class DocumentationContext {
     /**
      Register a documentation bundle with this context.
      */
-    private func register() throws {
+    private func register() async throws {
         try shouldContinueRegistration()
 
         let currentFeatureFlags: FeatureFlags?
@@ -1963,111 +1963,61 @@ public class DocumentationContext {
             }
         }
 
-        // Note: Each bundle is registered and processed separately.
-        // Documents and symbols may both reference each other so the bundle is registered in 4 steps
-        
-        // In the bundle discovery phase all tasks run in parallel as they don't depend on each other.
-        let discoveryGroup = DispatchGroup()
-        let discoveryQueue = DispatchQueue(label: "org.swift.docc.Discovery", qos: .unspecified, attributes: .concurrent, autoreleaseFrequency: .workItem)
-        
-        let discoveryError = Synchronized<(any Error)?>(nil)
+        // Documents and symbols may both reference each other so the inputs is registered in 4 steps
 
-        // Load all bundle symbol graphs into the loader.
-        var symbolGraphLoader: SymbolGraphLoader!
-        var hierarchyBasedResolver: PathHierarchyBasedLinkResolver!
-        
-        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            symbolGraphLoader = SymbolGraphLoader(
+        // Load symbol information and construct data structures that only rely on symbol information.
+        async let loadSymbols = { [signposter, inputs, dataProvider, configuration] in
+            var symbolGraphLoader = SymbolGraphLoader(
                 bundle: inputs,
                 dataProvider: dataProvider,
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
             )
             
-            do {
-                try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
+            try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
+                try autoreleasepool {
                     try symbolGraphLoader.loadAll()
                 }
-                hierarchyBasedResolver = signposter.withIntervalSignpost("Build PathHierarchy", id: signposter.makeSignpostID()) {
+            }
+            try shouldContinueRegistration()
+            let hierarchyBasedResolver = signposter.withIntervalSignpost("Build PathHierarchy", id: signposter.makeSignpostID()) {
+                autoreleasepool {
                     PathHierarchyBasedLinkResolver(pathHierarchy: PathHierarchy(
                         symbolGraphLoader: symbolGraphLoader,
                         bundleName: urlReadablePath(inputs.displayName),
                         knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
                     ))
                 }
-                
-                self.snippetResolver = SnippetResolver(symbolGraphLoader: symbolGraphLoader)
-            } catch {
-                // Pipe the error out of the dispatch queue.
-                discoveryError.sync({
-                    if $0 == nil { $0 = error }
-                })
             }
-        }
+            
+            let snippetResolver = SnippetResolver(symbolGraphLoader: symbolGraphLoader)
+           
+            return (symbolGraphLoader, hierarchyBasedResolver, snippetResolver)
+        }()
 
-        // First, all the resources are added since they don't reference anything else.
-        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            do {
-                try signposter.withIntervalSignpost("Load resources", id: signposter.makeSignpostID()) {
-                    try self.registerMiscResources()
-                }
-            } catch {
-                // Pipe the error out of the dispatch queue.
-                discoveryError.sync({
-                    if $0 == nil { $0 = error }
-                })
+        // Load resources like images and videos
+        async let loadResources: Void = try signposter.withIntervalSignpost("Load resources", id: signposter.makeSignpostID()) {
+            try autoreleasepool {
+                try self.registerMiscResources()
             }
         }
         
-        // Second, all the documents and symbols are added.
-        //
-        // Note: Documents and symbols may look up resources at this point but shouldn't lookup other documents or
-        //       symbols or attempt to resolve links/references since the topic graph may not contain all documents
-        //       or all symbols yet.
-        var result: (
-            tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
-            tutorials: [SemanticResult<Tutorial>],
-            tutorialArticles: [SemanticResult<TutorialArticle>],
-            articles: [SemanticResult<Article>],
-            documentationExtensions: [SemanticResult<Article>]
-        )!
-        
-        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            do {
-                result = try signposter.withIntervalSignpost("Load documents", id: signposter.makeSignpostID()) {
-                    try self.registerDocuments()
-                }
-            } catch {
-                // Pipe the error out of the dispatch queue.
-                discoveryError.sync({
-                    if $0 == nil { $0 = error }
-                })
+        // Load documents
+        async let loadDocuments = try signposter.withIntervalSignpost("Load documents", id: signposter.makeSignpostID()) {
+            try autoreleasepool {
+                try self.registerDocuments()
             }
         }
         
-        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            do {
-                try signposter.withIntervalSignpost("Load external resolvers", id: signposter.makeSignpostID()) {
-                    try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
-                }
-            } catch {
-                // Pipe the error out of the dispatch queue.
-                discoveryError.sync({
-                    if $0 == nil { $0 = error }
-                })
+        // Load any external resolvers
+        async let loadExternalResolvers: Void = try signposter.withIntervalSignpost("Load external resolvers", id: signposter.makeSignpostID()) {
+            try autoreleasepool {
+                try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
             }
-        }
-        
-        discoveryGroup.wait()
-
-        try shouldContinueRegistration()
-
-        // Re-throw discovery errors
-        if let encounteredError = discoveryError.sync({ $0 }) {
-            throw encounteredError
         }
         
         // All discovery went well, process the inputs.
-        let (tutorialTableOfContentsResults, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
+        let (tutorialTableOfContentsResults, tutorials, tutorialArticles, allArticles, documentationExtensions) = try await loadDocuments
+        try shouldContinueRegistration()
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
         let globalOptions = (allArticles + documentationExtensions).compactMap { article in
@@ -2107,7 +2057,10 @@ public class DocumentationContext {
             options = globalOptions.first
         }
         
+        let (symbolGraphLoader, hierarchyBasedResolver, snippetResolver) = try await loadSymbols
+        try shouldContinueRegistration()
         self.linkResolver.localResolver = hierarchyBasedResolver
+        self.snippetResolver = snippetResolver
         hierarchyBasedResolver.addMappingForRoots(bundle: inputs)
         for tutorial in tutorials {
             hierarchyBasedResolver.addTutorial(tutorial)
@@ -2120,9 +2073,10 @@ public class DocumentationContext {
         }
         
         registerRootPages(from: rootPageArticles)
+        
         try registerSymbols(symbolGraphLoader: symbolGraphLoader, documentationExtensions: documentationExtensions)
         // We don't need to keep the loader in memory after we've registered all symbols.
-        symbolGraphLoader = nil
+        _ = consume symbolGraphLoader
         
         try shouldContinueRegistration()
         
@@ -2149,11 +2103,16 @@ public class DocumentationContext {
             try shouldContinueRegistration()
         }
         
+        _ = try await loadExternalResolvers
+        
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         preResolveExternalLinks(semanticObjects:
             tutorialTableOfContentsResults.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject))
+        
+        // References to resources aren't used until the links are resolved
+        _ = try await loadResources
         
         resolveLinks(
             tutorialTableOfContents: tutorialTableOfContentsResults,
