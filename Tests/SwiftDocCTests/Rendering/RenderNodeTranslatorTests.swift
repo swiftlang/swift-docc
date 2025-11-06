@@ -1334,31 +1334,22 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
 
-        func renderNodeArticleFromReferencePath(
-            referencePath: String
-        ) throws -> RenderNode {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: referencePath, sourceLanguage: .swift)
-            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-            var translator = RenderNodeTranslator(context: context, identifier: reference)
-            return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
-        }
-        
         // Assert that articles that curates any symbol gets 'API Collection' assigned as the eyebrow title.
-        var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/APICollection")
+        var renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/APICollection")
         XCTAssertEqual(renderNode.metadata.roleHeading, "API Collection")
         // Assert that articles that curates only other articles don't get any value assigned as the eyebrow title.
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/Collection")
+        renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/Collection")
         XCTAssertEqual(renderNode.metadata.roleHeading, nil)
         // Assert that articles that don't curate anything else get 'Article' assigned as the eyebrow title.
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/Article")
+        renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/Article")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Article")
         // Assert that articles that have a custom title heading the eyebrow title assigned properly.
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/CustomRole")
+        renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/CustomRole")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Custom Role")
         // Assert that articles that have a custom page kind the eyebrow title assigned properly.
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/SampleCode")
+        renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/SampleCode")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
     }
     
@@ -1426,35 +1417,26 @@ class RenderNodeTranslatorTests: XCTestCase {
                 ),
             ]
         )
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-
-        func renderNodeArticleFromReferencePath(
-            referencePath: String
-        ) throws -> RenderNode {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: referencePath, sourceLanguage: .swift)
-            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-            var translator = RenderNodeTranslator(context: context, identifier: reference)
-            return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
-        }
+        let (_, context) = try await loadBundle(catalog: catalog)
         
         // Assert that API collections disabling automatic title headings don't get any value assigned as the eyebrow title,
         // but that the node's role itself is unaffected.
-        var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/APICollection")
+        var renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/APICollection")
         XCTAssertEqual(renderNode.metadata.roleHeading, nil)
         XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.collectionGroup.rawValue)
         // Assert that articles disabling automatic title headings don't get any value assigned as the eyebrow title,
         // but that the node's role itself is unaffected.
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/Article")
+        renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/Article")
         XCTAssertEqual(renderNode.metadata.roleHeading, nil)
         XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.article.rawValue)
         // Assert that articles that have a custom title heading have the eyebrow title assigned properly,
         // even when automatic title headings are disabled.
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/CustomRole")
+        renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/CustomRole")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Custom Role")
         XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.article.rawValue)
         // Assert that articles that have a custom page kind have the eyebrow title assigned properly,
         // even when automatic title headings are disabled.
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/SampleCode")
+        renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/SampleCode")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
     }
 
@@ -1544,7 +1526,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             ]
         ))
 
-        func renderNodeArticleFromReferencePath(
+        func renderNodeSymbolFromReferencePath(
             referencePath: String
         ) throws -> RenderNode {
             let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: referencePath, sourceLanguage: .swift)
@@ -1554,7 +1536,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         }
         
         // Assert that CounterpartSymbol's source languages have been added as source languages of Symbol
-        var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/Symbol")
+        var renderNode = try renderNodeSymbolFromReferencePath(referencePath: "/documentation/unit-test/Symbol")
         XCTAssertEqual(renderNode.variants?.count, 2)
         XCTAssertEqual(renderNode.variants, [
             .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/symbol"]),
@@ -1562,17 +1544,27 @@ class RenderNodeTranslatorTests: XCTestCase {
         ])
         
         // Assert that alternate representations which can't be resolved are ignored
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/OtherSymbol")
+        renderNode = try renderNodeSymbolFromReferencePath(referencePath: "/documentation/unit-test/OtherSymbol")
         XCTAssertEqual(renderNode.variants?.count, 1)
         XCTAssertEqual(renderNode.variants, [
             .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/othersymbol"]),
         ])
 
         // Assert that duplicate alternate representations are not added as variants
-        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/MultipleSwiftVariantsSymbol")
+        renderNode = try renderNodeSymbolFromReferencePath(referencePath: "/documentation/unit-test/MultipleSwiftVariantsSymbol")
         XCTAssertEqual(renderNode.variants?.count, 1)
         XCTAssertEqual(renderNode.variants, [
             .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unit-test/multipleswiftvariantssymbol"]),
         ])
+    }
+
+    private func renderNodeArticleFromReferencePath(
+        context: DocumentationContext,
+        referencePath: String
+    ) throws -> RenderNode {
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: referencePath, sourceLanguage: .swift)
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
+        return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
     }
 }
