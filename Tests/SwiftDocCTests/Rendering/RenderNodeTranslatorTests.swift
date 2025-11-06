@@ -1558,6 +1558,40 @@ class RenderNodeTranslatorTests: XCTestCase {
         ])
     }
 
+    // Tests if variants are emitted in catalogs with more than one root module.
+    func testEmitVariantsInCatalogWithMultipleModules() async throws {
+        let (_, context) = try await loadBundle(catalog: Folder(
+            name: "UnitTest.docc",
+            content: [
+                TextFile(name: "UnitTest.md", utf8Content: """
+                # Unit test
+
+                @Metadata {
+                  @TechnologyRoot
+                  @SupportedLanguage(swift)
+                  @SupportedLanguage(occ)
+                }
+
+                This is an article in a catalog containing a module different from the article-only collection.
+                """),
+                // The correct way to configure a catalog is to have a single
+                // root module. If multiple modules are present, it is not
+                // possible to determine which module an article is supposed to
+                // be registered with. This test includes another module to
+                // verify if the variants are correctly emitted when there is
+                // no sole root module.
+                JSONFile(name: "foo.symbols.json", content: makeSymbolGraph(moduleName: "foo")),
+            ]
+        ))
+
+        let article = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/UnitTest")
+        XCTAssertEqual(article.variants?.count, 2)
+        XCTAssertEqual(article.variants, [
+            .init(traits: [.interfaceLanguage("swift")], paths: ["/documentation/unittest"]),
+            .init(traits: [.interfaceLanguage("occ")], paths: ["/documentation/unittest"])
+        ])
+    }
+
     private func renderNodeArticleFromReferencePath(
         context: DocumentationContext,
         referencePath: String
