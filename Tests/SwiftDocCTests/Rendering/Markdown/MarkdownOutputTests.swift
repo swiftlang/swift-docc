@@ -138,6 +138,38 @@ final class MarkdownOutputTests: XCTestCase {
         let expectedLinkList = "[`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output"
         XCTAssert(node.markdown.contains(expectedLinkList))
     }
+    
+    func testLinkSymbolWithLinkInAbstractDoesntRecurse() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "Links.md", utf8Content: """
+                # Links
+
+                Tests the appearance of inline and linked lists
+
+                ## Overview
+
+                This is an inline link: ``MarkdownSymbol``
+
+                ## Topics
+
+                ### Links with abstracts
+
+                - ``MarkdownSymbol``
+                - ``OtherMarkdownSymbol``
+                """),
+            JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
+                makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``OtherMarkdownSymbol``"),
+                makeSymbol(id: "OtherMarkdownSymbol", kind: .struct, pathComponents: ["OtherMarkdownSymbol"], docComment: "A basic symbol to test markdown output. Different to ``MarkdownSymbol``")
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
+        let expectedInline = "inline link: [`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)"
+        XCTAssert(node.markdown.contains(expectedInline))
+        
+        let expectedLinkList = "[`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/OtherMarkdownSymbol)"
+        XCTAssert(node.markdown.contains(expectedLinkList))
+    }
         
     func testLanguageTabOnlyIncludesPrimaryLanguage() async throws {
         let catalog = catalog(files: [

@@ -165,8 +165,12 @@ extension MarkdownOutputMarkupWalker {
             linkTitle = node.title
         }
         let link = Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)])
+        // Only perform the linked list rendering for the first thing you find
+        let previous = isRenderingLinkList
+        isRenderingLinkList = false
         visit(link)
         visit(linkListAbstract)
+        isRenderingLinkList = previous
     }
     
     mutating func visitLink(_ link: Link) -> () {
@@ -201,8 +205,12 @@ extension MarkdownOutputMarkupWalker {
         }
         
         let link = Link(destination: destination, title: linkTitle, [linkMarkup])
+        // Only perform the linked list rendering for the first thing you find
+        let previous = isRenderingLinkList
+        isRenderingLinkList = false
         defaultVisit(link)
         visit(linkListAbstract)
+        isRenderingLinkList = previous
     }
     
     
