@@ -1379,4 +1379,62 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(externalLinkCount, 2, "Did not resolve the 2 expected external links.")
     }
 
+    func testExternalReferenceWithAbsolutePresentationURL() async throws {
+        class Resolver: ExternalDocumentationSource {
+            let bundleID: DocumentationBundle.Identifier = "com.example.test"
+            
+            func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
+                .success(ResolvedTopicReference(bundleID: bundleID, path: "/path/to/something", sourceLanguage: .swift))
+            }
+            
+            var entityToReturn: LinkDestinationSummary
+            init(entityToReturn: LinkDestinationSummary) {
+                self.entityToReturn = entityToReturn
+            }
+            
+            func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+                entityToReturn
+            }
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Root
+            
+            Link to an external page: <doc://com.example.test/something>
+            """),
+        ])
+        
+        // Only decoded link summaries support absolute presentation URLs.
+        let externalEntity = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data("""
+            {
+              "path": "https://com.example/path/to/something",
+              "title": "Something",
+              "kind": "org.swift.docc.kind.article",
+              "referenceURL": "doc://com.example.test/path/to/something",
+              "language": "swift",
+              "availableLanguages": [
+                "swift"
+              ]
+            }
+            """.utf8))
+        XCTAssertEqual(externalEntity.relativePresentationURL.absoluteString, "/path/to/something")
+        XCTAssertEqual(externalEntity.absolutePresentationURL?.absoluteString, "https://com.example/path/to/something")
+        
+        let resolver = Resolver(entityToReturn: externalEntity)
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [resolver.bundleID: resolver]
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        // Check the curation on the root page
+        let rootNode = try context.entity(with: XCTUnwrap(context.soleRootModuleReference))
+        let converter = DocumentationNodeConverter(context: context)
+        
+        let renderNode = converter.convert(rootNode)
+        let externalTopicReference = try XCTUnwrap(renderNode.references.values.first as? TopicRenderReference)
+        XCTAssertEqual(externalTopicReference.url, "https://com.example/path/to/something")
+    }
 }

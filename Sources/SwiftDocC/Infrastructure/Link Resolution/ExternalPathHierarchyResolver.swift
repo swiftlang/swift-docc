@@ -192,7 +192,7 @@ extension LinkDestinationSummary {
             identifier: .init(referenceURL.absoluteString),
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
-            url: relativePresentationURL.absoluteString,
+            url: absolutePresentationURL?.absoluteString ?? relativePresentationURL.absoluteString,
             kind: kind,
             required: false,
             role: role,
