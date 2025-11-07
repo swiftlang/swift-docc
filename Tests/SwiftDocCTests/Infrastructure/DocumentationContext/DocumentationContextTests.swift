@@ -2458,7 +2458,10 @@ let expected = """
         let curatedTopic = try XCTUnwrap(renderNode.topicSections.first?.identifiers.first)
         
         let topicReference = try XCTUnwrap(renderNode.references[curatedTopic] as? TopicRenderReference)
-        XCTAssertEqual(topicReference.title, "An article")
+        
+        // FIXME: Verify that article matches are preferred for general (non-symbol) links once rdar://79745455 https://github.com/swiftlang/swift-docc/issues/593 is fixed
+        XCTAssertEqual(topicReference.title, "Wrapper")
+//        XCTAssertEqual(topicReference.title, "An article")
         
         // This test also reproduce https://github.com/swiftlang/swift-docc/issues/593
         // When that's fixed this test should also use a symbol link to curate the top-level symbol and verify that
@@ -4804,6 +4807,41 @@ let expected = """
         XCTAssertEqual(linkResolutionProblems.count, 1)
         problem = try XCTUnwrap(linkResolutionProblems.last)
         XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/BestBook/MyArticle\'")
+    }
+    
+    func testArticleCollidingWithSymbol() async throws {
+        let catalog = Folder(name: "ModuleName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]), // Collision
+            ])),
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # Some article
+            
+            This article has the same reference as the symbol. One will override the other. 
+            We should at least warn about that.
+            """),
+        ])
+        
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let collidingPageReference = moduleReference.appendingPath("SomeClass")
+    
+        XCTAssertEqual(
+            Set(context.knownPages), [moduleReference, collidingPageReference],
+            "Ideally there should be 3 pages here but because of rdar://79745455 (issue #593) there isn't" // https://github.com/swiftlang/swift-docc/issues/593
+        )
+        
+        let node = try context.entity(with: collidingPageReference)
+        XCTAssert(node.kind.isSymbol, "Given #593 / rdar://79745455 we should deterministically prioritize the symbol over the article")
+        
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
+            "Article 'SomeClass.md' (Some article) would override class 'SomeClass'."
+        ])
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        let solution = try XCTUnwrap(problem.possibleSolutions.first)
+        XCTAssertEqual(solution.summary, "Rename 'SomeClass.md'")
     }
     
     func testContextRecognizesOverloads() async throws {

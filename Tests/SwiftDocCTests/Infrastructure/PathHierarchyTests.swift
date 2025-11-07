@@ -1239,8 +1239,11 @@ class PathHierarchyTests: XCTestCase {
         // The added article above has the same path as an existing symbol in the this module.
         let symbolNode = try tree.findNode(path: "/MixedLanguageFramework/Bar", onlyFindSymbols: true)
         XCTAssertNotNil(symbolNode.symbol, "Symbol link finds the symbol")
+        
         let articleNode = try tree.findNode(path: "/MixedLanguageFramework/Bar", onlyFindSymbols: false)
-        XCTAssertNil(articleNode.symbol, "General documentation link find the article")
+        XCTAssertNotNil(articleNode.symbol, "This should be an article but can't be because of rdar://79745455")
+        // FIXME: Verify that article matches are preferred for general (non-symbol) links once  https://github.com/swiftlang/swift-docc/issues/593 is fixed
+//        XCTAssertNil(articleNode.symbol, "General documentation link find the article")
     }
     
     func testArticleSelfAnchorLinks() async throws {
@@ -2491,13 +2494,17 @@ class PathHierarchyTests: XCTestCase {
             // Links to non-symbols can use only the file name, without specifying the module or catalog name.
             let articleID = try tree.find(path: "Wrapper", onlyFindSymbols: false)
             let articleMatch = try XCTUnwrap(tree.lookup[articleID])
-            XCTAssertNil(articleMatch.symbol, "Should have found the article")
+            XCTAssertNotNil(articleMatch.symbol, "This should be an article but can't be because of rdar://79745455")
+            // FIXME: Verify that article matches are preferred for general (non-symbol) links once rdar://79745455 https://github.com/swiftlang/swift-docc/issues/593 is fixed
+//            XCTAssertNil(articleMatch.symbol, "Should have found the article")
         }
         do {
             // Links to non-symbols can also use module-relative links.
             let articleID = try tree.find(path: "/Something/Wrapper", onlyFindSymbols: false)
             let articleMatch = try XCTUnwrap(tree.lookup[articleID])
-            XCTAssertNil(articleMatch.symbol, "Should have found the article")
+            XCTAssertNotNil(articleMatch.symbol, "This should be an article but can't be because of rdar://79745455")
+            // FIXME: Verify that article matches are preferred for general (non-symbol) links once rdar://79745455 https://github.com/swiftlang/swift-docc/issues/593 is fixed
+//            XCTAssertNil(articleMatch.symbol, "Should have found the article")
         }
         // Symbols can only use absolute links or be found relative to another page.
         let symbolID = try tree.find(path: "/Something/Wrapper", onlyFindSymbols: true)
