@@ -11,7 +11,6 @@
 public import Foundation
 import SymbolKit
 public import Markdown
-public import Common
 
 /// A resolved or unresolved reference to a piece of documentation.
 ///

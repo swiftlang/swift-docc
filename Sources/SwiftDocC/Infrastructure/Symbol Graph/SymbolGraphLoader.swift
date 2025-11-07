@@ -10,7 +10,6 @@
 
 import Foundation
 import SymbolKit
-import Common
 
 /// Loads symbol graph files from a documentation bundle.
 ///

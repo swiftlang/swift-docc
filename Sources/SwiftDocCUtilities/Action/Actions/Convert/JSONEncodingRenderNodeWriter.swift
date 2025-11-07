@@ -10,7 +10,6 @@
 
 import Foundation
 import SwiftDocC
-import Common
 
 /// An object that writes render nodes, as JSON files, into a target folder.
 ///

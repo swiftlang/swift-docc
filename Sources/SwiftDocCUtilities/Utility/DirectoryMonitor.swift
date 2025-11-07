@@ -10,7 +10,6 @@
 
 import Foundation
 import SwiftDocC
-private import Common
 
 #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
 import Darwin

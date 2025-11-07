@@ -11,7 +11,6 @@
 import XCTest
 import SymbolKit
 @testable @_spi(ExternalLinks) import SwiftDocC
-import Common
 import Markdown
 import SwiftDocCTestUtilities
 

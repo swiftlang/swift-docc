@@ -11,7 +11,6 @@
 import Foundation
 import Markdown
 import SymbolKit
-import Common
 
 private let automaticSeeAlsoLimit: Int = {
     ProcessInfo.processInfo.environment["DOCC_AUTOMATIC_SEE_ALSO_LIMIT"].flatMap { Int($0) } ?? 15

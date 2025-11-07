@@ -9,7 +9,6 @@
 */
 
 public import Foundation
-import Common
 
 /// An object that writes logs to the given output device.
 ///

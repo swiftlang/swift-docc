@@ -11,7 +11,6 @@
 import Foundation
 public import Markdown
 public import SymbolKit
-public import Common
 
 /// A documentation node holds all the information about a documentation entity's content.
 ///

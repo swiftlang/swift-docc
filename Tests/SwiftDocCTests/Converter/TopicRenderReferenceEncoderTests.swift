@@ -10,7 +10,6 @@
 
 import XCTest
 @testable import SwiftDocC
-private import Common
 
 class TopicRenderReferenceEncoderTests: XCTestCase {
 

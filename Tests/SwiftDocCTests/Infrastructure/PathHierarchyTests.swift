@@ -11,7 +11,6 @@
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import Common
 import SwiftDocCTestUtilities
 import Markdown
 

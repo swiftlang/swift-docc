@@ -10,7 +10,6 @@
 
 import Foundation
 import SymbolKit
-import Common
 
 /// A type that encapsulates resolving links by searching a hierarchy of path components.
 final class PathHierarchyBasedLinkResolver {

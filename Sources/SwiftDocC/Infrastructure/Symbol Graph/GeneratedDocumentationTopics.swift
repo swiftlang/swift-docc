@@ -11,7 +11,6 @@
 import Foundation
 import SymbolKit
 import Markdown
-import Common
 
 /// A collection of APIs to generate documentation topics.
 enum GeneratedDocumentationTopics {

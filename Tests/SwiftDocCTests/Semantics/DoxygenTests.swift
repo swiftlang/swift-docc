@@ -12,7 +12,6 @@ import Foundation
 
 import XCTest
 @testable import SwiftDocC
-import Common
 import SwiftDocCTestUtilities
 @testable import SymbolKit
 

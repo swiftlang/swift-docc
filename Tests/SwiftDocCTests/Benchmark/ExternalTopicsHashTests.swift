@@ -10,7 +10,6 @@
 
 import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
-import Common
 import Markdown
 
 class ExternalTopicsGraphHashTests: XCTestCase {

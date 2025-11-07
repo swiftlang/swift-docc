@@ -11,7 +11,6 @@
 import Foundation
 @testable import SwiftDocC
 import XCTest
-import Common
 
 class TestRenderNodeOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     var renderNodes = Synchronized<[RenderNode]>([])

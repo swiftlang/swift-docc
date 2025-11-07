@@ -10,7 +10,6 @@
 
 import Foundation
 import SymbolKit
-import Common
 
 /// An opaque identifier that uniquely identifies a resolved entry in the path hierarchy,
 ///

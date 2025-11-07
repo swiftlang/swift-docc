@@ -11,7 +11,6 @@
 import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
-import Common
 import SwiftDocCTestUtilities
 
 class SymbolReferenceTests: XCTestCase {

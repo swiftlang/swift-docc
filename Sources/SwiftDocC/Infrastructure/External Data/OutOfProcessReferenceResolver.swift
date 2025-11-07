@@ -10,7 +10,6 @@
 
 public import Foundation
 private import Markdown
-import Common
 
 /// A reference resolver that launches and interactively communicates with another process or service to resolve links.
 ///

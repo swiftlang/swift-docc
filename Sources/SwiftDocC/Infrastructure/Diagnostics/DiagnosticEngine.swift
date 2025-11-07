@@ -9,7 +9,6 @@
 */
 
 import Foundation
-import Common
 
 /// A type that collects and dispatches diagnostics during compilation.
 public final class DiagnosticEngine {
