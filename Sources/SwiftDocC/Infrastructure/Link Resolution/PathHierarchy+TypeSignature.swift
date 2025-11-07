@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -555,6 +555,15 @@ private struct StringScanner: ~Copyable {
         return remaining[..<index]
     }
     
+    mutating func scan(past predicate: (Character) -> Bool) -> Substring? {
+        guard let beforeIndex = remaining.firstIndex(where: predicate) else {
+            return nil
+        }
+        let index = remaining.index(after: beforeIndex)
+        defer { remaining = remaining[index...] }
+        return remaining[..<index]
+    }
+    
     var isAtEnd: Bool {
         remaining.isEmpty
     }
@@ -595,7 +604,7 @@ private struct StringScanner: ~Copyable {
         guard peek() == "(" else {
             // If the argument doesn't start with "(" it can't be neither a tuple nor a closure type.
             // In this case, scan until the next argument (",") or the end of the arguments (")")
-            return scan(until: { $0 == "," || $0 == ")" }) ?? takeAll()
+            return scanValue() ?? takeAll()
         }
         
         guard var argumentString = scanTuple() else {
@@ -611,7 +620,7 @@ private struct StringScanner: ~Copyable {
         
         guard peek() == "(" else {
             // This closure type has a simple return type.
-            guard let returnValue = scan(until: { $0 == "," || $0 == ")" }) else {
+            guard let returnValue = scanValue() else {
                 return nil
             }
             return argumentString + returnValue
@@ -632,13 +641,29 @@ private struct StringScanner: ~Copyable {
                 depth += 1
                 return false // keep scanning
             }
-            if depth > 0 {
-                if $0 == ")" {
-                    depth -= 1
-                }
+            else if $0 == ")" {
+                depth -= 1
+                return depth == 0 // stop only if we've reached a balanced number of parenthesis
+            }
+            return false // keep scanning
+        }
+        
+        return scan(past: predicate)
+    }
+    
+    mutating func scanValue() -> Substring? {
+        // The value may contain any number of nested generics. Keep track of the open and close angle brackets while scanning.
+        var depth = 0
+        let predicate: (Character) -> Bool = {
+            if $0 == "<" {
+                depth += 1
                 return false // keep scanning
             }
-            return $0 == "," || $0 == ")"
+            else if $0 == ">" {
+                depth -= 1
+                return false // keep scanning
+            }
+            return depth == 0 && ($0 == "," || $0 == ")")
         }
         return scan(until: predicate)
     }
