@@ -239,7 +239,7 @@ public struct DocumentationNode {
                 Symbol.Overloads(references: [], displayIndex: overloadData.overloadGroupIndex)
             })
 
-        var languages = Set([reference.sourceLanguage])
+        var languages = reference.sourceLanguages
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
         for (_, symbolAvailability) in symbolAvailabilityVariants.allValues {
@@ -777,7 +777,7 @@ public struct DocumentationNode {
         
         let symbolAvailability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
         
-        var languages = Set([reference.sourceLanguage])
+        var languages = reference.sourceLanguages
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
         let availabilityDomains = symbolAvailability?.availability.compactMap({ $0.domain?.rawValue })
@@ -860,7 +860,7 @@ public struct DocumentationNode {
         self.semantic = article
         self.sourceLanguage = reference.sourceLanguage
         self.name = .conceptual(title: article.title?.title ?? "")
-        self.availableSourceLanguages = [reference.sourceLanguage]
+        self.availableSourceLanguages = reference.sourceLanguages
         self.docChunks = [DocumentationChunk(source: .documentationExtension, markup: articleMarkup)]
         self.markup = articleMarkup
         self.isVirtual = false
