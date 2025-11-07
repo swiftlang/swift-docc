@@ -48,6 +48,7 @@ let package = Package(
                 .product(name: "CLMDB", package: "swift-lmdb"),
                 .product(name: "Crypto", package: "swift-crypto"),
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -72,6 +73,7 @@ let package = Package(
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -104,6 +106,7 @@ let package = Package(
             dependencies: [
                 .target(name: "CommandLine"),
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
         ),
 
@@ -125,7 +128,6 @@ let package = Package(
             ],
             swiftSettings: swiftSettings
         ),
-        
     ]
 )
 

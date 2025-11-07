@@ -15,7 +15,7 @@ import TestUtilities
 typealias Node = NavigatorTree.Node
 typealias PageType = NavigatorIndex.PageType
 
-let testBundleIdentifier = "org.swift.docc.example"
+private let testBundleIdentifier = "org.swift.docc.example"
 
 class NavigatorIndexingTests: XCTestCase {
     
