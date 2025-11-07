@@ -20,6 +20,15 @@ public struct RenderContentMetadata: Equatable, Codable {
     public var abstract: [RenderInlineContent]?
     /// An optional identifier for the device frame that should wrap this element.
     public var deviceFrame: String?
+
+    /// Declare a public initializer, to allow clients linking to Swift DocC to
+    /// create RenderContentMetadata values.
+    public init(anchor: String? = nil, title: String? = nil, abstract: [RenderInlineContent]? = nil, deviceFrame: String? = nil) {
+        self.anchor = anchor
+        self.title = title
+        self.abstract = abstract
+        self.deviceFrame = deviceFrame
+    }
 }
 
 extension RenderContentMetadata {
