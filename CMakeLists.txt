@@ -9,8 +9,11 @@ See https://swift.org/LICENSE.txt for license information
 
 cmake_minimum_required(VERSION 3.24)
 
+# FIXME: The C language is enabled as `GNUInstallDirs` requires the language to
+# function properly.  We must further enable the language in the initial set to
+# ensure that the correct linker is detected.
 project(SwiftDocC
-  LANGUAGES Swift)
+  LANGUAGES C Swift)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -20,7 +23,6 @@ set(CMAKE_Swift_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/swift)
 set(CMAKE_Swift_COMPILE_OPTIONS_MSVC_RUNTIME_LIBRARY MultiThreadedDLL)
 set(CMAKE_Swift_LANGUAGE_VERSION 5)
 
-enable_language(C)
 include(GNUInstallDirs)
 
 # NOTE(compnerd) workaround CMake issues
