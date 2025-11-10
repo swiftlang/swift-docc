@@ -15,7 +15,7 @@ import Foundation
 /// This allows decoding a ``RenderSection`` into its appropriate concrete type, based on the section's
 /// ``RenderSection/kind``.
 public struct CodableContentSection: Codable, Equatable {
-    var section: any RenderSection {
+    public var section: any RenderSection {
         get {
             typeErasedSection.value
         }
