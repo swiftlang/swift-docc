@@ -9,7 +9,7 @@
 */
 
 /// A programming language.
-public struct SourceLanguage: Hashable, Codable, Comparable {
+public struct SourceLanguage: Hashable, Codable, Comparable, Sendable {
     /// The display name of the programming language.
     public var name: String
     /// A globally unique identifier for the language.
@@ -132,7 +132,7 @@ public struct SourceLanguage: Hashable, Codable, Comparable {
     public static let metal = SourceLanguage(name: "Metal", id: "metal")
     
     /// The list of programming languages that are known to DocC.
-    public static var knownLanguages: [SourceLanguage] = [.swift, .objectiveC, .javaScript, .data, .metal]
+    public static let knownLanguages: [SourceLanguage] = [.swift, .objectiveC, .javaScript, .data, .metal]
     
     enum CodingKeys: CodingKey {
         case name

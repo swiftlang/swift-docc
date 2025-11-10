@@ -122,7 +122,7 @@ let package = Package(
                 // This target shouldn't have any local dependencies so that all other targets can depend on it.
                 // We can add dependencies on SymbolKit and Markdown here but they're not needed yet.
             ],
-            swiftSettings: swiftSettings // FIXME: Use `[.swiftLanguageMode(.v6)]` here
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         
         .testTarget(
@@ -131,7 +131,7 @@ let package = Package(
                 .target(name: "Common"),
                 .target(name: "TestUtilities"),
             ],
-            swiftSettings: swiftSettings // FIXME: Use `[.swiftLanguageMode(.v6)]` here
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
 
         // Test app for CommandLine
