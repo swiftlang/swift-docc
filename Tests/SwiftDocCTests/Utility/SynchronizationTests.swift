@@ -9,7 +9,7 @@
 */
 
 import XCTest
-@testable import Common // to directly access the internal "lock" property
+@testable import SwiftDocC
 #if os(Windows)
 import func WinSDK.TryAcquireSRWLockExclusive
 #endif

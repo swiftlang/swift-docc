@@ -9,10 +9,9 @@
 */
 
 public import Foundation
-public import Common
 
 /// A thread-safe cache for encoded render references.
-public typealias RenderReferenceCache = Common.Synchronized<[String: (reference: Data, overrides: [VariantOverride])]>
+public typealias RenderReferenceCache = Synchronized<[String: (reference: Data, overrides: [VariantOverride])]>
 
 enum TopicRenderReferenceEncoder {
     /// Inserts an encoded list of render references to an already encoded as data render node.
