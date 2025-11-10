@@ -7,7 +7,7 @@ Licensed under Apache License v2.0 with Runtime Library Exception
 See https://swift.org/LICENSE.txt for license information
 #]]
 
-add_library(CommandLine STATIC
+add_library(SwiftDocCUtilities STATIC
   Action/Action.swift
   Action/ActionResult.swift
   Action/Actions/Action+MoveOutput.swift
@@ -69,6 +69,6 @@ add_library(CommandLine STATIC
   Utility/PlatformArgumentParser.swift
   Utility/Signal.swift
   Utility/Throttle.swift)
-target_link_libraries(CommandLine PUBLIC
+target_link_libraries(SwiftDocCUtilities PUBLIC
   ArgumentParser
   SwiftDocC)

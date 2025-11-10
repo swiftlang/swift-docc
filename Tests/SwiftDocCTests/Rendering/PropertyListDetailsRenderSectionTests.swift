@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import SymbolKit
-import TestUtilities
+import SwiftDocCTestUtilities
 
 class PropertyListDetailsRenderSectionTests: XCTestCase {
 

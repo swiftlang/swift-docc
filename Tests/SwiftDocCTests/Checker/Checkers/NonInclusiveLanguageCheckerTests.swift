@@ -11,7 +11,7 @@
 import XCTest
 import Markdown
 @testable import SwiftDocC
-import TestUtilities
+import SwiftDocCTestUtilities
 
 class NonInclusiveLanguageCheckerTests: XCTestCase {
 

@@ -12,7 +12,7 @@ import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
 import Markdown
-import TestUtilities
+import SwiftDocCTestUtilities
 
 class SymbolTests: XCTestCase {
     

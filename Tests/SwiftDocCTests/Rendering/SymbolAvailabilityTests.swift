@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import TestUtilities
+import SwiftDocCTestUtilities
 
 class SymbolAvailabilityTests: XCTestCase {
     
