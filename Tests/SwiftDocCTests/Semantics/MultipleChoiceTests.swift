@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import TestUtilities
+import SwiftDocCTestUtilities
 
 class MultipleChoiceTests: XCTestCase {
     func testInvalidEmpty() async throws {

@@ -2,7 +2,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -55,7 +55,7 @@ let package = Package(
             name: "SwiftDocCTests",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .target(name: "TestUtilities"),
+                .target(name: "SwiftDocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -67,7 +67,7 @@ let package = Package(
         ),
         // Command-line tool library
         .target(
-            name: "CommandLine",
+            name: "SwiftDocCUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
@@ -77,11 +77,11 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "CommandLineTests",
+            name: "SwiftDocCUtilitiesTests",
             dependencies: [
-                .target(name: "CommandLine"),
+                .target(name: "SwiftDocCUtilities"),
                 .target(name: "SwiftDocC"),
-                .target(name: "TestUtilities"),
+                .target(name: "SwiftDocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -92,7 +92,7 @@ let package = Package(
         
         // Test utility library
         .target(
-            name: "TestUtilities",
+            name: "SwiftDocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
@@ -104,17 +104,17 @@ let package = Package(
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "CommandLine"),
+                .target(name: "SwiftDocCUtilities"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
         ),
 
-        // Test app for CommandLine
+        // Test app for SwiftDocCUtilities
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "CommandLine"),
+                .target(name: "SwiftDocCUtilities"),
             ],
             path: "Tests/signal-test-app",
             swiftSettings: swiftSettings
