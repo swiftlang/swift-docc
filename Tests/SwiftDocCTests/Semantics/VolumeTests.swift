@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import TestUtilities
 
 class VolumeTests: XCTestCase {
     func testEmpty() async throws {

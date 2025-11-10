@@ -11,7 +11,7 @@
 import Foundation
 @testable import SwiftDocC
 import SymbolKit
-import SwiftDocCTestUtilities
+import TestUtilities
 import XCTest
 
 class SemaToRenderNodeMixedLanguageTests: XCTestCase {

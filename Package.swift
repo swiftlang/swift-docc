@@ -57,7 +57,7 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "Common"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "TestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -69,7 +69,7 @@ let package = Package(
         ),
         // Command-line tool library
         .target(
-            name: "SwiftDocCUtilities",
+            name: "CommandLine",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "Common"),
@@ -80,12 +80,12 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "SwiftDocCUtilitiesTests",
+            name: "CommandLineTests",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "CommandLine"),
                 .target(name: "SwiftDocC"),
                 .target(name: "Common"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "TestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -96,7 +96,7 @@ let package = Package(
         
         // Test utility library
         .target(
-            name: "SwiftDocCTestUtilities",
+            name: "TestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "Common"),
@@ -109,7 +109,7 @@ let package = Package(
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "CommandLine"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
@@ -129,16 +129,16 @@ let package = Package(
             name: "CommonTests",
             dependencies: [
                 .target(name: "Common"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "TestUtilities"),
             ],
             swiftSettings: swiftSettings // FIXME: Use `[.swiftLanguageMode(.v6)]` here
         ),
 
-        // Test app for SwiftDocCUtilities
+        // Test app for CommandLine
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "CommandLine"),
             ],
             path: "Tests/signal-test-app",
             swiftSettings: swiftSettings

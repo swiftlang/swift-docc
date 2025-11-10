@@ -520,7 +520,7 @@ For more in-depth technical information about Swift-DocC, please refer to the
 project's technical documentation:
 
 - [`SwiftDocC` framework documentation](https://swiftlang.github.io/swift-docc/documentation/swiftdocc/)
-- [`SwiftDocCUtilities` framework documentation](https://swiftlang.github.io/swift-docc/documentation/swiftdoccutilities/)
+- [`CommandLine` framework documentation](https://swiftlang.github.io/swift-docc/documentation/commandline/)
 
 ### Related Projects
 
@@ -545,4 +545,4 @@ project's technical documentation:
   with support for building and viewing documentation for your framework and
   its dependencies.
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->

@@ -17,12 +17,12 @@ value so that the default initializer can be used.
 
 ### Feature flags on the command line
 
-Command-line feature flags live in the `Docc.Convert.FeatureFlagOptions` in `SwiftDocCUtilities`.
+Command-line feature flags live in the `Docc.Convert.FeatureFlagOptions` in `CommandLine`.
 This type implements the `ParsableArguments` protocol from Swift Argument Parser to create an option
 group for the `convert` and `preview` commands.
 
 These options are then handled in `ConvertAction.init(fromConvertCommand:)`, still in
-`SwiftDocCUtilities`, where they are written into the global feature flags ``FeatureFlags/current``
+`CommandLine`, where they are written into the global feature flags ``FeatureFlags/current``
 instance, which can then be used during the compilation process.
 
 ### Feature flags in Info.plist
@@ -37,4 +37,4 @@ Feature flags that are loaded from an Info.plist file are saved into the global 
 the bundle is being registered. To ensure that your new feature flag is properly loaded, update the
 ``FeatureFlags/loadFlagsFromBundle(_:)`` method to load your new field into the global flags.
 
-<!-- Copyright (c) 2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2024-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
