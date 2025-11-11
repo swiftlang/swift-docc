@@ -10,7 +10,7 @@
 
 import XCTest
 import SwiftDocC
-@testable import TestUtilities
+@testable import TestHelpers
 
 class TestFileSystemTests: XCTestCase {
     

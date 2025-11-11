@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 
 class BundleDiscoveryTests: XCTestCase {
     

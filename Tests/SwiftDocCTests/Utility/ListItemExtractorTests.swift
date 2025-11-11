@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import TestUtilities
+import TestHelpers
 @testable import SwiftDocC
 import Markdown
 

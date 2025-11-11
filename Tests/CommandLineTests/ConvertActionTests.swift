@@ -14,7 +14,7 @@ import Foundation
 @testable import CommandLine
 import SymbolKit
 import Markdown
-@testable import TestUtilities
+@testable import TestHelpers
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)

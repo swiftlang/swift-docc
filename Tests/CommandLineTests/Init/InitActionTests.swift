@@ -10,7 +10,7 @@
 
 import XCTest
 import Foundation
-import TestUtilities
+import TestHelpers
 @testable import CommandLine
 
 final class InitActionTests: XCTestCase {

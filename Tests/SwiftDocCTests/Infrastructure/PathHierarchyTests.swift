@@ -11,7 +11,7 @@
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 import Markdown
 
 class PathHierarchyTests: XCTestCase {

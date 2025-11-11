@@ -12,7 +12,7 @@ import XCTest
 import Foundation
 @testable import SwiftDocC
 @testable import CommandLine
-import TestUtilities
+import TestHelpers
 
 class ConvertActionStaticHostableTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archives it with options  to produce static content which is then validated.

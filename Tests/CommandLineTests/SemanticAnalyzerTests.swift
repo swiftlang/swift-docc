@@ -12,7 +12,7 @@ import XCTest
 import Markdown
 @testable import SwiftDocC
 @testable import CommandLine
-import TestUtilities
+import TestHelpers
 
 class SemanticAnalyzerTests: XCTestCase {
     private let catalogHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [

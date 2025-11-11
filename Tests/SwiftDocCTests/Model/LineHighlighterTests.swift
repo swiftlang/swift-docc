@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import TestUtilities
+import TestHelpers
 
 class LineHighlighterTests: XCTestCase {
     static let bundleID: DocumentationBundle.Identifier = "org.swift.docc.LineHighlighterTests"

@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import TestUtilities
+import TestHelpers
 
 class FileTests: XCTestCase {
     func testAbsoluteURL() {

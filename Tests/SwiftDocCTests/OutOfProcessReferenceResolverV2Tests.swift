@@ -12,7 +12,7 @@ import XCTest
 import Foundation
 import SymbolKit
 @_spi(ExternalLinks) @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 
 #if os(macOS)
 class OutOfProcessReferenceResolverV2Tests: XCTestCase {

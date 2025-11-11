@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import TestUtilities
+import TestHelpers
 
 /// A folder that represents a fake html-build directory for testing.
 extension Folder {

@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import TestUtilities
+import TestHelpers
 
 class FolderStructureTests: XCTestCase {
 

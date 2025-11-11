@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 
 class NodeTagsTests: XCTestCase {
     func testSPIMetadata() async throws {

@@ -11,7 +11,7 @@
 import XCTest
 import Foundation
 @testable import CommandLine
-import TestUtilities
+import TestHelpers
 
 class EmitGeneratedCurationsActionTests: XCTestCase {
     

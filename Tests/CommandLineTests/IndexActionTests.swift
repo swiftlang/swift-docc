@@ -13,7 +13,7 @@ import Foundation
 @testable import SwiftDocC
 @testable import CommandLine
 import Markdown
-import TestUtilities
+import TestHelpers
 
 class IndexActionTests: XCTestCase {
     #if !os(iOS)

@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 import Markdown
 import SymbolKit
 

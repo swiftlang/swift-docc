@@ -12,7 +12,7 @@
 import Foundation
 import XCTest
 @testable import CommandLine
-import TestUtilities
+import TestHelpers
 
 import NIO
 import NIOHTTP1

@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 @testable import CommandLine
-import TestUtilities
+import TestHelpers
 
 class MergeActionTests: XCTestCase {
     

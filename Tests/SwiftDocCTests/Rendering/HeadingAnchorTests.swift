@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 
 class HeadingAnchorTests: XCTestCase {
     func testEncodeHeadingAnchor() async throws {

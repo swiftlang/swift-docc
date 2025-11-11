@@ -11,7 +11,7 @@
 import XCTest
 @testable import CommandLine
 @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 import ArgumentParser
 
 class ConvertSubcommandSourceRepositoryTests: XCTestCase {

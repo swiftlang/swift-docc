@@ -10,7 +10,7 @@
 
 import Foundation
 import SwiftDocC
-import TestUtilities
+import TestHelpers
 import XCTest
 
 // THIS SHOULD BE REMOVED, RIGHT?!

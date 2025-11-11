@@ -12,7 +12,7 @@ import XCTest
 import Markdown
 import SymbolKit
 @testable @_spi(ExternalLinks) import SwiftDocC
-import TestUtilities
+import TestHelpers
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     

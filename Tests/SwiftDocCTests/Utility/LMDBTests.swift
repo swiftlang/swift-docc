@@ -11,7 +11,7 @@
 
 import XCTest
 @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 
 final class SwiftLMDBTests: XCTestCase {
     var environment: LMDB.Environment!

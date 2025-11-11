@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 import Markdown
 @testable import SwiftDocC
-import TestUtilities
+import TestHelpers
 
 class TermListTests: XCTestCase {
     
