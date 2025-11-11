@@ -12,7 +12,7 @@
 import Markdown
 import XCTest
 import SymbolKit
-import SwiftDocCTestUtilities
+import TestUtilities
 
 class SemaToRenderNodeTests: XCTestCase {
     func testCompileTutorial() async throws {

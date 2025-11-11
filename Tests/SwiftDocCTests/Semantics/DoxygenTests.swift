@@ -12,7 +12,7 @@ import Foundation
 
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import TestUtilities
 @testable import SymbolKit
 
 class DoxygenTests: XCTestCase {

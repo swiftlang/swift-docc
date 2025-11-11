@@ -13,7 +13,7 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import TestUtilities
 import Markdown
 
 class DocumentationCuratorTests: XCTestCase {

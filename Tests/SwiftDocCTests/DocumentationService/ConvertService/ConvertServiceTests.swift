@@ -12,7 +12,7 @@ import XCTest
 import Foundation
 @testable import SwiftDocC
 import SymbolKit
-import SwiftDocCTestUtilities
+import TestUtilities
 
 class ConvertServiceTests: XCTestCase {
     private let testBundleInfo = DocumentationBundle.Info(

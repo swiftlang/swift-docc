@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import TestUtilities
 import SymbolKit
 
 fileprivate extension [RenderBlockContent] {

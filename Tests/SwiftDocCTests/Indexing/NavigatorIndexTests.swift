@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import TestUtilities
 
 typealias Node = NavigatorTree.Node
 typealias PageType = NavigatorIndex.PageType
