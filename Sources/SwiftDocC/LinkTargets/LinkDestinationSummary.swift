@@ -83,6 +83,11 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// The relative presentation URL for this element.
     public let relativePresentationURL: URL
     
+    /// The absolute presentation URL for this element, or `nil` if only the _relative_ presentation URL is known.
+    ///
+    /// - Note: The absolute presentation URL (if one exists) and the relative presentation URL will always have the same path and fragment components.
+    let absolutePresentationURL: URL?
+    
     /// The resolved topic reference URL to this element.
     public var referenceURL: URL
     
@@ -359,6 +364,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.kind = kind
         self.language = language
         self.relativePresentationURL = relativePresentationURL
+        self.absolutePresentationURL = nil
         self.referenceURL = referenceURL
         self.title = title
         self.abstract = abstract
@@ -763,7 +769,9 @@ extension LinkDestinationSummary {
         } catch {
             kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
         }
-        relativePresentationURL = try container.decode(URL.self, forKey: .relativePresentationURL)
+        let decodedURL = try container.decode(URL.self, forKey: .relativePresentationURL)
+        (relativePresentationURL, absolutePresentationURL) = Self.checkIfDecodedURLWasAbsolute(decodedURL)
+        
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
@@ -807,6 +815,28 @@ extension LinkDestinationSummary {
         }
         
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
+    }
+    
+    private static func checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
+        guard decodedURL.isAbsoluteWebURL,
+              var components = URLComponents(url: decodedURL, resolvingAgainstBaseURL: false)
+        else {
+            // If the decoded URL isn't an absolute web URL that's valid according to RFC 3986, then treat it as relative.
+            return (relative: decodedURL, absolute: nil)
+        }
+        
+        // Remove the scheme, user, port, and host to create a relative URL.
+        components.scheme = nil
+        components.user   = nil
+        components.host   = nil
+        components.port   = nil
+            
+        guard let relativeURL = components.url else {
+            // If we can't create a relative URL that's valid according to RFC 3986, then treat the original as relative.
+            return (relative: decodedURL, absolute: nil)
+        }
+        
+        return (relative: relativeURL, absolute: decodedURL)
     }
 }
 
