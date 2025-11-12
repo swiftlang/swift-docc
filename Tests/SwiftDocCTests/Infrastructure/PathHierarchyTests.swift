@@ -2037,6 +2037,71 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("doSomething()-9kd0v", in: tree, asSymbolID: "some-function-id-AnyObject")
     }
     
+    func testParameterDisambiguationWithKeyPathType() async throws {
+        // Create two overloads with different key path parameter types
+        let parameterTypes: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+            // Swift.Int
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            // Swift.Bool
+            .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Sb"),
+        ]
+        
+        let catalog = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: parameterTypes.map { parameterTypeFragment in
+                makeSymbol(id: "some-function-id-\(parameterTypeFragment.spelling)-KeyPath", kind: .func, pathComponents: ["doSomething(keyPath:)"], signature: .init(
+                    parameters: [
+                        // "keyPath: KeyPath<String, Int>" or "keyPath: KeyPath<String, Bool>"
+                        .init(name: "keyPath", externalName: nil, declarationFragments: [
+                            .init(kind: .identifier, spelling: "keyPath", preciseIdentifier: nil),
+                            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                            .init(kind: .typeIdentifier, spelling: "KeyPath", preciseIdentifier: "s:s7KeyPathC"),
+                            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                            .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                            parameterTypeFragment,
+                            .init(kind: .text, spelling: ">", preciseIdentifier: nil)
+                        ], children: [])
+                    ],
+                    returns: [
+                        .init(kind: .text, spelling: "()", preciseIdentifier: nil) // 'Void' in text representation
+                    ]
+                ))
+            })),
+        ])
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        
+        XCTAssertEqual(paths["some-function-id-Int-KeyPath"],  "/ModuleName/doSomething(keyPath:)-(KeyPath<String,Int>)")
+        XCTAssertEqual(paths["some-function-id-Bool-KeyPath"], "/ModuleName/doSomething(keyPath:)-(KeyPath<String,Bool>)")
+        
+        try assertPathCollision("doSomething(keyPath:)", in: tree, collisions: [
+            ("some-function-id-Int-KeyPath",  "-(KeyPath<String,Int>)"),
+            ("some-function-id-Bool-KeyPath", "-(KeyPath<String,Bool>)"),
+        ])
+        
+        try assertPathRaisesErrorMessage("doSomething(keyPath:)", in: tree, context: context, expectedErrorMessage: "'doSomething(keyPath:)' is ambiguous at '/ModuleName'") { error in
+            XCTAssertEqual(error.solutions.count, 2)
+            
+            // These test symbols don't have full declarations. A real solution would display enough information to distinguish these.
+            XCTAssertEqual(error.solutions.dropFirst(0).first, .init(summary: "Insert '-(KeyPath<String,Bool>)' for \n'doSomething(keyPath:)'" , replacements: [("-(KeyPath<String,Bool>)", 21, 21)]))
+            XCTAssertEqual(error.solutions.dropFirst(1).first, .init(summary: "Insert '-(KeyPath<String,Int>)' for \n'doSomething(keyPath:)'" /* the test symbols don't have full declarations */, replacements: [("-(KeyPath<String,Int>)", 21, 21)]))
+        }
+        
+        assertParsedPathComponents("doSomething(keyPath:)-(KeyPath<String,Int>)", [("doSomething(keyPath:)", .typeSignature(parameterTypes: ["KeyPath<String,Int>"], returnTypes: nil))])
+        try assertFindsPath("doSomething(keyPath:)-(KeyPath<String,Int>)", in: tree, asSymbolID: "some-function-id-Int-KeyPath")
+        try assertFindsPath("doSomething(keyPath:)-(KeyPath<String,Int>)->()", in: tree, asSymbolID: "some-function-id-Int-KeyPath")
+        try assertFindsPath("doSomething(keyPath:)-2zg7h", in: tree, asSymbolID: "some-function-id-Int-KeyPath")
+        
+        assertParsedPathComponents("doSomething(keyPath:)-(KeyPath<String,Bool>)", [("doSomething(keyPath:)", .typeSignature(parameterTypes: ["KeyPath<String,Bool>"], returnTypes: nil))])
+        try assertFindsPath("doSomething(keyPath:)-(KeyPath<String,Bool>)", in: tree, asSymbolID: "some-function-id-Bool-KeyPath")
+        try assertFindsPath("doSomething(keyPath:)-(KeyPath<String,Bool>)->()", in: tree, asSymbolID: "some-function-id-Bool-KeyPath")
+        try assertFindsPath("doSomething(keyPath:)-2frrn", in: tree, asSymbolID: "some-function-id-Bool-KeyPath")
+    }
+    
     func testOverloadGroupSymbolsResolveLinksWithoutHash() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
@@ -4404,6 +4469,26 @@ class PathHierarchyTests: XCTestCase {
         }
         
         assertParsedPathComponents("operator[]-(std::string&)->std::string&", [("operator[]", .typeSignature(parameterTypes: ["std::string&"], returnTypes: ["std::string&"]))])
+        
+        // Nested generic types
+        assertParsedPathComponents("functionName-(KeyPath<String,Int>)", [("functionName", .typeSignature(parameterTypes: ["KeyPath<String,Int>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->KeyPath<String,Int>",  [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["KeyPath<String,Int>"]))])
+        
+        assertParsedPathComponents("functionName-(KeyPath<String,Int>,Dictionary<Int,Int>)",  [("functionName", .typeSignature(parameterTypes: ["KeyPath<String,Int>", "Dictionary<Int,Int>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->(KeyPath<String,Int>,Dictionary<Int,Int>)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["KeyPath<String,Int>", "Dictionary<Int,Int>"]))])
+        
+        assertParsedPathComponents("functionName-(KeyPath<String,Dictionary<Int,Int>>)", [("functionName", .typeSignature(parameterTypes: ["KeyPath<String,Dictionary<Int,Int>>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->KeyPath<String,Dictionary<Int,Int>>",  [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["KeyPath<String,Dictionary<Int,Int>>"]))])
+        
+        assertParsedPathComponents("functionName-(KeyPath<Array<Bool>,Dictionary<Int,(Bool,Bool))>>)", [("functionName", .typeSignature(parameterTypes: ["KeyPath<Array<Bool>,Dictionary<Int,(Bool,Bool))>>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->KeyPath<Array<Bool>,Dictionary<Int,(Bool,Bool))>>",  [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["KeyPath<Array<Bool>,Dictionary<Int,(Bool,Bool))>>"]))])
+        
+        // Nested generics and tuple types
+        assertParsedPathComponents( "functionName-(A<B,C>,(D<E,F,G>,H<(I,J),(K,L)>),M<N,(O<P,Q>,R),S>)", [("functionName", .typeSignature(parameterTypes: ["A<B,C>", "(D<E,F,G>,H<(I,J),(K,L)>)", "M<N,(O<P,Q>,R),S>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->(A<B,C>,(D<E,F,G>,H<(I,J),(K,L)>),M<N,(O<P,Q>,R),S>)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["A<B,C>", "(D<E,F,G>,H<(I,J),(K,L)>)", "M<N,(O<P,Q>,R),S>"]))])
+        // With special characters
+        assertParsedPathComponents( "functionName-(Å<𝔹,©>,(Δ<∃,⨍,𝄞>,ℌ<(𝓲,ⅉ),(🄺,ƛ)>),𝔐<𝚗,(Ω<π,Ⓠ>,℟),𝔖>)", [("functionName", .typeSignature(parameterTypes: ["Å<𝔹,©>", "(Δ<∃,⨍,𝄞>,ℌ<(𝓲,ⅉ),(🄺,ƛ)>)", "𝔐<𝚗,(Ω<π,Ⓠ>,℟),𝔖>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->(Å<𝔹,©>,(Δ<∃,⨍,𝄞>,ℌ<(𝓲,ⅉ),(🄺,ƛ)>),𝔐<𝚗,(Ω<π,Ⓠ>,℟),𝔖>)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["Å<𝔹,©>", "(Δ<∃,⨍,𝄞>,ℌ<(𝓲,ⅉ),(🄺,ƛ)>)", "𝔐<𝚗,(Ω<π,Ⓠ>,℟),𝔖>"]))])
     }
     
     func testResolveExternalLinkFromTechnologyRoot() async throws {
