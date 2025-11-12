@@ -3143,17 +3143,10 @@ class PathHierarchyTests: XCTestCase {
         )
 
         let catalog = Folder(name: "TestCatalog.docc", content: [
-            JSONFile(name: "MainModule.symbols.json", content: makeSymbolGraph(
-                moduleName: "MainModule",
-                symbols: [
-                    makeSymbol(id: mainModuleTypeID, kind: .struct, pathComponents: ["MainType"])
-                ]
-            )),
+            JSONFile(name: "MainModule.symbols.json", content: makeSymbolGraph(moduleName: "MainModule", symbols: [])),
             JSONFile(name: "MainModule@ImportedModule.symbols.json", content: makeSymbolGraph(
                 moduleName: "MainModule",
                 symbols: [
-                    makeSymbol(id: importedProtocolID, kind: .protocol, pathComponents: ["BaseProtocol"]),
-                    makeSymbol(id: importedTypeID, kind: .struct, pathComponents: ["ExtendedType"]),
                     makeSymbol(
                         id: extensionSymbolID,
                         kind: .extension,
