@@ -16,6 +16,10 @@ import Foundation
 /// ``RenderSection/kind``.
 public struct CodableContentSection: Codable, Equatable {
     public var section: any RenderSection {
+        @storageRestrictions(initializes: typeErasedSection)
+        init(initialValue)  {
+            typeErasedSection = AnyRenderSection(initialValue)
+        }
         get {
             typeErasedSection.value
         }
@@ -27,7 +31,6 @@ public struct CodableContentSection: Codable, Equatable {
     
     /// Creates a codable content section from the given section.
     public init(_ section: any RenderSection) {
-        self.typeErasedSection = AnyRenderSection(section)
         self.section = section
     }
     
@@ -35,7 +38,6 @@ public struct CodableContentSection: Codable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let kind = try container.decode(RenderSectionKind.self, forKey: .kind)
         
-        self.typeErasedSection = AnyRenderSection(ContentRenderSection(kind: .content, content: []))
         switch kind {
             case .discussion:
                 section = try ContentRenderSection(from: decoder)
