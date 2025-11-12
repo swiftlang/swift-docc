@@ -522,6 +522,20 @@ extension PathHierarchy.PathParser {
 
 // MARK: Scanning a substring
 
+/// A file-private, low-level string scanner type that's only designed for parsing type signature based disambiguation suffixes in authored links.
+///
+/// ## Correct usage
+///
+/// The higher level methods like ``scanReturnTypes()``, ``scanArguments()``, ``scanTuple()``, or ``scanValue()`` makes assumptions about the scanners content and current state.
+/// For example:
+/// - ``scanReturnTypes()`` knows that return types are specified after any parameter types and requires that the caller has already scanned the parameter types and advanced past the `"->"` separator.
+///   It's the caller's (`parseTypeSignatureDisambiguation(pathComponent:)` above) responsibility to do these things correctly.
+///   Similarly, it's the caller's responsibility to advance past the `"-"` prefix verify that the scanner points to an open parenthesis character (`(`) that before calling ``scanArguments()`` to scan the parameter types.
+///   Failing to do either of these things will result in unexpected parsed disambiguation that DocC will fail to find a match for.
+/// - Both ``scanArguments()``, or ``scanTuple()`` expects that the disambiguation portion of the authored link has a balanced number of open and closer parenthesis (`(` and `)`).
+///   If the authored link contains unbalanced parenthesis then disambiguation isn't valid and the scanner will return a parsed value that DocC will fail to find a match for.
+/// - ``scanValue()`` expects that the disambiguation portion of the authored link has a balanced number of open and closer angle brackets (`<` and `>`).
+///   If the authored link contains unbalanced angle brackets then disambiguation isn't valid and the scanner will return a parsed value that DocC will fail to find a match for.
 private struct StringScanner: ~Copyable {
     private var remaining: Substring
     
@@ -529,25 +543,45 @@ private struct StringScanner: ~Copyable {
         remaining = original
     }
     
-    func peek() -> Character? {
+    /// Returns the next character _without_ advancing the scanner
+    private func peek() -> Character? {
         remaining.first
     }
     
-    mutating func take() -> Character {
+    /// Advances the scanner and returns the scanned character.
+    private mutating func take() -> Character {
         remaining.removeFirst()
     }
     
+    /// Advances the scanner by `count` elements and returns the scanned substring.
     mutating func take(_ count: Int) -> Substring {
         defer { remaining = remaining.dropFirst(count) }
         return remaining.prefix(count)
     }
     
-    mutating func takeAll() -> Substring {
+    /// Advances the scanner to the end and returns the scanned substring.
+    private mutating func takeAll() -> Substring {
         defer { remaining.removeAll() }
         return remaining
     }
     
-    mutating func scan(until predicate: (Character) -> Bool) -> Substring? {
+    /// Advances the scanner up to the first character that satisfies the given `predicate` and returns the scanned substring.
+    ///
+    /// If the scanner doesn't contain any characters that satisfy the given `predicate`, then this method returns `nil` _without_ advancing the scanner.
+    ///
+    /// For example, consider a scanner that has already advanced 4 characters into the string `"One,Two,Three"`
+    /// ```
+    /// One,Two,Three
+    ///     ^
+    /// ```
+    /// Calling `scanner.scan(until: \.isNumber)` returns `nil` without advancing the scanner because none of the (remaining) characters is a number.
+    ///
+    /// Calling `scanner.scan(until: { $0 == "," })` advances the scanner by 3 additional characters, returning the scanned `"Two"` substring.
+    /// ```
+    /// One,Two,Three
+    ///        ^
+    /// ```
+    private mutating func scan(until predicate: (Character) -> Bool) -> Substring? {
         guard let index = remaining.firstIndex(where: predicate) else {
             return nil
         }
@@ -555,7 +589,23 @@ private struct StringScanner: ~Copyable {
         return remaining[..<index]
     }
     
-    mutating func scan(past predicate: (Character) -> Bool) -> Substring? {
+    /// Advances the scanner up to and past the first character that satisfies the given `predicate` and returns the scanned substring.
+    ///
+    /// If the scanner doesn't contain any characters that satisfy the given `predicate`, then this method returns `nil` _without_ advancing the scanner.
+    ///
+    /// For example, consider a scanner that has already advanced 4 characters into the string `"One,Two,Three"`
+    /// ```
+    /// One,Two,Three
+    ///     ^
+    /// ```
+    /// Calling `scanner.scan(until: \.isNumber)` returns `nil` without advancing the scanner because none of the (remaining) characters is a number.
+    ///
+    /// Calling `scanner.scan(until: { $0 == "," })` advances the scanner by 4 additional characters, returning the scanned `"Two,"` substring.
+    /// ```
+    /// One,Two,Three
+    ///         ^
+    /// ```
+    private mutating func scan(past predicate: (Character) -> Bool) -> Substring? {
         guard let beforeIndex = remaining.firstIndex(where: predicate) else {
             return nil
         }
@@ -564,16 +614,29 @@ private struct StringScanner: ~Copyable {
         return remaining[..<index]
     }
     
+    /// A Boolean value indicating whether the scanner has reached the end.
     var isAtEnd: Bool {
         remaining.isEmpty
     }
     
+    /// Returns a Boolean value indicating whether the substring at the scanners current position begins with the specified prefix.
     func hasPrefix(_ prefix: String) -> Bool {
         remaining.hasPrefix(prefix)
     }
 
     // MARK: Parsing argument types by scanning
     
+    /// Scans the remainder of the scanner's contents as the individual elements of a tuple return type,
+    /// or as a single return type if the scanners current position isn't an open parenthesis (`(`)
+    ///
+    /// For example, consider a scanner that has already advanced 8 characters into the string `"-(One)->(Two,Three)"`
+    /// ```
+    /// -(One)->(Two, Three)
+    ///         ^
+    /// ```
+    /// Because the scanner's current position is an open parenthesis (`(`), the scanner advances all the way to the end and returns `["Two", "Three"]` representing two elements in the tuple return value.
+    ///
+    /// - Note: The scanner expects that the caller has already scanned any parameter types and advanced past the `"->"` separator.
     mutating func scanReturnTypes() -> [Substring] {
         if peek() == "(" {
             _ = take() // the leading parenthesis
@@ -582,7 +645,20 @@ private struct StringScanner: ~Copyable {
             return [takeAll()]
         }
     }
-        
+    
+    /// Scans the list of individual parameter type names as if the scanner's current position was 1 past the open parenthesis (`(`) or a tuple.
+    ///
+    /// For example, consider a scanner that has already advanced 2 characters into the string `"-(One,(A,B))->(Two)"`
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///   ^
+    /// ```
+    /// The scanner parses two parameter return types---`"One"` and `"(A,B)"`---before the parenthesis balance out, advancing its position to one after the arguments list's closing parenthesis (`)`).
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///             ^
+    /// ```
+    /// - Note: The scanner expects that the caller has already advanced past the open parenthesis (`(`) that begins the list of parameter types.
     mutating func scanArguments() -> [Substring] {
         guard peek() != ")" else {
             _ = take() // drop the ")"
@@ -600,7 +676,19 @@ private struct StringScanner: ~Copyable {
         return arguments
     }
     
-    mutating func scanArgument() -> Substring? {
+    /// Scans a single type name, representing either a scalar value (such as `One`) or a nested tuple (such as `(A,B)`).
+    ///
+    /// For example, consider a scanner that has already advanced 6 characters into the string `"-(One,(A,B))->(Two)"`
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///       ^
+    /// ```
+    /// Because the value starts with an opening parenthesis (`(`), the scanner advances until the parenthesis balance out, returning `"(A,B)"`.
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///            ^
+    /// ```
+    private mutating func scanArgument() -> Substring? {
         guard peek() == "(" else {
             // If the argument doesn't start with "(" it can't be neither a tuple nor a closure type.
             // In this case, scan until the next argument (",") or the end of the arguments (")")
@@ -631,7 +719,20 @@ private struct StringScanner: ~Copyable {
         return argumentString + returnValue
     }
         
-    mutating func scanTuple() -> Substring? {
+    /// Scans a nested tuple as a single substring.
+    ///
+    /// For example, consider a scanner that has already advanced 6 character into the string `"-(One,(A,B))->(Two)"`
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///       ^
+    /// ```
+    /// Because the value starts with an opening parenthesis (`(`), the scanner advances until the parenthesis balance out, returning `"(A,B)"`.
+    /// ```
+    /// -(One,(A,B))->(Two)
+    ///            ^
+    /// ```
+    /// - Note: The scanner expects that the caller has already advanced to the open parenthesis (`(`) that's the start of the nested tuple.
+    private mutating func scanTuple() -> Substring? {
         assert(peek() == "(", "The caller should have checked that this is a tuple")
         
         // The tuple may contain any number of nested tuples. Keep track of the open and close parenthesis while scanning.
@@ -651,7 +752,19 @@ private struct StringScanner: ~Copyable {
         return scan(past: predicate)
     }
     
-    mutating func scanValue() -> Substring? {
+    /// Scans a single type name.
+    ///
+    /// For example, consider a scanner that has already advanced 2 character into the string `"-(One<A,B>,Two)"`
+    /// ```
+    /// -(One<A,B>,Two)
+    ///   ^
+    /// ```
+    /// Because the value contains generics (`<A,B>`), the scanner advances until the angle brackets balance out, returning `"One<A,B>"`.
+    /// ```
+    /// -(One<A,B>,Two)
+    ///           ^
+    /// ```
+    private mutating func scanValue() -> Substring? {
         // The value may contain any number of nested generics. Keep track of the open and close angle brackets while scanning.
         var depth = 0
         let predicate: (Character) -> Bool = {
