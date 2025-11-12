@@ -3198,7 +3198,91 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MainModule/TopLevelProtocol/extensionMember(_:)", in: tree, asSymbolID: "extensionMember1")
         try assertFindsPath("/MainModule/TopLevelProtocol/InnerStruct/extensionMember(_:)", in: tree, asSymbolID: "extensionMember2")
     }
-    
+
+    func testAbsoluteLinksToOtherModuleWithExtensions() async throws {
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+
+        let extendedTypeID = "extended-type-id"
+        let extensionID = "extension-id"
+        let extensionMethodID = "extension-method-id"
+
+        let extensionMixin = SymbolGraph.Symbol.Swift.Extension(
+            extendedModule: "ExtendedModule",
+            typeKind: .struct,
+            constraints: []
+        )
+
+        let catalog = Folder(name: "TestCatalog.docc", content: [
+            JSONFile(name: "MainModule.symbols.json", content: makeSymbolGraph(moduleName: "MainModule", symbols: [])),
+            JSONFile(name: "MainModule@ExtendedModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "MainModule",
+                symbols: [
+                    makeSymbol(
+                        id: extensionID,
+                        kind: .extension,
+                        pathComponents: ["ExtendedType"],
+                        otherMixins: [extensionMixin]
+                    ),
+                    makeSymbol(
+                        id: extensionMethodID,
+                        kind: .method,
+                        pathComponents: ["ExtendedType", "extensionMethod()"],
+                        otherMixins: [extensionMixin]
+                    )
+                ],
+                relationships: [
+                    .init(
+                        source: extensionMethodID,
+                        target: extensionID,
+                        kind: .memberOf,
+                        targetFallback: "ExtendedModule.ExtendedType"
+                    ),
+                    .init(
+                        source: extensionID,
+                        target: extendedTypeID,
+                        kind: .extensionTo,
+                        targetFallback: "ExtendedModule.ExtendedType"
+                    )
+                ]
+            ))
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        try assertFindsPath(
+            "/MainModule/ExtendedModule/ExtendedType/extensionMethod()",
+            in: tree,
+            asSymbolID: extensionMethodID
+        )
+
+        try assertFindsPath(
+            "ExtendedModule/ExtendedType",
+            in: tree,
+            asSymbolID: extensionID
+        )
+        try assertFindsPath(
+            "ExtendedModule/ExtendedType/extensionMethod()",
+            in: tree,
+            asSymbolID: extensionMethodID
+        )
+
+        // Verify that a link that resolves relative to the module
+        // fails to resolve as an absolute link, with a moduleNotFound error.
+        try assertPathRaisesErrorMessage(
+            "/ExtendedModule/ExtendedType",
+            in: tree,
+            context: context,
+            expectedErrorMessage: "No module named 'ExtendedModule'"
+        )
+        try assertPathRaisesErrorMessage(
+            "/ExtendedModule/ExtendedType/extensionMethod()",
+            in: tree,
+            context: context,
+            expectedErrorMessage: "No module named 'ExtendedModule'"
+        )
+    }
+
     func testMissingRequiredMemberOfSymbolGraphRelationshipInOneLanguageAcrossManyPlatforms() async throws {
         // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
         
