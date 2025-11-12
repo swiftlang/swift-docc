@@ -3130,25 +3130,23 @@ class PathHierarchyTests: XCTestCase {
     func testAbsoluteLinksToOtherModuleWithExtensions() async throws {
         enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
 
-        let importedProtocolID = "s:14ImportedModule12BaseProtocolP"
-        let importedTypeID = "s:14ImportedModule12ExtendedTypeV"
-        let extensionSymbolID = "s:e:s:14ImportedModule12ExtendedTypeV04MainC0E15extensionMethodyyF"
-        let extensionMethodID = "s:14ImportedModule12ExtendedTypeV04MainC0E15extensionMethodyyF"
-        let mainModuleTypeID = "s:10MainModule0A4TypeV"
+        let extendedTypeID = "extended-type-id"
+        let extensionID = "extension-id"
+        let extensionMethodID = "extension-method-id"
 
         let extensionMixin = SymbolGraph.Symbol.Swift.Extension(
-            extendedModule: "ImportedModule",
+            extendedModule: "ExtendedModule",
             typeKind: .struct,
             constraints: []
         )
 
         let catalog = Folder(name: "TestCatalog.docc", content: [
             JSONFile(name: "MainModule.symbols.json", content: makeSymbolGraph(moduleName: "MainModule", symbols: [])),
-            JSONFile(name: "MainModule@ImportedModule.symbols.json", content: makeSymbolGraph(
+            JSONFile(name: "MainModule@ExtendedModule.symbols.json", content: makeSymbolGraph(
                 moduleName: "MainModule",
                 symbols: [
                     makeSymbol(
-                        id: extensionSymbolID,
+                        id: extensionID,
                         kind: .extension,
                         pathComponents: ["ExtendedType"],
                         otherMixins: [extensionMixin]
@@ -3163,15 +3161,15 @@ class PathHierarchyTests: XCTestCase {
                 relationships: [
                     .init(
                         source: extensionMethodID,
-                        target: extensionSymbolID,
+                        target: extensionID,
                         kind: .memberOf,
-                        targetFallback: "ImportedModule.ExtendedType"
+                        targetFallback: "ExtendedModule.ExtendedType"
                     ),
                     .init(
-                        source: extensionSymbolID,
-                        target: importedTypeID,
+                        source: extensionID,
+                        target: extendedTypeID,
                         kind: .extensionTo,
-                        targetFallback: "ImportedModule.ExtendedType"
+                        targetFallback: "ExtendedModule.ExtendedType"
                     )
                 ]
             ))
@@ -3180,39 +3178,36 @@ class PathHierarchyTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: catalog)
         let tree = context.linkResolver.localResolver.pathHierarchy
 
-        XCTAssertEqual(tree.modules.count, 1)
-        XCTAssertEqual(tree.modules.first?.name, "MainModule")
-
-        let paths = tree.caseInsensitiveDisambiguatedPaths()
-        XCTAssertEqual(paths[importedProtocolID], "/MainModule/ImportedModule/BaseProtocol")
-        XCTAssertEqual(paths[importedTypeID], "/MainModule/ImportedModule/ExtendedType-struct")
-        XCTAssertEqual(
-            paths[extensionMethodID],
-            "/MainModule/ImportedModule/ExtendedType/extensionMethod()"
-        )
-
-        // Verify that symbols can be found at their correct paths
-        try assertFindsPath("/MainModule/ImportedModule/BaseProtocol", in: tree, asSymbolID: importedProtocolID)
-        try assertFindsPath("/MainModule/ImportedModule/ExtendedType-struct", in: tree, asSymbolID: importedTypeID)
         try assertFindsPath(
-            "/MainModule/ImportedModule/ExtendedType/extensionMethod()",
+            "/MainModule/ExtendedModule/ExtendedType/extensionMethod()",
             in: tree,
             asSymbolID: extensionMethodID
         )
 
-        // Verify that absolute paths to non-existent modules throw moduleNotFound error
-        // This is the fix being tested: without it, single-module fallback would trigger incorrectly
+        try assertFindsPath(
+            "ExtendedModule/ExtendedType",
+            in: tree,
+            asSymbolID: extensionID
+        )
+        try assertFindsPath(
+            "ExtendedModule/ExtendedType/extensionMethod()",
+            in: tree,
+            asSymbolID: extensionMethodID
+        )
+
+        // Verify that a link that resolves relative to the module
+        // fails to resolve as an absolute link, with a moduleNotFound error.
         try assertPathRaisesErrorMessage(
-            "/ImportedModule/BaseProtocol",
+            "/ExtendedModule/ExtendedType",
             in: tree,
             context: context,
-            expectedErrorMessage: "No module named 'ImportedModule'"
+            expectedErrorMessage: "No module named 'ExtendedModule'"
         )
         try assertPathRaisesErrorMessage(
-            "/ImportedModule/ExtendedType",
+            "/ExtendedModule/ExtendedType/extensionMethod()",
             in: tree,
             context: context,
-            expectedErrorMessage: "No module named 'ImportedModule'"
+            expectedErrorMessage: "No module named 'ExtendedModule'"
         )
     }
 
