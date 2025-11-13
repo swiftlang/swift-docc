@@ -13,6 +13,9 @@
       "name": "overloads"
     },
     {
+      "name": "precise-diagnostic-severity-control"
+    },
+    {
       "name": "synthesized-landing-page-name"
     }
   ]
