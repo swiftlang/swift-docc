@@ -25,6 +25,9 @@ public struct Diagnostic {
 
     /// An opaque identifier that diagnostic consumers and tools can use to identify specific types of diagnostics.
     public var identifier: String
+    
+    /// A unique string that identifies a group of diagnostics whose severity can be controlled by passing `--Werror` and `--Wwarning` flags to `docc`.
+    public var groupIdentifier: String?
 
     /// A brief summary that describe the problem or issue.
     public var summary: String
@@ -43,6 +46,7 @@ public struct Diagnostic {
         severity: DiagnosticSeverity,
         range: SourceRange? = nil,
         identifier: String,
+        groupIdentifier: String? = nil,
         summary: String,
         explanation: String? = nil,
         notes: [DiagnosticNote] = []
@@ -51,6 +55,7 @@ public struct Diagnostic {
         self.severity = severity
         self.range = range
         self.identifier = identifier
+        self.groupIdentifier = groupIdentifier
         self.summary = summary
         self.explanation = explanation
         self.notes = notes
