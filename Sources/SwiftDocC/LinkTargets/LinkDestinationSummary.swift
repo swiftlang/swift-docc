@@ -726,7 +726,7 @@ extension LinkDestinationSummary {
         } else {
             try container.encode(kind, forKey: .kind)
         }
-        try container.encode(relativePresentationURL, forKey: .relativePresentationURL)
+        try container.encode(absolutePresentationURL ?? relativePresentationURL, forKey: .relativePresentationURL)
         try container.encode(referenceURL, forKey: .referenceURL)
         try container.encode(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
