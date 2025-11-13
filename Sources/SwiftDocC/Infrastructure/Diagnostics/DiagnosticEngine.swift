@@ -141,11 +141,14 @@ public final class DiagnosticEngine {
     }
     
     private func updateDiagnosticSeverity(_ diagnostic: inout Diagnostic) {
-        let identifier = diagnostic.identifier
-        if diagnosticIDsWithErrorSeverity.contains(identifier) {
-            diagnostic.severity = .error
-        } else if diagnosticIDsWithWarningSeverity.contains(identifier) {
-            diagnostic.severity = .warning
+        func _severity(identifier: String) -> DiagnosticSeverity? {
+            if      diagnosticIDsWithErrorSeverity.contains(identifier)   { .error }
+            else if diagnosticIDsWithWarningSeverity.contains(identifier) { .warning }
+            else                                                          { nil }
+        }
+        
+        if let severity = diagnostic.groupIdentifier.flatMap(_severity) ?? _severity(identifier: diagnostic.identifier) {
+            diagnostic.severity = severity
         } else if treatWarningsAsErrors, diagnostic.severity == .warning {
             diagnostic.severity = .error
         }

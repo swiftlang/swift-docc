@@ -223,4 +223,49 @@ class DiagnosticEngineTests: XCTestCase {
         error: Test diagnostic three
         """)
     }
+    
+    func testRaiseSeverityOfDiagnosticGroups() {
+        let letterWarnings = ["A", "B", "C"].map { id in
+            Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: id, groupIdentifier: "Letter", summary: "Test diagnostic \(id)"), possibleSolutions: [])
+        }
+        let numberWarnings = ["1", "2", "3"].map { id in
+            Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: id, groupIdentifier: "Number", summary: "Test diagnostic \(id)"), possibleSolutions: [])
+        }
+        
+        let engineWithRaisedLetterSeverity = DiagnosticEngine(diagnosticIDsWithErrorSeverity: ["Letter"])
+        engineWithRaisedLetterSeverity.emit(letterWarnings)
+        engineWithRaisedLetterSeverity.emit(numberWarnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithRaisedLetterSeverity.problems, options: .formatConsoleOutputForTools), """
+        error: Test diagnostic A
+        error: Test diagnostic B
+        error: Test diagnostic C
+        warning: Test diagnostic 1
+        warning: Test diagnostic 2
+        warning: Test diagnostic 3
+        """)
+        
+        let engineWithRaisedNumberSeverity = DiagnosticEngine(diagnosticIDsWithErrorSeverity: ["Number"])
+        engineWithRaisedNumberSeverity.emit(letterWarnings)
+        engineWithRaisedNumberSeverity.emit(numberWarnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithRaisedNumberSeverity.problems, options: .formatConsoleOutputForTools), """
+        warning: Test diagnostic A
+        warning: Test diagnostic B
+        warning: Test diagnostic C
+        error: Test diagnostic 1
+        error: Test diagnostic 2
+        error: Test diagnostic 3
+        """)
+        
+        let engineWithRaisedNumberSeverityAndOneLetter = DiagnosticEngine(diagnosticIDsWithErrorSeverity: ["Number", "B"])
+        engineWithRaisedNumberSeverityAndOneLetter.emit(letterWarnings)
+        engineWithRaisedNumberSeverityAndOneLetter.emit(numberWarnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithRaisedNumberSeverityAndOneLetter.problems, options: .formatConsoleOutputForTools), """
+        warning: Test diagnostic A
+        error: Test diagnostic B
+        warning: Test diagnostic C
+        error: Test diagnostic 1
+        error: Test diagnostic 2
+        error: Test diagnostic 3
+        """)
+    }
 }
