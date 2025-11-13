@@ -237,7 +237,7 @@ final class SwiftLMDBTests: XCTestCase {
     }
     
     func testArrayOfInt() throws {
-#if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
+#if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
         let database = try environment.openDatabase()
         
         var array: [UInt32] = []
