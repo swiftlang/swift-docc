@@ -37,7 +37,7 @@ public struct ConformanceSection: Codable, Equatable {
     var conformancePrefix: [RenderInlineContent] = [.text("Conforms when")]
     
     /// The section constraints rendered as inline content.
-    let constraints: [RenderInlineContent]
+    var constraints: [RenderInlineContent]
     
     /// Additional parameters to consider when rendering conformance constraints.
     struct ConstraintRenderOptions {

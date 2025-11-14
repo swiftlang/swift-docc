@@ -16,7 +16,7 @@ public extension RenderNode {
         /// The tag type.
         let type: String
         /// The text to display.
-        let text: String
+        var text: String
         
         /// A pre-defined SPI tag.
         static let spi = Tag(type: "spi", text: "SPI")

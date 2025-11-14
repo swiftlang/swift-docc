@@ -14,7 +14,7 @@ import Foundation
 public struct RESTBodyRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restBody
     /// A title for the section.
-    public let title: String
+    public var title: String
     
     /// Content encoding MIME type for the request body.
     public let mimeType: String
@@ -23,14 +23,14 @@ public struct RESTBodyRenderSection: RenderSection, Equatable {
     public let bodyContentType: [DeclarationRenderSection.Token]
     
     /// Details about the request body, if available.
-    public let content: [RenderBlockContent]?
+    public var content: [RenderBlockContent]?
     
     /// A list of request parameters, if applicable.
     ///
     /// If the body content is `multipart/form-data` encoded, it contains a list
     /// of parameters. Each of these parameters is a ``RESTParameter``
     /// and it has its own value-content encoding, name, type, and description.
-    public let parameters: [RenderProperty]?
+    public var parameters: [RenderProperty]?
 
     /// Creates a new REST body section.
     /// - Parameters:

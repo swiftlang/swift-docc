@@ -24,14 +24,14 @@ public struct PossibleValuesRenderSection: RenderSection, Equatable {
         /// The value name.
         let name: String
         /// Details content, if any.
-        let content: [RenderBlockContent]?
+        var content: [RenderBlockContent]?
     }
     
     public var kind: RenderSectionKind = .possibleValues
     /// The title for the section, `nil` by default.
-    public let title: String?
+    public var title: String?
     /// The list of named values.
-    public let values: [NamedValue]
+    public var values: [NamedValue]
     
     /// Creates a new possible values section.
     /// - Parameter title: The section title.
