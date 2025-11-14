@@ -1420,7 +1420,10 @@ class ExternalReferenceResolverTests: XCTestCase {
             """.utf8))
         XCTAssertEqual(externalEntity.relativePresentationURL.absoluteString, "/path/to/something")
         XCTAssertEqual(externalEntity.absolutePresentationURL?.absoluteString, "https://com.example/path/to/something")
-        
+
+        // Test that encoding the link summary preserves the absolute URL
+        try assertRoundTripCoding(externalEntity)
+
         let resolver = Resolver(entityToReturn: externalEntity)
         
         var configuration = DocumentationContext.Configuration()

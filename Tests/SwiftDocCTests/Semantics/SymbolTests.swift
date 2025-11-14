@@ -1315,8 +1315,6 @@ class SymbolTests: XCTestCase {
                 "org.swift.docc.Metadata.InvalidPageColorInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidTitleHeadingInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidRedirectedInDocumentationComment",
-                
-                "org.swift.docc.unresolvedResource", // For the "test" asset that doesn't exist.
             ]
         )
         
