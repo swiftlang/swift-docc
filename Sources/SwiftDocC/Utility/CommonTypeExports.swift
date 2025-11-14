@@ -8,6 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Common
+public import DocCCommon
 
-public typealias SourceLanguage = Common.SourceLanguage
+public typealias SourceLanguage = DocCCommon.SourceLanguage

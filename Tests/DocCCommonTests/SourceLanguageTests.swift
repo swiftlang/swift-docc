@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Common
+import DocCCommon
 import XCTest
 
 class SourceLanguageTests: XCTestCase {

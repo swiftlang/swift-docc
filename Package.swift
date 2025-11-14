@@ -43,7 +43,7 @@ let package = Package(
         .target(
             name: "SwiftDocC",
             dependencies: [
-                .target(name: "Common"),
+                .target(name: "DocCCommon"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
@@ -56,7 +56,7 @@ let package = Package(
             name: "SwiftDocCTests",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .target(name: "Common"),
+                .target(name: "DocCCommon"),
                 .target(name: "SwiftDocCTestUtilities"),
             ],
             resources: [
@@ -72,7 +72,7 @@ let package = Package(
             name: "SwiftDocCUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .target(name: "Common"),
+                .target(name: "DocCCommon"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
@@ -84,7 +84,7 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocCUtilities"),
                 .target(name: "SwiftDocC"),
-                .target(name: "Common"),
+                .target(name: "DocCCommon"),
                 .target(name: "SwiftDocCTestUtilities"),
             ],
             resources: [
@@ -99,7 +99,7 @@ let package = Package(
             name: "SwiftDocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .target(name: "Common"),
+                .target(name: "DocCCommon"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             swiftSettings: swiftSettings
@@ -117,7 +117,7 @@ let package = Package(
         
         // A few common types and core functionality that's useable by all other targets.
         .target(
-            name: "Common",
+            name: "DocCCommon",
             dependencies: [
                 // This target shouldn't have any local dependencies so that all other targets can depend on it.
                 // We can add dependencies on SymbolKit and Markdown here but they're not needed yet.
@@ -126,9 +126,9 @@ let package = Package(
         ),
         
         .testTarget(
-            name: "CommonTests",
+            name: "DocCCommonTests",
             dependencies: [
-                .target(name: "Common"),
+                .target(name: "DocCCommon"),
                 .target(name: "SwiftDocCTestUtilities"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
