@@ -112,7 +112,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
     /**
      Initialize a `NavigatorItem` using raw data.
      
-     - Parameters rawValue: The `Data` from which the instance should be deserialized from.
+     - Parameter rawValue: The `Data` from which the instance should be deserialized from.
      */
     required public init?(rawValue: Data) {
         let data = rawValue

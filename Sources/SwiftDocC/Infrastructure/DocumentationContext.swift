@@ -1726,7 +1726,26 @@ public class DocumentationContext {
             }
             let reference = documentation.reference
             
-            documentationCache[reference] = documentation
+            if let existing = documentationCache[reference], existing.kind.isSymbol {
+                // By the time we get here it's already to late to fix the collision. All we can do is make the author aware of it and handle the collision deterministically.
+                // rdar://79745455 and https://github.com/swiftlang/swift-docc/issues/593 tracks fixing the root cause of this issue, avoiding the collision and allowing the article and symbol to both exist.
+                diagnosticEngine.emit(
+                    Problem(
+                        diagnostic: Diagnostic(source: article.source, severity: .warning, identifier: "org.swift.docc.articleCollisionProblem", summary: """
+                            Article '\(article.source.lastPathComponent)' (\(title)) would override \(existing.kind.name.lowercased()) '\(existing.name.description)'.
+                            """, explanation: """
+                            DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
+                            Until rdar://79745455 (issue #593) is fixed, DocC favors the symbol in this collision and drops the article to have deterministic behavior.
+                            """),
+                        possibleSolutions: [
+                            Solution(summary: "Rename '\(article.source.lastPathComponent)'", replacements: [ /* Renaming a file isn't something that we can represent with a replacement */ ])
+                        ]
+                    )
+                )
+                return article // Don't continue processing this article
+            } else {
+                documentationCache[reference] = documentation
+            }
             
             documentLocationMap[article.source] = reference
             let graphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: article.source), title: title)

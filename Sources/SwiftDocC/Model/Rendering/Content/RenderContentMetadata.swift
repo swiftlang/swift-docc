@@ -20,6 +20,19 @@ public struct RenderContentMetadata: Equatable, Codable {
     public var abstract: [RenderInlineContent]?
     /// An optional identifier for the device frame that should wrap this element.
     public var deviceFrame: String?
+
+    /// Creates a new metadata value for a content element.
+    /// - Parameters:
+    ///   - anchor: The named anchor of the content element.
+    ///   - title: The customized title for the content element.
+    ///   - abstract: The customized abstract for the content element.
+    ///   - deviceFrame: The identifier for the device frame that should wrap the content element.
+    public init(anchor: String? = nil, title: String? = nil, abstract: [RenderInlineContent]? = nil, deviceFrame: String? = nil) {
+        self.anchor = anchor
+        self.title = title
+        self.abstract = abstract
+        self.deviceFrame = deviceFrame
+    }
 }
 
 extension RenderContentMetadata {
