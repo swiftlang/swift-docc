@@ -83,19 +83,10 @@ package enum ConvertActionConverter {
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
         // Render all pages and gather their supplementary "digest" information if enabled.
-        let supplementaryRenderInfo = try await withThrowingTaskGroup(of: SupplementaryRenderInformation.self) { taskGroup in
-            let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
-            // Iterate over all the known pages in chunks
-            var remaining = context.knownPages[...]
-            
-            // Don't run more tasks in parallel than there are cores to run them
-            let maxParallelTasks: Int = ProcessInfo.processInfo.processorCount
-            let numberOfElementsPerTask = max(
-                Int(Double(remaining.count) / Double(maxParallelTasks * 10) + 1),
-                25 // An arbitrary smallest task size to avoid some concurrency overhead when there aren't that many pages is too small.
-            )
-            
-            func _render(referencesIn slice: consuming ArraySlice<ResolvedTopicReference>) throws -> SupplementaryRenderInformation {
+        let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
+        let supplementaryRenderInfo = try await context.knownPages._concurrentPerform(
+            taskName: "Render",
+            batchWork: { slice in
                 var supplementaryRenderInfo = SupplementaryRenderInformation()
                 
                 for identifier in slice {
@@ -111,11 +102,7 @@ package enum ConvertActionConverter {
 
                         switch documentationCoverageOptions.level {
                         case .detailed, .brief:
-                            let coverageEntry = try CoverageDataEntry(
-                                documentationNode: entity,
-                                renderNode: renderNode,
-                                context: context
-                            )
+                            let coverageEntry = try CoverageDataEntry(documentationNode: entity, renderNode: renderNode, context: context)
                             if coverageFilterClosure(coverageEntry) {
                                 supplementaryRenderInfo.coverageInfo.append(coverageEntry)
                             }
@@ -139,41 +126,15 @@ package enum ConvertActionConverter {
                 }
                 
                 return supplementaryRenderInfo
+            },
+            initialResult: SupplementaryRenderInformation(),
+            combineResults: { accumulated, partialResult in
+                accumulated.assets.merge(partialResult.assets, uniquingKeysWith: +)
+                accumulated.linkSummaries.append(contentsOf: partialResult.linkSummaries)
+                accumulated.indexingRecords.append(contentsOf: partialResult.indexingRecords)
+                accumulated.coverageInfo.append(contentsOf: partialResult.coverageInfo)
             }
-            
-            for _ in 0..<maxParallelTasks {
-                if !remaining.isEmpty {
-                    let slice = remaining.prefix(numberOfElementsPerTask)
-                    remaining = remaining.dropFirst(numberOfElementsPerTask)
-                    
-                    // Start work of one slice of the known pages
-                    taskGroup.addTask {
-                        return try _render(referencesIn: slice)
-                    }
-                }
-            }
-            
-            var aggregateSupplementaryRenderInfo = SupplementaryRenderInformation()
-            
-            for try await partialInfo in taskGroup {
-                aggregateSupplementaryRenderInfo.assets.merge(partialInfo.assets, uniquingKeysWith: +)
-                aggregateSupplementaryRenderInfo.linkSummaries.append(contentsOf: partialInfo.linkSummaries)
-                aggregateSupplementaryRenderInfo.indexingRecords.append(contentsOf: partialInfo.indexingRecords)
-                aggregateSupplementaryRenderInfo.coverageInfo.append(contentsOf: partialInfo.coverageInfo)
-                
-                if !remaining.isEmpty {
-                    let slice = remaining.prefix(numberOfElementsPerTask)
-                    remaining = remaining.dropFirst(numberOfElementsPerTask)
-                    
-                    // Start work of one slice of the known pages
-                    taskGroup.addTask {
-                        return try _render(referencesIn: slice)
-                    }
-                }
-            }
-            
-            return aggregateSupplementaryRenderInfo
-        }
+        )
         
         signposter.endInterval("Render", renderSignpostHandle)
         
