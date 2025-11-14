@@ -88,10 +88,13 @@ class DirectoryMonitorTests: XCTestCase {
         }
     }
     
-    /// - Warning: Please do not overuse this method as it takes 10s of wait time and can potentially slow down running the test suite.
     private func monitorNoUpdates(url: URL, testBlock: @escaping () throws -> Void, file: StaticString = #filePath, line: UInt = #line) throws {
+        let fileUpdateEvent = expectation(description: "Unexpectedly triggered an update event")
+        // This test does not expect any file change events
+        fileUpdateEvent.isInverted = true
+
         let monitor = try DirectoryMonitor(root: url) { rootURL, url in
-            XCTFail("Did produce file update event for a hidden file", file: file, line: line)
+            fileUpdateEvent.fulfill()
         }
         
         try monitor.start()
@@ -99,17 +102,11 @@ class DirectoryMonitorTests: XCTestCase {
             monitor.stop()
         }
         
-        let didNotTriggerUpdateForHiddenFile = expectation(description: "Doesn't trigger update")
-        DispatchQueue.global().async {
-            try? testBlock()
-        }
-        
-        // For the test purposes we assume a file change event will be delivered within generous 10 seconds.
-        DispatchQueue.global().asyncAfter(deadline: .now() + 10) {
-            didNotTriggerUpdateForHiddenFile.fulfill()
-        }
-        
-        wait(for: [didNotTriggerUpdateForHiddenFile], timeout: 20)        
+        // For test purposes, we assume a file change event will be delivered within 1.5 seconds.
+        // This also aligns with the `monitor()` method above, that ensures that file change events
+        // in tests are received within 1.5 seconds. If this works too eagerly, then the other tests
+        // in this suite will fail.
+        waitForExpectations(timeout: 1.5)
     }
     #endif
     
