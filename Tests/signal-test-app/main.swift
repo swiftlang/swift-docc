@@ -10,7 +10,7 @@
 
 //
 // Trap signals and exit with a predefined error code.
-// Check Tests/CommandLineTests/SignalTests.swift for more details.
+// Check Tests/DocCCommandLineTests/SignalTests.swift for more details.
 //
 
 #if os(macOS) || os(Linux) || os(Android)

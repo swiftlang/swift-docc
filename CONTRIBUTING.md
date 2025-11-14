@@ -520,7 +520,7 @@ For more in-depth technical information about Swift-DocC, please refer to the
 project's technical documentation:
 
 - [`SwiftDocC` framework documentation](https://swiftlang.github.io/swift-docc/documentation/swiftdocc/)
-- [`CommandLine` framework documentation](https://swiftlang.github.io/swift-docc/documentation/commandline/)
+- [`DocCCommandLine` framework documentation](https://swiftlang.github.io/swift-docc/documentation/docccommandline/)
 
 ### Related Projects
 

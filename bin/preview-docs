@@ -28,7 +28,7 @@ while test $# -gt 0; do
   case "$1" in
     --help)
       echo
-      echo "Usage: $(basename $0) [SwiftDocC|CommandLine|DocC] [-h] [--convert-only]"
+      echo "Usage: $(basename $0) [SwiftDocC|DocCCommandLine|DocC] [-h] [--convert-only]"
       echo "Builds the given framework and converts or previews the documentation"
       echo "Note: To preview you must set the \`DOCC_HTML_DIR\` with a path to a documentation template.
       
@@ -80,24 +80,24 @@ case $FRAMEWORK in
       --output-path "$DOCS_BUILD_DIR"
   ;;
   
-  "CommandLine")
+  "DocCCommandLine")
 
-    # Generate symbol graph files for CommandLine
+    # Generate symbol graph files for DocCCommandLine
     swift build --package-path "$DOCC_ROOT" \
-      --target CommandLine \
+      --target DocCCommandLine \
       -Xswiftc -emit-symbol-graph \
       -Xswiftc -emit-symbol-graph-dir -Xswiftc "$SGFS_DIR"
 
     echo
     
     # Delete the symbol graph files from dependences by looking for
-    # those without a 'CommandLine' prefix.
-    find "$SGFS_DIR" -type f ! -name 'CommandLine*' -delete
+    # those without a 'DocCCommandLine' prefix.
+    find "$SGFS_DIR" -type f ! -name 'DocCCommandLine*' -delete
     
     echo
     
     # Compile the documentation and the symbol graph data.
-    swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/CommandLine/CommandLine.docc" \
+    swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/DocCCommandLine/CommandLine.docc" \
       --experimental-enable-custom-templates \
       --fallback-display-name CommandLine \
       --fallback-bundle-identifier org.swift.CommandLine \
@@ -116,7 +116,7 @@ case $FRAMEWORK in
   
   *)
     echo
-    echo "Error: Unknown module '$FRAMEWORK'. Preview is supported only for SwiftDocC, CommandLine, or DocC."
+    echo "Error: Unknown module '$FRAMEWORK'. Preview is supported only for SwiftDocC, DocCCommandLine, or DocC."
     exit 0
   ;;
 esac

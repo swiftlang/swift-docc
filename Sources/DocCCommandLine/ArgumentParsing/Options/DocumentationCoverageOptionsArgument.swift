@@ -76,7 +76,7 @@ public struct DocumentationCoverageOptionsArgument: ParsableArguments {
 //
 // It is safe to add a retroactively conformance here because the other module (SwiftDocC) is in the same package.
 //
-// These conforming types are defined in SwiftDocC and extended in CommandLine, because SwiftDocC doesn't link against ArgumentParser (since it isn't about CLI).
+// These conforming types are defined in SwiftDocC and extended in DocCCommandLine, because SwiftDocC doesn't link against ArgumentParser (since it isn't about CLI).
 // We conform here because this is the first place that we can add the conformance. The implementation is in SwiftDocC.
 extension SwiftDocC.DocumentationCoverageLevel: ArgumentParser.ExpressibleByArgument {}
 extension SwiftDocC.DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation: ArgumentParser.ExpressibleByArgument {}

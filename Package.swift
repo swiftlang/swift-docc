@@ -110,7 +110,7 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
 
-        // Test app for CommandLine
+        // Test app for DocCCommandLine
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
