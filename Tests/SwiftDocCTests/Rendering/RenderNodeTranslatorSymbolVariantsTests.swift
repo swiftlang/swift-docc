@@ -13,7 +13,7 @@ import XCTest
 import SymbolKit
 import Markdown
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     
