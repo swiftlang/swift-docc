@@ -199,9 +199,15 @@ extension Collection {
                             remaining = remaining.dropFirst(numberOfElementsPerTask)
                             
                             // Start work of one slice of the known pages
+                            #if compiler(<6.2)
+                            taskGroup.addTask {
+                                return try work(slice)
+                            }
+                            #else
                             taskGroup.addTask(name: taskName) {
                                 return try work(slice)
                             }
+                            #endif
                         }
                     }
                     
@@ -220,9 +226,15 @@ extension Collection {
                             remaining = remaining.dropFirst(numberOfElementsPerTask)
                             
                             // Start work of one slice of the known pages
+                            #if compiler(<6.2)
+                            taskGroup.addTask {
+                                return try work(slice)
+                            }
+                            #else
                             taskGroup.addTask(name: taskName) {
                                 return try work(slice)
                             }
+                            #endif
                         }
                     }
                     
