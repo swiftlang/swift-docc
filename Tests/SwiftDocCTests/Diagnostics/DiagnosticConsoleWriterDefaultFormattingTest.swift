@@ -11,7 +11,7 @@
 import XCTest
 import Markdown
 @testable import SwiftDocC
-import TestHelpers
+import DocCTestUtilities
 
 class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 

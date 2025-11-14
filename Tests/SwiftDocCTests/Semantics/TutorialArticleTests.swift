@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import TestHelpers
+import DocCTestUtilities
 
 class TutorialArticleTests: XCTestCase {
     func testEmpty() async throws {

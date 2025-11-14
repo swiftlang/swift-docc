@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
-import TestHelpers
+import DocCTestUtilities
 
 class AutomaticCurationTests: XCTestCase {
     private let (availableExtensionSymbolKinds, availableNonExtensionSymbolKinds) = Set(AutomaticCuration.groupKindOrder).union(SymbolGraph.Symbol.KindIdentifier.allCases)

@@ -11,7 +11,7 @@
 import XCTest
 @testable @preconcurrency import SwiftDocC
 import Markdown
-import TestHelpers
+import DocCTestUtilities
 import SymbolKit
 
 class ArticleSymbolMentionsTests: XCTestCase {

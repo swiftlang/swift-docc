@@ -9,7 +9,7 @@
 */
 
 #if os(macOS) || os(Linux) || os(Android) || os(Windows) || os(FreeBSD)
-import CommandLine
+import DocCCommandLine
 
 await Task {
     await Docc.main()

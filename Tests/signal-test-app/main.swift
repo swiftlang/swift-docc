@@ -16,7 +16,7 @@
 #if os(macOS) || os(Linux) || os(Android)
 
 import Foundation
-import CommandLine
+import DocCCommandLine
 
 Signal.on(Signal.all) { _ in
     print("Signal test app exiting.")

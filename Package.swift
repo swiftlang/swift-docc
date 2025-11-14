@@ -55,7 +55,7 @@ let package = Package(
             name: "SwiftDocCTests",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .target(name: "TestHelpers"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -67,7 +67,7 @@ let package = Package(
         ),
         // Command-line tool library
         .target(
-            name: "CommandLine",
+            name: "DocCCommandLine",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
@@ -77,11 +77,11 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "CommandLineTests",
+            name: "DocCCommandLineTests",
             dependencies: [
-                .target(name: "CommandLine"),
+                .target(name: "DocCCommandLine"),
                 .target(name: "SwiftDocC"),
-                .target(name: "TestHelpers"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -92,7 +92,7 @@ let package = Package(
         
         // Test utility library
         .target(
-            name: "TestHelpers",
+            name: "DocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
@@ -104,7 +104,7 @@ let package = Package(
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "CommandLine"),
+                .target(name: "DocCCommandLine"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
@@ -114,7 +114,7 @@ let package = Package(
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "CommandLine"),
+                .target(name: "DocCCommandLine"),
             ],
             path: "Tests/signal-test-app",
             swiftSettings: swiftSettings

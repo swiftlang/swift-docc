@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import TestHelpers
+import DocCTestUtilities
 
 class DefaultCodeBlockSyntaxTests: XCTestCase {
     func testCodeBlockWithoutAnyLanguageOrDefault() async throws {
