@@ -88,58 +88,68 @@ package enum ConvertActionConverter {
             // Iterate over all the known pages in chunks
             var remaining = context.knownPages[...]
             
-            let numberOfBatches = ProcessInfo.processInfo.processorCount * 4
-            let numberOfElementsPerTask = Int(Double(remaining.count) / Double(numberOfBatches) + 1)
+            // Don't run more tasks in parallel than there are cores to run them
+            let maxParallelTasks: Int = ProcessInfo.processInfo.processorCount
+            let numberOfElementsPerTask = max(
+                Int(Double(remaining.count) / Double(maxParallelTasks * 10) + 1),
+                25 // An arbitrary smallest task size to avoid some concurrency overhead when there aren't that many pages is too small.
+            )
             
-            while !remaining.isEmpty {
-                let slice = remaining.prefix(numberOfElementsPerTask)
-                remaining = remaining.dropFirst(numberOfElementsPerTask)
+            func _render(referencesIn slice: consuming ArraySlice<ResolvedTopicReference>) throws -> SupplementaryRenderInformation {
+                var supplementaryRenderInfo = SupplementaryRenderInformation()
                 
-                // Start work of one slice of the known pages
-                taskGroup.addTask {
-                    var supplementaryRenderInfo = SupplementaryRenderInformation()
-                    
-                    for identifier in slice {
-                        try autoreleasepool {
-                            let entity = try context.entity(with: identifier)
+                for identifier in slice {
+                    try autoreleasepool {
+                        let entity = try context.entity(with: identifier)
 
-                            guard let renderNode = converter.renderNode(for: entity) else {
-                                // No render node was produced for this entity, so just skip it.
-                                return
-                            }
-                            
-                            try outputConsumer.consume(renderNode: renderNode)
+                        guard let renderNode = converter.renderNode(for: entity) else {
+                            // No render node was produced for this entity, so just skip it.
+                            return
+                        }
+                        
+                        try outputConsumer.consume(renderNode: renderNode)
 
-                            switch documentationCoverageOptions.level {
-                            case .detailed, .brief:
-                                let coverageEntry = try CoverageDataEntry(
-                                    documentationNode: entity,
-                                    renderNode: renderNode,
-                                    context: context
-                                )
-                                if coverageFilterClosure(coverageEntry) {
-                                    supplementaryRenderInfo.coverageInfo.append(coverageEntry)
-                                }
-                            case .none:
-                                break
+                        switch documentationCoverageOptions.level {
+                        case .detailed, .brief:
+                            let coverageEntry = try CoverageDataEntry(
+                                documentationNode: entity,
+                                renderNode: renderNode,
+                                context: context
+                            )
+                            if coverageFilterClosure(coverageEntry) {
+                                supplementaryRenderInfo.coverageInfo.append(coverageEntry)
                             }
+                        case .none:
+                            break
+                        }
+                        
+                        if emitDigest {
+                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: true)
+                            let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
                             
-                            if emitDigest {
-                                let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: true)
-                                let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
-                                
-                                supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
-                                supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
-                                supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
-                            } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-                                let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
-                                
-                                supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
-                            }
+                            supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
+                            supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
+                            supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
+                        } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+                            
+                            supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                         }
                     }
+                }
+                
+                return supplementaryRenderInfo
+            }
+            
+            for _ in 0..<maxParallelTasks {
+                if !remaining.isEmpty {
+                    let slice = remaining.prefix(numberOfElementsPerTask)
+                    remaining = remaining.dropFirst(numberOfElementsPerTask)
                     
-                    return supplementaryRenderInfo
+                    // Start work of one slice of the known pages
+                    taskGroup.addTask {
+                        return try _render(referencesIn: slice)
+                    }
                 }
             }
             
@@ -150,6 +160,16 @@ package enum ConvertActionConverter {
                 aggregateSupplementaryRenderInfo.linkSummaries.append(contentsOf: partialInfo.linkSummaries)
                 aggregateSupplementaryRenderInfo.indexingRecords.append(contentsOf: partialInfo.indexingRecords)
                 aggregateSupplementaryRenderInfo.coverageInfo.append(contentsOf: partialInfo.coverageInfo)
+                
+                if !remaining.isEmpty {
+                    let slice = remaining.prefix(numberOfElementsPerTask)
+                    remaining = remaining.dropFirst(numberOfElementsPerTask)
+                    
+                    // Start work of one slice of the known pages
+                    taskGroup.addTask {
+                        return try _render(referencesIn: slice)
+                    }
+                }
             }
             
             return aggregateSupplementaryRenderInfo
