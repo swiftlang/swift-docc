@@ -68,7 +68,16 @@
                     "usr": {
                         "type": "string"
                     },
+                    "plainTextDeclaration": {
+                        "type": "string"
+                    },
                     "fragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "navigatorFragments": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/DeclarationToken"
@@ -158,7 +167,18 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "plainTextDeclaration": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "fragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        },
+                        "nullable": true
+                    },
+                    "navigatorFragments": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/DeclarationToken"

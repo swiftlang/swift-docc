@@ -18,7 +18,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
         forResource: "Availability.symbols", withExtension: "json", subdirectory: "Test Resources")!
     
     func testSortingAtRenderTime() async throws {
-        let (bundleURL, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             let availabilitySymbolGraphURL = url.appendingPathComponent("Availability.symbols.json")
             try? FileManager.default.copyItem(at: self.availabilitySGFURL, to: availabilitySymbolGraphURL)
 
@@ -61,13 +61,10 @@ class AvailabilityRenderOrderTests: XCTestCase {
             let data = try jsonEncoder.encode(availabilitySymbolGraph)
             try data.write(to: availabilitySymbolGraphURL)
         }
-        defer {
-            try? FileManager.default.removeItem(at: bundleURL)
-        }
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify that all the symbol's availabilities were sorted into the order

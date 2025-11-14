@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -77,7 +77,7 @@ public class Synchronized<Value> {
     /// - Parameter block: A throwing block of work that optionally returns a value.
     /// - Returns: Returns the returned value of `block`, if any.
     @discardableResult
-    public func sync<Result>(_ block: (inout Value) throws -> Result) rethrows -> Result {
+    public func sync<Result, Error>(_ block: (inout Value) throws(Error) -> Result) throws(Error) -> Result {
         #if os(macOS) || os(iOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
@@ -116,7 +116,7 @@ extension Lock {
     }
     
     @discardableResult
-    package func sync<Result>(_ block: () throws -> Result) rethrows -> Result {
+    package func sync<Result, Error>(_ block: () throws(Error) -> Result) throws(Error) -> Result {
         #if os(macOS) || os(iOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }

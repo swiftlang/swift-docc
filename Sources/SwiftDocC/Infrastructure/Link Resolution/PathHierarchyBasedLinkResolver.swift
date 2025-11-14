@@ -228,7 +228,7 @@ final class PathHierarchyBasedLinkResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
-    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) throws -> TopicReferenceResolutionResult {
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) throws(PathHierarchy.Error) -> TopicReferenceResolutionResult {
         let parentID = resolvedReferenceMap[parent]
         let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
         guard let foundReference = resolvedReferenceMap[found] else {
@@ -264,8 +264,8 @@ final class PathHierarchyBasedLinkResolver {
     ///
     /// - Parameters:
     ///   - symbolGraph: The complete symbol graph to walk through.
-    ///   - bundle: The bundle to use when creating symbol references.
-    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], bundle: DocumentationBundle, context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
+    ///   - context: The context that the symbols are a part of.
+    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
         let disambiguatedPaths = pathHierarchy.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true, includeLanguage: true, allowAdvancedDisambiguation: false)
         
         var result: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] = [:]
@@ -280,7 +280,7 @@ final class PathHierarchyBasedLinkResolver {
                    pathComponents.count == componentsCount
                 {
                     let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
-                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
+                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: context.inputs)
                 }
                 
                 guard let path = disambiguatedPaths[uniqueIdentifier] else {
@@ -288,7 +288,7 @@ final class PathHierarchyBasedLinkResolver {
                 }
                 
                 return ResolvedTopicReference(
-                    bundleID: bundle.documentationRootReference.bundleID,
+                    bundleID: context.inputs.documentationRootReference.bundleID,
                     path: NodeURLGenerator.Path.documentationFolder + path,
                     sourceLanguages: symbol.sourceLanguages
                 )

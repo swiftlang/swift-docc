@@ -12,7 +12,7 @@ import Foundation
 import ArgumentParser
 import SwiftDocC
 
-struct CompareTo: ParsableCommand {
+struct CompareTo: @MainActor ParsableCommand {
     @Argument(
         help: "The baseline 'commit-ish' to compare the current checkout against."
     )
@@ -31,6 +31,7 @@ struct CompareTo: ParsableCommand {
         return outputDirectory ?? URL(fileURLWithPath: ".") // fallback to the current directory
     }
     
+    @MainActor
     mutating func run() throws {
         let currentDocCExecutable = try MeasureAction.buildDocC(at: doccProjectRootURL)
         let currentBenchmarkResult = try MeasureAction.gatherMeasurements(

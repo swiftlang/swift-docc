@@ -63,7 +63,7 @@ extension PathHierarchy.DisambiguationContainer {
         }
     }
     
-    private static func _minimalSuggestedDisambiguationForFewParameters(typeNames: Table<String>) -> [[String]?] {
+    private static func _minimalSuggestedDisambiguationForFewParameters(typeNames: consuming Table<String>) -> [[String]?] {
         typealias IntSet = _TinySmallValueIntSet
         // We find the minimal suggested type-signature disambiguation in two steps.
         //
@@ -216,7 +216,7 @@ extension PathHierarchy.DisambiguationContainer {
         }
     }
     
-    private static func _minimalSuggestedDisambiguationForManyParameters(typeNames: Table<String>) -> [[String]?] {
+    private static func _minimalSuggestedDisambiguationForManyParameters(typeNames: consuming Table<String>) -> [[String]?] {
         // If there are more than 64 parameters or more than 64 overloads we only try to disambiguate by a single type name.
         //
         // In practice, the number of parameters goes down rather quickly.
@@ -418,7 +418,7 @@ extension _TinySmallValueIntSet {
 // MARK: Table
 
 /// A fixed-size grid of elements.
-private struct Table<Element> {
+private struct Table<Element>: ~Copyable {
     typealias Size = (width: Int, height: Int)
     @usableFromInline
     let size: Size

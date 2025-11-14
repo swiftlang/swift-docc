@@ -2,7 +2,7 @@
 #
 # This source file is part of the Swift.org open source project
 #
-# Copyright (c) 2021 Apple Inc. and the Swift project authors
+# Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
 # Licensed under Apache License v2.0 with Runtime Library Exception
 #
 # See https://swift.org/LICENSE.txt for license information
@@ -18,108 +18,177 @@
 # absolute documentation links with the "com.test.bundle" identifier. For example: <doc://com.test.bundle/something>
 
 RESPONSE='{
-  "resolvedInformation" : {
-    "abstract" : "Resolved abstract.",
-    "availableLanguages" : [
+  "resolved" : {
+    "abstract" : [
       {
-        "id" : "swift",
-        "name" : "Language Name",
-        "idAliases" : [],
-        "linkDisambiguationID": "swift"
+        "text" : "Resolved ",
+        "type" : "text"
       },
       {
-        "id" : "occ",
-        "name" : "Variant Language Name",
-        "idAliases" : [
-          "objective-c",
-          "c"
+        "inlineContent" : [
+          {
+            "text" : "formatted",
+            "type" : "text"
+          }
         ],
-        "linkDisambiguationID" : "c"
+        "type" : "strong"
+      },
+      {
+        "text" : " abstract with ",
+        "type" : "text"
+      },
+      {
+        "identifier" : "doc://com.test.bundle/path/to/other-page",
+        "isActive" : true,
+        "type" : "reference"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
       }
     ],
-    "declarationFragments" : [
+    "availableLanguages" : [
+      "swift",
+      "data",
+      {
+        "id" : "language-id",
+        "idAliases" : [
+          "language-alias-id"
+        ],
+        "linkDisambiguationID" : "language-id",
+        "name" : "Language name"
+      },
+      {
+        "id" : "language-id-2",
+        "linkDisambiguationID" : "language-id-2",
+        "name" : "Other language name"
+      },
+      "occ"
+    ],
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "resolved"
+      },
       {
         "kind" : "text",
-        "spelling" : "declaration fragment"
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "fragment"
       }
     ],
     "kind" : {
-      "id" : "com.test.kind.id",
+      "id" : "kind-id",
       "isSymbol" : true,
-      "name" : "Kind Name"
+      "name" : "Kind name"
     },
     "language" : {
-      "id" : "swift",
-      "name" : "Language Name",
-      "idAliases" : [],
-      "linkDisambiguationID": "swift"
-      
+      "id" : "language-id",
+      "idAliases" : [
+        "language-alias-id"
+      ],
+      "linkDisambiguationID" : "language-id",
+      "name" : "Language name"
     },
+    "path" : "/documentation/something",
     "platforms" : [
       {
         "beta" : false,
-        "introducedAt" : "1.0.0",
-        "name" : "Platform Name"
+        "introducedAt" : "1.2.3",
+        "name" : "Platform name"
       }
     ],
-    "topicImages": [
+    "referenceURL" : "doc://com.test.bundle/documentation/something",
+    "references" : [
       {
-        "type": "card",
-        "identifier": "some-external-card-image-identifier"
-      }
-    ],
-    "references": [
-      {
-        "type": "image",
-        "identifier": "some-external-card-image-identifier",
-        "variants": [
+        "abstract" : [
           {
-            "url": "http:\/\/example.com\/some-image-1x.jpg",
-            "traits": [
+            "text" : "The abstract of another page that is linked to",
+            "type" : "text"
+          }
+        ],
+        "identifier" : "doc://com.test.bundle/path/to/other-page",
+        "kind" : "article",
+        "title" : "Linked from abstract",
+        "type" : "topic",
+        "url" : "/path/to/other-page"
+      },
+      {
+        "alt" : "Resolved image alt text",
+        "identifier" : "some-external-card-image-identifier",
+        "type" : "image",
+        "variants" : [
+          {
+            "traits" : [
               "1x"
-            ]
+            ],
+            "url" : "http://example.com/some-image.jpg"
           },
           {
-            "url": "http:\/\/example.com\/some-image-1x-dark.jpg",
-            "traits": [
-              "1x", "dark"
-            ]
-          },
-          {
-            "url": "http:\/\/example.com\/some-image-2x.jpg",
-            "traits": [
-              "2x"
-            ]
+            "traits" : [
+              "2x",
+              "dark"
+            ],
+            "url" : "http://example.com/some-image@2x~dark.jpg"
           }
         ]
       }
     ],
-    "title" : "Resolved Title",
-    "url" : "doc:\/\/com.test.bundle\/resolved/path\/",
+    "title" : "Resolved title",
+    "topicImages" : [
+      {
+        "identifier" : "some-external-card-image-identifier",
+        "type" : "card"
+      }
+    ],
+    "usr" : "resolved-unique-symbol-id",
     "variants" : [
       {
-        "abstract" : "Resolved variant abstract for this topic.",
-        "declarationFragments" : [
+        "abstract" : [
+          {
+            "text" : "Resolved  abstract",
+            "type" : "text"
+          },
+          {
+            "code" : "variant",
+            "type" : "codeVoice"
+          },
+          {
+            "text" : "Resolved  abstract",
+            "type" : "text"
+          }
+        ],
+        "fragments" : [
+          {
+            "kind" : "keyword",
+            "text" : "resolved"
+          },
           {
             "kind" : "text",
-            "spelling" : "variant declaration fragment"
+            "text" : " "
+          },
+          {
+            "kind" : "identifier",
+            "text" : "variant"
+          },
+          {
+            "kind" : "text",
+            "text" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "text" : "fragment"
           }
         ],
         "kind" : {
-          "id" : "com.test.other-kind.id",
+          "id" : "variant-kind-id",
           "isSymbol" : true,
-          "name" : "Variant Kind Name"
+          "name" : "Variant kind name"
         },
-        "language" : {
-          "id" : "occ",
-          "name" : "Variant Language Name",
-          "idAliases" : [
-            "objective-c",
-            "c"
-          ],
-          "linkDisambiguationID" : "c"
-        },
-        "title" : "Resolved Variant Title",
+        "language" : "occ",
+        "title" : "Resolved variant title",
         "traits" : [
           {
             "interfaceLanguage" : "occ"
@@ -130,8 +199,11 @@ RESPONSE='{
   }
 }'
 
-# Write this resolver's bundle identifier
-echo '{"bundleIdentifier":"com.test.bundle"}'
+# Write this resolver's identifier and capabilities
+echo '{
+  "identifier": "com.test.bundle", 
+  "capabilities": 0
+}'
 
 # Forever, wait for DocC to send a request and respond the resolved information
 while true

@@ -17,6 +17,7 @@ import SymbolKit
 /// which makes detecting symbol collisions and overloads easier.
 struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
+    private(set) var snippetSymbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private let dataProvider: any DataProvider
@@ -57,7 +58,7 @@ struct SymbolGraphLoader {
         
         let loadingLock = Lock()
 
-        var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
+        var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, isSnippetGraph: Bool, graph: SymbolKit.SymbolGraph)]()
         var loadError: (any Error)?
 
         let loadGraphAtURL: (URL) -> Void = { [dataProvider] symbolGraphURL in
@@ -98,9 +99,13 @@ struct SymbolGraphLoader {
                     usesExtensionSymbolFormat = symbolGraph.symbols.isEmpty ? nil : containsExtensionSymbols
                 }
                 
+                // If the graph doesn't have any symbols we treat it as a regular, but empty, graph.
+                //                                                   v
+                let isSnippetGraph = symbolGraph.symbols.values.first?.kind.identifier.isSnippetKind == true
+                
                 // Store the decoded graph in `loadedGraphs`
                 loadingLock.sync {
-                    loadedGraphs[symbolGraphURL] = (usesExtensionSymbolFormat, symbolGraph)
+                    loadedGraphs[symbolGraphURL] = (usesExtensionSymbolFormat, isSnippetGraph, symbolGraph)
                 }
             } catch {
                 // If the symbol graph was invalid, store the error
@@ -140,8 +145,9 @@ struct SymbolGraphLoader {
         let mergeSignpostHandle = signposter.beginInterval("Build unified symbol graph", id: signposter.makeSignpostID())
         let graphLoader = GraphCollector(extensionGraphAssociationStrategy: usingExtensionSymbolFormat ? .extendingGraph : .extendedGraph)
         
-        // feed the loaded graphs into the `graphLoader`
-        for (url, (_, graph)) in loadedGraphs {
+        
+        // feed the loaded non-snippet graphs into the `graphLoader`
+        for (url, (_, isSnippets, graph)) in loadedGraphs where !isSnippets {
             graphLoader.mergeSymbolGraph(graph, at: url)
         }
         
@@ -151,7 +157,8 @@ struct SymbolGraphLoader {
             throw loadError
         }
         
-        self.symbolGraphs = loadedGraphs.mapValues(\.graph)
+        self.symbolGraphs        = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? nil   : graph })
+        self.snippetSymbolGraphs = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? graph : nil   })
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
             createOverloadGroups: FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
         )
@@ -517,5 +524,11 @@ private extension SymbolGraph.Symbol.Availability {
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     func matches(_ platform: PlatformName) -> Bool {
         domain?.rawValue.lowercased() == platform.rawValue.lowercased()
+    }
+}
+
+extension SymbolGraph.Symbol.KindIdentifier {
+    var isSnippetKind: Bool {
+        self == .snippet || self == .snippetGroup
     }
 }

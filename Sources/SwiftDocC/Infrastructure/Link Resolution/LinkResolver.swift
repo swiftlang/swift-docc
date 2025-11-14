@@ -9,7 +9,6 @@
 */
 
 import Foundation
-public import SymbolKit
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
@@ -42,53 +41,7 @@ public class LinkResolver {
     
     /// The minimal information about an external entity necessary to render links to it on another page.
     @_spi(ExternalLinks) // This isn't stable API yet.
-    public struct ExternalEntity {
-        /// Creates a new external entity.
-        /// - Parameters:
-        ///   - topicRenderReference: The render reference for this external topic.
-        ///   - renderReferenceDependencies: Any dependencies for the render reference.
-        ///   - sourceLanguages: The different source languages for which this page is available.
-        ///   - symbolKind: The kind of symbol that's being referenced.
-        @_spi(ExternalLinks)
-        public init(
-            topicRenderReference: TopicRenderReference,
-            renderReferenceDependencies: RenderReferenceDependencies,
-            sourceLanguages: Set<SourceLanguage>,
-            symbolKind: SymbolGraph.Symbol.KindIdentifier? = nil
-        ) {
-            self.topicRenderReference = topicRenderReference
-            self.renderReferenceDependencies = renderReferenceDependencies
-            self.sourceLanguages = sourceLanguages
-            self.symbolKind = symbolKind
-        }
-        
-        /// The render reference for this external topic.
-        var topicRenderReference: TopicRenderReference
-        /// Any dependencies for the render reference.
-        ///
-        /// For example, if the external content contains links or images, those are included here.
-        var renderReferenceDependencies: RenderReferenceDependencies
-        /// The different source languages for which this page is available.
-        var sourceLanguages: Set<SourceLanguage>
-        /// The kind of symbol that's being referenced.
-        ///
-        /// This value is `nil` if the entity does not reference a symbol.
-        ///
-        /// For example, the navigator requires specific knowledge about what type of external symbol is being linked to.
-        var symbolKind: SymbolGraph.Symbol.KindIdentifier?
-
-        /// Creates a pre-render new topic content value to be added to a render context's reference store.
-        func topicContent() -> RenderReferenceStore.TopicContent {
-            return .init(
-                renderReference: topicRenderReference,
-                canonicalPath: nil,
-                taskGroups: nil,
-                source: nil,
-                isDocumentationExtensionContent: false,
-                renderReferenceDependencies: renderReferenceDependencies
-            )
-        }
-    }
+    public typealias ExternalEntity = LinkDestinationSummary // Currently we use the same format as DocC outputs for its own pages. That may change depending on what information we need here.
     
     /// Attempts to resolve an unresolved reference.
     ///
@@ -106,15 +59,15 @@ public class LinkResolver {
         
         // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
         if let bundleID = unresolvedReference.bundleID,
-           context.bundle.id != bundleID,
-           urlReadablePath(context.bundle.displayName) != bundleID.rawValue
+           context.inputs.id != bundleID,
+           urlReadablePath(context.inputs.displayName) != bundleID.rawValue
         {
             return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for '\(bundleID)'."))
         }
         
         do {
             return try localResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink)
-        } catch let error as PathHierarchy.Error {
+        } catch {
             // Check if there's a known external resolver for this module.
             if case .moduleNotFound(_, let remainingPathComponents, _) = error, let resolver = externalResolvers[remainingPathComponents.first!.full] {
                 let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
@@ -133,8 +86,6 @@ public class LinkResolver {
             } else {
                 return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo() { localResolver.fullName(of: $0, in: context) })
             }
-        } catch {
-            fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
         }
     }
     
@@ -185,8 +136,8 @@ private final class FallbackResolverBasedLinkResolver {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleID = unresolvedReference.bundleID ?? parent.bundleID
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
-              fallbackResolver.bundleID == context.bundle.id,
-              context.bundle.id == referenceBundleID || urlReadablePath(context.bundle.displayName) == referenceBundleID.rawValue
+              fallbackResolver.bundleID == context.inputs.id,
+              context.inputs.id == referenceBundleID || urlReadablePath(context.inputs.displayName) == referenceBundleID.rawValue
         else {
             return nil
         }
@@ -204,16 +155,16 @@ private final class FallbackResolverBasedLinkResolver {
         )
         allCandidateURLs.append(alreadyResolved.url)
         
-        let currentBundle = context.bundle
+        let currentInputs = context.inputs
         if !isCurrentlyResolvingSymbolLink {
             // First look up articles path
             allCandidateURLs.append(contentsOf: [
                 // First look up articles path
-                currentBundle.articlesDocumentationRootReference.url.appendingPathComponent(unresolvedReference.path),
+                currentInputs.articlesDocumentationRootReference.url.appendingPathComponent(unresolvedReference.path),
                 // Then technology tutorials root path (for individual tutorial pages)
-                currentBundle.tutorialsContainerReference.url.appendingPathComponent(unresolvedReference.path),
+                currentInputs.tutorialsContainerReference.url.appendingPathComponent(unresolvedReference.path),
                 // Then tutorials root path (for tutorial table of contents pages)
-                currentBundle.tutorialTableOfContentsContainer.url.appendingPathComponent(unresolvedReference.path),
+                currentInputs.tutorialTableOfContentsContainer.url.appendingPathComponent(unresolvedReference.path),
             ])
         }
         // Try resolving in the local context (as child)
@@ -228,8 +179,8 @@ private final class FallbackResolverBasedLinkResolver {
         
         // Check that the parent is not an article (ignoring if absolute or relative link)
         // because we cannot resolve in the parent context if it's not a symbol.
-        if parent.path.hasPrefix(currentBundle.documentationRootReference.path) && parentPath.count > 2 {
-            let rootPath = currentBundle.documentationRootReference.appendingPath(parentPath[2])
+        if parent.path.hasPrefix(currentInputs.documentationRootReference.path) && parentPath.count > 2 {
+            let rootPath = currentInputs.documentationRootReference.appendingPath(parentPath[2])
             let resolvedInRoot = rootPath.url.appendingPathComponent(unresolvedReference.path)
             
             // Confirm here that we we're not already considering this link. We only need to specifically
@@ -239,7 +190,7 @@ private final class FallbackResolverBasedLinkResolver {
             }
         }
         
-        allCandidateURLs.append(currentBundle.documentationRootReference.url.appendingPathComponent(unresolvedReference.path))
+        allCandidateURLs.append(currentInputs.documentationRootReference.url.appendingPathComponent(unresolvedReference.path))
         
         for candidateURL in allCandidateURLs {
             guard let candidateReference = ValidatedURL(candidateURL).map({ UnresolvedTopicReference(topicURL: $0) }) else {
@@ -266,5 +217,44 @@ private final class FallbackResolverBasedLinkResolver {
         }
         // Give up: there is no local or external document for this reference.
         return nil
+    }
+}
+
+extension LinkResolver.ExternalEntity {
+    /// Creates a pre-render new topic content value to be added to a render context's reference store.
+    func makeTopicContent() -> RenderReferenceStore.TopicContent {
+        .init(
+            renderReference: makeTopicRenderReference(),
+            canonicalPath: nil,
+            taskGroups: nil,
+            source: nil,
+            isDocumentationExtensionContent: false,
+            renderReferenceDependencies: makeRenderDependencies()
+        )
+    }
+    
+    func makeRenderDependencies() -> RenderReferenceDependencies {
+        guard let references else { return .init() }
+        
+       return .init(
+            topicReferences: references.compactMap { ($0 as? TopicRenderReference)?.topicReference(languages: availableLanguages) },
+            linkReferences:  references.compactMap { $0 as? LinkReference },
+            imageReferences: references.compactMap { $0 as? ImageReference }
+        )
+    }
+}
+
+private extension TopicRenderReference {
+    func topicReference(languages: Set<SourceLanguage>) -> ResolvedTopicReference? {
+        guard let url = URL(string: identifier.identifier), let rawBundleID = url.host else {
+            return nil
+        }
+        return ResolvedTopicReference(
+            bundleID: .init(rawValue: rawBundleID),
+            path: url.path,
+            fragment: url.fragment,
+            // TopicRenderReference doesn't have language information. Also, the reference's languages _doesn't_ specify the languages of the linked entity.
+            sourceLanguages: languages
+        )
     }
 }

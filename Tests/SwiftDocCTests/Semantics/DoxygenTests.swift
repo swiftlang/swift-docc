@@ -88,22 +88,22 @@ class DoxygenTests: XCTestCase {
                 )),
             ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
 
         // Verify the expected content in the in-memory model
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
 
         XCTAssertEqual(symbol.abstract?.format(), "This is an abstract.")
-        XCTAssertEqual(symbol.discussion?.content.map { $0.format() }, [
+        XCTAssertEqual(symbol.discussion?.content.map { $0.format().trimmingCharacters(in: .whitespacesAndNewlines) }, [
             #"\abstract This is description with abstract."#,
             #"\discussion This is a discussion linking to ``doc://unit-test/documentation/ModuleName/AnotherClass`` and ``doc://unit-test/documentation/ModuleName/AnotherClass/prop``."#,
             #"\note This is a note linking to ``doc://unit-test/documentation/ModuleName/Class3`` and ``Class3/prop2``."#
         ])
 
         // Verify the expected content in the render model
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
 
         XCTAssertEqual(renderNode.abstract, [.text("This is an abstract.")])

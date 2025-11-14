@@ -50,7 +50,7 @@ Use a text editor and the following listing to create a table of contents file n
 }
 ````
 
-The top level of the listing the includes a ``Tutorials`` directive. This directive and the directives it contains, define the structure of the page.
+The top level of the listing the includes a ``Tutorials`` directive. This directive, and the directives it contains, define the structure of the page.
 
 Rename the table of contents file and replace the placeholder content with your custom content. Use the ``Intro`` directive to introduce the reader to your tutorial through engaging text and imagery. Next, use ``Chapter`` directives to reference the step-by-step pages.
 

@@ -219,12 +219,12 @@ public class NavigatorIndex {
     }
     
     /**
-     Initialize an `NavigatorIndex` from a given path with an empty tree.
+     Initialize a `NavigatorIndex` from a given path with an empty tree.
      
      - Parameter url: The URL pointing to the path from which the index should be read.
      - Parameter bundleIdentifier: The name of the bundle the index is referring to.
      
-     - Note: Don't exposed this initializer as it's used **ONLY** for building an index.
+     - Note: Don't expose this initializer as it's used **ONLY** for building an index.
      */
     fileprivate init(withEmptyTree url: URL, bundleIdentifier: String) throws {
         self.url = url
@@ -364,14 +364,14 @@ public class NavigatorIndex {
     Read a tree on disk from a given path.
     The read is atomically performed, which means it reads all the content of the file from the disk and process the tree from loaded data.
     The queue is used to load the data for a given timeout period, after that, the queue is used to schedule another read after a given delay.
-    This approach ensures that the used  queue doesn't stall while loading the content from the disk keeping the used queue responsive.
+    This approach ensures that the used queue doesn't stall while loading the content from the disk keeping the used queue responsive.
     
     - Parameters:
-       - timeout: The amount of time we can load a batch of items from data, once the timeout time pass,
+       - timeout: The duration for which we can load a batch of items from data. Once the timeout duration passes,
                   the reading process will reschedule asynchronously using the given queue.
-       - delay: The delay to wait before schedule the next read. Default: 0.01 seconds.
+       - delay: The duration to wait for before scheduling the next read. Default: 0.01 seconds.
        - queue: The queue to use.
-       - broadcast: The callback to update get updates of the current process.
+       - broadcast: The callback to receive updates on the status of the current process.
      
     - Note: Do not access the navigator tree root node or the map from identifier to node from a different thread than the one the queue is using while the read is performed,
      this may cause data inconsistencies. For that please use the broadcast callback that notifies which items have been loaded.
@@ -454,6 +454,17 @@ extension NavigatorIndex {
             self.path = path
             self.fragment = fragment
             self.languageIdentifier = languageIdentifier
+        }
+
+        /// Compare an identifier with another one, ignoring the identifier language.
+        ///
+        /// Used when curating cross-language references in multi-language frameworks.
+        ///
+        /// - Parameter other: The other identifier to compare with.
+        func isEquivalentIgnoringLanguage(to other: Identifier) -> Bool {
+            return self.bundleIdentifier == other.bundleIdentifier &&
+                   self.path == other.path &&
+                   self.fragment == other.fragment
         }
     }
     
@@ -884,7 +895,7 @@ extension NavigatorIndex {
         ///   - emitJSONRepresentation: Whether or not a JSON representation of the index should
         ///     be written to disk.
         ///
-        ///     Defaults to `false`.
+        ///     Defaults to `true`.
         ///
         ///   - emitLMDBRepresentation: Whether or not an LMDB representation of the index should
         ///     written to disk.
@@ -917,7 +928,7 @@ extension NavigatorIndex {
                     let (nodeID, parent) = nodesMultiCurated[index]
                     let placeholders = identifierToChildren[nodeID]!
                     for reference in placeholders {
-                        if let child = identifierToNode[reference] {
+                        if let child = identifierToNode[reference] ?? externalNonSymbolNode(for: reference) {
                             parent.add(child: child)
                             pendingUncuratedReferences.remove(reference)
                             if !multiCurated.keys.contains(reference) && reference.fragment == nil {
@@ -938,7 +949,7 @@ extension NavigatorIndex {
             for (nodeIdentifier, placeholders) in identifierToChildren {
                 for reference in placeholders {
                     let parent = identifierToNode[nodeIdentifier]!
-                    if let child = identifierToNode[reference] {
+                    if let child = identifierToNode[reference] ?? externalNonSymbolNode(for: reference) {
                         let needsCopy = multiCurated[reference] != nil
                         parent.add(child: (needsCopy) ? child.copy() : child)
                         pendingUncuratedReferences.remove(reference)
@@ -969,14 +980,11 @@ extension NavigatorIndex {
                 // page types as symbol nodes on the assumption that an unknown page type is a
                 // symbol kind added in a future version of Swift-DocC.
                 // Finally, don't add external references to the root; if they are not referenced within the navigation tree, they should be dropped altogether.
-                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false , !node.item.isExternal {
+                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false, !node.item.isExternal {
 
                     // If an uncurated page has been curated in another language, don't add it to the top-level.
                     if curatedReferences.contains(where: { curatedNodeID in
-                        // Compare all the identifier's properties for equality, except for its language.
-                        curatedNodeID.bundleIdentifier == nodeID.bundleIdentifier
-                            && curatedNodeID.path == nodeID.path
-                            && curatedNodeID.fragment == nodeID.fragment
+                        curatedNodeID.isEquivalentIgnoringLanguage(to: nodeID)
                     }) {
                         continue
                     }
@@ -1256,7 +1264,22 @@ extension NavigatorIndex {
             problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
             problems.append(problem)
         }
-        
+
+        /// Find an external node for the reference that is not of a symbol kind. The source language
+        /// of the reference is ignored during this lookup since the reference assumes the target node
+        /// to be of the same language as the page that it is curated in. This may or may not be true
+        /// since non-symbol kinds (articles, tutorials, etc.) are not tied to a language.
+        // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
+        // FIXME: This should ideally be solved by making the article language-agnostic rather
+        // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+        func externalNonSymbolNode(for reference: NavigatorIndex.Identifier) -> NavigatorTree.Node? {
+            identifierToNode
+            .first { identifier, node in
+                identifier.isEquivalentIgnoringLanguage(to: reference)
+                && PageType.init(rawValue: node.item.pageType)?.isSymbolKind == false
+                && node.item.isExternal
+            }?.value
+        }
         
         /// Build the index using the render nodes files in the provided documentation archive.
         /// - Returns: A list containing all the errors encountered during indexing.

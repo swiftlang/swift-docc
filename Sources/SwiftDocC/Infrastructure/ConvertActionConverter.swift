@@ -21,10 +21,9 @@ package enum ConvertActionConverter {
     static package let signposter = NoOpSignposterShim()
 #endif
     
-    /// Converts the documentation bundle in the given context and passes its output to a given consumer.
+    /// Converts the documentation in the given context and passes its output to a given consumer.
     ///
     /// - Parameters:
-    ///   - bundle: The documentation bundle to convert.
     ///   - context: The context that the bundle is a part of.
     ///   - outputConsumer: The consumer that the conversion passes outputs of the conversion to.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
@@ -32,7 +31,6 @@ package enum ConvertActionConverter {
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
     /// - Returns: A list of problems that occurred during the conversion (excluding the problems that the context already encountered).
     package static func convert(
-        bundle: DocumentationBundle,
         context: DocumentationContext,
         outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
         sourceRepository: SourceRepository?,
@@ -61,15 +59,14 @@ package enum ConvertActionConverter {
         
         // Precompute the render context
         let renderContext = signposter.withIntervalSignpost("Build RenderContext", id: signposter.makeSignpostID()) {
-            RenderContext(documentationContext: context, bundle: bundle)
+            RenderContext(documentationContext: context)
         }
         try outputConsumer.consume(renderReferenceStore: renderContext.store)
 
         // Copy images, sample files, and other static assets.
-        try outputConsumer.consume(assetsInBundle: bundle)
+        try outputConsumer.consume(assetsInBundle: context.inputs)
         
         let converter = DocumentationContextConverter(
-            bundle: bundle,
             context: context,
             renderContext: renderContext,
             sourceRepository: sourceRepository
@@ -103,16 +100,7 @@ package enum ConvertActionConverter {
         
         let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
         let resultsGroup = DispatchGroup()
-        
-        // Consume external links and add them into the sidebar.
-        for externalLink in context.externalCache {
-            // Here we're associating the external node with the **current** bundle's bundle ID.
-            // This is needed because nodes are only considered children if the parent and child's bundle ID match.
-            // Otherwise, the node will be considered as a separate root node and displayed separately.
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
-            try outputConsumer.consume(externalRenderNode: externalRenderNode)
-        }
-        
+
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
         var conversionProblems: [Problem] = context.knownPages.concurrentPerform { identifier, results in
@@ -175,7 +163,27 @@ package enum ConvertActionConverter {
         signposter.endInterval("Render", renderSignpostHandle)
         
         guard !Task.isCancelled else { return [] }
-        
+
+        // Consumes all external links and adds them into the sidebar.
+        // This consumes all external links referenced across all content, and indexes them so they're available for reference in the navigator.
+        // This is not ideal as it means that links outside of the Topics section can impact the content of the navigator.
+        // TODO: It would be more correct to only index external links which have been curated as part of the Topics section.
+        //
+        // This has to run after all local nodes have been indexed because we're associating the external node with the **local** documentation's identifier,
+        // which makes it possible for there be clashes between local and external render nodes.
+        // When there are duplicate nodes, only the first one will be indexed,
+        // so in order to prefer local entities whenever there are any clashes, we have to index external nodes second.
+        // TODO: External render nodes should be associated with the correct documentation identifier.
+        try signposter.withIntervalSignpost("Index external links", id: signposter.makeSignpostID()) {
+            for externalLink in context.externalCache {
+                // Here we're associating the external node with the **local** documentation's identifier.
+                // This is needed because nodes are only considered children if the parent and child's identifier match.
+                // Otherwise, the node will be considered as a separate root node and displayed separately.
+                let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
+                try outputConsumer.consume(externalRenderNode: externalRenderNode)
+            }
+        }
+
         // Write various metadata
         if emitDigest {
             signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
@@ -192,7 +200,7 @@ package enum ConvertActionConverter {
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
             signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
                 do {
-                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
+                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
                     try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
                     
                     if !emitDigest {
@@ -225,7 +233,7 @@ package enum ConvertActionConverter {
             break
         }
         
-        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: bundle.displayName, bundleID: bundle.id))
+        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: context.inputs.displayName, bundleID: context.inputs.id))
         
         // Log the finalized topic graph checksum.
         benchmark(add: Benchmark.TopicGraphHash(context: context))

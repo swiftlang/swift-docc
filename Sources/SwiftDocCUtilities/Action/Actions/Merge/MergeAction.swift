@@ -65,6 +65,8 @@ struct MergeAction: AsyncAction {
                 let fromDirectory = archive.appendingPathComponent(directoryToCopy, isDirectory: true)
                 let toDirectory = targetURL.appendingPathComponent(directoryToCopy, isDirectory: true)
 
+                guard fileManager.directoryExists(atPath: fromDirectory.path) else { continue }
+
                 // Ensure that the destination directory exist in case the first archive didn't have that kind of pages.
                 // This is necessary when merging a reference-only archive with a tutorial-only archive.
                 try? fileManager.createDirectory(at: toDirectory, withIntermediateDirectories: false, attributes: nil)

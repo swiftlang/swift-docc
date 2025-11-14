@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 /// A programming language.
-public struct SourceLanguage: Hashable, Codable, Comparable {
+public struct SourceLanguage: Hashable, Codable, Comparable, Sendable {
     /// The display name of the programming language.
     public var name: String
     /// A globally unique identifier for the language.
@@ -132,7 +132,7 @@ public struct SourceLanguage: Hashable, Codable, Comparable {
     public static let metal = SourceLanguage(name: "Metal", id: "metal")
     
     /// The list of programming languages that are known to DocC.
-    public static var knownLanguages: [SourceLanguage] = [.swift, .objectiveC, .javaScript, .data, .metal]
+    public static let knownLanguages: [SourceLanguage] = [.swift, .objectiveC, .javaScript, .data, .metal]
     
     enum CodingKeys: CodingKey {
         case name
@@ -157,7 +157,9 @@ public struct SourceLanguage: Hashable, Codable, Comparable {
         
         try container.encode(self.name, forKey: SourceLanguage.CodingKeys.name)
         try container.encode(self.id, forKey: SourceLanguage.CodingKeys.id)
-        try container.encodeIfNotEmpty(self.idAliases, forKey: SourceLanguage.CodingKeys.idAliases)
+        if !self.idAliases.isEmpty {
+            try container.encode(self.idAliases, forKey: SourceLanguage.CodingKeys.idAliases)
+        }
         try container.encode(self.linkDisambiguationID, forKey: SourceLanguage.CodingKeys.linkDisambiguationID)
     }
     

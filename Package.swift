@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 /*
  This source file is part of the Swift.org open source project
 
@@ -15,6 +15,8 @@ import class Foundation.ProcessInfo
 let swiftSettings: [SwiftSetting] = [
     .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
     
+    .swiftLanguageMode(.v5),
+    
     .enableUpcomingFeature("ConciseMagicFile"), // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
     .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
     .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
@@ -23,8 +25,8 @@ let swiftSettings: [SwiftSetting] = [
 let package = Package(
     name: "SwiftDocC",
     platforms: [
-        .macOS(.v12),
-        .iOS(.v15)
+        .macOS(.v13),
+        .iOS(.v16)
     ],
     products: [
         .library(
@@ -41,17 +43,20 @@ let package = Package(
         .target(
             name: "SwiftDocC",
             dependencies: [
+                .target(name: "DocCCommon"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
                 .product(name: "Crypto", package: "swift-crypto"),
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "SwiftDocCTests",
             dependencies: [
                 .target(name: "SwiftDocC"),
+                .target(name: "DocCCommon"),
                 .target(name: "SwiftDocCTestUtilities"),
             ],
             resources: [
@@ -67,9 +72,11 @@ let package = Package(
             name: "SwiftDocCUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
+                .target(name: "DocCCommon"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -77,6 +84,7 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocCUtilities"),
                 .target(name: "SwiftDocC"),
+                .target(name: "DocCCommon"),
                 .target(name: "SwiftDocCTestUtilities"),
             ],
             resources: [
@@ -91,6 +99,7 @@ let package = Package(
             name: "SwiftDocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
+                .target(name: "DocCCommon"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             swiftSettings: swiftSettings
@@ -102,7 +111,27 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocCUtilities"),
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
+        ),
+        
+        // A few common types and core functionality that's useable by all other targets.
+        .target(
+            name: "DocCCommon",
+            dependencies: [
+                // This target shouldn't have any local dependencies so that all other targets can depend on it.
+                // We can add dependencies on SymbolKit and Markdown here but they're not needed yet.
+            ],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        
+        .testTarget(
+            name: "DocCCommonTests",
+            dependencies: [
+                .target(name: "DocCCommon"),
+                .target(name: "SwiftDocCTestUtilities"),
+            ],
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
 
         // Test app for SwiftDocCUtilities
@@ -123,7 +152,6 @@ let package = Package(
             ],
             swiftSettings: swiftSettings
         ),
-        
     ]
 )
 
