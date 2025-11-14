@@ -8,5 +8,5 @@ See https://swift.org/LICENSE.txt for license information
 #]]
 
 add_subdirectory(SwiftDocC)
-add_subdirectory(CommandLine)
+add_subdirectory(SwiftDocCUtilities)
 add_subdirectory(docc)

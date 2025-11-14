@@ -2,7 +2,7 @@
 #
 # This source file is part of the Swift.org open source project
 #
-# Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+# Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
 # Licensed under Apache License v2.0 with Runtime Library Exception
 #
 # See https://swift.org/LICENSE.txt for license information
@@ -27,9 +27,9 @@ SWIFT_DOCC_ROOT="$(dirname $(dirname $(filepath $0)))"
 
 DOCC_BUILD_DIR="$SWIFT_DOCC_ROOT"/.build/docc-gh-pages-build
 DOCC_OUTPUT_DIR="$DOCC_BUILD_DIR"/SwiftDocC.doccarchive
-COMMAND_LINE_OUTPUT_DIR="$DOCC_BUILD_DIR"/CommandLine.doccarchive
+DOCC_UTILITIES_OUTPUT_DIR="$DOCC_BUILD_DIR"/SwiftDocCUtilities.doccarchive
 
-mkdir -p "$COMMAND_LINE_OUTPUT_DIR"
+mkdir -p "$DOCC_UTILITIES_OUTPUT_DIR"
 
 # Set current directory to the repository root
 cd "$SWIFT_DOCC_ROOT"
@@ -58,31 +58,31 @@ swift package \
     --hosting-base-path swift-docc \
     --output-path "$DOCC_OUTPUT_DIR"
 
-echo -e "\033[34;1m Building SwiftDocC Utilities docs at $COMMAND_LINE_OUTPUT_DIR \033[0m"
+echo -e "\033[34;1m Building SwiftDocC Utilities docs at $DOCC_UTILITIES_OUTPUT_DIR \033[0m"
 
-# Generate documentation for the 'CommandLine' target and output it
+# Generate documentation for the 'SwiftDocCUtilities' target and output it
 # to a temporary output directory in the .build directory.
 swift package \
     --allow-writing-to-directory "$DOCC_BUILD_DIR" \
     generate-documentation \
-    --target CommandLine \
+    --target SwiftDocCUtilities \
     --disable-indexing \
     --source-service github \
     --source-service-base-url https://github.com/swiftlang/swift-docc/blob/main \
     --checkout-path "$SWIFT_DOCC_ROOT" \
     --transform-for-static-hosting \
     --hosting-base-path swift-docc \
-    --output-path "$COMMAND_LINE_OUTPUT_DIR"
+    --output-path "$DOCC_UTILITIES_OUTPUT_DIR"
 
 echo -e "\033[34;1m Merging docs \033q[0m"
 
 # Remove the output directory so that the merge command can output there
 rm -rf "$SWIFT_DOCC_ROOT/gh-pages/docs"
 
-# Merge the CommandLine docs into the primary SwiftDocC docs
+# Merge the SwiftDocCUtilities docs into the primary SwiftDocC docs
 swift run docc merge \
     "$DOCC_OUTPUT_DIR" \
-    "$COMMAND_LINE_OUTPUT_DIR" \
+    "$DOCC_UTILITIES_OUTPUT_DIR" \
     --output-path "$SWIFT_DOCC_ROOT/gh-pages/docs"
 
 # Save the current commit we've just built documentation from in a variable

@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import TestUtilities
+import SwiftDocCTestUtilities
 @testable import SwiftDocC
 
 class DocumentationInputsProviderTests: XCTestCase {

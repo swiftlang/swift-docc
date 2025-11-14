@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,13 +10,13 @@
 
 //
 // Trap signals and exit with a predefined error code.
-// Check Tests/CommandLineTests/SignalTests.swift for more details.
+// Check Tests/SwiftDocCUtilitiesTests/SignalTests.swift for more details.
 //
 
 #if os(macOS) || os(Linux) || os(Android)
 
 import Foundation
-import CommandLine
+import SwiftDocCUtilities
 
 Signal.on(Signal.all) { _ in
     print("Signal test app exiting.")

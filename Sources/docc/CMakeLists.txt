@@ -10,7 +10,7 @@ See https://swift.org/LICENSE.txt for license information
 add_executable(docc
   main.swift)
 target_link_libraries(docc PRIVATE
-  CommandLine)
+  SwiftDocCUtilities)
 
 install(TARGETS docc
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

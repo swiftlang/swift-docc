@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import TestUtilities
+import SwiftDocCTestUtilities
 import SymbolKit
 
 class DeclarationsRenderSectionTests: XCTestCase {
