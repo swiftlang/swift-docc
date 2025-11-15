@@ -65,7 +65,13 @@ extension PathHierarchy.DisambiguationContainer {
     }
     
     private static func _minimalSuggestedDisambiguationForFewParameters(typeNames: consuming Table<String>) -> [[String]?] {
-        typealias IntSet = _TinySmallValueIntSet
+        /// A specialized set-algebra type that only stores the possible values `0 ..< 64`.
+        ///
+        /// This specialized implementation is _not_ suitable as a general purpose set-algebra type.
+        /// However, because the code in this file only works with consecutive sequences of very small integers (most likely `0 ..< 16` and increasingly less likely the higher the number),
+        /// and because the the sets of those integers is frequently accessed in loops, a specialized implementation addresses bottlenecks in `_minimalSuggestedDisambiguation(...)`.
+        typealias IntSet = _FixedSizeBitSet<UInt64>
+        
         // We find the minimal suggested type-signature disambiguation in two steps.
         //
         // First, we compute which type names occur in which overloads.
@@ -259,15 +265,6 @@ extension PathHierarchy.DisambiguationContainer {
         }
     }
 }
-
-// MARK: Int Set
-
-/// A specialized set-algebra type that only stores the possible values `0 ..< 64`.
-///
-/// This specialized implementation is _not_ suitable as a general purpose set-algebra type.
-/// However, because the code in this file only works with consecutive sequences of very small integers (most likely `0 ..< 16` and increasingly less likely the higher the number),
-/// and because the the sets of those integers is frequently accessed in loops, a specialized implementation addresses bottlenecks in `_minimalSuggestedDisambiguation(...)`.
-private typealias _TinySmallValueIntSet = DocCCommon._FixedSizeBitSet
 
 // MARK: Table
 

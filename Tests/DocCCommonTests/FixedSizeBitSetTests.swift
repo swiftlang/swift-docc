@@ -14,7 +14,7 @@ import Testing
 struct FixedSizeBitSetTests {
     @Test
     func testBehavesSameAsSet() {
-        var tiny = _FixedSizeBitSet()
+        var tiny = _FixedSizeBitSet<UInt64>()
         var real = Set<Int>()
         
         #expect(tiny.contains(4) == real.contains(4))
@@ -78,7 +78,7 @@ struct FixedSizeBitSetTests {
     @Test()
     func testCombinations() {
         do {
-            let tiny: _FixedSizeBitSet = [0,1,2]
+            let tiny: _FixedSizeBitSet<UInt8> = [0,1,2]
             #expect(tiny.allCombinationsOfValues().map { $0.sorted() } == [
                 [0], [1], [2],
                 [0,1], [0,2], [1,2],
@@ -87,7 +87,7 @@ struct FixedSizeBitSetTests {
         }
         
         do {
-            let tiny: _FixedSizeBitSet = [2,5,9]
+            let tiny: _FixedSizeBitSet<UInt16> = [2,5,9]
             #expect(tiny.allCombinationsOfValues().map { $0.sorted() } == [
                 [2], [5], [9],
                 [2,5], [2,9], [5,9],
@@ -96,7 +96,7 @@ struct FixedSizeBitSetTests {
         }
         
         do {
-            let tiny: _FixedSizeBitSet = [3,4,7,11,15,16]
+            let tiny: _FixedSizeBitSet<UInt32> = [3,4,7,11,15,16]
             
             let expected: [[Int]] = [
                 // 1 elements
@@ -142,5 +142,38 @@ struct FixedSizeBitSetTests {
                        == actualForSize.map(\.description).sorted())
             }
         }
+    }
+    
+    @Test
+    func testIsSameSizeAsWrappedStorageType() async {
+        // Size
+        #expect(MemoryLayout<_FixedSizeBitSet<   Int8 >>.size == MemoryLayout<   Int8 >.size)
+        #expect(MemoryLayout<_FixedSizeBitSet<  UInt8 >>.size == MemoryLayout<  UInt8 >.size)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int16 >>.size == MemoryLayout<  Int16 >.size)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt16 >>.size == MemoryLayout< UInt16 >.size)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int32 >>.size == MemoryLayout<  Int32 >.size)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt32 >>.size == MemoryLayout< UInt32 >.size)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int64 >>.size == MemoryLayout<  Int64 >.size)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt64 >>.size == MemoryLayout< UInt64 >.size)
+        
+        // Stride
+        #expect(MemoryLayout<_FixedSizeBitSet<   Int8 >>.stride == MemoryLayout<   Int8 >.stride)
+        #expect(MemoryLayout<_FixedSizeBitSet<  UInt8 >>.stride == MemoryLayout<  UInt8 >.stride)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int16 >>.stride == MemoryLayout<  Int16 >.stride)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt16 >>.stride == MemoryLayout< UInt16 >.stride)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int32 >>.stride == MemoryLayout<  Int32 >.stride)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt32 >>.stride == MemoryLayout< UInt32 >.stride)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int64 >>.stride == MemoryLayout<  Int64 >.stride)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt64 >>.stride == MemoryLayout< UInt64 >.stride)
+        
+        // Alignment
+        #expect(MemoryLayout<_FixedSizeBitSet<   Int8 >>.alignment == MemoryLayout<   Int8 >.alignment)
+        #expect(MemoryLayout<_FixedSizeBitSet<  UInt8 >>.alignment == MemoryLayout<  UInt8 >.alignment)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int16 >>.alignment == MemoryLayout<  Int16 >.alignment)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt16 >>.alignment == MemoryLayout< UInt16 >.alignment)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int32 >>.alignment == MemoryLayout<  Int32 >.alignment)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt32 >>.alignment == MemoryLayout< UInt32 >.alignment)
+        #expect(MemoryLayout<_FixedSizeBitSet<  Int64 >>.alignment == MemoryLayout<  Int64 >.alignment)
+        #expect(MemoryLayout<_FixedSizeBitSet< UInt64 >>.alignment == MemoryLayout< UInt64 >.alignment)
     }
 }

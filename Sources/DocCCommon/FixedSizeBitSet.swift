@@ -10,18 +10,18 @@
 
 /// A fixed size bit set, used for storing very small amounts of small integer values.
 ///
-/// This type can only store values that are `0 ..< 64` which makes it _unsuitable_ as a general purpose set-algebra type.
+/// This type can only store values that are `0 ..< Storage.bitWidth` which makes it _unsuitable_ as a general purpose set-algebra type.
 /// However, in specialized cases where the caller can guarantee that all values are in bounds, this type can offer a memory and performance improvement.
-package struct _FixedSizeBitSet {
+package struct _FixedSizeBitSet<Storage: FixedWidthInteger & Sendable>: Sendable {
     package typealias Element = Int
     
     package init() {}
     
     @usableFromInline
-    private(set) var storage: UInt64 = 0
+    private(set) var storage: Storage = 0
     
     @inlinable
-    init(storage: UInt64) {
+    init(storage: Storage) {
         self.storage = storage
     }
 }
@@ -29,8 +29,8 @@ package struct _FixedSizeBitSet {
 // MARK: Set Algebra
 
 extension _FixedSizeBitSet: SetAlgebra {
-    private static func mask(_ number: Int) -> UInt64 {
-        precondition(number < 64, "Number \(number) is out of bounds (0..<64)")
+    private static func mask(_ number: Int) -> Storage {
+        precondition(number < Storage.bitWidth, "Number \(number) is out of bounds (0..<\(Storage.bitWidth))")
         return 1 << number
     }
     
@@ -118,7 +118,7 @@ extension _FixedSizeBitSet: Sequence {
     private struct _Iterator: IteratorProtocol {
         typealias Element = Int
         
-        private var storage: UInt64
+        private var storage: Storage
         private var current: Int = -1
         
         @inlinable
@@ -149,10 +149,10 @@ extension _FixedSizeBitSet {
         let smallest = storage.trailingZeroBitCount
         
         var combinations: [Self] = []
-        combinations.reserveCapacity((1 << count /*known to be <64 */) - 1)
+        combinations.reserveCapacity((1 << count /*known to be less than Storage.bitWidth */) - 1)
         
         for raw in 1 ... storage >> smallest {
-            let combination = Self(storage: UInt64(raw << smallest))
+            let combination = Self(storage: Storage(raw << smallest))
             
             // Filter out any combinations that include columns that are the same for all overloads
             guard self.isSuperset(of: combination) else { continue }
