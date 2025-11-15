@@ -131,6 +131,24 @@ class DocumentationContentRendererTests: XCTestCase {
             ]
         )
     }
+    
+    func testRenderKindAndRoleForAPICollection() throws {
+        // Articles with task groups should get collectionGroup role for external references
+        let apiCollectionSummary = LinkDestinationSummary(
+            kind: .article,
+            language: .swift,
+            relativePresentationURL: URL(string: "/documentation/test/external/api-collection")!,
+            referenceURL: URL(string: "doc://com.example.test/documentation/test/external/api-collection")!,
+            title: "External API Collection",
+            availableLanguages: [.swift],
+            taskGroups: [LinkDestinationSummary.TaskGroup(title: "Symbols", identifiers: ["doc://com.example.test/symbol1"])],
+            variants: []
+        )
+
+        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(.article, semantic: nil, linkSummary: apiCollectionSummary)
+        XCTAssertEqual(kind, RenderNode.Kind.article)
+        XCTAssertEqual(role, "collectionGroup")
+    }
 }
 
 private extension DocumentationDataVariantsTrait {

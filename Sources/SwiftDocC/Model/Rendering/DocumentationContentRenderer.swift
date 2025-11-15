@@ -247,7 +247,7 @@ public class DocumentationContentRenderer {
         return true
     }
 
-    static func renderKindAndRole(_ kind: DocumentationNode.Kind?, semantic: Semantic?) -> (RenderNode.Kind, String) {
+    static func renderKindAndRole(_ kind: DocumentationNode.Kind?, semantic: Semantic? = nil, linkSummary: LinkDestinationSummary? = nil) -> (RenderNode.Kind, String) {
         guard let kind else {
             return (.article, role(for: .article).rawValue)
         }
@@ -270,6 +270,9 @@ public class DocumentationContentRenderer {
         default:
             if let article = semantic as? Article {
                 return (.article, roleForArticle(article, nodeKind: kind).rawValue)
+            } else if kind == .article, let summary = linkSummary, summary.taskGroups != nil {
+                // For external references: Articles with task groups are API Collections and should have collectionGroup role
+                return (.article, Self.role(for: .collectionGroup).rawValue)
             } else {
                 return (.article, role)
             }

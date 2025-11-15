@@ -165,7 +165,7 @@ extension LinkDestinationSummary {
     
     /// Create a topic render render reference for this link summary and its content variants.
     func makeTopicRenderReference() -> TopicRenderReference {
-        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
+        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil, linkSummary: self)
         
         var titleVariants = VariantCollection(defaultValue: title)
         var abstractVariants = VariantCollection(defaultValue: abstract ?? [])
