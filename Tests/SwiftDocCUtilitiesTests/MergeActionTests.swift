@@ -940,8 +940,7 @@ class MergeActionTests: XCTestCase {
             
             let outputConsumer = ConvertFileWritingConsumer(targetFolder: outputPath, bundleRootFolder: catalogDir, fileManager: fileSystem, context: context, indexer: indexer, transformForStaticHostingIndexHTML: nil, bundleID: inputs.id)
             
-            let convertProblems = try ConvertActionConverter.convert(context: context, outputConsumer: outputConsumer, sourceRepository: nil, emitDigest: false, documentationCoverageOptions: .noCoverage)
-            XCTAssert(convertProblems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)
+            try await ConvertActionConverter.convert(context: context, outputConsumer: outputConsumer, sourceRepository: nil, emitDigest: false, documentationCoverageOptions: .noCoverage)
             
             let navigatorProblems = indexer.finalize(emitJSON: true, emitLMDB: false)
             XCTAssert(navigatorProblems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)

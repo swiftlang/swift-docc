@@ -95,7 +95,7 @@ extension XCTestCase {
         )
         let outputConsumer = TestRenderNodeOutputConsumer()
         
-        _ = try ConvertActionConverter.convert(
+        try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
             sourceRepository: sourceRepository,
