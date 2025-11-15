@@ -21,6 +21,9 @@ struct SourceLanguageTests {
         }
     }
     
+    // This test uses mutating SourceLanguage properties which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     @Test
     func testHasValueSemanticsForBothKnownAndUnknownLanguages() throws {
         var original = SourceLanguage.swift
@@ -81,6 +84,9 @@ struct SourceLanguageTests {
         }
     }
     
+    // This test uses mutating SourceLanguage properties which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     @Test
     func testReusesExistingValuesModifyingProperties() {
         // Creating more than 256 languages would fail if SourceLanguage initializer didn't reuse existing values

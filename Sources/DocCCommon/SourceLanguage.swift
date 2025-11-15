@@ -163,6 +163,7 @@ public extension SourceLanguage {
     /// The display name of the programming language.
     var name: String {
         get {  _accessInfo().name }
+        @available(*, deprecated, message: "Create a new source language using 'init(name:id:idAliases:linkDisambiguationID:)' instead. This deprecated API will be removed after 6.4 is released.")
         set {
             // Modifying a language in any way create a new entry. This is generally discouraged because it easily creates a situation where language ID strings aren't globally unique anymore
             _unknownLanguages.withLock { unknownLanguages in
@@ -175,6 +176,7 @@ public extension SourceLanguage {
     /// A globally unique identifier for the language.
     var id: String {
         get {  _accessInfo().id }
+        @available(*, deprecated, message: "Create a new source language using 'init(name:id:idAliases:linkDisambiguationID:)' instead. This deprecated API will be removed after 6.4 is released.")
         set {
             // Modifying a language in any way create a new entry. This is generally discouraged because it easily creates a situation where language ID strings aren't globally unique anymore
             _unknownLanguages.withLock { unknownLanguages in
@@ -187,6 +189,7 @@ public extension SourceLanguage {
     /// Aliases for the language's identifier.
     var idAliases: [String] {
         get {  _accessInfo().idAliases }
+        @available(*, deprecated, message: "Create a new source language using 'init(name:id:idAliases:linkDisambiguationID:)' instead. This deprecated API will be removed after 6.4 is released.")
         set {
             // Modifying a language in any way create a new entry. This is generally discouraged because it easily creates a situation where language ID strings aren't globally unique anymore
             _unknownLanguages.withLock { unknownLanguages in
@@ -199,6 +202,7 @@ public extension SourceLanguage {
     /// The identifier to use for link disambiguation purposes.
     var linkDisambiguationID: String {
         get {  _accessInfo().linkDisambiguationID }
+        @available(*, deprecated, message: "Create a new source language using 'init(name:id:idAliases:linkDisambiguationID:)' instead. This deprecated API will be removed after 6.4 is released.")
         set {
             // Modifying a language in any way create a new entry. This is generally discouraged because it easily creates a situation where language ID strings aren't globally unique anymore
             _unknownLanguages.withLock { unknownLanguages in
