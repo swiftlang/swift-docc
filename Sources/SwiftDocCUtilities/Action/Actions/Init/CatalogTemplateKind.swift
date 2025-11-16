@@ -87,4 +87,46 @@ extension CatalogTemplateKind {
             """
         ]
     }
+    
+    /// Content of the 'changeLog' template
+    static func changeLogTemplateFileContent(
+        frameworkName: String,
+        initialDocCArchiveVersion: String,
+        newerDocCArchiveVersion: String,
+        additionLinks: String,
+        removalLinks: String
+    ) -> [String : String] {
+        [
+            "\(frameworkName.localizedCapitalized)_Changelog.md": """
+                # \(frameworkName.localizedCapitalized) Updates
+                
+                @Metadata {
+                    @PageColor(yellow)
+                }
+                
+                Learn about important changes to \(frameworkName.localizedCapitalized).
+                
+                ## Overview
+
+                Browse notable changes in \(frameworkName.localizedCapitalized).
+                
+                ## Diff between \(initialDocCArchiveVersion) and \(newerDocCArchiveVersion)
+
+                
+                ### Change Log
+                
+                #### Additions
+                _New symbols added in \(newerDocCArchiveVersion) that did not previously exist in \(initialDocCArchiveVersion)._
+                                    
+                \(additionLinks)
+                
+                
+                #### Removals
+                _Old symbols that existed in \(initialDocCArchiveVersion) that no longer exist in \(newerDocCArchiveVersion)._
+                                    
+                \(removalLinks)
+                
+                """
+        ]
+    }
 }
