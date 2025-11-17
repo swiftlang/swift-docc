@@ -142,6 +142,116 @@ extension _FixedSizeBitSet: Sequence {
     }
 }
 
+// MARK: Collection
+
+extension _FixedSizeBitSet: Collection {
+    // Collection conformance requires an `Index` type, that the collection can advance, and `startIndex` and `endIndex` accessors that follow certain requirements.
+    //
+    // For this design, as a hidden implementation detail, the `Index` holds the bit offset to the element.
+    
+    @inlinable
+    package subscript(position: Index) -> Int {
+        precondition(position.bit < Storage.bitWidth, "Index \(position.bit) out of bounds")
+        // Because the index stores the bit offset, which is also the value, we can simply return the value without accessing the storage.
+        return Int(position.bit)
+    }
+    
+    package struct Index: Comparable {
+        // The bit offset into the storage to the value
+        fileprivate var bit: UInt8
+        
+        package static func < (lhs: Self, rhs: Self) -> Bool {
+            lhs.bit < rhs.bit
+        }
+    }
+    
+    @inlinable
+    package var startIndex: Index {
+        // This is the index (bit offset) to the smallest value in the bit set.
+        Index(bit: UInt8(storage.trailingZeroBitCount))
+    }
+    
+    @inlinable
+    package var endIndex: Index {
+        // For a valid collection, the end index is required to be _exactly_ one past the last in-bounds index, meaning; `index(after: LAST_IN-BOUNDS_INDEX)`
+        // If the collection implementation doesn't satisfy this requirement, it will have an infinitely long `indices` collection.
+        // This either results in infinite implementations or hits internal preconditions in other Swift types that that collection has more elements than its `count`.
+        
+        // See `index(after:)` below for explanation of how the index after is calculated.
+        let lastInBoundsBit = UInt8(Storage.bitWidth &- storage.leadingZeroBitCount)
+        return Index(bit: lastInBoundsBit &+ UInt8((storage &>> lastInBoundsBit).trailingZeroBitCount))
+    }
+    
+    @inlinable
+    package func index(after currentIndex: Index) -> Index {
+        // To advance the index we have to find the next 1 bit _after_ the current bit.
+        // For example, consider the following 16 bits, where values are represented from left to right:
+        //   0110 0010 0110 0010
+        //
+        // To go from the first index to the second index, we need to count the number of 0 bits between it and the next 1 bit.
+        // We get this value by shifting the bits by one past the current index:
+        //   0110 0010 0110 0010
+        //                    ╰╴current index
+        //   0001 1000 1001 1000
+        //                   ~~~ 3 trailing zero bits
+        //
+        // The second index's absolute value is the one past the first index's value plus the number of trailing zero bits in the shifted value.
+        //
+        // For the third index we repeat the same process, starting by shifting the bits by one past second index:
+        //   0110 0010 0110 0010
+        //               ╰╴current index
+        //   0000 0001 1000 1001
+        //                      0 trailing zero bits
+        //
+        // This time there are no trailing zero bits in the shifted value, so the third index's absolute value is just one past the second index.
+        let shift = currentIndex.bit &+ 1
+        return Index(bit: shift &+ UInt8((storage &>> shift).trailingZeroBitCount))
+    }
+    
+    @inlinable
+    package func formIndex(after index: inout Index)  {
+        // See `index(after:)` above for explanation.
+        index.bit &+= 1
+        index.bit &+= UInt8((storage &>> index.bit).trailingZeroBitCount)
+    }
+    
+    @inlinable
+    package func distance(from start: Index, to end: Index) -> Int {
+        // To compute the distance between two indices we have to find the number 1 bit from the start index to (but excluding) the end index.
+        // For example, consider the following 16 bits, where values are represented from left to right:
+        //   0110 0010 0110 0010
+        //      end╶╯    ╰╴start
+        //
+        // To find the distance between the second index and the fourth index, we need to count the number of 0 bits between it and the next 1 bit.
+        // We limit the calculation to this range in two steps.
+        //
+        // First, we mask out all the bits above the end index:
+        //      end╶╮    ╭╴start
+        //   0110 0010 0110 0010
+        //   0000 0011 1111 1111  mask
+        //
+        // Because collections can have end indices that extend out-of-bounds we need to clamp the mask from a larger integer type to avoid it wrapping around to 0.
+        let mask = Storage(clamping: (1 &<< UInt(end.bit)) &- 1)
+        var distance = storage & mask
+        
+        // Then, we shift away all the bits below the start index:
+        //      end╶╮    ╭╴start
+        //   0000 0010 0110 0010
+        //   0000 0000 0000 1001
+        distance &>>= start.bit
+        
+        // The distance from start to end is the number of 1 bits in this number.
+        return distance.nonzeroBitCount
+    }
+    
+    @inlinable
+    package var count: Int {
+        storage.nonzeroBitCount
+    }
+}
+
+// MARK: Combinations
+
 extension _FixedSizeBitSet {
     /// Returns a list of all possible combinations of the elements in the set, in order of increasing number of elements.
     package func allCombinationsOfValues() -> [Self] {
@@ -161,10 +271,5 @@ extension _FixedSizeBitSet {
         }
         // The bits of larger and larger Int values won't be in order of number of bits set, so we sort them.
         return combinations.sorted(by: { $0.count < $1.count })
-    }
-    
-    @inlinable
-    package var count: Int {
-        storage.nonzeroBitCount
     }
 }

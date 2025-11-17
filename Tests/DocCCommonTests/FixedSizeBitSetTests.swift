@@ -75,6 +75,90 @@ struct FixedSizeBitSetTests {
         #expect(tiny.isSuperset(of: .init(tiny.dropLast())) ==  real.isSuperset(of: .init(real.dropLast())))
     }
     
+    @Test(arguments: [
+        [],
+        [    2],
+        [0,1,    4,  6,      10],
+        [0,    3,  5,6,      10,      13,   15],
+        [              7,8,     11,      14],
+        [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+    ])
+    func testBehavesSameAsArray(_ real: [Int]) throws {
+        let tiny = _FixedSizeBitSet<UInt16>(real)
+        
+        #expect(tiny.elementsEqual(real))
+        
+        // Sorting
+        #expect(tiny.min()    == real.min())
+        #expect(tiny.max()    == real.max())
+        #expect(tiny.sorted() == real.sorted())
+        
+        // Indexes
+        #expect(tiny.distance(from: tiny.startIndex, to: tiny.endIndex)
+             == real.distance(from: real.startIndex, to: real.endIndex))
+        
+        // Index distances
+        #expect(real.count == tiny.count)
+        for offset in 0 ..< tiny.count {
+            let tinyIndex = try #require(tiny.index(tiny.startIndex, offsetBy: offset, limitedBy: tiny.endIndex))
+            let realIndex = try #require(real.index(real.startIndex, offsetBy: offset, limitedBy: real.endIndex))
+            
+            #expect(tiny.distance(from: tiny.startIndex, to: tinyIndex)
+                 == real.distance(from: real.startIndex, to: realIndex), "Distances from start to index @\(offset) is the same")
+            
+            #expect(tiny.distance(from: tinyIndex, to: tiny.endIndex)
+                 == real.distance(from: realIndex, to: real.endIndex), "Distances from index @\(offset) to end is the same")
+        }
+        // Limited index offset by count is not-nil
+        #expect(tiny.index(tiny.startIndex, offsetBy: tiny.count, limitedBy: tiny.endIndex) != nil)
+        #expect(real.index(real.startIndex, offsetBy: real.count, limitedBy: real.endIndex) != nil)
+        
+        // Limited index offset beyond the count is nil
+        #expect(tiny.index(tiny.startIndex, offsetBy: tiny.count + 1, limitedBy: tiny.endIndex) == nil)
+        #expect(real.index(real.startIndex, offsetBy: real.count + 1, limitedBy: real.endIndex) == nil)
+        
+        // Index advancements
+        do {
+            var currentIndex = tiny.startIndex
+            
+            for _ in 0 ..< tiny.count {
+                let before = currentIndex
+                let after  = tiny.index(after: currentIndex)
+                
+                #expect(before < after)
+                #expect(tiny.distance(from: before, to: after) == 1)
+                
+                #expect(currentIndex == before)
+                tiny.formIndex(after: &currentIndex)
+                #expect(currentIndex == after)
+            }
+        }
+        
+        // Index subscripts
+        #expect(tiny.indices.count == real.indices.count)
+        for (tinyIndex, realIndex) in zip(tiny.indices, real.indices) {
+            #expect(tiny[tinyIndex] == real[realIndex])
+        }
+        
+        // Subsequences
+        
+        // Dropping prefixes
+        for elementsToDrop in 0 ..< tiny.count {
+            #expect(real.dropFirst(elementsToDrop).elementsEqual(tiny.dropFirst(elementsToDrop)), "Dropping \(elementsToDrop) from the start should be the same")
+            #expect(real.dropLast(elementsToDrop).elementsEqual(tiny.dropLast(elementsToDrop)), "Dropping \(elementsToDrop) from the end should be the same")
+        }
+        
+        for elementsToKeep in 0 ..< tiny.count {
+            #expect(real.prefix(elementsToKeep).elementsEqual(tiny.prefix(elementsToKeep)), "A \(elementsToKeep) prefix should be the same")
+            #expect(real.suffix(elementsToKeep).elementsEqual(tiny.suffix(elementsToKeep)), "A \(elementsToKeep) suffix should be the same")
+        }
+        
+        // Iteration
+        for (tinyNumber, realNumber) in zip(tiny, real) {
+            #expect(tinyNumber == realNumber)
+        }
+    }
+    
     @Test()
     func testCombinations() {
         do {
