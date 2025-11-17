@@ -22,7 +22,7 @@ public struct SourceLanguage: Hashable, Codable, Comparable, Sendable {
     /// For example, a set can represent a page's list of supported language or it can represent a filter of common languages between to pages.
     /// Because each DocC execution only involves very few unique languages in practice,
     /// having a very small private identifier type allows DocC to pack all the languages it realistically needs into a small (inlineable) value.
-    private var _id: UInt8
+    fileprivate var _id: UInt8 // this is fileprivate so that SmallSourceLanguageSet (below) can access it
 }
 
 /// The private type that holds the information for each source language
@@ -372,5 +372,175 @@ public extension SourceLanguage {
             // Otherwise, sort by ID (a string) for a stable order.
             lhs.id < rhs.id
         }
+    }
+}
+
+// MARK: SourceLanguage Set
+
+package struct SmallSourceLanguageSet: Sendable, SetAlgebra, ExpressibleByArrayLiteral, Sequence, Collection {
+    // There are a few different valid ways that we could implement this, each with their own tradeoffs.
+    //
+    // The current implementation uses a single fixed size 64-value bit set to store the private `SourceLanguage._id` values.
+    // The primary benefit of this design is that it's easy to implement, very fast, and uses the same logic for both known and unknown source languages.
+    // The tradeoff is that it "only" supports 64 different programming languages at once and that it "only" supports the first 59 unknown/custom source languages that a single DocC build creates.
+    // This may sound like a great limitation. However, in practice almost all content deals with either 1 or 2 languages.
+    // There is some known content with 3 languages but beyond that; as little as 4 or 5 or more languages is increasingly less common/realistic.
+    // A single project with >64 languages is considered so _extremely_ unlikely that it's considered an unrealistic hypothetical.
+    //
+    // Another way that we could implement this within 64 bits could be to store 8 separate UInt8 values.
+    // This would limit the numbers of source languages in a single set to 8 but would enable a project to use create 251 different unknown/custom source languages.
+    // This would make it a harder to implement the SetAlgebra, Sequence, and Collection conformances.
+    // Because `InlineArray` requires Swift 6.2, this design would need to use 8 separate properties or an 8 element tuple, making most operations _O(n)_ (where _n_ is <= 8).
+    //
+    // We could also combine the two designs above to use a smaller bit set for some values, and a series of separate UInt8 values.
+    // This would enable a project to use create 251 different unknown/custom source languages at the cost of supporting fewer simultaneous values in the set.
+    // This would also have a _greatly_ increased implementation complexity; because we would need both the bit-set-implementation and the separate-UInt8-values-implementation and we would need to dynamically switch between them throughout the entire implementation.
+    // Depending on the size of the bit set and the number of additional UInt8 values, we could achieve different balances between total number of supported values in the set and number of unknown/custom languages.
+    // For example, an 8-value bit set for known languages and 7 UInt8 properties for unknown languages would allow the set to contains 12 languages (the 5 known and 7 unknown).
+    // Alternatively, a 32-value bit set for both known and unknown languages and 4 additional UInt8 properties for unknown languages with a high `_id` could support up to 36 different values.
+    // That said, storing unknown languages in both the bit set and the additional UInt8 properties would have an _even_ greater implementation complexity.
+    // Because the very high implementation complexity of these various mixed-implementation designs, we shouldn't try to implement any of them until we know for certain that it's necessary.
+    //
+    // We _could_ use an enum to switch between an inline fixed size value and a dynamic resizable value.
+    // However, the 1 bit for the two enum cases would double the `stride` of the memory layout, resulting in 63 unused "wasted" bits.
+    
+    private var bitSet: _FixedSizeBitSet<UInt64>
+    private init(storage: _FixedSizeBitSet<UInt64>) {
+        self.bitSet = storage
+    }
+    
+    @inlinable
+    package init() {
+        bitSet = .init()
+    }
+    
+    // SetAlgebra
+    
+    package typealias Element = SourceLanguage
+    
+    @inlinable
+    package func contains(_ member: SourceLanguage) -> Bool {
+        bitSet.contains(Int(member._id))
+    }
+    @inlinable
+    package func union(_ other: SmallSourceLanguageSet) -> SmallSourceLanguageSet {
+        Self(storage: bitSet.union(other.bitSet))
+    }
+    @inlinable
+    package func intersection(_ other: SmallSourceLanguageSet) -> SmallSourceLanguageSet {
+        Self(storage: bitSet.intersection(other.bitSet))
+    }
+    @inlinable
+    package func symmetricDifference(_ other: SmallSourceLanguageSet) -> SmallSourceLanguageSet {
+        Self(storage: bitSet.symmetricDifference(other.bitSet))
+    }
+    @inlinable
+    @discardableResult
+    package mutating func insert(_ newMember: SourceLanguage) -> (inserted: Bool, memberAfterInsert: SourceLanguage) {
+        (bitSet.insert(Int(newMember._id)).inserted, newMember)
+    }
+    @inlinable
+    @discardableResult
+    package mutating func remove(_ member: SourceLanguage) -> SourceLanguage? {
+        bitSet.remove(Int(member._id)).map { SourceLanguage(_id: UInt8($0)) }
+    }
+    @inlinable
+    @discardableResult
+    package mutating func update(with newMember: SourceLanguage) -> SourceLanguage? {
+        bitSet.update(with: Int(newMember._id)).map { SourceLanguage(_id: UInt8($0)) }
+    }
+    @inlinable
+    package mutating func formUnion(_ other: SmallSourceLanguageSet) {
+        bitSet.formUnion(other.bitSet)
+    }
+    @inlinable
+    package mutating func formIntersection(_ other: SmallSourceLanguageSet) {
+        bitSet.formIntersection(other.bitSet)
+    }
+    @inlinable
+    package mutating func formSymmetricDifference(_ other: SmallSourceLanguageSet) {
+        bitSet.formSymmetricDifference(other.bitSet)
+    }
+    
+    // ExpressibleByArrayLiteral
+    
+    @inlinable
+    package init(arrayLiteral elements: SourceLanguage...) {
+        bitSet = .init()
+        for language in elements {
+            bitSet.insert(Int(language._id))
+        }
+    }
+    
+    // Sequence
+    
+    @inlinable
+    package func makeIterator() -> some IteratorProtocol<SourceLanguage> {
+        _Iterator(wrapped: bitSet.makeIterator())
+    }
+    
+    private struct _Iterator<Wrapped: IteratorProtocol<Int>>: IteratorProtocol {
+        typealias Element = SourceLanguage
+        
+        fileprivate var wrapped: Wrapped
+        
+        @inlinable
+        mutating func next() -> SourceLanguage? {
+            wrapped.next().map { SourceLanguage(_id: UInt8($0) )}
+        }
+    }
+    
+    // Collection
+    
+    package typealias Index = _FixedSizeBitSet<UInt64>.Index
+    @inlinable
+    package var startIndex: Index {
+        bitSet.startIndex
+    }
+    @inlinable
+    package var endIndex: Index {
+        bitSet.endIndex
+    }
+    @inlinable
+    package subscript(position: Index) -> SourceLanguage {
+        SourceLanguage(_id: UInt8(bitSet[position]))
+    }
+    @inlinable
+    package func index(after currentIndex: Index) -> Index {
+        bitSet.index(after: currentIndex)
+    }
+    
+    private var containsUnknownLanguages: Bool {
+        // There are 5 known languages, representing the trailing 5 bits of the bit set
+        let unknownLanguagesMask: UInt64 = 0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11100000
+        return (bitSet.storage & unknownLanguagesMask) != 0
+    }
+    
+    package func min() -> SourceLanguage? {
+        guard containsUnknownLanguages else {
+            // Known languages are trivially sortable by their `_id`
+            return bitSet.min().map { SourceLanguage(_id: UInt8($0) )}
+        }
+        
+        return Array(bitSet).map { SourceLanguage(_id: UInt8($0) )}.min()
+    }
+    
+    package func sorted() -> [SourceLanguage] {
+        guard containsUnknownLanguages else {
+            // Known languages are trivially sortable by their `_id`
+            return bitSet.sorted().map { SourceLanguage(_id: UInt8($0) )}
+        }
+        
+        return Array(bitSet).map { SourceLanguage(_id: UInt8($0) )}.sorted()
+    }
+    
+    @inlinable
+    package var isEmpty: Bool {
+        bitSet.isEmpty
+    }
+    
+    @inlinable
+    package var count: Int {
+        bitSet.count
     }
 }

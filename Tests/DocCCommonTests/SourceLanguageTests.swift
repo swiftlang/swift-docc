@@ -113,6 +113,7 @@ struct SourceLanguageTests {
     @Test
     func testSortsSwiftFirstAndThenByID() throws {
         var languages = SourceLanguage.knownLanguages
+        #expect(languages.min()?.name == "Swift")
         #expect(languages.sorted().map(\.name) == [
             "Swift",       // swift (always first)
             "Data",        // data
@@ -126,7 +127,7 @@ struct SourceLanguageTests {
             SourceLanguage(name: "AAA", id: "zzz"), // will sort last
             SourceLanguage(name: "ZZZ", id: "aaa"), // will sort first (after Swift)
         ])
-        
+        #expect(languages.min()?.name == "Swift")
         #expect(languages.sorted().map(\.name) == [
             "Swift",       // swift (always first)
             "ZZZ",         // aaa (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
