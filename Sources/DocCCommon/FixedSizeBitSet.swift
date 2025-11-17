@@ -31,7 +31,7 @@ package struct _FixedSizeBitSet<Storage: FixedWidthInteger & Sendable>: Sendable
 extension _FixedSizeBitSet: SetAlgebra {
     private static func mask(_ number: Int) -> Storage {
         precondition(number < Storage.bitWidth, "Number \(number) is out of bounds (0..<\(Storage.bitWidth))")
-        return 1 << number
+        return 1 &<< number
     }
     
     @inlinable
@@ -134,9 +134,9 @@ extension _FixedSizeBitSet: Sequence {
             // If the set is somewhat sparse, we can find the next element faster by shifting to the next value.
             // This saves needing to do `contains()` checks for all the numbers since the previous element.
             let amountToShift = storage.trailingZeroBitCount + 1
-            storage >>= amountToShift
+            storage &>>= amountToShift
             
-            current += amountToShift
+            current &+= amountToShift
             return current
         }
     }
@@ -274,10 +274,10 @@ extension _FixedSizeBitSet {
         let smallest = storage.trailingZeroBitCount
         
         var combinations: [Self] = []
-        combinations.reserveCapacity((1 << count /*known to be less than Storage.bitWidth */) - 1)
+        combinations.reserveCapacity((1 &<< count /*known to be less than Storage.bitWidth */) - 1)
         
-        for raw in 1 ... storage >> smallest {
-            let combination = Self(storage: Storage(raw << smallest))
+        for raw in 1 ... storage &>> smallest {
+            let combination = Self(storage: Storage(raw &<< smallest))
             
             // Filter out any combinations that include columns that are the same for all overloads
             guard self.isSuperset(of: combination) else { continue }
