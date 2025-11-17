@@ -185,7 +185,7 @@ extension _FixedSizeBitSet: Collection {
     @inlinable
     package func index(after currentIndex: Index) -> Index {
         // To advance the index we have to find the next 1 bit _after_ the current bit.
-        // For example, consider the following 16 bits, where values are represented from left to right:
+        // For example, consider the following 16 bits, where values are represented from right to left:
         //   0110 0010 0110 0010
         //
         // To go from the first index to the second index, we need to count the number of 0 bits between it and the next 1 bit.
@@ -218,7 +218,7 @@ extension _FixedSizeBitSet: Collection {
     @inlinable
     package func distance(from start: Index, to end: Index) -> Int {
         // To compute the distance between two indices we have to find the number 1 bit from the start index to (but excluding) the end index.
-        // For example, consider the following 16 bits, where values are represented from left to right:
+        // For example, consider the following 16 bits, where values are represented from right to left:
         //   0110 0010 0110 0010
         //      end╶╯    ╰╴start
         //
