@@ -265,6 +265,10 @@ extension _FixedSizeBitSet: Collection {
     }
 }
 
+// MARK: Hashable
+
+extension _FixedSizeBitSet: Hashable {}
+
 // MARK: Combinations
 
 extension _FixedSizeBitSet {

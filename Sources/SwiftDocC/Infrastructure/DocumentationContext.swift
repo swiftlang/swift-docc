@@ -1194,7 +1194,7 @@ public class DocumentationContext {
                             bundleID: reference.bundleID,
                             path: symbolPath,
                             fragment: nil,
-                            sourceLanguages: reference.sourceLanguages
+                            _smallSourceLanguages: reference._smallSourceLanguages
                         )
                         
                         if let existing = uncuratedDocumentationExtensions[symbolReference] {

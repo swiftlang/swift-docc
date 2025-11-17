@@ -203,7 +203,7 @@ struct RenderHierarchyTranslator {
             defaultValue: mainPathReferences.map(makeHierarchy) // It's possible that the symbol only has a language representation in a variant language
         )
         
-        for language in symbolReference.sourceLanguages where language != symbolReference.sourceLanguage {
+        for language in symbolReference._smallSourceLanguages where language != symbolReference.sourceLanguage {
             guard let variantPathReferences = context.linkResolver.localResolver.breadcrumbs(of: symbolReference, in: language),
                   variantPathReferences != mainPathReferences
             else {

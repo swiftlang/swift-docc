@@ -377,7 +377,7 @@ public extension SourceLanguage {
 
 // MARK: SourceLanguage Set
 
-package struct SmallSourceLanguageSet: Sendable, SetAlgebra, ExpressibleByArrayLiteral, Sequence, Collection {
+package struct SmallSourceLanguageSet: Sendable, Hashable, SetAlgebra, ExpressibleByArrayLiteral, Sequence, Collection {
     // There are a few different valid ways that we could implement this, each with their own tradeoffs.
     //
     // The current implementation uses a single fixed size 64-value bit set to store the private `SourceLanguage._id` values.
