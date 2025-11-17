@@ -570,7 +570,7 @@
                         "type": "string",
                         "enum": ["icon", "card"]
                     },
-                    "reference": {
+                    "identifier": {
                         "type": "string",
                         "format": "reference(ImageRenderReference)"
                     }
