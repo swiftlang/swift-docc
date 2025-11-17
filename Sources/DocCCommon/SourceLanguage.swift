@@ -358,16 +358,16 @@ public extension SourceLanguage {
 
 public extension SourceLanguage {
     static func < (lhs: SourceLanguage, rhs: SourceLanguage) -> Bool {
+        if lhs._isKnownLanguage, rhs._isKnownLanguage {
+            // If both languages are known, their `_id` is also their sort order
+            lhs._id < rhs._id
+        }
+        
         // Sort Swift before other languages.
-        if lhs == .swift {
+        else if lhs == .swift {
             true
         } else if rhs == .swift {
             false
-        }
-        
-        else if lhs._isKnownLanguage, rhs._isKnownLanguage {
-            // If both languages are known, their `_id` is also their sort order
-            lhs._id < rhs._id
         } else {
             // Otherwise, sort by ID (a string) for a stable order.
             lhs.id < rhs.id
