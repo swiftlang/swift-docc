@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import DocCCommon
 
 /// An opaque identifier that uniquely identifies a resolved entry in the path hierarchy,
 ///
@@ -517,7 +518,7 @@ extension PathHierarchy {
         /// The symbol, if a node has one.
         fileprivate(set) var symbol: SymbolGraph.Symbol?
         /// The languages where this node's symbol is represented.
-        fileprivate(set) var languages: Set<SourceLanguage> = []
+        fileprivate(set) var languages = SmallSourceLanguageSet()
         /// The other language representation of this symbol.
         ///
         /// > Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
@@ -575,7 +576,7 @@ extension PathHierarchy {
         
         fileprivate func deepClone(
             separating separatedLanguage: SourceLanguage,
-            keeping otherLanguages: Set<SourceLanguage>,
+            keeping otherLanguages: SmallSourceLanguageSet,
             symbolsByUSR: borrowing [String: SymbolGraph.Symbol],
             didCloneNode: (Node, SymbolGraph.Symbol) -> Void
         ) -> Node {
