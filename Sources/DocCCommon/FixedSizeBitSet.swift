@@ -245,6 +245,21 @@ extension _FixedSizeBitSet: Collection {
     }
     
     @inlinable
+    package var first: Element? {
+        isEmpty ? nil : storage.trailingZeroBitCount
+    }
+    
+    @inlinable
+    package func min() -> Element? {
+        first // The elements are already sorted
+    }
+    
+    @inlinable
+    package func sorted() -> [Element] {
+        Array(self) // The elements are already sorted
+    }
+    
+    @inlinable
     package var count: Int {
         storage.nonzeroBitCount
     }
