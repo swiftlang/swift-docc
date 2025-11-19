@@ -9,44 +9,52 @@
 */
 
 import Foundation
+import Markdown
 import XCTest
 @testable import SwiftDocC
 
 class RenderBlockContent_AsideStyleTests: XCTestCase {
-    private typealias AsideStyle = RenderBlockContent.AsideStyle
-    
+    private typealias Aside = RenderBlockContent.Aside
+
     func testDisplayNameForSpecialRawValue() {
         XCTAssertEqual(
-            AsideStyle(rawValue: "nonmutatingvariant").displayName,
+            Aside(asideKind: .nonMutatingVariant, content: []).name,
             "Non-Mutating Variant"
         )
-        
         XCTAssertEqual(
-            AsideStyle(rawValue: "NonMutatingVariant").displayName,
+            Aside(asideKind: .init(rawValue: "nonmutatingvariant")!, content: []).name,
             "Non-Mutating Variant"
         )
-        
+
         XCTAssertEqual(
-            AsideStyle(rawValue: "mutatingvariant").displayName,
+            Aside(asideKind: .mutatingVariant, content: []).name,
             "Mutating Variant"
         )
-        
         XCTAssertEqual(
-            AsideStyle(rawValue: "todo").displayName,
+            Aside(asideKind: .init(rawValue: "mutatingvariant")!, content: []).name,
+            "Mutating Variant"
+        )
+
+        XCTAssertEqual(
+            Aside(asideKind: .todo, content: []).name,
+            "To Do"
+        )
+        XCTAssertEqual(
+            Aside(asideKind: .init(rawValue: "todo")!, content: []).name,
             "To Do"
         )
     }
-    
+
     func testDisplayNameForAsideWithExistingUppercasedContent() {
         XCTAssertEqual(
-            AsideStyle(rawValue: "Random title").displayName,
+            Aside(asideKind: .init(rawValue: "Random title")!, content: []).name,
             "Random title"
         )
     }
-    
+
     func testDisplayNameForAsideWithLowercasedContent() {
         XCTAssertEqual(
-            AsideStyle(rawValue: "random title").displayName,
+            Aside(asideKind: .init(rawValue: "random title")!, content: []).name,
             "Random Title"
         )
     }

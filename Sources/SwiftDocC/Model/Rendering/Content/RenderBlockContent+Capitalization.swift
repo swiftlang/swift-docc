@@ -68,7 +68,7 @@ extension RenderBlockContent.Paragraph {
 
 extension RenderBlockContent.Aside {
     func capitalizingFirstWord() -> RenderBlockContent.Aside {
-        return .init(style: self.style, content: self.content.capitalizingFirstWord())
+        return .init(style: self.style, name: self.name, content: self.content.capitalizingFirstWord())
     }
 }
 

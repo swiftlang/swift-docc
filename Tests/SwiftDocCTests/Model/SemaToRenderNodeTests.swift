@@ -2444,34 +2444,6 @@ Document
         XCTAssertNotNil(renderReference.navigatorTitle)
     }
 
-    let asidesStressTest: [RenderBlockContent] = [
-        .aside(.init(style: .init(rawValue: "Note"), content: [.paragraph(.init(inlineContent: [.text("This is a note.")]))])),
-        .aside(.init(style: .init(rawValue: "Tip"), content: [.paragraph(.init(inlineContent: [.text("Here’s a tip.")]))])),
-        .aside(.init(style: .init(rawValue: "Important"), content: [.paragraph(.init(inlineContent: [.text("Keep this in mind.")]))])),
-        .aside(.init(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("Try this out.")]))])),
-        .aside(.init(style: .init(rawValue: "Warning"), content: [.paragraph(.init(inlineContent: [.text("Watch out for this.")]))])),
-        .aside(.init(style: .init(rawValue: "Attention"), content: [.paragraph(.init(inlineContent: [.text("Head’s up!")]))])),
-        .aside(.init(style: .init(rawValue: "Author"), content: [.paragraph(.init(inlineContent: [.text("I wrote this.")]))])),
-        .aside(.init(style: .init(rawValue: "Authors"), content: [.paragraph(.init(inlineContent: [.text("We wrote this.")]))])),
-        .aside(.init(style: .init(rawValue: "Bug"), content: [.paragraph(.init(inlineContent: [.text("This is wrong.")]))])),
-        .aside(.init(style: .init(rawValue: "Complexity"), content: [.paragraph(.init(inlineContent: [.text("This takes time.")]))])),
-        .aside(.init(style: .init(rawValue: "Copyright"), content: [.paragraph(.init(inlineContent: [.text("2021 Apple Inc.")]))])),
-        .aside(.init(style: .init(rawValue: "Date"), content: [.paragraph(.init(inlineContent: [.text("1 January 1970")]))])),
-        .aside(.init(style: .init(rawValue: "Invariant"), content: [.paragraph(.init(inlineContent: [.text("This shouldn’t change.")]))])),
-        .aside(.init(style: .init(rawValue: "MutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This will change.")]))])),
-        .aside(.init(style: .init(rawValue: "NonMutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This changes, but not in the data.")]))])),
-        .aside(.init(style: .init(rawValue: "Postcondition"), content: [.paragraph(.init(inlineContent: [.text("After calling, this should be true.")]))])),
-        .aside(.init(style: .init(rawValue: "Precondition"), content: [.paragraph(.init(inlineContent: [.text("Before calling, this should be true.")]))])),
-        .aside(.init(style: .init(rawValue: "Remark"), content: [.paragraph(.init(inlineContent: [.text("Something you should know.")]))])),
-        .aside(.init(style: .init(rawValue: "Requires"), content: [.paragraph(.init(inlineContent: [.text("This needs something.")]))])),
-        .aside(.init(style: .init(rawValue: "Since"), content: [.paragraph(.init(inlineContent: [.text("The beginning of time.")]))])),
-        .aside(.init(style: .init(rawValue: "Todo"), content: [.paragraph(.init(inlineContent: [.text("This needs work.")]))])),
-        .aside(.init(style: .init(rawValue: "Version"), content: [.paragraph(.init(inlineContent: [.text("3.1.4")]))])),
-        .aside(.init(style: .init(rawValue: "SeeAlso"), content: [.paragraph(.init(inlineContent: [.text("This other thing.")]))])),
-        .aside(.init(style: .init(rawValue: "SeeAlso"), content: [.paragraph(.init(inlineContent: [.text("And this other thing.")]))])),
-        .aside(.init(style: .init(rawValue: "Throws"), content: [.paragraph(.init(inlineContent: [.text("A serious error.")]))])),
-    ]
-    
     func testBareTechnology() async throws {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try """
@@ -2604,29 +2576,159 @@ Document
     
     /// Ensures we render our supported asides from symbol-graph content correctly, whether as a blockquote or as a list item.
     func testRenderAsides() async throws {
+
         let asidesSGFURL = Bundle.module.url(
             forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: asidesSGFURL, to: url.appendingPathComponent("Asides.symbols.json"))
         }
         
-        // Both of these symbols have the same content; one just has its asides as list items and the other has blockquotes.
-        let testReference: (ResolvedTopicReference) throws -> () = { myFuncReference in
+        func testReference(
+            myFuncReference: ResolvedTopicReference,
+            expectedAsideStyles: [String],
+            expectedAsideNames: [String?],
+            expectedAsideTexts: [String],
+            file: StaticString = #filePath,
+            line: UInt = #line
+        ) throws {
             let node = try context.entity(with: myFuncReference)
             let symbol = node.semantic as! Symbol
             
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
-            let asides = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
-            
-            XCTAssertEqual(Array(asides.content.dropFirst()), self.asidesStressTest)
+            let contentSection = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
+            let blockContent = contentSection.content.dropFirst()
+            let asides: [RenderBlockContent.Aside] = blockContent.compactMap { block in
+                guard case let .aside(aside) = block else {
+                    XCTFail("Unexpected block content in Asides.symbols.json")
+                    return nil
+                }
+                return aside
+            }
+            XCTAssertEqual(25, asides.count)
+
+            XCTAssertEqual(expectedAsideStyles, asides.map(\.style.rawValue), file: file, line: line)
+            XCTAssertEqual(expectedAsideNames, asides.map(\.name), file: file, line: line)
+
+            for (expectedAsideText, aside) in zip(expectedAsideTexts, asides) {
+                let expectedInlineContent = [
+                    RenderBlockContent.paragraph(
+                        .init(
+                            inlineContent: [
+                                .text(expectedAsideText)
+                            ]
+                        )
+                    )
+                ]
+                XCTAssertEqual(expectedInlineContent, aside.content, file: file, line: line)
+            }
         }
-        
-        let dashReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/dashAsides()", sourceLanguage: .swift)
+
+        // Instead of creating expected aside objects, type out strings here.
+        // This makes assertion failures much easier to read and parse.
+
+        // The aside styles from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
+        let expectedAsideStyles = [
+            "note",
+            "tip",
+            "important",
+            "experiment",
+            "warning",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+            "note",
+        ]
+
+        // The aside names from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
+        let expectedAsideNames = [
+            "Note",
+            "Tip",
+            "Important",
+            "Experiment",
+            "Warning",
+            "Attention",
+            "Author",
+            "Authors",
+            "Bug",
+            "Complexity",
+            "Copyright",
+            "Date",
+            "Invariant",
+            "Mutating Variant",
+            "Non-Mutating Variant",
+            "Postcondition",
+            "Precondition",
+            "Remark",
+            "Requires",
+            "Since",
+            "To Do",
+            "Version",
+            "See Also",
+            "See Also",
+            "Throws"
+        ]
+
+        // The aside contents from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
+        let expectedAsideContents = [
+            "This is a note.",
+            "Here’s a tip.",
+            "Keep this in mind.",
+            "Try this out.",
+            "Watch out for this.",
+            "Head’s up!",
+            "I wrote this.",
+            "We wrote this.",
+            "This is wrong.",
+            "This takes time.",
+            "2021 Apple Inc.",
+            "1 January 1970",
+            "This shouldn’t change.",
+            "This will change.",
+            "This changes, but not in the data.",
+            "After calling, this should be true.",
+            "Before calling, this should be true.",
+            "Something you should know.",
+            "This needs something.",
+            "The beginning of time.",
+            "This needs work.",
+            "3.1.4",
+            "This other thing.",
+            "And this other thing.",
+            "A serious error.",
+        ]
+
         let quoteReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/quoteAsides()", sourceLanguage: .swift)
-        
-        try testReference(dashReference)
-        try testReference(quoteReference)
+        try testReference(
+            myFuncReference: quoteReference,
+            expectedAsideStyles: expectedAsideStyles,
+            expectedAsideNames: expectedAsideNames,
+            expectedAsideTexts: expectedAsideContents
+        )
+
+        let dashReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/dashAsides()", sourceLanguage: .swift)
+        try testReference(
+            myFuncReference: dashReference,
+            expectedAsideStyles: expectedAsideStyles,
+            expectedAsideNames: expectedAsideNames,
+            expectedAsideTexts: expectedAsideContents
+        )
     }
 
     /// Tests parsing origin data from symbol graph.
@@ -2958,96 +3060,174 @@ Document
         XCTAssertNil(renderNode.abstract)
     }
 
-    func testAsidesDecoding() throws {
-        try assertRoundTripCoding(asidesStressTest)
+    // The 5 standard styles are encoded and decoded. The names are set to the capitalized style name.
+    func testEncodingAsidesStandardStyles() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let styles = [
+            "note",
+            "important",
+            "warning",
+            "experiment",
+            "tip",
+        ]
+        for style in styles {
+            let aside: RenderBlockContent = .aside(
+                .init(style: .init(rawValue: style), content: expectedContent),
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(style.capitalized)","style":"\(style)","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
 
-        try assertJSONRepresentation(
-            asidesStressTest,
-            """
-            [
-            {"type":"aside", "style":"note", "name":"Note",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This is a note."}]}]},
-            {"type":"aside", "style":"tip", "name":"Tip",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Here’s a tip."}]}]},
-            {"type":"aside", "style":"important", "name":"Important",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Keep this in mind."}]}]},
-            {"type":"aside", "style":"experiment","name":"Experiment",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Try this out."}]}]},
-            {"type":"aside", "style":"warning", "name":"Warning",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Watch out for this."}]}]},
-            {"type":"aside", "style":"note", "name":"Attention",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Head’s up!"}]}]},
-            {"type":"aside", "style":"note", "name":"Author",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"I wrote this."}]}]},
-            {"type":"aside", "style":"note", "name":"Authors",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"We wrote this."}]}]},
-            {"type":"aside", "style":"note", "name":"Bug",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This is wrong."}]}]},
-            {"type":"aside", "style":"note", "name":"Complexity",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This takes time."}]}]},
-            {"type":"aside", "style":"note", "name":"Copyright",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"2021 Apple Inc."}]}]},
-            {"type":"aside", "style":"note", "name":"Date",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"1 January 1970"}]}]},
-            {"type":"aside", "style":"note", "name":"Invariant",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This shouldn’t change."}]}]},
-            {"type":"aside", "style":"note", "name":"Mutating Variant",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This will change."}]}]},
-            {"type":"aside", "style":"note", "name":"Non-Mutating Variant",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This changes, but not in the data."}]}]},
-            {"type":"aside", "style":"note", "name":"Postcondition",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"After calling, this should be true."}]}]},
-            {"type":"aside", "style":"note", "name":"Precondition",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Before calling, this should be true."}]}]},
-            {"type":"aside", "style":"note", "name":"Remark",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Something you should know."}]}]},
-            {"type":"aside", "style":"note", "name":"Requires",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This needs something."}]}]},
-            {"type":"aside", "style":"note", "name":"Since",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"The beginning of time."}]}]},
-            {"type":"aside", "style":"note", "name":"To Do",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This needs work."}]}]},
-            {"type":"aside", "style":"note", "name":"Version",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"3.1.4"}]}]},
-            {"type":"aside", "style":"note", "name":"See Also",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This other thing."}]}]},
-            {"type":"aside", "style":"note", "name":"See Also",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"And this other thing."}]}]},
-            {"type":"aside", "style":"note", "name":"Throws",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"A serious error."}]}]},
-            ]
-            """)
+    // The 5 standard styles can also be specified by name. The capitalization of the name is retained.
+    // The style is always lowercase.
+    func testEncodingAsidesStandardNames() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let names = [
+            "note",
+            "important",
+            "warning",
+            "experiment",
+            "tip",
+            "Note",
+            "Important",
+            "Warning",
+            "Experiment",
+            "Tip",
+        ]
+        for name in names {
+            let aside: RenderBlockContent = .aside(
+                .init(name: name, content: expectedContent),
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(name)","style":"\(name.lowercased())","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
 
-        // While decoding, overwrite the style with the name, if both are specified. We expect the style's raw value
-        // to be "Custom Title", not "important" in this example.
-        try assertJSONRepresentation(
-            RenderBlockContent.aside(
+    // Unknown, custom styles are ignored and coerced to style="note" and name="Note"
+    func testEncodingAsideCustomStyles() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let styles = [
+            "custom",
+            "other",
+            "something-else",
+        ]
+        for style in styles {
+
+            let aside: RenderBlockContent = .aside(
+                .init(style: .init(rawValue: style), content: expectedContent)
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"Note","style":"note","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
+
+    // Custom names are supported using style="note"
+    func testEncodingAsideCustomNames() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let names = [
+            "Custom",
+            "Other",
+            "Something Else",
+        ]
+        for name in names {
+            let aside: RenderBlockContent = .aside(
+                .init(name: name, content: expectedContent)
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(name)","style":"note","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
+
+    // Custom names are supported using style="tip", by specifying both the style and name
+    func testEncodingTipAsideCustomNames() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        let names = [
+            "Custom",
+            "Other",
+            "Something Else",
+        ]
+        for name in names {
+            let aside: RenderBlockContent = .aside(
                 .init(
-                    style: .init(rawValue: "Custom Title"),
-                    content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))]
+                    style: .init(rawValue: "tip"),
+                    name: name,
+                    content: expectedContent
                 )
-            ),
-            """
-            {
-              "type": "aside",
-              "content": [
-                {
-                  "type": "paragraph",
-                  "inlineContent": [
-                    {
-                      "type": "text",
-                      "text": "This is a custom title..."
-                    }
-                  ]
-                }
-              ],
-              "style": "important",
-              "name": "Custom Title"
+            )
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(name)","style":"tip","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
+
+    // Asides with a style matching a known kind of Swift Markdown aside are rendered using the display name of the
+    // Swift Markdown aside kind.
+    func testEncodingAsideKnownMarkdownKind() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        for kind in Aside.Kind.allCases {
+            let aside: RenderBlockContent = .aside(
+                .init(asideKind: kind, content: expectedContent)
+            )
+            // This will return one of the DocC Render supported styles, or rawValue="note"
+            let style = RenderBlockContent.AsideStyle(asideKind: kind)
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(kind.displayName)","style":"\(style.rawValue)","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
+        }
+    }
+
+    // Asides with a custom/unknown Swift Markdown aside kind
+    func testEncodingAsideUnknownMarkdownKind() throws {
+        let expectedContent: [RenderBlockContent] = [.paragraph(.init(inlineContent: [.text("This is a note...")]))]
+        for kind in [
+            "Something Special",
+            "No Idea What This Is",
+        ] {
+            guard let asideKind = Markdown.Aside.Kind.init(rawValue: kind) else {
+                XCTFail("Unexpected Markdown.Aside.Kind.rawValue: \(kind)")
+                return
             }
-            """)
-            
-        for style in Aside.Kind.allCases.map({ RenderBlockContent.AsideStyle(asideKind: $0) }) + [.init(displayName: "Custom Title")] {
-            try assertRoundTripCoding(RenderBlockContent.aside(.init(style: style, content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))])))
+            let aside: RenderBlockContent = .aside(
+                .init(asideKind: asideKind, content: expectedContent)
+            )
+            // This will return one of the DocC Render supported styles, or rawValue="note"
+            let style = RenderBlockContent.AsideStyle(asideKind: asideKind)
+            let expectedJson = """
+                {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(asideKind.displayName)","style":"\(style.rawValue)","type":"aside"}
+                """
+            // Test encoding
+            try assertJSONEncoding(aside, jsonSortedKeysNoWhitespace: expectedJson)
+            // Test decoding
+            try assertJSONRepresentation(aside, expectedJson)
         }
     }
 
