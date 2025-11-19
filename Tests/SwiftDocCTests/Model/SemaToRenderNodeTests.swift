@@ -3072,7 +3072,7 @@ Document
         ]
         for style in styles {
             let aside: RenderBlockContent = .aside(
-                .init(style: .init(rawValue: style), content: expectedContent),
+                .init(style: .init(rawValue: style), content: expectedContent)
             )
             let expectedJson = """
                 {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(style.capitalized)","style":"\(style)","type":"aside"}
@@ -3102,7 +3102,7 @@ Document
         ]
         for name in names {
             let aside: RenderBlockContent = .aside(
-                .init(name: name, content: expectedContent),
+                .init(name: name, content: expectedContent)
             )
             let expectedJson = """
                 {"content":[{"inlineContent":[{"text":"This is a note...","type":"text"}],"type":"paragraph"}],"name":"\(name)","style":"\(name.lowercased())","type":"aside"}
