@@ -829,4 +829,96 @@ class LinkDestinationSummaryTests: XCTestCase {
             "doc://com.example.mymodule/documentation/MyModule/MyClass/myFunc()-9a7po",
         ])
     }
+
+    /// Tests that API Collections (articles with Topics sections) are correctly identified as `.collectionGroup`
+    /// kind in linkable entities, ensuring cross-framework references display the correct icon.
+    func testAPICollectionKindForLinkDestinationSummary() async throws {
+        throw XCTSkip("Test will be enabled after implementing the fix")
+
+        let symbolGraph = makeSymbolGraph(
+            moduleName: "TestModule",
+            symbols: [makeSymbol(id: "test-class", kind: .class, pathComponents: ["TestClass"])]
+        )
+
+        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "APICollection.md", utf8Content: """
+                # API Collection
+
+                This is an API Collection that curates symbols.
+
+                ## Topics
+
+                - ``TestModule/TestClass``
+                """),
+            JSONFile(name: "TestModule.symbols.json", content: symbolGraph)
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+        let converter = DocumentationNodeConverter(context: context)
+
+        let apiCollectionReference = ResolvedTopicReference(
+            bundleID: context.inputs.id,
+            path: "/documentation/unit-test/APICollection",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: apiCollectionReference)
+        let renderNode = converter.convert(node)
+
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let pageSummary = try XCTUnwrap(summaries.first)
+
+        XCTAssertEqual(pageSummary.kind, .collectionGroup)
+        XCTAssertEqual(pageSummary.title, "API Collection")
+        XCTAssertEqual(pageSummary.abstract, [.text("This is an API Collection that curates symbols.")])
+
+        // Verify round-trip encoding preserves the correct kind
+        try assertRoundTripCoding(pageSummary)
+    }
+
+    /// Tests that explicit `@PageKind(article)` metadata overrides API Collection detection,
+    /// ensuring that explicit page kind directives take precedence over automatic detection.
+    func testExplicitPageKindOverridesAPICollectionDetection() async throws {
+        let symbolGraph = makeSymbolGraph(
+            moduleName: "TestModule",
+            symbols: [makeSymbol(id: "test-class", kind: .class, pathComponents: ["TestClass"])]
+        )
+
+        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "ExplicitArticle.md", utf8Content: """
+                # Explicit Article
+
+                This looks like an API Collection but is explicitly marked as an article.
+
+                @Metadata {
+                    @PageKind(article)
+                }
+
+                ## Topics
+
+                - ``TestModule/TestClass``
+                """),
+            JSONFile(name: "TestModule.symbols.json", content: symbolGraph)
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+        let converter = DocumentationNodeConverter(context: context)
+
+        let explicitArticleReference = ResolvedTopicReference(
+            bundleID: context.inputs.id,
+            path: "/documentation/unit-test/ExplicitArticle",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: explicitArticleReference)
+        let renderNode = converter.convert(node)
+
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let pageSummary = try XCTUnwrap(summaries.first)
+
+        // Should be .article because of explicit @PageKind(article), not .collectionGroup
+        XCTAssertEqual(pageSummary.kind, .article)
+        XCTAssertEqual(pageSummary.title, "Explicit Article")
+
+        // Verify round-trip encoding preserves the correct kind
+        try assertRoundTripCoding(pageSummary)
+    }
 }
