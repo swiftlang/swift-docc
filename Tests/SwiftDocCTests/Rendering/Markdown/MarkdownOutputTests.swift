@@ -27,7 +27,7 @@ final class MarkdownOutputTests: XCTestCase {
         }
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
         let node = try XCTUnwrap(context.entity(with: reference))
-        var translator = MarkdownOutputNodeTranslator(context: context, bundle: bundle, node: node)
+        var translator = MarkdownOutputNodeTranslator(context: context, node: node)
         let output = try XCTUnwrap(translator.createOutput())
         let manifest = try XCTUnwrap(output.manifest)
         return (output.node, manifest)

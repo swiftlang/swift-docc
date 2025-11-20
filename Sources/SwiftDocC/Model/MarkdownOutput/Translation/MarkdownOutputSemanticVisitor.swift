@@ -12,18 +12,16 @@
 internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     
     let context: DocumentationContext
-    let bundle: DocumentationBundle
     let documentationNode: DocumentationNode
     let identifier: ResolvedTopicReference
     var markdownWalker: MarkdownOutputMarkupWalker
     var manifest: MarkdownOutputManifest?
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, node: DocumentationNode) {
+    init(context: DocumentationContext, node: DocumentationNode) {
         self.context = context
-        self.bundle = bundle
         self.documentationNode = node
         self.identifier = node.reference
-        self.markdownWalker = MarkdownOutputMarkupWalker(context: context, bundle: bundle, identifier: identifier)
+        self.markdownWalker = MarkdownOutputMarkupWalker(context: context, identifier: identifier)
     }
     
     typealias Result = MarkdownOutputNode?
@@ -77,7 +75,7 @@ extension MarkdownOutputSemanticVisitor {
 extension MarkdownOutputSemanticVisitor {
     
     mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
-        var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: bundle, reference: identifier)
+        var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: context.inputs, reference: identifier)
         if let title = article.title?.plainText {
             metadata.title = title
         }
@@ -88,7 +86,7 @@ extension MarkdownOutputSemanticVisitor {
             title: metadata.title
         )
         
-        manifest = MarkdownOutputManifest(title: bundle.displayName, documents: [document])
+        manifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [document])
         
         if
             let metadataAvailability = article.metadata?.availability,
@@ -118,6 +116,7 @@ import Markdown
 extension MarkdownOutputSemanticVisitor {
     
     mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
+        let bundle = context.inputs
         var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier)
         
         metadata.symbol = .init(symbol, context: context, bundle: bundle)
@@ -263,7 +262,7 @@ extension MarkdownOutputSemanticVisitor {
     }
     
     mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
-        var metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: bundle, reference: identifier)
+        var metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: context.inputs, reference: identifier)
         
         if tutorial.intro.title.isEmpty == false {
             metadata.title = tutorial.intro.title

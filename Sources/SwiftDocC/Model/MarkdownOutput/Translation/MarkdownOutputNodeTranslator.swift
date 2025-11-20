@@ -15,8 +15,8 @@ internal struct MarkdownOutputNodeTranslator {
     
     var visitor: MarkdownOutputSemanticVisitor
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, node: DocumentationNode) {
-        self.visitor = MarkdownOutputSemanticVisitor(context: context, bundle: bundle, node: node)
+    init(context: DocumentationContext, node: DocumentationNode) {
+        self.visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
     }
     
     mutating func createOutput() -> CollectedMarkdownOutput? {

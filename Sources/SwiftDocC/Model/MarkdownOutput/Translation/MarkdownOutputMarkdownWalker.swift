@@ -13,12 +13,10 @@ import Markdown
 /// Performs any markup processing necessary to build the final output markdown
 internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     let context: DocumentationContext
-    let bundle: DocumentationBundle
     let identifier: ResolvedTopicReference
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference) {
+    init(context: DocumentationContext, identifier: ResolvedTopicReference) {
         self.context = context
-        self.bundle = bundle
         self.identifier = identifier
     }
     
@@ -127,7 +125,7 @@ extension MarkdownOutputMarkupWalker {
             filename = first.lastPathComponent
         }
                     
-        markdown.append("![\(image.altText ?? "")](images/\(bundle.id)/\(filename))")
+        markdown.append("![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
     }
        
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> () {
@@ -227,7 +225,7 @@ extension MarkdownOutputMarkupWalker {
     }
     
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> () {
-        
+        let bundle = context.inputs
         switch blockDirective.name {
         case VideoMedia.directiveName:
             guard let video = VideoMedia(from: blockDirective, for: bundle) else {
@@ -331,7 +329,7 @@ extension MarkdownOutputMarkupWalker {
             filename = first.lastPathComponent
         }
                     
-        markdown.append("\n\n![\(video.altText ?? "")](videos/\(bundle.id)/\(filename))")
+        markdown.append("\n\n![\(video.altText ?? "")](videos/\(context.inputs.id)/\(filename))")
         visit(container: video.caption)
     }
     
@@ -341,7 +339,7 @@ extension MarkdownOutputMarkupWalker {
         if let resolvedImages = context.resolveAsset(named: unescaped, in: identifier, withType: .image), let first = resolvedImages.variants.first?.value {
             filename = first.lastPathComponent
         }
-        markdown.append("\n\n![\(image.altText ?? "")](images/\(bundle.id)/\(filename))")
+        markdown.append("\n\n![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
     }
     
     mutating func visit(_ code: Code) -> Void {

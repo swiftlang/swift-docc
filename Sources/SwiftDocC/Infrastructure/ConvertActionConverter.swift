@@ -78,7 +78,7 @@ package enum ConvertActionConverter {
         var assets = [RenderReferenceType : [any RenderReference]]()
         var coverageInfo = [CoverageDataEntry]()
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
-        var markdownManifest = MarkdownOutputManifest(title: bundle.displayName, documents: [])
+        var markdownManifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [])
         
         // An inner function to gather problems for errors encountered during the conversion.
         //

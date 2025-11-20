@@ -125,7 +125,6 @@ public class DocumentationContextConverter {
 
         var translator = MarkdownOutputNodeTranslator(
             context: context,
-            bundle: bundle,
             node: node
         )
         return translator.createOutput()
