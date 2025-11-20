@@ -829,4 +829,53 @@ class LinkDestinationSummaryTests: XCTestCase {
             "doc://com.example.mymodule/documentation/MyModule/MyClass/myFunc()-9a7po",
         ])
     }
+
+    /// Tests that API Collections (articles with Topics sections) are correctly identified as `.collectionGroup`
+    /// kind in linkable entities, ensuring cross-framework references display the correct icon.
+    func testAPICollectionKindForLinkDestinationSummary() async throws {
+        throw XCTSkip("Test will be enabled after implementing the fix")
+
+        let symbolGraph = makeSymbolGraph(
+            moduleName: "TestModule",
+            symbols: [makeSymbol(id: "test-class", kind: .class, pathComponents: ["TestClass"])]
+        )
+
+        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "APICollection.md", utf8Content: """
+                # Time Pitch Algorithm Settings
+
+                This is an API Collection that curates symbols.
+
+                ## Topics
+
+                ### Algorithms
+                - ``TestModule/TestClass``
+                """),
+            JSONFile(name: "TestModule.symbols.json", content: symbolGraph),
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+        let converter = DocumentationNodeConverter(context: context)
+
+        let apiCollectionReference = ResolvedTopicReference(
+            bundleID: context.inputs.id,
+            path: "/documentation/TestBundle/APICollection",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: apiCollectionReference)
+        let renderNode = converter.convert(node)
+
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let pageSummary = summaries[0]
+
+        XCTAssertEqual(pageSummary.kind, .collectionGroup)
+        XCTAssertEqual(pageSummary.title, "Time Pitch Algorithm Settings")
+        XCTAssertEqual(pageSummary.abstract, [.text("This is an API Collection that curates symbols.")])
+
+        // Verify round-trip encoding preserves the correct kind
+        let encoded = try JSONEncoder().encode(pageSummary)
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+        XCTAssertEqual(decoded.kind, .collectionGroup)
+    }
 }
