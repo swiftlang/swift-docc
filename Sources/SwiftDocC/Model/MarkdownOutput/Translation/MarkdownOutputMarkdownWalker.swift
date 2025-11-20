@@ -313,6 +313,39 @@ extension MarkdownOutputMarkupWalker {
         }
         
     }
+    
+    mutating func visitTable(_ table: Table) -> () {
+        // TODO: Temporary fix while waiting for https://github.com/swiftlang/swift-markdown/issues/238 to be integrated. Once that is present this whole method can be deleted.
+        // Do any rows have spans due to misformatting that take it over the max number?
+        let columnCount = table.maxColumnCount
+        var safeRows = [Table.Row]()
+        for row in table.body.rows {
+            let widthIncludingSpan = row.cells.reduce(0) { $0 + $1.colspan }
+            if widthIncludingSpan > columnCount {
+                var truncated = row
+                var safeColumnCount: UInt = 0
+                var safeCells = [Table.Cell]()
+                for cell in row.cells {
+                    if safeColumnCount + cell.colspan <= columnCount {
+                        safeCells.append(cell)
+                        safeColumnCount += cell.colspan
+                    } else {
+                        var safeCell = cell
+                        safeCell.colspan = 1
+                        safeCells.append(safeCell)
+                        break
+                    }
+                }
+                truncated.setCells(safeCells)
+                safeRows.append(truncated)
+            } else {
+                safeRows.append(row)
+            }
+        }
+        var table = table
+        table.body.setRows(safeRows)
+        defaultVisit(table)
+    }
 }
 
 // Semantic handling

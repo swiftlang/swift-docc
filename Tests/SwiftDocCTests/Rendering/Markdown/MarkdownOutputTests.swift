@@ -448,6 +448,44 @@ final class MarkdownOutputTests: XCTestCase {
         )
     }
     
+    func testBadlyFormattedTablesCrash() async throws {
+        let catalog = catalog(files: [
+            // It's the || that causes the problem - there is no issue if there is a space between the characters
+            TextFile(name: "DodgyTables.md", utf8Content: """
+                # Tables
+
+                Demonstrates how markdown tables that are badly formatted dont crash the export
+
+                ## Overview
+
+                | Parameter | Description |
+                |:----------|:------------|
+                | `a` | The first parameter |
+                | `b` | The second parameter || `c` | The third parameter |
+                
+                end of the table
+                """)
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "DodgyTables")
+        let expected = """
+            # Tables
+
+            Demonstrates how markdown tables that are badly formatted dont crash the export
+
+            ## Overview
+
+            |Parameter|Description         |
+            |:--------|:-------------------|
+            |`a`      |The first parameter |
+            |`b`      |The second parameter|
+            
+            end of the table
+            """
+        
+        XCTAssertEqual(node.markdown, expected)
+    }
+    
     // MARK: - Metadata
     
     func testArticleMetadata() async throws {
