@@ -123,6 +123,7 @@ let package = Package(
                 // This target shouldn't have any local dependencies so that all other targets can depend on it.
                 // We can add dependencies on SymbolKit and Markdown here but they're not needed yet.
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         
@@ -141,6 +142,7 @@ let package = Package(
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
         ),
         .testTarget(

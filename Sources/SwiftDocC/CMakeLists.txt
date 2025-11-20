@@ -465,6 +465,8 @@ add_library(SwiftDocC
   Utility/Version.swift)
 target_link_libraries(SwiftDocC PRIVATE
   DocCCommon)
+target_link_libraries(SwiftDocC PRIVATE
+  DocCHTML)
 target_link_libraries(SwiftDocC PUBLIC
   SwiftMarkdown::Markdown
   DocC::SymbolKit
