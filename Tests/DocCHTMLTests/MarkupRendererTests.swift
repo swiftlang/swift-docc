@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-import HTML
+import DocCHTML
 @testable import SwiftDocC
 import Markdown
 

@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-import HTML
+import DocCHTML
 
 final class WordBreakTests: XCTestCase {
     func testWordBreaks() {

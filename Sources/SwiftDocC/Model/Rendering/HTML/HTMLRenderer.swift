@@ -13,15 +13,15 @@ import Foundation
 // FIXME: See if we can avoid depending on XMLNode/XMLParser to avoid needing to import FoundationXML
 import FoundationXML
 #endif
-import HTML
+import DocCHTML
 import Markdown
 import SymbolKit
 
-private struct ContextLinkProvider: HTML.LinkProvider {
+private struct ContextLinkProvider: DocCHTML.LinkProvider {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
     
-    func element(for url: URL) -> HTML.LinkedElement? {
+    func element(for url: URL) -> DocCHTML.LinkedElement? {
         guard url.scheme == "doc",
               let rawBundleID = url.host,
               let node = context.documentationCache[ResolvedTopicReference(bundleID: .init(rawValue: rawBundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift /* The reference's language doesn't matter */)]
@@ -29,7 +29,7 @@ private struct ContextLinkProvider: HTML.LinkProvider {
             return nil
         }
         
-        let names: HTML.LinkedElement.Names
+        let names: DocCHTML.LinkedElement.Names
         if let symbol = node.semantic as? Symbol,
            case .symbol(let primaryTitle) = node.name
         {
@@ -50,7 +50,7 @@ private struct ContextLinkProvider: HTML.LinkProvider {
                 names = .single(.symbol(primaryTitle))
             }
         } else {
-            let name: HTML.LinkedElement.Name = switch node.name {
+            let name: DocCHTML.LinkedElement.Name = switch node.name {
                 case .conceptual(let title):   .conceptual(title)
                 case .symbol(name: let title): .symbol(title)
             }
@@ -82,7 +82,7 @@ private struct ContextLinkProvider: HTML.LinkProvider {
             return result
         }
         
-        let subheadings: HTML.LinkedElement.Subheadings
+        let subheadings: DocCHTML.LinkedElement.Subheadings
         if let symbol = node.semantic as? Symbol {
             let primarySubheading = symbol.subHeading
             let allSubheadings = symbol.subHeadingVariants.allValues
@@ -118,12 +118,12 @@ private struct ContextLinkProvider: HTML.LinkProvider {
         }
     }
     
-    func assetNamed(_ assetName: String) -> HTML.LinkedAsset? {
+    func assetNamed(_ assetName: String) -> DocCHTML.LinkedAsset? {
         guard let asset = context.resolveAsset(named: assetName, in: reference) else {
             return nil
         }
         
-        var images = [HTML.LinkedAsset.ColorStyle: [Int: URL]]()
+        var images = [DocCHTML.LinkedAsset.ColorStyle: [Int: URL]]()
         for (traits, url) in asset.variants {
             let scale = (traits.displayScale ?? .standard).scaleFactor
             
