@@ -143,7 +143,7 @@ let package = Package(
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             exclude: ["CMakeLists.txt"],
-            swiftSettings: swiftSettings
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .testTarget(
             name: "DocCHTMLTests",
@@ -153,7 +153,7 @@ let package = Package(
                 .product(name: "Markdown", package: "swift-markdown"),
                 .target(name: "SwiftDocCTestUtilities"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
 
         // Test app for SwiftDocCUtilities
