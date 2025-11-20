@@ -28,9 +28,10 @@ class DocumentationInputsProviderTests: XCTestCase {
                         // This top-level Info.plist will be read for bundle information
                         InfoPlist(displayName: "CustomDisplayName"),
                         
-                        // These top-level files will be treated as a custom footer and a custom theme
+                        // Top-level files with customization
                         TextFile(name: "footer.html", utf8Content: ""),
                         TextFile(name: "theme-settings.json", utf8Content: ""),
+                        TextFile(name: "custom-scripts.json", utf8Content: ""),
                         
                         // Top-level content will be found
                         TextFile(name: "CCC.md", utf8Content: ""),
@@ -95,6 +96,7 @@ class DocumentationInputsProviderTests: XCTestCase {
                 "Found.docc/Inner/Info.plist",
                 "Found.docc/Inner/header.html",
                 "Found.docc/Inner/second.png",
+                "Found.docc/custom-scripts.json",
                 "Found.docc/first.png",
                 "Found.docc/footer.html",
                 "Found.docc/theme-settings.json",
@@ -107,6 +109,7 @@ class DocumentationInputsProviderTests: XCTestCase {
             XCTAssertEqual(bundle.customFooter.map(relativePathString), "Found.docc/footer.html")
             XCTAssertEqual(bundle.customHeader.map(relativePathString), nil)
             XCTAssertEqual(bundle.themeSettings.map(relativePathString), "Found.docc/theme-settings.json")
+            XCTAssertEqual(bundle.customScripts.map(relativePathString), "Found.docc/custom-scripts.json")
         }
     }
     

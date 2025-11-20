@@ -1,0 +1,98 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Custom Scripts",
+        "description": "This spec describes the permissible contents of a custom-scripts.json file in a documentation catalog, which is used to add custom scripts to a DocC-generated website.",
+        "version": "0.0.1"
+    },
+    "paths": {},
+    "components": {
+        "schemas": {
+            "Scripts": {
+                "type": "array",
+                "description": "An array of custom scripts, which is the top-level container in a custom-scripts.json file.",
+                "items": {
+                    "oneOf": [
+                        { "$ref": "#/components/schemas/ExternalScript" },
+                        { "$ref": "#/components/schemas/LocalScript" },
+                        { "$ref": "#/components/schemas/InlineScript" }
+                    ]
+                }
+            },
+            "Script": {
+                "type": "object",
+                "description": "An abstract schema representing any script, from which all three script types inherit.",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The `type` attribute of the HTML script element."
+                    },
+                    "run": {
+                        "type": "string",
+                        "enum": ["on-load", "on-navigate", "on-load-and-navigate"],
+                        "description": "Whether the custom script should be run only on the initial page load, each time the reader navigates after the initial page load, or both."
+                    }
+                }
+            },
+            "ScriptFromFile": {
+                "description": "An abstract schema representing a script from an external or local file; that is, not an inline script.",
+                "allOf": [
+                    { "$ref": "#/components/schemas/Script" },
+                    {
+                        "properties": {
+                            "async": { "type": "boolean" },
+                            "defer": { "type": "boolean" }
+                        }
+                    }
+                ]
+            },
+            "ExternalScript": {
+                "description": "A script at an external URL.",
+                "allOf": [
+                    { "$ref": "#/components/schemas/ScriptFromFile" },
+                    {
+                        "required": ["url"],
+                        "properties": {
+                            "url": { "type": "string" },
+                            "integrity": { "type": "string" }
+                        }
+                    }
+                ]
+            },
+            "LocalScript": {
+                "description": "A script from a local file.",
+                "allOf": [
+                    { "$ref": "#/components/schemas/ScriptFromFile" },
+                    {
+                        "required": ["name"],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the local script file, optionally including the '.js' extension."
+                            },
+                        }
+                    }
+                ]
+            },
+            "InlineScript": {
+                "description": "A script whose source code is in the custom-scripts.json file itself.",
+                "allOf": [
+                    { "$ref": "#/components/schemas/Script" },
+                    {
+                        "required": ["code"],
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "The source code of the inline script."
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}
