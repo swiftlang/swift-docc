@@ -9,14 +9,14 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 import DocCHTML
 @testable import SwiftDocC
 import Markdown
 
-final class MarkupRenderer_PageElementsTests: XCTestCase {
-    
-    func testRenderBreadcrumbs() throws {
+struct MarkupRenderer_PageElementsTests {
+    @Test
+    func testRenderBreadcrumbs() {
         let elements = [
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/index.html")!,
@@ -45,7 +45,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         ]
         let breadcrumbs = makeRenderer(elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path })
         
-        XCTAssertEqual(breadcrumbs.rendered(prettyFormatted: true), """
+        #expect(breadcrumbs.rendered(prettyFormatted: true) == """
         <nav id="breadcrumbs">
         <ul>
             <li>
@@ -63,14 +63,14 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         """)
     }
     
-    func testRenderAvailability() throws {
+    @Test
+    func testRenderAvailability() {
         let availability = makeRenderer().availability([
             .init(name: "First", introduced: "1.2", deprecated: "3.4", isBeta: false),
             .init(name: "Second", introduced: "1.2.3", isBeta: false),
             .init(name: "Third", introduced: "4.5", isBeta: true),
         ])
-        
-        XCTAssertEqual(availability.rendered(prettyFormatted: true), """
+        #expect(availability.rendered(prettyFormatted: true) == """
         <ul id="availability">
         <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" role="text" title="Introduced in First 1.2 and deprecated in First 3.4">First 1.2–3.4</li>
         <li aria-label="Second 1.2.3+, Available on 1.2.3 and later" role="text" title="Available on 1.2.3 and later">Second 1.2.3+</li>
@@ -79,7 +79,8 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         """)
     }
     
-    func testRenderSingleLanguageParameters() throws {
+    @Test
+    func testRenderSingleLanguageParameters() {
         let parameters = makeRenderer().parameters([
             "swift": [
                 .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
@@ -90,7 +91,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
                 """)),
             ]
         ])
-        XCTAssertEqual(parameters.rendered(prettyFormatted: true), """
+        #expect(parameters.rendered(prettyFormatted: true) == """
         <section id="parameters">
         <h2>
             <a href="#parameters">Parameters</a>
@@ -118,7 +119,8 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         """)
     }
     
-    func testRenderLanguageSpecificParameters() throws {
+    @Test
+    func testRenderLanguageSpecificParameters() {
         let parameters = makeRenderer().parameters([
             "swift": [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
@@ -131,7 +133,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
                 .init(name: "ObjectiveCOnly", content: parseMarkup(string: "Only available in Objective-C")),
             ],
         ])
-        XCTAssertEqual(parameters.rendered(prettyFormatted: true), """
+        #expect(parameters.rendered(prettyFormatted: true) == """
         <section id="parameters">
         <h2>
             <a href="#parameters">Parameters</a>
@@ -166,7 +168,8 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         """)
     }
     
-    func testRenderManyLanguageSpecificParameters() throws {
+    @Test
+    func testRenderManyLanguageSpecificParameters() {
         let parameters = makeRenderer().parameters([
             "swift": [
                 .init(name: "First", content: parseMarkup(string: "Some description")),
@@ -178,7 +181,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
                 .init(name: "Third", content: parseMarkup(string: "Some description")),
             ],
         ])
-        XCTAssertEqual(parameters.rendered(prettyFormatted: true), """
+        #expect(parameters.rendered(prettyFormatted: true) == """
         <section id="parameters">
         <h2>
             <a href="#parameters">Parameters</a>
@@ -211,7 +214,8 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         """)
     }
     
-    func testRenderSwiftDeclaration() throws {
+    @Test
+    func testRenderSwiftDeclaration() {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
@@ -241,7 +245,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
                 .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
             ]
         ])
-        XCTAssertEqual(declaration.rendered(prettyFormatted: true), """
+        #expect(declaration.rendered(prettyFormatted: true) == """
         <pre id="declaration">
         <code>
             <span class="token-keyword">func</span>
@@ -259,7 +263,8 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
         """)
     }
     
-    func testRenderLanguageSpecificDeclarations() throws {
+    @Test
+    func testRenderLanguageSpecificDeclarations() {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
@@ -314,7 +319,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
                 .init(kind: .text,              spelling: ";",           preciseIdentifier: nil),
             ]
         ])
-        XCTAssertEqual(declaration.rendered(prettyFormatted: true), """
+        #expect(declaration.rendered(prettyFormatted: true) == """
         <pre id="declaration">
         <code class="swift-only">
             <span class="token-keyword">func</span>
@@ -348,9 +353,7 @@ final class MarkupRenderer_PageElementsTests: XCTestCase {
     private func makeRenderer(
         elementsToReturn: [LinkedElement] = [],
         pathsToReturn: [String: URL] = [:],
-        assetsToReturn: [String: LinkedAsset] = [:],
-        file: StaticString = #filePath,
-        line: UInt = #line
+        assetsToReturn: [String: LinkedAsset] = [:]
     ) -> MarkupRenderer<some LinkProvider> {
         let path = URL(string: "/documentation/ModuleName/Something/ThisPage/index.html")!
         

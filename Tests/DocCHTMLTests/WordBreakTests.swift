@@ -9,10 +9,11 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 import DocCHTML
 
-final class WordBreakTests: XCTestCase {
+struct WordBreakTests {
+    @Test
     func testWordBreaks() {
         assertWordBreaks(for: "doSomething<Generic>(withFirst:andSecond:)", matches: """
         do
@@ -66,13 +67,13 @@ final class WordBreakTests: XCTestCase {
     private func assertWordBreaks(
         for symbolName: String,
         matches expectedHTML: String,
-        file: StaticString = #filePath,
+        sourceLocation: SourceLocation = #_sourceLocation,
         line: UInt = #line
     ) {
         let withWordBreaks = RenderHelpers.wordBreak(symbolName: symbolName)
             .map { $0.xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement] )}
             .joined(separator: "\n")
         
-        XCTAssertEqual(withWordBreaks, expectedHTML, file: file, line: line)
+        #expect(withWordBreaks == expectedHTML, sourceLocation: sourceLocation)
     }
 }

@@ -9,32 +9,33 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 import DocCHTML
 @testable import SwiftDocC
 import Markdown
 
-final class MarkupRendererTests: XCTestCase {
- 
-    func testRenderParagraphsWithFormattedText() async throws {
-        try assert(
+struct MarkupRendererTests {
+    @Test
+    func testRenderParagraphsWithFormattedText() {
+        assert(
             rendering: "This is a paragraph with _emphasized_ and **strong** text.",
             matches: "<p>This is a paragraph with <i>emphasized</i> and <b>strong</b> text.</p>"
         )
         
-        try assert(
+        assert(
             rendering: "This is a paragraph with ~strikethrough~ and `pre-formatted` text.",
             matches: "<p>This is a paragraph with <s>strikethrough</s> and <code>pre-formatted</code> text.</p>"
         )
         
-        try assert(
+        assert(
             rendering: #"This is a paragraph with "double" and 'single' quoted text."#,
             matches: "<p>This is a paragraph with “double” and ‘single’ quoted text.</p>"
         )
     }
     
-    func testRenderHeadings() async throws {
-        try assert(
+    @Test
+    func testRenderHeadings() {
+        assert(
             rendering: """
             # One
             
@@ -50,7 +51,7 @@ final class MarkupRendererTests: XCTestCase {
             """
         )
         
-        try assert(
+        assert(
             rendering: """
             One
             ===
@@ -65,7 +66,7 @@ final class MarkupRendererTests: XCTestCase {
             """
         )
         
-        try assert(
+        assert(
             rendering: """
             # _One_
             
@@ -88,8 +89,9 @@ final class MarkupRendererTests: XCTestCase {
         )
     }
     
-    func testRenderTables() async throws {
-        try assert(
+    @Test
+    func testRenderTables() {
+        assert(
             rendering: """
             First   | Second  | 
             ------- | ------- |
@@ -119,7 +121,7 @@ final class MarkupRendererTests: XCTestCase {
             """
         )
         
-        try assert(
+        assert(
             rendering: """
             First | Second | Third |
             ----- | ------ | ----- |
@@ -155,7 +157,7 @@ final class MarkupRendererTests: XCTestCase {
             """
         )
         
-        try assert(
+        assert(
             rendering: """
             First | Second | Third | Fourth 
             ----- | ------ | ----- | ------
@@ -196,8 +198,9 @@ final class MarkupRendererTests: XCTestCase {
         )
     }
     
-    func testRenderLists() async throws {
-        try assert(
+    @Test
+    func testRenderLists() {
+        assert(
             rendering: """
             - First
             - Second
@@ -247,8 +250,9 @@ final class MarkupRendererTests: XCTestCase {
         )
     }
     
+    @Test
     func testRenderAsides() async throws {
-        try assert(
+        assert(
             rendering: """
             > Note: Something noteworthy
             >
@@ -269,8 +273,9 @@ final class MarkupRendererTests: XCTestCase {
         )
     }
     
+    @Test
     func testRenderCodeBlocks() async throws {
-        try assert(
+        assert(
             rendering: """
             ~~~
             Some block of code
@@ -285,7 +290,7 @@ final class MarkupRendererTests: XCTestCase {
             """
         )
         
-        try assert(
+        assert(
             rendering: """
                 Some block of code
             """,
@@ -298,7 +303,7 @@ final class MarkupRendererTests: XCTestCase {
             """
         )
         
-        try assert(
+        assert(
             rendering: """
             ```lang
             Some block of code
@@ -312,21 +317,21 @@ final class MarkupRendererTests: XCTestCase {
             </pre>
             """
         )
-        
     }
     
-    func testRenderMiscellaneousElements() async throws {
-        try assert(
+    @Test
+    func testRenderMiscellaneousElements() {
+        assert(
             rendering: "First\nSecond", // new lines usually have no special meaning in markdown...
             matches: "<p>First Second</p>"
         )
         
-        try assert(
+        assert(
             rendering: "First  \nSecond", // ... but with two trailing spaces they are treated as line breaks
             matches: "<p>First<br/>Second</p>"
         )
         
-        try assert(
+        assert(
             rendering: """
             -------
             """,
@@ -334,12 +339,13 @@ final class MarkupRendererTests: XCTestCase {
         )
     }
     
-    func testRelativeLinksToOtherPages() async throws {
+    @Test
+    func testRelativeLinksToOtherPages() throws {
         // Link to article
-        try assert(
+        assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
             elementToReturn: .init(
-                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeArticle/index.html")),
+                path: try #require(URL(string: "doc://com.example.test/documentation/Something/SomeArticle/index.html")),
                 names: .single(.conceptual("Some Article Title")),
                 subheadings: .single(.conceptual("Some Article Title")), // Not relevant for inline links
                 abstract: nil // Not relevant for inline links
@@ -353,10 +359,10 @@ final class MarkupRendererTests: XCTestCase {
         )
         
         // Link to single-language symbol
-        try assert(
+        assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
             elementToReturn: .init(
-                path: try XCTUnwrap(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
+                path: try #require(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
                 names: .single(.symbol("someMethod(_:_:)")),
                 subheadings: .single(.symbol([ // Not relevant for inline links
                     .init(text: "func ", kind: .decorator),
@@ -379,7 +385,7 @@ final class MarkupRendererTests: XCTestCase {
         )
         
         // Link to symbol with multiple language representation
-        try assert(
+        assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             prettyFormatted: true,
@@ -402,7 +408,7 @@ final class MarkupRendererTests: XCTestCase {
         )
         
         // Link with custom title
-        try assert(
+        assert(
             rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
@@ -411,7 +417,7 @@ final class MarkupRendererTests: XCTestCase {
         )
         
         // Link with custom symbol-like title
-        try assert(
+        assert(
             rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
@@ -420,12 +426,13 @@ final class MarkupRendererTests: XCTestCase {
         )
     }
     
-    func testRelativeLinksToImages() async throws {
+    @Test
+    func testRelativeLinksToImages() throws {
         // Only a single image representation
-        try assert(
+        assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(images: [
-                .light: [1: try XCTUnwrap(URL(string: "images/com.test.example/some-image.png"))]
+                .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))]
             ]),
             prettyFormatted: true,
             matches: """
@@ -438,12 +445,12 @@ final class MarkupRendererTests: XCTestCase {
         )
         
         // Only light mode image representations
-        try assert(
+        assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(images: [
                 .light: [
-                    1: try XCTUnwrap(URL(string: "images/com.test.example/some-image.png")),
-                    2: try XCTUnwrap(URL(string: "images/com.test.example/some-image@2x.png")),
+                    1: try #require(URL(string: "images/com.test.example/some-image.png")),
+                    2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
                 ]
             ]),
             prettyFormatted: true,
@@ -457,11 +464,11 @@ final class MarkupRendererTests: XCTestCase {
         )
         
         // Only a single scale factor
-        try assert(
+        assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(images: [
-                .light: [1: try XCTUnwrap(URL(string: "images/com.test.example/some-image.png"))],
-                .dark:  [1: try XCTUnwrap(URL(string: "images/com.test.example/some-image~dark.png"))],
+                .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))],
+                .dark:  [1: try #require(URL(string: "images/com.test.example/some-image~dark.png"))],
             ]),
             prettyFormatted: true,
             matches: """
@@ -476,16 +483,16 @@ final class MarkupRendererTests: XCTestCase {
         )
         
         // Multiple styles and scale factors
-        try assert(
+        assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(images: [
                 .light: [
-                    1: try XCTUnwrap(URL(string: "images/com.test.example/some-image.png")),
-                    2: try XCTUnwrap(URL(string: "images/com.test.example/some-image@2x.png")),
+                    1: try #require(URL(string: "images/com.test.example/some-image.png")),
+                    2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
                 ],
                 .dark: [
-                    1: try XCTUnwrap(URL(string: "images/com.test.example/some-image~dark.png")),
-                    2: try XCTUnwrap(URL(string: "images/com.test.example/some-image~dark@2x.png")),
+                    1: try #require(URL(string: "images/com.test.example/some-image~dark.png")),
+                    2: try #require(URL(string: "images/com.test.example/some-image~dark@2x.png")),
                 ],
             ]),
             prettyFormatted: true,
@@ -507,9 +514,8 @@ final class MarkupRendererTests: XCTestCase {
         assetToReturn: LinkedAsset? = nil,
         prettyFormatted: Bool = false,
         matches expectedHTML: String,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) throws {
+        sourceLocation: Testing.SourceLocation = #_sourceLocation
+    ) {
         let renderer = MarkupRenderer(
             path: URL(string: "/documentation/Something/ThisPage/index.html")!,
             linkProvider: SingleValueLinkProvider(
@@ -520,10 +526,10 @@ final class MarkupRendererTests: XCTestCase {
         let htmlNodes = Document(parsing: markdownContent).children.map { renderer.visit($0) }
         let htmlString = htmlNodes.rendered(prettyFormatted: prettyFormatted)
         
-        XCTAssertEqual(htmlString, expectedHTML, file: file, line: line)
+        #expect(htmlString == expectedHTML, sourceLocation: sourceLocation)
     }
     
-    private func makeExampleMethodWithDifferentLanguageRepresentations()  -> LinkedElement {
+    private func makeExampleMethodWithDifferentLanguageRepresentations() -> LinkedElement {
         LinkedElement(
             path: URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")!,
             names: .languageSpecificSymbol([
