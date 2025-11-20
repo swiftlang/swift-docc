@@ -833,8 +833,6 @@ class LinkDestinationSummaryTests: XCTestCase {
     /// Tests that API Collections (articles with Topics sections) are correctly identified as `.collectionGroup`
     /// kind in linkable entities, ensuring cross-framework references display the correct icon.
     func testAPICollectionKindForLinkDestinationSummary() async throws {
-        throw XCTSkip("Test will be enabled after implementing the fix")
-
         let symbolGraph = makeSymbolGraph(
             moduleName: "TestModule",
             symbols: [makeSymbol(id: "test-class", kind: .class, pathComponents: ["TestClass"])]
