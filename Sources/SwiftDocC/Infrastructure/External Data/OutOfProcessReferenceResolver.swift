@@ -60,8 +60,24 @@ private import Markdown
 ///
 /// ## Topics
 ///
+/// ### Messages
+///
+/// Requests that DocC sends to your link resolver executable and the responses that it should send back.
+///
 /// - ``RequestV2``
 /// - ``ResponseV2``
+///
+/// ### Finding common capabilities
+///
+/// Ways that your link resolver executable can signal any optional capabilities that it supports.
+///
+/// - ``ResponseV2/identifierAndCapabilities(_:_:)``
+/// - ``Capabilities``
+///
+/// ### Deprecated messages
+///
+/// - ``Request``
+/// - ``Response``
 ///
 /// ## See Also
 /// - ``DocumentationContext/externalDocumentationSources``
@@ -390,11 +406,15 @@ extension OutOfProcessReferenceResolver {
         private var linkCache: [String /* either a USR or an absolute UnresolvedTopicReference */: LinkDestinationSummary] = [:]
         
         func resolve(unresolvedReference: UnresolvedTopicReference) throws -> TopicReferenceResolutionResult {
-            let linkString = unresolvedReference.topicURL.absoluteString
-            if let cachedSummary = linkCache[linkString] {
+            let unresolvedReferenceString = unresolvedReference.topicURL.absoluteString
+            if let cachedSummary = linkCache[unresolvedReferenceString] {
                 return .success( makeReference(for: cachedSummary) )
             }
             
+            let linkString = String(
+                unresolvedReferenceString.dropFirst(6) // "doc://"
+                    .drop(while: { $0 != "/" })        // the known identifier (host component)
+            )
             let response: ResponseV2 = try longRunningProcess.sendAndWait(request: RequestV2.link(linkString))
             
             switch response {
@@ -402,12 +422,13 @@ extension OutOfProcessReferenceResolver {
                     throw Error.executableSentBundleIdentifierAgain
                     
                 case .failure(let diagnosticMessage):
+                    let prefixLength = 2 /* for "//" */ + bundleID.rawValue.utf8.count
                     let solutions: [Solution] = (diagnosticMessage.solutions ?? []).map {
                         Solution(summary: $0.summary, replacements: $0.replacement.map { replacement in
                             [Replacement(
                                 // The replacement ranges are relative to the link itself.
-                                // To replace the entire link, we create a range from 0 to the original length, both offset by -4 (the "doc:" length)
-                                range: SourceLocation(line: 0, column: -4, source: nil) ..< SourceLocation(line: 0, column: linkString.utf8.count - 4, source: nil),
+                                // To replace only the path and fragment portion of the link, we create a range from 0 to the relative link string length, both offset by the bundle ID length
+                                range: SourceLocation(line: 0, column: prefixLength, source: nil) ..< SourceLocation(line: 0, column: linkString.utf8.count + prefixLength, source: nil),
                                 replacement: replacement
                             )]
                         } ?? [])
@@ -419,7 +440,7 @@ extension OutOfProcessReferenceResolver {
                     
                 case .resolved(let linkSummary):
                     // Cache the information for the original authored link
-                    linkCache[linkString] = linkSummary
+                    linkCache[unresolvedReferenceString] = linkSummary
                     // Cache the information for the resolved reference. That's what's will be used when returning the entity later.
                     let reference = makeReference(for: linkSummary)
                     linkCache[reference.absoluteString] = linkSummary

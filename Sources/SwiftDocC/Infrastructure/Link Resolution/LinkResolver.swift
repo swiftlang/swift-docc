@@ -59,8 +59,8 @@ public class LinkResolver {
         
         // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
         if let bundleID = unresolvedReference.bundleID,
-           context.bundle.id != bundleID,
-           urlReadablePath(context.bundle.displayName) != bundleID.rawValue
+           context.inputs.id != bundleID,
+           urlReadablePath(context.inputs.displayName) != bundleID.rawValue
         {
             return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for '\(bundleID)'."))
         }
@@ -136,8 +136,8 @@ private final class FallbackResolverBasedLinkResolver {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleID = unresolvedReference.bundleID ?? parent.bundleID
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
-              fallbackResolver.bundleID == context.bundle.id,
-              context.bundle.id == referenceBundleID || urlReadablePath(context.bundle.displayName) == referenceBundleID.rawValue
+              fallbackResolver.bundleID == context.inputs.id,
+              context.inputs.id == referenceBundleID || urlReadablePath(context.inputs.displayName) == referenceBundleID.rawValue
         else {
             return nil
         }
@@ -155,16 +155,16 @@ private final class FallbackResolverBasedLinkResolver {
         )
         allCandidateURLs.append(alreadyResolved.url)
         
-        let currentBundle = context.bundle
+        let currentInputs = context.inputs
         if !isCurrentlyResolvingSymbolLink {
             // First look up articles path
             allCandidateURLs.append(contentsOf: [
                 // First look up articles path
-                currentBundle.articlesDocumentationRootReference.url.appendingPathComponent(unresolvedReference.path),
+                currentInputs.articlesDocumentationRootReference.url.appendingPathComponent(unresolvedReference.path),
                 // Then technology tutorials root path (for individual tutorial pages)
-                currentBundle.tutorialsContainerReference.url.appendingPathComponent(unresolvedReference.path),
+                currentInputs.tutorialsContainerReference.url.appendingPathComponent(unresolvedReference.path),
                 // Then tutorials root path (for tutorial table of contents pages)
-                currentBundle.tutorialTableOfContentsContainer.url.appendingPathComponent(unresolvedReference.path),
+                currentInputs.tutorialTableOfContentsContainer.url.appendingPathComponent(unresolvedReference.path),
             ])
         }
         // Try resolving in the local context (as child)
@@ -179,8 +179,8 @@ private final class FallbackResolverBasedLinkResolver {
         
         // Check that the parent is not an article (ignoring if absolute or relative link)
         // because we cannot resolve in the parent context if it's not a symbol.
-        if parent.path.hasPrefix(currentBundle.documentationRootReference.path) && parentPath.count > 2 {
-            let rootPath = currentBundle.documentationRootReference.appendingPath(parentPath[2])
+        if parent.path.hasPrefix(currentInputs.documentationRootReference.path) && parentPath.count > 2 {
+            let rootPath = currentInputs.documentationRootReference.appendingPath(parentPath[2])
             let resolvedInRoot = rootPath.url.appendingPathComponent(unresolvedReference.path)
             
             // Confirm here that we we're not already considering this link. We only need to specifically
@@ -190,7 +190,7 @@ private final class FallbackResolverBasedLinkResolver {
             }
         }
         
-        allCandidateURLs.append(currentBundle.documentationRootReference.url.appendingPathComponent(unresolvedReference.path))
+        allCandidateURLs.append(currentInputs.documentationRootReference.url.appendingPathComponent(unresolvedReference.path))
         
         for candidateURL in allCandidateURLs {
             guard let candidateReference = ValidatedURL(candidateURL).map({ UnresolvedTopicReference(topicURL: $0) }) else {

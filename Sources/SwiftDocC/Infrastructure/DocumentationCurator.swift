@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,14 +17,10 @@ struct DocumentationCurator {
     /// The documentation context to crawl.
     private let context: DocumentationContext
     
-    /// The current bundle.
-    private let bundle: DocumentationBundle
-    
     private(set) var problems = [Problem]()
     
-    init(in context: DocumentationContext, bundle: DocumentationBundle, initial: Set<ResolvedTopicReference> = []) {
+    init(in context: DocumentationContext, initial: Set<ResolvedTopicReference> = []) {
         self.context = context
-        self.bundle = bundle
         self.curatedNodes = initial
     }
     
@@ -99,7 +95,7 @@ struct DocumentationCurator {
             // - "documentation/CatalogName/ArticleName"
             switch path.components(separatedBy: "/").count {
             case 0,1:
-                return NodeURLGenerator.Path.article(bundleName: bundle.displayName, articleName: path).stringValue
+                return NodeURLGenerator.Path.article(bundleName: context.inputs.displayName, articleName: path).stringValue
             case 2:
                 return "\(NodeURLGenerator.Path.documentationFolder)/\(path)"
             default:

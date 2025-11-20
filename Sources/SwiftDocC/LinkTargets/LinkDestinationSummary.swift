@@ -83,6 +83,11 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// The relative presentation URL for this element.
     public let relativePresentationURL: URL
     
+    /// The absolute presentation URL for this element, or `nil` if only the _relative_ presentation URL is known.
+    ///
+    /// - Note: The absolute presentation URL (if one exists) and the relative presentation URL will always have the same path and fragment components.
+    let absolutePresentationURL: URL?
+    
     /// The resolved topic reference URL to this element.
     public var referenceURL: URL
     
@@ -107,7 +112,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
     //  so that external documentation sources don't need to provide that data.
     //  Adding new required properties is considered breaking change since existing external documentation sources
     //  wouldn't necessarily meet these new requirements.
-    
+    //  Make sure to update the encoding, decoding and Equatable implementations when adding new properties.
+
     /// A collection of identifiers that all relate to some common task, as described by the title.
     public struct TaskGroup: Codable, Equatable {
         /// The title of this task group
@@ -226,7 +232,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let subheadingDeclarationFragments: VariantValue<DeclarationFragments?>
         
-        @available(*, deprecated, renamed: "subheadingDeclarationFragments", message: "Use 'subheadingDeclarationFragments' instead. This deprecated API will be removed after 6.3 is released.")
+        @available(*, deprecated, renamed: "subheadingDeclarationFragments", message: "Use 'subheadingDeclarationFragments' instead. This deprecated API will be removed after 6.4 is released.")
         public var declarationFragments: VariantValue<DeclarationFragments?> {
             subheadingDeclarationFragments
         }
@@ -241,7 +247,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
         ///
         /// If the summarized element has an image but the variant doesn't, this property will be `Optional.some(nil)`.
-        @available(*, deprecated, message: "`TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.3 is released")
+        @available(*, deprecated, message: "`TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.4 is released")
         public let topicImages: VariantValue<[TopicImage]?> = nil
         
         /// Creates a new summary variant with the values that are different from the main summarized values.
@@ -284,7 +290,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
             self.navigatorDeclarationFragments = navigatorDeclarationFragments
         }
         
-        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)", message: "Use `init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)` instead. `TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.3 is released")
+        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)", message: "Use `init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)` instead. `TopicRenderReference` doesn't support variant specific topic images. This property will be removed after 6.4 is released")
         public init(
             traits: [RenderNode.Variant.Trait],
             kind: VariantValue<DocumentationNode.Kind> = nil,
@@ -359,6 +365,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.kind = kind
         self.language = language
         self.relativePresentationURL = relativePresentationURL
+        self.absolutePresentationURL = nil
         self.referenceURL = referenceURL
         self.title = title
         self.abstract = abstract
@@ -375,7 +382,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.variants = variants
     }
     
-    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Use `init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)` instead. This property will be removed after 6.3 is released")
+    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Use `init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)` instead. This property will be removed after 6.4 is released")
     public init(
         kind: DocumentationNode.Kind,
         language: SourceLanguage,
@@ -431,15 +438,14 @@ public extension DocumentationNode {
         renderNode: RenderNode,
         includeTaskGroups: Bool = true
     ) -> [LinkDestinationSummary] {
-        let bundle = context.bundle
-        guard bundle.id == reference.bundleID else {
+        guard context.inputs.id == reference.bundleID else {
             // Don't return anything for external references that don't have a bundle in the context.
             return []
         }
-        let urlGenerator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+        let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
         let relativePresentationURL = urlGenerator.presentationURLForReference(reference).withoutHostAndPortAndScheme()
         
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: reference)
+        var compiler = RenderContentCompiler(context: context, identifier: reference)
 
         let platforms = renderNode.metadata.platforms
         
@@ -720,7 +726,7 @@ extension LinkDestinationSummary {
         } else {
             try container.encode(kind, forKey: .kind)
         }
-        try container.encode(relativePresentationURL, forKey: .relativePresentationURL)
+        try container.encode(absolutePresentationURL ?? relativePresentationURL, forKey: .relativePresentationURL)
         try container.encode(referenceURL, forKey: .referenceURL)
         try container.encode(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
@@ -764,7 +770,9 @@ extension LinkDestinationSummary {
         } catch {
             kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
         }
-        relativePresentationURL = try container.decode(URL.self, forKey: .relativePresentationURL)
+        let decodedURL = try container.decode(URL.self, forKey: .relativePresentationURL)
+        (relativePresentationURL, absolutePresentationURL) = Self.checkIfDecodedURLWasAbsolute(decodedURL)
+        
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
@@ -808,6 +816,28 @@ extension LinkDestinationSummary {
         }
         
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
+    }
+    
+    private static func checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
+        guard decodedURL.isAbsoluteWebURL,
+              var components = URLComponents(url: decodedURL, resolvingAgainstBaseURL: false)
+        else {
+            // If the decoded URL isn't an absolute web URL that's valid according to RFC 3986, then treat it as relative.
+            return (relative: decodedURL, absolute: nil)
+        }
+        
+        // Remove the scheme, user, port, and host to create a relative URL.
+        components.scheme = nil
+        components.user   = nil
+        components.host   = nil
+        components.port   = nil
+            
+        guard let relativeURL = components.url else {
+            // If we can't create a relative URL that's valid according to RFC 3986, then treat the original as relative.
+            return (relative: decodedURL, absolute: nil)
+        }
+        
+        return (relative: relativeURL, absolute: decodedURL)
     }
 }
 
@@ -906,12 +936,15 @@ extension LinkDestinationSummary {
         guard lhs.kind == rhs.kind else { return false }
         guard lhs.language == rhs.language else { return false }
         guard lhs.relativePresentationURL == rhs.relativePresentationURL else { return false }
+        guard lhs.absolutePresentationURL == rhs.absolutePresentationURL else { return false }
         guard lhs.title == rhs.title else { return false }
         guard lhs.abstract == rhs.abstract else { return false }
         guard lhs.availableLanguages == rhs.availableLanguages else { return false }
         guard lhs.platforms == rhs.platforms else { return false }
         guard lhs.taskGroups == rhs.taskGroups else { return false }
+        guard lhs.plainTextDeclaration == rhs.plainTextDeclaration else { return false }
         guard lhs.subheadingDeclarationFragments == rhs.subheadingDeclarationFragments else { return false }
+        guard lhs.navigatorDeclarationFragments == rhs.navigatorDeclarationFragments else { return false }
         guard lhs.redirects == rhs.redirects else { return false }
         guard lhs.topicImages == rhs.topicImages else { return false }
         guard lhs.variants == rhs.variants else { return false }

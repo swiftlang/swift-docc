@@ -25,14 +25,14 @@ class RoleTests: XCTestCase {
     ]
     
     func testNodeRoles() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         // Compile docs and verify contents
         for (path, expectedRole) in expectedRoles {
             let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: path, fragment: nil, sourceLanguage: .swift)
             do {
                 let node = try context.entity(with: identifier)
-                var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+                var translator = RenderNodeTranslator(context: context, identifier: node.reference)
                 let renderNode = translator.visit(node.semantic) as! RenderNode
                 XCTAssertEqual(expectedRole, renderNode.metadata.role, "Unexpected role \(renderNode.metadata.role!.singleQuoted) for identifier \(identifier.path)")
             } catch {
@@ -43,11 +43,11 @@ class RoleTests: XCTestCase {
     }
     
     func testDocumentationRenderReferenceRoles() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit"] as? TopicRenderReference)?.role, "collection")
@@ -56,11 +56,11 @@ class RoleTests: XCTestCase {
     }
 
     func testTutorialsRenderReferenceRoles() async throws {
-        let (_, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
+        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests")
 
         let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/TestOverview"] as? TopicRenderReference)?.role, "overview")

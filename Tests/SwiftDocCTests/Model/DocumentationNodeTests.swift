@@ -76,4 +76,27 @@ class DocumentationNodeTests: XCTestCase {
         XCTAssertEqual(DocumentationNode.symbolKind(for: .typeConstant), .typeProperty)
         XCTAssertEqual(DocumentationNode.symbolKind(for: .object), .dictionary)
     }
+
+    func testWithMultipleSourceLanguages() throws {
+        let sourceLanguages: Set<SourceLanguage> = [.swift, .objectiveC]
+        // Test if articles contain all available source languages
+        let article = Article(markup: Document(parsing: "# Title", options: []), metadata: nil, redirects: nil, options: [:])
+        let articleNode = try DocumentationNode(
+            reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguages: sourceLanguages),
+            article: article
+        )
+        XCTAssertEqual(articleNode.availableSourceLanguages, sourceLanguages)
+
+        // Test if symbols contain all available source languages
+        let symbol = makeSymbol(id: "blah", kind: .class, pathComponents: ["blah"])
+        let symbolNode = DocumentationNode(
+            reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguages: sourceLanguages),
+            symbol: symbol,
+            platformName: nil,
+            moduleReference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguages: sourceLanguages),
+            article: nil,
+            engine: DiagnosticEngine()
+        )
+        XCTAssertEqual(symbolNode.availableSourceLanguages, sourceLanguages)
+    }
 }
