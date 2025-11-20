@@ -67,8 +67,8 @@ class RenderContentMetadataTests: XCTestCase {
     }
     
     func testRenderingTables() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         | Column 1  | Column 2 |
@@ -108,8 +108,8 @@ class RenderContentMetadataTests: XCTestCase {
     }
 
     func testRenderingTableSpans() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
         | one | two | three |
@@ -161,8 +161,8 @@ class RenderContentMetadataTests: XCTestCase {
     }
 
     func testRenderingTableColumnAlignments() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
         | one | two | three | four |
@@ -203,8 +203,8 @@ class RenderContentMetadataTests: XCTestCase {
 
     /// Verifies that a table with `nil` alignments and a table with all-unset alignments still compare as equal.
     func testRenderedTableEquality() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
         | Column 1  | Column 2 |
@@ -229,8 +229,8 @@ class RenderContentMetadataTests: XCTestCase {
 
     /// Verifies that two tables with otherwise-identical contents but different column alignments compare as unequal.
     func testRenderedTableInequality() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let decodedTableWithUnsetColumns: RenderBlockContent.Table
         do {
@@ -276,8 +276,8 @@ class RenderContentMetadataTests: XCTestCase {
     }
     
     func testStrikethrough() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         ~~Striken~~ text.
@@ -299,8 +299,8 @@ class RenderContentMetadataTests: XCTestCase {
     }
     
     func testHeadingAnchorShouldBeEncoded() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: bundle.id, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (_, context) = try await testBundleAndContext()
+        var renderContentCompiler = RenderContentCompiler(context: context, identifier: ResolvedTopicReference(bundleID: context.inputs.id, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         ## テスト

@@ -757,7 +757,7 @@ public class DocumentationContext {
             let (url, analyzed) = analyzedDocument
 
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: inputs)
-            let reference = ResolvedTopicReference(bundleID: inputs.id, path: path, sourceLanguage: .swift)
+            var reference = ResolvedTopicReference(bundleID: inputs.id, path: path, sourceLanguage: .swift)
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
@@ -811,7 +811,11 @@ public class DocumentationContext {
                 
                 insertLandmarks(tutorialArticle.landmarks, from: topicGraphNode, source: url)
             } else if let article = analyzed as? Article {
-                                
+                // If the article contains any `@SupportedLanguage` directives in the metadata,
+                // include those languages in the set of source languages for the reference.
+                if let supportedLanguages = article.supportedLanguages {
+                    reference = reference.withSourceLanguages(supportedLanguages)
+                }
                 // Here we create a topic graph node with the prepared data but we don't add it to the topic graph just yet
                 // because we don't know where in the hierarchy the article belongs, we will add it later when crawling the manual curation via Topics task groups.
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: url), title: article.title!.plainText)
@@ -1722,7 +1726,26 @@ public class DocumentationContext {
             }
             let reference = documentation.reference
             
-            documentationCache[reference] = documentation
+            if let existing = documentationCache[reference], existing.kind.isSymbol {
+                // By the time we get here it's already to late to fix the collision. All we can do is make the author aware of it and handle the collision deterministically.
+                // rdar://79745455 and https://github.com/swiftlang/swift-docc/issues/593 tracks fixing the root cause of this issue, avoiding the collision and allowing the article and symbol to both exist.
+                diagnosticEngine.emit(
+                    Problem(
+                        diagnostic: Diagnostic(source: article.source, severity: .warning, identifier: "org.swift.docc.articleCollisionProblem", summary: """
+                            Article '\(article.source.lastPathComponent)' (\(title)) would override \(existing.kind.name.lowercased()) '\(existing.name.description)'.
+                            """, explanation: """
+                            DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
+                            Until rdar://79745455 (issue #593) is fixed, DocC favors the symbol in this collision and drops the article to have deterministic behavior.
+                            """),
+                        possibleSolutions: [
+                            Solution(summary: "Rename '\(article.source.lastPathComponent)'", replacements: [ /* Renaming a file isn't something that we can represent with a replacement */ ])
+                        ]
+                    )
+                )
+                return article // Don't continue processing this article
+            } else {
+                documentationCache[reference] = documentation
+            }
             
             documentLocationMap[article.source] = reference
             let graphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: article.source), title: title)
@@ -1842,17 +1865,7 @@ public class DocumentationContext {
         let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: inputs)
         
         // Use the languages specified by the `@SupportedLanguage` directives if present.
-        let availableSourceLanguages = article.value
-            .metadata
-            .flatMap { metadata in
-                let languages = Set(
-                    metadata.supportedLanguages
-                        .map(\.language)
-                )
-                
-                return languages.isEmpty ? nil : languages
-            }
-        ?? availableSourceLanguages
+        let availableSourceLanguages = article.value.supportedLanguages ?? availableSourceLanguages
         
         // If available source languages are provided and it contains Swift, use Swift as the default language of
         // the article.
