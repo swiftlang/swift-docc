@@ -166,7 +166,7 @@ If you have commit access, you can run the required tests by commenting the foll
 
 If you do not have commit access, please ask one of the code owners to trigger them for you.
 For more details on Swift-DocC's continuous integration, see the
-[Continous Integration](#continuous-integration) section below.
+[Continuous Integration](#continuous-integration) section below.
 
 ### Introducing source breaking changes
 
@@ -207,7 +207,23 @@ by navigating to the root of the repository and running the following:
 By running tests locally with the `test` script you will be best prepared for
 automated testing in CI as well.
 
-### Testing in Xcode
+### Adding new tests
+
+We recommend that you use [Swift Testing](https://developer.apple.com/documentation/testing) when you add new tests. 
+Currently there are few existing tests to draw inspiration from, so here are a few recommendations:
+
+- Prefer small test inputs that ideally use a virtual file system for both reading and writing.
+- Consider using parameterized tests if you're making the same verifications in multiple configurations or on multiple elements.
+- Think about what information would be helpful to someone else who might debug that test case if it fails in the future.
+- Use `#require` rather that force unwrapping for behaviors that would change due to unexpected bugs in the code you're testing. 
+
+If you're updating an existing test case with additional logic, we appreciate it if you also modernize that test, but we don't expect it.
+If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing.
+
+If you modernize an existing test case, consider not only the syntactical differences between Swift Testing and XCTest, 
+but also if there are any Swift Testing features or other changes that would make the test case easier to read, maintain, or debug.
+
+### Testing DocC's integration with Xcode
 
 You can test a locally built version of Swift-DocC in Xcode 13 or later by setting
 the `DOCC_EXEC` build setting to the path of your local `docc`:
