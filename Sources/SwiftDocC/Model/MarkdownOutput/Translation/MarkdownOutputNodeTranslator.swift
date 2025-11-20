@@ -9,7 +9,6 @@
 */
 
 public import Foundation
-@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
 
 /// Creates ``CollectedMarkdownOutput`` from a ``DocumentationNode``.
 internal struct MarkdownOutputNodeTranslator {

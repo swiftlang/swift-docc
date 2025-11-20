@@ -9,7 +9,6 @@
 */
 
 import Foundation
-@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
 
 #if canImport(os)
 package import os

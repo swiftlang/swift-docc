@@ -33,10 +33,6 @@ let package = Package(
             name: "SwiftDocC",
             targets: ["SwiftDocC"]
         ),
-        .library(
-            name: "SwiftDocCMarkdownOutput",
-            targets: ["SwiftDocCMarkdownOutput"]
-        ),
         .executable(
             name: "docc",
             targets: ["docc"]
@@ -51,7 +47,6 @@ let package = Package(
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
                 .product(name: "Crypto", package: "swift-crypto"),
-                .target(name: "SwiftDocCMarkdownOutput")
             ],
             swiftSettings: swiftSettings
         ),
@@ -130,12 +125,6 @@ let package = Package(
             ],
             swiftSettings: swiftSettings
         ),
-        
-        // Experimental markdown output
-        .target(
-            name: "SwiftDocCMarkdownOutput",
-            dependencies: []
-        )
         
     ]
 )

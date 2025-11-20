@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
-
 /// Visits the semantic structure of a documentation node and returns a ``MarkdownOutputNode``
 internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     

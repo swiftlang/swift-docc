@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(MarkdownOutput) import SwiftDocCMarkdownOutput
+
 /// A consumer for output produced by a documentation conversion.
 ///
 /// Types that conform to this protocol manage what to do with documentation conversion products, for example persist them to disk
