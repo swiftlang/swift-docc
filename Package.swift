@@ -2,7 +2,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -57,7 +57,7 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -69,7 +69,7 @@ let package = Package(
         ),
         // Command-line tool library
         .target(
-            name: "SwiftDocCUtilities",
+            name: "DocCCommandLine",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
@@ -80,12 +80,12 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "SwiftDocCUtilitiesTests",
+            name: "DocCCommandLineTests",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -96,7 +96,7 @@ let package = Package(
         
         // Test utility library
         .target(
-            name: "SwiftDocCTestUtilities",
+            name: "DocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
@@ -109,12 +109,12 @@ let package = Package(
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
-        ),
         
+        ),
         // A few common types and core functionality that's useable by all other targets.
         .target(
             name: "DocCCommon",
@@ -129,16 +129,16 @@ let package = Package(
             name: "DocCCommonTests",
             dependencies: [
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
 
-        // Test app for SwiftDocCUtilities
+        // Test app for DocCCommandLine
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             path: "Tests/signal-test-app",
             swiftSettings: swiftSettings
