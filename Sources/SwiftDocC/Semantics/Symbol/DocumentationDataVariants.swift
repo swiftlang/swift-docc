@@ -128,13 +128,23 @@ extension DocumentationDataVariants: Equatable where Variant: Equatable {}
 /// The trait associated with a variant of some piece of information about a documentation node.
 public struct DocumentationDataVariantsTrait: Hashable {
     /// The Swift programming language.
-    public static var swift = DocumentationDataVariantsTrait(interfaceLanguage: SourceLanguage.swift.id)
+    public static var swift = DocumentationDataVariantsTrait(sourceLanguage: .swift)
     
     /// The Objective-C programming language.
-    public static var objectiveC = DocumentationDataVariantsTrait(interfaceLanguage: SourceLanguage.objectiveC.id)
+    public static var objectiveC = DocumentationDataVariantsTrait(sourceLanguage: .objectiveC)
     
     /// The language in which the documentation node is relevant.
-    public var interfaceLanguage: String?
+    public var interfaceLanguage: String? {
+        get {
+            sourceLanguage?.id
+        }
+        @available(*, deprecated, message: "Create a new DocumentationDataVariantsTrait instead. This deprecated API will be removed after 6.4 is released.")
+        set {
+            sourceLanguage = newValue.map { SourceLanguage(id: $0) }
+        }
+    }
+    
+    private(set) var sourceLanguage: SourceLanguage?
     
     /// A special trait that represents the fallback trait, which internal clients can use to access the default value of a collection of variants.
     static var fallback = DocumentationDataVariantsTrait()
@@ -143,17 +153,18 @@ public struct DocumentationDataVariantsTrait: Hashable {
     ///
     /// - Parameter interfaceLanguage: The language in which a documentation node is relevant.
     public init(interfaceLanguage: String? = nil) {
-        self.interfaceLanguage = interfaceLanguage
+        self.init(sourceLanguage: interfaceLanguage.map { SourceLanguage(id: $0) })
+    }
+    
+    init(sourceLanguage: SourceLanguage?) {
+        self.sourceLanguage = sourceLanguage
     }
 
     /// Creates a new trait given a symbol graph selector.
     ///
     /// - Parameter selector: The symbol graph selector to use when creating the trait.
     public init(for selector: UnifiedSymbolGraph.Selector) {
-        self.init(
-            interfaceLanguage: SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage)?.id
-                ?? selector.interfaceLanguage
-        )
+        self.init(interfaceLanguage: selector.interfaceLanguage)
     }
 }
 

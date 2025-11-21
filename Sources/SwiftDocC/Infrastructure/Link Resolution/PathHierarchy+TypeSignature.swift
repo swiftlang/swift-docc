@@ -20,7 +20,7 @@ extension PathHierarchy {
             return nil
         }
         
-        let isSwift = symbol.identifier.interfaceLanguage == SourceLanguage.swift.id
+        let isSwift = symbol.identifier.interfaceLanguage == "swift"
         return (
             signature.parameters.map { parameterTypeSpelling(for: $0.declarationFragments, isSwift: isSwift) },
             returnTypeSpellings(for: signature.returns, isSwift: isSwift)
