@@ -67,7 +67,7 @@ extension Benchmark {
             ) else { return nil }
             return Int64(pmcStats.PeakWorkingSetSize)
         }
-        #elseif os(FreeBSD)
+        #elseif os(FreeBSD) || os(OpenBSD)
         private static func peakMemory() -> Int64? {
             var usage = rusage()
             if (getrusage(RUSAGE_SELF, &usage) == -1) {

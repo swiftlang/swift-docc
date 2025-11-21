@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if os(Linux) || os(Android) || os(Windows) || os(FreeBSD)
+#if os(Linux) || os(Android) || os(Windows) || os(FreeBSD) || os(OpenBSD)
 /// A shim for non-ObjC targets that runs the given block of code.
 ///
 /// The existence of this shim allows you the use of auto-release pools to optimize memory footprint on Darwin platforms while maintaining

@@ -27,7 +27,7 @@ public struct Signal {
         signalAction.__sigaction_handler = unsafeBitCast(callback, to: sigaction.__Unnamed_union___sigaction_handler.self)
         #elseif os(Android)
         signalAction.sa_handler = callback
-        #elseif os(FreeBSD)
+        #elseif os(FreeBSD) || os(OpenBSD)
         signalAction.__sigaction_u.__sa_handler = callback
         #else
         signalAction.__sigaction_u = unsafeBitCast(callback, to: __sigaction_u.self)
