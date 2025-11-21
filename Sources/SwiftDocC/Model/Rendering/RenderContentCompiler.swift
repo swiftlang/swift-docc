@@ -36,10 +36,10 @@ struct RenderContentCompiler: MarkupVisitor {
         let aside = Aside(blockQuote)
         
         let newAside = RenderBlockContent.Aside(
-            style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
+            asideKind: aside.kind,
             content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]
         )
-            
+
         return [RenderBlockContent.aside(newAside.capitalizingFirstWord())]
     }
     
@@ -389,10 +389,13 @@ struct RenderContentCompiler: MarkupVisitor {
                     fatalError("Unexpected content type in note: \(type(of: $0))")
                 }
             }
-        return [RenderBlockContent.aside(.init(
-            style: .init(asideKind: .note),
-            content: content
-        ))]
+        let aside = RenderBlockContent.aside(
+            .init(
+                asideKind: .note,
+                content: content
+            )
+        )
+        return [aside]
     }
     
     mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> [any RenderContent] {
