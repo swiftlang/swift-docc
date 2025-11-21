@@ -43,7 +43,7 @@ struct MarkupRenderer_PageElementsTests {
                 abstract: nil
             ),
         ]
-        let breadcrumbs = makeRenderer(elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path })
+        let breadcrumbs = makeRenderer(elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path }, currentPageNames: .single(.conceptual("ThisPage")))
         
         #expect(breadcrumbs.rendered(prettyFormatted: true) == """
         <nav id="breadcrumbs">

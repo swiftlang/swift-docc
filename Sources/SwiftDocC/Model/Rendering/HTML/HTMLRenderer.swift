@@ -154,7 +154,7 @@ struct HTMLRenderer {
         self.renderContext = renderContext
         let linkProvider = ContextLinkProvider(reference: reference, context: context)
         self.linkProvider = linkProvider
-        let filePath = reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html")
+        let filePath = ContextLinkProvider.filePath(for: reference)
         self.filePath = filePath
         self.renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
     }
@@ -181,7 +181,8 @@ struct HTMLRenderer {
         hero.addChild(
             .element(named: "header", children: [
                 renderer.breadcrumbs(
-                    references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { ContextLinkProvider.filePath(for: $0) }
+                    references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { ContextLinkProvider.filePath(for: $0) },
+                    currentPageNames: .single(.conceptual(node.name.plainText))
                 ),
                 
                 .element(
@@ -297,11 +298,25 @@ struct HTMLRenderer {
             articleElement.addChild(hero)
         }
         
+        let names: LinkedElement.Names
+        if case .conceptual(title: let title) = node.name {
+            names = .single(.conceptual(title))
+        } else {
+            names = .languageSpecificSymbol([String: String](
+                symbol.titleVariants.allValues.compactMap({ trait, title in
+                    guard let lang = trait.interfaceLanguage else { return nil }
+                    return (key: lang, value: title)
+                }),
+                uniquingKeysWith: { _, new in new }
+            ))
+        }
+        
         // Breadcrumbs and Eyebrow
         hero.addChild(
             .element(named: "header", children: [
                 renderer.breadcrumbs(
-                    references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { ContextLinkProvider.filePath(for: $0) }
+                    references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { ContextLinkProvider.filePath(for: $0) },
+                    currentPageNames: names
                 ),
                 
                 .element(
