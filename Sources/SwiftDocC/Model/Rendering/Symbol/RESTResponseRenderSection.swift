@@ -14,9 +14,9 @@ import Foundation
 public struct RESTResponseRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restResponses
     /// The title for the section.
-    public let title: String
+    public var title: String
     /// The list of possible REST responses.
-    public let responses: [RESTResponse]
+    public var responses: [RESTResponse]
 
     enum CodingKeys: String, CodingKey {
         case kind
@@ -70,7 +70,7 @@ public struct RESTResponse: Codable, TextIndexing, Equatable {
     /// A type declaration of the response's content.
     public let type: [DeclarationRenderSection.Token]
     /// Response details, if any.
-    public let content: [RenderBlockContent]?
+    public var content: [RenderBlockContent]?
 
     /// Creates a new REST response section.
     /// - Parameters:
