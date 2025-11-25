@@ -108,7 +108,7 @@ enum GeneratedDocumentationTopics {
                 parentPath: parent.path,
                 articleName: title
             ).stringValue,
-            _smallSourceLanguages: automaticCurationSourceLanguages
+            sourceLanguages: automaticCurationSourceLanguages
         )
         
         // Add the topic graph node

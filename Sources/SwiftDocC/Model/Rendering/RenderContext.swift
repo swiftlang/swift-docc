@@ -104,7 +104,7 @@ public struct RenderContext {
                     path: url.path,
                     fragment: url.fragment,
                     // TopicRenderReference doesn't have language information. Also, the reference's languages _doesn't_ specify the languages of the linked entity.
-                    _smallSourceLanguages: reference._smallSourceLanguages
+                    sourceLanguages: reference._sourceLanguages
                 )
                 topics[dependencyReference] = .init(renderReference: dependency, canonicalPath: nil, taskGroups: nil, source: nil, isDocumentationExtensionContent: false)
             }

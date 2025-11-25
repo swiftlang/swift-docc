@@ -1868,7 +1868,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.
                 // If the current symbol and its custom alternate representation share language representations, the custom language representation is ignored.
                 allVariants.merge(
-                    alternateRepresentationReference._smallSourceLanguages.map { ($0, alternateRepresentationReference) }
+                    alternateRepresentationReference._sourceLanguages.map { ($0, alternateRepresentationReference) }
                 ) { existing, _ in existing }
             }
         }

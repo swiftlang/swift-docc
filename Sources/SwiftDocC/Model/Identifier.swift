@@ -195,7 +195,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// The source language for which this topic is relevant.
     public var sourceLanguage: SourceLanguage {
         // Return Swift by default to maintain backwards-compatibility.
-        _smallSourceLanguages.min()!
+        _sourceLanguages.min()!
     }
     
     /// The source languages for which this topic is relevant.
@@ -204,28 +204,29 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// corresponding ``DocumentationNode``. If you need to query the source languages associated with a documentation node, use
     /// ``DocumentationContext/sourceLanguages(for:)`` instead.
     public var sourceLanguages: Set<SourceLanguage> {
-        Set(_smallSourceLanguages)
+        Set(_sourceLanguages)
     }
     
-    var _smallSourceLanguages: SmallSourceLanguageSet {
+    var _sourceLanguages: SmallSourceLanguageSet {
         _storage.sourceLanguages
     }
     
     /// - Note: The `path` parameter is escaped to a path readable string.
     public init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
-        self.init(bundleID: bundleID, path: path, fragment: fragment, _smallSourceLanguages: [sourceLanguage])
+        self.init(bundleID: bundleID, path: path, fragment: fragment, sourceLanguages: [sourceLanguage])
     }
     
+    @_disfavoredOverload
     public init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
-        self.init(bundleID: bundleID, path: path, fragment: fragment, _smallSourceLanguages: .init(sourceLanguages))
+        self.init(bundleID: bundleID, path: path, fragment: fragment, sourceLanguages: .init(sourceLanguages))
     }
     
-    init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, _smallSourceLanguages: SmallSourceLanguageSet) {
+    init(bundleID: DocumentationBundle.Identifier, path: String, fragment: String? = nil, sourceLanguages: SmallSourceLanguageSet) {
         self.init(
             bundleID: bundleID,
             urlReadablePath: urlReadablePath(path),
             urlReadableFragment: fragment.map(urlReadableFragment(_:)),
-            sourceLanguages: _smallSourceLanguages
+            sourceLanguages: sourceLanguages
         )
     }
     
@@ -316,7 +317,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             bundleID: bundleID,
             path: path,
             fragment: fragment, // The internal initializer implementation ensures that the fragment is URL readable
-            _smallSourceLanguages: _smallSourceLanguages
+            sourceLanguages: _sourceLanguages
         )
         
         return newReference
@@ -332,7 +333,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let newReference = ResolvedTopicReference(
             bundleID: bundleID,
             urlReadablePath: url.appendingPathComponent(urlReadablePath(path), isDirectory: false).path,
-            sourceLanguages: _smallSourceLanguages
+            sourceLanguages: _sourceLanguages
         )
         return newReference
     }
@@ -354,7 +355,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             bundleID: bundleID,
             urlReadablePath: newPath,
             urlReadableFragment: reference.fragment.map(urlReadableFragment),
-            sourceLanguages: _smallSourceLanguages
+            sourceLanguages: _sourceLanguages
         )
         return newReference
     }
@@ -366,7 +367,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             bundleID: bundleID,
             urlReadablePath: newPath,
             urlReadableFragment: fragment,
-            sourceLanguages: _smallSourceLanguages
+            sourceLanguages: _sourceLanguages
         )
         return newReference
     }
@@ -376,11 +377,11 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// If the current topic reference already includes the given source languages, this returns
     /// the original topic reference.
     public func addingSourceLanguages(_ sourceLanguages: some Sequence<SourceLanguage>) -> ResolvedTopicReference {
-        var updatedLanguages = _smallSourceLanguages
+        var updatedLanguages = _sourceLanguages
         for language in sourceLanguages {
             updatedLanguages.insert(language)
         }
-        guard updatedLanguages != _smallSourceLanguages else {
+        guard updatedLanguages != _sourceLanguages else {
             return self
         }
         
@@ -398,7 +399,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// this returns the original topic reference.
     public func withSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> ResolvedTopicReference {
         let newSourceLanguages = SmallSourceLanguageSet(sourceLanguages)
-        guard newSourceLanguages != _smallSourceLanguages else {
+        guard newSourceLanguages != _sourceLanguages else {
             return self
         }
         
@@ -422,7 +423,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         
         let sourceLanguageIDVariants = DocumentationDataVariants<String>(
             values: [DocumentationDataVariantsTrait: String](
-                uniqueKeysWithValues: _smallSourceLanguages.map { language in
+                uniqueKeysWithValues: _sourceLanguages.map { language in
                     (DocumentationDataVariantsTrait(interfaceLanguage: language.id), language.id)
                 }
             )
