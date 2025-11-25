@@ -11,7 +11,7 @@
 /// A programming language, for example "Swift" or "Objective-C".
 public struct SourceLanguage: Hashable, Codable, Comparable, Sendable {
     /// Using only an 8-bit value as an identifier technically limits a single DocC execution to 256 different languages.
-    /// This may sound like a great limitation. However, in practice almost all content deals with either 1 or 2 languages.
+    /// This may sound like a significant limitation. However, in practice almost all content deals with either 1 or 2 languages.
     /// There is some known content with 3 languages but beyond that 4 or 5 or more languages is increasingly less common/realistic.
     ///
     /// Thus, in practice it's deemed unrealistic that any content would ever represent symbols from 256 different programming languages.
@@ -383,7 +383,7 @@ package struct SmallSourceLanguageSet: Sendable, Hashable, SetAlgebra, Expressib
     // The current implementation uses a single fixed size 64-value bit set to store the private `SourceLanguage._id` values.
     // The primary benefit of this design is that it's easy to implement, very fast, and uses the same logic for both known and unknown source languages.
     // The tradeoff is that it "only" supports 64 different programming languages at once and that it "only" supports the first 59 unknown/custom source languages that a single DocC build creates.
-    // This may sound like a great limitation. However, in practice almost all content deals with either 1 or 2 languages.
+    // This may sound like a significant limitation. However, in practice almost all content deals with either 1 or 2 languages.
     // There is some known content with 3 languages but beyond that; as little as 4 or 5 or more languages is increasingly less common/realistic.
     // A single project with >64 languages is considered so _extremely_ unlikely that it's considered an unrealistic hypothetical.
     //

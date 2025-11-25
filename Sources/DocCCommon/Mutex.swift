@@ -11,8 +11,8 @@
 #if os(macOS) || os(iOS)
 import Darwin
 
-// This type is designs to have the same API surface as 'Synchronization.Mutex'.
-// It's different from 'SwiftDocC.Synchronized' which requires that the wrapped values is `Copyable`.
+// This type is designed to have the same API surface as 'Synchronization.Mutex'.
+// It's different from 'SwiftDocC.Synchronized' which requires that the wrapped value is `Copyable`.
 //
 // When we can require macOS 15.0 we can remove this custom type and use 'Synchronization.Mutex' directly on all platforms.
 struct Mutex<Value: ~Copyable>: ~Copyable, @unchecked Sendable {
@@ -39,8 +39,6 @@ struct Mutex<Value: ~Copyable>: ~Copyable, @unchecked Sendable {
         return try body(&value.pointee)
     }
 }
-
-//extension Mutex:  where Value: ~Copyable {}
 #else
 import Synchronization
 

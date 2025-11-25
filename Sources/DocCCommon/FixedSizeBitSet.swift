@@ -133,7 +133,7 @@ extension _FixedSizeBitSet: Sequence {
             }
             // If the set is somewhat sparse, we can find the next element faster by shifting to the next value.
             // This saves needing to do `contains()` checks for all the numbers since the previous element.
-            let amountToShift = storage.trailingZeroBitCount + 1
+            let amountToShift = storage.trailingZeroBitCount &+ 1
             storage &>>= amountToShift
             
             current &+= amountToShift
@@ -217,7 +217,7 @@ extension _FixedSizeBitSet: Collection {
     
     @inlinable
     package func distance(from start: Index, to end: Index) -> Int {
-        // To compute the distance between two indices we have to find the number 1 bit from the start index to (but excluding) the end index.
+        // To compute the distance between two indices we have to find the number of 1 bits from the start index to (but excluding) the end index.
         // For example, consider the following 16 bits, where values are represented from right to left:
         //   0110 0010 0110 0010
         //      end╶╯    ╰╴start
