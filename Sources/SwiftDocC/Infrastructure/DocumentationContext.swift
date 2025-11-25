@@ -1938,7 +1938,7 @@ public class DocumentationContext {
         // for each language it's available in.
         if let symbol = node.semantic as? Symbol {
             for sourceLanguage in node.availableSourceLanguages {
-                symbol.automaticTaskGroupsVariants[.init(interfaceLanguage: sourceLanguage.id)] = [automaticTaskGroup]
+                symbol.automaticTaskGroupsVariants[.init(sourceLanguage: sourceLanguage)] = [automaticTaskGroup]
             }
         } else if var taskGroupProviding = node.semantic as? (any AutomaticTaskGroupsProviding) {
             taskGroupProviding.automaticTaskGroups = [automaticTaskGroup]

@@ -424,7 +424,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let sourceLanguageIDVariants = DocumentationDataVariants<String>(
             values: [DocumentationDataVariantsTrait: String](
                 uniqueKeysWithValues: _sourceLanguages.map { language in
-                    (DocumentationDataVariantsTrait(interfaceLanguage: language.id), language.id)
+                    (DocumentationDataVariantsTrait(sourceLanguage: language), language.id)
                 }
             )
         )
