@@ -387,38 +387,6 @@ struct HTMLRenderer {
             hero.addChild( renderer.declaration(fragmentsByLanguageID) )
         }
         
-        for (trait, variant) in symbol.declarationVariants.allValues.sorted(by: { $0.trait < $1.trait}) {
-            guard let lang = trait.interfaceLanguage else { continue }
-            
-            for (/*platforms*/_, declaration) in variant {
-                // FIXME: Pretty print declarations for Swift and Objective-C
-                
-                hero.addChild(
-                    .element(named: "pre", children: [
-                        .element(named: "code", children: declaration.declarationFragments.map { fragment in
-                            // ???: Do `.text` tokens need to be wrapped in a span?
-                            if fragment.kind == .typeIdentifier,
-                               let symbolID = fragment.preciseIdentifier,
-                               let reference = context.localOrExternalReference(symbolID: symbolID)
-                            {
-                                // Make a link
-                                return .element(named: "span", children: [
-                                    .element(
-                                        named: "a",
-                                        children: [.text(fragment.spelling)],
-                                        attributes: ["href": path(to: reference)]
-                                    )
-                                ], attributes: ["class": "type-identifier-link"])
-                            }
-                            else {
-                                return .element(named: "span", children: [.text(fragment.spelling)], attributes: ["class": "token-\(fragment.kind.rawValue)"])
-                            }
-                        })
-                    ], attributes: ["class": "\(lang)-only"])
-                )
-            }
-        }
-        
         // Deprecation message
         if let deprecationSummary = symbol.deprecatedSummary {
             var children: [XMLNode] = [
@@ -458,7 +426,7 @@ struct HTMLRenderer {
         if let returnsSection = symbol.returnsSection {
             let section = XMLElement(name: "section")
             section.addAttribute(
-                XMLNode.attribute(withName: "class", stringValue: "return-value") as! XMLNode
+                XMLNode.attribute(withName: "id", stringValue: "return-value") as! XMLNode
             )
             
             if let title = ReturnsSection.title {

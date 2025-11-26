@@ -153,7 +153,6 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </html>
         """)
         
-        // FIXME: This output contains some unexpected duplication for the declaration.
         XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/ModuleName/SomeClass/index.html")), encoding: .utf8)), """
         <html>
           <head>
@@ -183,13 +182,6 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <code>
                         <span class="token-keyword">class</span>
                          <span class="token-identifier">SomeClass</span>
-                    </code>
-                </pre>
-                <pre class="swift-only">
-                    <code>
-                        <span class="token-keyword">class</span>
-                        <span class="token-text"> </span>
-                        <span class="token-identifier">SomeClass</span>
                     </code>
                 </pre>
             </section>
