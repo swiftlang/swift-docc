@@ -15,6 +15,7 @@ package import FoundationXML
 #endif
 
 package import Markdown
+package import DocCCommon
 
 package extension MarkdownRenderer {
     struct ParameterInfo {
@@ -27,7 +28,7 @@ package extension MarkdownRenderer {
         }
     }
     
-    func parameters(_ info: [String: [ParameterInfo]]) -> XMLNode {
+    func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> XMLNode {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
         
         // Add a heading that references the section before anything the actual parameter list
@@ -49,11 +50,11 @@ package extension MarkdownRenderer {
         default:
             // In practice DocC only encounters one or two different languages. If there would be a third one,
             // produce correct looking pages that may include duplicated markup by not trying to share parameters across languages.
-            items.append(contentsOf: info.map { languageID, info in
+            items.append(contentsOf: info.map { language, info in
                 .element(
                     named: "dl",
                     children: _singleLanguageParameterItems(info),
-                    attributes: ["class": "\(languageID)-only"]
+                    attributes: ["class": "\(language.id)-only"]
                 )
             })
         }
@@ -85,12 +86,16 @@ package extension MarkdownRenderer {
     }
     
     private func _dualLanguageParameters(
-        primary: (key: String, value: [ParameterInfo]),
-        secondary: (key: String, value: [ParameterInfo])
+        primary:   (key: SourceLanguage, value: [ParameterInfo]),
+        secondary: (key: SourceLanguage, value: [ParameterInfo])
     ) -> XMLElement {
-        var items = _singleLanguageParameterItems(primary.value)
+        // Shadow the parameters with more descriptive tuple labels
+        let primary   = (language: primary.key,   parameters: primary.value)
+        let secondary = (language: secondary.key, parameters: secondary.value)
         
-        let differences = secondary.value.difference(from: primary.value, by: { $0.name == $1.name })
+        var items = _singleLanguageParameterItems(primary.parameters)
+        
+        let differences = secondary.parameters.difference(from: primary.parameters, by: { $0.name == $1.name })
         
         var primaryOnlyIndices = Set<Int>()
         
@@ -99,8 +104,8 @@ package extension MarkdownRenderer {
             primaryOnlyIndices.insert(offset)
             let index = offset * 2
             // Mark those items as only being applying to the first language
-            items[index    ].addAttributes(["class": "\(primary.key)-only"])
-            items[index + 1].addAttributes(["class": "\(primary.key)-only"])
+            items[index    ].addAttributes(["class": "\(primary.language.id)-only"])
+            items[index + 1].addAttributes(["class": "\(primary.language.id)-only"])
         }
         
         for case let .insert(offset, parameter, _) in differences.insertions {
@@ -111,9 +116,9 @@ package extension MarkdownRenderer {
                 // Name
                 .element(named: "dt", children: [
                     .element(named: "code", children: [.text(parameter.name)])
-                ], attributes: ["class": "\(secondary.key)-only"]),
+                ], attributes: ["class": "\(secondary.language.id)-only"]),
                 // Description
-                .element(named: "dd", children: parameter.content.map { visit($0) }, attributes: ["class": "\(secondary.key)-only"])
+                .element(named: "dd", children: parameter.content.map { visit($0) }, attributes: ["class": "\(secondary.language.id)-only"])
             ], at: index)
         }
         

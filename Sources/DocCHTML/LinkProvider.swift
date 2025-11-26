@@ -10,6 +10,7 @@
 
 package import Foundation
 package import Markdown
+package import DocCCommon
 
 /// A type that provides information about other pages, and on-page elements, that the rendered page references.
 package protocol LinkProvider {
@@ -56,7 +57,7 @@ package struct LinkedElement {
         /// This element is a symbol with different names in different languages.
         ///
         /// Because `@DisplayName` applies to all language representations, these language specific names are always the symbol's subheading declaration and should display in a monospaced font.
-        case languageSpecificSymbol([String /* Language ID */: String])
+        case languageSpecificSymbol([SourceLanguage: String])
     }
     package enum Name {
         /// The name refers to an article, heading, or custom `@DisplayName` and should display as regular text.
@@ -72,7 +73,7 @@ package struct LinkedElement {
         /// This element is a symbol with different names in different languages.
         ///
         /// Because `@DisplayName` applies to all language representations, these language specific names are always the symbol's subheading declaration and should display in a monospaced font.
-        case languageSpecificSymbol([String /* Language ID */: [SymbolNameFragment]])
+        case languageSpecificSymbol([SourceLanguage: [SymbolNameFragment]])
     }
     package enum Subheading {
         /// The name refers to an article, heading, or custom `@DisplayName` and should display as regular text.

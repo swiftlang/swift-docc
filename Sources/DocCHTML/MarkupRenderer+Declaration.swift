@@ -14,21 +14,22 @@ package import Foundation
 package import FoundationXML
 #endif
 
+package import DocCCommon
 package import SymbolKit
 
 package extension MarkdownRenderer {
  
     typealias DeclarationFragment = SymbolGraph.Symbol.DeclarationFragments.Fragment
     
-    func declaration(_ fragmentsByLanguage: [String /* Language ID*/: [DeclarationFragment]]) -> XMLElement {
+    func declaration(_ fragmentsByLanguage: [SourceLanguage: [DeclarationFragment]]) -> XMLElement {
         let fragmentsByLanguage = RenderHelpers.sortedLanguageSpecificValues(fragmentsByLanguage)
         // Note: declarations scroll, so they don't need to word wrap within tokens
         
         let declarations: [XMLElement] = if fragmentsByLanguage.count == 1 {
             [XMLNode.element(named: "code", children: _declarationTokens(for: fragmentsByLanguage.first!.value))]
         } else {
-            fragmentsByLanguage.map { languageID, fragments in
-                XMLNode.element(named: "code", children: _declarationTokens(for: fragments), attributes: ["class": "\(languageID)-only"])
+            fragmentsByLanguage.map { language, fragments in
+                XMLNode.element(named: "code", children: _declarationTokens(for: fragments), attributes: ["class": "\(language.id)-only"])
             }
         }
         return .element(named: "pre", children: declarations, attributes: ["id": "declaration"])

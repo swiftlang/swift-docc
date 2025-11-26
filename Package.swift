@@ -139,6 +139,7 @@ let package = Package(
         .target(
             name: "DocCHTML",
             dependencies: [
+                .target(name: "DocCCommon"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],

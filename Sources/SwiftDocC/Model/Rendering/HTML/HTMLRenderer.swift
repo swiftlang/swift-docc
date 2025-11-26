@@ -37,9 +37,9 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
             
             if titles.contains(where: { _, title in title != primaryTitle }) {
                // This symbol has multiple unique names
-                let titles = [String: String](
+                let titles = [SourceLanguage: String](
                     titles.map { trait, title in
-                        ((trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift).id, title)
+                        ((trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift), title)
                     },
                     uniquingKeysWith: { _, new in new }
                 )
@@ -91,7 +91,7 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
                 // This symbol has multiple unique names
                 subheadings = .languageSpecificSymbol(.init(
                     allSubheadings.map { trait, subheading in (
-                        key:   (trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift).id,
+                        key:   (trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift),
                         value: convert(subheading)
                     )},
                     uniquingKeysWith: { _, new in new }
@@ -296,10 +296,10 @@ struct HTMLRenderer {
         if case .conceptual(title: let title) = node.name {
             names = .single(.conceptual(title))
         } else {
-            names = .languageSpecificSymbol([String: String](
+            names = .languageSpecificSymbol([SourceLanguage: String](
                 symbol.titleVariants.allValues.compactMap({ trait, title in
-                    guard let lang = trait.interfaceLanguage else { return nil }
-                    return (key: lang, value: title)
+                    guard let languageID = trait.interfaceLanguage else { return nil }
+                    return (key: SourceLanguage(id: languageID), value: title)
                 }),
                 uniquingKeysWith: { _, new in new }
             ))
@@ -380,10 +380,10 @@ struct HTMLRenderer {
         if !symbol.declarationVariants.allValues.isEmpty {
             // FIXME: Display platform specific declarations
             
-            var fragmentsByLanguageID = [String: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
+            var fragmentsByLanguageID = [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
             for (trait, variant) in symbol.declarationVariants.allValues {
                 guard let languageID = trait.interfaceLanguage else { continue }
-                fragmentsByLanguageID[languageID] = variant.values.first?.declarationFragments
+                fragmentsByLanguageID[SourceLanguage(id: languageID)] = variant.values.first?.declarationFragments
             }
             
             hero.addChild( renderer.declaration(fragmentsByLanguageID) )
@@ -439,14 +439,13 @@ struct HTMLRenderer {
             )
         }
         
-        
         // Parameters
         if !symbol.parametersSectionVariants.allValues.isEmpty {
             articleElement.addChild(
                 renderer.parameters(
                     .init(
                         symbol.parametersSectionVariants.allValues.map { trait, parameters in (
-                            key:   trait.interfaceLanguage ?? "swift",
+                            key:   trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift,
                             value: parameters.parameters.map {
                                 .init(name: $0.name, content: $0.contents)
                             }

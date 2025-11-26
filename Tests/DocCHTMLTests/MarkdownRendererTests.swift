@@ -558,11 +558,11 @@ struct MarkdownRendererTests {
         LinkedElement(
             path: URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")!,
             names: .languageSpecificSymbol([
-                SourceLanguage.swift.id : "doSomething(with:and:)",
-                SourceLanguage.objectiveC.id: "doSomethingWithFirst:andSecond:",
+                .swift:      "doSomething(with:and:)",
+                .objectiveC: "doSomethingWithFirst:andSecond:",
             ]),
             subheadings: .languageSpecificSymbol([ // Not relevant for inline links
-                SourceLanguage.swift.id: [
+                .swift: [
                     .init(text: "func ", kind: .decorator),
                     .init(text: "doSomething", kind: .identifier),
                     .init(text: "(", kind: .decorator),
@@ -571,7 +571,7 @@ struct MarkdownRendererTests {
                     .init(text: "and", kind: .identifier),
                     .init(text: ")", kind: .decorator),
                 ],
-                SourceLanguage.objectiveC.id: [
+                .objectiveC: [
                     .init(text: "doSomethingWithFirst", kind: .identifier),
                     .init(text: ":", kind: .decorator),
                     .init(text: "andSecond", kind: .identifier),

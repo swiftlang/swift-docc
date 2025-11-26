@@ -27,15 +27,15 @@ struct MarkdownRenderer_PageElementsTests {
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/Something/index.html")!,
                 names: .languageSpecificSymbol([
-                    "swift": "Something",
-                    "occ": "TLASomething",
+                    .swift:      "Something",
+                    .objectiveC: "TLASomething",
                 ]),
                 subheadings: .languageSpecificSymbol([
-                    "swift": [
+                    .swift: [
                         .init(text: "class ", kind: .decorator),
                         .init(text: "Something", kind: .identifier),
                     ],
-                    "occ": [
+                    .objectiveC: [
                         .init(text: "class ", kind: .decorator),
                         .init(text: "TLASomething", kind: .identifier),
                     ],
@@ -82,7 +82,7 @@ struct MarkdownRenderer_PageElementsTests {
     @Test
     func testRenderSingleLanguageParameters() {
         let parameters = makeRenderer().parameters([
-            "swift": [
+            .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
                 .init(name: "Second", content: parseMarkup(string: """
                 Some **other** _formatted_ description
@@ -122,12 +122,12 @@ struct MarkdownRenderer_PageElementsTests {
     @Test
     func testRenderLanguageSpecificParameters() {
         let parameters = makeRenderer().parameters([
-            "swift": [
+            .swift: [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
                 .init(name: "SwiftOnly", content: parseMarkup(string: "Only available in Swift")),
                 .init(name: "SecondCommon", content: parseMarkup(string: "Also available in both languages")),
             ],
-            "occ": [
+            .objectiveC: [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
                 .init(name: "SecondCommon", content: parseMarkup(string: "Also available in both languages")),
                 .init(name: "ObjectiveCOnly", content: parseMarkup(string: "Only available in Objective-C")),
@@ -171,13 +171,13 @@ struct MarkdownRenderer_PageElementsTests {
     @Test
     func testRenderManyLanguageSpecificParameters() {
         let parameters = makeRenderer().parameters([
-            "swift": [
+            .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some description")),
             ],
-            "occ": [
+            .objectiveC: [
                 .init(name: "Second", content: parseMarkup(string: "Some description")),
             ],
-            "data": [
+            .data: [
                 .init(name: "Third", content: parseMarkup(string: "Some description")),
             ],
         ])
@@ -223,7 +223,7 @@ struct MarkdownRenderer_PageElementsTests {
         ]
         
         let declaration = makeRenderer(pathsToReturn: symbolPaths).declaration([
-            "swift":  [
+            .swift:  [
                 .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
                 .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
                 .init(kind: .identifier,        spelling: "doSomething", preciseIdentifier: nil),
@@ -273,7 +273,7 @@ struct MarkdownRenderer_PageElementsTests {
         ]
         
         let declaration = makeRenderer(pathsToReturn: symbolPaths).declaration([
-            "swift":  [
+            .swift:  [
                 .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
                 .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
                 .init(kind: .identifier,        spelling: "doSomething", preciseIdentifier: nil),
@@ -295,7 +295,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
             ],
             
-            "occ":  [
+            .objectiveC:  [
                 .init(kind: .text,              spelling: "- (",         preciseIdentifier: nil),
                 .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
                 .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),

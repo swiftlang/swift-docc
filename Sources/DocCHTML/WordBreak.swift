@@ -14,6 +14,8 @@ package import Foundation
 package import FoundationXML
 #endif
 
+package import DocCCommon
+
 package enum RenderHelpers {
     /// Inserts `<wbr/>` elements into a symbol name so that it can wrap better on the rendered page.
     ///
@@ -55,17 +57,8 @@ package enum RenderHelpers {
     }
     
     /// Returns the language specific symbol names sorted by the language.
-    package static func sortedLanguageSpecificValues<Value>(_ valuesByLanguageID: [String /* language ID */: Value]) -> [(key: String, value: Value)] {
-        valuesByLanguageID.sorted(by: { lhs, rhs in
-            // Sort Swift before other languages.
-            if lhs.key == "swift" {
-                return true
-            } else if rhs.key == "swift" {
-                return false
-            }
-            // Otherwise, sort by ID for a stable order.
-            return lhs.key < rhs.key
-        })
+    package static func sortedLanguageSpecificValues<Value>(_ valuesByLanguageID: [SourceLanguage: Value]) -> [(key: SourceLanguage, value: Value)] {
+        valuesByLanguageID.sorted(by: { lhs, rhs in lhs.key < rhs.key })
     }
 }
 
