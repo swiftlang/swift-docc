@@ -353,6 +353,8 @@ struct MarkdownRenderer_PageElementsTests {
     private func makeRenderer(
         elementsToReturn: [LinkedElement] = [],
         pathsToReturn: [String: URL] = [:],
+        assetsToReturn: [String: LinkedAsset] = [:],
+        fallbackLinkTextsToReturn: [String: String] = [:]
     ) -> MarkdownRenderer<some LinkProvider> {
         let path = URL(string: "/documentation/ModuleName/Something/ThisPage/index.html")!
         
@@ -376,6 +378,8 @@ struct MarkdownRenderer_PageElementsTests {
             linkProvider: MultiValueLinkProvider(
                 elementsToReturn: elementsByURL,
                 pathsToReturn: pathsToReturn,
+                assetsToReturn: assetsToReturn,
+                fallbackLinkTextsToReturn: fallbackLinkTextsToReturn
             )
         )
     }
@@ -400,5 +404,10 @@ struct MultiValueLinkProvider: LinkProvider {
     var assetsToReturn: [String: LinkedAsset]
     func assetNamed(_ assetName: String) -> LinkedAsset? {
         assetsToReturn[assetName]
+    }
+    
+    var fallbackLinkTextsToReturn: [String: String]
+    func fallbackLinkText(linkString: String) -> String {
+        fallbackLinkTextsToReturn[linkString] ?? linkString
     }
 }

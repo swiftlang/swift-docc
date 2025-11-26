@@ -424,6 +424,29 @@ struct MarkdownRendererTests {
             <p><a href="../../SomeClass/someMethod(_:_:)/index.html">Some <code>Custom<wbr/>Symbol<wbr/>Name</code> title</a></p>
             """
         )
+        
+        // Unresolved documentation link with fallback link text
+        assert(
+            rendering: "<doc://com.example.test/documentation/Something/NotFound>", // Simulate a link that's unresolved
+            elementToReturn: nil,
+            fallbackLinkTextToReturn: "Some fallback link text",
+            prettyFormatted: true,
+            matches: """
+            <p>Some fallback link text</p>
+            """
+        )
+        // Unresolved _symbol_ link with fallback link text
+        assert(
+            rendering: "``ModuleName/NotFoundClass/someMethod(_:)-h1a2s3h``", // Simulate a symbol link that's unresolved
+            elementToReturn: nil,
+            fallbackLinkTextToReturn: "Some fallback link text",
+            prettyFormatted: true,
+            matches: """
+            <p>
+            <code>Some fallback link text</code>
+            </p>
+            """
+        )
     }
     
     @Test
@@ -512,6 +535,7 @@ struct MarkdownRendererTests {
         rendering markdownContent: String,
         elementToReturn: LinkedElement? = nil,
         assetToReturn: LinkedAsset? = nil,
+        fallbackLinkTextToReturn: String? = nil,
         prettyFormatted: Bool = false,
         matches expectedHTML: String,
         sourceLocation: Testing.SourceLocation = #_sourceLocation
@@ -520,10 +544,11 @@ struct MarkdownRendererTests {
             path: URL(string: "/documentation/Something/ThisPage/index.html")!,
             linkProvider: SingleValueLinkProvider(
                 elementToReturn: elementToReturn,
-                assetToReturn: assetToReturn
+                assetToReturn: assetToReturn,
+                fallbackLinkTextToReturn: fallbackLinkTextToReturn
             )
         )
-        let htmlNodes = Document(parsing: markdownContent).children.map { renderer.visit($0) }
+        let htmlNodes = Document(parsing: markdownContent, options: .parseSymbolLinks).children.map { renderer.visit($0) }
         let htmlString = htmlNodes.rendered(prettyFormatted: prettyFormatted)
         
         #expect(htmlString == expectedHTML, sourceLocation: sourceLocation)
@@ -591,5 +616,10 @@ struct SingleValueLinkProvider: LinkProvider {
     var assetToReturn: LinkedAsset?
     func assetNamed(_ assetName: String) -> LinkedAsset? {
         assetToReturn
+    }
+    
+    var fallbackLinkTextToReturn: String?
+    func fallbackLinkText(linkString: String) -> String {
+        fallbackLinkTextToReturn ?? linkString
     }
 }

@@ -21,6 +21,9 @@ package protocol LinkProvider {
     
     /// Provide information about an asset, or `nil` if the asset can't be found.
     func assetNamed(_ assetName: String) -> LinkedAsset?
+    
+    /// Fallback link text for a link string that the provider couldn't provide any information for.
+    func fallbackLinkText(linkString: String) -> String
 }
 
 package struct LinkedElement {

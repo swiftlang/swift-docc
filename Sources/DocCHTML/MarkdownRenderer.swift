@@ -176,10 +176,8 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 attributes: ["href": destination.absoluteString]
             )
         } else {
-            // FIXME: Add this to the protocol
-//            // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
-//            return .text(LinkCompletionTools.parse(linkString: destination.path).last?.name ?? "")
-            return .text(destination.path)
+            // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation
+            return .text(linkProvider.fallbackLinkText(linkString: destination.path))
         }
     }
     
@@ -187,11 +185,8 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         guard let destination = symbolLink.destination.flatMap({ URL(string: $0) }),
               let linkedElement = linkProvider.element(for: destination)
         else {
-            // FIXME: Add this to the protocol
-//            // If this is an unresolved symbol link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
-//            let name = symbolLink.destination.flatMap { LinkCompletionTools.parse(linkString: $0).last?.name } ?? ""
-//            return .element(named: "code", children: [.text(name)])
-            return .element(named: "code", children: [.text(symbolLink.destination ?? "")])
+            // If this is an unresolved symbol link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
+            return .element(named: "code", children: [.text(linkProvider.fallbackLinkText(linkString: symbolLink.destination ?? ""))])
         }
         
         let children: [XMLNode] = switch linkedElement.names {

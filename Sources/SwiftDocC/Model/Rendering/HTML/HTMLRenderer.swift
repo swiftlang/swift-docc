@@ -133,6 +133,11 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
         return .init(images: images)
     }
     
+    func fallbackLinkText(linkString: String) -> String {
+        // For unresolved links, especially to symbols, prefer to display only the the last link component without its disambiguation
+        PathHierarchy.PathParser.parse(path: linkString).components.last.map { String($0.name) } ?? linkString
+    }
+    
     static func filePath(for reference: ResolvedTopicReference) -> URL {
         reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html")
     }
