@@ -227,6 +227,9 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <header>
                     <nav id="breadcrumbs">
                         <ul>
+                            <li>
+                                <a href="../../index.html">ModuleName</a>
+                            </li>
                             <li>SomeClass</li>
                         </ul>
                     </nav>
@@ -283,6 +286,12 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <header>
                     <nav id="breadcrumbs">
                         <ul>
+                            <li>
+                                <a href="../../../index.html">ModuleName</a>
+                            </li>
+                            <li>
+                                <a href="../../index.html">SomeClass</a>
+                            </li>
                             <li>someMethod(with:and:)</li>
                         </ul>
                     </nav>
@@ -363,6 +372,9 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <header>
                         <nav id="breadcrumbs">
                             <ul>
+                                <li>
+                                    <a href="../../index.html">ModuleName</a>
+                                </li>
                                 <li>Some article</li>
                             </ul>
                         </nav>

@@ -194,7 +194,7 @@ struct HTMLRenderer {
         hero.addChild(
             .element(named: "header", children: [
                 renderer.breadcrumbs(
-                    references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { ContextLinkProvider.filePath(for: $0) },
+                    references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.url },
                     currentPageNames: .single(.conceptual(node.name.plainText))
                 ),
                 
@@ -307,7 +307,7 @@ struct HTMLRenderer {
         hero.addChild(
             .element(named: "header", children: [
                 renderer.breadcrumbs(
-                    references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { ContextLinkProvider.filePath(for: $0) },
+                    references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
                     currentPageNames: names
                 ),
                 
