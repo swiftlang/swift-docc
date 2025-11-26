@@ -28,42 +28,28 @@ package extension MarkdownRenderer {
         }
     }
     
-    func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> XMLNode {
+    func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> XMLElement {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
-        
-        // Add a heading that references the section before anything the actual parameter list
-        let header = switch goal {
-        case .quality:
-            XMLNode.element(named: "a", children: [.text("Parameters")], attributes: ["href": "#parameters"])
-        case .conciseness:
-            XMLNode.text("Parameters")
-        }
-        var items: [XMLElement] = [
-            .element(named: "h2", children: [header])
-        ]
-        
-        switch info.count {
+        let items: [XMLElement] = switch info.count {
         case 1:
-            items.append(
-                _singleLanguageParameters(info.first!.value) // Verified to exist above
-            )
+            [_singleLanguageParameters(info.first!.value)] // Verified to exist above
+            
         case 2:
-            items.append(
-                _dualLanguageParameters(primary: info.first!, secondary: info.last!) // Both verified to exist above
-            )
+            [_dualLanguageParameters(primary: info.first!, secondary: info.last!)] // Both verified to exist above
+            
         default:
             // In practice DocC only encounters one or two different languages. If there would be a third one,
             // produce correct looking pages that may include duplicated markup by not trying to share parameters across languages.
-            items.append(contentsOf: info.map { language, info in
+            info.map { language, info in
                 .element(
                     named: "dl",
                     children: _singleLanguageParameterItems(info),
                     attributes: ["class": "\(language.id)-only"]
                 )
-            })
+            }
         }
         
-        return .element(named: "section", children: items, attributes: goal == .quality ? ["id": "parameters"] : [:])
+        return selfReferencingSection(named: "Parameters", content: items)
     }
     
     private func _singleLanguageParameters(_ parameterInfo: [ParameterInfo]) -> XMLElement {

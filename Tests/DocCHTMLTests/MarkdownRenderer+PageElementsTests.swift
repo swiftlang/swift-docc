@@ -308,6 +308,60 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
+    func testRenderSingleLanguageReturnSections(goal: RenderGoal) {
+        let parameters = makeRenderer(goal: goal).returns([
+            .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
+        ])
+        let expectedHTMLStart = switch goal {
+        case .quality: """
+            <section id="return-value">
+            <h2>
+                <a href="#return-value">Return Value</a>
+            </h2>
+            """
+        case .conciseness: """
+            <section>
+            <h2>Return Value</h2>
+            """
+        }
+        
+        #expect(parameters.rendered(prettyFormatted: true) == """
+        \(expectedHTMLStart)
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        </section>
+        """)
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderLanguageSpecificReturnSections(goal: RenderGoal) {
+        let parameters = makeRenderer(goal: goal).returns([
+            .swift:      parseMarkup(string: "First paragraph\n\nSecond paragraph"),
+            .objectiveC: parseMarkup(string: "Other language's paragraph"),
+        ])
+        let expectedHTMLStart = switch goal {
+        case .quality: """
+            <section id="return-value">
+            <h2>
+                <a href="#return-value">Return Value</a>
+            </h2>
+            """
+        case .conciseness: """
+            <section>
+            <h2>Return Value</h2>
+            """
+        }
+        
+        #expect(parameters.rendered(prettyFormatted: true) == """
+        \(expectedHTMLStart)
+        <p class="swift-only">First paragraph</p>
+        <p class="swift-only">Second paragraph</p>
+        <p class="occ-only">Other language’s paragraph</p>
+        </section>
+        """)
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
     func testRenderLanguageSpecificDeclarations(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,

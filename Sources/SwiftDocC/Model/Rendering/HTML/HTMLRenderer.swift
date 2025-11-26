@@ -423,6 +423,19 @@ struct HTMLRenderer {
         }
         
         // Return value
+        if !symbol.returnsSectionVariants.allValues.isEmpty {
+            articleElement.addChild(
+                renderer.returns(
+                    .init(
+                        symbol.returnsSectionVariants.allValues.map { trait, returnSection in (
+                            key:   trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift,
+                            value: returnSection.content
+                        )},
+                        uniquingKeysWith: { _, new in new }
+                    )
+                )
+            )
+        }
         if let returnsSection = symbol.returnsSection {
             let section = XMLElement(name: "section")
             section.addAttribute(
