@@ -11,7 +11,10 @@
 package import Foundation
 package import Markdown
 
-package struct MarkupRenderer<Provider: LinkProvider> {
+/// An HTML renderer for DocC markdown content.
+///
+/// Markdown elements that have different meaning depending on where they occur in the page structure (for example links in prose vs. links in topic sections) should be handled at a layer above this plain markdown renderer.
+package struct MarkdownRenderer<Provider: LinkProvider> {
     /// The path within the output archive to the page that this renderer renders.
     let path: URL
     /// A type that provides information about other pages that the rendered page references.

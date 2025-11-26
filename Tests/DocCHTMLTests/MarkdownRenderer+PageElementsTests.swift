@@ -14,7 +14,7 @@ import DocCHTML
 @testable import SwiftDocC
 import Markdown
 
-struct MarkupRenderer_PageElementsTests {
+struct MarkdownRenderer_PageElementsTests {
     @Test
     func testRenderBreadcrumbs() {
         let elements = [
@@ -353,8 +353,7 @@ struct MarkupRenderer_PageElementsTests {
     private func makeRenderer(
         elementsToReturn: [LinkedElement] = [],
         pathsToReturn: [String: URL] = [:],
-        assetsToReturn: [String: LinkedAsset] = [:]
-    ) -> MarkupRenderer<some LinkProvider> {
+    ) -> MarkdownRenderer<some LinkProvider> {
         let path = URL(string: "/documentation/ModuleName/Something/ThisPage/index.html")!
         
         var elementsByURL = [
@@ -372,12 +371,11 @@ struct MarkupRenderer_PageElementsTests {
             elementsByURL[element.path] = element
         }
         
-        return MarkupRenderer(
+        return MarkdownRenderer(
             path: path,
             linkProvider: MultiValueLinkProvider(
                 elementsToReturn: elementsByURL,
                 pathsToReturn: pathsToReturn,
-                assetsToReturn: assetsToReturn
             )
         )
     }

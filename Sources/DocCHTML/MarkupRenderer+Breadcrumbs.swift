@@ -14,7 +14,7 @@ package import Foundation
 package import FoundationXML
 #endif
 
-package extension MarkupRenderer {
+package extension MarkdownRenderer {
     /// Creates an HTML element for the breadcrumbs leading up to the renderer's reference.
     func breadcrumbs(references: [URL], currentPageNames: LinkedElement.Names) -> XMLNode {
         // Breadcrumbs handle symbols differently than most elements, so there's no point in sharing _this_ code

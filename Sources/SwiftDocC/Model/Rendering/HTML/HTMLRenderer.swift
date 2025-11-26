@@ -146,7 +146,7 @@ struct HTMLRenderer {
     private let linkProvider: ContextLinkProvider
     private let filePath: URL
     
-    private let renderer: MarkupRenderer<ContextLinkProvider>
+    private let renderer: MarkdownRenderer<ContextLinkProvider>
     
     init(reference: ResolvedTopicReference, context: DocumentationContext, renderContext: RenderContext) {
         self.reference = reference
@@ -156,7 +156,7 @@ struct HTMLRenderer {
         self.linkProvider = linkProvider
         let filePath = ContextLinkProvider.filePath(for: reference)
         self.filePath = filePath
-        self.renderer = MarkupRenderer(path: filePath, linkProvider: linkProvider)
+        self.renderer = MarkdownRenderer(path: filePath, linkProvider: linkProvider)
     }
     
     private func path(to destination: ResolvedTopicReference) -> String {

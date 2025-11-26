@@ -16,7 +16,7 @@ package import FoundationXML
 
 package import SymbolKit
 
-package extension MarkupRenderer {
+package extension MarkdownRenderer {
  
     typealias DeclarationFragment = SymbolGraph.Symbol.DeclarationFragments.Fragment
     

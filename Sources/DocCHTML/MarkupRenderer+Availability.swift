@@ -14,7 +14,7 @@ package import Foundation
 package import FoundationXML
 #endif
 
-package extension MarkupRenderer {
+package extension MarkdownRenderer {
     struct AvailabilityInfo {
         package var name: String
         package var introduced, deprecated: String?

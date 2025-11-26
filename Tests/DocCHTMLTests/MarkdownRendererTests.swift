@@ -14,7 +14,7 @@ import DocCHTML
 @testable import SwiftDocC
 import Markdown
 
-struct MarkupRendererTests {
+struct MarkdownRendererTests {
     @Test
     func testRenderParagraphsWithFormattedText() {
         assert(
@@ -516,7 +516,7 @@ struct MarkupRendererTests {
         matches expectedHTML: String,
         sourceLocation: Testing.SourceLocation = #_sourceLocation
     ) {
-        let renderer = MarkupRenderer(
+        let renderer = MarkdownRenderer(
             path: URL(string: "/documentation/Something/ThisPage/index.html")!,
             linkProvider: SingleValueLinkProvider(
                 elementToReturn: elementToReturn,

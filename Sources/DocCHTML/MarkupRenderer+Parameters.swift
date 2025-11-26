@@ -16,7 +16,7 @@ package import FoundationXML
 
 package import Markdown
 
-package extension MarkupRenderer {
+package extension MarkdownRenderer {
     struct ParameterInfo {
         package var name: String
         package var content: [any Markup]
