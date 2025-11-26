@@ -15,8 +15,8 @@ import DocCHTML
 import Markdown
 
 struct MarkdownRenderer_PageElementsTests {
-    @Test
-    func testRenderBreadcrumbs() {
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderBreadcrumbs(goal: RenderGoal) {
         let elements = [
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/index.html")!,
@@ -43,45 +43,70 @@ struct MarkdownRenderer_PageElementsTests {
                 abstract: nil
             ),
         ]
-        let breadcrumbs = makeRenderer(elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path }, currentPageNames: .single(.conceptual("ThisPage")))
-        
-        #expect(breadcrumbs.rendered(prettyFormatted: true) == """
-        <nav id="breadcrumbs">
-        <ul>
+        let breadcrumbs = makeRenderer(goal: goal, elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path }, currentPageNames: .single(.conceptual("ThisPage")))
+        switch goal {
+        case .quality:
+            #expect(breadcrumbs.rendered(prettyFormatted: true) == """
+            <nav id="breadcrumbs">
+            <ul>
+                <li>
+                    <a href="../../../index.html">ModuleName</a>
+                </li>
+                <li>
+                    <a href="../../index.html">
+                        <span class="swift-only">Something</span>
+                        <span class="occ-only">TLASomething</span>
+                    </a>
+                </li>
+                <li>ThisPage</li>
+            </ul>
+            </nav>
+            """)
+        case .conciseness:
+            #expect(breadcrumbs.rendered(prettyFormatted: true) == """
+            <ul>
             <li>
                 <a href="../../../index.html">ModuleName</a>
             </li>
             <li>
-                <a href="../../index.html">
-                    <span class="swift-only">Something</span>
-                    <span class="occ-only">TLASomething</span>
-                </a>
+                <a href="../../index.html">Something</a>
             </li>
             <li>ThisPage</li>
-        </ul>
-        </nav>
-        """)
+            </ul>
+            """)
+        }
     }
     
-    @Test
-    func testRenderAvailability() {
-        let availability = makeRenderer().availability([
-            .init(name: "First", introduced: "1.2", deprecated: "3.4", isBeta: false),
-            .init(name: "Second", introduced: "1.2.3", isBeta: false),
-            .init(name: "Third", introduced: "4.5", isBeta: true),
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderAvailability(goal: RenderGoal) {
+        let availability = makeRenderer(goal: goal).availability([
+            .init(name: "First",  introduced: "1.2", deprecated: "3.4", isBeta: false),
+            .init(name: "Second", introduced: "1.2.3",                  isBeta: false),
+            .init(name: "Third",  introduced: "4.5",                    isBeta: true),
         ])
-        #expect(availability.rendered(prettyFormatted: true) == """
-        <ul id="availability">
-        <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" role="text" title="Introduced in First 1.2 and deprecated in First 3.4">First 1.2–3.4</li>
-        <li aria-label="Second 1.2.3+, Available on 1.2.3 and later" role="text" title="Available on 1.2.3 and later">Second 1.2.3+</li>
-        <li aria-label="Third 4.5+, Available on 4.5 and later" class="beta" role="text" title="Available on 4.5 and later">Third 4.5+</li>
-        </ul>
-        """)
+        switch goal {
+        case .quality:
+            #expect(availability.rendered(prettyFormatted: true) == """
+            <ul id="availability">
+            <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" role="text" title="Introduced in First 1.2 and deprecated in First 3.4">First 1.2–3.4</li>
+            <li aria-label="Second 1.2.3+, Available on 1.2.3 and later" role="text" title="Available on 1.2.3 and later">Second 1.2.3+</li>
+            <li aria-label="Third 4.5+, Available on 4.5 and later" class="beta" role="text" title="Available on 4.5 and later">Third 4.5+</li>
+            </ul>
+            """)
+        case .conciseness:
+            #expect(availability.rendered(prettyFormatted: true) == """
+            <ul id="availability">
+            <li>First 1.2–3.4</li>
+            <li>Second 1.2.3+</li>
+            <li>Third 4.5+</li>
+            </ul>
+            """)
+        }
     }
     
-    @Test
-    func testRenderSingleLanguageParameters() {
-        let parameters = makeRenderer().parameters([
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderSingleLanguageParameters(goal: RenderGoal) {
+        let parameters = makeRenderer(goal: goal).parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
                 .init(name: "Second", content: parseMarkup(string: """
@@ -91,11 +116,21 @@ struct MarkdownRenderer_PageElementsTests {
                 """)),
             ]
         ])
+        let expectedHTMLStart = switch goal {
+        case .quality: """
+            <section id="parameters">
+            <h2>
+                <a href="#parameters">Parameters</a>
+            </h2>
+            """
+        case .conciseness: """
+            <section>
+            <h2>Parameters</h2>
+            """
+        }
+        
         #expect(parameters.rendered(prettyFormatted: true) == """
-        <section id="parameters">
-        <h2>
-            <a href="#parameters">Parameters</a>
-        </h2>
+        \(expectedHTMLStart)
         <dl>
             <dt>
                 <code>First</code>
@@ -121,7 +156,7 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test
     func testRenderLanguageSpecificParameters() {
-        let parameters = makeRenderer().parameters([
+        let parameters = makeRenderer(goal: .quality).parameters([
             .swift: [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
                 .init(name: "SwiftOnly", content: parseMarkup(string: "Only available in Swift")),
@@ -170,7 +205,7 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test
     func testRenderManyLanguageSpecificParameters() {
-        let parameters = makeRenderer().parameters([
+        let parameters = makeRenderer(goal: .quality).parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some description")),
             ],
@@ -214,15 +249,15 @@ struct MarkdownRenderer_PageElementsTests {
         """)
     }
     
-    @Test
-    func testRenderSwiftDeclaration() {
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderSwiftDeclaration(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
             "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
         ]
         
-        let declaration = makeRenderer(pathsToReturn: symbolPaths).declaration([
+        let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
             .swift:  [
                 .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
                 .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
@@ -245,26 +280,35 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
             ]
         ])
-        #expect(declaration.rendered(prettyFormatted: true) == """
-        <pre id="declaration">
-        <code>
-            <span class="token-keyword">func</span>
-             <span class="token-identifier">doSomething</span>
-            (<span class="token-externalParam">with</span>
-             <span class="token-internalParam">first</span>
-            : <a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
-            , <span class="token-externalParam">and</span>
-             <span class="token-internalParam">second</span>
-            : <a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
-            ) <span class="token-keyword">throws</span>
-            -&gt; <a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
-        </code>
-        </pre>
-        """)
+        switch goal {
+        case .quality:
+            #expect(declaration.rendered(prettyFormatted: true) == """
+            <pre id="declaration">
+            <code>
+                <span class="token-keyword">func</span>
+                 <span class="token-identifier">doSomething</span>
+                (<span class="token-externalParam">with</span>
+                 <span class="token-internalParam">first</span>
+                : <a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
+                , <span class="token-externalParam">and</span>
+                 <span class="token-internalParam">second</span>
+                : <a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
+                ) <span class="token-keyword">throws</span>
+                -&gt; <a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
+            </code>
+            </pre>
+            """)
+        case .conciseness:
+            #expect(declaration.rendered(prettyFormatted: true) == """
+            <pre id="declaration">
+            <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
+            </pre>
+            """)
+        }
     }
     
-    @Test
-    func testRenderLanguageSpecificDeclarations() {
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderLanguageSpecificDeclarations(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
@@ -272,7 +316,7 @@ struct MarkdownRenderer_PageElementsTests {
             "error-parameter-symbol-id":  URL(string: "/documentation/Foundation/NSError/index.html")!,
         ]
         
-        let declaration = makeRenderer(pathsToReturn: symbolPaths).declaration([
+        let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
             .swift:  [
                 .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
                 .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
@@ -319,38 +363,49 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(kind: .text,              spelling: ";",           preciseIdentifier: nil),
             ]
         ])
-        #expect(declaration.rendered(prettyFormatted: true) == """
-        <pre id="declaration">
-        <code class="swift-only">
-            <span class="token-keyword">func</span>
-             <span class="token-identifier">doSomething</span>
-            (<span class="token-externalParam">with</span>
-             <span class="token-internalParam">first</span>
-            : <a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
-            , <span class="token-externalParam">and</span>
-             <span class="token-internalParam">second</span>
-            : <a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
-            ) <span class="token-keyword">throws</span>
-            -&gt; <a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
-        </code>
-        <code class="occ-only">- (<a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
-            ) <span class="token-identifier">doSomethingWithFirst</span>
-            : (<a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
-            ) <span class="token-internalParam">first</span>
-             <span class="token-identifier">andSecond</span>
-            : (<a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
-            ) <span class="token-internalParam">second</span>
-             <span class="token-identifier">error</span>
-            : (<a class="token-typeIdentifier" href="../../../../Foundation/NSError/index.html">NSError</a>
-             **) <span class="token-internalParam">error</span>
-            ;</code>
-        </pre>
-        """)
+        switch goal {
+        case .quality:
+            #expect(declaration.rendered(prettyFormatted: true) == """
+            <pre id="declaration">
+            <code class="swift-only">
+                <span class="token-keyword">func</span>
+                 <span class="token-identifier">doSomething</span>
+                (<span class="token-externalParam">with</span>
+                 <span class="token-internalParam">first</span>
+                : <a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
+                , <span class="token-externalParam">and</span>
+                 <span class="token-internalParam">second</span>
+                : <a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
+                ) <span class="token-keyword">throws</span>
+                -&gt; <a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
+            </code>
+            <code class="occ-only">- (<a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
+                ) <span class="token-identifier">doSomethingWithFirst</span>
+                : (<a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
+                ) <span class="token-internalParam">first</span>
+                 <span class="token-identifier">andSecond</span>
+                : (<a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
+                ) <span class="token-internalParam">second</span>
+                 <span class="token-identifier">error</span>
+                : (<a class="token-typeIdentifier" href="../../../../Foundation/NSError/index.html">NSError</a>
+                 **) <span class="token-internalParam">error</span>
+                ;</code>
+            </pre>
+            """)
+            
+        case .conciseness:
+            #expect(declaration.rendered(prettyFormatted: true) == """
+            <pre id="declaration">
+            <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
+            </pre>
+            """)
+        }
     }
     
     // MARK: -
     
     private func makeRenderer(
+        goal: RenderGoal,
         elementsToReturn: [LinkedElement] = [],
         pathsToReturn: [String: URL] = [:],
         assetsToReturn: [String: LinkedAsset] = [:],
@@ -373,15 +428,12 @@ struct MarkdownRenderer_PageElementsTests {
             elementsByURL[element.path] = element
         }
         
-        return MarkdownRenderer(
-            path: path,
-            linkProvider: MultiValueLinkProvider(
-                elementsToReturn: elementsByURL,
-                pathsToReturn: pathsToReturn,
-                assetsToReturn: assetsToReturn,
-                fallbackLinkTextsToReturn: fallbackLinkTextsToReturn
-            )
-        )
+        return MarkdownRenderer(path: path, goal: goal, linkProvider: MultiValueLinkProvider(
+            elementsToReturn: elementsByURL,
+            pathsToReturn: pathsToReturn,
+            assetsToReturn: assetsToReturn,
+            fallbackLinkTextsToReturn: fallbackLinkTextsToReturn
+        ))
     }
     
     private func parseMarkup(string: String) -> [any Markup] {
@@ -409,5 +461,11 @@ struct MultiValueLinkProvider: LinkProvider {
     var fallbackLinkTextsToReturn: [String: String]
     func fallbackLinkText(linkString: String) -> String {
         fallbackLinkTextsToReturn[linkString] ?? linkString
+    }
+}
+
+extension RenderGoal: CaseIterable {
+    package static var allCases: [RenderGoal] {
+        [.quality, .conciseness]
     }
 }

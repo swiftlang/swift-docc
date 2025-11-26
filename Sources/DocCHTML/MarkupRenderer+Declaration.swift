@@ -23,6 +23,15 @@ package extension MarkdownRenderer {
     
     func declaration(_ fragmentsByLanguage: [SourceLanguage: [DeclarationFragment]]) -> XMLElement {
         let fragmentsByLanguage = RenderHelpers.sortedLanguageSpecificValues(fragmentsByLanguage)
+        
+        guard goal == .quality else {
+            // If the goal is conciseness, display only the primary language's plain text declaration in a <code> block
+            let plainTextDeclaration: [XMLNode] = fragmentsByLanguage.first.map { _, fragments in
+                [.element(named: "code", children: [.text(fragments.map(\.spelling).joined())])]
+            } ?? []
+            return .element(named: "pre", children: plainTextDeclaration, attributes: ["id": "declaration"])
+        }
+        
         // Note: declarations scroll, so they don't need to word wrap within tokens
         
         let declarations: [XMLElement] = if fragmentsByLanguage.count == 1 {

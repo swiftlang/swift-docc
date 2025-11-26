@@ -32,10 +32,14 @@ package extension MarkdownRenderer {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
         
         // Add a heading that references the section before anything the actual parameter list
+        let header = switch goal {
+        case .quality:
+            XMLNode.element(named: "a", children: [.text("Parameters")], attributes: ["href": "#parameters"])
+        case .conciseness:
+            XMLNode.text("Parameters")
+        }
         var items: [XMLElement] = [
-            .element(named: "h2", children: [
-                .element(named: "a", children: [.text("Parameters")], attributes: ["href": "#parameters"])
-            ])
+            .element(named: "h2", children: [header])
         ]
         
         switch info.count {
@@ -59,7 +63,7 @@ package extension MarkdownRenderer {
             })
         }
         
-        return .element(named: "section", children: items, attributes: ["id": "parameters"])
+        return .element(named: "section", children: items, attributes: goal == .quality ? ["id": "parameters"] : [:])
     }
     
     private func _singleLanguageParameters(_ parameterInfo: [ParameterInfo]) -> XMLElement {

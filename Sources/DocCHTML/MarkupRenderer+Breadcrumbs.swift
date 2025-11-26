@@ -22,13 +22,22 @@ package extension MarkdownRenderer {
             switch names {
             // Breadcrumbs display both symbolic names and conceptual in a default style
             case .single(.conceptual(let name)), .single(.symbol(let name)):
-                [.text(name)]
+                return [.text(name)]
                 
             case .languageSpecificSymbol(let namesByLanguageID):
-                RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
-                    .element(named: "span", children: [
-                        .text(name) // Breadcrumbs display symbol names in a default style (no "code voice")
-                    ], attributes: ["class": "\(language.id)-only"])
+                let names = RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID)
+                return switch goal {
+                case .quality:
+                    names.map { language, name in
+                        .element(named: "span", children: [
+                            .text(name) // Breadcrumbs display symbol names in a default style (no "code voice")
+                        ], attributes: ["class": "\(language.id)-only"])
+                    }
+                case .conciseness:
+                    // If the goal is conciseness, only display the primary language's name
+                    names.first.map { _, name in
+                        [.text(name)]
+                    } ?? []
                 }
             }
         }
@@ -45,11 +54,13 @@ package extension MarkdownRenderer {
         items.append(
             .element(named: "li", children: nameElements(for: currentPageNames))
         )
+        let list = XMLNode.element(named: "ul", children: items)
         
-        return .element(
-            named: "nav",
-            children: [.element(named: "ul", children: items)],
-            attributes: ["id": "breadcrumbs"]
-        )
+        return switch goal {
+        case .conciseness:
+            list
+        case .quality:
+            .element(named: "nav", children: [list], attributes: ["id": "breadcrumbs"])
+        }
     }
 }

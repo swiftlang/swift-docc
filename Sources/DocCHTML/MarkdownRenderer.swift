@@ -11,17 +11,30 @@
 package import Foundation
 package import Markdown
 
+/// The primary goal for the rendered HTML output.
+package enum RenderGoal {
+    /// The rendered output should prioritize quality, optimizing for human consumption.
+    ///
+    /// The rendered output might include explicit work-breaks, syntax highlighted code, etc.
+    case quality
+    /// The minimalistic rendered output should prioritize conciseness, optimizing for consumption by machines such as SEO indexers or LLMs.
+    case conciseness
+}
+
 /// An HTML renderer for DocC markdown content.
 ///
 /// Markdown elements that have different meaning depending on where they occur in the page structure (for example links in prose vs. links in topic sections) should be handled at a layer above this plain markdown renderer.
 package struct MarkdownRenderer<Provider: LinkProvider> {
     /// The path within the output archive to the page that this renderer renders.
     let path: URL
+    /// The goal of the rendered HTML output.
+    let goal: RenderGoal
     /// A type that provides information about other pages that the rendered page references.
     let linkProvider: Provider
     
-    package init(path: URL, linkProvider: Provider) {
+    package init(path: URL, goal: RenderGoal, linkProvider: Provider) {
         self.path = path
+        self.goal = goal
         self.linkProvider = linkProvider
     }
     

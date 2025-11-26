@@ -146,20 +146,22 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
 struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
+    let goal: RenderGoal
     
     private let linkProvider: ContextLinkProvider
     private let filePath: URL
     
     private let renderer: MarkdownRenderer<ContextLinkProvider>
     
-    init(reference: ResolvedTopicReference, context: DocumentationContext) {
+    init(reference: ResolvedTopicReference, context: DocumentationContext, goal: RenderGoal) {
         self.reference = reference
         self.context = context
+        self.goal = goal
         let linkProvider = ContextLinkProvider(reference: reference, context: context)
         self.linkProvider = linkProvider
         let filePath = ContextLinkProvider.filePath(for: reference)
         self.filePath = filePath
-        self.renderer = MarkdownRenderer(path: filePath, linkProvider: linkProvider)
+        self.renderer = MarkdownRenderer(path: filePath, goal: goal, linkProvider: linkProvider)
     }
     
     private func path(to destination: ResolvedTopicReference) -> String {
@@ -210,11 +212,7 @@ struct HTMLRenderer {
         
         // Title
         hero.addChild(
-            .element(
-                named: "h1",
-                children: [.text(node.name.plainText)],
-                attributes: ["class": "title"]
-            )
+            .element(named: "h1", children: [.text(node.name.plainText)])
         )
         
         // Abstract
@@ -235,7 +233,7 @@ struct HTMLRenderer {
         var hasMadeSeparatedCuration = false
         
         func separateCurationIfNeeded() {
-            guard !hasMadeSeparatedCuration else {
+            guard !hasMadeSeparatedCuration, goal == .quality else {
                 return
             }
             

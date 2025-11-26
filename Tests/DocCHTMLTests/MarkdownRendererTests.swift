@@ -542,6 +542,7 @@ struct MarkdownRendererTests {
     ) {
         let renderer = MarkdownRenderer(
             path: URL(string: "/documentation/Something/ThisPage/index.html")!,
+            goal: .quality,
             linkProvider: SingleValueLinkProvider(
                 elementToReturn: elementToReturn,
                 assetToReturn: assetToReturn,
