@@ -177,9 +177,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <header>
                         <nav id="breadcrumbs">
                             <ul>
-                                <li>
-                                    <span class="swift-only">ModuleName</span>
-                                </li>
+                                <li>ModuleName</li>
                             </ul>
                         </nav>
                         <span class="eyebrow">Framework</span>
@@ -229,9 +227,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <header>
                     <nav id="breadcrumbs">
                         <ul>
-                            <li>
-                                <span class="swift-only">SomeClass</span>
-                            </li>
+                            <li>SomeClass</li>
                         </ul>
                     </nav>
                     <span class="eyebrow">Class</span>
@@ -287,9 +283,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <header>
                     <nav id="breadcrumbs">
                         <ul>
-                            <li>
-                                <span class="swift-only">someMethod(with:and:)</span>
-                            </li>
+                            <li>someMethod(with:and:)</li>
                         </ul>
                     </nav>
                     <span class="eyebrow">Instance Method</span>

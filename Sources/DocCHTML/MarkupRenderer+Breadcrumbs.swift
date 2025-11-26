@@ -28,10 +28,14 @@ package extension MarkdownRenderer {
                 let names = RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID)
                 return switch goal {
                 case .quality:
-                    names.map { language, name in
-                        .element(named: "span", children: [
-                            .text(name) // Breadcrumbs display symbol names in a default style (no "code voice")
-                        ], attributes: ["class": "\(language.id)-only"])
+                    if names.count == 1 {
+                        [.text(names.first!.value)]
+                    } else {
+                        names.map { language, name in
+                                .element(named: "span", children: [
+                                    .text(name) // Breadcrumbs display symbol names in a default style (no "code voice")
+                                ], attributes: ["class": "\(language.id)-only"])
+                        }
                     }
                 case .conciseness:
                     // If the goal is conciseness, only display the primary language's name
