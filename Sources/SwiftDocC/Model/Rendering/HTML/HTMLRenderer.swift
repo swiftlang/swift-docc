@@ -164,8 +164,16 @@ struct HTMLRenderer {
             ?? destination.path) + "/index.html"
     }
     
+    struct RenderedPageInfo {
+        var content: XMLNode
+        var metadata: Metadata
+        struct Metadata {
+            var title: String
+            var plainDescription: String?
+        }
+    }
     
-    mutating func renderArticle(_ article: Article) -> XMLNode {
+    mutating func renderArticle(_ article: Article) -> RenderedPageInfo {
         let node = context.documentationCache[reference]!
         
         let main = XMLElement(name: "main")
@@ -276,10 +284,16 @@ struct HTMLRenderer {
             articleElement.addChild(section)
         }
         
-        return makePage(main: main, title: article.title?.plainText ?? node.name.plainText, plainDescription: article.abstract?.plainText)
+        return RenderedPageInfo(
+            content: main,
+            metadata: .init(
+                title: article.title?.plainText ?? node.name.plainText,
+                plainDescription: article.abstract?.plainText
+            )
+        )
     }
     
-    mutating func renderSymbol(_ symbol: Symbol) -> XMLNode {
+    mutating func renderSymbol(_ symbol: Symbol) -> RenderedPageInfo {
         let node = context.documentationCache[reference]!
         
         let isDeprecated = symbol.isDeprecated
@@ -579,7 +593,13 @@ struct HTMLRenderer {
             articleElement.addChild(section)
         }
         
-        return makePage(main: main, title: symbol.title, plainDescription: symbol.abstract?.plainText)
+        return RenderedPageInfo(
+            content: main,
+            metadata: .init(
+                title: symbol.title,
+                plainDescription: symbol.abstract?.plainText
+            )
+        )
     }
     
     private func makeDiscussion(_ discussion: DiscussionSection, isSymbol: Bool) -> XMLNode {
@@ -726,6 +746,7 @@ struct HTMLRenderer {
         return nil
     }
     
+    // FIXME: There's currently nothing calling this. Instead, the 2 `render...` methods return a `RenderedPageInfo` value.
     private func makePage(main: XMLNode, title: String, plainDescription: String?) -> XMLNode {
         let head = XMLElement(name: "head")
         head.setChildren([

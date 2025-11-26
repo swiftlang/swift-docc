@@ -26,6 +26,7 @@ package enum ConvertActionConverter {
     /// - Parameters:
     ///   - context: The context that the bundle is a part of.
     ///   - outputConsumer: The consumer that the conversion passes outputs of the conversion to.
+    ///   - htmlContentConsumer: The consumer for HTML content that the conversion produces, or `nil` if the conversion shouldn't produce any HTML content.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - emitDigest: Whether the conversion should pass additional metadata output––such as linkable entities information, indexing information, or asset references by asset type––to the consumer.
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
@@ -33,6 +34,7 @@ package enum ConvertActionConverter {
     package static func convert(
         context: DocumentationContext,
         outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
+        htmlContentConsumer: (any HTMLContentConsumer)?,
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
@@ -103,25 +105,26 @@ package enum ConvertActionConverter {
 
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
-        var conversionProblems: [Problem] = context.knownPages.concurrentPerform { identifier, results in
+        var conversionProblems: [Problem] = context.knownPages.concurrentPerform { [htmlContentConsumer] identifier, results in
             // If cancelled skip all concurrent conversion work in this block.
             guard !Task.isCancelled else { return }
             
             // Wrap JSON encoding in an autorelease pool to avoid retaining the autoreleased ObjC objects returned by `JSONSerialization`
             autoreleasepool {
                 do {
-                    // FIXME: This needs a feature flag instead of being hard-coded like this
-                    var renderer = HTMLRenderer(reference: identifier, context: context, renderContext: renderContext)
-                    
                     let entity = try context.entity(with: identifier)
-                    if let symbol = entity.semantic as? Symbol {
-                        let html = renderer.renderSymbol(symbol)
-                        try outputConsumer.consume(page: html, for: identifier)
-                    } else if let article = entity.semantic as? Article {
-                        let html = renderer.renderArticle(article)
-                        try outputConsumer.consume(page: html, for: identifier)
+                    
+                    if let htmlContentConsumer {
+                        var renderer = HTMLRenderer(reference: identifier, context: context, renderContext: renderContext)
+                        
+                        if let symbol = entity.semantic as? Symbol {
+                            let renderedPageInfo = renderer.renderSymbol(symbol)
+                            try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                        } else if let article = entity.semantic as? Article {
+                            let renderedPageInfo = renderer.renderArticle(article)
+                            try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                        }
                     }
-                    return
                     
                     guard let renderNode = converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
@@ -256,5 +259,18 @@ package enum ConvertActionConverter {
         benchmark(add: Benchmark.PeakMemory())
         
         return conversionProblems
+    }
+}
+
+private extension HTMLContentConsumer {
+    func consume(pageInfo: HTMLRenderer.RenderedPageInfo, forPage reference: ResolvedTopicReference) throws {
+        try consume(
+            mainContent: pageInfo.content,
+            metadata: (
+                title: pageInfo.metadata.title,
+                description: pageInfo.metadata.plainDescription
+            ),
+            forPage: reference
+        )
     }
 }

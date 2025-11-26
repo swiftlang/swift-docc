@@ -23,9 +23,6 @@ public protocol ConvertOutputConsumer {
     /// > Warning: This method might be called concurrently.
     func consume(renderNode: RenderNode) throws
     
-    // FIXME: I don't know if the same consumer should handle both kinds of output
-    func consume(page: XMLNode, for reference: ResolvedTopicReference) throws
-    
     /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
     func consume(assetsInBundle bundle: DocumentationBundle) throws
     

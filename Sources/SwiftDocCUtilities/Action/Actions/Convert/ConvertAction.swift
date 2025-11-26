@@ -30,6 +30,7 @@ public struct ConvertAction: AsyncAction {
     let diagnosticEngine: DiagnosticEngine
 
     private let transformForStaticHosting: Bool
+    private let includeContentInEachHTMLFile: Bool
     private let hostingBasePath: String?
     
     let sourceRepository: SourceRepository?
@@ -64,6 +65,7 @@ public struct ConvertAction: AsyncAction {
     ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
     ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
     ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
+    ///   - includeContentInEachHTMLFile: `true` if the convert action should process each static hosting HTML file so that it contains documentation content for environments without JavaScript enabled, otherwise `false`.
     ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation bundle if it doesn't discover another bundle, otherwise `false`.
     ///   - hostingBasePath: The base path where the built documentation archive will be hosted at.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
@@ -91,6 +93,7 @@ public struct ConvertAction: AsyncAction {
         experimentalEnableCustomTemplates: Bool = false,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool = false,
+        includeContentInEachHTMLFile: Bool = false,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
         sourceRepository: SourceRepository? = nil,
@@ -105,6 +108,7 @@ public struct ConvertAction: AsyncAction {
         self.temporaryDirectory = temporaryDirectory
         self.documentationCoverageOptions = documentationCoverageOptions
         self.transformForStaticHosting = transformForStaticHosting
+        self.includeContentInEachHTMLFile = includeContentInEachHTMLFile
         self.hostingBasePath = hostingBasePath
         self.sourceRepository = sourceRepository
         
@@ -248,7 +252,7 @@ public struct ConvertAction: AsyncAction {
 //        }
 
         let indexHTML: URL?
-        if let htmlTemplateDirectory {
+        if let htmlTemplateDirectory, transformForStaticHosting, !includeContentInEachHTMLFile {
             let indexHTMLUrl = temporaryFolder.appendingPathComponent(
                 HTMLTemplate.indexFileName.rawValue,
                 isDirectory: false
@@ -299,9 +303,16 @@ public struct ConvertAction: AsyncAction {
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
-            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
+            transformForStaticHostingIndexHTML: indexHTML,
             bundleID: inputs.id
         )
+        
+        let htmlConsumer: FileWritingHTMLContentConsumer?
+        if includeContentInEachHTMLFile, let indexHTML {
+            htmlConsumer = try FileWritingHTMLContentConsumer(targetFolder: temporaryFolder, fileManager: fileManager, htmlTemplate: indexHTML)
+        } else {
+            htmlConsumer = nil
+        }
 
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
             let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: catalogURL)
@@ -320,6 +331,7 @@ public struct ConvertAction: AsyncAction {
                 try ConvertActionConverter.convert(
                     context: context,
                     outputConsumer: outputConsumer,
+                    htmlContentConsumer: htmlConsumer,
                     sourceRepository: sourceRepository,
                     emitDigest: emitDigest,
                     documentationCoverageOptions: documentationCoverageOptions
