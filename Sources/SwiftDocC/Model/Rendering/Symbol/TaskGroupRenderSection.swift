@@ -13,9 +13,9 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind = .taskGroup
     
     /// An optional title for the section.
-    public let title: String?
+    public var title: String?
     /// An optional abstract summary for the section.
-    public let abstract: [RenderInlineContent]?
+    public var abstract: [RenderInlineContent]?
     /// An optional discussion for the section.
     public var discussion: (any RenderSection)? {
         get {
