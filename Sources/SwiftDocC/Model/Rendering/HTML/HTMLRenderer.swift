@@ -141,17 +141,15 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
 struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
-    let renderContext: RenderContext
     
     private let linkProvider: ContextLinkProvider
     private let filePath: URL
     
     private let renderer: MarkdownRenderer<ContextLinkProvider>
     
-    init(reference: ResolvedTopicReference, context: DocumentationContext, renderContext: RenderContext) {
+    init(reference: ResolvedTopicReference, context: DocumentationContext) {
         self.reference = reference
         self.context = context
-        self.renderContext = renderContext
         let linkProvider = ContextLinkProvider(reference: reference, context: context)
         self.linkProvider = linkProvider
         let filePath = ContextLinkProvider.filePath(for: reference)
@@ -259,30 +257,7 @@ struct HTMLRenderer {
             separateCurationIfNeeded()
             articleElement.addChild(makeGroupedSection(seeAlso))
         }
-        if let taskGroup = AutomaticCuration.seeAlso(for: node, withTraits: [.swift, .objectiveC], context: context, renderContext: renderContext, renderer: .init(context: context)) {
-            separateCurationIfNeeded()
-            // Automatice SeeAlso
-            let section = XMLElement(name: "section")
-            
-            if let title = SeeAlsoSection.title {
-                section.addChild(
-                    .selfReferencingHeader(title: title)
-                )
-            }
-            if let heading = taskGroup.title {
-                section.addChild(
-                    .selfReferencingHeader(level: 3, title: heading)
-                )
-            }
-            
-            for link in taskGroup.references {
-                if let element = self.makeTopicSectionItem(for: link) {
-                    section.addChild(element)
-                }
-            }
-            
-            articleElement.addChild(section)
-        }
+        // TODO: Add a way of determining the _automatic_ SeeAlso sections that doesn't query the JSON RenderContext for information.
         
         return RenderedPageInfo(
             content: main,
@@ -566,32 +541,7 @@ struct HTMLRenderer {
             separateCurationIfNeeded()
             articleElement.addChild(makeGroupedSection(seeAlso))
         }
-        
-        if let taskGroup = AutomaticCuration.seeAlso(for: node, withTraits: [.swift, .objectiveC], context: context, renderContext: renderContext, renderer: .init(context: context)) {
-            // Automatice SeeAlso
-            let section = XMLElement(name: "section")
-            separateCurationIfNeeded()
-            
-            if let title = SeeAlsoSection.title {
-                section.addChild(
-                    .selfReferencingHeader(title: title)
-                )
-            }
-            
-            if let heading = taskGroup.title {
-                section.addChild(
-                    .selfReferencingHeader(level: 3, title: heading)
-                )
-            }
-            
-            for link in taskGroup.references {
-                if let element = self.makeTopicSectionItem(for: link) {
-                    section.addChild(element)
-                }
-            }
-            
-            articleElement.addChild(section)
-        }
+        // TODO: Add a way of determining the _automatic_ SeeAlso sections that doesn't query the JSON RenderContext for information.
         
         return RenderedPageInfo(
             content: main,
