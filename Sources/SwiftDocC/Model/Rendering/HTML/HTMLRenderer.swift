@@ -436,26 +436,6 @@ struct HTMLRenderer {
                 )
             )
         }
-        if let returnsSection = symbol.returnsSection {
-            let section = XMLElement(name: "section")
-            section.addAttribute(
-                XMLNode.attribute(withName: "id", stringValue: "return-value") as! XMLNode
-            )
-            
-            if let title = ReturnsSection.title {
-                section.addChild(
-                    .selfReferencingHeader(title: title)
-                )
-            }
-            
-            for markup in returnsSection.content {
-                section.addChild(
-                    renderer.visit(markup)
-                )
-            }
-            
-            articleElement.addChild(section)
-        }
         
         // Discussion
         if let discussion = symbol.discussion {

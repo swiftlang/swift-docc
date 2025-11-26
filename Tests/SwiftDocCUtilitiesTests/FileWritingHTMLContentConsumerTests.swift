@@ -19,17 +19,74 @@ import SwiftDocCTestUtilities
 final class FileWritingHTMLContentConsumerTests: XCTestCase {
     
     func testWritesContentInsideHTMLTemplate() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "ModuleName.docc", content: [
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some article
+            
+            This is an article.
+            
+            It explains how a developer can perform some task using this module.
+            """),
+            
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
-                Some in-source description of this class
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                Some in-source description of this class.
                 """, otherMixins: [
-                    SymbolGraph.Symbol.DeclarationFragments.init(declarationFragments: [
+                    SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
                         .init(kind: .keyword,    spelling: "class",     preciseIdentifier: nil),
                         .init(kind: .text,       spelling: " ",         preciseIdentifier: nil),
                         .init(kind: .identifier, spelling: "SomeClass", preciseIdentifier: nil),
                     ])
+                ]),
+                makeSymbol(id: "some-method-id", kind: .method, pathComponents: ["SomeClass", "someMethod(with:and:)"], docComment: """
+                Some in-source description of this method.
+                
+                Further description of this method and how to use it.
+                
+                - Parameters: 
+                  - first:  Description of the `first` parameter.
+                  - second: Description of the `second` parameter.
+                - Returns:  Description of the return value.
+                """, otherMixins: [
+                    SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                        .init(kind: .keyword,           spelling: "func",       preciseIdentifier: nil),
+                        .init(kind: .text,              spelling: " ",          preciseIdentifier: nil),
+                        .init(kind: .identifier,        spelling: "someMethod", preciseIdentifier: nil),
+                        .init(kind: .text,              spelling: "(",          preciseIdentifier: nil),
+                        .init(kind: .externalParameter, spelling: "with",       preciseIdentifier: nil),
+                        .init(kind: .text,              spelling: " ",          preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "first",      preciseIdentifier: nil),
+                        .init(kind: .text,              spelling: ": ",         preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier,    spelling: "Int",        preciseIdentifier: "s:Si"),
+                        .init(kind: .text,              spelling: ", ",         preciseIdentifier: nil),
+                        .init(kind: .externalParameter, spelling: "and",        preciseIdentifier: nil),
+                        .init(kind: .text,              spelling: " ",          preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "second",     preciseIdentifier: nil),
+                        .init(kind: .text,              spelling: ": ",         preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier,    spelling: "String",     preciseIdentifier: "s:SS"),
+                        .init(kind: .text,              spelling: ") -> ",      preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier,    spelling: "Bool",       preciseIdentifier: "s:Sb"),
+                    ]),
+                    SymbolGraph.Symbol.FunctionSignature(
+                        parameters: [
+                            .init(name: "first", externalName: "with", declarationFragments: [
+                                .init(kind: .identifier,     spelling: "first",  preciseIdentifier: nil),
+                                .init(kind: .text,           spelling: ": ",     preciseIdentifier: nil),
+                                .init(kind: .typeIdentifier, spelling: "Int",    preciseIdentifier: "s:Si"),
+                            ], children: []),
+                            .init(name: "second", externalName: "and", declarationFragments: [
+                                .init(kind: .identifier,     spelling: "first",  preciseIdentifier: nil),
+                                .init(kind: .text,           spelling: ": ",     preciseIdentifier: nil),
+                                .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:Ss"),
+                            ], children: [])
+                        ],
+                        returns: [
+                            .init(kind: .typeIdentifier,     spelling: "Bool",    preciseIdentifier: "s:Sb"),
+                        ]
+                    )
                 ])
+            ], relationships: [
+                .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil)
             ])),
             
             TextFile(name: "ModuleName.md", utf8Content: """
@@ -90,12 +147,16 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         )
         
         // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
-        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output"), """
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output-dir"), """
         output-dir/
         ╰─ documentation/
            ╰─ ModuleName/
-              ├─ SomeClass/
+              ├─ SomeArticle/
               │  ╰─ index.html
+              ├─ SomeClass/
+              │  ├─ index.html
+              │  ╰─ someMethod(with:and:)/
+              │     ╰─ index.html
               ╰─ index.html
         """)
         
@@ -143,7 +204,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                                 Class</span>
                         </code>
                     </a>
-                    <p>Some in-source description of this class</p>
+                    <p>Some in-source description of this class.</p>
                 </div>
             </section>
         </article>
@@ -177,13 +238,151 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 </header>
                 <h1>Some<wbr/>
                     Class</h1>
-                <p id="abstract">Some in-source description of this class</p>
+                <p id="abstract">Some in-source description of this class.</p>
                 <pre id="declaration">
                     <code>
                         <span class="token-keyword">class</span>
                          <span class="token-identifier">SomeClass</span>
                     </code>
                 </pre>
+            </section>
+            <section>
+                <h2 id="Topics">
+                    <a href="#Topics">Topics</a>
+                </h2>
+                <h3 id="Instance-Methods">
+                    <a href="#Instance-Methods">Instance Methods</a>
+                </h3>
+                <div class="link-block">
+                    <a href="someMethod(with:and:)/index.html">
+                        <code class="swift-only">
+                            <span class="identifier">some<wbr/>
+                                Method(<wbr/>
+                                with:<wbr/>
+                                and:)</span>
+                        </code>
+                    </a>
+                    <p>Some in-source description of this method.</p>
+                </div>
+            </section>
+        </article>
+        </main></noscript>
+            <div id="app"></div>
+          </body>
+        </html>
+        """)
+        
+        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")), encoding: .utf8)), """
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <link rel="icon" href="/favicon.ico" />
+            <title>someMethod(with:and:)</title>
+            <script>var baseUrl = "/"</script>
+          </head>
+          <body>
+            <noscript><main>
+        <article>
+            <section class="separated">
+                <header>
+                    <nav id="breadcrumbs">
+                        <ul>
+                            <li>
+                                <span class="swift-only">someMethod(with:and:)</span>
+                            </li>
+                        </ul>
+                    </nav>
+                    <span class="eyebrow">Instance Method</span>
+                </header>
+                <h1>some<wbr/>
+                    Method(<wbr/>
+                    with:<wbr/>
+                    and:)</h1>
+                <p id="abstract">Some in-source description of this method.</p>
+                <pre id="declaration">
+                    <code>
+                        <span class="token-keyword">func</span>
+                         <span class="token-identifier">someMethod</span>
+                        (<span class="token-externalParam">with</span>
+                         <span class="token-internalParam">first</span>
+                        : <span class="token-typeIdentifier">Int</span>
+                        , <span class="token-externalParam">and</span>
+                         <span class="token-internalParam">second</span>
+                        : <span class="token-typeIdentifier">String</span>
+                        ) -&gt; <span class="token-typeIdentifier">Bool</span>
+                    </code>
+                </pre>
+            </section>
+            <section id="parameters">
+                <h2>
+                    <a href="#parameters">Parameters</a>
+                </h2>
+                <dl>
+                    <dt>
+                        <code>first</code>
+                    </dt>
+                    <dd>
+                        <p>Description of the <code>first</code>
+                             parameter.</p>
+                    </dd>
+                    <dt>
+                        <code>second</code>
+                    </dt>
+                    <dd>
+                        <p>Description of the <code>second</code>
+                             parameter.</p>
+                    </dd>
+                </dl>
+            </section>
+            <section id="return-value">
+                <h2>
+                    <a href="#return-value">Return Value</a>
+                </h2>
+                <p>Description of the return value.</p>
+            </section>
+            <section>
+                <h2 id="Discussion">
+                    <a href="#Discussion">Discussion</a>
+                </h2>
+                <p>Further description of this method and how to use it.</p>
+            </section>
+        </article>
+        </main></noscript>
+            <div id="app"></div>
+          </body>
+        </html>
+        """)
+        
+        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/ModuleName/SomeArticle/index.html")), encoding: .utf8)), """
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <link rel="icon" href="/favicon.ico" />
+            <title>Some article</title>
+            <script>var baseUrl = "/"</script>
+          </head>
+          <body>
+            <noscript><main>
+        <article>
+            <div id="hero-article">
+                <section>
+                    <header>
+                        <nav id="breadcrumbs">
+                            <ul>
+                                <li>Some article</li>
+                            </ul>
+                        </nav>
+                        <span class="eyebrow">Article</span>
+                    </header>
+                    <h1>Some article</h1>
+                    <p id="abstract">This is an article.</p>
+                </section>
+            </div>
+            <section>
+                <h2 id="Overview">
+                    <a href="#Overview">Overview</a>
+                </h2>
+                <p>It explains how a developer can perform some task using this module.</p>
             </section>
         </article>
         </main></noscript>
