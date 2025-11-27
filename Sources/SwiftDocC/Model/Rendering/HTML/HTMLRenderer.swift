@@ -200,16 +200,12 @@ struct HTMLRenderer {
                 ),
                 
                 .element(
-                    named: "span",
+                    named: "p",
                     children: [.text(article.topics == nil ? "Article": "API Collection")],
-                    attributes: ["class": "eyebrow"]
+                    attributes: ["id": "eyebrow"]
                 ),
             ])
         )
-        
-        
-        // FIXME: Add a background for articles
-        // FIXME: Then add a background for the Framework page
         
         // Title
         hero.addChild(
@@ -321,9 +317,9 @@ struct HTMLRenderer {
                 ),
                 
                 .element(
-                    named: "span",
+                    named: "p",
                     children: [.text(symbol.roleHeading)],
-                    attributes: ["class": "eyebrow"]
+                    attributes: ["id": "eyebrow"]
                 ),
             ])
         )

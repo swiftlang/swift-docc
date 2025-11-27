@@ -197,7 +197,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                                 <li>ModuleName</li>
                             </ul>
                         </nav>
-                        <span class="eyebrow">Framework</span>
+                        <p id="eyebrow">Framework</p>
                     </header>
                     <h1>Module<wbr/>
                         Name</h1>
@@ -257,7 +257,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                             <li>SomeClass</li>
                         </ul>
                     </nav>
-                    <span class="eyebrow">Class</span>
+                    <p id="eyebrow">Class</p>
                 </header>
                 <h1>Some<wbr/>
                     Class</h1>
@@ -330,7 +330,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                             <li>someMethod(with:and:)</li>
                         </ul>
                     </nav>
-                    <span class="eyebrow">Instance Method</span>
+                    <p id="eyebrow">Instance Method</p>
                 </header>
                 <h1>some<wbr/>
                     Method(<wbr/>
@@ -429,7 +429,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                                 <li>Some article</li>
                             </ul>
                         </nav>
-                        <span class="eyebrow">Article</span>
+                        <p id="eyebrow">Article</p>
                     </header>
                     <h1>Some article</h1>
                     <p id="abstract">This is an article.</p>
