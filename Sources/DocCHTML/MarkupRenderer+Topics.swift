@@ -30,7 +30,7 @@ package extension MarkdownRenderer {
         }
     }
     
-    func topicsSection(_ taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> XMLElement {
+    func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> XMLElement {
         let taskGroups = RenderHelpers.sortedLanguageSpecificValues(taskGroups)
         
         let items: [XMLElement] = if taskGroups.count == 1 {
@@ -50,7 +50,7 @@ package extension MarkdownRenderer {
             }
         }
         
-        return selfReferencingSection(named: "Topics", content: items)
+        return selfReferencingSection(named: sectionName, content: items)
     }
     
     private func _singleTaskGroupElements(for taskGroup: TaskGroupInfo) -> [XMLElement] {

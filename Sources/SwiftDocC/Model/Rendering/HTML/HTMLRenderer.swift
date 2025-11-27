@@ -255,7 +255,7 @@ struct HTMLRenderer {
             
             // TODO: Support language specific topic sections
             articleElement.addChild(
-                renderer.topicsSection([
+                renderer.groupedSection(named: "Topics", groups: [
                     .swift: topics.taskGroups.map { group in
                         .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
                             $0.destination.flatMap { URL(string: $0) }
@@ -269,7 +269,16 @@ struct HTMLRenderer {
         // See Also
         if let seeAlso = article.seeAlso {
             separateCurationIfNeeded()
-            articleElement.addChild(makeGroupedSection(seeAlso))
+            
+            articleElement.addChild(
+                renderer.groupedSection(named: "See Also", groups: [
+                    .swift: seeAlso.taskGroups.map { group in
+                        .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
+                            $0.destination.flatMap { URL(string: $0) }
+                        })
+                    }
+                ])
+            )
         }
         // TODO: Add a way of determining the _automatic_ SeeAlso sections that doesn't query the JSON RenderContext for information.
         
@@ -477,7 +486,7 @@ struct HTMLRenderer {
             
             // TODO: Support language specific topic sections
             articleElement.addChild(
-                renderer.topicsSection([
+                renderer.groupedSection(named: "Topics", groups: [
                     .swift: topics.taskGroups.map { group in
                         .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
                             $0.destination.flatMap { URL(string: $0) }
@@ -490,7 +499,7 @@ struct HTMLRenderer {
            automaticTopics.contains(where: { !$0.references.isEmpty })
         {
             articleElement.addChild(
-                renderer.topicsSection([
+                renderer.groupedSection(named: "Topics", groups: [
                     .swift: automaticTopics.map { group in
                         .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
                     }
@@ -501,7 +510,16 @@ struct HTMLRenderer {
         // See Also
         if let seeAlso = symbol.seeAlso {
             separateCurationIfNeeded()
-            articleElement.addChild(makeGroupedSection(seeAlso))
+            
+            articleElement.addChild(
+                renderer.groupedSection(named: "See Also", groups: [
+                    .swift: seeAlso.taskGroups.map { group in
+                        .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
+                            $0.destination.flatMap { URL(string: $0) }
+                        })
+                    }
+                ])
+            )
         }
         // TODO: Add a way of determining the _automatic_ SeeAlso sections that doesn't query the JSON RenderContext for information.
         
@@ -539,123 +557,6 @@ struct HTMLRenderer {
         }
         
         return section
-    }
-    
-    private func makeGroupedSection<Grouped: GroupedSection>(_ groupedSection: Grouped) -> XMLNode {
-        let section = XMLElement(name: "section")
-        
-        if let title = Grouped.title {
-            section.addChild(
-                .selfReferencingHeader(title: title)
-            )
-        }
-        
-        for taskGroup in groupedSection.taskGroups {
-            if let heading = taskGroup.heading {
-                section.addChild(
-                    .selfReferencingHeader(level: 3, title: heading.title)
-                )
-            }
-            
-            for link in taskGroup.links {
-                guard let destination = link.destination,
-                      let reference = context.referenceIndex[destination]
-                else {
-                    // Unresolved links wouldn't be found here
-                    continue
-                }
-                
-                if let element = self.makeTopicSectionItem(for: reference) {
-                    section.addChild(element)
-                }
-            }
-        }
-        
-        return section
-    }
-    
-    private func makeTopicSectionItem(for reference: ResolvedTopicReference) -> XMLNode? {
-        if let local = context.documentationCache[reference] {
-            let container = XMLNode.element(named: "div")//, attributes: ["class": className])
-            var className = "link-block"
-             
-            // Title
-            var titles: [XMLNode]? = nil
-            if let symbol = local.semantic as? Symbol {
-                if symbol.isDeprecated {
-                    className += " deprecated"
-                }
-                
-                if case .conceptual(let title) = local.name {
-                    // FIXME: What element and class should this be?
-                    titles = [.element(named: "span", children: [.text(title)])]
-                    
-                }
-                else  {
-                    titles = symbol.subHeadingVariants
-                        .allValues.sorted(by: { $0.trait < $1.trait})
-                        .compactMap { trait, variant in
-                            guard let lang = trait.interfaceLanguage else { return nil }
-                            
-                            return .element(
-                                named: "code",
-                                children: variant.map { fragment in
-                                    let className = switch fragment.kind {
-                                        case .identifier, .externalParameter:
-                                            "identifier"
-                                        default:
-                                            "decorator"
-                                    }
-                                    
-                                    return .element(named: "span", children: RenderHelpers.wordBreak(symbolName: fragment.spelling), attributes: ["class": className])
-                                },
-                                attributes: ["class": "\(lang)-only"]
-                            )
-                        }
-                }
-                
-            } else if let article = local.semantic as? Article {
-                if let heading = article.title {
-                    // FIXME: What element and class should this be?
-                    titles = [.element(named: "span", children: [.text(heading.title)])]
-                }
-            }
-            container.setAttributesWith(["class": className])
-            if let titles {
-                container.addChild(
-                    .element(named: "a", children: titles, attributes: ["href": path(to: reference)])
-                )
-            }
-            
-            // Abstract
-            if let abstract = (local.semantic as? any Abstracted)?.abstract {
-                container.addChild(renderer.visit(abstract))
-            }
-            
-            return container
-        } else if let external = context.externalCache[reference] {
-            let container = XMLNode.element(named: "div", attributes: ["class": "link-block"])
-            
-            let title: XMLNode
-            if external.kind.isSymbol, let fragments = external.subheadingDeclarationFragments {
-                title = .element(named: "code", children: fragments.map { fragment in
-                    let className = fragment.kind == .identifier ? "identifier" : "decorator"
-                    return .element(named: "span", children: [.text(fragment.text)], attributes: ["class": className])
-                })
-            } else {
-                // FIXME: What element and class should this be?
-                title = .element(named: "span", children: [.text(external.title)])
-            }
-            
-            container.addChild(
-                .element(named: "a", children: [title], attributes: ["href": path(to: reference)])
-            )
-            
-            // TODO: Support external abstracts as well
-            
-            return container
-        }
-        return nil
     }
     
     // FIXME: There's currently nothing calling this. Instead, the 2 `render...` methods return a `RenderedPageInfo` value.

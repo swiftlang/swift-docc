@@ -456,8 +456,8 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
     
-    @Test(arguments: RenderGoal.allCases)
-    func testRenderSingleLanguageTopicSectionsWithMultiLanguageLinks(goal: RenderGoal) {
+    @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
+    func testRenderSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
         let elements = [
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
@@ -502,7 +502,9 @@ struct MarkdownRenderer_PageElementsTests {
             ),
         ]
         
-        let topicSection = makeRenderer(goal: goal, elementsToReturn: elements).topicsSection([
+        let renderer = makeRenderer(goal: goal, elementsToReturn: elements)
+        let expectedSectionID = expectedGroupTitle.lowercased().replacingOccurrences(of: " ", with: "-")
+        let groupedSection = renderer.groupedSection(named: expectedGroupTitle, groups: [
             .swift: [
                 .init(title: "Group title", content: parseMarkup(string: "Some description of this group"), references: [
                     URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
@@ -513,10 +515,10 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .quality:
-            #expect(topicSection.rendered(prettyFormatted: true) == """
-            <section id="topics">
+            #expect(groupedSection.rendered(prettyFormatted: true) == """
+            <section id="\(expectedSectionID)">
             <h2>
-                <a href="#topics">Topics</a>
+                <a href="#\(expectedSectionID)">\(expectedGroupTitle)</a>
             </h2>
             <h3 id="group-title">
                 <a href="#group-title">Group title</a>
@@ -566,9 +568,9 @@ struct MarkdownRenderer_PageElementsTests {
             </section>
             """)
         case .conciseness:
-            #expect(topicSection.rendered(prettyFormatted: true) == """
+            #expect(groupedSection.rendered(prettyFormatted: true) == """
             <section>
-            <h2>Topics</h2>
+            <h2>\(expectedGroupTitle)</h2>
             <h3>Group title</h3>
             <p>Some description of this group</p>
             <ul>

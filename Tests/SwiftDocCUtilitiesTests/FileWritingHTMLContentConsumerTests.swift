@@ -26,6 +26,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             This is an article.
             
             It explains how a developer can perform some task using this module.
+            
+            ## See Also
+            
+            - ``SomeClass``
             """),
             
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
@@ -47,6 +51,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   - first:  Description of the `first` parameter.
                   - second: Description of the `second` parameter.
                 - Returns:  Description of the return value.
+                
+                ## See Also
+                
+                - <doc:SomeArticle>
                 """, otherMixins: [
                     SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
                         .init(kind: .keyword,           spelling: "func",       preciseIdentifier: nil),
@@ -93,6 +101,15 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             # ``ModuleName``
             
             Some description of this module
+            
+            ## Topics
+            
+            ## Something custom
+            
+            A custom _formatted_ description of this topic section
+            
+            - <doc:SomeArticle>
+            - ``SomeClass``
             """)
         ])
         
@@ -192,10 +209,14 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <h2>
                     <a href="#topics">Topics</a>
                 </h2>
-                <h3 id="classes">
-                    <a href="#classes">Classes</a>
-                </h3>
+                <h2>Something custom</h2>
+                <p>A custom <i>formatted</i>
+                     description of this topic section</p>
                 <ul>
+                    <li>
+                        <a href="../SomeArticle/index.html">Some article<p>This is an article.</p>
+                        </a>
+                    </li>
                     <li>
                         <a href="../SomeClass/index.html">
                             <code>
@@ -349,11 +370,25 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 </h2>
                 <p>Description of the return value.</p>
             </section>
-            <section>
+            <section class="separated">
                 <h2 id="Discussion">
                     <a href="#Discussion">Discussion</a>
                 </h2>
                 <p>Further description of this method and how to use it.</p>
+            </section>
+            <section id="see-also">
+                <h2>
+                    <a href="#see-also">See Also</a>
+                </h2>
+                <h3 id="related-documentation">
+                    <a href="#related-documentation">Related Documentation</a>
+                </h3>
+                <ul>
+                    <li>
+                        <a href="../../../SomeArticle/index.html">Some article<p>This is an article.</p>
+                        </a>
+                    </li>
+                </ul>
             </section>
         </article>
         </main></noscript>
@@ -390,11 +425,31 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <p id="abstract">This is an article.</p>
                 </section>
             </div>
-            <section>
+            <section class="separated">
                 <h2 id="Overview">
                     <a href="#Overview">Overview</a>
                 </h2>
                 <p>It explains how a developer can perform some task using this module.</p>
+            </section>
+            <section id="see-also">
+                <h2>
+                    <a href="#see-also">See Also</a>
+                </h2>
+                <h3 id="related-documentation">
+                    <a href="#related-documentation">Related Documentation</a>
+                </h3>
+                <ul>
+                    <li>
+                        <a href="../../SomeClass/index.html">
+                            <code>
+                                <span class="decorator">class </span>
+                                <span class="identifier">Some<wbr/>
+                                    Class</span>
+                            </code>
+                            <p>Some in-source description of this class.</p>
+                        </a>
+                    </li>
+                </ul>
             </section>
         </article>
         </main></noscript>
