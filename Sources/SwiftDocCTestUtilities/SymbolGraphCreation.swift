@@ -107,7 +107,7 @@ extension XCTestCase {
         
         return SymbolGraph.Symbol(
             identifier: SymbolGraph.Symbol.Identifier(precise: id, interfaceLanguage: language.id),
-            names: makeSymbolNames(name: pathComponents.last!),
+            names: makeSymbolNames(name: pathComponents.last!, kindID: kindID),
             pathComponents: pathComponents,
             docComment: docComment.map {
                 makeLineList(
@@ -133,13 +133,20 @@ extension XCTestCase {
         return SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: domainName), introducedVersion: introduced, deprecatedVersion: deprecated, obsoletedVersion: obsoleted, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: unconditionallyUnavailable, willEventuallyBeDeprecated: false)
     }
     
-    package func makeSymbolNames(name: String) -> SymbolGraph.Symbol.Names {
-        SymbolGraph.Symbol.Names(
-            title: name,
-            navigator: [.init(kind: .identifier, spelling: name, preciseIdentifier: nil)],
-            subHeading: [.init(kind: .identifier, spelling: name, preciseIdentifier: nil)],
-            prose: nil
+    package func makeSymbolNames(name: String, kindID: SymbolGraph.Symbol.KindIdentifier? = nil) -> SymbolGraph.Symbol.Names {
+        var fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = []
+        if let kindID {
+            fragments.append(contentsOf: [
+                // This is not entirely correct but it's a fair approximation for test that that may not even be checked against.
+                .init(kind: .keyword, spelling: kindID.identifier, preciseIdentifier: nil),
+                .init(kind: .text,    spelling: " ",               preciseIdentifier: nil),
+            ])
+        }
+        fragments.append(
+            .init(kind: .identifier, spelling: name, preciseIdentifier: nil)
         )
+        
+        return SymbolGraph.Symbol.Names(title: name,navigator: fragments, subHeading: fragments, prose: nil)
     }
     
     package func makeSymbolKind(_ kindID: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol.Kind {

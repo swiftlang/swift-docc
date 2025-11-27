@@ -78,7 +78,7 @@ private extension CharacterSet {
 ///
 /// If this step is not performed, the disallowed characters are instead percent escape encoded, which is less readable.
 /// For example, a fragment like `"#hello world"` is converted to `"#hello-world"` instead of `"#hello%20world"`.
-private func urlReadableFragment(_ fragment: some StringProtocol) -> String {
+func urlReadableFragment(_ fragment: some StringProtocol) -> String {
     var fragment = fragment
         // Trim leading/trailing whitespace
         .trimmingCharacters(in: .whitespaces)

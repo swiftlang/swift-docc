@@ -456,6 +456,138 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
     
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderSingleLanguageTopicSectionsWithMultiLanguageLinks(goal: RenderGoal) {
+        let elements = [
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
+                names: .languageSpecificSymbol([
+                    .swift:      "SomeClass",
+                    .objectiveC: "TLASomeClass",
+                ]),
+                subheadings: .languageSpecificSymbol([
+                    .swift: [
+                        .init(text: "class ",    kind: .decorator),
+                        .init(text: "SomeClass", kind: .identifier),
+                    ],
+                    .objectiveC: [
+                        .init(text: "class ",       kind: .decorator),
+                        .init(text: "TLASomeClass", kind: .identifier),
+                    ],
+                ]),
+                abstract: nil
+            ),
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
+                names: .languageSpecificSymbol([
+                    .swift:      "someMethod(with:and:)",
+                    .objectiveC: "someMethodWithFirst:andSecond:",
+                ]),
+                subheadings: .languageSpecificSymbol([
+                    .swift: [
+                        .init(text: "func ",      kind: .decorator),
+                        .init(text: "someMethod", kind: .identifier),
+                        .init(text: "(",          kind: .decorator),
+                        .init(text: "with",       kind: .identifier),
+                        .init(text: ": Int, ",    kind: .decorator),
+                        .init(text: "and",        kind: .identifier),
+                        .init(text: ": String)",  kind: .decorator),
+                    ],
+                    .objectiveC: [
+                        .init(text: "- ", kind: .decorator),
+                        .init(text: "someMethodWithFirst:andSecond:", kind: .identifier),
+                    ],
+                ]),
+                abstract: nil
+            ),
+        ]
+        
+        let topicSection = makeRenderer(goal: goal, elementsToReturn: elements).topicsSection([
+            .swift: [
+                .init(title: "Group title", content: parseMarkup(string: "Some description of this group"), references: [
+                    URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
+                    URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
+                ])
+            ]
+        ])
+        
+        switch goal {
+        case .quality:
+            #expect(topicSection.rendered(prettyFormatted: true) == """
+            <section id="topics">
+            <h2>
+                <a href="#topics">Topics</a>
+            </h2>
+            <h3 id="group-title">
+                <a href="#group-title">Group title</a>
+            </h3>
+            <p>Some description of this group</p>
+            <ul>
+                <li>
+                    <a href="../../../SomeClass/index.html">
+                        <code class="swift-only">
+                            <span class="decorator">class </span>
+                            <span class="identifier">Some<wbr/>
+                                Class</span>
+                        </code>
+                        <code class="occ-only">
+                            <span class="decorator">class </span>
+                            <span class="identifier">TLASome<wbr/>
+                                Class</span>
+                        </code>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../../SomeClass/someMethod(with:and:)/index.html">
+                        <code class="swift-only">
+                            <span class="decorator">func </span>
+                            <span class="identifier">some<wbr/>
+                                Method</span>
+                            <span class="decorator">(</span>
+                            <span class="identifier">with</span>
+                            <span class="decorator">:<wbr/>
+                                 Int, </span>
+                            <span class="identifier">and</span>
+                            <span class="decorator">:<wbr/>
+                                 String)</span>
+                        </code>
+                        <code class="occ-only">
+                            <span class="decorator">- </span>
+                            <span class="identifier">some<wbr/>
+                                Method<wbr/>
+                                With<wbr/>
+                                First:<wbr/>
+                                and<wbr/>
+                                Second:</span>
+                        </code>
+                    </a>
+                </li>
+            </ul>
+            </section>
+            """)
+        case .conciseness:
+            #expect(topicSection.rendered(prettyFormatted: true) == """
+            <section>
+            <h2>Topics</h2>
+            <h3>Group title</h3>
+            <p>Some description of this group</p>
+            <ul>
+                <li>
+                    <a href="../../../SomeClass/index.html">
+                        <code>class SomeClass</code>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../../SomeClass/someMethod(with:and:)/index.html">
+                        <code>func someMethod(with: Int, and: String)</code>
+                    </a>
+                </li>
+            </ul>
+            </section>
+            """)
+        }
+    }
+    
     // MARK: -
     
     private func makeRenderer(

@@ -79,6 +79,7 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
                     current = .init(text: fragment.spelling, kind: kind)
                 }
             }
+            result.append(current)
             return result
         }
         
@@ -251,7 +252,17 @@ struct HTMLRenderer {
         // Topics
         if let topics = article.topics {
             separateCurationIfNeeded()
-            articleElement.addChild(makeGroupedSection(topics))
+            
+            // TODO: Support language specific topic sections
+            articleElement.addChild(
+                renderer.topicsSection([
+                    .swift: topics.taskGroups.map { group in
+                        .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
+                            $0.destination.flatMap { URL(string: $0) }
+                        })
+                    }
+                ])
+            )
         }
         // Articles don't have automatic topic sections
         
@@ -464,39 +475,27 @@ struct HTMLRenderer {
         if let topics = symbol.topics {
             separateCurationIfNeeded()
             
-            articleElement.addChild(makeGroupedSection(topics))
-        }
-        if let automaticTopics = try? AutomaticCuration.topics(for: node, withTraits: [.swift, .objectiveC], context: context) {
-            // Automatice SeeAlso
-            let section = XMLElement(name: "section")
-            
-            var didAddAnyLink = false
-            
-            if let title = TopicsSection.title {
-                section.addChild(
-                    .selfReferencingHeader(title: title)
-                )
-            }
-            
-            for automaticTopic in automaticTopics {
-                if let heading = automaticTopic.title {
-                    section.addChild(
-                        .selfReferencingHeader(level: 3, title: heading)
-                    )
-                }
-                
-                for link in automaticTopic.references {
-                    if let element = self.makeTopicSectionItem(for: link) {
-                        didAddAnyLink = true
-                        section.addChild(element)
+            // TODO: Support language specific topic sections
+            articleElement.addChild(
+                renderer.topicsSection([
+                    .swift: topics.taskGroups.map { group in
+                        .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
+                            $0.destination.flatMap { URL(string: $0) }
+                        })
                     }
-                }
-            }
-            
-            if didAddAnyLink {
-                separateCurationIfNeeded()
-                articleElement.addChild(section)
-            }
+                ])
+            )
+        }
+        if let automaticTopics = try? AutomaticCuration.topics(for: node, withTraits: [.swift, .objectiveC], context: context),
+           automaticTopics.contains(where: { !$0.references.isEmpty })
+        {
+            articleElement.addChild(
+                renderer.topicsSection([
+                    .swift: automaticTopics.map { group in
+                        .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
+                    }
+                ])
+            )
         }
         
         // See Also

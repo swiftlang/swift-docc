@@ -125,10 +125,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             Folder(name: "output-dir", content: [])
         ])
         
-        let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+        let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/path/to/\(catalog.name)"), options: .init())
         
-        let context = try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: .init())
+        let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
         
         let htmlConsumer = try FileWritingHTMLContentConsumer(
             targetFolder: URL(fileURLWithPath: "/output-dir"),
@@ -188,22 +188,25 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <pre id="declaration"/>
                 </section>
             </div>
-            <section>
-                <h2 id="Topics">
-                    <a href="#Topics">Topics</a>
+            <section id="topics">
+                <h2>
+                    <a href="#topics">Topics</a>
                 </h2>
-                <h3 id="Classes">
-                    <a href="#Classes">Classes</a>
+                <h3 id="classes">
+                    <a href="#classes">Classes</a>
                 </h3>
-                <div class="link-block">
-                    <a href="SomeClass/index.html">
-                        <code class="swift-only">
-                            <span class="identifier">Some<wbr/>
-                                Class</span>
-                        </code>
-                    </a>
-                    <p>Some in-source description of this class.</p>
-                </div>
+                <ul>
+                    <li>
+                        <a href="../SomeClass/index.html">
+                            <code>
+                                <span class="decorator">class </span>
+                                <span class="identifier">Some<wbr/>
+                                    Class</span>
+                            </code>
+                            <p>Some in-source description of this class.</p>
+                        </a>
+                    </li>
+                </ul>
             </section>
         </article>
         </main></noscript>
@@ -245,24 +248,27 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     </code>
                 </pre>
             </section>
-            <section>
-                <h2 id="Topics">
-                    <a href="#Topics">Topics</a>
+            <section id="topics">
+                <h2>
+                    <a href="#topics">Topics</a>
                 </h2>
-                <h3 id="Instance-Methods">
-                    <a href="#Instance-Methods">Instance Methods</a>
+                <h3 id="instance-methods">
+                    <a href="#instance-methods">Instance Methods</a>
                 </h3>
-                <div class="link-block">
-                    <a href="someMethod(with:and:)/index.html">
-                        <code class="swift-only">
-                            <span class="identifier">some<wbr/>
-                                Method(<wbr/>
-                                with:<wbr/>
-                                and:)</span>
-                        </code>
-                    </a>
-                    <p>Some in-source description of this method.</p>
-                </div>
+                <ul>
+                    <li>
+                        <a href="../someMethod(with:and:)/index.html">
+                            <code>
+                                <span class="decorator">method </span>
+                                <span class="identifier">some<wbr/>
+                                    Method(<wbr/>
+                                    with:<wbr/>
+                                    and:)</span>
+                            </code>
+                            <p>Some in-source description of this method.</p>
+                        </a>
+                    </li>
+                </ul>
             </section>
         </article>
         </main></noscript>
