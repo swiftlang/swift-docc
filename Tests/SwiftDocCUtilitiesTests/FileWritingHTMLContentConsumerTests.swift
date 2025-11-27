@@ -35,28 +35,45 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
                 Some in-source description of this class.
-                """, otherMixins: [
-                    SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
-                        .init(kind: .keyword,    spelling: "class",     preciseIdentifier: nil),
-                        .init(kind: .text,       spelling: " ",         preciseIdentifier: nil),
-                        .init(kind: .identifier, spelling: "SomeClass", preciseIdentifier: nil),
-                    ])
+                """, declaration: [
+                    .init(kind: .keyword,    spelling: "class",     preciseIdentifier: nil),
+                    .init(kind: .text,       spelling: " ",         preciseIdentifier: nil),
+                    .init(kind: .identifier, spelling: "SomeClass", preciseIdentifier: nil),
                 ]),
-                makeSymbol(id: "some-method-id", kind: .method, pathComponents: ["SomeClass", "someMethod(with:and:)"], docComment: """
-                Some in-source description of this method.
-                
-                Further description of this method and how to use it.
-                
-                - Parameters: 
-                  - first:  Description of the `first` parameter.
-                  - second: Description of the `second` parameter.
-                - Returns:  Description of the return value.
-                
-                ## See Also
-                
-                - <doc:SomeArticle>
-                """, otherMixins: [
-                    SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                makeSymbol(
+                    id: "some-method-id", kind: .method, pathComponents: ["SomeClass", "someMethod(with:and:)"],
+                    docComment: """
+                    Some in-source description of this method.
+                    
+                    Further description of this method and how to use it.
+                    
+                    - Parameters: 
+                      - first:  Description of the `first` parameter.
+                      - second: Description of the `second` parameter.
+                    - Returns:  Description of the return value.
+                    
+                    ## See Also
+                    
+                    - <doc:SomeArticle>
+                    """,
+                    signature: .init(
+                        parameters: [
+                            .init(name: "first", externalName: "with", declarationFragments: [
+                                .init(kind: .identifier,     spelling: "first",  preciseIdentifier: nil),
+                                .init(kind: .text,           spelling: ": ",     preciseIdentifier: nil),
+                                .init(kind: .typeIdentifier, spelling: "Int",    preciseIdentifier: "s:Si"),
+                            ], children: []),
+                            .init(name: "second", externalName: "and", declarationFragments: [
+                                .init(kind: .identifier,     spelling: "first",  preciseIdentifier: nil),
+                                .init(kind: .text,           spelling: ": ",     preciseIdentifier: nil),
+                                .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:Ss"),
+                            ], children: [])
+                        ],
+                        returns: [
+                            .init(kind: .typeIdentifier,     spelling: "Bool",    preciseIdentifier: "s:Sb"),
+                        ]
+                    ),
+                    declaration: [
                         .init(kind: .keyword,           spelling: "func",       preciseIdentifier: nil),
                         .init(kind: .text,              spelling: " ",          preciseIdentifier: nil),
                         .init(kind: .identifier,        spelling: "someMethod", preciseIdentifier: nil),
@@ -74,25 +91,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                         .init(kind: .typeIdentifier,    spelling: "String",     preciseIdentifier: "s:SS"),
                         .init(kind: .text,              spelling: ") -> ",      preciseIdentifier: nil),
                         .init(kind: .typeIdentifier,    spelling: "Bool",       preciseIdentifier: "s:Sb"),
-                    ]),
-                    SymbolGraph.Symbol.FunctionSignature(
-                        parameters: [
-                            .init(name: "first", externalName: "with", declarationFragments: [
-                                .init(kind: .identifier,     spelling: "first",  preciseIdentifier: nil),
-                                .init(kind: .text,           spelling: ": ",     preciseIdentifier: nil),
-                                .init(kind: .typeIdentifier, spelling: "Int",    preciseIdentifier: "s:Si"),
-                            ], children: []),
-                            .init(name: "second", externalName: "and", declarationFragments: [
-                                .init(kind: .identifier,     spelling: "first",  preciseIdentifier: nil),
-                                .init(kind: .text,           spelling: ": ",     preciseIdentifier: nil),
-                                .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:Ss"),
-                            ], children: [])
-                        ],
-                        returns: [
-                            .init(kind: .typeIdentifier,     spelling: "Bool",    preciseIdentifier: "s:Sb"),
-                        ]
-                    )
-                ])
+                    ]
+                )
             ], relationships: [
                 .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil)
             ])),
@@ -281,11 +281,18 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <li>
                         <a href="../someMethod(with:and:)/index.html">
                             <code>
-                                <span class="decorator">method </span>
+                                <span class="decorator">func </span>
                                 <span class="identifier">some<wbr/>
-                                    Method(<wbr/>
-                                    with:<wbr/>
-                                    and:)</span>
+                                    Method</span>
+                                <span class="decorator">(</span>
+                                <span class="identifier">with</span>
+                                <span class="decorator"> first:<wbr/>
+                                     Int, </span>
+                                <span class="identifier">and</span>
+                                <span class="decorator"> second:<wbr/>
+                                     String)<wbr/>
+                                     -&gt;<wbr/>
+                                     Bool</span>
                             </code>
                             <p>Some in-source description of this method.</p>
                         </a>
