@@ -45,9 +45,15 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <h1>One</h1>
-            <h2>Two</h2>
-            <h3>Three</h3>
+            <h1 id="one">
+            <a href="#one">One</a>
+            </h1>
+            <h2 id="two">
+            <a href="#two">Two</a>
+            </h2>
+            <h3 id="three">
+            <a href="#three">Three</a>
+            </h3>
             """
         )
         
@@ -61,8 +67,12 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <h1>One</h1>
-            <h2>Two</h2>
+            <h1 id="one">
+            <a href="#one">One</a>
+            </h1>
+            <h2 id="two">
+            <a href="#two">Two</a>
+            </h2>
             """
         )
         
@@ -76,14 +86,20 @@ struct MarkdownRendererTests {
             """,
             prettyFormatted: true,
             matches: """
-            <h1>
-            <i>One</i>
+            <h1 id="one">
+            <a href="#one">
+                <i>One</i>
+            </a>
             </h1>
-            <h2>
-            <b>Two</b>
+            <h2 id="two">
+            <a href="#two">
+                <b>Two</b>
+            </a>
             </h2>
-            <h3>
-            <code>Three</code>
+            <h3 id="three">
+            <a href="#three">
+                <code>Three</code>
+            </a>
             </h3>
             """
         )

@@ -60,7 +60,26 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     }
     
     package func visit(_ heading: Heading) -> XMLNode {
-        .element(named: "h\(heading.level)", children: visit(heading.children))
+        selfReferencingHeading(level: heading.level, content: visit(heading.children), plainTextTitle: heading.plainText)
+    }
+    
+    func selfReferencingHeading(level: Int, content: [XMLNode], plainTextTitle: @autoclosure () -> String) -> XMLElement {
+        switch goal {
+        case .conciseness:
+            return .element(named: "h\(level)", children: content)
+            
+        case .quality:
+            let id = urlReadableFragment(plainTextTitle().lowercased())
+            return .element(
+                named: "h\(level)",
+                children: [
+                    // Wrap the heading content in an anchor ...
+                    .element(named: "a", children: content, attributes: ["href": "#\(id)"])
+                ],
+                // ... that refers to the heading itself
+                attributes: ["id": id]
+            )
+        }
     }
     
     func visit(_ emphasis: Emphasis) -> XMLNode {

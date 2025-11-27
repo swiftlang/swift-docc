@@ -25,7 +25,13 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             
             This is an article.
             
+            ## Custom discussion
+            
             It explains how a developer can perform some task using this module.
+            
+            ### Details
+            
+            This subsection describes something more detailed.
             
             ## See Also
             
@@ -104,7 +110,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             
             ## Topics
             
-            ## Something custom
+            ### Something custom
             
             A custom _formatted_ description of this topic section
             
@@ -209,7 +215,9 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <h2>
                     <a href="#topics">Topics</a>
                 </h2>
-                <h2>Something custom</h2>
+                <h3 id="something-custom">
+                    <a href="#something-custom">Something custom</a>
+                </h3>
                 <p>A custom <i>formatted</i>
                      description of this topic section</p>
                 <ul>
@@ -435,11 +443,15 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <p id="abstract">This is an article.</p>
                 </section>
             </div>
-            <section id="overview">
+            <section id="custom-discussion">
                 <h2>
-                    <a href="#overview">Overview</a>
+                    <a href="#custom-discussion">Custom discussion</a>
                 </h2>
                 <p>It explains how a developer can perform some task using this module.</p>
+                <h3 id="details">
+                    <a href="#details">Details</a>
+                </h3>
+                <p>This subsection describes something more detailed.</p>
             </section>
             <hr/>
             <section id="see-also">

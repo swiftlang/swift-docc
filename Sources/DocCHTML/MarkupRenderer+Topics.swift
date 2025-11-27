@@ -63,12 +63,7 @@ package extension MarkdownRenderer {
         var items: [XMLElement] = []
         // Title
         if let title = taskGroup.title {
-            switch goal {
-            case .quality:
-                items.append(.selfReferencingHeader(level: 3, title: title))
-            case .conciseness:
-                items.append(.element(named: "h3", children: [.text(title)]))
-            }
+            items.append(selfReferencingHeading(level: 3, content: [.text(title)], plainTextTitle: title))
         }
         // Abstract/Discussion
         for markup in taskGroup.content {
@@ -141,22 +136,5 @@ package extension MarkdownRenderer {
                 attributes: languageFilter.map { ["class": "\($0.id)-only"] }
             )
         }
-    }
-}
-
-extension XMLNode {
-    static func selfReferencingHeader(level: Int, title: String) -> XMLElement {
-        let id = urlReadableFragment(title.lowercased())
-        return .element(
-            named: "h\(level)",
-            children: [
-                .element(
-                    named: "a",
-                    children: [.text(title)],
-                    attributes: ["href": "#\(id)"]
-                )
-            ],
-            attributes: ["id": id]
-        )
     }
 }
