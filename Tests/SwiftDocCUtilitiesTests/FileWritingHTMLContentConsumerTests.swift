@@ -247,7 +247,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
           <body>
             <noscript><main>
         <article>
-            <section class="separated">
+            <section>
                 <header>
                     <nav id="breadcrumbs">
                         <ul>
@@ -269,6 +269,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     </code>
                 </pre>
             </section>
+            <hr/>
             <section id="topics">
                 <h2>
                     <a href="#topics">Topics</a>
@@ -309,7 +310,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
           <body>
             <noscript><main>
         <article>
-            <section class="separated">
+            <section>
                 <header>
                     <nav id="breadcrumbs">
                         <ul>
@@ -370,12 +371,14 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 </h2>
                 <p>Description of the return value.</p>
             </section>
-            <section class="separated">
+            <hr/>
+            <section>
                 <h2 id="Discussion">
                     <a href="#Discussion">Discussion</a>
                 </h2>
                 <p>Further description of this method and how to use it.</p>
             </section>
+            <hr/>
             <section id="see-also">
                 <h2>
                     <a href="#see-also">See Also</a>
@@ -425,12 +428,13 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <p id="abstract">This is an article.</p>
                 </section>
             </div>
-            <section class="separated">
+            <section>
                 <h2 id="Overview">
                     <a href="#Overview">Overview</a>
                 </h2>
                 <p>It explains how a developer can perform some task using this module.</p>
             </section>
+            <hr/>
             <section id="see-also">
                 <h2>
                     <a href="#see-also">See Also</a>

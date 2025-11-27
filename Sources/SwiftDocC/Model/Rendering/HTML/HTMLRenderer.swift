@@ -231,22 +231,12 @@ struct HTMLRenderer {
             articleElement.addChild(makeDiscussion(discussion, isSymbol: false))
         }
         
-        var hasMadeSeparatedCuration = false
-        
         func separateCurationIfNeeded() {
-            guard !hasMadeSeparatedCuration, goal == .quality else {
+            guard goal == .quality, ((articleElement.children ?? []).last as? XMLElement)?.name == "section" else {
                 return
             }
             
-            guard let section: XMLElement = (articleElement.children ?? []).reversed().mapFirst(where: {
-                guard let element = $0 as? XMLElement, element.name == "section" else { return nil }
-                return element
-            }) else {
-                return
-            }
-            
-            hasMadeSeparatedCuration = true
-            section.setAttributesWith(["class": "separated"])
+            articleElement.addChild(.element(named: "hr")) // Separate the sections with a thematic break
         }
         
         // Topics
@@ -306,7 +296,6 @@ struct HTMLRenderer {
                 .element(named: "div", children: [hero], attributes: ["id": "hero-module"])
             )
         } else {
-            hero.setAttributesWith(["class": "separated"])
             articleElement.addChild(hero)
         }
         
@@ -457,54 +446,44 @@ struct HTMLRenderer {
             )
         }
         
+        func separateCurationIfNeeded() {
+            guard goal == .quality, ((articleElement.children ?? []).last as? XMLElement)?.name == "section" else {
+                return
+            }
+            
+            articleElement.addChild(.element(named: "hr")) // Separate the sections with a thematic break
+        }
+        
         // Discussion
         if let discussion = symbol.discussion {
+            separateCurationIfNeeded()
+            
             articleElement.addChild(makeDiscussion(discussion, isSymbol: true))
         }
         
-        var hasMadeSeparatedCuration = false
-        
-        func separateCurationIfNeeded() {
-            guard !hasMadeSeparatedCuration else {
-                return
-            }
-            
-            guard let section: XMLElement = (articleElement.children ?? []).reversed().mapFirst(where: {
-                guard let element = $0 as? XMLElement, element.name == "section" else { return nil }
-                return element
-            }) else {
-                return
-            }
-            
-            hasMadeSeparatedCuration = true
-            section.setAttributesWith(["class": "separated"])
-        }
-        
         // Topics
-        if let topics = symbol.topics {
-            separateCurationIfNeeded()
-            
+        do {
             // TODO: Support language specific topic sections
-            articleElement.addChild(
-                renderer.groupedSection(named: "Topics", groups: [
-                    .swift: topics.taskGroups.map { group in
-                        .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
-                            $0.destination.flatMap { URL(string: $0) }
-                        })
-                    }
-                ])
-            )
-        }
-        if let automaticTopics = try? AutomaticCuration.topics(for: node, withTraits: [.swift, .objectiveC], context: context),
-           automaticTopics.contains(where: { !$0.references.isEmpty })
-        {
-            articleElement.addChild(
-                renderer.groupedSection(named: "Topics", groups: [
-                    .swift: automaticTopics.map { group in
-                        .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
-                    }
-                ])
-            )
+            var taskGroupInfo: [MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo] = []
+            
+            if let authored = symbol.topics?.taskGroups {
+                taskGroupInfo.append(contentsOf: authored.map { group in
+                    .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
+                        $0.destination.flatMap { URL(string: $0) }
+                    })
+                })
+            }
+            if let automatic = try? AutomaticCuration.topics(for: node, withTraits: [.swift, .objectiveC], context: context) {
+                taskGroupInfo.append(contentsOf: automatic.map { group in
+                    .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
+                })
+            }
+            
+            if !taskGroupInfo.isEmpty {
+                separateCurationIfNeeded()
+                
+                articleElement.addChild(renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
+            }
         }
         
         // See Also
