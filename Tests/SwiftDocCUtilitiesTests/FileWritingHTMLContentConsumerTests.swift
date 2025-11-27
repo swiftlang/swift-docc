@@ -191,7 +191,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <link rel="icon" href="/favicon.ico" />
             <title>ModuleName</title>
             <script>var baseUrl = "/"</script>
-          </head>
+          <meta content="Some description of this module" name="description"/></head>
           <body>
             <noscript><main>
         <article>
@@ -251,7 +251,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <link rel="icon" href="/favicon.ico" />
             <title>SomeClass</title>
             <script>var baseUrl = "/"</script>
-          </head>
+          <meta content="Some in-source description of this class." name="description"/></head>
           <body>
             <noscript><main>
         <article>
@@ -321,7 +321,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <link rel="icon" href="/favicon.ico" />
             <title>someMethod(with:and:)</title>
             <script>var baseUrl = "/"</script>
-          </head>
+          <meta content="Some in-source description of this method." name="description"/></head>
           <body>
             <noscript><main>
         <article>
@@ -422,7 +422,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <link rel="icon" href="/favicon.ico" />
             <title>Some article</title>
             <script>var baseUrl = "/"</script>
-          </head>
+          <meta content="This is an article." name="description"/></head>
           <body>
             <noscript><main>
         <article>

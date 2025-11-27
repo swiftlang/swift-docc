@@ -10,6 +10,7 @@
 
 import Foundation
 import SwiftDocC
+import DocCHTML
 
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var targetFolder: URL
@@ -18,37 +19,46 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var prettyPrintOutput: Bool
     
     private struct HTMLTemplate {
-        var beforeTitle: String
-        var fromTitleToNoScript: String
-        var afterNoScript: String
+        var original: String
+        var contentReplacementRange:     Range<String.Index>
+        var titleReplacementRange:       Range<String.Index>
+        var descriptionReplacementRange: Range<String.Index>
         
         init(data: Data) throws {
             let content = String(decoding: data, as: UTF8.self)
             
-            // FIXME: If the template doesn't already contain a <noscript> tag, add one to the start of the <body>
-            let noScriptStart = content.utf8.firstRange(of: "<noscript>".utf8)!.upperBound
+            // ???: Should we parse the content with XMLParser instead? If so, what do we do if it's not valid XHTML?
+            let noScriptStart = content.utf8.firstRange(of:  "<noscript>".utf8)!.upperBound
             let noScriptEnd   = content.utf8.firstRange(of: "</noscript>".utf8)!.lowerBound
             
-            let prefix = content[..<noScriptStart]
-            
-            // FIXME: If the template doesn't already contain a <title> tag, add one to the end of the <head>
-            let titleStart = content.utf8.firstRange(of: "<title>".utf8)!.upperBound
+            let titleStart = content.utf8.firstRange(of:  "<title>".utf8)!.upperBound
             let titleEnd   = content.utf8.firstRange(of: "</title>".utf8)!.lowerBound
             
-            // ???: Should we parse the content with XMLParser instead? If so, what do we do if it's not valid XHTML?
+            let beforeHeadEnd = content.utf8.firstRange(of: "</head>".utf8)!.lowerBound
             
-            beforeTitle         = String( prefix[..<titleStart] )
-            fromTitleToNoScript = String( prefix[titleEnd...] )
-            afterNoScript       = String( content[noScriptEnd...] )
+            original = content
+            // FIXME: If the template doesn't already contain a <noscript> tag, add one to the start of the <body>
+            // FIXME: If the template doesn't already contain a <title> tag, add one to the end of the <head>
+            contentReplacementRange     = noScriptStart ..< noScriptEnd
+            titleReplacementRange       = titleStart    ..< titleEnd
+            descriptionReplacementRange = beforeHeadEnd ..< beforeHeadEnd
         }
         
         func makeContent(
             content: XMLNode,
             title: String,
-            plainDescription _: String?, // FIXME: Insert the description in the <head>
+            plainDescription: String?,
             prettyPrint: Bool
         ) -> String {
-            beforeTitle + title + fromTitleToNoScript + content.rendered(prettyPrinted: prettyPrint) + afterNoScript
+            var copy = original
+            copy.replaceSubrange(contentReplacementRange, with: content.rendered(prettyPrinted: prettyPrint))
+            if let plainDescription {
+                let metaDescription = XMLNode.element(named: "meta", attributes: ["name": "description", "content": plainDescription])
+                copy.replaceSubrange(descriptionReplacementRange, with: metaDescription.rendered(prettyPrinted: prettyPrint))
+            }
+            copy.replaceSubrange(titleReplacementRange,   with: title)
+            
+            return copy
         }
     }
     private var htmlTemplate: HTMLTemplate
