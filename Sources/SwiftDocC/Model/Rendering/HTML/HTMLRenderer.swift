@@ -192,20 +192,15 @@ struct HTMLRenderer {
         )
         
         // Breadcrumbs and Eyebrow
-        hero.addChild(
-            .element(named: "header", children: [
-                renderer.breadcrumbs(
-                    references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.url },
-                    currentPageNames: .single(.conceptual(node.name.plainText))
-                ),
-                
-                .element(
-                    named: "p",
-                    children: [.text(article.topics == nil ? "Article": "API Collection")],
-                    attributes: ["id": "eyebrow"]
-                ),
-            ])
-        )
+        hero.addChild(renderer.breadcrumbs(
+            references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.url },
+            currentPageNames: .single(.conceptual(node.name.plainText))
+        ))
+        hero.addChild(.element(
+            named: "p",
+            children: [.text(article.topics == nil ? "Article": "API Collection")],
+            attributes: ["id": "eyebrow"]
+        ))
         
         // Title
         hero.addChild(
@@ -309,20 +304,11 @@ struct HTMLRenderer {
         }
         
         // Breadcrumbs and Eyebrow
-        hero.addChild(
-            .element(named: "header", children: [
-                renderer.breadcrumbs(
-                    references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
-                    currentPageNames: names
-                ),
-                
-                .element(
-                    named: "p",
-                    children: [.text(symbol.roleHeading)],
-                    attributes: ["id": "eyebrow"]
-                ),
-            ])
-        )
+        hero.addChild(renderer.breadcrumbs(
+            references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
+            currentPageNames: names
+        ))
+        hero.addChild(.element(named: "p", children: [.text(symbol.roleHeading)], attributes: ["id": "eyebrow"]))
         
         // Title
         let titleVariants = symbol.titleVariants.allValues.sorted(by: { $0.trait < $1.trait})

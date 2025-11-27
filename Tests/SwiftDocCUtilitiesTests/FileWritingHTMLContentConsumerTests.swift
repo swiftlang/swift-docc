@@ -197,14 +197,12 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         <article>
             <div id="hero-module">
                 <section>
-                    <header>
-                        <nav id="breadcrumbs">
-                            <ul>
-                                <li>ModuleName</li>
-                            </ul>
-                        </nav>
-                        <p id="eyebrow">Framework</p>
-                    </header>
+                    <nav id="breadcrumbs">
+                        <ul>
+                            <li>ModuleName</li>
+                        </ul>
+                    </nav>
+                    <p id="eyebrow">Framework</p>
                     <h1>Module<wbr/>
                         Name</h1>
                     <p id="abstract">Some description of this module</p>
@@ -256,17 +254,15 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <noscript><main>
         <article>
             <section>
-                <header>
-                    <nav id="breadcrumbs">
-                        <ul>
-                            <li>
-                                <a href="../../index.html">ModuleName</a>
-                            </li>
-                            <li>SomeClass</li>
-                        </ul>
-                    </nav>
-                    <p id="eyebrow">Class</p>
-                </header>
+                <nav id="breadcrumbs">
+                    <ul>
+                        <li>
+                            <a href="../../index.html">ModuleName</a>
+                        </li>
+                        <li>SomeClass</li>
+                    </ul>
+                </nav>
+                <p id="eyebrow">Class</p>
                 <h1>Some<wbr/>
                     Class</h1>
                 <p id="abstract">Some in-source description of this class.</p>
@@ -326,20 +322,18 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <noscript><main>
         <article>
             <section>
-                <header>
-                    <nav id="breadcrumbs">
-                        <ul>
-                            <li>
-                                <a href="../../../index.html">ModuleName</a>
-                            </li>
-                            <li>
-                                <a href="../../index.html">SomeClass</a>
-                            </li>
-                            <li>someMethod(with:and:)</li>
-                        </ul>
-                    </nav>
-                    <p id="eyebrow">Instance Method</p>
-                </header>
+                <nav id="breadcrumbs">
+                    <ul>
+                        <li>
+                            <a href="../../../index.html">ModuleName</a>
+                        </li>
+                        <li>
+                            <a href="../../index.html">SomeClass</a>
+                        </li>
+                        <li>someMethod(with:and:)</li>
+                    </ul>
+                </nav>
+                <p id="eyebrow">Instance Method</p>
                 <h1>some<wbr/>
                     Method(<wbr/>
                     with:<wbr/>
@@ -428,17 +422,15 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         <article>
             <div id="hero-article">
                 <section>
-                    <header>
-                        <nav id="breadcrumbs">
-                            <ul>
-                                <li>
-                                    <a href="../../index.html">ModuleName</a>
-                                </li>
-                                <li>Some article</li>
-                            </ul>
-                        </nav>
-                        <p id="eyebrow">Article</p>
-                    </header>
+                    <nav id="breadcrumbs">
+                        <ul>
+                            <li>
+                                <a href="../../index.html">ModuleName</a>
+                            </li>
+                            <li>Some article</li>
+                        </ul>
+                    </nav>
+                    <p id="eyebrow">Article</p>
                     <h1>Some article</h1>
                     <p id="abstract">This is an article.</p>
                 </section>
