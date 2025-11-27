@@ -29,7 +29,7 @@ package extension MarkdownRenderer {
             let plainTextDeclaration: [XMLNode] = fragmentsByLanguage.first.map { _, fragments in
                 [.element(named: "code", children: [.text(fragments.map(\.spelling).joined())])]
             } ?? []
-            return .element(named: "pre", children: plainTextDeclaration, attributes: ["id": "declaration"])
+            return .element(named: "pre", children: plainTextDeclaration)
         }
         
         // Note: declarations scroll, so they don't need to word wrap within tokens

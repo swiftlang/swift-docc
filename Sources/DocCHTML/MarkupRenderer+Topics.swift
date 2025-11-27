@@ -125,7 +125,7 @@ package extension MarkdownRenderer {
             .element(
                 named: "code",
                 children: fragments.map {
-                    .element(named: "span", children: RenderHelpers.wordBreak(symbolName: $0.text), attributes: ["class": $0.kind.rawValue])
+                    .element(named: "span", children: wordBreak(symbolName: $0.text), attributes: ["class": $0.kind.rawValue])
                 },
                 attributes: languageFilter.map { ["class": "\($0.id)-only"] }
             )

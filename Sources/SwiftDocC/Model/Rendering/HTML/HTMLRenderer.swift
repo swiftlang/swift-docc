@@ -187,9 +187,14 @@ struct HTMLRenderer {
         main.addChild(articleElement)
         
         let hero = XMLElement(name: "section")
-        articleElement.addChild(
-            .element(named: "div", children: [hero], attributes: ["id": article.topics != nil ? "hero-api" : "hero-article"])
-        )
+        switch goal {
+        case .quality:
+            articleElement.addChild(
+                .element(named: "div", children: [hero], attributes: ["id": article.topics != nil ? "hero-api" : "hero-article"])
+            )
+        case .conciseness:
+            articleElement.addChild(hero)
+        }
         
         // Breadcrumbs and Eyebrow
         hero.addChild(renderer.breadcrumbs(
@@ -264,7 +269,7 @@ struct HTMLRenderer {
         // TODO: Add a way of determining the _automatic_ SeeAlso sections that doesn't query the JSON RenderContext for information.
         
         return RenderedPageInfo(
-            content: main,
+            content: goal == .quality ? main : articleElement,
             metadata: .init(
                 title: article.title?.plainText ?? node.name.plainText,
                 plainDescription: article.abstract?.plainText
@@ -282,7 +287,7 @@ struct HTMLRenderer {
         main.addChild(articleElement)
         
         let hero = XMLElement(name: "section")
-        if symbol.kind.identifier == .module {
+        if symbol.kind.identifier == .module, goal == .quality {
             articleElement.addChild(
                 .element(named: "div", children: [hero], attributes: ["id": "hero-module"])
             )
@@ -308,7 +313,11 @@ struct HTMLRenderer {
             references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
             currentPageNames: names
         ))
-        hero.addChild(.element(named: "p", children: [.text(symbol.roleHeading)], attributes: ["id": "eyebrow"]))
+        hero.addChild(.element(
+            named: "p",
+            children: [.text(symbol.roleHeading)],
+            attributes: goal == .quality ? ["id": "eyebrow"] : [:]
+        ))
         
         // Title
         let titleVariants = symbol.titleVariants.allValues.sorted(by: { $0.trait < $1.trait})
@@ -333,7 +342,7 @@ struct HTMLRenderer {
             hero.addChild(
                 .element(
                     named: "h1",
-                    children: RenderHelpers.wordBreak(symbolName: variant),
+                    children: renderer.wordBreak(symbolName: variant),
                     attributes: attributes
                 )
             )
@@ -342,10 +351,9 @@ struct HTMLRenderer {
         // Abstract
         if let abstract = symbol.abstract {
             let paragraph = renderer.visit(abstract) as! XMLElement
-            
-            paragraph.addAttribute(
-                XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode
-            )
+            if goal == .quality {
+                paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
+            }
             hero.addChild(paragraph)
         }
         
@@ -487,7 +495,7 @@ struct HTMLRenderer {
         // TODO: Add a way of determining the _automatic_ SeeAlso sections that doesn't query the JSON RenderContext for information.
         
         return RenderedPageInfo(
-            content: main,
+            content: goal == .quality ? main : articleElement,
             metadata: .init(
                 title: symbol.title,
                 plainDescription: symbol.abstract?.plainText

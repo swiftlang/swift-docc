@@ -193,53 +193,38 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <script>var baseUrl = "/"</script>
           <meta content="Some formatted description of this module" name="description"/></head>
           <body>
-            <noscript><main>
-        <article>
-            <div id="hero-module">
-                <section>
-                    <nav id="breadcrumbs">
-                        <ul>
-                            <li>ModuleName</li>
-                        </ul>
-                    </nav>
-                    <p id="eyebrow">Framework</p>
-                    <h1>Module<wbr/>
-                        Name</h1>
-                    <p id="abstract">Some <b>formatted</b>
-                         description of this module</p>
-                </section>
-            </div>
-            <section id="topics">
-                <h2>
-                    <a href="#topics">Topics</a>
-                </h2>
-                <h3 id="something-custom">
-                    <a href="#something-custom">Something custom</a>
-                </h3>
-                <p>A custom <i>formatted</i>
-                     description of this topic section</p>
-                <ul>
-                    <li>
-                        <a href="../SomeArticle/index.html">
-                            <p>Some article</p>
-                            <p>This is an <i>formatted</i>
-                                 article.</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="../SomeClass/index.html">
-                            <code>
-                                <span class="decorator">class </span>
-                                <span class="identifier">Some<wbr/>
-                                    Class</span>
-                            </code>
-                            <p>Some in-source description of this class.</p>
-                        </a>
-                    </li>
-                </ul>
-            </section>
-        </article>
-        </main></noscript>
+            <noscript><article>
+        <section>
+            <ul>
+                <li>ModuleName</li>
+            </ul>
+            <p>Framework</p>
+            <h1>ModuleName</h1>
+            <p>Some <b>formatted</b>
+                 description of this module</p>
+        </section>
+        <section>
+            <h2>Topics</h2>
+            <h3>Something custom</h3>
+            <p>A custom <i>formatted</i>
+                 description of this topic section</p>
+            <ul>
+                <li>
+                    <a href="../SomeArticle/index.html">
+                        <p>Some article</p>
+                        <p>This is an <i>formatted</i>
+                             article.</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="../SomeClass/index.html">
+                        <code>class SomeClass</code>
+                        <p>Some in-source description of this class.</p>
+                    </a>
+                </li>
+            </ul>
+        </section>
+        </article></noscript>
             <div id="app"></div>
           </body>
         </html>
@@ -254,60 +239,34 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <script>var baseUrl = "/"</script>
           <meta content="Some in-source description of this class." name="description"/></head>
           <body>
-            <noscript><main>
-        <article>
-            <section>
-                <nav id="breadcrumbs">
-                    <ul>
-                        <li>
-                            <a href="../../index.html">ModuleName</a>
-                        </li>
-                        <li>SomeClass</li>
-                    </ul>
-                </nav>
-                <p id="eyebrow">Class</p>
-                <h1>Some<wbr/>
-                    Class</h1>
-                <p id="abstract">Some in-source description of this class.</p>
-                <pre id="declaration">
-                    <code>
-                        <span class="token-keyword">class</span>
-                         <span class="token-identifier">SomeClass</span>
-                    </code>
-                </pre>
-            </section>
-            <hr/>
-            <section id="topics">
-                <h2>
-                    <a href="#topics">Topics</a>
-                </h2>
-                <h3 id="instance-methods">
-                    <a href="#instance-methods">Instance Methods</a>
-                </h3>
-                <ul>
-                    <li>
-                        <a href="../someMethod(with:and:)/index.html">
-                            <code>
-                                <span class="decorator">func </span>
-                                <span class="identifier">some<wbr/>
-                                    Method</span>
-                                <span class="decorator">(</span>
-                                <span class="identifier">with</span>
-                                <span class="decorator"> first:<wbr/>
-                                     Int, </span>
-                                <span class="identifier">and</span>
-                                <span class="decorator"> second:<wbr/>
-                                     String)<wbr/>
-                                     -&gt;<wbr/>
-                                     Bool</span>
-                            </code>
-                            <p>Some in-source description of this method.</p>
-                        </a>
-                    </li>
-                </ul>
-            </section>
-        </article>
-        </main></noscript>
+            <noscript><article>
+        <section>
+            <ul>
+                <li>
+                    <a href="../../index.html">ModuleName</a>
+                </li>
+                <li>SomeClass</li>
+            </ul>
+            <p>Class</p>
+            <h1>SomeClass</h1>
+            <p>Some in-source description of this class.</p>
+            <pre>
+                <code>class SomeClass</code>
+            </pre>
+        </section>
+        <section>
+            <h2>Topics</h2>
+            <h3>Instance Methods</h3>
+            <ul>
+                <li>
+                    <a href="../someMethod(with:and:)/index.html">
+                        <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
+                        <p>Some in-source description of this method.</p>
+                    </a>
+                </li>
+            </ul>
+        </section>
+        </article></noscript>
             <div id="app"></div>
           </body>
         </html>
@@ -322,94 +281,65 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <script>var baseUrl = "/"</script>
           <meta content="Some in-source description of this method." name="description"/></head>
           <body>
-            <noscript><main>
-        <article>
-            <section>
-                <nav id="breadcrumbs">
-                    <ul>
-                        <li>
-                            <a href="../../../index.html">ModuleName</a>
-                        </li>
-                        <li>
-                            <a href="../../index.html">SomeClass</a>
-                        </li>
-                        <li>someMethod(with:and:)</li>
-                    </ul>
-                </nav>
-                <p id="eyebrow">Instance Method</p>
-                <h1>some<wbr/>
-                    Method(<wbr/>
-                    with:<wbr/>
-                    and:)</h1>
-                <p id="abstract">Some in-source description of this method.</p>
-                <pre id="declaration">
-                    <code>
-                        <span class="token-keyword">func</span>
-                         <span class="token-identifier">someMethod</span>
-                        (<span class="token-externalParam">with</span>
-                         <span class="token-internalParam">first</span>
-                        : <span class="token-typeIdentifier">Int</span>
-                        , <span class="token-externalParam">and</span>
-                         <span class="token-internalParam">second</span>
-                        : <span class="token-typeIdentifier">String</span>
-                        ) -&gt; <span class="token-typeIdentifier">Bool</span>
-                    </code>
-                </pre>
-            </section>
-            <section id="parameters">
-                <h2>
-                    <a href="#parameters">Parameters</a>
-                </h2>
-                <dl>
-                    <dt>
-                        <code>first</code>
-                    </dt>
-                    <dd>
-                        <p>Description of the <code>first</code>
-                             parameter.</p>
-                    </dd>
-                    <dt>
-                        <code>second</code>
-                    </dt>
-                    <dd>
-                        <p>Description of the <code>second</code>
-                             parameter.</p>
-                    </dd>
-                </dl>
-            </section>
-            <section id="return-value">
-                <h2>
-                    <a href="#return-value">Return Value</a>
-                </h2>
-                <p>Description of the return value.</p>
-            </section>
-            <hr/>
-            <section id="discussion">
-                <h2>
-                    <a href="#discussion">Discussion</a>
-                </h2>
-                <p>Further description of this method and how to use it.</p>
-            </section>
-            <hr/>
-            <section id="see-also">
-                <h2>
-                    <a href="#see-also">See Also</a>
-                </h2>
-                <h3 id="related-documentation">
-                    <a href="#related-documentation">Related Documentation</a>
-                </h3>
-                <ul>
-                    <li>
-                        <a href="../../../SomeArticle/index.html">
-                            <p>Some article</p>
-                            <p>This is an <i>formatted</i>
-                                 article.</p>
-                        </a>
-                    </li>
-                </ul>
-            </section>
-        </article>
-        </main></noscript>
+            <noscript><article>
+        <section>
+            <ul>
+                <li>
+                    <a href="../../../index.html">ModuleName</a>
+                </li>
+                <li>
+                    <a href="../../index.html">SomeClass</a>
+                </li>
+                <li>someMethod(with:and:)</li>
+            </ul>
+            <p>Instance Method</p>
+            <h1>someMethod(with:and:)</h1>
+            <p>Some in-source description of this method.</p>
+            <pre>
+                <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
+            </pre>
+        </section>
+        <section>
+            <h2>Parameters</h2>
+            <dl>
+                <dt>
+                    <code>first</code>
+                </dt>
+                <dd>
+                    <p>Description of the <code>first</code>
+                         parameter.</p>
+                </dd>
+                <dt>
+                    <code>second</code>
+                </dt>
+                <dd>
+                    <p>Description of the <code>second</code>
+                         parameter.</p>
+                </dd>
+            </dl>
+        </section>
+        <section>
+            <h2>Return Value</h2>
+            <p>Description of the return value.</p>
+        </section>
+        <section>
+            <h2>Discussion</h2>
+            <p>Further description of this method and how to use it.</p>
+        </section>
+        <section>
+            <h2>See Also</h2>
+            <h3>Related Documentation</h3>
+            <ul>
+                <li>
+                    <a href="../../../SomeArticle/index.html">
+                        <p>Some article</p>
+                        <p>This is an <i>formatted</i>
+                             article.</p>
+                    </a>
+                </li>
+            </ul>
+        </section>
+        </article></noscript>
             <div id="app"></div>
           </body>
         </html>
@@ -424,57 +354,38 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <script>var baseUrl = "/"</script>
           <meta content="This is an formatted article." name="description"/></head>
           <body>
-            <noscript><main>
-        <article>
-            <div id="hero-article">
-                <section>
-                    <nav id="breadcrumbs">
-                        <ul>
-                            <li>
-                                <a href="../../index.html">ModuleName</a>
-                            </li>
-                            <li>Some article</li>
-                        </ul>
-                    </nav>
-                    <p id="eyebrow">Article</p>
-                    <h1>Some article</h1>
-                    <p id="abstract">This is an <i>formatted</i>
-                         article.</p>
-                </section>
-            </div>
-            <section id="custom-discussion">
-                <h2>
-                    <a href="#custom-discussion">Custom discussion</a>
-                </h2>
-                <p>It explains how a developer can perform some task using this module.</p>
-                <h3 id="details">
-                    <a href="#details">Details</a>
-                </h3>
-                <p>This subsection describes something more detailed.</p>
-            </section>
-            <hr/>
-            <section id="see-also">
-                <h2>
-                    <a href="#see-also">See Also</a>
-                </h2>
-                <h3 id="related-documentation">
-                    <a href="#related-documentation">Related Documentation</a>
-                </h3>
-                <ul>
-                    <li>
-                        <a href="../../SomeClass/index.html">
-                            <code>
-                                <span class="decorator">class </span>
-                                <span class="identifier">Some<wbr/>
-                                    Class</span>
-                            </code>
-                            <p>Some in-source description of this class.</p>
-                        </a>
-                    </li>
-                </ul>
-            </section>
-        </article>
-        </main></noscript>
+            <noscript><article>
+        <section>
+            <ul>
+                <li>
+                    <a href="../../index.html">ModuleName</a>
+                </li>
+                <li>Some article</li>
+            </ul>
+            <p id="eyebrow">Article</p>
+            <h1>Some article</h1>
+            <p id="abstract">This is an <i>formatted</i>
+                 article.</p>
+        </section>
+        <section>
+            <h2>Custom discussion</h2>
+            <p>It explains how a developer can perform some task using this module.</p>
+            <h3>Details</h3>
+            <p>This subsection describes something more detailed.</p>
+        </section>
+        <section>
+            <h2>See Also</h2>
+            <h3>Related Documentation</h3>
+            <ul>
+                <li>
+                    <a href="../../SomeClass/index.html">
+                        <code>class SomeClass</code>
+                        <p>Some in-source description of this class.</p>
+                    </a>
+                </li>
+            </ul>
+        </section>
+        </article></noscript>
             <div id="app"></div>
           </body>
         </html>

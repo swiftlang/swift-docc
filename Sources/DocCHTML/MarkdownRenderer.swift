@@ -153,6 +153,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         return .text(html.rawHTML)
     }
     
+    package func wordBreak(symbolName: String) -> [XMLNode] {
+        switch goal {
+        case .quality:     RenderHelpers.wordBreak(symbolName: symbolName)
+        case .conciseness: [.text(symbolName)]
+        }
+    }
+    
     func visit(_ link: Link) -> XMLNode {
         guard let destination = link.destination.flatMap({ URL(string: $0) }) else {
             return .text("")
@@ -162,7 +169,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             var customTitle = [XMLNode]()
             for child in link.inlineChildren {
                 if let code = child as? InlineCode {
-                    customTitle.append(.element(named: "code", children: RenderHelpers.wordBreak(symbolName: code.code)))
+                    customTitle.append(.element(named: "code", children: wordBreak(symbolName: code.code)))
                 } else {
                     customTitle.append(visit(child))
                 }
@@ -186,12 +193,12 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 case .single(let name):
                     switch name {
                         case .conceptual(let name): [ .text(name) ]
-                        case .symbol(let name):     [ .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name)) ]
+                        case .symbol(let name):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
                     }
                     
                 case .languageSpecificSymbol(let namesByLanguageID):
                     RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
-                        .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
+                        .element(named: "code", children: wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
                     }
             }
             
@@ -225,12 +232,12 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             case .single(let name):
                 switch name {
                     case .conceptual(let name): [ .text(name) ]
-                    case .symbol(let name):     [ .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name)) ]
+                    case .symbol(let name):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
                 }
                 
             case .languageSpecificSymbol(let namesByLanguageID):
                 RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
-                    .element(named: "code", children: RenderHelpers.wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
+                    .element(named: "code", children: wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
                 }
         }
         

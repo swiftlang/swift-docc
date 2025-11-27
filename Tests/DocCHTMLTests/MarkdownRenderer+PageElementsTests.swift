@@ -300,7 +300,7 @@ struct MarkdownRenderer_PageElementsTests {
             """)
         case .conciseness:
             #expect(declaration.rendered(prettyFormatted: true) == """
-            <pre id="declaration">
+            <pre>
             <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
             </pre>
             """)
@@ -449,7 +449,7 @@ struct MarkdownRenderer_PageElementsTests {
             
         case .conciseness:
             #expect(declaration.rendered(prettyFormatted: true) == """
-            <pre id="declaration">
+            <pre>
             <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
             </pre>
             """)
