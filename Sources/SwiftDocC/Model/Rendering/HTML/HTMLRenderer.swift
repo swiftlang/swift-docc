@@ -508,30 +508,17 @@ struct HTMLRenderer {
     }
     
     private func makeDiscussion(_ discussion: DiscussionSection, isSymbol: Bool) -> XMLNode {
-        let section = XMLElement(name: "section")
-        
-        // Don't add a heading if it's already authored
-        if (discussion.content.first as? Heading)?.level != 2 {
-            section.addChild(
-                .selfReferencingHeader(title: isSymbol ? "Discussion" : "Overview")
-            )
-        }
-        
         var remaining = discussion.content[...]
-        if let heading = discussion.content.first as? Heading, heading.level == 2 {
-            _ = remaining.removeFirst()
-            section.addChild(
-                .selfReferencingHeader(title: heading.title)
-            )
+        
+        let title: String
+        if let heading = remaining.first as? Heading, heading.level == 2 {
+            _ = remaining.removeFirst() // Make the authored heading reference the section, not itself
+            title = heading.title
+        } else {
+            title = isSymbol ? "Discussion" : "Overview"
         }
         
-        for markup in remaining {
-            section.addChild(
-                renderer.visit(markup)
-            )
-        }
-        
-        return section
+        return renderer.selfReferencingSection(named: title, content: remaining.map { renderer.visit($0) })
     }
     
     // FIXME: There's currently nothing calling this. Instead, the 2 `render...` methods return a `RenderedPageInfo` value.

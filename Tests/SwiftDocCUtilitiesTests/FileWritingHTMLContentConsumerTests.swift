@@ -379,9 +379,9 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <p>Description of the return value.</p>
             </section>
             <hr/>
-            <section>
-                <h2 id="Discussion">
-                    <a href="#Discussion">Discussion</a>
+            <section id="discussion">
+                <h2>
+                    <a href="#discussion">Discussion</a>
                 </h2>
                 <p>Further description of this method and how to use it.</p>
             </section>
@@ -435,9 +435,9 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <p id="abstract">This is an article.</p>
                 </section>
             </div>
-            <section>
-                <h2 id="Overview">
-                    <a href="#Overview">Overview</a>
+            <section id="overview">
+                <h2>
+                    <a href="#overview">Overview</a>
                 </h2>
                 <p>It explains how a developer can perform some task using this module.</p>
             </section>
