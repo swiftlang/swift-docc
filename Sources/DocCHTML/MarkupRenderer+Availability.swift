@@ -57,7 +57,7 @@ package extension MarkdownRenderer {
                 attributes["class"] = "deprecated"
             }
             
-            return .element(named: "li", children: [.text(text)], attributes: goal == .quality ? attributes : [:])
+            return .element(named: "li", children: [.text(text)], attributes: goal == .richness ? attributes : [:])
         }
         
         return .element(

@@ -91,7 +91,7 @@ package extension MarkdownRenderer {
             items = switch goal {
             case .conciseness:
                 [ .element(named: "code", children: [.text(fragments.map(\.text).joined())]) ]
-            case .quality:
+            case .richness:
                 [ _symbolSubheading(fragments, languageFilter: nil) ]
             }
             break
@@ -121,7 +121,7 @@ package extension MarkdownRenderer {
     
     private func _symbolSubheading(_ fragments: [LinkedElement.SymbolNameFragment], languageFilter: SourceLanguage?) -> XMLElement {
         switch goal {
-        case .quality:
+        case .richness:
             .element(
                 named: "code",
                 children: fragments.map {

@@ -188,7 +188,7 @@ struct HTMLRenderer {
         
         let hero = XMLElement(name: "section")
         switch goal {
-        case .quality:
+        case .richness:
             articleElement.addChild(
                 .element(named: "div", children: [hero], attributes: ["id": article.topics != nil ? "hero-api" : "hero-article"])
             )
@@ -228,7 +228,7 @@ struct HTMLRenderer {
         }
         
         func separateCurationIfNeeded() {
-            guard goal == .quality, ((articleElement.children ?? []).last as? XMLElement)?.name == "section" else {
+            guard goal == .richness, ((articleElement.children ?? []).last as? XMLElement)?.name == "section" else {
                 return
             }
             
@@ -269,7 +269,7 @@ struct HTMLRenderer {
         // TODO: Add a way of determining the _automatic_ SeeAlso sections that doesn't query the JSON RenderContext for information.
         
         return RenderedPageInfo(
-            content: goal == .quality ? main : articleElement,
+            content: goal == .richness ? main : articleElement,
             metadata: .init(
                 title: article.title?.plainText ?? node.name.plainText,
                 plainDescription: article.abstract?.plainText
@@ -287,7 +287,7 @@ struct HTMLRenderer {
         main.addChild(articleElement)
         
         let hero = XMLElement(name: "section")
-        if symbol.kind.identifier == .module, goal == .quality {
+        if symbol.kind.identifier == .module, goal == .richness {
             articleElement.addChild(
                 .element(named: "div", children: [hero], attributes: ["id": "hero-module"])
             )
@@ -316,7 +316,7 @@ struct HTMLRenderer {
         hero.addChild(.element(
             named: "p",
             children: [.text(symbol.roleHeading)],
-            attributes: goal == .quality ? ["id": "eyebrow"] : [:]
+            attributes: goal == .richness ? ["id": "eyebrow"] : [:]
         ))
         
         // Title
@@ -351,7 +351,7 @@ struct HTMLRenderer {
         // Abstract
         if let abstract = symbol.abstract {
             let paragraph = renderer.visit(abstract) as! XMLElement
-            if goal == .quality {
+            if goal == .richness {
                 paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
             }
             hero.addChild(paragraph)
@@ -439,7 +439,7 @@ struct HTMLRenderer {
         }
         
         func separateCurationIfNeeded() {
-            guard goal == .quality, ((articleElement.children ?? []).last as? XMLElement)?.name == "section" else {
+            guard goal == .richness, ((articleElement.children ?? []).last as? XMLElement)?.name == "section" else {
                 return
             }
             
@@ -495,7 +495,7 @@ struct HTMLRenderer {
         // TODO: Add a way of determining the _automatic_ SeeAlso sections that doesn't query the JSON RenderContext for information.
         
         return RenderedPageInfo(
-            content: goal == .quality ? main : articleElement,
+            content: goal == .richness ? main : articleElement,
             metadata: .init(
                 title: symbol.title,
                 plainDescription: symbol.abstract?.plainText

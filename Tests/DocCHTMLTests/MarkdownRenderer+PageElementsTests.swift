@@ -45,7 +45,7 @@ struct MarkdownRenderer_PageElementsTests {
         ]
         let breadcrumbs = makeRenderer(goal: goal, elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path }, currentPageNames: .single(.conceptual("ThisPage")))
         switch goal {
-        case .quality:
+        case .richness:
             #expect(breadcrumbs.rendered(prettyFormatted: true) == """
             <nav id="breadcrumbs">
             <ul>
@@ -85,7 +85,7 @@ struct MarkdownRenderer_PageElementsTests {
             .init(name: "Third",  introduced: "4.5",                    isBeta: true),
         ])
         switch goal {
-        case .quality:
+        case .richness:
             #expect(availability.rendered(prettyFormatted: true) == """
             <ul id="availability">
             <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" role="text" title="Introduced in First 1.2 and deprecated in First 3.4">First 1.2–3.4</li>
@@ -117,7 +117,7 @@ struct MarkdownRenderer_PageElementsTests {
             ]
         ])
         let expectedHTMLStart = switch goal {
-        case .quality: """
+        case .richness: """
             <section id="parameters">
             <h2>
                 <a href="#parameters">Parameters</a>
@@ -156,7 +156,7 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test
     func testRenderLanguageSpecificParameters() {
-        let parameters = makeRenderer(goal: .quality).parameters([
+        let parameters = makeRenderer(goal: .richness).parameters([
             .swift: [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
                 .init(name: "SwiftOnly", content: parseMarkup(string: "Only available in Swift")),
@@ -205,7 +205,7 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test
     func testRenderManyLanguageSpecificParameters() {
-        let parameters = makeRenderer(goal: .quality).parameters([
+        let parameters = makeRenderer(goal: .richness).parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some description")),
             ],
@@ -281,7 +281,7 @@ struct MarkdownRenderer_PageElementsTests {
             ]
         ])
         switch goal {
-        case .quality:
+        case .richness:
             #expect(declaration.rendered(prettyFormatted: true) == """
             <pre id="declaration">
             <code>
@@ -313,7 +313,7 @@ struct MarkdownRenderer_PageElementsTests {
             .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
         ])
         let expectedHTMLStart = switch goal {
-        case .quality: """
+        case .richness: """
             <section id="return-value">
             <h2>
                 <a href="#return-value">Return Value</a>
@@ -340,7 +340,7 @@ struct MarkdownRenderer_PageElementsTests {
             .objectiveC: parseMarkup(string: "Other language's paragraph"),
         ])
         let expectedHTMLStart = switch goal {
-        case .quality: """
+        case .richness: """
             <section id="return-value">
             <h2>
                 <a href="#return-value">Return Value</a>
@@ -418,7 +418,7 @@ struct MarkdownRenderer_PageElementsTests {
             ]
         ])
         switch goal {
-        case .quality:
+        case .richness:
             #expect(declaration.rendered(prettyFormatted: true) == """
             <pre id="declaration">
             <code class="swift-only">
@@ -521,7 +521,7 @@ struct MarkdownRenderer_PageElementsTests {
         ])
         
         switch goal {
-        case .quality:
+        case .richness:
             #expect(groupedSection.rendered(prettyFormatted: true) == """
             <section id="\(expectedSectionID)">
             <h2>
@@ -681,6 +681,6 @@ struct MultiValueLinkProvider: LinkProvider {
 
 extension RenderGoal: CaseIterable {
     package static var allCases: [RenderGoal] {
-        [.quality, .conciseness]
+        [.richness, .conciseness]
     }
 }

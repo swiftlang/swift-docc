@@ -13,10 +13,10 @@ package import Markdown
 
 /// The primary goal for the rendered HTML output.
 package enum RenderGoal {
-    /// The rendered output should prioritize quality, optimizing for human consumption.
+    /// The rendered output should prioritize richness, optimizing for human consumption.
     ///
     /// The rendered output might include explicit work-breaks, syntax highlighted code, etc.
-    case quality
+    case richness
     /// The minimalistic rendered output should prioritize conciseness, optimizing for consumption by machines such as SEO indexers or LLMs.
     case conciseness
 }
@@ -68,7 +68,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         case .conciseness:
             return .element(named: "h\(level)", children: content)
             
-        case .quality:
+        case .richness:
             let id = urlReadableFragment(plainTextTitle().lowercased())
             return .element(
                 named: "h\(level)",
@@ -155,7 +155,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     
     package func wordBreak(symbolName: String) -> [XMLNode] {
         switch goal {
-        case .quality:     RenderHelpers.wordBreak(symbolName: symbolName)
+        case .richness:     RenderHelpers.wordBreak(symbolName: symbolName)
         case .conciseness: [.text(symbolName)]
         }
     }

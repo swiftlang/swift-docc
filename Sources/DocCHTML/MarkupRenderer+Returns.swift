@@ -48,7 +48,7 @@ package extension MarkdownRenderer {
         let sectionAttributes: [String: String]
         
         switch goal {
-        case .quality:
+        case .richness:
             let id = urlReadableFragment(sectionName.lowercased())
             headingContent = .element(named: "a", children: [.text(sectionName)], attributes: ["href": "#\(id)"])
             sectionAttributes = ["id": id]

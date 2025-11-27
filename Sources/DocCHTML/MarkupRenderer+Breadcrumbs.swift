@@ -27,7 +27,7 @@ package extension MarkdownRenderer {
             case .languageSpecificSymbol(let namesByLanguageID):
                 let names = RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID)
                 return switch goal {
-                case .quality:
+                case .richness:
                     if names.count == 1 {
                         [.text(names.first!.value)]
                     } else {
@@ -63,7 +63,7 @@ package extension MarkdownRenderer {
         return switch goal {
         case .conciseness:
             list
-        case .quality:
+        case .richness:
             .element(named: "nav", children: [list], attributes: ["id": "breadcrumbs"])
         }
     }
