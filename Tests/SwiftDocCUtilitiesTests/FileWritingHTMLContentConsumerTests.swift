@@ -206,7 +206,6 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <h1>Module<wbr/>
                         Name</h1>
                     <p id="abstract">Some description of this module</p>
-                    <pre id="declaration"/>
                 </section>
             </div>
             <section id="topics">

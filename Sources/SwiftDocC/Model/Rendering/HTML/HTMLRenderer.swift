@@ -375,7 +375,9 @@ struct HTMLRenderer {
                 fragmentsByLanguageID[SourceLanguage(id: languageID)] = variant.values.first?.declarationFragments
             }
             
-            hero.addChild( renderer.declaration(fragmentsByLanguageID) )
+            if fragmentsByLanguageID.values.contains(where: { !$0.isEmpty }) {
+                hero.addChild( renderer.declaration(fragmentsByLanguageID) )
+            }
         }
         
         // Deprecation message
