@@ -85,7 +85,7 @@ package extension MarkdownRenderer {
         var items: [XMLNode]
         switch element.subheadings {
         case .single(.conceptual(let title)):
-            items = [.text(title)]
+            items = [.element(named: "p", children: [.text(title)])]
             
         case .single(.symbol(let fragments)):
             items = switch goal {

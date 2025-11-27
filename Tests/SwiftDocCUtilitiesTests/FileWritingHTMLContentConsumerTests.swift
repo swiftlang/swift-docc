@@ -23,7 +23,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some article
             
-            This is an article.
+            This is an _formatted_ article.
             
             ## Custom discussion
             
@@ -106,7 +106,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             TextFile(name: "ModuleName.md", utf8Content: """
             # ``ModuleName``
             
-            Some description of this module
+            Some **formatted** description of this module
             
             ## Topics
             
@@ -191,7 +191,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <link rel="icon" href="/favicon.ico" />
             <title>ModuleName</title>
             <script>var baseUrl = "/"</script>
-          <meta content="Some description of this module" name="description"/></head>
+          <meta content="Some formatted description of this module" name="description"/></head>
           <body>
             <noscript><main>
         <article>
@@ -205,7 +205,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <p id="eyebrow">Framework</p>
                     <h1>Module<wbr/>
                         Name</h1>
-                    <p id="abstract">Some description of this module</p>
+                    <p id="abstract">Some <b>formatted</b>
+                         description of this module</p>
                 </section>
             </div>
             <section id="topics">
@@ -219,7 +220,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                      description of this topic section</p>
                 <ul>
                     <li>
-                        <a href="../SomeArticle/index.html">Some article<p>This is an article.</p>
+                        <a href="../SomeArticle/index.html">
+                            <p>Some article</p>
+                            <p>This is an <i>formatted</i>
+                                 article.</p>
                         </a>
                     </li>
                     <li>
@@ -396,7 +400,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 </h3>
                 <ul>
                     <li>
-                        <a href="../../../SomeArticle/index.html">Some article<p>This is an article.</p>
+                        <a href="../../../SomeArticle/index.html">
+                            <p>Some article</p>
+                            <p>This is an <i>formatted</i>
+                                 article.</p>
                         </a>
                     </li>
                 </ul>
@@ -415,7 +422,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <link rel="icon" href="/favicon.ico" />
             <title>Some article</title>
             <script>var baseUrl = "/"</script>
-          <meta content="This is an article." name="description"/></head>
+          <meta content="This is an formatted article." name="description"/></head>
           <body>
             <noscript><main>
         <article>
@@ -431,7 +438,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     </nav>
                     <p id="eyebrow">Article</p>
                     <h1>Some article</h1>
-                    <p id="abstract">This is an article.</p>
+                    <p id="abstract">This is an <i>formatted</i>
+                         article.</p>
                 </section>
             </div>
             <section id="custom-discussion">

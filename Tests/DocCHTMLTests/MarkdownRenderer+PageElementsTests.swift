@@ -475,7 +475,13 @@ struct MarkdownRenderer_PageElementsTests {
                         .init(text: "TLASomeClass", kind: .identifier),
                     ],
                 ]),
-                abstract: nil
+                abstract: parseMarkup(string: "Some _formatted_ description of this class").first as? Paragraph
+            ),
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeArticle/index.html")!,
+                names: .single(.conceptual("Some Article")),
+                subheadings: .single(.conceptual("Some Article")),
+                abstract: parseMarkup(string: "Some **formatted** description of this _article_.").first as? Paragraph
             ),
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
@@ -508,6 +514,7 @@ struct MarkdownRenderer_PageElementsTests {
             .swift: [
                 .init(title: "Group title", content: parseMarkup(string: "Some description of this group"), references: [
                     URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
+                    URL(string: "/documentation/ModuleName/SomeArticle/index.html")!,
                     URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
                 ])
             ]
@@ -537,6 +544,16 @@ struct MarkdownRenderer_PageElementsTests {
                             <span class="identifier">TLASome<wbr/>
                                 Class</span>
                         </code>
+                        <p>Some <i>formatted</i>
+                             description of this class</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../../SomeArticle/index.html">
+                        <p>Some Article</p>
+                        <p>Some <b>formatted</b>
+                             description of this <i>article</i>
+                            .</p>
                     </a>
                 </li>
                 <li>
@@ -577,6 +594,16 @@ struct MarkdownRenderer_PageElementsTests {
                 <li>
                     <a href="../../../SomeClass/index.html">
                         <code>class SomeClass</code>
+                        <p>Some <i>formatted</i>
+                             description of this class</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="../../../SomeArticle/index.html">
+                        <p>Some Article</p>
+                        <p>Some <b>formatted</b>
+                             description of this <i>article</i>
+                            .</p>
                     </a>
                 </li>
                 <li>
