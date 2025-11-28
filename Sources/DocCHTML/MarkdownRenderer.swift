@@ -102,15 +102,15 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         .text(text.string)
     }
     
-    func visit(_ lineBreak: LineBreak) -> XMLNode {
+    func visit(_: LineBreak) -> XMLNode {
         .element(named: "br")
     }
     
-    func visit(_ softBreak: SoftBreak) -> XMLNode {
+    func visit(_: SoftBreak) -> XMLNode {
         .text(" ") // A soft line break doesn't actually break the content
     }
     
-    func visit(_ thematicBreak: ThematicBreak) -> XMLNode {
+    func visit(_: ThematicBreak) -> XMLNode {
         .element(named: "hr")
     }
     
@@ -482,8 +482,8 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     
     // MARK: Directives
     
-    func visit(_ blockDirective: BlockDirective) -> XMLNode {
-        .text("") // Do nothing for now
+    func visit(_: BlockDirective) -> XMLNode {
+        .text("") // TODO: Render the block directives that can appear in the content.
     }
     
     // FIXME: It would be nice if DocC processed these before rendering
@@ -592,16 +592,5 @@ private extension Image {
             return nil
         }
         return firstText.string
-    }
-}
-
-private extension URL {
-    /// Returns a copy of the URL without the scheme, host, and port components.
-    func withoutHostAndPortAndScheme() -> URL {
-        var components = URLComponents(url: self, resolvingAgainstBaseURL: false)!
-        components.scheme = nil
-        components.host = nil
-        components.port = nil
-        return components.url!
     }
 }

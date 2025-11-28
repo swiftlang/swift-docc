@@ -149,25 +149,17 @@ struct HTMLRenderer {
     let context: DocumentationContext
     let goal: RenderGoal
     
-    private let linkProvider: ContextLinkProvider
-    private let filePath: URL
-    
     private let renderer: MarkdownRenderer<ContextLinkProvider>
     
     init(reference: ResolvedTopicReference, context: DocumentationContext, goal: RenderGoal) {
         self.reference = reference
         self.context = context
         self.goal = goal
-        let linkProvider = ContextLinkProvider(reference: reference, context: context)
-        self.linkProvider = linkProvider
-        let filePath = ContextLinkProvider.filePath(for: reference)
-        self.filePath = filePath
-        self.renderer = MarkdownRenderer(path: filePath, goal: goal, linkProvider: linkProvider)
-    }
-    
-    private func path(to destination: ResolvedTopicReference) -> String {
-        (destination.url.relative(to: reference.url)?.path
-            ?? destination.path) + "/index.html"
+        self.renderer = MarkdownRenderer(
+            path: ContextLinkProvider.filePath(for: reference),
+            goal: goal,
+            linkProvider: ContextLinkProvider(reference: reference, context: context)
+        )
     }
     
     struct RenderedPageInfo {
@@ -517,127 +509,7 @@ struct HTMLRenderer {
         return renderer.selfReferencingSection(named: title, content: remaining.map { renderer.visit($0) })
     }
     
-    // FIXME: There's currently nothing calling this. Instead, the 2 `render...` methods return a `RenderedPageInfo` value.
-    private func makePage(main: XMLNode, title: String, plainDescription: String?) -> XMLNode {
-        let head = XMLElement(name: "head")
-        head.setChildren([
-            // <meta charset="utf-8">
-            .element(named: "meta", attributes: ["charset": "utf-8"]),
-            
-            // <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-            .metaElement(name: "viewport", content: "width=device-width,initial-scale=1,viewport-fit=cover"),
-            
-            // <link rel="icon" href="/favicon.ico">
-            .element(named: "link", attributes: [
-                "rel": "icon",
-                "href": "/favicon.ico", // ???: Should this be relative to the page?
-            ]),
-            
-            // <link rel="mask-icon" href="/apple-logo.svg" color="#333333">
-            .element(named: "link", attributes: [
-                "rel": "mask-icon",
-                "href": "/apple-logo.svg", // ???: Should this be relative to the page?
-                "color": "#333333",
-            ]),
-            
-            .element(named: "title", children: [
-                .text(title)
-            ]),
-            
-            // <link rel="stylesheet" href="styles.css" />
-            .element(named: "link", attributes: [
-                "rel": "stylesheet",
-                "href": String(repeating: "../", count: reference.url.pathComponents.count - 1) + "styles.css"
-            ]),
-            
-            .element(named: "script", attributes: [
-                "type": "text/javascript",
-                "src": String(repeating: "../", count: reference.url.pathComponents.count - 1) + "reference.js"
-            ]),
-            
-            // FIXME: Include OpenGraph metadata
-        ])
-        if let abstract = plainDescription {
-            head.addChild(
-                .metaElement(name: "description", content: abstract)
-            )
-        }
-        
-        // FIXME: Add the page header here
-        let header = XMLNode.element(
-            named: "header",
-            children: [
-                .element(named: "button", attributes: ["id": "sidebar-toggle", "onclick": "toggleSidebar()"]),
-                
-                .element(
-                    named: "span",
-                    children: [.text("Documentation")],
-                    attributes: ["id": "header-title"]
-                ),
-                
-                .element(named: "div", children: [
-                    .element(named: "label", children: [.text("Language: ")], attributes: ["for": "language-toggle"]),
-                    
-                    .element(
-                        named: "select",
-                        children: [
-                            .element(named: "option", children: [.text("Swift")], attributes: ["value": "swift"]),
-                            .element(named: "option", children: [.text("Objective-C")], attributes: ["value": "occ"]),
-                        ],
-                        attributes: ["id": "language-toggle", "onchange": "languageChanged()"]
-                    ),
-                ])
-            ]
-        )
-        
-        // Wrap up the page
-        let document = XMLDocument(rootElement: .element(
-            named: "html",
-            children: [
-                head,
-                .element(named: "body", children: [
-                    header,
-                    main // Passes as an argument
-                ])
-            ],
-            attributes: ["lang": "en-US"]
-        ))
-        document.documentContentKind = .xhtml
-        
-        let docTypeDefinition = XMLDTD()
-        docTypeDefinition.publicID = "-//W3C//DTD XHTML 1.0 Strict//EN"
-        docTypeDefinition.systemID = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-        docTypeDefinition.name = "html"
-        document.dtd = docTypeDefinition
-        
-        return document
-    }
-    
-}
-
-extension XMLNode {
-    static func metaElement(name: String, content: String) -> XMLElement {
-        .element(named: "meta", attributes: ["name": name, "content": content])
-    }
-    
-    static func metaElement(property: String, content: String) -> XMLElement {
-        .element(named: "meta", attributes: ["property": property, "content": content])
-    }
-    
-    static func selfReferencingHeader(level: Int = 2, title: String) -> XMLElement {
-        let id = urlReadableFragment(title)
-        return .element(
-            named: "h\(level)",
-            children: [
-                .element(
-                    named: "a",
-                    children: [.text(title)],
-                    attributes: ["href": "#\(id)"]
-                )
-            ],
-            attributes: ["id": id]
-        )
-    }
+    // TODO: As a future direction, build another layer on top of this that creates a full HTML page from scratch.
 }
 
 // Note; this isn't a Comparable conformance because I wanted it to be private to this file.

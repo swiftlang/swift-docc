@@ -14,7 +14,6 @@ import DocCHTML
 
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var targetFolder: URL
-    var bundleRootFolder: URL?
     var fileManager: any FileManagerProtocol
     var prettyPrintOutput: Bool
     
@@ -65,13 +64,11 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     
     init(
         targetFolder: URL,
-        bundleRootFolder: URL? = nil,
         fileManager: some FileManagerProtocol,
         htmlTemplate: URL,
         prettyPrintOutput: Bool = shouldPrettyPrintOutputJSON
     ) throws {
         self.targetFolder = targetFolder
-        self.bundleRootFolder = bundleRootFolder
         self.fileManager = fileManager
         self.htmlTemplate = try HTMLTemplate(data: fileManager.contents(of: htmlTemplate))
         self.prettyPrintOutput = prettyPrintOutput
