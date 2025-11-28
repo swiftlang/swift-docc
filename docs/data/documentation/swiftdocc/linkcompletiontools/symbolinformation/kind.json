@@ -120,15 +120,6 @@
   "sections" : [
 
   ],
-  "seeAlsoSections" : [
-    {
-      "anchor" : "Related-Documentation",
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol\/KindIdentifier"
-      ],
-      "title" : "Related Documentation"
-    }
-  ],
   "variants" : [
     {
       "paths" : [
@@ -277,56 +268,6 @@
   "title" : "kind",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/symbolinformation\/kind"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/Symbol/KindIdentifier": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-      "text" : "SymbolGraph"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-      "text" : "Symbol"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V14KindIdentifierV",
-      "text" : "KindIdentifier"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol\/KindIdentifier",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "KindIdentifier"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "SymbolGraph.Symbol.KindIdentifier",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol\/kindidentifier"
 }
 }
 }

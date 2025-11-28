@@ -32898,6 +32898,11 @@
                     "type" : "method"
                   },
                   {
+                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(page:for:)",
+                    "title" : "func consume(page: XMLNode, for: ResolvedTopicReference) throws",
+                    "type" : "method"
+                  },
+                  {
                     "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(rendernode:)",
                     "title" : "func consume(renderNode: RenderNode) throws",
                     "type" : "method"
@@ -38990,6 +38995,11 @@
                       {
                         "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/experimentalmodifycatalogwithgeneratedcuration",
                         "title" : "var experimentalModifyCatalogWithGeneratedCuration: Bool",
+                        "type" : "property"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/experimentaltransformforstatichostingwithcontent",
+                        "title" : "var experimentalTransformForStaticHostingWithContent: Bool",
                         "type" : "property"
                       },
                       {

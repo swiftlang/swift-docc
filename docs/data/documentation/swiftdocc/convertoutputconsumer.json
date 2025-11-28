@@ -131,6 +131,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(indexingRecords:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkableElementSummaries:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(page:for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderNode:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)"
       ],
@@ -641,6 +642,73 @@
   "title" : "consume(linkableElementSummaries:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkableelementsummaries:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(page:for:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "consume"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "page"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:objc(cs)NSXMLNode",
+      "text" : "XMLNode"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
+      "text" : "ResolvedTopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(page:for:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "consume(page:for:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(page:for:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(renderNode:)": {
   "abstract" : [

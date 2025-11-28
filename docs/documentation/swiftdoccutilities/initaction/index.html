@@ -1,1 +1,53 @@
-<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>Documentation</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.0b7dc663.js"></script><script defer="defer" src="/swift-docc/js/index.9be457a8.js"></script><link href="/swift-docc/css/index.19043b1e.css" rel="stylesheet"></head><body data-color-scheme="auto"><noscript><style>.noscript{font-family:"SF Pro Display","SF Pro Icons","Helvetica Neue",Helvetica,Arial,sans-serif;margin:92px auto 140px auto;text-align:center;width:980px}.noscript-title{color:#111;font-size:48px;font-weight:600;letter-spacing:-.003em;line-height:1.08365;margin:0 auto 54px auto;width:502px}@media only screen and (max-width:1068px){.noscript{margin:90px auto 120px auto;width:692px}.noscript-title{font-size:40px;letter-spacing:0;line-height:1.1;margin:0 auto 45px auto;width:420px}}@media only screen and (max-width:735px){.noscript{margin:45px auto 60px auto;width:87.5%}.noscript-title{font-size:32px;letter-spacing:.004em;line-height:1.125;margin:0 auto 35px auto;max-width:330px;width:auto}}#loading-placeholder{display:none}</style><div class="noscript"><h1 class="noscript-title">This page requires JavaScript.</h1><p>Please turn on JavaScript in your browser and refresh the page to view its content.</p></div></noscript><div id="app"></div></body></html>
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>InitAction</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.0b7dc663.js"></script><script defer="defer" src="/swift-docc/js/index.54db7914.js"></script><link href="/swift-docc/css/index.19043b1e.css" rel="stylesheet"><meta content="An action that generates a documentation catalog from a template seed." name="description"/></head><body data-color-scheme="auto"><noscript><article><section><ul><li><a href="../index.html">SwiftDocCUtilities</a></li><li>InitAction</li></ul><p>Structure</p><h1>InitAction</h1><p>An action that generates a documentation catalog from a template seed.</p><pre><code>struct InitAction</code></pre></section><h2>Overview</h2><p>Generates a DocC catalog from one of the two available templates:</p><ul><li><p><code>articleOnly</code>: A template designed for authoring article-only reference documentation.</p></li><li><p><code>tutorial</code>: A template designed for authoring tutorials, consisting of a catalog that contains a table of contents and a chapter. ommit Use <code>docc init</code> to quickly start authoring your content without having to manually add boilerplate content to get the DocC documentation catalog working.</p></li></ul><h2>Templates</h2><p>There are two available templates to start from, depending on the type of content the author wants to write.</p><h3>Article-Only Template</h3><h6>ArticleOnly.md</h6><pre><code># ArticleOnly Template
+
+&lt;!--- Metadata configuration to make appear this documentation page as a top-level page --&gt;
+
+@Metadata {
+  @TechnologyRoot
+}
+
+Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
+
+## Overview
+
+Add one or more paragraphs that introduce your content overview.
+</code></pre><p>With the structure:</p><pre><code>⎯ ArticleOnly.docc
+    ├ ArticleOnly.md
+    ⎣ Resources
+</code></pre><h3>Tutorial Template</h3><h6>table-of-contents.tutorial</h6><pre><code>@Tutorials(name: "\(title)") {
+    @Intro(title: "Tutorial Introduction") {
+        Add one or more paragraphs that introduce your tutorial.
+    }
+    @Chapter(name: "Chapter Name") {
+        @Image(source: "add-your-chapter-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
+        @TutorialReference(tutorial: "doc:page-01")
+    }
+}
+</code></pre><h6>Chapter01/page-01.tutorial</h6><pre><code>@Tutorial() {
+    @Intro(title: "Tutorial Page Title") {
+        Add one paragraph that introduce your tutorial.
+    }
+    @Section(title: "Section Name") {
+        @ContentAndMedia {
+            Add text that introduces the tasks that the reader needs to follow.
+            @Image(source: "add-your-section-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
+        }
+        @Steps {
+            @Step {
+                This is a step with code.
+                @Code(name: "", file: "")
+            }
+            @Step {
+                This is a step with an image.
+                @Image(source: "", alt: "")
+            }
+        }
+    }
+}
+</code></pre><p>With the structure:</p><pre><code>⎯ Tutorial.docc
+    ├ table-of-contents.tutorial
+    ├ Chapter01
+    ⎜   ├ page-01.tutorial
+    ⎜   ⎣ Resources
+    ⎣ Resources
+</code></pre><h2>Topics</h2><h3>Initializers</h3><ul><li><a href="init(catalogoutputdirectory:documentationtitle:catalogtemplate:)/index.html"><code>init(catalogOutputDirectory: URL, documentationTitle: String, catalogTemplate: CatalogTemplateKind) throws</code><p>Creates a new Init action from the given parameters.</p></a></li><li><a href="init(frominitoptions:)/index.html"><code>init(fromInitOptions: InitOptions) throws</code><p>Creates a init action from the options given in the init command.</p></a></li></ul><h3>Instance Methods</h3><ul><li><a href="perform(loghandle:)/index.html"><code>func perform(logHandle: inout LogHandle) async throws -&gt; ActionResult</code><p>Generates a documentation catalog from a catalog template.</p></a></li></ul></article></noscript><div id="app"></div></body></html>

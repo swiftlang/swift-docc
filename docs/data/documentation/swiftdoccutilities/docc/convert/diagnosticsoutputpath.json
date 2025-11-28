@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Convert.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L287"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L296"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

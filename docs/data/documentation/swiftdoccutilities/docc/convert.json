@@ -139,6 +139,7 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalDocumentationCoverageOptions",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalEnableCustomTemplates",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalModifyCatalogWithGeneratedCuration",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalTransformForStaticHostingWithContent",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fallbackBundleDisplayName",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fallbackBundleIdentifier",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fallbackDefaultModuleKind",
@@ -1148,6 +1149,43 @@
   "title" : "experimentalModifyCatalogWithGeneratedCuration",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/experimentalmodifycatalogwithgeneratedcuration"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/experimentalTransformForStaticHostingWithContent": {
+  "abstract" : [
+    {
+      "text" : "A Boolean value that is true if the DocC archive produced by this conversion will browsing without JavaScript enabled.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "experimentalTransformForStaticHostingWithContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalTransformForStaticHostingWithContent",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "experimentalTransformForStaticHostingWithContent",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/experimentaltransformforstatichostingwithcontent"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/fallbackBundleDisplayName": {
   "abstract" : [

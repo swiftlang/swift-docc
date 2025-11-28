@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Convert.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L651"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L660"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

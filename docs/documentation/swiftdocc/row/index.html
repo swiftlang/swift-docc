@@ -1,1 +1,26 @@
-<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>Documentation</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.0b7dc663.js"></script><script defer="defer" src="/swift-docc/js/index.9be457a8.js"></script><link href="/swift-docc/css/index.19043b1e.css" rel="stylesheet"></head><body data-color-scheme="auto"><noscript><style>.noscript{font-family:"SF Pro Display","SF Pro Icons","Helvetica Neue",Helvetica,Arial,sans-serif;margin:92px auto 140px auto;text-align:center;width:980px}.noscript-title{color:#111;font-size:48px;font-weight:600;letter-spacing:-.003em;line-height:1.08365;margin:0 auto 54px auto;width:502px}@media only screen and (max-width:1068px){.noscript{margin:90px auto 120px auto;width:692px}.noscript-title{font-size:40px;letter-spacing:0;line-height:1.1;margin:0 auto 45px auto;width:420px}}@media only screen and (max-width:735px){.noscript{margin:45px auto 60px auto;width:87.5%}.noscript-title{font-size:32px;letter-spacing:.004em;line-height:1.125;margin:0 auto 35px auto;max-width:330px;width:auto}}#loading-placeholder{display:none}</style><div class="noscript"><h1 class="noscript-title">This page requires JavaScript.</h1><p>Please turn on JavaScript in your browser and refresh the page to view its content.</p></div></noscript><div id="app"></div></body></html>
+<!doctype html><html lang="en-US" class="no-js"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/swift-docc/favicon.ico"><link rel="mask-icon" href="/swift-docc/favicon.svg" color="#333333"><title>Row</title><script>var baseUrl = "/swift-docc/"</script><script defer="defer" src="/swift-docc/js/chunk-vendors.0b7dc663.js"></script><script defer="defer" src="/swift-docc/js/index.54db7914.js"></script><link href="/swift-docc/css/index.19043b1e.css" rel="stylesheet"><meta content="A container directive that arranges content into a grid-based row and column layout." name="description"/></head><body data-color-scheme="auto"><noscript><article><section><ul><li><a href="../index.html">SwiftDocC</a></li><li>Row</li></ul><p>Class</p><h1>Row</h1><p>A container directive that arranges content into a grid-based row and column layout.</p><pre><code>final class Row</code></pre></section><h2>Discussion</h2><p>Create a new row by creating an <code>@Row</code> that contains child <code>@Column</code> directives.</p><pre class="md"><code>@Row {
+   @Column {
+      @Image(source: "icon-power-icon", alt: "A blue square containing a snowflake.") {
+         Ice power
+      }
+   }
+
+   @Column {
+      @Image(source: "fire-power-icon", alt: "A red square containing a flame.") {
+         Fire power
+      }
+   }
+
+   @Column {
+      @Image(source: "wind-power-icon", alt: "A teal square containing a breath of air.") {
+         Wind power
+      }
+   }
+
+   @Column {
+      @Image(source: "lightning-power-icon", alt: "A yellow square containing a lightning bolt.") {
+         Lightning power
+      }
+   }
+}
+</code></pre><h2>Topics</h2><ul><li><a href="column/index.html"><code>class Column</code><p>A container directive that holds general markup content describing a column with a row in a grid-based layout.</p></a></li></ul><h3>Instance Properties</h3><ul><li><a href="columns/index.html"><code>var columns: [Row.Column]</code><p>The columns that make up this row.</p></a></li><li><a href="numberofcolumns/index.html"><code>var numberOfColumns: Int</code><p>The number of columns in this row.</p></a></li><li><a href="originalmarkup/index.html"><code>let originalMarkup: BlockDirective</code></a></li></ul><h3>Type Properties</h3><ul><li><a href="introducedversion/index.html"><code>static let introducedVersion: String</code></a></li></ul></article></noscript><div id="app"></div></body></html>
