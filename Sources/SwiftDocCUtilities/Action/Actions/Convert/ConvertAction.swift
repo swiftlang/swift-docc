@@ -252,7 +252,7 @@ public struct ConvertAction: AsyncAction {
 //        }
 
         let indexHTML: URL?
-        if let htmlTemplateDirectory, transformForStaticHosting, !includeContentInEachHTMLFile {
+        if let htmlTemplateDirectory, transformForStaticHosting || includeContentInEachHTMLFile {
             let indexHTMLUrl = temporaryFolder.appendingPathComponent(
                 HTMLTemplate.indexFileName.rawValue,
                 isDirectory: false
@@ -303,7 +303,7 @@ public struct ConvertAction: AsyncAction {
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
-            transformForStaticHostingIndexHTML: indexHTML,
+            transformForStaticHostingIndexHTML: includeContentInEachHTMLFile ? nil : indexHTML,
             bundleID: inputs.id
         )
         

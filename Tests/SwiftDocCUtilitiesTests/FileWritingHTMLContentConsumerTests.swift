@@ -173,18 +173,18 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output-dir"), """
         output-dir/
         ╰─ documentation/
-           ╰─ ModuleName/
-              ├─ SomeArticle/
+           ╰─ modulename/
+              ├─ index.html
+              ├─ somearticle/
               │  ╰─ index.html
-              ├─ SomeClass/
-              │  ├─ index.html
-              │  ╰─ someMethod(with:and:)/
-              │     ╰─ index.html
-              ╰─ index.html
+              ╰─ someclass/
+                 ├─ index.html
+                 ╰─ somemethod(with:and:)/
+                    ╰─ index.html
         """)
         
         
-        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/ModuleName/index.html")), encoding: .utf8)), """
+        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/index.html")), encoding: .utf8)), """
         <html>
           <head>
             <meta charset="utf-8" />
@@ -230,7 +230,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </html>
         """)
         
-        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/ModuleName/SomeClass/index.html")), encoding: .utf8)), """
+        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/index.html")), encoding: .utf8)), """
         <html>
           <head>
             <meta charset="utf-8" />
@@ -272,7 +272,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </html>
         """)
         
-        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")), encoding: .utf8)), """
+        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/somemethod(with:and:)/index.html")), encoding: .utf8)), """
         <html>
           <head>
             <meta charset="utf-8" />
@@ -345,7 +345,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </html>
         """)
         
-        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/ModuleName/SomeArticle/index.html")), encoding: .utf8)), """
+        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/somearticle/index.html")), encoding: .utf8)), """
         <html>
           <head>
             <meta charset="utf-8" />

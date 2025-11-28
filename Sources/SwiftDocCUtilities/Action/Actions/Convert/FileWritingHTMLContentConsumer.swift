@@ -61,6 +61,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         }
     }
     private var htmlTemplate: HTMLTemplate
+    private let fileWriter: JSONEncodingRenderNodeWriter
     
     init(
         targetFolder: URL,
@@ -72,6 +73,11 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         self.fileManager = fileManager
         self.htmlTemplate = try HTMLTemplate(data: fileManager.contents(of: htmlTemplate))
         self.prettyPrintOutput = prettyPrintOutput
+        self.fileWriter = JSONEncodingRenderNodeWriter(
+            targetFolder: targetFolder,
+            fileManager: fileManager,
+            transformForStaticHostingIndexHTML: nil
+        )
     }
     
     func consume(
@@ -86,9 +92,8 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
             prettyPrint: prettyPrintOutput
         )
         
-        let url = targetFolder.appendingPathComponent(reference.path)
-        try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-        try fileManager.createFile(at: url.appendingPathComponent("index.html"), contents: Data(htmlString.utf8), options: .atomic)
+        let relativeFilePath = NodeURLGenerator.fileSafeReferencePath(reference, lowercased: true) + "/index.html"
+        try fileWriter.write(Data(htmlString.utf8), toFileSafePath: relativeFilePath)
     }
 }
 
