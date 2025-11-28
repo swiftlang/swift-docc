@@ -252,15 +252,16 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         let from = path
         let to   = other
         
-        guard from != to else { return to.withoutHostAndPortAndScheme().absoluteString }
+        guard from != to else { return "." }
 
         // To be able to compare the components of the two URLs they both need to be absolute and standardized.
         let fromComponents = from.absoluteURL.standardizedFileURL.pathComponents
-        let toComponents   = to.absoluteURL.standardizedFileURL.pathComponents
+        let toComponents   =   to.absoluteURL.standardizedFileURL.pathComponents
 
         let commonPrefixLength = Array(zip(fromComponents, toComponents).prefix { lhs, rhs in lhs == rhs }).count
 
-        let relativeComponents = repeatElement("..", count: fromComponents.count - commonPrefixLength) + toComponents.dropFirst(commonPrefixLength)
+        let relativeComponents = repeatElement("..", count: fromComponents.count - commonPrefixLength - 1 /* the "index.html" component doesn't count in a web server */)
+            + toComponents.dropFirst(commonPrefixLength)
        
         return relativeComponents.joined(separator: "/")
     }

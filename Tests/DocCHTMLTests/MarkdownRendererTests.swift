@@ -369,7 +369,7 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../../SomeArticle/index.html">Some Article Title</a>
+            <a href="../SomeArticle/index.html">Some Article Title</a>
             </p>
             """
         )
@@ -390,7 +390,7 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../../SomeClass/someMethod(_:_:)/index.html">
+            <a href="../SomeClass/someMethod(_:_:)/index.html">
                 <code>some<wbr/>
                     Method(<wbr/>
                     _:<wbr/>
@@ -407,7 +407,7 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../../SomeClass/someMethod(_:_:)/index.html">
+            <a href="../SomeClass/someMethod(_:_:)/index.html">
                 <code class="swift-only">do<wbr/>
                     Something(<wbr/>
                     with:<wbr/>
@@ -428,7 +428,7 @@ struct MarkdownRendererTests {
             rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
-            <p><a href="../../SomeClass/someMethod(_:_:)/index.html">Custom <i>formatted</i> title</a></p>
+            <p><a href="../SomeClass/someMethod(_:_:)/index.html">Custom <i>formatted</i> title</a></p>
             """
         )
         
@@ -437,7 +437,7 @@ struct MarkdownRendererTests {
             rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
-            <p><a href="../../SomeClass/someMethod(_:_:)/index.html">Some <code>Custom<wbr/>Symbol<wbr/>Name</code> title</a></p>
+            <p><a href="../SomeClass/someMethod(_:_:)/index.html">Some <code>Custom<wbr/>Symbol<wbr/>Name</code> title</a></p>
             """
         )
         
@@ -477,7 +477,7 @@ struct MarkdownRendererTests {
             matches: """
             <p>
             <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../../images/com.test.example/some-image.png"/>
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../images/com.test.example/some-image.png"/>
             </picture>
             </p>
             """
@@ -496,7 +496,7 @@ struct MarkdownRendererTests {
             matches: """
             <p>
             <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../../images/com.test.example/some-image@2x.png 2x, ../../../../../images/com.test.example/some-image.png 1x"/>
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x"/>
             </picture>
             </p>
             """
@@ -513,8 +513,8 @@ struct MarkdownRendererTests {
             matches: """
             <p>
             <picture>
-                <source media="(prefers-color-scheme: light)" src="../../../../../images/com.test.example/some-image.png"/>
-                <source media="(prefers-color-scheme: dark)" src="../../../../../images/com.test.example/some-image~dark.png"/>
+                <source media="(prefers-color-scheme: light)" src="../../../../images/com.test.example/some-image.png"/>
+                <source media="(prefers-color-scheme: dark)" src="../../../../images/com.test.example/some-image~dark.png"/>
                 <img alt="Some alt text" decoding="async" loading="lazy"/>
             </picture>
             </p>
@@ -538,8 +538,8 @@ struct MarkdownRendererTests {
             matches: """
             <p>
             <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../../../images/com.test.example/some-image@2x.png 2x, ../../../../../images/com.test.example/some-image.png 1x"/>
-                <source media="(prefers-color-scheme: dark)" srcset="../../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../../images/com.test.example/some-image~dark.png 1x"/>
+                <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x"/>
+                <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../images/com.test.example/some-image~dark.png 1x"/>
                 <img alt="Some alt text" decoding="async" loading="lazy"/>
             </picture>
             </p>

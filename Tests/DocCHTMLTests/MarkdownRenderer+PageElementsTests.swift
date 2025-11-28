@@ -50,10 +50,10 @@ struct MarkdownRenderer_PageElementsTests {
             <nav id="breadcrumbs">
             <ul>
                 <li>
-                    <a href="../../../index.html">ModuleName</a>
+                    <a href="../../index.html">ModuleName</a>
                 </li>
                 <li>
-                    <a href="../../index.html">
+                    <a href="../index.html">
                         <span class="swift-only">Something</span>
                         <span class="occ-only">TLASomething</span>
                     </a>
@@ -66,10 +66,10 @@ struct MarkdownRenderer_PageElementsTests {
             #expect(breadcrumbs.rendered(prettyFormatted: true) == """
             <ul>
             <li>
-                <a href="../../../index.html">ModuleName</a>
+                <a href="../../index.html">ModuleName</a>
             </li>
             <li>
-                <a href="../../index.html">Something</a>
+                <a href="../index.html">Something</a>
             </li>
             <li>ThisPage</li>
             </ul>
@@ -289,12 +289,12 @@ struct MarkdownRenderer_PageElementsTests {
                  <span class="token-identifier">doSomething</span>
                 (<span class="token-externalParam">with</span>
                  <span class="token-internalParam">first</span>
-                : <a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
+                : <a class="token-typeIdentifier" href="../../FirstParameterValue/index.html">FirstParameterValue</a>
                 , <span class="token-externalParam">and</span>
                  <span class="token-internalParam">second</span>
-                : <a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
+                : <a class="token-typeIdentifier" href="../../SecondParameterValue/index.html">SecondParameterValue</a>
                 ) <span class="token-keyword">throws</span>
-                -&gt; <a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
+                -&gt; <a class="token-typeIdentifier" href="../../ReturnValue/index.html">ReturnValue</a>
             </code>
             </pre>
             """)
@@ -426,22 +426,22 @@ struct MarkdownRenderer_PageElementsTests {
                  <span class="token-identifier">doSomething</span>
                 (<span class="token-externalParam">with</span>
                  <span class="token-internalParam">first</span>
-                : <a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
+                : <a class="token-typeIdentifier" href="../../FirstParameterValue/index.html">FirstParameterValue</a>
                 , <span class="token-externalParam">and</span>
                  <span class="token-internalParam">second</span>
-                : <a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
+                : <a class="token-typeIdentifier" href="../../SecondParameterValue/index.html">SecondParameterValue</a>
                 ) <span class="token-keyword">throws</span>
-                -&gt; <a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
+                -&gt; <a class="token-typeIdentifier" href="../../ReturnValue/index.html">ReturnValue</a>
             </code>
-            <code class="occ-only">- (<a class="token-typeIdentifier" href="../../../ReturnValue/index.html">ReturnValue</a>
+            <code class="occ-only">- (<a class="token-typeIdentifier" href="../../ReturnValue/index.html">ReturnValue</a>
                 ) <span class="token-identifier">doSomethingWithFirst</span>
-                : (<a class="token-typeIdentifier" href="../../../FirstParameterValue/index.html">FirstParameterValue</a>
+                : (<a class="token-typeIdentifier" href="../../FirstParameterValue/index.html">FirstParameterValue</a>
                 ) <span class="token-internalParam">first</span>
                  <span class="token-identifier">andSecond</span>
-                : (<a class="token-typeIdentifier" href="../../../SecondParameterValue/index.html">SecondParameterValue</a>
+                : (<a class="token-typeIdentifier" href="../../SecondParameterValue/index.html">SecondParameterValue</a>
                 ) <span class="token-internalParam">second</span>
                  <span class="token-identifier">error</span>
-                : (<a class="token-typeIdentifier" href="../../../../Foundation/NSError/index.html">NSError</a>
+                : (<a class="token-typeIdentifier" href="../../../Foundation/NSError/index.html">NSError</a>
                  **) <span class="token-internalParam">error</span>
                 ;</code>
             </pre>
@@ -533,7 +533,7 @@ struct MarkdownRenderer_PageElementsTests {
             <p>Some description of this group</p>
             <ul>
                 <li>
-                    <a href="../../../SomeClass/index.html">
+                    <a href="../../SomeClass/index.html">
                         <code class="swift-only">
                             <span class="decorator">class </span>
                             <span class="identifier">Some<wbr/>
@@ -549,7 +549,7 @@ struct MarkdownRenderer_PageElementsTests {
                     </a>
                 </li>
                 <li>
-                    <a href="../../../SomeArticle/index.html">
+                    <a href="../../SomeArticle/index.html">
                         <p>Some Article</p>
                         <p>Some <b>formatted</b>
                              description of this <i>article</i>
@@ -557,7 +557,7 @@ struct MarkdownRenderer_PageElementsTests {
                     </a>
                 </li>
                 <li>
-                    <a href="../../../SomeClass/someMethod(with:and:)/index.html">
+                    <a href="../../SomeClass/someMethod(with:and:)/index.html">
                         <code class="swift-only">
                             <span class="decorator">func </span>
                             <span class="identifier">some<wbr/>
@@ -592,14 +592,14 @@ struct MarkdownRenderer_PageElementsTests {
             <p>Some description of this group</p>
             <ul>
                 <li>
-                    <a href="../../../SomeClass/index.html">
+                    <a href="../../SomeClass/index.html">
                         <code>class SomeClass</code>
                         <p>Some <i>formatted</i>
                              description of this class</p>
                     </a>
                 </li>
                 <li>
-                    <a href="../../../SomeArticle/index.html">
+                    <a href="../../SomeArticle/index.html">
                         <p>Some Article</p>
                         <p>Some <b>formatted</b>
                              description of this <i>article</i>
@@ -607,7 +607,7 @@ struct MarkdownRenderer_PageElementsTests {
                     </a>
                 </li>
                 <li>
-                    <a href="../../../SomeClass/someMethod(with:and:)/index.html">
+                    <a href="../../SomeClass/someMethod(with:and:)/index.html">
                         <code>func someMethod(with: Int, and: String)</code>
                     </a>
                 </li>
