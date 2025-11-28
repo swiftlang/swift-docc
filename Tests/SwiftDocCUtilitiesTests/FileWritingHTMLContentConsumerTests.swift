@@ -209,14 +209,14 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
              description of this topic section</p>
         <ul>
             <li>
-                <a href="SomeArticle/index.html">
+                <a href="somearticle/index.html">
                     <p>Some article</p>
                     <p>This is an <i>formatted</i>
                          article.</p>
                 </a>
             </li>
             <li>
-                <a href="SomeClass/index.html">
+                <a href="someclass/index.html">
                     <code>class SomeClass</code>
                     <p>Some in-source description of this class.</p>
                 </a>
@@ -260,7 +260,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         <h3>Instance Methods</h3>
         <ul>
             <li>
-                <a href="someMethod(with:and:)/index.html">
+                <a href="somemethod(with:and:)/index.html">
                     <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
                     <p>Some in-source description of this method.</p>
                 </a>
@@ -324,7 +324,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         <h3>Related Documentation</h3>
         <ul>
             <li>
-                <a href="../../SomeArticle/index.html">
+                <a href="../../somearticle/index.html">
                     <p>Some article</p>
                     <p>This is an <i>formatted</i>
                          article.</p>
@@ -360,7 +360,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                  article.</p>
         </section>
         <h2>Custom discussion</h2>
-        <p>It explains how a developer can perform some task using <a href="../SomeClass/index.html">
+        <p>It explains how a developer can perform some task using <a href="../someclass/index.html">
                 <code>SomeClass</code>
             </a>
              in this module.</p>
@@ -370,7 +370,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         <h3>Related Documentation</h3>
         <ul>
             <li>
-                <a href="../SomeClass/index.html">
+                <a href="../someclass/index.html">
                     <code>class SomeClass</code>
                     <p>Some in-source description of this class.</p>
                 </a>

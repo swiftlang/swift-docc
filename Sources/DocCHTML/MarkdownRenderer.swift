@@ -264,6 +264,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             + toComponents.dropFirst(commonPrefixLength)
        
         return relativeComponents.joined(separator: "/")
+            .lowercased() // Don't make assumptions about a case insensitive hosting environment.
     }
     
     func visit(_ image: Image) -> XMLNode {

@@ -369,7 +369,7 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../SomeArticle/index.html">Some Article Title</a>
+            <a href="../somearticle/index.html">Some Article Title</a>
             </p>
             """
         )
@@ -390,7 +390,7 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../SomeClass/someMethod(_:_:)/index.html">
+            <a href="../someclass/somemethod(_:_:)/index.html">
                 <code>some<wbr/>
                     Method(<wbr/>
                     _:<wbr/>
@@ -407,7 +407,7 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../SomeClass/someMethod(_:_:)/index.html">
+            <a href="../someclass/somemethod(_:_:)/index.html">
                 <code class="swift-only">do<wbr/>
                     Something(<wbr/>
                     with:<wbr/>
@@ -428,7 +428,7 @@ struct MarkdownRendererTests {
             rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
-            <p><a href="../SomeClass/someMethod(_:_:)/index.html">Custom <i>formatted</i> title</a></p>
+            <p><a href="../someclass/somemethod(_:_:)/index.html">Custom <i>formatted</i> title</a></p>
             """
         )
         
@@ -437,7 +437,7 @@ struct MarkdownRendererTests {
             rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
             matches: """
-            <p><a href="../SomeClass/someMethod(_:_:)/index.html">Some <code>Custom<wbr/>Symbol<wbr/>Name</code> title</a></p>
+            <p><a href="../someclass/somemethod(_:_:)/index.html">Some <code>Custom<wbr/>Symbol<wbr/>Name</code> title</a></p>
             """
         )
         
