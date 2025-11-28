@@ -9,7 +9,6 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Configuration-swift.struct",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Configuration-swift.struct\/ExternalDocumentationConfiguration-swift.struct"
@@ -120,7 +119,7 @@
               "text" : "."
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier-swift.struct",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
               "text" : "Identifier"
@@ -215,7 +214,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Identifier-swift.struct": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Identifier": {
   "abstract" : [
     {
       "text" : "A stable and locally unique identifier for a collection of documentation inputs.",
@@ -236,7 +235,7 @@
       "text" : "Identifier"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier-swift.struct",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -247,7 +246,7 @@
   "role" : "symbol",
   "title" : "DocumentationBundle.Identifier",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier-swift.struct"
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
   "abstract" : [
@@ -409,20 +408,6 @@
   "title" : "sources",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/configuration-swift.struct\/externaldocumentationconfiguration-swift.struct\/sources"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextGroup": {
-  "abstract" : [
-    {
-      "text" : "Build and query the in-memory documentation model.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Documentation Context",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextgroup"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ExternalDocumentationSource": {
   "abstract" : [

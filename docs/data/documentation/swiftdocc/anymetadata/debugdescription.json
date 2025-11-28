@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyMetadata",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyMetadata\/CustomDebugStringConvertible-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyMetadata"
       ]
     ]
   },
@@ -188,17 +186,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/anymetadata"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AnyMetadata/CustomDebugStringConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyMetadata\/CustomDebugStringConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "CustomDebugStringConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/anymetadata\/customdebugstringconvertible-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/AnyMetadata/debugDescription": {
   "abstract" : [
 
@@ -232,20 +219,6 @@
   "title" : "debugDescription",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/anymetadata\/debugdescription"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationIndexing": {
-  "abstract" : [
-    {
-      "text" : "Create documentation indexes optimized for text search or navigation.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Documentation Indexing",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationindexing"
 }
 }
 }

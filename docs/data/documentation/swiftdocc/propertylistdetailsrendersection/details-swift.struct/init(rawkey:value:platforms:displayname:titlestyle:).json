@@ -117,7 +117,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PropertyListDetailsRenderSection.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PropertyListDetailsRenderSection.swift#L62"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PropertyListDetailsRenderSection.swift#L54"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

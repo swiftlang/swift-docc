@@ -144,6 +144,20 @@
   "sections" : [
 
   ],
+  "seeAlsoSections" : [
+    {
+      "anchor" : "Semantic-Elements",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupConvertible",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible"
+      ],
+      "title" : "Semantic Elements"
+    }
+  ],
   "topicSections" : [
     {
       "anchor" : "Associated-Types",
@@ -157,7 +171,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)-8wzl8",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitArticle(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitAssessments(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitChapter(_:)",
@@ -176,7 +190,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitStep(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitSteps(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitSymbol(_:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTechnology(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTile(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorial(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorialArticle(_:)",
@@ -449,6 +462,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/contentandmedia"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible": {
+  "abstract" : [
+    {
+      "text" : "A semantic object formed from a directive after a series of semantic analysis checks.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DirectiveConvertible"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DirectiveConvertible"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DirectiveConvertible",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/directiveconvertible"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/ImageMedia": {
   "abstract" : [
     {
@@ -601,6 +648,40 @@
   "title" : "MarkupContainer",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupConvertible": {
+  "abstract" : [
+    {
+      "text" : "A type that can be initialized from markup.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MarkupConvertible"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupConvertible",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MarkupConvertible"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MarkupConvertible",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markupconvertible"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice": {
   "abstract" : [
@@ -810,7 +891,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticvisitor\/result"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visit(_:)-8wzl8": {
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visit(_:)": {
   "abstract" : [
     {
       "text" : "Visit any kind of ",
@@ -867,13 +948,13 @@
       "text" : "Result"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)-8wzl8",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "visit(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visit(_:)-8wzl8"
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visit(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitArticle(_:)": {
   "abstract" : [
@@ -1978,59 +2059,6 @@
   "title" : "visitSymbol(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitsymbol(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitTechnology(_:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "visitTechnology"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC23TutorialTableOfContentsC",
-      "text" : "TutorialTableOfContents"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC15SemanticVisitorP6ResultQa",
-      "text" : "Result"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTechnology(_:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "visitTechnology(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visittechnology(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitTile(_:)": {
   "abstract" : [

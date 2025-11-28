@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -108,8 +107,6 @@
       "anchor" : "Code-Listings",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributedCodeListing",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedCodeListingReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey"
       ],
       "title" : "Code Listings"
@@ -188,41 +185,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AttributedCodeListing": {
-  "abstract" : [
-    {
-      "text" : "A code block represented as lines of lexical tokens.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "AttributedCodeListing"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributedCodeListing",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "AttributedCodeListing"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "AttributedCodeListing",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/attributedcodelisting"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/CodeColorsPreferenceKey": {
   "abstract" : [
     {
@@ -256,20 +218,6 @@
   "title" : "CodeColorsPreferenceKey",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/codecolorspreferencekey"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextGroup": {
-  "abstract" : [
-    {
-      "text" : "Build and query the in-memory documentation model.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Documentation Context",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontextgroup"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SRGBColor": {
   "abstract" : [
@@ -597,40 +545,6 @@
   "title" : "red",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/srgbcolor\/red"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/UnresolvedCodeListingReference": {
-  "abstract" : [
-    {
-      "text" : "A reference to a code listing that hasn’t been resolved yet.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "UnresolvedCodeListingReference"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedCodeListingReference",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "UnresolvedCodeListingReference"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "UnresolvedCodeListingReference",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/unresolvedcodelistingreference"
 }
 }
 }

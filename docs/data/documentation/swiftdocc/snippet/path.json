@@ -1,15 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "The path components of a symbol link that would be used to resolve a reference to a snippet,",
+      "text" : "The relative path from your package’s top-level “Snippets” directory to the snippet file that you want to embed in the page, without the ",
       "type" : "text"
     },
     {
-      "text" : " ",
-      "type" : "text"
+      "code" : ".swift",
+      "type" : "codeVoice"
     },
     {
-      "text" : "only occurring as a block directive argument.",
+      "text" : " file extension.",
       "type" : "text"
     }
   ],
@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Snippet.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L46"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -209,7 +209,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Snippet": {
   "abstract" : [
-
+    {
+      "text" : "Embeds a code example from the project’s code snippets.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {
@@ -241,15 +244,15 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Snippet/path": {
   "abstract" : [
     {
-      "text" : "The path components of a symbol link that would be used to resolve a reference to a snippet,",
+      "text" : "The relative path from your package’s top-level “Snippets” directory to the snippet file that you want to embed in the page, without the ",
       "type" : "text"
     },
     {
-      "text" : " ",
-      "type" : "text"
+      "code" : ".swift",
+      "type" : "codeVoice"
     },
     {
-      "text" : "only occurring as a block directive argument.",
+      "text" : " file extension.",
       "type" : "text"
     }
   ],

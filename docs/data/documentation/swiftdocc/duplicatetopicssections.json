@@ -16,8 +16,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -116,7 +115,6 @@
       "anchor" : "Predefined-Checks",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker",
@@ -148,7 +146,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitHeading(_:)-1idm1"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitHeading(_:)"
       ],
       "title" : "Instance Methods"
     },
@@ -200,40 +198,6 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly": {
-  "abstract" : [
-    {
-      "text" : "A document’s abstract may only contain formatted text. Images and links are not allowed.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "AbstractContainsFormattedTextOnly"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "AbstractContainsFormattedTextOnly"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "AbstractContainsFormattedTextOnly",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Checker": {
   "abstract" : [
@@ -464,7 +428,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/problems"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/visitHeading(_:)-1idm1": {
+"doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/visitHeading(_:)": {
   "abstract" : [
 
   ],
@@ -495,12 +459,12 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitHeading(_:)-1idm1",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitHeading(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitHeading(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/visitheading(_:)-1idm1"
+  "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/visitheading(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle": {
   "abstract" : [
@@ -665,20 +629,6 @@
   "title" : "SeeAlsoInTopicsHeadingChecker",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/seealsointopicsheadingchecker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

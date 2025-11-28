@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/ParsableArguments-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc"
       ]
     ]
   },
@@ -225,17 +224,6 @@
   "title" : "Docc",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/ParsableArguments-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/ParsableArguments-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ParsableArguments Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/parsablearguments-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/parseOrExit(_:)": {
   "abstract" : [

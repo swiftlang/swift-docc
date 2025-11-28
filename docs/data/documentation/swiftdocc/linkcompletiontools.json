@@ -1,0 +1,655 @@
+{
+  "abstract" : [
+    {
+      "text" : "A collection of API for link completion.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC19LinkCompletionToolsO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "LinkCompletionTools"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "LinkCompletionTools"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "LinkCompletionTools.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/LinkCompletionTools.swift#L24"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "LinkCompletionTools"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "LinkCompletionTools"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "An example link completion workflow could look something like this;",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Assume that there’s already an partial link in progress: ",
+              "type" : "text"
+            },
+            {
+              "code" : "First\/Second-enum\/",
+              "type" : "codeVoice"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "First, parse the link into link components using ",
+                      "type" : "text"
+                    },
+                    {
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/parse(linkString:)",
+                      "isActive" : true,
+                      "type" : "reference"
+                    },
+                    {
+                      "text" : ".",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Second, narrow down the possible symbols to suggest as completion using ",
+                      "type" : "text"
+                    },
+                    {
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/SymbolInformation\/matches(_:)",
+                      "isActive" : true,
+                      "type" : "reference"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Third, determine the minimal unique disambiguation for each completion suggestion using ",
+                      "type" : "text"
+                    },
+                    {
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/suggestedDisambiguation(forCollidingSymbols:)",
+                      "isActive" : true,
+                      "type" : "reference"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "You can use ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/SymbolInformation\/hash(uniqueSymbolID:)",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " to compute the hashed symbol identifiers needed for steps 2 and 3 above.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Tip",
+          "style" : "tip",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Structures",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/SymbolInformation"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "anchor" : "Type-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/parse(linkString:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/suggestedDisambiguation(forCollidingSymbols:)"
+      ],
+      "title" : "Type Methods"
+    },
+    {
+      "anchor" : "Enumerations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/linkcompletiontools"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools": {
+  "abstract" : [
+    {
+      "text" : "A collection of API for link completion.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkCompletionTools"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkCompletionTools"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkCompletionTools",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/ParsedDisambiguation": {
+  "abstract" : [
+    {
+      "text" : "A disambiguation suffix for a parsed link component.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ParsedDisambiguation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ParsedDisambiguation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkCompletionTools.ParsedDisambiguation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/parseddisambiguation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/SymbolInformation": {
+  "abstract" : [
+    {
+      "text" : "Information about a symbol for link completion purposes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolInformation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/SymbolInformation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolInformation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkCompletionTools.SymbolInformation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/symbolinformation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/SymbolInformation/hash(uniqueSymbolID:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a hashed representation of a symbol’s unique identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hash"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "uniqueSymbolID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/SymbolInformation\/hash(uniqueSymbolID:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "hash(uniqueSymbolID:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/symbolinformation\/hash(uniquesymbolid:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/SymbolInformation/matches(_:)": {
+  "abstract" : [
+    {
+      "text" : "Returns a Boolean value that indicates whether this symbol information matches the parsed disambiguation from one of the link components of a parsed link string.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "matches"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO",
+      "text" : "LinkCompletionTools"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO20ParsedDisambiguationO",
+      "text" : "ParsedDisambiguation"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/SymbolInformation\/matches(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "matches(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/symbolinformation\/matches(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/parse(linkString:)": {
+  "abstract" : [
+    {
+      "text" : "Parses link string into link components; each consisting of a base name and a disambiguation suffix.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parse"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "linkString"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> [(name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", disambiguation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO",
+      "text" : "LinkCompletionTools"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO20ParsedDisambiguationO",
+      "text" : "ParsedDisambiguation"
+    },
+    {
+      "kind" : "text",
+      "text" : ")]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/parse(linkString:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "parse(linkString:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/parse(linkstring:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/suggestedDisambiguation(forCollidingSymbols:)": {
+  "abstract" : [
+    {
+      "text" : "Suggests the minimal most readable disambiguation string for each symbol with the same name.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "suggestedDisambiguation"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "forCollidingSymbols"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO",
+      "text" : "LinkCompletionTools"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19LinkCompletionToolsO17SymbolInformationV",
+      "text" : "SymbolInformation"
+    },
+    {
+      "kind" : "text",
+      "text" : "]) -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/suggestedDisambiguation(forCollidingSymbols:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "suggestedDisambiguation(forCollidingSymbols:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/suggesteddisambiguation(forcollidingsymbols:)"
+}
+}
+}

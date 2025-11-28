@@ -9,8 +9,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker\/descendIntoChildren(of:)-1mme3"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker"
       ]
     ]
   },
@@ -250,54 +249,6 @@
   "title" : "SemanticWalker",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticwalker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SemanticWalker/descendIntoChildren(of:)-1mme3": {
-  "abstract" : [
-
-  ],
-  "defaultImplementations" : 1,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "descendIntoChildren"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "of"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
-      "text" : "Semantic"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker\/descendIntoChildren(of:)-1mme3",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "descendIntoChildren(of:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semanticwalker\/descendintochildren(of:)-1mme3"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticWalker/descendIntoChildren(of:)-6nzm0": {
   "abstract" : [

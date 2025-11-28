@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/LocalizedError-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered"
       ]
     ]
   },
@@ -219,17 +218,6 @@
   "title" : "ErrorsEncountered",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/errorsencountered"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/LocalizedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/LocalizedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LocalizedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorsencountered\/localizederror-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/recoverySuggestion": {
   "abstract" : [

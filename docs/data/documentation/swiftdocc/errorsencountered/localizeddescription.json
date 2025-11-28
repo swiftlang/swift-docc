@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/Error-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered"
       ]
     ]
   },
@@ -215,17 +214,6 @@
   "title" : "ErrorsEncountered",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/errorsencountered"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorsencountered\/error-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/localizedDescription": {
   "abstract" : [

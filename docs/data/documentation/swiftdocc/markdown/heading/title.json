@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown\/Heading",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown\/Heading\/Landmark-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown\/Heading"
       ]
     ]
   },
@@ -199,17 +198,6 @@
   "title" : "Heading",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markdown\/heading"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Markdown/Heading/Landmark-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown\/Heading\/Landmark-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Landmark Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markdown\/heading\/landmark-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Markdown/Heading/title": {
   "abstract" : [

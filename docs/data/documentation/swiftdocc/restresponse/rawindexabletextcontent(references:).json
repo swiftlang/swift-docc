@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponse",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponse\/TextIndexing-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponse"
       ]
     ]
   },
@@ -235,17 +234,6 @@
   "title" : "RESTResponse",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/restresponse"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RESTResponse/TextIndexing-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponse\/TextIndexing-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "TextIndexing Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/restresponse\/textindexing-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RESTResponse/rawIndexableTextContent(references:)": {
   "abstract" : [

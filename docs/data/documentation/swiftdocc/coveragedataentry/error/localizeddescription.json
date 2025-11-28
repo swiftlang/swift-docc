@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/Error-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error"
       ]
     ]
   },
@@ -251,17 +250,6 @@
   "title" : "CoverageDataEntry.Error",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/coveragedataentry\/error"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/CoverageDataEntry/Error/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/coveragedataentry\/error\/error-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/CoverageDataEntry/Error/localizedDescription": {
   "abstract" : [

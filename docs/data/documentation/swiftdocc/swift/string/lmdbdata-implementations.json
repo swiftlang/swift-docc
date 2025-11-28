@@ -36,7 +36,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)-22h9w",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)-82m2y"
       ],
       "title" : "Initializers"
@@ -45,7 +45,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)-402na",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)-7w4l3"
       ],
       "title" : "Instance Methods"
@@ -133,7 +133,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/string"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/String/init(data:)-22h9w": {
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/String/init(data:)": {
   "abstract" : [
 
   ],
@@ -164,12 +164,12 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)-22h9w",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/init(data:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "init(data:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/string\/init(data:)-22h9w"
+  "url" : "\/documentation\/swiftdocc\/swift\/string\/init(data:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/String/init(data:)-82m2y": {
   "abstract" : [
@@ -209,7 +209,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/string\/init(data:)-82m2y"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/String/read(_:)-402na": {
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/String/read(_:)": {
   "abstract" : [
 
   ],
@@ -276,12 +276,12 @@
       "text" : "ResultType"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)-402na",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/read(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "read(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/string\/read(_:)-402na"
+  "url" : "\/documentation\/swiftdocc\/swift\/string\/read(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/String/read(_:)-7w4l3": {
   "abstract" : [

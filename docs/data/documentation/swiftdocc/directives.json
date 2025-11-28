@@ -112,8 +112,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupConvertible",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TechnologyBound"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible"
       ],
       "title" : "Semantic Elements"
     },
@@ -1349,41 +1348,6 @@
   "title" : "Symbol",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TechnologyBound": {
-  "abstract" : [
-    {
-      "text" : "An entity directly referring to the technology it belongs to.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "TechnologyBound"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TechnologyBound",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "TechnologyBound"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "TechnologyBound",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/technologybound"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot": {
   "abstract" : [

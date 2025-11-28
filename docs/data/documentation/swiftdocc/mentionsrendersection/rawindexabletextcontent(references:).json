@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MentionsRenderSection",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MentionsRenderSection\/TextIndexing-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MentionsRenderSection"
       ]
     ]
   },
@@ -224,17 +223,6 @@
   "title" : "MentionsRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/mentionsrendersection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MentionsRenderSection/TextIndexing-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MentionsRenderSection\/TextIndexing-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "TextIndexing Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/mentionsrendersection\/textindexing-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MentionsRenderSection/rawIndexableTextContent(references:)": {
   "abstract" : [

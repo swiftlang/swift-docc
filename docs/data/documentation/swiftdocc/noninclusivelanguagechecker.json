@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -128,7 +127,6 @@
       "anchor" : "Predefined-Checks",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract",
@@ -167,9 +165,9 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitCodeBlock(_:)-494bl",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitInlineCode(_:)-8s5lb",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitText(_:)-7v8az"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitCodeBlock(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitInlineCode(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitText(_:)"
       ],
       "title" : "Instance Methods"
     },
@@ -229,40 +227,6 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly": {
-  "abstract" : [
-    {
-      "text" : "A document’s abstract may only contain formatted text. Images and links are not allowed.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "AbstractContainsFormattedTextOnly"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "AbstractContainsFormattedTextOnly"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "AbstractContainsFormattedTextOnly",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Checker": {
   "abstract" : [
@@ -656,7 +620,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/severity"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitCodeBlock(_:)-494bl": {
+"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitCodeBlock(_:)": {
   "abstract" : [
 
   ],
@@ -687,14 +651,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitCodeBlock(_:)-494bl",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitCodeBlock(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitCodeBlock(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitcodeblock(_:)-494bl"
+  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitcodeblock(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitInlineCode(_:)-8s5lb": {
+"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitInlineCode(_:)": {
   "abstract" : [
 
   ],
@@ -725,14 +689,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitInlineCode(_:)-8s5lb",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitInlineCode(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitInlineCode(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitinlinecode(_:)-8s5lb"
+  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitinlinecode(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitText(_:)-7v8az": {
+"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitText(_:)": {
   "abstract" : [
 
   ],
@@ -763,12 +727,12 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitText(_:)-7v8az",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitText(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitText(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visittext(_:)-7v8az"
+  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visittext(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker": {
   "abstract" : [
@@ -831,20 +795,6 @@
   "title" : "SeeAlsoInTopicsHeadingChecker",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/seealsointopicsheadingchecker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

@@ -36,7 +36,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)-5fj6t",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)-82m48"
       ],
       "title" : "Initializers"
@@ -45,8 +45,8 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)-7w4jp",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)-8xq1u"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)-7w4jp"
       ],
       "title" : "Instance Methods"
     }
@@ -122,7 +122,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/array"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/init(data:)-5fj6t": {
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/init(data:)": {
   "abstract" : [
 
   ],
@@ -185,12 +185,12 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)-5fj6t",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/init(data:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "init(data:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/array\/init(data:)-5fj6t"
+  "url" : "\/documentation\/swiftdocc\/swift\/array\/init(data:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/init(data:)-82m48": {
   "abstract" : [
@@ -229,6 +229,112 @@
   "title" : "init(data:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/array\/init(data:)-82m48"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/read(_:)": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Element",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "FixedWidthInteger",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "read"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "R"
+    },
+    {
+      "kind" : "text",
+      "text" : ">(("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SW",
+      "text" : "UnsafeRawBufferPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "R"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "rethrows"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "R"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "read(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/array\/read(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/read(_:)-7w4jp": {
   "abstract" : [
@@ -303,112 +409,6 @@
   "title" : "read(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/array\/read(_:)-7w4jp"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/Array/read(_:)-8xq1u": {
-  "abstract" : [
-
-  ],
-  "conformance" : {
-    "availabilityPrefix" : [
-      {
-        "text" : "Available when",
-        "type" : "text"
-      }
-    ],
-    "conformancePrefix" : [
-      {
-        "text" : "Conforms when",
-        "type" : "text"
-      }
-    ],
-    "constraints" : [
-      {
-        "code" : "Element",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " conforms to ",
-        "type" : "text"
-      },
-      {
-        "code" : "FixedWidthInteger",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : ".",
-        "type" : "text"
-      }
-    ]
-  },
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "read"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "R"
-    },
-    {
-      "kind" : "text",
-      "text" : ">(("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SW",
-      "text" : "UnsafeRawBufferPointer"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "R"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "rethrows"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "R"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array\/read(_:)-8xq1u",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "read(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/array\/read(_:)-8xq1u"
 }
 }
 }

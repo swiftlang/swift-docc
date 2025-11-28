@@ -37,7 +37,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Kind-swift.struct\/init(from:)-l4xy"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Kind-swift.struct\/init(from:)"
       ],
       "title" : "Initializers"
     }
@@ -161,7 +161,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/indexingrecord\/kind-swift.struct"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/IndexingRecord/Kind-swift.struct/init(from:)-l4xy": {
+"doc://SwiftDocC/documentation/SwiftDocC/IndexingRecord/Kind-swift.struct/init(from:)": {
   "abstract" : [
 
   ],
@@ -196,12 +196,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Kind-swift.struct\/init(from:)-l4xy",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Kind-swift.struct\/init(from:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "init(from:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/indexingrecord\/kind-swift.struct\/init(from:)-l4xy"
+  "url" : "\/documentation\/swiftdocc\/indexingrecord\/kind-swift.struct\/init(from:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode": {
   "abstract" : [

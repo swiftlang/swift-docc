@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys\/Equatable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys"
       ]
     ]
   },
@@ -339,17 +338,6 @@
   "title" : "!=(_:_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/benchmarkresults\/codingkeys\/!=(_:_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BenchmarkResults/CodingKeys/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/benchmarkresults\/codingkeys\/equatable-implementations"
 }
 }
 }

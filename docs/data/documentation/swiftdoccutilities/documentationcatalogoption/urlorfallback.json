@@ -18,8 +18,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption\/DirectoryPathOption-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption"
       ]
     ]
   },
@@ -187,17 +186,6 @@
   "title" : "DocumentationCatalogOption",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCatalogOption/DirectoryPathOption-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption\/DirectoryPathOption-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectoryPathOption Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/directorypathoption-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCatalogOption/url": {
   "abstract" : [

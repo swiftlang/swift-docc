@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/Checker-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker"
       ]
     ]
   },
@@ -227,17 +225,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/compositechecker"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/Checker-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/Checker-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Checker Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/checker-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/any()": {
   "abstract" : [
     {
@@ -282,20 +269,6 @@
   "title" : "any()",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/compositechecker\/any()"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

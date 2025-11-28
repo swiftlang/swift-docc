@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTBodyRenderSection",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTBodyRenderSection\/TextIndexing-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTBodyRenderSection"
       ]
     ]
   },
@@ -190,17 +189,6 @@
   "title" : "RESTBodyRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/restbodyrendersection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RESTBodyRenderSection/TextIndexing-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTBodyRenderSection\/TextIndexing-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "TextIndexing Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/restbodyrendersection\/textindexing-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RESTBodyRenderSection/headings": {
   "abstract" : [

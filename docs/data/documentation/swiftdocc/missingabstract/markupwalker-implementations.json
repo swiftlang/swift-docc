@@ -36,6 +36,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract\/defaultVisit(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract\/descendInto(_:)"
       ],
       "title" : "Instance Methods"
@@ -102,6 +103,44 @@
   "title" : "MissingAbstract",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/missingabstract"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MissingAbstract/defaultVisit(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "defaultVisit"
+    },
+    {
+      "kind" : "text",
+      "text" : "(any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract\/defaultVisit(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "defaultVisit(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/missingabstract\/defaultvisit(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MissingAbstract/descendInto(_:)": {
   "abstract" : [

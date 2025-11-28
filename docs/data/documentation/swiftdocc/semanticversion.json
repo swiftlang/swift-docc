@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -139,7 +138,7 @@
       "anchor" : "Operators",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/_(_:_:)-2zi67"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/_(_:_:)"
       ],
       "title" : "Operators"
     },
@@ -223,20 +222,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
-  "abstract" : [
-    {
-      "text" : "Convert documentation nodes into render nodes and save them to disk.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Rendering Model",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderingmodel"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion": {
   "abstract" : [
     {
@@ -293,7 +278,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticversion\/equatable-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/_(_:_:)-2zi67": {
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/_(_:_:)": {
   "abstract" : [
     {
       "text" : "Compare one semantic version with another.",
@@ -353,12 +338,12 @@
       "text" : "Bool"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/_(_:_:)-2zi67",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/_(_:_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "<(_:_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semanticversion\/_(_:_:)-2zi67"
+  "url" : "\/documentation\/swiftdocc\/semanticversion\/_(_:_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/buildMetadata": {
   "abstract" : [

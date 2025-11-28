@@ -317,9 +317,8 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalDocumentationSources",
-              "isActive" : true,
-              "type" : "reference"
+              "code" : "DocumentationContext\/externalDocumentationSources",
+              "type" : "codeVoice"
             },
             {
               "text" : " it is capable of resolving links general documentation links via that ",
@@ -427,54 +426,6 @@
   "title" : "DocumentationContext",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalDocumentationSources": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "externalDocumentationSources"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16BundleIdentifiera",
-      "text" : "BundleIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : " : any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC27ExternalDocumentationSourceP",
-      "text" : "ExternalDocumentationSource"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalDocumentationSources",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "externalDocumentationSources",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/externaldocumentationsources"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ExternalDocumentationSource": {
   "abstract" : [

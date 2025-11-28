@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/LMDBData-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String"
       ]
     ]
   },
@@ -203,17 +202,6 @@
   "title" : "String",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/string"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/String/LMDBData-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String\/LMDBData-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LMDBData Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/string\/lmdbdata-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/String/init(data:)-82m2y": {
   "abstract" : [

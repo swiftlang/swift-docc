@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/Identifier-swift.enum",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/Identifier-swift.enum\/Equatable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/Identifier-swift.enum"
       ]
     ]
   },
@@ -342,17 +341,6 @@
   "title" : "!=(_:_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tile\/identifier-swift.enum\/!=(_:_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Tile/Identifier-swift.enum/Equatable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/Identifier-swift.enum\/Equatable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Equatable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/tile\/identifier-swift.enum\/equatable-implementations"
 }
 }
 }

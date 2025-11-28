@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date\/LMDBData-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date"
       ]
     ]
   },
@@ -192,17 +191,6 @@
   "title" : "Date",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/foundation\/date"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation/Date/LMDBData-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date\/LMDBData-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LMDBData Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation\/date\/lmdbdata-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Foundation/Date/init(data:)": {
   "abstract" : [

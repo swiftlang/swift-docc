@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/ParsableCommand-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index"
       ]
     ]
   },
@@ -252,17 +251,6 @@
   "title" : "Docc.Index",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/index"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/ParsableCommand-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/ParsableCommand-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ParsableCommand Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/parsablecommand-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/main(_:)-8i89v": {
   "abstract" : [

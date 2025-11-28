@@ -5,7 +5,7 @@
       "type" : "text"
     },
     {
-      "code" : "MarkupVisitor.defaultVisit(_:)",
+      "code" : "MarkupWalker.defaultVisit(_:)",
       "type" : "codeVoice"
     },
     {
@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/MarkupVisitor-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle"
       ]
     ]
   },
@@ -211,17 +209,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/MarkupVisitor-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/MarkupVisitor-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupVisitor Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/markupvisitor-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/defaultVisit(_:)": {
   "abstract" : [
 
@@ -259,20 +246,6 @@
   "title" : "defaultVisit(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/defaultvisit(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupVisitor-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker"
       ]
     ]
   },
@@ -90,7 +88,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkupVisitor.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Visitor\/MarkupVisitor.swift#L396"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Visitor\/MarkupVisitor.swift#L404"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -263,17 +261,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/anychecker"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/MarkupVisitor-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupVisitor-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupVisitor Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/anychecker\/markupvisitor-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitTableRow(_:)": {
   "abstract" : [
 
@@ -333,20 +320,6 @@
   "title" : "visitTableRow(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/anychecker\/visittablerow(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

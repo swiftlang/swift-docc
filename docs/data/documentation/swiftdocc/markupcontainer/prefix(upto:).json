@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Collection-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer"
       ]
     ]
   },
@@ -255,17 +254,6 @@
   "title" : "MarkupContainer",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/Collection-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Collection-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Collection Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/collection-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/prefix(upTo:)": {
   "abstract" : [

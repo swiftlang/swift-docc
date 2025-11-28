@@ -19,8 +19,7 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/TopicsVisualStyle",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/TopicsVisualStyle\/Style",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/TopicsVisualStyle\/Style\/ExpressibleByArgument-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/TopicsVisualStyle\/Style"
       ]
     ]
   },
@@ -274,17 +273,6 @@
   "title" : "TopicsVisualStyle.Style",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/topicsvisualstyle\/style"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/TopicsVisualStyle/Style/ExpressibleByArgument-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/TopicsVisualStyle\/Style\/ExpressibleByArgument-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ExpressibleByArgument Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/topicsvisualstyle\/style\/expressiblebyargument-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/TopicsVisualStyle/Style/defaultCompletionKind-27xo": {
   "abstract" : [

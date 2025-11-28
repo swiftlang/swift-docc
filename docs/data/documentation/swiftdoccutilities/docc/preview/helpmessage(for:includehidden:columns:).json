@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/ParsableCommand-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview"
       ]
     ]
   },
@@ -381,17 +380,6 @@
   "title" : "Docc.Preview",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/preview"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Preview/ParsableCommand-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/ParsableCommand-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ParsableCommand Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/preview\/parsablecommand-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Preview/helpMessage(for:includeHidden:columns:)": {
   "abstract" : [

@@ -137,16 +137,6 @@
       "kind" : "declarations"
     }
   ],
-  "relationshipsSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis"
-      ],
-      "kind" : "relationships",
-      "title" : "Conforms To",
-      "type" : "conformsTo"
-    }
-  ],
   "schemaVersion" : {
     "major" : 0,
     "minor" : 3,
@@ -168,7 +158,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownDirectives\/analyze(_:children:source:for:in:problems:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownDirectives\/analyze(_:children:source:problems:)"
       ],
       "title" : "Instance Methods"
     }
@@ -337,7 +327,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasonlyknowndirectives"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasOnlyKnownDirectives/analyze(_:children:source:for:in:problems:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasOnlyKnownDirectives/analyze(_:children:source:problems:)": {
   "abstract" : [
 
   ],
@@ -373,7 +363,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": some "
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "some"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -412,40 +410,6 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "for"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "in"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
       "text" : "problems"
     },
     {
@@ -470,12 +434,12 @@
       "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownDirectives\/analyze(_:children:source:for:in:problems:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownDirectives\/analyze(_:children:source:problems:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "analyze(_:children:source:for:in:problems:)",
+  "title" : "analyze(_:children:source:problems:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasonlyknowndirectives\/analyze(_:children:source:for:in:problems:)"
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasonlyknowndirectives\/analyze(_:children:source:problems:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasOnlyKnownDirectives/init(severityIfFound:allowedDirectives:allowsMarkup:allowsStructuredMarkup:)": {
   "abstract" : [
@@ -565,48 +529,6 @@
   "title" : "init(severityIfFound:allowedDirectives:allowsMarkup:allowsStructuredMarkup:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasonlyknowndirectives\/init(severityiffound:alloweddirectives:allowsmarkup:allowsstructuredmarkup:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SemanticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "A focused semantic analysis of a ",
-      "type" : "text"
-    },
-    {
-      "code" : "BlockDirective",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", recording problems and producing a result.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "SemanticAnalysis"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "SemanticAnalysis"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "SemanticAnalysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semanticanalysis"
 }
 }
 }

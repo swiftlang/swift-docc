@@ -12,7 +12,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:m:s:e:s:e:s:9SymbolKit07UnifiedA5GraphC0A0C9SwiftDocCE17preciseIdentifierSSSgvp",
+    "externalID" : "s:m:s:e:s:e:s:e:s:9SymbolKit0A5GraphV0A0V13AccessControlV9SwiftDocCE5level33_C30548A266A6713E0481A780329E4000LLSiSgvp",
     "modules" : [
       {
         "name" : "SwiftDocC"
@@ -36,8 +36,7 @@
       "anchor" : "Extended-Types",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/UnifiedSymbolGraph"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph"
       ],
       "title" : "Extended Types"
     }
@@ -97,23 +96,6 @@
   "title" : "SymbolGraph",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/UnifiedSymbolGraph": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/UnifiedSymbolGraph",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "UnifiedSymbolGraph"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "UnifiedSymbolGraph",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbolkit\/unifiedsymbolgraph"
 }
 }
 }

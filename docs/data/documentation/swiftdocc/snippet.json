@@ -1,4 +1,10 @@
 {
+  "abstract" : [
+    {
+      "text" : "Embeds a code example from the project’s code snippets.",
+      "type" : "text"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -40,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Snippet.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -82,6 +88,224 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Use a ",
+              "type" : "text"
+            },
+            {
+              "code" : "Snippet",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " directive to embed a code example from the project’s “Snippets” directory on the page.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "The ",
+              "type" : "text"
+            },
+            {
+              "code" : "path",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " argument is the relative path from the package’s top-level “Snippets” directory to your snippet file without the ",
+              "type" : "text"
+            },
+            {
+              "code" : ".swift",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " extension.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "@Snippet(path: \"example-snippet\", slice: \"setup\")"
+          ],
+          "syntax" : "markdown",
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If you prefer, you can specify the relative path from the package’s ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "root",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " directory (by including a “Snippets\/” prefix).",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "You can also include the package name—as defined in ",
+              "type" : "text"
+            },
+            {
+              "code" : "Package.swift",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : "—before the “Snippets\/” prefix.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Neither of these leading path components are necessary because all your snippet code files are always located in your package’s “Snippets” directory.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Before Swift-DocC 6.2.1, the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "@Snippet",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " path needed to include both the package name component and the “Snippets” component:",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            },
+            {
+              "code" : [
+                "@Snippet(path: \"my-package\/Snippets\/example-snippet\")"
+              ],
+              "syntax" : "markdown",
+              "type" : "codeListing"
+            }
+          ],
+          "name" : "Earlier Versions",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "You can define named slices of your snippet by annotating the snippet file with ",
+              "type" : "text"
+            },
+            {
+              "code" : "\/\/ snippet.<name>",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " and ",
+              "type" : "text"
+            },
+            {
+              "code" : "\/\/ snippet.end",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " lines.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "A named slice automatically ends at the start of the next named slice, without an explicit ",
+              "type" : "text"
+            },
+            {
+              "code" : "snippet.end",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " annotation.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If the referenced snippet includes annotated slices, you can limit the embedded code example to a certain line range by specifying a ",
+              "type" : "text"
+            },
+            {
+              "code" : "slice",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " name.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "By default, the embedded code example includes the full snippet. For more information, see ",
+              "type" : "text"
+            },
+            {
+              "text" : "doc:adding-code-snippets-to-your-content#Slice-up-your-snippet-to-break-it-up-in-your-content",
+              "type" : "text"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "relationshipsSections" : [
@@ -242,7 +466,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Snippet": {
   "abstract" : [
-
+    {
+      "text" : "Embeds a code example from the project’s code snippets.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {
@@ -361,15 +588,15 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Snippet/path": {
   "abstract" : [
     {
-      "text" : "The path components of a symbol link that would be used to resolve a reference to a snippet,",
+      "text" : "The relative path from your package’s top-level “Snippets” directory to the snippet file that you want to embed in the page, without the ",
       "type" : "text"
     },
     {
-      "text" : " ",
-      "type" : "text"
+      "code" : ".swift",
+      "type" : "codeVoice"
     },
     {
-      "text" : "only occurring as a block directive argument.",
+      "text" : " file extension.",
       "type" : "text"
     }
   ],
@@ -406,7 +633,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Snippet/slice": {
   "abstract" : [
     {
-      "text" : "An optional named range to limit the lines shown.",
+      "text" : "The name of a snippet slice to limit the embedded code example to a certain line range.",
       "type" : "text"
     }
   ],

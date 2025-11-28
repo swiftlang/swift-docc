@@ -36,7 +36,6 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/defaultVisit(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visit(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitBlockDirective(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitBlockQuote(_:)",
@@ -44,6 +43,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitCustomBlock(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitCustomInline(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitDocument(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitDoxygenAbstract(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitDoxygenDiscussion(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitDoxygenNote(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitDoxygenParameter(_:)",
@@ -134,44 +134,6 @@
   "title" : "NonOverviewHeadingChecker",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/defaultVisit(_:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "defaultVisit"
-    },
-    {
-      "kind" : "text",
-      "text" : "(any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown6MarkupP",
-      "text" : "Markup"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/defaultVisit(_:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "defaultVisit(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/defaultvisit(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/visit(_:)": {
   "abstract" : [
@@ -529,6 +491,57 @@
   "title" : "visitDocument(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/visitdocument(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/visitDoxygenAbstract(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenAbstract"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown15DoxygenAbstractV",
+      "text" : "DoxygenAbstract"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitDoxygenAbstract(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenAbstract(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker\/visitdoxygenabstract(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker/visitDoxygenDiscussion(_:)": {
   "abstract" : [

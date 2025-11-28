@@ -18,9 +18,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption\/DirectoryPathOption-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption"
       ]
     ]
   },
@@ -189,17 +187,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/doccarchiveoption"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocCArchiveOption/DirectoryPathOption-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption\/DirectoryPathOption-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectoryPathOption Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/directorypathoption-implementations"
-},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocCArchiveOption/url": {
   "abstract" : [
     {
@@ -286,40 +273,6 @@
   "title" : "urlOrFallback",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/urlorfallback"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc": {
-  "abstract" : [
-    {
-      "text" : "The default, command-line interface you use to compile and preview documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Docc"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Docc"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Docc",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc"
 }
 }
 }

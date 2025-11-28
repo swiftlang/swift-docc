@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/DirectiveConvertible-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind"
       ]
     ]
   },
@@ -78,7 +77,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -278,17 +277,6 @@
   "title" : "Metadata.PageKind",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/metadata\/pagekind"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Metadata/PageKind/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/metadata\/pagekind\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/PageKind/canConvertDirective(_:)": {
   "abstract" : [

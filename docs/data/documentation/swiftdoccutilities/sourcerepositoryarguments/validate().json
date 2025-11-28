@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/ParsableArguments-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments"
       ]
     ]
   },
@@ -183,17 +182,6 @@
   "title" : "SourceRepositoryArguments",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments/ParsableArguments-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/ParsableArguments-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ParsableArguments Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/parsablearguments-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments/validate()": {
   "abstract" : [

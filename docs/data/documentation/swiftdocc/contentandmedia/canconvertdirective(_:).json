@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/DirectiveConvertible-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia"
       ]
     ]
   },
@@ -77,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -243,17 +242,6 @@
   "title" : "ContentAndMedia",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/contentandmedia"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ContentAndMedia/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/contentandmedia\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ContentAndMedia/canConvertDirective(_:)": {
   "abstract" : [

@@ -152,7 +152,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument\/validate()-3ui"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument\/validate()"
       ],
       "title" : "Instance Methods"
     },
@@ -401,7 +401,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/symbolkindfilter"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument/validate()-3ui": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument/validate()": {
   "abstract" : [
 
   ],
@@ -427,12 +427,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument\/validate()-3ui",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument\/validate()",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "validate()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/validate()-3ui"
+  "url" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/validate()"
 }
 }
 }

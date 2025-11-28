@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption\/ParsableArguments-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption"
       ]
     ]
   },
@@ -180,17 +179,6 @@
   "title" : "DirectoryPathOption",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/directorypathoption"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DirectoryPathOption/ParsableArguments-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption\/ParsableArguments-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ParsableArguments Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/directorypathoption\/parsablearguments-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DirectoryPathOption/validate()": {
   "abstract" : [

@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Float",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Float\/LMDBData-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Float"
       ]
     ]
   },
@@ -280,17 +279,6 @@
   "title" : "Float",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/float"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/Float/LMDBData-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Float\/LMDBData-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LMDBData Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/float\/lmdbdata-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Float/read(_:)": {
   "abstract" : [

@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -194,7 +193,6 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeDataExtractor",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeProvider",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Serializable",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyCodable",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyMetadata",
@@ -210,7 +208,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/init(data:)-4txvt"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/init(data:)"
       ],
       "title" : "Initializers"
     },
@@ -218,7 +216,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/read(_:)-9zbwr"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/read(_:)"
       ],
       "title" : "Instance Methods"
     }
@@ -403,20 +401,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/availabilityindex"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationIndexing": {
-  "abstract" : [
-    {
-      "text" : "Create documentation indexes optimized for text search or navigation.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Documentation Indexing",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationindexing"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Foundation/Data": {
   "abstract" : [
 
@@ -581,7 +565,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/lmdbdata"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/LMDBData/init(data:)-4txvt": {
+"doc://SwiftDocC/documentation/SwiftDocC/LMDBData/init(data:)": {
   "abstract" : [
 
   ],
@@ -613,15 +597,15 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/init(data:)-4txvt",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/init(data:)",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "init(data:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/lmdbdata\/init(data:)-4txvt"
+  "url" : "\/documentation\/swiftdocc\/lmdbdata\/init(data:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/LMDBData/read(_:)-9zbwr": {
+"doc://SwiftDocC/documentation/SwiftDocC/LMDBData/read(_:)": {
   "abstract" : [
 
   ],
@@ -689,13 +673,13 @@
       "text" : "ResultType"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/read(_:)-9zbwr",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/read(_:)",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "read(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/lmdbdata\/read(_:)-9zbwr"
+  "url" : "\/documentation\/swiftdocc\/lmdbdata\/read(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem": {
   "abstract" : [
@@ -803,41 +787,6 @@
   "title" : "RenderNodeDataExtractor",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernodedataextractor"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeProvider": {
-  "abstract" : [
-    {
-      "text" : "A protocol to provide data to be indexed.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "RenderNodeProvider"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeProvider",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "RenderNodeProvider"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "RenderNodeProvider",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernodeprovider"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Serializable": {
   "abstract" : [

@@ -41,8 +41,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/...(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/.._(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/.._(_:_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/_(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/_(_:_:)-1pnru",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/_(_:_:)-8h3qv",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/_=(_:_:)-2uzxp",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/_=(_:_:)-5kwde"
       ],
@@ -457,6 +457,70 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/'.._(_:_:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/_(_:_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "<"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
+      "text" : "DiagnosticSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
+      "text" : "DiagnosticSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/_(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "<(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/_(_:_:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/_(_:_:)-1pnru": {
   "abstract" : [
 
@@ -518,70 +582,6 @@
   "title" : ">(_:_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/_(_:_:)-1pnru"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/_(_:_:)-8h3qv": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "<"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
-      "text" : "DiagnosticSeverity"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
-      "text" : "DiagnosticSeverity"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/_(_:_:)-8h3qv",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "<(_:_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/_(_:_:)-8h3qv"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/_=(_:_:)-2uzxp": {
   "abstract" : [

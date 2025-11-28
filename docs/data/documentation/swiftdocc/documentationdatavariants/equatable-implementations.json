@@ -3,6 +3,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Directives",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariants"
       ]
@@ -68,6 +69,20 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Directives": {
+  "abstract" : [
+    {
+      "text" : "Use structured, semantic, documentation elements authored in markup.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Directives",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Directives",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/directives"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationDataVariants": {
   "abstract" : [

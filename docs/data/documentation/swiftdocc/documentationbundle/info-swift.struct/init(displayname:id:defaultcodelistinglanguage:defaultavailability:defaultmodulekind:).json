@@ -9,7 +9,6 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct"
       ]
@@ -133,7 +132,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle+Info.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationBundle+Info.swift#L95"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationBundle+Info.swift#L86"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -195,7 +194,7 @@
               "text" : "."
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier-swift.struct",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
               "text" : "Identifier"
@@ -441,7 +440,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Identifier-swift.struct": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Identifier": {
   "abstract" : [
     {
       "text" : "A stable and locally unique identifier for a collection of documentation inputs.",
@@ -462,7 +461,7 @@
       "text" : "Identifier"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier-swift.struct",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -473,7 +472,7 @@
   "role" : "symbol",
   "title" : "DocumentationBundle.Identifier",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier-swift.struct"
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Info-swift.struct": {
   "abstract" : [
@@ -626,20 +625,6 @@
   "title" : "init(displayName:id:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/info-swift.struct\/init(displayname:id:defaultcodelistinglanguage:defaultavailability:defaultmodulekind:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
-  "abstract" : [
-    {
-      "text" : "Learn how to discover documentation inputs on the file system.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Input Discovery",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 }
 }
 }

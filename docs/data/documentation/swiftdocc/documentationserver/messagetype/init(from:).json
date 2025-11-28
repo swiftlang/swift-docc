@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/RawRepresentable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType"
       ]
     ]
   },
@@ -280,17 +279,6 @@
   "title" : "DocumentationServer.MessageType",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/init(from:)": {
   "abstract" : [

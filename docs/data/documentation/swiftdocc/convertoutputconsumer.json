@@ -126,14 +126,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assets:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assetsInBundle:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(benchmarks:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(buildMetadata:)-832tf",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(buildMetadata:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(documentationCoverageInfo:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(indexingRecords:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)-6wfnr",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkableElementSummaries:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(problems:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderNode:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)-3hxf0"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)"
       ],
       "title" : "Instance Methods"
     }
@@ -371,7 +370,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(benchmarks:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(buildMetadata:)-832tf": {
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(buildMetadata:)": {
   "abstract" : [
     {
       "text" : "Consumes build metadata created during a conversion.",
@@ -418,13 +417,13 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(buildMetadata:)-832tf",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(buildMetadata:)",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "consume(buildMetadata:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(buildmetadata:)-832tf"
+  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(buildmetadata:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(documentationCoverageInfo:)": {
   "abstract" : [
@@ -534,7 +533,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(indexingrecords:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(linkResolutionInformation:)-6wfnr": {
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(linkResolutionInformation:)": {
   "abstract" : [
     {
       "text" : "Consumes a file representation of the local link resolution information.",
@@ -581,13 +580,13 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)-6wfnr",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "consume(linkResolutionInformation:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkresolutioninformation:)-6wfnr"
+  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkresolutioninformation:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(linkableElementSummaries:)": {
   "abstract" : [
@@ -643,60 +642,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkableelementsummaries:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(problems:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes an array of problems that were generated during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "problems"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
-    },
-    {
-      "kind" : "text",
-      "text" : "]) "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(problems:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(problems:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(problems:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(renderNode:)": {
   "abstract" : [
     {
@@ -751,7 +696,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(rendernode:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(renderReferenceStore:)-3hxf0": {
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(renderReferenceStore:)": {
   "abstract" : [
     {
       "text" : "Consumes a render reference store creating during a conversion.",
@@ -798,13 +743,13 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)-3hxf0",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "consume(renderReferenceStore:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(renderreferencestore:)-3hxf0"
+  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(renderreferencestore:)"
 }
 }
 }

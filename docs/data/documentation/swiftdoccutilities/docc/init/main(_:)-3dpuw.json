@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/AsyncParsableCommand-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init"
       ]
     ]
   },
@@ -294,17 +293,6 @@
   "title" : "Docc.Init",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/init"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/AsyncParsableCommand-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/AsyncParsableCommand-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "AsyncParsableCommand Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/asyncparsablecommand-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/main(_:)-3dpuw": {
   "abstract" : [

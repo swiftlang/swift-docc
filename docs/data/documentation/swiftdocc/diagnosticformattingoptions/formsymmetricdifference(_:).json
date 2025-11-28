@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/OptionSet-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions"
       ]
     ]
   },
@@ -235,17 +234,6 @@
   "title" : "DiagnosticFormattingOptions",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/OptionSet-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/OptionSet-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "OptionSet Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions\/optionset-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/formSymmetricDifference(_:)": {
   "abstract" : [

@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/DirectiveConvertible-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle"
       ]
     ]
   },
@@ -78,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -211,40 +209,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Options": {
-  "abstract" : [
-    {
-      "text" : "A directive to adjust Swift-DocC’s default behaviors when rendering a page.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Options"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Options"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Options",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/options"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle": {
   "abstract" : [
     {
@@ -286,17 +250,6 @@
   "title" : "TopicsVisualStyle",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicsvisualstyle"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/canConvertDirective(_:)": {
   "abstract" : [

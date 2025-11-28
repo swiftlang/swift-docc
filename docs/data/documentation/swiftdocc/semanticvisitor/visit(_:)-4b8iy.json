@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)-8wzl8"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor"
       ]
     ]
   },
@@ -77,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticVisitor.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L150"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L147"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -357,71 +356,6 @@
   "title" : "visit(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visit(_:)-4b8iy"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visit(_:)-8wzl8": {
-  "abstract" : [
-    {
-      "text" : "Visit any kind of ",
-      "type" : "text"
-    },
-    {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
-      "isActive" : true,
-      "type" : "reference"
-    },
-    {
-      "text" : " node and return the result.",
-      "type" : "text"
-    }
-  ],
-  "defaultImplementations" : 1,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "visit"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
-      "text" : "Semantic"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC15SemanticVisitorP6ResultQa",
-      "text" : "Result"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)-8wzl8",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "visit(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visit(_:)-8wzl8"
 }
 }
 }

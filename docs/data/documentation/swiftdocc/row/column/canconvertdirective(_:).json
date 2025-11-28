@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row\/Column",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row\/Column\/DirectiveConvertible-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row\/Column"
       ]
     ]
   },
@@ -78,7 +77,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -294,17 +293,6 @@
   "title" : "Row.Column",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/row\/column"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Row/Column/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row\/Column\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/row\/column\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Row/Column/canConvertDirective(_:)": {
   "abstract" : [

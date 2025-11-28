@@ -245,9 +245,8 @@
       "type" : "text"
     },
     {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
-      "isActive" : true,
-      "type" : "reference"
+      "code" : "SemanticAnalysis\/Result",
+      "type" : "codeVoice"
     },
     {
       "text" : ". If so, return that child and the remainder.",
@@ -318,35 +317,6 @@
   "title" : "init(severityIfNotFound:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyone\/init(severityifnotfound:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SemanticAnalysis/Result": {
-  "abstract" : [
-    {
-      "text" : "The result of the analysis.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "associatedtype"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Result"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "Result",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semanticanalysis\/result"
 }
 }
 }

@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/Comparable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor"
       ]
     ]
   },
@@ -343,17 +342,6 @@
   "title" : "...(_:_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/printcursor\/'...(_:_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PrintCursor/Comparable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/Comparable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Comparable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/printcursor\/comparable-implementations"
 }
 }
 }

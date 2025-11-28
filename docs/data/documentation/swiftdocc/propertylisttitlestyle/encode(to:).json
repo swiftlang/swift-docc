@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/RawRepresentable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle"
       ]
     ]
   },
@@ -261,17 +260,6 @@
   "title" : "PropertyListTitleStyle",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/encode(to:)": {
   "abstract" : [

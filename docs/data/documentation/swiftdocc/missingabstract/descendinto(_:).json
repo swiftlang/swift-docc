@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract\/MarkupWalker-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract"
       ]
     ]
   },
@@ -211,17 +209,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/missingabstract"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MissingAbstract/MarkupWalker-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract\/MarkupWalker-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupWalker Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/missingabstract\/markupwalker-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/MissingAbstract/descendInto(_:)": {
   "abstract" : [
 
@@ -259,20 +246,6 @@
   "title" : "descendInto(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/missingabstract\/descendinto(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

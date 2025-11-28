@@ -3,6 +3,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Directives",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer"
       ]
     ]
@@ -51,8 +52,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/count(where:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/elementsEqual(_:by:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/enumerated()",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)-25j29",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)-9kv1v",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/first(where:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/flatMap(_:)-6k7e1",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/flatMap(_:)-8eb6p",
@@ -102,6 +102,20 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Directives": {
+  "abstract" : [
+    {
+      "text" : "Use structured, semantic, documentation elements authored in markup.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Directives",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Directives",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/directives"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer": {
   "abstract" : [
@@ -738,7 +752,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer\/enumerated()"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/filter(_:)-25j29": {
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/filter(_:)": {
   "abstract" : [
 
   ],
@@ -819,92 +833,12 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)-25j29",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "filter(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/filter(_:)-25j29"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/filter(_:)-9kv1v": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "filter"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation9PredicateV",
-      "text" : "Predicate"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:ST7ElementQa",
-      "text" : "Element"
-    },
-    {
-      "kind" : "text",
-      "text" : ">) "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:ST7ElementQa",
-      "text" : "Element"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)-9kv1v",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "filter(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/filter(_:)-9kv1v"
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/filter(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/first(where:)": {
   "abstract" : [

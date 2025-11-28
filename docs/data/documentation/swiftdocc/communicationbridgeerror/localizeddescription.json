@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError\/Error-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError"
       ]
     ]
   },
@@ -183,20 +181,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Communication": {
-  "abstract" : [
-    {
-      "text" : "Offer native integration of DocC in your IDE.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Communication Bridge",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/communication"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridgeError": {
   "abstract" : [
     {
@@ -230,17 +214,6 @@
   "title" : "CommunicationBridgeError",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/communicationbridgeerror"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridgeError/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/communicationbridgeerror\/error-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridgeError/localizedDescription": {
   "abstract" : [

@@ -20,8 +20,7 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation\/ExpressibleByArgument-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation"
       ]
     ]
   },
@@ -284,17 +283,6 @@
   "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions\/bitflagrepresentation"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions/BitFlagRepresentation/ExpressibleByArgument-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation\/ExpressibleByArgument-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ExpressibleByArgument Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions\/bitflagrepresentation\/expressiblebyargument-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions/BitFlagRepresentation/defaultCompletionKind-6rq34": {
   "abstract" : [

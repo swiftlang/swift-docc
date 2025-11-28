@@ -123,6 +123,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContext\/init(documentationContext:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContext\/init(documentationContext:bundle:)"
       ],
       "title" : "Initializers"
@@ -198,13 +199,52 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendercontext"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderContext/init(documentationContext:bundle:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderContext/init(documentationContext:)": {
   "abstract" : [
     {
       "text" : "Creates a new render context.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "documentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContext\/init(documentationContext:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(documentationContext:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendercontext\/init(documentationcontext:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderContext/init(documentationContext:bundle:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

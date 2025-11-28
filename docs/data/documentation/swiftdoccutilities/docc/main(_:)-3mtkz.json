@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/AsyncParsableCommand-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc"
       ]
     ]
   },
@@ -262,17 +261,6 @@
   "title" : "Docc",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/AsyncParsableCommand-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/AsyncParsableCommand-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "AsyncParsableCommand Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/asyncparsablecommand-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/main(_:)-3mtkz": {
   "abstract" : [

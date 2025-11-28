@@ -129,7 +129,7 @@
       "anchor" : "Type-Properties",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/configuration-88iaw"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/configuration"
       ],
       "title" : "Type Properties"
     },
@@ -290,7 +290,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/parsablecommand-implementations"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/configuration-88iaw": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/configuration": {
   "abstract" : [
 
   ],
@@ -325,12 +325,12 @@
       "text" : "CommandConfiguration"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/configuration-88iaw",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/configuration",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "configuration",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/configuration-88iaw"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/configuration"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/init()": {
   "abstract" : [

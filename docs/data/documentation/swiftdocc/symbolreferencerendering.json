@@ -148,7 +148,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParameterRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleStyle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertiesRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty",
@@ -1428,38 +1427,6 @@
   "title" : "Throw",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/throw"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "enum"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "TitleStyle"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleStyle",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "TitleStyle"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "TitleStyle",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/titlestyle"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicsSection": {
   "abstract" : [

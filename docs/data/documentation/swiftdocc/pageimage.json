@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -47,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PageImage.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageImage.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageImage.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -103,21 +102,22 @@
             {
               "text" : "You can use this directive to set the image used when rendering a user-interface element representing the page.",
               "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Use the “icon” purpose to customize the icon that DocC uses to represent this page in the navigation sidebar.",
+              "type" : "text"
             },
             {
               "text" : " ",
               "type" : "text"
             },
             {
-              "text" : "For example, use the page image directive to customize the icon used to represent this page in the navigation sidebar,",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "or the card image used to represent this page when using the ",
+              "text" : "For article pages, DocC also uses this icon to represent the article in topics sections and in ",
               "type" : "text"
             },
             {
@@ -126,20 +126,106 @@
               "type" : "reference"
             },
             {
-              "text" : " directive and the ",
+              "text" : " directives that use the ",
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links\/VisualStyle-swift.enum\/detailedGrid",
+              "code" : "list",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " visual style.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Page images with the “icon” purpose work best when they’re square and when they have good visual clarity at small sizes (less than 20×20 points).",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Tip",
+          "style" : "tip",
+          "type" : "aside"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Use the “card” purpose to customize the image that DocC uses to represent this page inside ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links",
               "isActive" : true,
               "type" : "reference"
+            },
+            {
+              "text" : " directives that use the either the ",
+              "type" : "text"
+            },
+            {
+              "code" : "detailedGrid",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " or the ",
+              "type" : "text"
+            },
+            {
+              "code" : "compactGrid",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " visual style.",
+              "type" : "text"
             },
             {
               "text" : " ",
               "type" : "text"
             },
             {
-              "text" : "visual style.",
+              "text" : "For article pages, DocC also incorporates a partially faded out version of the card image in the background of the page itself.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Page images with the “card” purpose work best when they have a 16:9 aspect ratio. Currently, the largest size that DocC displays a card image is 640×360 points.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Tip",
+          "style" : "tip",
+          "type" : "aside"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If you specify an “icon” page image without specifying a “card” page image, DocC will use the icon as a fallback in places where the card image is preferred.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "To avoid upscaled pixelated icons in these places, either configure a “card” page image as well or use a scalable vector image asset for the “icon” page image.",
               "type" : "text"
             }
           ],
@@ -492,68 +578,6 @@
   "title" : "Links",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/links"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Links/VisualStyle-swift.enum/detailedGrid": {
-  "abstract" : [
-    {
-      "text" : "A grid of items based on the card image for the linked pages.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "case"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "detailedGrid"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links\/VisualStyle-swift.enum\/detailedGrid",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "Links.VisualStyle.detailedGrid",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/links\/visualstyle-swift.enum\/detailedgrid"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Metadata": {
-  "abstract" : [
-    {
-      "text" : "A directive that contains various metadata about a page.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Metadata"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Metadata"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Metadata",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/metadata"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
   "abstract" : [

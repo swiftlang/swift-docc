@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)-3hxf0"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer"
       ]
     ]
   },
@@ -76,7 +75,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertOutputConsumer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L57"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L58"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -257,61 +256,6 @@
   "title" : "consume(renderReferenceStore:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(renderreferencestore:)-2y05j"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(renderReferenceStore:)-3hxf0": {
-  "abstract" : [
-    {
-      "text" : "Consumes a render reference store creating during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "defaultImplementations" : 1,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "renderReferenceStore"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20RenderReferenceStoreV",
-      "text" : "RenderReferenceStore"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)-3hxf0",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(renderReferenceStore:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(renderreferencestore:)-3hxf0"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceStore": {
   "abstract" : [

@@ -25,7 +25,7 @@
       "type" : "text"
     },
     {
-      "text" : "This approach ensures that the used  queue doesn’t stall while loading the content from the disk keeping the used queue responsive.",
+      "text" : "This approach ensures that the used queue doesn’t stall while loading the content from the disk keeping the used queue responsive.",
       "type" : "text"
     }
   ],
@@ -33,7 +33,6 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex"
       ]
     ]
@@ -151,7 +150,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L390"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L379"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -281,7 +280,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The amount of time we can load a batch of items from data, once the timeout time pass,",
+                  "text" : "The duration for which we can load a batch of items from data. Once the timeout duration passes,",
                   "type" : "text"
                 },
                 {
@@ -303,7 +302,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The delay to wait before schedule the next read. Default: 0.01 seconds.",
+                  "text" : "The duration to wait for before scheduling the next read. Default: 0.01 seconds.",
                   "type" : "text"
                 }
               ],
@@ -331,7 +330,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The callback to update get updates of the current process.",
+                  "text" : "The callback to receive updates on the status of the current process.",
                   "type" : "text"
                 }
               ],
@@ -413,20 +412,6 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationIndexing": {
-  "abstract" : [
-    {
-      "text" : "Create documentation indexes optimized for text search or navigation.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Documentation Indexing",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationindexing"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex": {
   "abstract" : [
@@ -521,7 +506,7 @@
       "type" : "text"
     },
     {
-      "text" : "This approach ensures that the used  queue doesn’t stall while loading the content from the disk keeping the used queue responsive.",
+      "text" : "This approach ensures that the used queue doesn’t stall while loading the content from the disk keeping the used queue responsive.",
       "type" : "text"
     }
   ],

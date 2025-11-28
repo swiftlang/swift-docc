@@ -80,7 +80,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L358"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L354"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -142,7 +142,7 @@
               "text" : "."
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier-swift.struct",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV10IdentifierV",
               "text" : "Identifier"
@@ -328,7 +328,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Identifier-swift.struct": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Identifier": {
   "abstract" : [
     {
       "text" : "A stable and locally unique identifier for a collection of documentation inputs.",
@@ -349,7 +349,7 @@
       "text" : "Identifier"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier-swift.struct",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Identifier",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -360,7 +360,7 @@
   "role" : "symbol",
   "title" : "DocumentationBundle.Identifier",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier-swift.struct"
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/identifier"
 }
 }
 }

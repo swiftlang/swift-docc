@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt8",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt8\/LMDBData-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt8"
       ]
     ]
   },
@@ -280,17 +279,6 @@
   "title" : "UInt8",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/uint8"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt8/LMDBData-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt8\/LMDBData-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LMDBData Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint8\/lmdbdata-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt8/read(_:)": {
   "abstract" : [

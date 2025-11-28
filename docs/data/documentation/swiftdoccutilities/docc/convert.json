@@ -129,11 +129,12 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/documentationCatalog",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/emitDigest",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/emitLMDBIndex",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalCodeBlockAnnotations",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalDeviceFrameSupport",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalLinkHierarchySerialization",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalMentionedIn",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalOverloadedSymbolPresentation",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableInheritedDocs",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableMentionedIn",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableParametersAndReturnsValidation",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalDocumentationCoverageOptions",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/experimentalEnableCustomTemplates",
@@ -158,7 +159,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/run()",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/validate()-1hb4l"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/validate()"
       ],
       "title" : "Instance Methods"
     },
@@ -166,7 +167,7 @@
       "anchor" : "Type-Properties",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/configuration-1ow2d"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/configuration"
       ],
       "title" : "Type Properties"
     },
@@ -445,7 +446,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/analyze"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/configuration-1ow2d": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/configuration": {
   "abstract" : [
 
   ],
@@ -480,12 +481,12 @@
       "text" : "CommandConfiguration"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/configuration-1ow2d",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/configuration",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "configuration",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/configuration-1ow2d"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/configuration"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/defaultCodeListingLanguage": {
   "abstract" : [
@@ -770,6 +771,43 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/emitlmdbindex"
 },
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableExperimentalCodeBlockAnnotations": {
+  "abstract" : [
+    {
+      "text" : "A user-provided value that is true if the user enables experimental support for code block annotation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "enableExperimentalCodeBlockAnnotations"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalCodeBlockAnnotations",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "enableExperimentalCodeBlockAnnotations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentalcodeblockannotations"
+},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableExperimentalDeviceFrameSupport": {
   "abstract" : [
     {
@@ -844,51 +882,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentallinkhierarchyserialization"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableExperimentalMentionedIn": {
-  "abstract" : [
-    {
-      "text" : "A user-provided value that is true if the user enables experimental automatically generated “mentioned in”",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "links on symbols.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "enableExperimentalMentionedIn"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableExperimentalMentionedIn",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "enableExperimentalMentionedIn",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentalmentionedin"
-},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableExperimentalOverloadedSymbolPresentation": {
   "abstract" : [
     {
@@ -962,6 +955,51 @@
   "title" : "enableInheritedDocs",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableinheriteddocs"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableMentionedIn": {
+  "abstract" : [
+    {
+      "text" : "A user-provided value that is true if the user enables experimental automatically generated “mentioned in”",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "links on symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "enableMentionedIn"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/enableMentionedIn",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "enableMentionedIn",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enablementionedin"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableParametersAndReturnsValidation": {
   "abstract" : [
@@ -1642,7 +1680,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/transformforstatichosting"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/validate()-1hb4l": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/validate()": {
   "abstract" : [
 
   ],
@@ -1668,12 +1706,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/validate()-1hb4l",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/validate()",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "validate()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/validate()-1hb4l"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/validate()"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/warningsAsErrors": {
   "abstract" : [

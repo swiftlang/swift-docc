@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/SetAlgebra-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions"
       ]
     ]
   },
@@ -213,17 +212,6 @@
   "title" : "DiagnosticFormattingOptions",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/SetAlgebra-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/SetAlgebra-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "SetAlgebra Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions\/setalgebra-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/isDisjoint(with:)": {
   "abstract" : [

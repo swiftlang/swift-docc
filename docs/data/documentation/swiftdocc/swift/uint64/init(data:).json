@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt64",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt64\/LMDBData-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt64"
       ]
     ]
   },
@@ -192,17 +191,6 @@
   "title" : "UInt64",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/uint64"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt64/LMDBData-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt64\/LMDBData-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LMDBData Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint64\/lmdbdata-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt64/init(data:)": {
   "abstract" : [

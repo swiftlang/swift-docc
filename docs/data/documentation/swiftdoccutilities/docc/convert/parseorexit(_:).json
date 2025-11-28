@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/ParsableArguments-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert"
       ]
     ]
   },
@@ -260,17 +259,6 @@
   "title" : "Docc.Convert",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/ParsableArguments-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/ParsableArguments-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ParsableArguments Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/parsablearguments-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/parseOrExit(_:)": {
   "abstract" : [

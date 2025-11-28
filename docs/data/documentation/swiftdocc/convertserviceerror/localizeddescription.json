@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertServiceError",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertServiceError\/Error-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertServiceError"
       ]
     ]
   },
@@ -215,17 +214,6 @@
   "title" : "ConvertServiceError",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertserviceerror"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertServiceError/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertServiceError\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertserviceerror\/error-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertServiceError/localizedDescription": {
   "abstract" : [

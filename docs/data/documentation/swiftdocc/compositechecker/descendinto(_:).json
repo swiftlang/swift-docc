@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/MarkupWalker-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker"
       ]
     ]
   },
@@ -219,17 +217,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/compositechecker"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/MarkupWalker-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/MarkupWalker-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupWalker Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/markupwalker-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/descendInto(_:)": {
   "abstract" : [
 
@@ -267,20 +254,6 @@
   "title" : "descendInto(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/compositechecker\/descendinto(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Sequence-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer"
       ]
     ]
   },
@@ -362,17 +361,6 @@
   "title" : "MarkupContainer",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/Sequence-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Sequence-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Sequence Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/sequence-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/count(where:)": {
   "abstract" : [

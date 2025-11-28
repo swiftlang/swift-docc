@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/AsyncParsableCommand-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index"
       ]
     ]
   },
@@ -297,17 +296,6 @@
   "title" : "Docc.Index",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/index"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/AsyncParsableCommand-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/AsyncParsableCommand-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "AsyncParsableCommand Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/asyncparsablecommand-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/main(_:)-3b2do": {
   "abstract" : [

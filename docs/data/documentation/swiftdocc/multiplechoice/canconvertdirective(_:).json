@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/DirectiveConvertible-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice"
       ]
     ]
   },
@@ -77,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -243,17 +242,6 @@
   "title" : "MultipleChoice",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/multiplechoice"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice/DirectiveConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/DirectiveConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DirectiveConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/multiplechoice\/directiveconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice/canConvertDirective(_:)": {
   "abstract" : [

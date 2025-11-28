@@ -108,7 +108,7 @@
       "anchor" : "Operators",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/_(_:_:)-1q572"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/_(_:_:)"
       ],
       "title" : "Operators"
     },
@@ -240,7 +240,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/printcursor\/equatable-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/PrintCursor/_(_:_:)-1q572": {
+"doc://SwiftDocC/documentation/SwiftDocC/PrintCursor/_(_:_:)": {
   "abstract" : [
 
   ],
@@ -297,12 +297,12 @@
       "text" : "Bool"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/_(_:_:)-1q572",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/_(_:_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "<(_:_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/printcursor\/_(_:_:)-1q572"
+  "url" : "\/documentation\/swiftdocc\/printcursor\/_(_:_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PrintCursor/column": {
   "abstract" : [

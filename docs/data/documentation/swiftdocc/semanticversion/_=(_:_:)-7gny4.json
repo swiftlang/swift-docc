@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/Comparable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion"
       ]
     ]
   },
@@ -213,20 +211,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
-  "abstract" : [
-    {
-      "text" : "Convert documentation nodes into render nodes and save them to disk.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Rendering Model",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderingmodel"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion": {
   "abstract" : [
     {
@@ -260,17 +244,6 @@
   "title" : "SemanticVersion",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticversion"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/Comparable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/Comparable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Comparable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/semanticversion\/comparable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/_=(_:_:)-7gny4": {
   "abstract" : [

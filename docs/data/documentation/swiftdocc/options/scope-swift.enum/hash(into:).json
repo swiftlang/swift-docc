@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options\/Scope-swift.enum",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options\/Scope-swift.enum\/RawRepresentable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options\/Scope-swift.enum"
       ]
     ]
   },
@@ -304,17 +303,6 @@
   "title" : "Options.Scope",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/options\/scope-swift.enum"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Options/Scope-swift.enum/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options\/Scope-swift.enum\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/options\/scope-swift.enum\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Options/Scope-swift.enum/hash(into:)": {
   "abstract" : [

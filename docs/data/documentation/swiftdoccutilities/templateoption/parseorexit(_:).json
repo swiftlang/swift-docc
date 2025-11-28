@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/ParsableArguments-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption"
       ]
     ]
   },
@@ -193,40 +191,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc": {
-  "abstract" : [
-    {
-      "text" : "The default, command-line interface you use to compile and preview documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Docc"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Docc"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Docc",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc"
-},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/TemplateOption": {
   "abstract" : [
     {
@@ -269,17 +233,6 @@
   "title" : "TemplateOption",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/templateoption"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/TemplateOption/ParsableArguments-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/ParsableArguments-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ParsableArguments Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/templateoption\/parsablearguments-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/TemplateOption/parseOrExit(_:)": {
   "abstract" : [

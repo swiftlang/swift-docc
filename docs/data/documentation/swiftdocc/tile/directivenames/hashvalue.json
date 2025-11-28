@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames\/RawRepresentable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames"
       ]
     ]
   },
@@ -268,17 +267,6 @@
   "title" : "Tile.DirectiveNames",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tile\/directivenames"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Tile/DirectiveNames/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/DirectiveNames\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/tile\/directivenames\/rawrepresentable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Tile/DirectiveNames/hashValue": {
   "abstract" : [

@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt32",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt32\/LMDBData-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt32"
       ]
     ]
   },
@@ -192,17 +191,6 @@
   "title" : "UInt32",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/uint32"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt32/LMDBData-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt32\/LMDBData-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LMDBData Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint32\/lmdbdata-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt32/init(data:)": {
   "abstract" : [

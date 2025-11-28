@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind\/RawRepresentable-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind"
       ]
     ]
   },
@@ -241,17 +240,6 @@
   "title" : "CatalogTemplateKind",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/catalogtemplatekind"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/CatalogTemplateKind/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/catalogtemplatekind\/rawrepresentable-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/CatalogTemplateKind/init(argument:)": {
   "abstract" : [

@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/canConvertDirective(_:)-4s1ii"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible"
       ]
     ]
   },
@@ -77,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -305,70 +304,6 @@
   "title" : "canConvertDirective(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/directiveconvertible\/canconvertdirective(_:)-3fj6w"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible/canConvertDirective(_:)-4s1ii": {
-  "abstract" : [
-    {
-      "text" : "Returns a Boolean value indicating whether the ",
-      "type" : "text"
-    },
-    {
-      "code" : "DirectiveConvertible",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " recognizes the given directive.",
-      "type" : "text"
-    }
-  ],
-  "defaultImplementations" : 1,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "canConvertDirective"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
-      "text" : "BlockDirective"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/canConvertDirective(_:)-4s1ii",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "canConvertDirective(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/directiveconvertible\/canconvertdirective(_:)-4s1ii"
 }
 }
 }

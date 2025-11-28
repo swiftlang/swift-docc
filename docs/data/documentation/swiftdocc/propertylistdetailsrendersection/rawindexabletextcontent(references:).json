@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection\/TextIndexing-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection"
       ]
     ]
   },
@@ -227,17 +226,6 @@
   "title" : "PropertyListDetailsRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/propertylistdetailsrendersection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PropertyListDetailsRenderSection/TextIndexing-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListDetailsRenderSection\/TextIndexing-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "TextIndexing Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/propertylistdetailsrendersection\/textindexing-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PropertyListDetailsRenderSection/rawIndexableTextContent(references:)": {
   "abstract" : [

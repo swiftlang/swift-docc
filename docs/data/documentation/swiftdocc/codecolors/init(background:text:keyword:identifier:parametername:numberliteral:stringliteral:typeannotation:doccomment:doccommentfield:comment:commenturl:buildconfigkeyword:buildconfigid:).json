@@ -9,7 +9,6 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors"
       ]
     ]
@@ -1092,20 +1091,6 @@
   "title" : "init(background:text:keyword:identifier:parameterName:numberLiteral:stringLiteral:typeAnnotation:docComment:docCommentField:comment:commentURL:buildConfigKeyword:buildConfigId:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/codecolors\/init(background:text:keyword:identifier:parametername:numberliteral:stringliteral:typeannotation:doccomment:doccommentfield:comment:commenturl:buildconfigkeyword:buildconfigid:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Communication": {
-  "abstract" : [
-    {
-      "text" : "Offer native integration of DocC in your IDE.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Communication Bridge",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/communication"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SRGBColor": {
   "abstract" : [

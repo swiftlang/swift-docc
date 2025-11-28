@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies\/Decodable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies"
       ]
     ]
   },
@@ -195,17 +194,6 @@
   "title" : "RenderReferenceDependencies",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreferencedependencies"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceDependencies/Decodable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies\/Decodable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Decodable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderreferencedependencies\/decodable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceDependencies/init(from:)": {
   "abstract" : [

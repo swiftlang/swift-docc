@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind\/ExpressibleByArgument-Implementations"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind"
       ]
     ]
   },
@@ -217,17 +216,6 @@
   "title" : "CatalogTemplateKind",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/catalogtemplatekind"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/CatalogTemplateKind/ExpressibleByArgument-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind\/ExpressibleByArgument-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ExpressibleByArgument Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/catalogtemplatekind\/expressiblebyargument-implementations"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/CatalogTemplateKind/allValueStrings": {
   "abstract" : [

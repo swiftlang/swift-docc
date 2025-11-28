@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt16",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt16\/LMDBData-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt16"
       ]
     ]
   },
@@ -280,17 +279,6 @@
   "title" : "UInt16",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/uint16"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt16/LMDBData-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt16\/LMDBData-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LMDBData Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/uint16\/lmdbdata-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt16/read(_:)": {
   "abstract" : [

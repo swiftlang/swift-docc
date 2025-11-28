@@ -150,6 +150,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertService\/process(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertService\/process(_:completion:)"
       ],
       "title" : "Instance Methods"
@@ -536,6 +537,75 @@
   "title" : "init(linkResolvingServer:allowArbitraryCatalogDirectories:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertservice\/init(linkresolvingserver:allowarbitrarycatalogdirectories:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertService/process(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "process"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationServerC",
+      "text" : "DocumentationServer"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationServerC7MessageV",
+      "text" : "Message"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "async"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationServerC",
+      "text" : "DocumentationServer"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationServerC7MessageV",
+      "text" : "Message"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertService\/process(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "process(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertservice\/process(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertService/process(_:completion:)": {
   "abstract" : [

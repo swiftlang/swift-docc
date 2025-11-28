@@ -137,6 +137,17 @@
   "sections" : [
 
   ],
+  "seeAlsoSections" : [
+    {
+      "anchor" : "Metadata-Directives",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TechnologyRoot"
+      ],
+      "title" : "Metadata Directives"
+    }
+  ],
   "topicSections" : [
     {
       "anchor" : "Child-Directives",

@@ -163,7 +163,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByUnicodeScalarLiteral-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByStringLiteral-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/RawRepresentable-Implementations"
       ],
       "title" : "Default Implementations"
@@ -312,16 +312,16 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/expressiblebyextendedgraphemeclusterliteral-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/ExpressibleByUnicodeScalarLiteral-Implementations": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/ExpressibleByStringLiteral-Implementations": {
   "abstract" : [
 
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByUnicodeScalarLiteral-Implementations",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByStringLiteral-Implementations",
   "kind" : "article",
   "role" : "collectionGroup",
-  "title" : "ExpressibleByUnicodeScalarLiteral Implementations",
+  "title" : "ExpressibleByStringLiteral Implementations",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/expressiblebyunicodescalarliteral-implementations"
+  "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/expressiblebystringliteral-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/RawRepresentable-Implementations": {
   "abstract" : [

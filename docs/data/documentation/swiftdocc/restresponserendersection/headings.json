@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection\/TextIndexing-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection"
       ]
     ]
   },
@@ -190,17 +189,6 @@
   "title" : "RESTResponseRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/restresponserendersection"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RESTResponseRenderSection/TextIndexing-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTResponseRenderSection\/TextIndexing-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "TextIndexing Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/restresponserendersection\/textindexing-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RESTResponseRenderSection/headings": {
   "abstract" : [

@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Utilities"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -97,7 +96,8 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/10Foundation14LocalizedErrorP",
         "doc:\/\/SwiftDocC\/s5ErrorP",
-        "doc:\/\/SwiftDocC\/s8SendableP"
+        "doc:\/\/SwiftDocC\/s8SendableP",
+        "doc:\/\/SwiftDocC\/s16SendableMetatypeP"
       ],
       "kind" : "relationships",
       "title" : "Inherits From",
@@ -111,7 +111,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error",
@@ -138,9 +137,17 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/errorDescription-3e16y"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/errorDescription"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Default-Implementations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/LocalizedError-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -275,7 +282,18 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/describederror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DescribedError/errorDescription-3e16y": {
+"doc://SwiftDocC/documentation/SwiftDocC/DescribedError/LocalizedError-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/LocalizedError-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "LocalizedError Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/describederror\/localizederror-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DescribedError/errorDescription": {
   "abstract" : [
     {
       "text" : "A plain-text description of the error.",
@@ -306,13 +324,13 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/errorDescription-3e16y",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/errorDescription",
   "kind" : "symbol",
   "required" : true,
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/describederror\/errordescription-3e16y"
+  "url" : "\/documentation\/swiftdocc\/describederror\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/PropertyListError": {
   "abstract" : [
@@ -486,41 +504,6 @@
   "title" : "DocumentationServerError",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationservererror"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/WorkspaceError": {
-  "abstract" : [
-    {
-      "text" : "An error when requesting information from a workspace.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "enum"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "WorkspaceError"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "WorkspaceError"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationWorkspace.WorkspaceError",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/workspaceerror"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered": {
   "abstract" : [
@@ -759,16 +742,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/error"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Utilities": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Utilities",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Utility APIs",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/utilities"
+"doc://SwiftDocC/s16SendableMetatypeP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",
+  "title" : "Swift.SendableMetatype",
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/s5ErrorP": {
   "identifier" : "doc:\/\/SwiftDocC\/s5ErrorP",

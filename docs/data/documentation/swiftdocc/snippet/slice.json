@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "An optional named range to limit the lines shown.",
+      "text" : "The name of a snippet slice to limit the embedded code example to a certain line range.",
       "type" : "text"
     }
   ],
@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Snippet.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L26"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L52"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -131,6 +131,26 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "By default, the embedded code example includes the full snippet.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -205,7 +225,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Snippet": {
   "abstract" : [
-
+    {
+      "text" : "Embeds a code example from the project’s code snippets.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {
@@ -237,7 +260,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Snippet/slice": {
   "abstract" : [
     {
-      "text" : "An optional named range to limit the lines shown.",
+      "text" : "The name of a snippet slice to limit the embedded code example to a certain line range.",
       "type" : "text"
     }
   ],

@@ -5,11 +5,21 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "This check is no longer applicable. This deprecated API will be removed after 6.4 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -45,9 +55,12 @@
         "text" : "AbstractContainsFormattedTextOnly"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "AbstractContainsFormattedTextOnly.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/AbstractContainsFormattedTextOnly.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/AbstractContainsFormattedTextOnly.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -103,21 +116,6 @@
   "sections" : [
 
   ],
-  "seeAlsoSections" : [
-    {
-      "anchor" : "Predefined-Checks",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker"
-      ],
-      "title" : "Predefined Checks"
-    }
-  ],
   "topicSections" : [
     {
       "anchor" : "Initializers",
@@ -139,9 +137,9 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitDocument(_:)-9c7wa",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitImage(_:)-2ym28",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitLink(_:)-839yv"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitDocument(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitImage(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitLink(_:)"
       ],
       "title" : "Instance Methods"
     },
@@ -201,6 +199,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -268,6 +267,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -306,6 +306,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -340,10 +341,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly\/problems"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly/visitDocument(_:)-9c7wa": {
+"doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly/visitDocument(_:)": {
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -371,17 +373,18 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitDocument(_:)-9c7wa",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitDocument(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitDocument(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly\/visitdocument(_:)-9c7wa"
+  "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly\/visitdocument(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly/visitImage(_:)-2ym28": {
+"doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly/visitImage(_:)": {
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -409,17 +412,18 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitImage(_:)-2ym28",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitImage(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitImage(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly\/visitimage(_:)-2ym28"
+  "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly\/visitimage(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly/visitLink(_:)-839yv": {
+"doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly/visitLink(_:)": {
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -447,12 +451,12 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitLink(_:)-839yv",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly\/visitLink(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitLink(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly\/visitlink(_:)-839yv"
+  "url" : "\/documentation\/swiftdocc\/abstractcontainsformattedtextonly\/visitlink(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Checker": {
   "abstract" : [
@@ -487,226 +491,6 @@
   "title" : "Checker",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/checker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections": {
-  "abstract" : [
-    {
-      "text" : "A ",
-      "type" : "text"
-    },
-    {
-      "code" : "Document",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " may only have one level-2 “Topics” heading at the top level, since it serves as structured data for a documentation bundle’s hierarchy.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DuplicateTopicsSections"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DuplicateTopicsSections"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DuplicateTopicsSections",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/duplicatetopicssections"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle": {
-  "abstract" : [
-    {
-      "text" : "A document should have a single title, i.e. a single first-level heading.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "InvalidAdditionalTitle"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "InvalidAdditionalTitle"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "InvalidAdditionalTitle",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MissingAbstract": {
-  "abstract" : [
-    {
-      "text" : "A document should have an abstract.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "MissingAbstract"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "MissingAbstract"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "MissingAbstract",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/missingabstract"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker": {
-  "abstract" : [
-    {
-      "text" : "Checks for non-inclusive language in documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "NonInclusiveLanguageChecker"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "NonInclusiveLanguageChecker"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "NonInclusiveLanguageChecker",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NonOverviewHeadingChecker": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "NonOverviewHeadingChecker"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "NonOverviewHeadingChecker"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "NonOverviewHeadingChecker",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nonoverviewheadingchecker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SeeAlsoInTopicsHeadingChecker": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "SeeAlsoInTopicsHeadingChecker"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "SeeAlsoInTopicsHeadingChecker"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "SeeAlsoInTopicsHeadingChecker",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/seealsointopicsheadingchecker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

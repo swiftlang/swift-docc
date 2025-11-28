@@ -9,7 +9,6 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent"
       ]
     ]
@@ -107,7 +106,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/init(syntax:code:metadata:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/init(syntax:code:metadata:options:)"
       ],
       "title" : "Initializers"
     },
@@ -117,6 +116,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/code",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/metadata",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/options",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/syntax"
       ],
       "title" : "Instance Properties"
@@ -283,7 +283,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting\/code"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeListing/init(syntax:code:metadata:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeListing/init(syntax:code:metadata:options:)": {
   "abstract" : [
     {
       "text" : "Make a new ",
@@ -356,15 +356,41 @@
     },
     {
       "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO04CodeD7OptionsV",
+      "text" : "CodeBlockOptions"
+    },
+    {
+      "kind" : "text",
       "text" : "?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/init(syntax:code:metadata:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/init(syntax:code:metadata:options:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(syntax:code:metadata:)",
+  "title" : "init(syntax:code:metadata:options:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting\/init(syntax:code:metadata:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting\/init(syntax:code:metadata:options:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeListing/metadata": {
   "abstract" : [
@@ -407,6 +433,56 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting\/metadata"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeListing/options": {
+  "abstract" : [
+    {
+      "text" : "Annotations for code blocks",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO04CodeD7OptionsV",
+      "text" : "CodeBlockOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing\/options",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "options",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting\/options"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeListing/syntax": {
   "abstract" : [
     {
@@ -447,20 +523,6 @@
   "title" : "syntax",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting\/syntax"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
-  "abstract" : [
-    {
-      "text" : "Convert documentation nodes into render nodes and save them to disk.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Rendering Model",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderingmodel"
 }
 }
 }

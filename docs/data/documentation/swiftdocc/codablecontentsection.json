@@ -155,6 +155,14 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodableContentSection\/section"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
@@ -383,6 +391,40 @@
   "title" : "init(from:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/codablecontentsection\/init(from:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodableContentSection/section": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "section"
+    },
+    {
+      "kind" : "text",
+      "text" : ": any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13RenderSectionP",
+      "text" : "RenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodableContentSection\/section",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "section",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codablecontentsection\/section"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderSection": {
   "abstract" : [

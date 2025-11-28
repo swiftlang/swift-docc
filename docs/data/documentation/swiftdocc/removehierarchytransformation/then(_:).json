@@ -9,8 +9,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation\/RenderNodeTransforming-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation"
       ]
     ]
   },
@@ -257,17 +256,6 @@
   "title" : "RemoveHierarchyTransformation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/removehierarchytransformation"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RemoveHierarchyTransformation/RenderNodeTransforming-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation\/RenderNodeTransforming-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RenderNodeTransforming Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/removehierarchytransformation\/rendernodetransforming-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RemoveHierarchyTransformation/then(_:)": {
   "abstract" : [

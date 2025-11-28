@@ -17,8 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/LocalizedError-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError"
       ]
     ]
   },
@@ -219,17 +218,6 @@
   "title" : "DocumentationServerError",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationservererror"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServerError/LocalizedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/LocalizedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LocalizedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationservererror\/localizederror-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationServerError/helpAnchor": {
   "abstract" : [

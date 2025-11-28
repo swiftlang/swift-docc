@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/Checker-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections"
       ]
     ]
   },
@@ -227,17 +225,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/duplicatetopicssections"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/Checker-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/Checker-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Checker Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/checker-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/any()": {
   "abstract" : [
     {
@@ -282,20 +269,6 @@
   "title" : "any()",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/any()"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

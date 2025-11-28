@@ -42,7 +42,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/...(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/.._(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/.._(_:_:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)-59xmv",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)-9kxlt",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_=(_:_:)-65nt",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_=(_:_:)-zwys"
@@ -493,7 +493,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/'.._(_:_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/_(_:_:)-59xmv": {
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/_(_:_:)": {
   "abstract" : [
     {
       "text" : "Compares two semantic versions.",
@@ -571,12 +571,12 @@
       "text" : "Bool"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)-59xmv",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "<(_:_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/_(_:_:)-59xmv"
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/_(_:_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/_(_:_:)-9kxlt": {
   "abstract" : [

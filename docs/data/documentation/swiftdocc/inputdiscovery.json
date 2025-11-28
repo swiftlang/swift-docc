@@ -274,7 +274,6 @@
       "anchor" : "Documentation-Bundle",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes"
       ],
       "title" : "Documentation Bundle"
@@ -359,41 +358,6 @@
   "title" : "BundleData",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/bundledata"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BundleIdentifier": {
-  "abstract" : [
-    {
-      "text" : "Documentation bundles use a string value as a unique identifier.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "typealias"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "BundleIdentifier"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleIdentifier",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "BundleIdentifier"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "BundleIdentifier",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/bundleidentifier"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DataAsset": {
   "abstract" : [

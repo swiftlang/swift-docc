@@ -9,7 +9,6 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode"
       ]
     ]
@@ -48,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L259"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L253"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -123,7 +122,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Kind-swift.enum\/init(from:)-5lcyq",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Kind-swift.enum\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Kind-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
@@ -306,7 +305,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/kind-swift.enum\/article"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Kind-swift.enum/init(from:)-5lcyq": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Kind-swift.enum/init(from:)": {
   "abstract" : [
 
   ],
@@ -341,12 +340,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Kind-swift.enum\/init(from:)-5lcyq",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Kind-swift.enum\/init(from:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "init(from:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernode\/kind-swift.enum\/init(from:)-5lcyq"
+  "url" : "\/documentation\/swiftdocc\/rendernode\/kind-swift.enum\/init(from:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Kind-swift.enum/init(rawValue:)": {
   "abstract" : [
@@ -485,20 +484,6 @@
   "title" : "RenderNode.Kind.tutorial",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/kind-swift.enum\/tutorial"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
-  "abstract" : [
-    {
-      "text" : "Convert documentation nodes into render nodes and save them to disk.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Rendering Model",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderingmodel"
 }
 }
 }

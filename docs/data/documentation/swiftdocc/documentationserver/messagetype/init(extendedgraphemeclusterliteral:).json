@@ -5,7 +5,7 @@
       "type" : "text"
     },
     {
-      "code" : "ExpressibleByExtendedGraphemeClusterLiteral.init(extendedGraphemeClusterLiteral:)",
+      "code" : "ExpressibleByStringLiteral.init(extendedGraphemeClusterLiteral:)",
       "type" : "codeVoice"
     },
     {
@@ -18,8 +18,7 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType"
       ]
     ]
   },
@@ -272,17 +271,6 @@
   "title" : "DocumentationServer.MessageType",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/ExpressibleByExtendedGraphemeClusterLiteral-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType\/ExpressibleByExtendedGraphemeClusterLiteral-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "ExpressibleByExtendedGraphemeClusterLiteral Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationserver\/messagetype\/expressiblebyextendedgraphemeclusterliteral-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer/MessageType/init(extendedGraphemeClusterLiteral:)": {
   "abstract" : [

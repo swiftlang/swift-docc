@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Utilities"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -81,6 +80,12 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "mentions",
+      "mentions" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags"
+      ]
     }
   ],
   "relationshipsSections" : [
@@ -117,7 +122,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/init(additionalFlags:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/init(from:)"
       ],
       "title" : "Initializers"
@@ -126,11 +131,11 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalCodeBlockAnnotationsEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDeviceFrameSupportEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalLinkHierarchySerializationEnabled",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalMentionedInEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalOverloadedSymbolPresentationEnabled",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalParametersAndReturnsValidationEnabled",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isMentionedInEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isParametersAndReturnsValidationEnabled"
       ],
       "title" : "Instance Properties"
@@ -181,6 +186,20 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AddingFeatureFlags": {
+  "abstract" : [
+    {
+      "text" : "Develop experimental features by adding feature flags.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding Feature Flags",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/addingfeatureflags"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Checksum": {
   "abstract" : [
@@ -303,10 +322,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/current"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/init(additionalFlags:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/init()": {
   "abstract" : [
     {
-      "text" : "Creates a set of feature flags with the given values.",
+      "text" : "Creates a set of feature flags with all default values.",
       "type" : "text"
     }
   ],
@@ -317,41 +336,15 @@
     },
     {
       "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "additionalFlags"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : " : "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : "])"
+      "text" : "()"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/init(additionalFlags:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/init()",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(additionalFlags:)",
+  "title" : "init()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/featureflags\/init(additionalflags:)"
+  "url" : "\/documentation\/swiftdocc\/featureflags\/init()"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/init(from:)": {
   "abstract" : [
@@ -394,6 +387,43 @@
   "title" : "init(from:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/init(from:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalCodeBlockAnnotationsEnabled": {
+  "abstract" : [
+    {
+      "text" : "Whether or not experimental annotation of code blocks is enabled.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isExperimentalCodeBlockAnnotationsEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalCodeBlockAnnotationsEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isExperimentalCodeBlockAnnotationsEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalcodeblockannotationsenabled"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalDeviceFrameSupportEnabled": {
   "abstract" : [
@@ -469,51 +499,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentallinkhierarchyserializationenabled"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalMentionedInEnabled": {
-  "abstract" : [
-    {
-      "text" : "Whether experimental support for automatically rendering links on symbol documentation to articles",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "that mention that symbol.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "isExperimentalMentionedInEnabled"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalMentionedInEnabled",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "isExperimentalMentionedInEnabled",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalmentionedinenabled"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalOverloadedSymbolPresentationEnabled": {
   "abstract" : [
     {
@@ -551,11 +536,13 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaloverloadedsymbolpresentationenabled"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalParametersAndReturnsValidationEnabled": {
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isMentionedInEnabled": {
   "abstract" : [
-
+    {
+      "text" : "Whether support for automatically rendering links on symbol documentation to articles that mention that symbol is enabled.",
+      "type" : "text"
+    }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -567,7 +554,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "isExperimentalParametersAndReturnsValidationEnabled"
+      "text" : "isMentionedInEnabled"
     },
     {
       "kind" : "text",
@@ -579,12 +566,12 @@
       "text" : "Bool"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalParametersAndReturnsValidationEnabled",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isMentionedInEnabled",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "isExperimentalParametersAndReturnsValidationEnabled",
+  "title" : "isMentionedInEnabled",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalparametersandreturnsvalidationenabled"
+  "url" : "\/documentation\/swiftdocc\/featureflags\/ismentionedinenabled"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isParametersAndReturnsValidationEnabled": {
   "abstract" : [
@@ -622,17 +609,6 @@
   "title" : "isParametersAndReturnsValidationEnabled",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/isparametersandreturnsvalidationenabled"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Utilities": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Utilities",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Utility APIs",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/utilities"
 }
 }
 }

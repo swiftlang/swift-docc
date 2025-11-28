@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -96,8 +95,7 @@
       "anchor" : "Documentation-Bundle",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleIdentifier"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle"
       ],
       "title" : "Documentation Bundle"
     }
@@ -109,7 +107,6 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isCustomFooter(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isCustomHeader(_:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isDocumentationBundle(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isDocumentationCatalog(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isInfoPlistFile(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isMarkupFile(_:)",
@@ -148,41 +145,6 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BundleIdentifier": {
-  "abstract" : [
-    {
-      "text" : "Documentation bundles use a string value as a unique identifier.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "typealias"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "BundleIdentifier"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleIdentifier",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "BundleIdentifier"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "BundleIdentifier",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/bundleidentifier"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
   "abstract" : [
@@ -359,58 +321,6 @@
   "title" : "isCustomHeader(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes\/iscustomheader(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundleFileTypes/isDocumentationBundle(_:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "isDocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isDocumentationBundle(_:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "isDocumentationBundle(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes\/isdocumentationbundle(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundleFileTypes/isDocumentationCatalog(_:)": {
   "abstract" : [
@@ -797,20 +707,6 @@
   "title" : "isTutorialFile(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes\/istutorialfile(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/InputDiscovery": {
-  "abstract" : [
-    {
-      "text" : "Learn how to discover documentation inputs on the file system.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InputDiscovery",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Input Discovery",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/inputdiscovery"
 }
 }
 }

@@ -1,0 +1,442 @@
+{
+  "abstract" : [
+    {
+      "text" : "A disambiguation suffix for a parsed link component.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC19LinkCompletionToolsO20ParsedDisambiguationO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ParsedDisambiguation"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ParsedDisambiguation"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "LinkCompletionTools.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/LinkCompletionTools.swift#L39"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "LinkCompletionTools.ParsedDisambiguation"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ParsedDisambiguation"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/SQ"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/kindAndOrHash(kind:hash:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/none",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/typeSignature(parameterTypes:returnTypes:)"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/suffix"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Default-Implementations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/linkcompletiontools\/parseddisambiguation"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools": {
+  "abstract" : [
+    {
+      "text" : "A collection of API for link completion.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkCompletionTools"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkCompletionTools"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkCompletionTools",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/ParsedDisambiguation": {
+  "abstract" : [
+    {
+      "text" : "A disambiguation suffix for a parsed link component.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ParsedDisambiguation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ParsedDisambiguation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkCompletionTools.ParsedDisambiguation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/parseddisambiguation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/ParsedDisambiguation/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/parseddisambiguation\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/ParsedDisambiguation/kindAndOrHash(kind:hash:)": {
+  "abstract" : [
+    {
+      "text" : "This path component uses a combination of kind and hash disambiguation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "kindAndOrHash"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "kind"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "hash"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/kindAndOrHash(kind:hash:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LinkCompletionTools.ParsedDisambiguation.kindAndOrHash(kind:hash:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/parseddisambiguation\/kindandorhash(kind:hash:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/ParsedDisambiguation/none": {
+  "abstract" : [
+    {
+      "text" : "This link component isn’t disambiguated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "none"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/none",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LinkCompletionTools.ParsedDisambiguation.none",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/parseddisambiguation\/none"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/ParsedDisambiguation/suffix": {
+  "abstract" : [
+    {
+      "text" : "A string representation of the disambiguation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "suffix"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/suffix",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "suffix",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/parseddisambiguation\/suffix"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkCompletionTools/ParsedDisambiguation/typeSignature(parameterTypes:returnTypes:)": {
+  "abstract" : [
+    {
+      "text" : "This path component uses type signature information for disambiguation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "typeSignature"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "parameterTypes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "returnTypes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools\/ParsedDisambiguation\/typeSignature(parameterTypes:returnTypes:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LinkCompletionTools.ParsedDisambiguation.typeSignature(parameterTypes:returnTypes:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkcompletiontools\/parseddisambiguation\/typesignature(parametertypes:returntypes:)"
+}
+}
+}

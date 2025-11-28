@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract\/MarkupVisitor-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract"
       ]
     ]
   },
@@ -81,7 +79,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkupVisitor.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Visitor\/MarkupVisitor.swift#L321"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Visitor\/MarkupVisitor.swift#L329"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -237,17 +235,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/missingabstract"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MissingAbstract/MarkupVisitor-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract\/MarkupVisitor-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "MarkupVisitor Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/missingabstract\/markupvisitor-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/MissingAbstract/visitCodeBlock(_:)": {
   "abstract" : [
 
@@ -298,20 +285,6 @@
   "title" : "visitCodeBlock(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/missingabstract\/visitcodeblock(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
 }
 }
 }

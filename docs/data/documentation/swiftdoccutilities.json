@@ -132,7 +132,7 @@
         },
         {
           "code" : [
-            "import ArgumentParser",
+            "public import ArgumentParser",
             "",
             "public struct MyDocumentationTool: AsyncParsableCommand {",
             "    public static var configuration = CommandConfiguration(",

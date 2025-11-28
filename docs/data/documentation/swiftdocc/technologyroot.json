@@ -8,8 +8,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -250,21 +249,13 @@
   ],
   "seeAlsoSections" : [
     {
-      "anchor" : "Child-Directives",
+      "anchor" : "Metadata-Directives",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AlternateRepresentation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayName",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageImage",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SupportedLanguage",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleHeading"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata"
       ],
-      "title" : "Child Directives"
+      "title" : "Metadata Directives"
     }
   ],
   "topicSections" : [
@@ -326,74 +317,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AlternateRepresentation": {
-  "abstract" : [
-    {
-      "text" : "A directive that configures an alternate language representation of a symbol.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "AlternateRepresentation"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AlternateRepresentation",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "AlternateRepresentation"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "AlternateRepresentation",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/alternaterepresentation"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/CallToAction": {
-  "abstract" : [
-    {
-      "text" : "A directive that adds a prominent button or link to a page’s header.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "CallToAction"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "CallToAction"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "CallToAction",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/calltoaction"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible": {
   "abstract" : [
     {
@@ -427,40 +350,6 @@
   "title" : "DirectiveConvertible",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/directiveconvertible"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DisplayName": {
-  "abstract" : [
-    {
-      "text" : "A directive that controls how the documentation-extension file overrides the symbol’s display name.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DisplayName"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayName",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DisplayName"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DisplayName",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/displayname"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension": {
   "abstract" : [
@@ -530,142 +419,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/metadata"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
-  "abstract" : [
-    {
-      "text" : "A directive that specifies when a documentation page is available for a given platform.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Availability"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Availability"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Metadata.Availability",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/metadata\/availability"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Metadata/PageKind": {
-  "abstract" : [
-    {
-      "text" : "A directive that allows you to set a page’s kind, which affects its default title heading and page icon.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "PageKind"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "PageKind"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Metadata.PageKind",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/metadata\/pagekind"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PageColor": {
-  "abstract" : [
-    {
-      "text" : "A directive that specifies an accent color for a given documentation page.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "PageColor"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "PageColor"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "PageColor",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/pagecolor"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PageImage": {
-  "abstract" : [
-    {
-      "text" : "Associates an image with a page.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "PageImage"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageImage",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "PageImage"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "PageImage",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/pageimage"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
   "abstract" : [
     {
@@ -699,40 +452,6 @@
   "title" : "Semantic",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semantic"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SupportedLanguage": {
-  "abstract" : [
-    {
-      "text" : "A directive that controls what programming languages an article is available in.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "SupportedLanguage"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SupportedLanguage",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "SupportedLanguage"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "SupportedLanguage",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/supportedlanguage"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot": {
   "abstract" : [
@@ -854,40 +573,6 @@
   "title" : "originalMarkup",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/technologyroot\/originalmarkup"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TitleHeading": {
-  "abstract" : [
-    {
-      "text" : "A directive for customizing the text of a page’s title heading.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "TitleHeading"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleHeading",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "TitleHeading"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "TitleHeading",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/titleheading"
 }
 }
 }

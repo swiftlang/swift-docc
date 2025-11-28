@@ -17,7 +17,6 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption"
       ]
     ]
@@ -168,40 +167,6 @@
   "title" : "init()",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/init()"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc": {
-  "abstract" : [
-    {
-      "text" : "The default, command-line interface you use to compile and preview documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Docc"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Docc"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Docc",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc"
 }
 }
 }

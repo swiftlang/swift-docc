@@ -103,6 +103,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/init(context:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/init(documentationContext:bundle:)"
       ],
       "title" : "Initializers"
@@ -204,14 +205,61 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontentrenderer\/referencegroup"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContentRenderer/init(documentationContext:bundle:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContentRenderer/init(context:)": {
   "abstract" : [
     {
-      "text" : "Creates a new content renderer for the given documentation context and bundle.",
+      "text" : "Creates a new content renderer for the given documentation context.",
       "type" : "text"
     }
   ],
   "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "context"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/init(context:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(context:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontentrenderer\/init(context:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContentRenderer/init(documentationContext:bundle:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "convenience"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
     {
       "kind" : "identifier",
       "text" : "init"

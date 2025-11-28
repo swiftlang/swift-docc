@@ -17,8 +17,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities"
       ]
     ]
   },
@@ -164,7 +163,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/validate()-2gibg"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/validate()"
       ],
       "title" : "Instance Methods"
     },
@@ -248,40 +247,6 @@
   "title" : "DocCArchiveOption",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/doccarchiveoption"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc": {
-  "abstract" : [
-    {
-      "text" : "The default, command-line interface you use to compile and preview documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Docc"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Docc"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Docc",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption": {
   "abstract" : [
@@ -491,7 +456,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/templateoption\/templateurl"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/TemplateOption/validate()-2gibg": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/TemplateOption/validate()": {
   "abstract" : [
 
   ],
@@ -517,12 +482,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/validate()-2gibg",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/validate()",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "validate()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/templateoption\/validate()-2gibg"
+  "url" : "\/documentation\/swiftdoccutilities\/templateoption\/validate()"
 }
 }
 }

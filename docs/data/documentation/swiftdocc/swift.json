@@ -36,7 +36,6 @@
       "anchor" : "Extended-Protocols",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Collection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Sequence"
       ],
       "title" : "Extended Protocols"
@@ -199,38 +198,6 @@
   "title" : "CodingUserInfoKey",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift\/codinguserinfokey"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/Collection": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:Sl",
-      "text" : "Collection"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Collection",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Collection"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Collection",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/collection"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Double": {
   "abstract" : [

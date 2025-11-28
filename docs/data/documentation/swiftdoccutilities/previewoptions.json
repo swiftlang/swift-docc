@@ -153,7 +153,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/validate()-2prs9"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/validate()"
       ],
       "title" : "Instance Methods"
     },
@@ -472,7 +472,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/previewoptions\/port"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewOptions/validate()-2prs9": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewOptions/validate()": {
   "abstract" : [
 
   ],
@@ -498,12 +498,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/validate()-2prs9",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/validate()",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "validate()",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/previewoptions\/validate()-2prs9"
+  "url" : "\/documentation\/swiftdoccutilities\/previewoptions\/validate()"
 }
 }
 }

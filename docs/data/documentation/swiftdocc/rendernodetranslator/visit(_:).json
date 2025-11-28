@@ -17,9 +17,7 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/SemanticVisitor-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator"
       ]
     ]
   },
@@ -78,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticVisitor.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L150"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L147"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -236,17 +234,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernodetranslator"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTranslator/SemanticVisitor-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/SemanticVisitor-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "SemanticVisitor Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernodetranslator\/semanticvisitor-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTranslator/visit(_:)": {
   "abstract" : [
 
@@ -297,20 +284,6 @@
   "title" : "visit(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernodetranslator\/visit(_:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
-  "abstract" : [
-    {
-      "text" : "Convert documentation nodes into render nodes and save them to disk.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Rendering Model",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderingmodel"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
   "abstract" : [

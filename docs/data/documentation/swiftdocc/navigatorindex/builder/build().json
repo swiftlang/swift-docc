@@ -9,7 +9,6 @@
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder"
       ]
@@ -56,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L1271"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L1287"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -138,20 +137,11 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "Either ",
+                  "text" : "",
                   "type" : "text"
                 },
                 {
                   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/archiveURL",
-                  "isActive" : true,
-                  "type" : "reference"
-                },
-                {
-                  "text" : " or ",
-                  "type" : "text"
-                },
-                {
-                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/renderNodeProvider",
                   "isActive" : true,
                   "type" : "reference"
                 },
@@ -206,20 +196,6 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationIndexing": {
-  "abstract" : [
-    {
-      "text" : "Create documentation indexes optimized for text search or navigation.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Documentation Indexing",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationindexing"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex": {
   "abstract" : [
@@ -410,48 +386,6 @@
   "title" : "build()",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/build()"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/renderNodeProvider": {
-  "abstract" : [
-    {
-      "text" : "The data provider.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "renderNodeProvider"
-    },
-    {
-      "kind" : "text",
-      "text" : ": (any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderNodeProviderP",
-      "text" : "RenderNodeProvider"
-    },
-    {
-      "kind" : "text",
-      "text" : ")?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/renderNodeProvider",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "renderNodeProvider",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/rendernodeprovider"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Problem": {
   "abstract" : [

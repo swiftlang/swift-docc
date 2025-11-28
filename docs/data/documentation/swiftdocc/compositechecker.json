@@ -16,8 +16,7 @@
   "hierarchy" : {
     "paths" : [
       [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
       ]
     ]
   },
@@ -144,28 +143,28 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visit(_:)-7sh2d",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitBlockQuote(_:)-1qmop",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCodeBlock(_:)-4qev3",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomBlock(_:)-4q4fj",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomInline(_:)-1g2fi",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDocument(_:)-9bjmm",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitEmphasis(_:)-97oq0",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitHTMLBlock(_:)-37i3w",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitHeading(_:)-1s6ni",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitImage(_:)-3gspa",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitInlineCode(_:)-9xy2s",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitInlineHTML(_:)-81o0s",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitLineBreak(_:)-79sox",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitLink(_:)-91l87",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitListItem(_:)-40gax",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitOrderedList(_:)-491oq",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitParagraph(_:)-3exbl",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitSoftBreak(_:)-5vt8s",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitStrong(_:)-469vs",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitText(_:)-36wda",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitThematicBreak(_:)-3bpxu",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitUnorderedList(_:)-3figv"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visit(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitBlockQuote(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCodeBlock(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomBlock(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomInline(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDocument(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitEmphasis(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitHTMLBlock(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitHeading(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitImage(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitInlineCode(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitInlineHTML(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitLineBreak(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitLink(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitListItem(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitOrderedList(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitParagraph(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitSoftBreak(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitStrong(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitText(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitThematicBreak(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitUnorderedList(_:)"
       ],
       "title" : "Instance Methods"
     },
@@ -424,7 +423,15 @@
     },
     {
       "kind" : "text",
-      "text" : "(some "
+      "text" : "("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "some"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
     },
     {
       "kind" : "typeIdentifier",
@@ -490,7 +497,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/compositechecker\/problems"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visit(_:)-7sh2d": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visit(_:)": {
   "abstract" : [
 
   ],
@@ -521,14 +528,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visit(_:)-7sh2d",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visit(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visit(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visit(_:)-7sh2d"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visit(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitBlockQuote(_:)-1qmop": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitBlockQuote(_:)": {
   "abstract" : [
 
   ],
@@ -559,14 +566,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitBlockQuote(_:)-1qmop",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitBlockQuote(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitBlockQuote(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitblockquote(_:)-1qmop"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitblockquote(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitCodeBlock(_:)-4qev3": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitCodeBlock(_:)": {
   "abstract" : [
 
   ],
@@ -597,14 +604,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCodeBlock(_:)-4qev3",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCodeBlock(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitCodeBlock(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitcodeblock(_:)-4qev3"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitcodeblock(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitCustomBlock(_:)-4q4fj": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitCustomBlock(_:)": {
   "abstract" : [
 
   ],
@@ -635,14 +642,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomBlock(_:)-4q4fj",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomBlock(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitCustomBlock(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitcustomblock(_:)-4q4fj"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitcustomblock(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitCustomInline(_:)-1g2fi": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitCustomInline(_:)": {
   "abstract" : [
 
   ],
@@ -673,14 +680,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomInline(_:)-1g2fi",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomInline(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitCustomInline(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitcustominline(_:)-1g2fi"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitcustominline(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitDocument(_:)-9bjmm": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitDocument(_:)": {
   "abstract" : [
 
   ],
@@ -711,14 +718,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDocument(_:)-9bjmm",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDocument(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitDocument(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitdocument(_:)-9bjmm"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitdocument(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitEmphasis(_:)-97oq0": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitEmphasis(_:)": {
   "abstract" : [
 
   ],
@@ -749,14 +756,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitEmphasis(_:)-97oq0",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitEmphasis(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitEmphasis(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitemphasis(_:)-97oq0"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitemphasis(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitHTMLBlock(_:)-37i3w": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitHTMLBlock(_:)": {
   "abstract" : [
 
   ],
@@ -787,14 +794,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitHTMLBlock(_:)-37i3w",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitHTMLBlock(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitHTMLBlock(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visithtmlblock(_:)-37i3w"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visithtmlblock(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitHeading(_:)-1s6ni": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitHeading(_:)": {
   "abstract" : [
 
   ],
@@ -825,14 +832,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitHeading(_:)-1s6ni",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitHeading(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitHeading(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitheading(_:)-1s6ni"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitheading(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitImage(_:)-3gspa": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitImage(_:)": {
   "abstract" : [
 
   ],
@@ -863,14 +870,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitImage(_:)-3gspa",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitImage(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitImage(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitimage(_:)-3gspa"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitimage(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitInlineCode(_:)-9xy2s": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitInlineCode(_:)": {
   "abstract" : [
 
   ],
@@ -901,14 +908,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitInlineCode(_:)-9xy2s",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitInlineCode(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitInlineCode(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitinlinecode(_:)-9xy2s"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitinlinecode(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitInlineHTML(_:)-81o0s": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitInlineHTML(_:)": {
   "abstract" : [
 
   ],
@@ -939,14 +946,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitInlineHTML(_:)-81o0s",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitInlineHTML(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitInlineHTML(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitinlinehtml(_:)-81o0s"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitinlinehtml(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitLineBreak(_:)-79sox": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitLineBreak(_:)": {
   "abstract" : [
 
   ],
@@ -977,14 +984,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitLineBreak(_:)-79sox",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitLineBreak(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitLineBreak(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitlinebreak(_:)-79sox"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitlinebreak(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitLink(_:)-91l87": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitLink(_:)": {
   "abstract" : [
 
   ],
@@ -1015,14 +1022,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitLink(_:)-91l87",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitLink(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitLink(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitlink(_:)-91l87"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitlink(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitListItem(_:)-40gax": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitListItem(_:)": {
   "abstract" : [
 
   ],
@@ -1053,14 +1060,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitListItem(_:)-40gax",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitListItem(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitListItem(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitlistitem(_:)-40gax"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitlistitem(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitOrderedList(_:)-491oq": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitOrderedList(_:)": {
   "abstract" : [
 
   ],
@@ -1091,14 +1098,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitOrderedList(_:)-491oq",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitOrderedList(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitOrderedList(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitorderedlist(_:)-491oq"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitorderedlist(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitParagraph(_:)-3exbl": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitParagraph(_:)": {
   "abstract" : [
 
   ],
@@ -1129,14 +1136,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitParagraph(_:)-3exbl",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitParagraph(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitParagraph(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitparagraph(_:)-3exbl"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitparagraph(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitSoftBreak(_:)-5vt8s": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitSoftBreak(_:)": {
   "abstract" : [
 
   ],
@@ -1167,14 +1174,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitSoftBreak(_:)-5vt8s",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitSoftBreak(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitSoftBreak(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitsoftbreak(_:)-5vt8s"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitsoftbreak(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitStrong(_:)-469vs": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitStrong(_:)": {
   "abstract" : [
 
   ],
@@ -1205,14 +1212,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitStrong(_:)-469vs",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitStrong(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitStrong(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitstrong(_:)-469vs"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitstrong(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitText(_:)-36wda": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitText(_:)": {
   "abstract" : [
 
   ],
@@ -1243,14 +1250,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitText(_:)-36wda",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitText(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitText(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visittext(_:)-36wda"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visittext(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitThematicBreak(_:)-3bpxu": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitThematicBreak(_:)": {
   "abstract" : [
 
   ],
@@ -1281,14 +1288,14 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitThematicBreak(_:)-3bpxu",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitThematicBreak(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitThematicBreak(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitthematicbreak(_:)-3bpxu"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitthematicbreak(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitUnorderedList(_:)-3figv": {
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitUnorderedList(_:)": {
   "abstract" : [
 
   ],
@@ -1319,26 +1326,12 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitUnorderedList(_:)-3figv",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitUnorderedList(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "visitUnorderedList(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitunorderedlist(_:)-3figv"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
-  "abstract" : [
-    {
-      "text" : "Run static analysis checks on markup files.",
-      "type" : "text"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Static Analysis",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/staticanalysis"
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitunorderedlist(_:)"
 }
 }
 }

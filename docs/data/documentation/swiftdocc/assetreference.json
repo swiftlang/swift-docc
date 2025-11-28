@@ -109,7 +109,6 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/init(assetName:bundleID:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/init(assetName:bundleIdentifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/init(from:)"
       ],
       "title" : "Initializers"
@@ -119,8 +118,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/assetName",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/bundleID",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/bundleIdentifier"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/bundleID"
       ],
       "title" : "Instance Properties"
     },
@@ -309,41 +307,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/assetreference\/bundleid"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/AssetReference/bundleIdentifier": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "bundleIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/bundleIdentifier",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "bundleIdentifier",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/assetreference\/bundleidentifier"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/AssetReference/init(assetName:bundleID:)": {
   "abstract" : [
     {
@@ -410,62 +373,6 @@
   "title" : "init(assetName:bundleID:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/assetreference\/init(assetname:bundleid:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/AssetReference/init(assetName:bundleIdentifier:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "assetName"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "bundleIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/init(assetName:bundleIdentifier:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(assetName:bundleIdentifier:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/assetreference\/init(assetname:bundleidentifier:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AssetReference/init(from:)": {
   "abstract" : [
