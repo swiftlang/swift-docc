@@ -254,7 +254,9 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </section>
         <h2>Mentioned In</h2>
         <ul>
-            <li>Some article</li>
+            <li>
+                <a href="../somearticle/index.html">Some article</a>
+            </li>
         </ul>
         <h2>Topics</h2>
         <h3>Instance Methods</h3>

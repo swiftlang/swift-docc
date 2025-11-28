@@ -248,7 +248,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         )
     }
     
-    func path(to other: URL) -> String {
+    package func path(to other: URL) -> String {
         let from = path
         let to   = other
         

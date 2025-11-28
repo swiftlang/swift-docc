@@ -451,9 +451,16 @@ struct HTMLRenderer {
             let mentions = context.articleSymbolMentions.articlesMentioning(reference)
             if !mentions.isEmpty {
                 articleElement.addChildren(
+                    // FIXME: Create a dedicated MarkdownRenderer method for the "Mentioned In" section
                     renderer.selfReferencingSection(named: "Mentioned In", content: [
                         .element(named: "ul", children: mentions.compactMap { reference in
-                            context.documentationCache[reference].map { .element(named: "li", children: [.text($0.name.description)]) }
+                            context.documentationCache[reference].map {
+                                .element(named: "li", children: [
+                                    .element(named: "a", children: [.text($0.name.description)], attributes: [
+                                        "href": renderer.path(to: $0.reference.url) + "/index.html"
+                                    ])
+                                ])
+                            }
                         })
                     ])
                 )
