@@ -30,6 +30,8 @@ package extension MarkdownRenderer {
     
     func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> [XMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
+        guard info.contains(where: { _, params in !params.isEmpty }) else { return [] }
+        
         let items: [XMLElement] = switch info.count {
         case 1:
             [_singleLanguageParameters(info.first!.value)] // Verified to exist above

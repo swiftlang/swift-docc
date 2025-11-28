@@ -44,6 +44,8 @@ package extension MarkdownRenderer {
     }
     
     func selfReferencingSection(named sectionName: String, content: [XMLNode]) -> [XMLNode] {
+        guard !content.isEmpty else { return [] }
+        
         switch goal {
         case .richness:
             let id = urlReadableFragment(sectionName.lowercased())
