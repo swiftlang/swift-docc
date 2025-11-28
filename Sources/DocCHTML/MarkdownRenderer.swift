@@ -8,7 +8,13 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(FoundationXML)
+// FIXME: See if we can avoid depending on XMLNode/XMLParser to avoid needing to import FoundationXML
+package import FoundationXML
+package import FoundationEssentials
+#else
 package import Foundation
+#endif
 package import Markdown
 
 /// The primary goal for the rendered HTML output.

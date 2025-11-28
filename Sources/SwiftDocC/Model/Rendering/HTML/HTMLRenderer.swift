@@ -8,10 +8,12 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 #if canImport(FoundationXML)
 // FIXME: See if we can avoid depending on XMLNode/XMLParser to avoid needing to import FoundationXML
 import FoundationXML
+import FoundationEssentials
+#else
+import Foundation
 #endif
 import DocCHTML
 import Markdown
@@ -407,12 +409,12 @@ struct HTMLRenderer {
         if !symbol.parametersSectionVariants.allValues.isEmpty {
             articleElement.addChildren(
                 renderer.parameters(
-                    .init(
+                    [SourceLanguage: [MarkdownRenderer<ContextLinkProvider>.ParameterInfo]](
                         symbol.parametersSectionVariants.allValues.map { trait, parameters in (
                             // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
                             key:   trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift,
                             value: parameters.parameters.map {
-                                .init(name: $0.name, content: $0.contents)
+                                MarkdownRenderer<ContextLinkProvider>.ParameterInfo(name: $0.name, content: $0.contents)
                             }
                         )},
                         uniquingKeysWith: { _, new in new }

@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
-
 /// A consumer for output produced by a documentation conversion.
 ///
 /// Types that conform to this protocol manage what to do with documentation conversion products, for example persist them to disk
@@ -58,7 +56,6 @@ public extension ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
-    func consume(page: XMLNode, for reference: ResolvedTopicReference) throws {}
 }
 
 // Default implementation so that conforming types don't need to implement deprecated API.

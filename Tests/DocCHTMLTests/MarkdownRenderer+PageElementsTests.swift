@@ -8,7 +8,14 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(FoundationEssentials)
+// FIXME: See if we can avoid depending on XMLNode/XMLParser to avoid needing to import FoundationXML
+import FoundationXML
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
 import Testing
 import DocCHTML
 @testable import SwiftDocC

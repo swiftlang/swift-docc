@@ -8,10 +8,11 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-package import Foundation
 #if canImport(FoundationXML)
 // FIXME: See if we can avoid depending on XMLNode/XMLParser to avoid needing to import FoundationXML
 package import FoundationXML
+#else
+package import Foundation
 #endif
 
 package import DocCCommon
