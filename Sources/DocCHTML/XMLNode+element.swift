@@ -18,7 +18,7 @@ extension XMLNode {
     package static func element(
         named name: String,
         children: [XMLNode]? = nil,
-        attributes: [String: String]? = nil,
+        attributes: [String: String]? = nil
     ) -> XMLElement {
         let attributeNodes: [XMLNode]?
         if let attributes, !attributes.isEmpty {
