@@ -619,6 +619,13 @@ extension Sequence<XMLNode> {
     }
 }
 
+extension Sequence<XMLElement> {
+    func rendered(prettyFormatted: Bool) -> String {
+        map { $0.rendered(prettyFormatted: prettyFormatted) }
+            .joined(separator: prettyFormatted ? "\n" : "")
+    }
+}
+
 struct SingleValueLinkProvider: LinkProvider {
     var elementToReturn: LinkedElement?
     func element(for path: URL) -> LinkedElement? {

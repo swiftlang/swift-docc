@@ -28,7 +28,7 @@ package extension MarkdownRenderer {
         }
     }
     
-    func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> XMLElement {
+    func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> [XMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
         let items: [XMLElement] = switch info.count {
         case 1:

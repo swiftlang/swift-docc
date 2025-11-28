@@ -30,7 +30,7 @@ package extension MarkdownRenderer {
         }
     }
     
-    func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> XMLElement {
+    func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> [XMLNode] {
         let taskGroups = RenderHelpers.sortedLanguageSpecificValues(taskGroups)
         
         let items: [XMLElement] = if taskGroups.count == 1 {

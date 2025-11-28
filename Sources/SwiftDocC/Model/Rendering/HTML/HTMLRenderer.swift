@@ -218,7 +218,7 @@ struct HTMLRenderer {
         
         // Discussion
         if let discussion = article.discussion {
-            articleElement.addChild(makeDiscussion(discussion, isSymbol: false))
+            articleElement.addChildren(makeDiscussion(discussion, isSymbol: false))
         }
         
         func separateCurationIfNeeded() {
@@ -234,7 +234,7 @@ struct HTMLRenderer {
             separateCurationIfNeeded()
             
             // TODO: Support language specific topic sections
-            articleElement.addChild(
+            articleElement.addChildren(
                 renderer.groupedSection(named: "Topics", groups: [
                     .swift: topics.taskGroups.map { group in
                         .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
@@ -250,7 +250,7 @@ struct HTMLRenderer {
         if let seeAlso = article.seeAlso {
             separateCurationIfNeeded()
             
-            articleElement.addChild(
+            articleElement.addChildren(
                 renderer.groupedSection(named: "See Also", groups: [
                     .swift: seeAlso.taskGroups.map { group in
                         .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
@@ -405,7 +405,7 @@ struct HTMLRenderer {
         
         // Parameters
         if !symbol.parametersSectionVariants.allValues.isEmpty {
-            articleElement.addChild(
+            articleElement.addChildren(
                 renderer.parameters(
                     .init(
                         symbol.parametersSectionVariants.allValues.map { trait, parameters in (
@@ -423,7 +423,7 @@ struct HTMLRenderer {
         
         // Return value
         if !symbol.returnsSectionVariants.allValues.isEmpty {
-            articleElement.addChild(
+            articleElement.addChildren(
                 renderer.returns(
                     .init(
                         symbol.returnsSectionVariants.allValues.map { trait, returnSection in (
@@ -450,7 +450,7 @@ struct HTMLRenderer {
             
             let mentions = context.articleSymbolMentions.articlesMentioning(reference)
             if !mentions.isEmpty {
-                articleElement.addChild(
+                articleElement.addChildren(
                     renderer.selfReferencingSection(named: "Mentioned In", content: [
                         .element(named: "ul", children: mentions.compactMap { reference in
                             context.documentationCache[reference].map { .element(named: "li", children: [.text($0.name.description)]) }
@@ -464,7 +464,7 @@ struct HTMLRenderer {
         if let discussion = symbol.discussion {
             separateCurationIfNeeded()
             
-            articleElement.addChild(makeDiscussion(discussion, isSymbol: true))
+            articleElement.addChildren(makeDiscussion(discussion, isSymbol: true))
         }
         
         // Topics
@@ -488,7 +488,7 @@ struct HTMLRenderer {
             if !taskGroupInfo.isEmpty {
                 separateCurationIfNeeded()
                 
-                articleElement.addChild(renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
+                articleElement.addChildren(renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
             }
         }
         
@@ -496,7 +496,7 @@ struct HTMLRenderer {
         if let seeAlso = symbol.seeAlso {
             separateCurationIfNeeded()
             
-            articleElement.addChild(
+            articleElement.addChildren(
                 renderer.groupedSection(named: "See Also", groups: [
                     .swift: seeAlso.taskGroups.map { group in
                         .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
@@ -517,7 +517,7 @@ struct HTMLRenderer {
         )
     }
     
-    private func makeDiscussion(_ discussion: DiscussionSection, isSymbol: Bool) -> XMLNode {
+    private func makeDiscussion(_ discussion: DiscussionSection, isSymbol: Bool) -> [XMLNode] {
         var remaining = discussion.content[...]
         
         let title: String
@@ -539,5 +539,13 @@ private extension DocumentationDataVariantsTrait {
     static func < (lhs: DocumentationDataVariantsTrait, rhs: DocumentationDataVariantsTrait) -> Bool {
         // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
         (lhs.interfaceLanguage ?? "") < (rhs.interfaceLanguage ?? "")
+    }
+}
+
+private extension XMLElement {
+    func addChildren(_ nodes: [XMLNode]) {
+        for node in nodes {
+            addChild(node)
+        }
     }
 }

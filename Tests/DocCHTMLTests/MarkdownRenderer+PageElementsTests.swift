@@ -116,22 +116,39 @@ struct MarkdownRenderer_PageElementsTests {
                 """)),
             ]
         ])
-        let expectedHTMLStart = switch goal {
-        case .richness: """
+        
+        switch goal {
+        case .richness:
+            #expect(parameters.rendered(prettyFormatted: true) == """
             <section id="parameters">
             <h2>
                 <a href="#parameters">Parameters</a>
             </h2>
-            """
-        case .conciseness: """
-            <section>
+            <dl>
+                <dt>
+                    <code>First</code>
+                </dt>
+                <dd>
+                    <p>Some <i>formatted</i>
+                         description with <code>code</code>
+                    </p>
+                </dd>
+                <dt>
+                    <code>Second</code>
+                </dt>
+                <dd>
+                    <p>Some <b>other</b>
+                         <i>formatted</i>
+                         description</p>
+                    <p>That spans two paragraphs</p>
+                </dd>
+            </dl>
+            </section>
+            """)
+        case .conciseness:
+            #expect(parameters.rendered(prettyFormatted: true) == """
             <h2>Parameters</h2>
-            """
-        }
-        
-        #expect(parameters.rendered(prettyFormatted: true) == """
-        \(expectedHTMLStart)
-        <dl>
+            <dl>
             <dt>
                 <code>First</code>
             </dt>
@@ -149,9 +166,9 @@ struct MarkdownRenderer_PageElementsTests {
                      description</p>
                 <p>That spans two paragraphs</p>
             </dd>
-        </dl>
-        </section>
-        """)
+            </dl>
+            """)
+        }
     }
     
     @Test
@@ -312,25 +329,28 @@ struct MarkdownRenderer_PageElementsTests {
         let parameters = makeRenderer(goal: goal).returns([
             .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
         ])
-        let expectedHTMLStart = switch goal {
-        case .richness: """
+        
+        let commonHTML = """
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            #expect(parameters.rendered(prettyFormatted: true) == """
             <section id="return-value">
             <h2>
                 <a href="#return-value">Return Value</a>
             </h2>
-            """
-        case .conciseness: """
-            <section>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            #expect(parameters.rendered(prettyFormatted: true) == """
             <h2>Return Value</h2>
-            """
+            \(commonHTML)
+            """)
         }
-        
-        #expect(parameters.rendered(prettyFormatted: true) == """
-        \(expectedHTMLStart)
-        <p>First paragraph</p>
-        <p>Second paragraph</p>
-        </section>
-        """)
     }
     
     @Test(arguments: RenderGoal.allCases)
@@ -339,26 +359,29 @@ struct MarkdownRenderer_PageElementsTests {
             .swift:      parseMarkup(string: "First paragraph\n\nSecond paragraph"),
             .objectiveC: parseMarkup(string: "Other language's paragraph"),
         ])
-        let expectedHTMLStart = switch goal {
-        case .richness: """
+        
+        let commonHTML = """
+        <p class="swift-only">First paragraph</p>
+        <p class="swift-only">Second paragraph</p>
+        <p class="occ-only">Other language’s paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            #expect(parameters.rendered(prettyFormatted: true) == """
             <section id="return-value">
             <h2>
                 <a href="#return-value">Return Value</a>
             </h2>
-            """
-        case .conciseness: """
-            <section>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            #expect(parameters.rendered(prettyFormatted: true) == """
             <h2>Return Value</h2>
-            """
+            \(commonHTML)
+            """)
         }
-        
-        #expect(parameters.rendered(prettyFormatted: true) == """
-        \(expectedHTMLStart)
-        <p class="swift-only">First paragraph</p>
-        <p class="swift-only">Second paragraph</p>
-        <p class="occ-only">Other language’s paragraph</p>
-        </section>
-        """)
     }
     
     @Test(arguments: RenderGoal.allCases)
@@ -586,33 +609,31 @@ struct MarkdownRenderer_PageElementsTests {
             """)
         case .conciseness:
             #expect(groupedSection.rendered(prettyFormatted: true) == """
-            <section>
             <h2>\(expectedGroupTitle)</h2>
             <h3>Group title</h3>
             <p>Some description of this group</p>
             <ul>
-                <li>
-                    <a href="../../SomeClass/index.html">
-                        <code>class SomeClass</code>
-                        <p>Some <i>formatted</i>
-                             description of this class</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="../../SomeArticle/index.html">
-                        <p>Some Article</p>
-                        <p>Some <b>formatted</b>
-                             description of this <i>article</i>
-                            .</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="../../SomeClass/someMethod(with:and:)/index.html">
-                        <code>func someMethod(with: Int, and: String)</code>
-                    </a>
-                </li>
+            <li>
+                <a href="../../SomeClass/index.html">
+                    <code>class SomeClass</code>
+                    <p>Some <i>formatted</i>
+                         description of this class</p>
+                </a>
+            </li>
+            <li>
+                <a href="../../SomeArticle/index.html">
+                    <p>Some Article</p>
+                    <p>Some <b>formatted</b>
+                         description of this <i>article</i>
+                        .</p>
+                </a>
+            </li>
+            <li>
+                <a href="../../SomeClass/someMethod(with:and:)/index.html">
+                    <code>func someMethod(with: Int, and: String)</code>
+                </a>
+            </li>
             </ul>
-            </section>
             """)
         }
     }

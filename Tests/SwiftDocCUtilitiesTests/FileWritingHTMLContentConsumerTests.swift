@@ -203,27 +203,25 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <p>Some <b>formatted</b>
                  description of this module</p>
         </section>
-        <section>
-            <h2>Topics</h2>
-            <h3>Something custom</h3>
-            <p>A custom <i>formatted</i>
-                 description of this topic section</p>
-            <ul>
-                <li>
-                    <a href="SomeArticle/index.html">
-                        <p>Some article</p>
-                        <p>This is an <i>formatted</i>
-                             article.</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="SomeClass/index.html">
-                        <code>class SomeClass</code>
-                        <p>Some in-source description of this class.</p>
-                    </a>
-                </li>
-            </ul>
-        </section>
+        <h2>Topics</h2>
+        <h3>Something custom</h3>
+        <p>A custom <i>formatted</i>
+             description of this topic section</p>
+        <ul>
+            <li>
+                <a href="SomeArticle/index.html">
+                    <p>Some article</p>
+                    <p>This is an <i>formatted</i>
+                         article.</p>
+                </a>
+            </li>
+            <li>
+                <a href="SomeClass/index.html">
+                    <code>class SomeClass</code>
+                    <p>Some in-source description of this class.</p>
+                </a>
+            </li>
+        </ul>
         </article></noscript>
             <div id="app"></div>
           </body>
@@ -254,24 +252,20 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <code>class SomeClass</code>
             </pre>
         </section>
-        <section>
-            <h2>Mentioned In</h2>
-            <ul>
-                <li>Some article</li>
-            </ul>
-        </section>
-        <section>
-            <h2>Topics</h2>
-            <h3>Instance Methods</h3>
-            <ul>
-                <li>
-                    <a href="someMethod(with:and:)/index.html">
-                        <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
-                        <p>Some in-source description of this method.</p>
-                    </a>
-                </li>
-            </ul>
-        </section>
+        <h2>Mentioned In</h2>
+        <ul>
+            <li>Some article</li>
+        </ul>
+        <h2>Topics</h2>
+        <h3>Instance Methods</h3>
+        <ul>
+            <li>
+                <a href="someMethod(with:and:)/index.html">
+                    <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
+                    <p>Some in-source description of this method.</p>
+                </a>
+            </li>
+        </ul>
         </article></noscript>
             <div id="app"></div>
           </body>
@@ -305,46 +299,38 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
             </pre>
         </section>
-        <section>
-            <h2>Parameters</h2>
-            <dl>
-                <dt>
-                    <code>first</code>
-                </dt>
-                <dd>
-                    <p>Description of the <code>first</code>
-                         parameter.</p>
-                </dd>
-                <dt>
-                    <code>second</code>
-                </dt>
-                <dd>
-                    <p>Description of the <code>second</code>
-                         parameter.</p>
-                </dd>
-            </dl>
-        </section>
-        <section>
-            <h2>Return Value</h2>
-            <p>Description of the return value.</p>
-        </section>
-        <section>
-            <h2>Discussion</h2>
-            <p>Further description of this method and how to use it.</p>
-        </section>
-        <section>
-            <h2>See Also</h2>
-            <h3>Related Documentation</h3>
-            <ul>
-                <li>
-                    <a href="../../SomeArticle/index.html">
-                        <p>Some article</p>
-                        <p>This is an <i>formatted</i>
-                             article.</p>
-                    </a>
-                </li>
-            </ul>
-        </section>
+        <h2>Parameters</h2>
+        <dl>
+            <dt>
+                <code>first</code>
+            </dt>
+            <dd>
+                <p>Description of the <code>first</code>
+                     parameter.</p>
+            </dd>
+            <dt>
+                <code>second</code>
+            </dt>
+            <dd>
+                <p>Description of the <code>second</code>
+                     parameter.</p>
+            </dd>
+        </dl>
+        <h2>Return Value</h2>
+        <p>Description of the return value.</p>
+        <h2>Discussion</h2>
+        <p>Further description of this method and how to use it.</p>
+        <h2>See Also</h2>
+        <h3>Related Documentation</h3>
+        <ul>
+            <li>
+                <a href="../../SomeArticle/index.html">
+                    <p>Some article</p>
+                    <p>This is an <i>formatted</i>
+                         article.</p>
+                </a>
+            </li>
+        </ul>
         </article></noscript>
             <div id="app"></div>
           </body>
@@ -373,27 +359,23 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <p id="abstract">This is an <i>formatted</i>
                  article.</p>
         </section>
-        <section>
-            <h2>Custom discussion</h2>
-            <p>It explains how a developer can perform some task using <a href="../SomeClass/index.html">
-                    <code>SomeClass</code>
+        <h2>Custom discussion</h2>
+        <p>It explains how a developer can perform some task using <a href="../SomeClass/index.html">
+                <code>SomeClass</code>
+            </a>
+             in this module.</p>
+        <h3>Details</h3>
+        <p>This subsection describes something more detailed.</p>
+        <h2>See Also</h2>
+        <h3>Related Documentation</h3>
+        <ul>
+            <li>
+                <a href="../SomeClass/index.html">
+                    <code>class SomeClass</code>
+                    <p>Some in-source description of this class.</p>
                 </a>
-                 in this module.</p>
-            <h3>Details</h3>
-            <p>This subsection describes something more detailed.</p>
-        </section>
-        <section>
-            <h2>See Also</h2>
-            <h3>Related Documentation</h3>
-            <ul>
-                <li>
-                    <a href="../SomeClass/index.html">
-                        <code>class SomeClass</code>
-                        <p>Some in-source description of this class.</p>
-                    </a>
-                </li>
-            </ul>
-        </section>
+            </li>
+        </ul>
         </article></noscript>
             <div id="app"></div>
           </body>

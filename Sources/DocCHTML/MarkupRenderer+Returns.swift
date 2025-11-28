@@ -18,7 +18,7 @@ package import Markdown
 package import DocCCommon
 
 package extension MarkdownRenderer {
-    func returns(_ languageSpecificSections: [SourceLanguage: [any Markup]]) -> XMLElement {
+    func returns(_ languageSpecificSections: [SourceLanguage: [any Markup]]) -> [XMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(languageSpecificSections)
         let items: [XMLNode] = if info.count == 1 {
             info.first!.value.map { visit($0) } // Verified to exist above
@@ -43,25 +43,23 @@ package extension MarkdownRenderer {
         return selfReferencingSection(named: "Return Value", content: items)
     }
     
-    func selfReferencingSection(named sectionName: String, content: [XMLNode]) -> XMLElement {
-        let headingContent: XMLNode
-        let sectionAttributes: [String: String]
-        
+    func selfReferencingSection(named sectionName: String, content: [XMLNode]) -> [XMLNode] {
         switch goal {
         case .richness:
             let id = urlReadableFragment(sectionName.lowercased())
-            headingContent = .element(named: "a", children: [.text(sectionName)], attributes: ["href": "#\(id)"])
-            sectionAttributes = ["id": id]
+            
+            return [.element(
+                named: "section",
+                children: [
+                    .element(named: "h2", children: [
+                        .element(named: "a", children: [.text(sectionName)], attributes: ["href": "#\(id)"])
+                    ])
+                ] + content,
+                attributes: ["id": id]
+            )]
         case .conciseness:
-            headingContent = .text(sectionName)
-            sectionAttributes = [:]
+            return [.element(named: "h2", children: [.text(sectionName)]) as XMLNode] + content
         }
-        
-        return .element(
-            named: "section",
-            children: [.element(named: "h2", children: [headingContent])] + content,
-            attributes: sectionAttributes
-        )
     }
 }
 
