@@ -39,6 +39,7 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
                // This symbol has multiple unique names
                 let titles = [SourceLanguage: String](
                     titles.map { trait, title in
+                        // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
                         ((trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift), title)
                     },
                     uniquingKeysWith: { _, new in new }
@@ -92,6 +93,7 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
                 // This symbol has multiple unique names
                 subheadings = .languageSpecificSymbol(.init(
                     allSubheadings.map { trait, subheading in (
+                        // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
                         key:   (trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift),
                         value: convert(subheading)
                     )},
@@ -293,6 +295,7 @@ struct HTMLRenderer {
         } else {
             names = .languageSpecificSymbol([SourceLanguage: String](
                 symbol.titleVariants.allValues.compactMap({ trait, title in
+                    // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
                     guard let languageID = trait.interfaceLanguage else { return nil }
                     return (key: SourceLanguage(id: languageID), value: title)
                 }),
@@ -314,6 +317,7 @@ struct HTMLRenderer {
         // Title
         let titleVariants = symbol.titleVariants.allValues.sorted(by: { $0.trait < $1.trait})
         for (trait, variant) in titleVariants {
+            // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
             guard let lang = trait.interfaceLanguage else { continue }
             
             var classes: [String] = []
@@ -371,6 +375,7 @@ struct HTMLRenderer {
             
             var fragmentsByLanguageID = [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
             for (trait, variant) in symbol.declarationVariants.allValues {
+                // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
                 guard let languageID = trait.interfaceLanguage else { continue }
                 fragmentsByLanguageID[SourceLanguage(id: languageID)] = variant.values.first?.declarationFragments
             }
@@ -404,6 +409,7 @@ struct HTMLRenderer {
                 renderer.parameters(
                     .init(
                         symbol.parametersSectionVariants.allValues.map { trait, parameters in (
+                            // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
                             key:   trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift,
                             value: parameters.parameters.map {
                                 .init(name: $0.name, content: $0.contents)
@@ -421,6 +427,7 @@ struct HTMLRenderer {
                 renderer.returns(
                     .init(
                         symbol.returnsSectionVariants.allValues.map { trait, returnSection in (
+                            // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
                             key:   trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift,
                             value: returnSection.content
                         )},
@@ -515,6 +522,7 @@ struct HTMLRenderer {
 // Note; this isn't a Comparable conformance because I wanted it to be private to this file.
 private extension DocumentationDataVariantsTrait {
     static func < (lhs: DocumentationDataVariantsTrait, rhs: DocumentationDataVariantsTrait) -> Bool {
+        // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
         (lhs.interfaceLanguage ?? "") < (rhs.interfaceLanguage ?? "")
     }
 }
