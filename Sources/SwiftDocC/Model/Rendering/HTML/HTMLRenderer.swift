@@ -445,6 +445,21 @@ struct HTMLRenderer {
             articleElement.addChild(.element(named: "hr")) // Separate the sections with a thematic break
         }
         
+        if FeatureFlags.current.isMentionedInEnabled {
+            separateCurationIfNeeded()
+            
+            let mentions = context.articleSymbolMentions.articlesMentioning(reference)
+            if !mentions.isEmpty {
+                articleElement.addChild(
+                    renderer.selfReferencingSection(named: "Mentioned In", content: [
+                        .element(named: "ul", children: mentions.compactMap { reference in
+                            context.documentationCache[reference].map { .element(named: "li", children: [.text($0.name.description)]) }
+                        })
+                    ])
+                )
+            }
+        }
+        
         // Discussion
         if let discussion = symbol.discussion {
             separateCurationIfNeeded()

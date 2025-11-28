@@ -27,7 +27,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             
             ## Custom discussion
             
-            It explains how a developer can perform some task using this module.
+            It explains how a developer can perform some task using ``SomeClass`` in this module.
             
             ### Details
             
@@ -255,6 +255,12 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             </pre>
         </section>
         <section>
+            <h2>Mentioned In</h2>
+            <ul>
+                <li>Some article</li>
+            </ul>
+        </section>
+        <section>
             <h2>Topics</h2>
             <h3>Instance Methods</h3>
             <ul>
@@ -369,7 +375,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </section>
         <section>
             <h2>Custom discussion</h2>
-            <p>It explains how a developer can perform some task using this module.</p>
+            <p>It explains how a developer can perform some task using <a href="../SomeClass/index.html">
+                    <code>SomeClass</code>
+                </a>
+                 in this module.</p>
             <h3>Details</h3>
             <p>This subsection describes something more detailed.</p>
         </section>
