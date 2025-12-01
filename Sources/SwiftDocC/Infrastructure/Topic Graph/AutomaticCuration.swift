@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 import SymbolKit
-
+import DocCCommon
 
 private let automaticSeeAlsoLimit: Int = {
     ProcessInfo.processInfo.environment["DOCC_AUTOMATIC_SEE_ALSO_LIMIT"].flatMap { Int($0) } ?? 15
@@ -56,9 +56,7 @@ public struct AutomaticCuration {
         withTraits variantsTraits: Set<DocumentationDataVariantsTrait>,
         context: DocumentationContext
     ) throws -> [TaskGroup] {
-        let languagesFilter = Set(variantsTraits.compactMap {
-            $0.interfaceLanguage.map { SourceLanguage(id: $0) }
-        })
+        let languagesFilter = SmallSourceLanguageSet(variantsTraits.compactMap(\.sourceLanguage))
         
         // Because the `TopicGraph` uses the same nodes for both language representations and doesn't have awareness of language specific edges,
         // it can't correctly determine language specific automatic curation. Instead we ask the `PathHierarchy` which is source-language-aware.
@@ -171,9 +169,7 @@ public struct AutomaticCuration {
             return nil
         }
         
-        let variantLanguages = Set(variantsTraits.compactMap { traits in
-            traits.interfaceLanguage.map { SourceLanguage(id: $0) }
-        })
+        let variantLanguages = SmallSourceLanguageSet(variantsTraits.compactMap(\.sourceLanguage))
         
         func isRelevant(_ filteredGroup: DocumentationContentRenderer.ReferenceGroup) -> Bool {
             // Check if the task group is filtered to a subset of languages

@@ -31,11 +31,7 @@ public struct DocumentationNode {
     
     /// All of the traits that make up the different variants of this node.
     public var availableVariantTraits: Set<DocumentationDataVariantsTrait> {
-        return Set(
-            availableSourceLanguages
-                .map(\.id)
-                .map(DocumentationDataVariantsTrait.init(interfaceLanguage:))
-        )
+        Set(availableSourceLanguages.map(DocumentationDataVariantsTrait.init(sourceLanguage:)))
     }
     
     /// The names of the platforms for which the node is available.
