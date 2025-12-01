@@ -302,7 +302,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let symbolSemantic = try XCTUnwrap(node.semantic as? Symbol)
         let swiftParameterNames = symbolSemantic.parametersSectionVariants.firstValue?.parameters
         let objcParameterNames  = symbolSemantic.parametersSectionVariants.allValues.mapFirst(where: { (trait, variant) -> [Parameter]? in
-            guard trait.interfaceLanguage == SourceLanguage.objectiveC.id else { return nil }
+            guard trait.sourceLanguage == .objectiveC else { return nil }
             return variant.parameters
         })
         
@@ -312,7 +312,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         let swiftReturnsContent = symbolSemantic.returnsSection.map { _format($0.content) }
         let objcReturnsContent  = symbolSemantic.returnsSectionVariants.allValues.mapFirst(where: { (trait, variant) -> String? in
-            guard trait.interfaceLanguage == SourceLanguage.objectiveC.id else { return nil }
+            guard trait.sourceLanguage == .objectiveC else { return nil }
             return variant.content.map { $0.format() }.joined()
         })
         
@@ -344,7 +344,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         let symbolSemantic = try XCTUnwrap(node.semantic as? Symbol)
         let swiftReturnsSection = try XCTUnwrap(
-            symbolSemantic.returnsSectionVariants.allValues.first(where: { trait, _ in trait.interfaceLanguage == "swift" })
+            symbolSemantic.returnsSectionVariants.allValues.first(where: { trait, _ in trait.sourceLanguage == .swift })
         ).variant
         XCTAssertEqual(swiftReturnsSection.content.map { $0.format() }, [
             "Return value documentation for an initializer."
