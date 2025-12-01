@@ -527,7 +527,7 @@ extension LinkDestinationSummary {
         let topicImages = renderNode.metadata.images
         let referenceIdentifiers = topicImages.map(\.identifier)
         
-        guard let symbol = documentationNode.semantic as? Symbol, let summaryTrait = documentationNode.availableVariantTraits.first(where: { $0.interfaceLanguage == documentationNode.sourceLanguage.id }) else {
+        guard let symbol = documentationNode.semantic as? Symbol, let summaryTrait = documentationNode.availableVariantTraits.first(where: { $0.sourceLanguage == documentationNode.sourceLanguage }) else {
             // Only symbol documentation currently support multi-language variants (rdar://86580915)
             let references = referenceIdentifiers
                 .compactMap { renderNode.references[$0.identifier] }
@@ -577,7 +577,7 @@ extension LinkDestinationSummary {
 
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
             // Skip the variant for the summarized elements source language.
-            guard let interfaceLanguage = trait.interfaceLanguage, interfaceLanguage != documentationNode.sourceLanguage.id else {
+            guard let sourceLanguage = trait.sourceLanguage, sourceLanguage != documentationNode.sourceLanguage else {
                 return nil
             }
             
@@ -588,7 +588,7 @@ extension LinkDestinationSummary {
             }
             
             let plainTextDeclarationVariant = symbol.plainTextDeclaration(for: trait)
-            let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(interfaceLanguage)]
+            let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(sourceLanguage.id)]
             
             // Use the abbreviated declaration fragments instead of the full declaration fragments.
             // These have been derived from the symbol's subheading declaration fragments as part of rendering.
@@ -602,7 +602,7 @@ extension LinkDestinationSummary {
             return Variant(
                 traits: variantTraits,
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
-                language: nilIfEqual(main: language, variant: SourceLanguage(knownLanguageIdentifier: interfaceLanguage)),
+                language: nilIfEqual(main: language, variant: sourceLanguage),
                 relativePresentationURL: nil, // The symbol variant uses the same relative path
                 title: nilIfEqual(main: title, variant: symbol.titleVariants[trait]),
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
