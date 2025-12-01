@@ -11,6 +11,7 @@
 import Foundation
 import SymbolKit
 import Markdown
+import DocCCommon
 
 /// A collection of APIs to generate documentation topics.
 enum GeneratedDocumentationTopics {
@@ -97,10 +98,8 @@ enum GeneratedDocumentationTopics {
     private static let defaultImplementationGroupTitle = "Default Implementations"
     
     private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext) throws {
-        let automaticCurationSourceLanguage: SourceLanguage
-        let automaticCurationSourceLanguages: Set<SourceLanguage>
-        automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
-        automaticCurationSourceLanguages = Set(identifiers.flatMap { identifier in context.sourceLanguages(for: identifier) })
+        let automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
+        let automaticCurationSourceLanguages = SmallSourceLanguageSet(identifiers.flatMap { identifier in context.sourceLanguages(for: identifier) })
         
         // Create the collection topic reference
         let collectionReference = ResolvedTopicReference(
@@ -121,8 +120,8 @@ enum GeneratedDocumentationTopics {
         let node = try context.entity(with: parent)
         if let symbol = node.semantic as? Symbol {
             for trait in node.availableVariantTraits {
-                guard let language = trait.interfaceLanguage,
-                      automaticCurationSourceLanguages.lazy.map(\.id).contains(language)
+                guard let language = trait.sourceLanguage,
+                      automaticCurationSourceLanguages.contains(language)
                 else {
                     // If the collection is not available in this trait, don't curate it in this symbol's variant.
                     continue
@@ -190,7 +189,7 @@ enum GeneratedDocumentationTopics {
             reference: collectionReference,
             kind: .collectionGroup,
             sourceLanguage: automaticCurationSourceLanguage,
-            availableSourceLanguages: automaticCurationSourceLanguages,
+            availableSourceLanguages: Set(automaticCurationSourceLanguages),
             name: DocumentationNode.Name.conceptual(title: title),
             markup: Document(parsing: ""),
             semantic: collectionArticle
