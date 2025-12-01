@@ -12,7 +12,7 @@
                 "type": "object",
                 "required": [
                     "bundleDisplayName",
-                    "bundleIdentifier",
+                    "bundleID",
                     "schemaVersion"
                 ],
                 "properties": {
