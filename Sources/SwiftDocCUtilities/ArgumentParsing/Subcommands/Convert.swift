@@ -238,10 +238,30 @@ extension Docc {
                 help: "Format output to the console intended for an IDE or other tool to parse.")
             var formatConsoleOutputForTools = false
             
-            @Flag(help: "Treat warnings as errors")
+            @Flag(help: "Treat all warnings as errors")
             var warningsAsErrors = false
+            
+            @Option(
+                name: [.customLong("Werror")], // This matches Swift's spellings
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp("Treat this diagnostic group as an error", valueName: "diagnostic-id")
+            )
+            var warningGroupsWithErrorSeverity: [String] = []
+            
+            @Option(
+                name: [.customLong("Wwarning")], // This matches Swift's spellings
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp(
+                    "Treat this diagnostic group as a warning",
+                    discussion: """
+                    If you pass '--warnings-as-errors' you can use this flag to lower one or more specific groups of diagnostics to a warnings severity.
+                    """,
+                    valueName: "diagnostic-id"
+                )
+            )
+            var warningGroupsWithWarningSeverity: [String] = []
 
-            func validate() throws {
+            mutating func validate() throws {
                 if analyze && diagnosticLevel != nil {
                     warnAboutDiagnostic(.init(
                         severity: .information,
@@ -260,6 +280,26 @@ extension Docc {
                             """
                     ))
                 }
+                
+                if !warningGroupsWithErrorSeverity.isEmpty,
+                   !warningGroupsWithWarningSeverity.isEmpty
+                {
+                    // Check if there's overlap between the two diagnostic levels
+                    let diagnosticIDsWithConflictingSeverities = Set(warningGroupsWithErrorSeverity).intersection(warningGroupsWithWarningSeverity)
+                    if !diagnosticIDsWithConflictingSeverities.isEmpty {
+                        for diagnosticID in diagnosticIDsWithConflictingSeverities.sorted() {
+                            warnAboutDiagnostic(.init(
+                                severity: .information,
+                                identifier: "org.swift.docc.ConflictingDiagnosticSeverity",
+                                summary: "Conflicting severity (both '--Wwarning' and '--Werror') for diagnostic group '\(diagnosticID)'."
+                            ))
+                        }
+                        
+                        // Because we don't know which severity was specified last, remove the diagnostic ID from both groups
+                        warningGroupsWithErrorSeverity.removeAll(where: { diagnosticIDsWithConflictingSeverities.contains($0) })
+                        warningGroupsWithWarningSeverity.removeAll(where: { diagnosticIDsWithConflictingSeverities.contains($0) })
+                    }
+                }
             }
         
             private static let supportedDiagnosticLevelsMessage = """
@@ -276,7 +316,19 @@ extension Docc {
             get { diagnosticOptions.warningsAsErrors }
             set { diagnosticOptions.warningsAsErrors = newValue }
         }
-
+        
+        /// A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
+        public var diagnosticIDsWithWarningSeverity: [String] {
+            get { diagnosticOptions.warningGroupsWithWarningSeverity }
+            set { diagnosticOptions.warningGroupsWithWarningSeverity = newValue }
+        }
+        
+        /// A list of diagnostic identifiers that are explicitly raised to an "error" severity.
+        public var diagnosticIDsWithErrorSeverity: [String] {
+            get { diagnosticOptions.warningGroupsWithErrorSeverity }
+            set { diagnosticOptions.warningGroupsWithErrorSeverity = newValue }
+        }
+        
         /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
         public var formatConsoleOutputForTools: Bool {
             get { diagnosticOptions.formatConsoleOutputForTools }
