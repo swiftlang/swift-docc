@@ -183,8 +183,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     ╰─ index.html
         """)
         
-        
-        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/index.html")), encoding: .utf8)), """
+        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/index.html")), matches: """
         <html>
           <head>
             <meta charset="utf-8" />
@@ -228,7 +227,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </html>
         """)
         
-        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/index.html")), encoding: .utf8)), """
+        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/index.html")), matches: """
         <html>
           <head>
             <meta charset="utf-8" />
@@ -274,7 +273,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </html>
         """)
         
-        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/somemethod(with:and:)/index.html")), encoding: .utf8)), """
+        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/someclass/somemethod(with:and:)/index.html")), matches: """
         <html>
           <head>
             <meta charset="utf-8" />
@@ -339,7 +338,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         </html>
         """)
         
-        XCTAssertEqual(try XCTUnwrap(String(data: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/somearticle/index.html")), encoding: .utf8)), """
+        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/somearticle/index.html")), matches: """
         <html>
           <head>
             <meta charset="utf-8" />
@@ -387,6 +386,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
 
 }
 
+// MARK: Helpers
+
 private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     func consume(renderNode: RenderNode) throws { }
     func consume(assetsInBundle bundle: DocumentationBundle) throws { }
@@ -399,4 +400,31 @@ private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     func consume(buildMetadata: BuildMetadata) throws { }
     func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
     func consume(externalRenderNode: ExternalRenderNode) throws { }
+}
+
+private func assert(readHTML: Data, matches expectedHTML: String, file: StaticString = #filePath, line: UInt = #line) {
+    // XMLNode on macOS and Linux pretty print with different indentation.
+    // To compare the XML structure without getting false positive failures because of indentation and other formatting differences,
+    // we explicitly process each string into an easy-to-compare format.
+    func formatForTestComparison(_ xmlString: String) -> String {
+        // This is overly simplified and won't result in "pretty" XML for general use but sufficient for test content comparisons
+        xmlString
+            // Put each tag on its own line
+            .replacingOccurrences(of: ">", with: ">\n")
+            // Remove leading indentation
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: "\n")
+            // Explicitly escape a few HTML characters that appear in the test content
+            .replacingOccurrences(of: "–", with: "&#x2013;") // en-dash
+            .replacingOccurrences(of: "—", with: "&#x2014;") // em-dash
+    }
+    
+    XCTAssertEqual(
+        formatForTestComparison(String(decoding: readHTML, as: UTF8.self)),
+        formatForTestComparison(expectedHTML),
+        file: file,
+        line: line
+    )
 }

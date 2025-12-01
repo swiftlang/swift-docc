@@ -573,9 +573,7 @@ struct MarkdownRendererTests {
             )
         )
         let htmlNodes = Document(parsing: markdownContent, options: .parseSymbolLinks).children.map { renderer.visit($0) }
-        let htmlString = htmlNodes.rendered(prettyFormatted: prettyFormatted)
-        
-        #expect(htmlString == expectedHTML, sourceLocation: sourceLocation)
+        htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expectedXMLString: expectedHTML, sourceLocation: sourceLocation)
     }
     
     private func makeExampleMethodWithDifferentLanguageRepresentations() -> LinkedElement {
@@ -610,7 +608,11 @@ struct MarkdownRendererTests {
 // MARK: Helpers
 
 extension XMLNode {
-    func rendered(prettyFormatted: Bool) -> String {
+    func assertMatches(prettyFormatted: Bool, expectedXMLString: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
+        _assertMatches(actualXMLString: rendered(prettyFormatted: prettyFormatted), expectedXMLString: expectedXMLString, sourceLocation: sourceLocation)
+    }
+    
+    fileprivate func rendered(prettyFormatted: Bool) -> String {
         if prettyFormatted {
             xmlString(options: [.nodePrettyPrint, .nodeCompactEmptyElement])
         } else {
@@ -620,17 +622,47 @@ extension XMLNode {
 }
 
 extension Sequence<XMLNode> {
-    func rendered(prettyFormatted: Bool) -> String {
+    func assertMatches(prettyFormatted: Bool, expectedXMLString: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
+        _assertMatches(actualXMLString: rendered(prettyFormatted: prettyFormatted), expectedXMLString: expectedXMLString, sourceLocation: sourceLocation)
+    }
+    
+    private func rendered(prettyFormatted: Bool) -> String {
         map { $0.rendered(prettyFormatted: prettyFormatted) }
             .joined(separator: prettyFormatted ? "\n" : "")
     }
 }
 
 extension Sequence<XMLElement> {
-    func rendered(prettyFormatted: Bool) -> String {
+    func assertMatches(prettyFormatted: Bool, expectedXMLString: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
+        _assertMatches(actualXMLString: rendered(prettyFormatted: prettyFormatted), expectedXMLString: expectedXMLString, sourceLocation: sourceLocation)
+    }
+    
+    private func rendered(prettyFormatted: Bool) -> String {
         map { $0.rendered(prettyFormatted: prettyFormatted) }
             .joined(separator: prettyFormatted ? "\n" : "")
     }
+}
+
+private func _assertMatches(actualXMLString: String, expectedXMLString: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) {
+    // XMLNode on macOS and Linux pretty print with different indentation.
+    // To compare the XML structure without getting false positive failures because of indentation and other formatting differences,
+    // we explicitly process each string into an easy-to-compare format.
+    func formatForTestComparison(_ xmlString: String) -> String {
+        // This is overly simplified and won't result in "pretty" XML for general use but sufficient for test content comparisons
+        xmlString
+            // Put each tag on its own line
+            .replacingOccurrences(of: ">", with: ">\n")
+            // Remove leading indentation
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .joined(separator: "\n")
+            // Explicitly escape a few HTML characters that appear in the test content
+            .replacingOccurrences(of: "–", with: "&#x2013;") // en-dash
+            .replacingOccurrences(of: "—", with: "&#x2014;") // em-dash
+    }
+    
+    #expect(formatForTestComparison(actualXMLString) == formatForTestComparison(expectedXMLString), sourceLocation: sourceLocation)
 }
 
 struct SingleValueLinkProvider: LinkProvider {

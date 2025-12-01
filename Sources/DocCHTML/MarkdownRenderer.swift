@@ -171,7 +171,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return .text("")
         }
         
-        if link.childCount > 0 {
+        guard link.isAutolink else {
             var customTitle = [XMLNode]()
             for child in link.inlineChildren {
                 if let code = child as? InlineCode {
@@ -181,16 +181,14 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 }
             }
             
-            if customTitle != [.text(destination.absoluteString)] {
-                return .element(
-                    named: "a",
-                    children: customTitle,
-                    attributes: [
-                        // Use relative links for DocC elements, and the full link otherwise.
-                        "href": linkProvider.element(for: destination).flatMap { path(to: $0.path) } ?? destination.absoluteString
-                    ]
-                )
-            }
+            return .element(
+                named: "a",
+                children: customTitle,
+                attributes: [
+                    // Use relative links for DocC elements, and the full link otherwise.
+                    "href": linkProvider.element(for: destination).flatMap { path(to: $0.path) } ?? destination.absoluteString
+                ]
+            )
         }
         
         // Make a relative link

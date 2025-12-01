@@ -53,7 +53,7 @@ struct MarkdownRenderer_PageElementsTests {
         let breadcrumbs = makeRenderer(goal: goal, elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path }, currentPageNames: .single(.conceptual("ThisPage")))
         switch goal {
         case .richness:
-            #expect(breadcrumbs.rendered(prettyFormatted: true) == """
+            breadcrumbs.assertMatches(prettyFormatted: true, expectedXMLString: """
             <nav id="breadcrumbs">
             <ul>
                 <li>
@@ -70,7 +70,7 @@ struct MarkdownRenderer_PageElementsTests {
             </nav>
             """)
         case .conciseness:
-            #expect(breadcrumbs.rendered(prettyFormatted: true) == """
+            breadcrumbs.assertMatches(prettyFormatted: true, expectedXMLString: """
             <ul>
             <li>
                 <a href="../../index.html">ModuleName</a>
@@ -93,7 +93,7 @@ struct MarkdownRenderer_PageElementsTests {
         ])
         switch goal {
         case .richness:
-            #expect(availability.rendered(prettyFormatted: true) == """
+            availability.assertMatches(prettyFormatted: true, expectedXMLString: """
             <ul id="availability">
             <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" role="text" title="Introduced in First 1.2 and deprecated in First 3.4">First 1.2–3.4</li>
             <li aria-label="Second 1.2.3+, Available on 1.2.3 and later" role="text" title="Available on 1.2.3 and later">Second 1.2.3+</li>
@@ -101,7 +101,7 @@ struct MarkdownRenderer_PageElementsTests {
             </ul>
             """)
         case .conciseness:
-            #expect(availability.rendered(prettyFormatted: true) == """
+            availability.assertMatches(prettyFormatted: true, expectedXMLString: """
             <ul id="availability">
             <li>First 1.2–3.4</li>
             <li>Second 1.2.3+</li>
@@ -126,7 +126,7 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            #expect(parameters.rendered(prettyFormatted: true) == """
+            parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
             <section id="parameters">
             <h2>
                 <a href="#parameters">Parameters</a>
@@ -153,7 +153,7 @@ struct MarkdownRenderer_PageElementsTests {
             </section>
             """)
         case .conciseness:
-            #expect(parameters.rendered(prettyFormatted: true) == """
+            parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
             <h2>Parameters</h2>
             <dl>
             <dt>
@@ -192,7 +192,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(name: "ObjectiveCOnly", content: parseMarkup(string: "Only available in Objective-C")),
             ],
         ])
-        #expect(parameters.rendered(prettyFormatted: true) == """
+        parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
         <section id="parameters">
         <h2>
             <a href="#parameters">Parameters</a>
@@ -240,7 +240,7 @@ struct MarkdownRenderer_PageElementsTests {
                 .init(name: "Third", content: parseMarkup(string: "Some description")),
             ],
         ])
-        #expect(parameters.rendered(prettyFormatted: true) == """
+        parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
         <section id="parameters">
         <h2>
             <a href="#parameters">Parameters</a>
@@ -306,7 +306,7 @@ struct MarkdownRenderer_PageElementsTests {
         ])
         switch goal {
         case .richness:
-            #expect(declaration.rendered(prettyFormatted: true) == """
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
             <code>
                 <span class="token-keyword">func</span>
@@ -323,7 +323,7 @@ struct MarkdownRenderer_PageElementsTests {
             </pre>
             """)
         case .conciseness:
-            #expect(declaration.rendered(prettyFormatted: true) == """
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre>
             <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
             </pre>
@@ -344,7 +344,7 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            #expect(parameters.rendered(prettyFormatted: true) == """
+            parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
             <section id="return-value">
             <h2>
                 <a href="#return-value">Return Value</a>
@@ -353,7 +353,7 @@ struct MarkdownRenderer_PageElementsTests {
             </section>
             """)
         case .conciseness:
-            #expect(parameters.rendered(prettyFormatted: true) == """
+            parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
             <h2>Return Value</h2>
             \(commonHTML)
             """)
@@ -375,7 +375,7 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            #expect(parameters.rendered(prettyFormatted: true) == """
+            parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
             <section id="return-value">
             <h2>
                 <a href="#return-value">Return Value</a>
@@ -384,7 +384,7 @@ struct MarkdownRenderer_PageElementsTests {
             </section>
             """)
         case .conciseness:
-            #expect(parameters.rendered(prettyFormatted: true) == """
+            parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
             <h2>Return Value</h2>
             \(commonHTML)
             """)
@@ -449,7 +449,7 @@ struct MarkdownRenderer_PageElementsTests {
         ])
         switch goal {
         case .richness:
-            #expect(declaration.rendered(prettyFormatted: true) == """
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre id="declaration">
             <code class="swift-only">
                 <span class="token-keyword">func</span>
@@ -478,7 +478,7 @@ struct MarkdownRenderer_PageElementsTests {
             """)
             
         case .conciseness:
-            #expect(declaration.rendered(prettyFormatted: true) == """
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
             <pre>
             <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
             </pre>
@@ -552,7 +552,7 @@ struct MarkdownRenderer_PageElementsTests {
         
         switch goal {
         case .richness:
-            #expect(groupedSection.rendered(prettyFormatted: true) == """
+            groupedSection.assertMatches(prettyFormatted: true, expectedXMLString: """
             <section id="\(expectedSectionID)">
             <h2>
                 <a href="#\(expectedSectionID)">\(expectedGroupTitle)</a>
@@ -615,7 +615,7 @@ struct MarkdownRenderer_PageElementsTests {
             </section>
             """)
         case .conciseness:
-            #expect(groupedSection.rendered(prettyFormatted: true) == """
+            groupedSection.assertMatches(prettyFormatted: true, expectedXMLString: """
             <h2>\(expectedGroupTitle)</h2>
             <h3>Group title</h3>
             <p>Some description of this group</p>
