@@ -1017,7 +1017,18 @@ private extension DocumentationNode {
         // specialized articles, like sample code pages, that benefit from being treated as articles in
         // some parts of the compilation process (like curation) but not others (like link destination
         // summary creation and render node translation).
-        return metadata?.pageKind?.kind.documentationNodeKind ?? kind
+        let baseKind = metadata?.pageKind?.kind.documentationNodeKind ?? kind
+
+        // For articles, check if they should be treated as API Collections (collectionGroup).
+        // This ensures that linkable entities have the same kind detection logic as the rendering system,
+        // fixing cross-framework references where API Collections were incorrectly showing as articles.
+        if baseKind == .article,
+           let article = semantic as? Article,
+           DocumentationContentRenderer.roleForArticle(article, nodeKind: kind) == .collectionGroup {
+            return .collectionGroup
+        }
+
+        return baseKind
     }
 }
 
