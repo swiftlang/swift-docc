@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import XCTest
 
 typealias Position = RenderBlockContent.CodeBlockOptions.Position
