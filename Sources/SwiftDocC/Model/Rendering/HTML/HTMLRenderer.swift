@@ -41,8 +41,7 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
                // This symbol has multiple unique names
                 let titles = [SourceLanguage: String](
                     titles.map { trait, title in
-                        // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
-                        ((trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift), title)
+                        (trait.sourceLanguage ?? .swift, title)
                     },
                     uniquingKeysWith: { _, new in new }
                 )
@@ -95,8 +94,7 @@ private struct ContextLinkProvider: DocCHTML.LinkProvider {
                 // This symbol has multiple unique names
                 subheadings = .languageSpecificSymbol(.init(
                     allSubheadings.map { trait, subheading in (
-                        // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
-                        key:   (trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift),
+                        key:   trait.sourceLanguage ?? .swift,
                         value: convert(subheading)
                     )},
                     uniquingKeysWith: { _, new in new }
@@ -297,9 +295,8 @@ struct HTMLRenderer {
         } else {
             names = .languageSpecificSymbol([SourceLanguage: String](
                 symbol.titleVariants.allValues.compactMap({ trait, title in
-                    // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
-                    guard let languageID = trait.interfaceLanguage else { return nil }
-                    return (key: SourceLanguage(id: languageID), value: title)
+                    guard let language = trait.sourceLanguage else { return nil }
+                    return (key: language, value: title)
                 }),
                 uniquingKeysWith: { _, new in new }
             ))
@@ -319,12 +316,11 @@ struct HTMLRenderer {
         // Title
         let titleVariants = symbol.titleVariants.allValues.sorted(by: { $0.trait < $1.trait})
         for (trait, variant) in titleVariants {
-            // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
-            guard let lang = trait.interfaceLanguage else { continue }
+            guard let language = trait.sourceLanguage else { continue }
             
             var classes: [String] = []
             if titleVariants.count > 1 {
-                classes.append("\(lang)-only")
+                classes.append("\(language.id)-only")
             }
             if isDeprecated {
                 classes.append("deprecated")
@@ -375,15 +371,14 @@ struct HTMLRenderer {
         if !symbol.declarationVariants.allValues.isEmpty {
             // FIXME: Display platform specific declarations
             
-            var fragmentsByLanguageID = [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
+            var fragmentsByLanguage = [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
             for (trait, variant) in symbol.declarationVariants.allValues {
-                // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
-                guard let languageID = trait.interfaceLanguage else { continue }
-                fragmentsByLanguageID[SourceLanguage(id: languageID)] = variant.values.first?.declarationFragments
+                guard let language = trait.sourceLanguage else { continue }
+                fragmentsByLanguage[language] = variant.values.first?.declarationFragments
             }
             
-            if fragmentsByLanguageID.values.contains(where: { !$0.isEmpty }) {
-                hero.addChild( renderer.declaration(fragmentsByLanguageID) )
+            if fragmentsByLanguage.values.contains(where: { !$0.isEmpty }) {
+                hero.addChild( renderer.declaration(fragmentsByLanguage) )
             }
         }
         
@@ -411,8 +406,7 @@ struct HTMLRenderer {
                 renderer.parameters(
                     [SourceLanguage: [MarkdownRenderer<ContextLinkProvider>.ParameterInfo]](
                         symbol.parametersSectionVariants.allValues.map { trait, parameters in (
-                            // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
-                            key:   trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift,
+                            key:   trait.sourceLanguage ?? .swift,
                             value: parameters.parameters.map {
                                 MarkdownRenderer<ContextLinkProvider>.ParameterInfo(name: $0.name, content: $0.contents)
                             }
@@ -429,8 +423,7 @@ struct HTMLRenderer {
                 renderer.returns(
                     .init(
                         symbol.returnsSectionVariants.allValues.map { trait, returnSection in (
-                            // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
-                            key:   trait.interfaceLanguage.map { SourceLanguage(id: $0) } ?? .swift,
+                            key:   trait.sourceLanguage ?? .swift,
                             value: returnSection.content
                         )},
                         uniquingKeysWith: { _, new in new }
@@ -546,8 +539,13 @@ struct HTMLRenderer {
 // Note; this isn't a Comparable conformance because I wanted it to be private to this file.
 private extension DocumentationDataVariantsTrait {
     static func < (lhs: DocumentationDataVariantsTrait, rhs: DocumentationDataVariantsTrait) -> Bool {
-        // FIXME: Use 'sourceLanguage' once https://github.com/swiftlang/swift-docc/pull/1355 is merged
-        (lhs.interfaceLanguage ?? "") < (rhs.interfaceLanguage ?? "")
+        if let lhs = lhs.sourceLanguage {
+            if let rhs = rhs.sourceLanguage {
+                return lhs < rhs
+            }
+            return true // nil is after anything
+        }
+        return false // nil is after anything
     }
 }
 
