@@ -9,11 +9,13 @@ See https://swift.org/LICENSE.txt for license information
 
 add_library(DocCHTML STATIC
   LinkProvider.swift
-  MarkupRenderer+Availability.swift
-  MarkupRenderer+Breadcrumbs.swift
-  MarkupRenderer+Declaration.swift
-  MarkupRenderer+Parameters.swift
-  MarkupRenderer.swift
+  MarkdownRenderer+Availability.swift
+  MarkdownRenderer+Breadcrumbs.swift
+  MarkdownRenderer+Declaration.swift
+  MarkdownRenderer+Parameters.swift
+  MarkdownRenderer+Returns.swift
+  MarkdownRenderer+Topics.swift
+  MarkdownRenderer.swift
   WordBreak.swift
   XMLNode+element.swift)
 target_link_libraries(DocCHTML PUBLIC
