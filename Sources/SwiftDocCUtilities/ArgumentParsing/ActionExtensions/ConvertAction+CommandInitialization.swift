@@ -78,6 +78,7 @@ extension ConvertAction {
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             experimentalModifyCatalogWithGeneratedCuration: convert.experimentalModifyCatalogWithGeneratedCuration,
             transformForStaticHosting: convert.transformForStaticHosting,
+            includeContentInEachHTMLFile: convert.experimentalTransformForStaticHostingWithContent,
             allowArbitraryCatalogDirectories: convert.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingBasePath,
             sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),

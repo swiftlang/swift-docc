@@ -8,6 +8,7 @@ See https://swift.org/LICENSE.txt for license information
 #]]
 
 add_subdirectory(DocCCommon)
+add_subdirectory(DocCHTML)
 add_subdirectory(SwiftDocC)
 add_subdirectory(SwiftDocCUtilities)
 add_subdirectory(docc)
