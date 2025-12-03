@@ -38,7 +38,9 @@ final class MarkdownOutputTests: XCTestCase {
             TextFile(name: "Article.md", utf8Content: """
                 # Article
 
-                A mostly empty article to make sure paths are formatted correctly
+                A mostly empty article to make sure paths are formatted correctly. 
+                
+                If we create a test catalog with a single file, then the reference for that file is doc://MarkdownOutput/documentation/FileName, instead of doc://MarkdownOutput/documentation/MarkdownOutput/Filename
                 
                 ## Overview
                 
