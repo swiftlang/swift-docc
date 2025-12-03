@@ -1,0 +1,628 @@
+/*
+ This source file is part of the Swift.org open source project
+
+ Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+#if canImport(FoundationXML)
+// TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
+package import FoundationXML
+package import FoundationEssentials
+internal import struct Foundation.CharacterSet
+#else
+package import Foundation
+#endif
+package import Markdown
+
+/// The primary goal for the rendered HTML output.
+package enum RenderGoal {
+    /// The rendered output should prioritize richness, optimizing for human consumption.
+    ///
+    /// The rendered output might include explicit work-breaks, syntax highlighted code, etc.
+    case richness
+    /// The minimalistic rendered output should prioritize conciseness, optimizing for consumption by machines such as SEO indexers or LLMs.
+    case conciseness
+}
+
+/// An HTML renderer for DocC markdown content.
+///
+/// Markdown elements that have different meaning depending on where they occur in the page structure (for example links in prose vs. links in topic sections) should be handled at a layer above this plain markdown renderer.
+package struct MarkdownRenderer<Provider: LinkProvider> {
+    /// The path within the output archive to the page that this renderer renders.
+    let path: URL
+    /// The goal of the rendered HTML output.
+    let goal: RenderGoal
+    /// A type that provides information about other pages that the rendered page references.
+    let linkProvider: Provider
+    
+    package init(path: URL, goal: RenderGoal, linkProvider: Provider) {
+        self.path = path
+        self.goal = goal
+        self.linkProvider = linkProvider
+    }
+    
+    func visit(_ paragraph: Paragraph) -> XMLNode {
+        .element(named: "p", children: visit(paragraph.children))
+    }
+    
+    func visit(_ blockQuote: BlockQuote) -> XMLNode {
+        let aside = Aside(blockQuote)
+        
+        var children: [XMLNode] = [
+            .element(named: "p", children: [.text(aside.kind.displayName)], attributes: ["class": "label"])
+        ]
+        for child in aside.content {
+            children.append(visit(child))
+        }
+        
+        return .element(
+            named: "blockquote",
+            children: children,
+            attributes: ["class": "aside \(aside.kind.rawValue.lowercased())"]
+        )
+    }
+    
+    package func visit(_ heading: Heading) -> XMLNode {
+        selfReferencingHeading(level: heading.level, content: visit(heading.children), plainTextTitle: heading.plainText)
+    }
+    
+    func selfReferencingHeading(level: Int, content: [XMLNode], plainTextTitle: @autoclosure () -> String) -> XMLElement {
+        switch goal {
+        case .conciseness:
+            return .element(named: "h\(level)", children: content)
+            
+        case .richness:
+            let id = urlReadableFragment(plainTextTitle().lowercased())
+            return .element(
+                named: "h\(level)",
+                children: [
+                    // Wrap the heading content in an anchor ...
+                    .element(named: "a", children: content, attributes: ["href": "#\(id)"])
+                ],
+                // ... that refers to the heading itself
+                attributes: ["id": id]
+            )
+        }
+    }
+    
+    func visit(_ emphasis: Emphasis) -> XMLNode {
+        .element(named: "i", children: visit(emphasis.children))
+    }
+    
+    func visit(_ strong: Strong) -> XMLNode {
+        .element(named: "b", children: visit(strong.children))
+    }
+    
+    func visit(_ strikethrough: Strikethrough) -> XMLNode {
+        .element(named: "s", children: visit(strikethrough.children))
+    }
+    
+    func visit(_ inlineCode: InlineCode) -> XMLNode {
+        .element(named: "code", children: [.text(inlineCode.code)])
+    }
+    
+    func visit(_ text: Text) -> XMLNode {
+        .text(text.string)
+    }
+    
+    func visit(_: LineBreak) -> XMLNode {
+        .element(named: "br")
+    }
+    
+    func visit(_: SoftBreak) -> XMLNode {
+        .text(" ") // A soft line break doesn't actually break the content
+    }
+    
+    func visit(_: ThematicBreak) -> XMLNode {
+        .element(named: "hr")
+    }
+    
+    private func _removeComments(from node: XMLNode) {
+        guard let element = node as? XMLElement,
+              let children = element.children
+        else {
+            return
+        }
+        
+        let withoutComments = children.filter { $0.kind != .comment }
+        element.setChildren(withoutComments)
+        
+        for child in withoutComments {
+            _removeComments(from: child)
+        }
+    }
+    
+    func visit(_ html: HTMLBlock) -> XMLNode {
+        do {
+            let parsed = try XMLElement(xmlString: html.rawHTML)
+            _removeComments(from: parsed)
+            return parsed
+        } catch {
+            return .text("")
+        }
+    }
+    
+    func visit(_ html: InlineHTML) -> XMLNode {
+        // Inline HTML is one tag at a time, meaning that the closing and opening tags are parsed separately
+        // Because of this, we can't parse it with `XMLElement` or `XMLParser`.
+        
+        // We assume that we want all tags except for comments
+        guard !html.rawHTML.hasPrefix("<!--") else {
+            return .text("")
+        }
+        
+        // We can't create a valid structured XMLNode (because that closing tag will come later,
+        // so we return the raw tag as text.
+        return .text(html.rawHTML)
+    }
+    
+    package func wordBreak(symbolName: String) -> [XMLNode] {
+        switch goal {
+        case .richness:     RenderHelpers.wordBreak(symbolName: symbolName)
+        case .conciseness: [.text(symbolName)]
+        }
+    }
+    
+    func visit(_ link: Link) -> XMLNode {
+        guard let destination = link.destination.flatMap({ URL(string: $0) }) else {
+            return .text("")
+        }
+        
+        guard link.isAutolink else {
+            var customTitle = [XMLNode]()
+            for child in link.inlineChildren {
+                if let code = child as? InlineCode {
+                    customTitle.append(.element(named: "code", children: wordBreak(symbolName: code.code)))
+                } else {
+                    customTitle.append(visit(child))
+                }
+            }
+            
+            return .element(
+                named: "a",
+                children: customTitle,
+                attributes: [
+                    // Use relative links for DocC elements, and the full link otherwise.
+                    "href": linkProvider.element(for: destination).flatMap { path(to: $0.path) } ?? destination.absoluteString
+                ]
+            )
+        }
+        
+        // Make a relative link
+        if let linkedElement = linkProvider.element(for: destination) {
+            let children: [XMLNode] = switch linkedElement.names {
+                case .single(let name):
+                    switch name {
+                        case .conceptual(let name): [ .text(name) ]
+                        case .symbol(let name):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
+                    }
+                    
+                case .languageSpecificSymbol(let namesByLanguageID):
+                    RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
+                        .element(named: "code", children: wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
+                    }
+            }
+            
+            return .element(
+                named: "a",
+                children: children,
+                attributes: ["href": path(to: linkedElement.path)]
+            )
+        } else if destination.scheme != "doc" {
+            // This could be a http link
+            return .element(
+                named: "a",
+                children: [.text(destination.absoluteString)],
+                attributes: ["href": destination.absoluteString]
+            )
+        } else {
+            // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation
+            return .text(linkProvider.fallbackLinkText(linkString: destination.path))
+        }
+    }
+    
+    func visit(_ symbolLink: SymbolLink) -> XMLNode {
+        guard let destination = symbolLink.destination.flatMap({ URL(string: $0) }),
+              let linkedElement = linkProvider.element(for: destination)
+        else {
+            // If this is an unresolved symbol link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
+            return .element(named: "code", children: [.text(linkProvider.fallbackLinkText(linkString: symbolLink.destination ?? ""))])
+        }
+        
+        let children: [XMLNode] = switch linkedElement.names {
+            case .single(let name):
+                switch name {
+                    case .conceptual(let name): [ .text(name) ]
+                    case .symbol(let name):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
+                }
+                
+            case .languageSpecificSymbol(let namesByLanguageID):
+                RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
+                    .element(named: "code", children: wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
+                }
+        }
+        
+        return .element(
+            named: "a",
+            children: children,
+            attributes: ["href": path(to: linkedElement.path)]
+        )
+    }
+    
+    package func path(to other: URL) -> String {
+        let from = path
+        let to   = other
+        
+        guard from != to else { return "." }
+
+        // To be able to compare the components of the two URLs they both need to be absolute and standardized.
+        let fromComponents = from.absoluteURL.standardizedFileURL.pathComponents
+        let toComponents   =   to.absoluteURL.standardizedFileURL.pathComponents
+
+        let commonPrefixLength = Array(zip(fromComponents, toComponents).prefix { lhs, rhs in lhs == rhs }).count
+
+        let relativeComponents = repeatElement("..", count: fromComponents.count - commonPrefixLength - 1 /* the "index.html" component doesn't count in a web server */)
+            + toComponents.dropFirst(commonPrefixLength)
+       
+        return relativeComponents.joined(separator: "/")
+            .lowercased() // Don't make assumptions about a case insensitive hosting environment.
+    }
+    
+    func visit(_ image: Image) -> XMLNode {
+        guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.images.isEmpty else {
+            return .text("") // ???: What do we return for images that won't display anything?
+        }
+        
+        func srcAttributes(for images: [Int: URL]) -> [String: String] {
+            switch images.count {
+                case 0: [:]
+                case 1: ["src": path(to: images.first!.value)]
+                default: ["srcset": images.sorted(by: { $0.key > $1.key }) // large scale factors first
+                    .map { scale, url in "\(path(to: url)) \(scale)x" }
+                    .joined(separator: ", ")
+                ]
+            }
+        }
+        
+        var imgAttributes = [
+            "decoding": "async",
+            "loading": "lazy",
+        ]
+        if let altText = image.altText {
+            imgAttributes["alt"] = altText
+        }
+        
+        var children = [XMLNode]()
+        if asset.images.count == 1 {
+            // When all image are either dark/light mode, add them directly on the "img" element
+            imgAttributes.merge(srcAttributes(for: asset.images.first!.value), uniquingKeysWith: { _, new in new })
+        } else {
+            // Define a "source" element for each dark/light style
+            for (style, images) in asset.images.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // order light images before dark images
+                var attributes = srcAttributes(for: images)
+                attributes["media"] = "(prefers-color-scheme: \(style.rawValue))"
+                children.append(.element(named: "source", attributes: attributes))
+            }
+        }
+        
+        children.append(.element(named: "img", attributes: imgAttributes))
+        
+        return .element(named: "picture", children: children)
+    }
+    
+    func visit(_ codeBlock: CodeBlock) -> XMLNode {
+        let attributes = codeBlock.language.map {
+            ["class": $0]
+        }
+        
+        return .element(
+            named: "pre",
+            children: [
+                .element(named: "code", children: [.text(codeBlock.code)])
+            ],
+            attributes: attributes
+        )
+        
+    }
+    
+    // MARK: List
+    
+    func visit(_ unorderedList: UnorderedList) -> XMLNode {
+        .element(named: "ul", children: visit(unorderedList.children))
+    }
+    
+    func visit(_ orderedList: OrderedList) -> XMLNode {
+        .element(named: "ol", children: visit(orderedList.children))
+    }
+    
+    func visit(_ listItem: ListItem) -> XMLNode {
+        .element(named: "li", children: visit(listItem.children))
+    }
+    
+    // MARK: Tables
+    
+    func visit(_ table: Table) -> XMLNode {
+        let element = XMLElement(name: "table")
+                
+        if !table.head.isEmpty {
+            var column = 0
+            
+            element.addChild(
+                .element(named: "thead", children: [
+                    .element(named: "tr", children: table.head.cells.compactMap { (cell) -> XMLNode? in
+                        defer { column += 1 }
+                        
+                        if cell.colspan == 0 || cell.rowspan == 0 {
+                            return nil
+                        }
+                        
+                        var attributes: [String: String] = [:]
+                        if cell.colspan != 1 {
+                            attributes["colspan"] = "\(cell.colspan)"
+                        }
+                        if cell.rowspan != 1 {
+                            attributes["rowspan"] = "\(cell.rowspan)"
+                        }
+                        
+                        if let alignment = table.columnAlignments[column] {
+                            attributes["class"] = switch alignment {
+                                case .left:   "left"
+                                case .center: "center"
+                                case .right:  "right"
+                            }
+                        }
+                        
+                        return .element(
+                            named: "th",
+                            children: visit(cell.children),
+                            attributes: attributes
+                        )
+                    })
+                ])
+            )
+        }
+        
+        if !table.body.isEmpty {
+            element.addChild(
+                .element(named: "tbody", children: table.body.rows.map { row in
+                    var column = 0
+                    return .element(named: "tr", children: row.cells.compactMap { (cell) -> XMLNode? in
+                        defer { column += 1 }
+                        
+                        if cell.colspan == 0 || cell.rowspan == 0 {
+                            return nil
+                        }
+                        
+                        var attributes: [String: String] = [:]
+                        if cell.colspan != 1 {
+                            attributes["colspan"] = "\(cell.colspan)"
+                        }
+                        if cell.rowspan != 1 {
+                            attributes["rowspan"] = "\(cell.rowspan)"
+                        }
+                        
+                        if let alignment = table.columnAlignments[column] {
+                            attributes["class"] = switch alignment {
+                                case .left:   "left"
+                                case .center: "center"
+                                case .right:  "right"
+                            }
+                        }
+                        
+                        return .element(
+                            named: "td",
+                            children: visit(cell.children),
+                            attributes: attributes
+                        )
+                    })
+                })
+            )
+        }
+        
+        return element
+    }
+    
+    // MARK: Markup children
+    
+    private func visit(_ container: MarkupChildren) -> [XMLNode] {
+        var children: [XMLNode] = []
+        children.reserveCapacity(container.underestimatedCount)
+        
+        guard container.contains(where: { $0 is InlineHTML }) else {
+            for element in container {
+                children.append(visit(element))
+            }
+            return children
+        }
+        
+        var elements = Array(container)
+        outer: while !elements.isEmpty {
+            let element = elements.removeFirst()
+            
+            guard let start = element as? InlineHTML else {
+                children.append(visit(element))
+                continue
+            }
+            
+            // Try to parse the smallest valid inline HTML
+            var rawHTML = start.rawHTML
+            guard !rawHTML.hasPrefix("<!--") else {
+                // Skip plain inline comments
+                continue
+            }
+            
+            // Check if this is a a complete "empty-element" tag (for example `<br />` or `<hr />`)
+            if let parsed = try? XMLElement(xmlString: rawHTML) {
+                children.append(parsed)
+                continue
+            }
+            
+            // Gradually increase the content to try and parse
+            var copy = elements
+            inner: while !copy.isEmpty, let next = copy.first as? any InlineMarkup {
+                _ = copy.removeFirst()
+                
+                if let html = next as? InlineHTML, html.rawHTML.hasPrefix("<!--") {
+                    // Skip this comment
+                    continue inner
+                }
+                
+                rawHTML += next.format()
+                if let parsed = try? XMLElement(xmlString: rawHTML) {
+                    children.append(parsed)
+                    elements = copy // Skip over all the elements that make up this parsed node
+                    continue outer
+                }
+                
+            }
+            // Didn't parse anything valid before running out of inline elements.
+            // Just drop this html tag
+            continue
+        }
+        
+        return children
+    }
+    
+    // MARK: Directives
+    
+    func visit(_: BlockDirective) -> XMLNode {
+        .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
+    }
+    
+    // TODO: Support rendering Doxygen tags. (rdar://165755750)
+    // It would be nice if DocC processed in the model, so that all renderers could have just one code path for parameters, returns, etc.
+    
+    func visit(_: DoxygenNote) -> XMLNode {
+        .text("")
+    }
+    func visit(_: DoxygenReturns) -> XMLNode {
+        .text("")
+    }
+    func visit(_: DoxygenAbstract) -> XMLNode {
+        .text("")
+    }
+    func visit(_: DoxygenParameter) -> XMLNode {
+        .text("")
+    }
+    func visit(_: DoxygenDiscussion) -> XMLNode {
+        .text("")
+    }
+    
+    // MARK: Default
+    
+    @_disfavoredOverload
+    package func visit(_ markup: some Markup) -> XMLNode {
+        // Check common markup types first
+        if let paragraph = markup as? Paragraph {
+            return visit(paragraph)
+        } else if let text = markup as? Text {
+            return visit(text)
+        } else if let strong = markup as? Strong {
+            return visit(strong)
+        } else if let emphasis = markup as? Emphasis {
+            return visit(emphasis)
+        } else if let symbolLink = markup as? SymbolLink {
+            return visit(symbolLink)
+        } else if let link = markup as? Link {
+            return visit(link)
+        } else if let inlineCode = markup as? InlineCode {
+            return visit(inlineCode)
+        } else if let image = markup as? Image {
+            return visit(image)
+        } else if let listItem = markup as? ListItem {
+            return visit(listItem)
+        } else if let heading = markup as? Heading {
+            return visit(heading)
+        } else if let orderedList = markup as? OrderedList {
+            return visit(orderedList)
+        } else if let unorderedList = markup as? UnorderedList {
+            return visit(unorderedList)
+        } else if let codeBlock = markup as? CodeBlock {
+            return visit(codeBlock)
+        } else if let blockQuote = markup as? BlockQuote {
+            return visit(blockQuote)
+        } else if let table = markup as? Table {
+            return visit(table)
+        } else if let lineBreak = markup as? LineBreak {
+            return visit(lineBreak)
+        } else if let softBreak = markup as? SoftBreak {
+            return visit(softBreak)
+        } else if let thematicBreak = markup as? ThematicBreak {
+            return visit(thematicBreak)
+        } else if let blockDirective = markup as? BlockDirective {
+            return visit(blockDirective)
+        } else if let inlineHTML = markup as? InlineHTML {
+            return visit(inlineHTML)
+        } else if let html = markup as? HTMLBlock {
+            return visit(html)
+        } else if let strikethrough = markup as? Strikethrough {
+            return visit(strikethrough)
+        } else if let customBlock = markup as? CustomBlock {
+            return visit(customBlock)
+        } else if let document = markup as? Document {
+            return visit(document)
+        } else if let customInline = markup as? CustomInline {
+            return visit(customInline)
+        } else if let attributes = markup as? InlineAttributes {
+            return visit(attributes)
+        } else if let doxygenDiscussion = markup as? DoxygenDiscussion {
+            return visit(doxygenDiscussion)
+        } else if let doxygenNote = markup as? DoxygenNote {
+            return visit(doxygenNote)
+        } else if let doxygenAbstract = markup as? DoxygenAbstract {
+            return visit(doxygenAbstract)
+        } else if let doxygenParam = markup as? DoxygenParameter {
+            return visit(doxygenParam)
+        } else if let doxygenReturns = markup as? DoxygenReturns {
+            return visit(doxygenReturns)
+        } else if markup is Table.Head || markup is Table.Body || markup is Table.Row || markup is Table.Cell {
+            fatalError("This renderer is expected to visit the `Table` element, not it's member. It's a programming error to pass one of its member type directly.")
+        } else {
+            fatalError("Encountered unknown markup element. All supported markup elements should already be defined by the Markdown framework")
+        }
+    }
+}
+
+// MARK: Helpers
+
+private extension Image {
+    /// The first element's text if it is a `Markdown.Text` element, otherwise `nil`.
+    var altText: String? {
+        guard let firstText = child(at: 0) as? Text else {
+            return nil
+        }
+        return firstText.string
+    }
+}
+
+private extension CharacterSet {
+    static let fragmentCharactersToRemove = CharacterSet.punctuationCharacters // Remove punctuation from fragments
+        .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
+        .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.
+    static let whitespaceAndDashes = CharacterSet.whitespaces
+        .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
+}
+
+/// Creates a more readable version of a fragment by replacing characters that are not allowed in the fragment of a URL with hyphens.
+///
+/// If this step is not performed, the disallowed characters are instead percent escape encoded, which is less readable.
+/// For example, a fragment like `"#hello world"` is converted to `"#hello-world"` instead of `"#hello%20world"`.
+func urlReadableFragment(_ fragment: some StringProtocol) -> String {
+    var fragment = fragment
+        // Trim leading/trailing whitespace
+        .trimmingCharacters(in: .whitespaces)
+    
+        // Replace continuous whitespace and dashes
+        .components(separatedBy: .whitespaceAndDashes)
+        .filter({ !$0.isEmpty })
+        .joined(separator: "-")
+    
+    // Remove invalid characters
+    fragment.unicodeScalars.removeAll(where: CharacterSet.fragmentCharactersToRemove.contains)
+    
+    return fragment
+}
