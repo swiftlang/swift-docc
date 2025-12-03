@@ -171,16 +171,36 @@ extension MarkdownOutputMarkupWalker {
     }
     
     mutating func visitLink(_ link: Link) -> () {
+                
         guard
             link.isAutolink,
             let destination = link.destination,
-            let resolved = context.referenceIndex[destination],
-            let doc = try? context.entity(with: resolved)
+            let resolved = context.referenceIndex[destination]
         else {
             return defaultVisit(link)
         }
         
-        let linkTitle: String
+        let doc: DocumentationNode
+        let anchorSection: AnchorSection?
+        
+        // Does the link have a fragment?
+        if let _ = resolved.fragment {
+            let noFragment = resolved.withFragment(nil)
+            guard let parent = try? context.entity(with: noFragment) else {
+                return defaultVisit(link)
+            }
+            doc = parent
+            anchorSection = doc.anchorSections.first(where: { $0.reference == resolved })
+        } else {
+            anchorSection = nil
+            if let found = try? context.entity(with: resolved) {
+                doc = found
+            } else {
+                return defaultVisit(link)
+            }
+        }
+        
+        var linkTitle: String
         var linkListAbstract: (any Markup)?
         if
             let article = doc.semantic as? Article
@@ -189,9 +209,14 @@ extension MarkdownOutputMarkupWalker {
                 linkListAbstract = article.abstract
                 add(source: resolved, type: .belongsToTopic, subtype: nil)
             }
-            linkTitle = article.title?.plainText ?? resolved.lastPathComponent
+            linkTitle = anchorSection?.title ?? article.title?.plainText ?? resolved.lastPathComponent
         } else {
-            linkTitle = resolved.lastPathComponent
+            linkTitle = anchorSection?.title ?? resolved.lastPathComponent
+        }
+        
+        // No abstract for an anchor link
+        if anchorSection != nil {
+            linkListAbstract = nil
         }
         
         let linkMarkup: any RecurringInlineMarkup

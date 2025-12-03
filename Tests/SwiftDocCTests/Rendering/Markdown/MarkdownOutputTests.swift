@@ -84,6 +84,14 @@ final class MarkdownOutputTests: XCTestCase {
                 # Rows and Columns
                 
                 Just here for the links
+                
+                ## Overview
+                
+                I am the overview
+                
+                ## Multi-word heading
+                
+                I am here to test the url readable fragment stuff
                 """),
             TextFile(name: "Links.md", utf8Content: """
                 # Links
@@ -93,12 +101,19 @@ final class MarkdownOutputTests: XCTestCase {
                 ## Overview
 
                 This is an inline link: <doc:RowsAndColumns>
+                This is an inline link with a heading: <doc:RowsAndColumns#Overview>
+                This is an inline link with a multi-word heading: <doc:RowsAndColumns#Multi-word-heading>
 
                 ## Topics
 
                 ### Links with abstracts
 
                 - <doc:RowsAndColumns>
+                - <doc:RowsAndColumns#Overview>
+                
+                ### No more links
+                
+                Empty section
                 """)
             ])
         
@@ -106,8 +121,17 @@ final class MarkdownOutputTests: XCTestCase {
         let expectedInline = "inline link: [Rows and Columns](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)"
         XCTAssert(node.markdown.contains(expectedInline))
         
+        let expectedInlineAnchor = "inline link with a heading: [Overview](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns#Overview)"
+        XCTAssert(node.markdown.contains(expectedInlineAnchor))
+        let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
+        XCTAssert(node.markdown.contains(expectedInlineAnchorMultiWord))
+        
         let expectedLinkList = "[Rows and Columns](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)\n\nJust here for the links"
         XCTAssert(node.markdown.contains(expectedLinkList))
+        
+        // No abstract
+        let expectedLinkListAnchor = "[Overview](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns#Overview)\n\n###"
+        XCTAssert(node.markdown.contains(expectedLinkListAnchor))
     }
        
     func testLinkSymbolFormatting() async throws {
