@@ -144,12 +144,16 @@ final class MarkdownOutputTests: XCTestCase {
                 ## Overview
 
                 This is an inline link: ``MarkdownSymbol``
+                
+                This is an unresolvable link: ``Unresolvable``
 
                 ## Topics
 
                 ### Links with abstracts
 
                 - ``MarkdownSymbol``
+                - ``UnresolvableInList``
+                
                 """),
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "MarkdownSymbol", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
@@ -162,6 +166,13 @@ final class MarkdownOutputTests: XCTestCase {
         
         let expectedLinkList = "[`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output"
         XCTAssert(node.markdown.contains(expectedLinkList))
+        
+        let unresolvableLink = "[`Unresolvable`]"
+        XCTAssertFalse(node.markdown.contains(unresolvableLink))
+        let unresolvableAsCodeVoice = "unresolvable link: `Unresolvable`"
+        XCTAssert(node.markdown.contains(unresolvableAsCodeVoice))
+        XCTAssertFalse(node.markdown.contains("UnresolvableInList"))
+                    
     }
     
     func testLinkSymbolWithLinkInAbstractDoesntRecurse() async throws {

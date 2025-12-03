@@ -134,12 +134,20 @@ extension MarkdownOutputMarkupWalker {
     }
     
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> () {
+        guard let destination = symbolLink.destination else {
+            return
+        }
+        
         guard
-            let destination = symbolLink.destination,
             let resolved = context.referenceIndex[destination],
             let node = context.topicGraph.nodeWithReference(resolved)
         else {
-            return defaultVisit(symbolLink)
+            // Unresolved symbol - use code voice, unless we're in a list, in which case, ignore it
+            if isRenderingLinkList {
+                return
+            }
+            let code = InlineCode(destination)
+            return visit(code)
         }
         
         let linkTitle: String
