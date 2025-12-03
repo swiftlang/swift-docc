@@ -48,37 +48,9 @@ class JSONEncodingRenderNodeWriter {
     ///   - renderNode: The node which the writer object writes to a JSON file.
     ///   - encoder: The encoder to serialize the render node with.
     func write(_ renderNode: RenderNode, encoder: JSONEncoder) throws {
-        let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
-            renderNode.identifier,
-            lowercased: true
-        )
         
         // The path on disk to write the render node JSON file at.
-        let renderNodeTargetFileURL = renderNodeURLGenerator
-            .urlForReference(
-                renderNode.identifier,
-                fileSafePath: fileSafePath
-            )
-            .appendingPathExtension("json")
-        
-        let renderNodeTargetFolderURL = renderNodeTargetFileURL.deletingLastPathComponent()
-        
-        // On Linux sometimes it takes a moment for the directory to be created and that leads to
-        // errors when trying to write files concurrently in the same target location.
-        // We keep an index in `directoryIndex` and create new sub-directories as needed.
-        // When the symbol's directory already exists no code is executed during the lock below
-        // besides the set lookup.
-        try directoryIndex.sync { directoryIndex in
-            let (insertedRenderNodeTargetFolderURL, _) = directoryIndex.insert(renderNodeTargetFolderURL)
-            if insertedRenderNodeTargetFolderURL {
-                try fileManager.createDirectory(
-                    at: renderNodeTargetFolderURL,
-                    withIntermediateDirectories: true,
-                    attributes: nil
-                )
-            }
-        }
-        
+        let (fileSafePath, renderNodeTargetFileURL) = try targetFilePathAndURL(for: renderNode.identifier, pathExtension: "json")
         let data = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache)
         try fileManager.createFile(at: renderNodeTargetFileURL, contents: data, options: nil)
         
@@ -117,47 +89,52 @@ class JSONEncodingRenderNodeWriter {
         }
     }
     
-    // TODO: Should this be a separate writer? Will we write markdown without creating render JSON?
     /// Writes a markdown node to a file at a location based on the node's relative URL.
     ///
-    /// If the target path to the JSON file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
-    /// create those intermediate folders before writing the JSON file.
+    /// If the target path to the markdown file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
+    /// create those intermediate folders before writing the markdown file.
     ///
     /// - Parameters:
     ///   - markdownNode: The node which the writer object writes
     func write(_ markdownNode: WritableMarkdownOutputNode) throws {
-        
+                
+        // The path on disk to write the markdown file at.
+        let (_, markdownNodeTargetFileURL) = try targetFilePathAndURL(for: markdownNode.identifier, pathExtension: "md")
+        try fileManager.createFile(at: markdownNodeTargetFileURL, contents: markdownNode.nodeData, options: nil)
+    }
+    
+    /// Returns the target URL for a given reference identifier, safely creating the containing directory structure if necessary
+    private func targetFilePathAndURL(for identifier: ResolvedTopicReference, pathExtension: String) throws -> (fileSafePath: String, targetURL: URL) {
         let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
-            markdownNode.identifier,
+            identifier,
             lowercased: true
         )
         
-        // The path on disk to write the markdown file at.
-        let markdownNodeTargetFileURL = renderNodeURLGenerator
+        // The path on disk to write the file at.
+        let targetFileURL = renderNodeURLGenerator
             .urlForReference(
-                markdownNode.identifier,
+                identifier,
                 fileSafePath: fileSafePath
             )
-            .appendingPathExtension("md")
+            .appendingPathExtension(pathExtension)
         
-        let markdownNodeTargetFolderURL = markdownNodeTargetFileURL.deletingLastPathComponent()
-        
+        let targetFolderURL = targetFileURL.deletingLastPathComponent()
         // On Linux sometimes it takes a moment for the directory to be created and that leads to
         // errors when trying to write files concurrently in the same target location.
         // We keep an index in `directoryIndex` and create new sub-directories as needed.
         // When the symbol's directory already exists no code is executed during the lock below
         // besides the set lookup.
         try directoryIndex.sync { directoryIndex in
-            let (insertedMarkdownNodeTargetFolderURL, _) = directoryIndex.insert(markdownNodeTargetFolderURL)
-            if insertedMarkdownNodeTargetFolderURL {
+            let (insertedTargetFolderURL, _) = directoryIndex.insert(targetFolderURL)
+            if insertedTargetFolderURL {
                 try fileManager.createDirectory(
-                    at: markdownNodeTargetFolderURL,
+                    at: targetFolderURL,
                     withIntermediateDirectories: true,
                     attributes: nil
                 )
             }
         }
         
-        try fileManager.createFile(at: markdownNodeTargetFileURL, contents: markdownNode.nodeData, options: nil)
+        return (fileSafePath, targetFileURL)
     }
 }
