@@ -118,7 +118,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return .element(named: "h\(level)", children: content)
             
         case .richness:
-            let id = urlReadableFragment(plainTextTitle().lowercased())
+            let id = urlReadableFragment(plainTextTitle())
             return .element(
                 named: "h\(level)",
                 children: [
