@@ -264,12 +264,9 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         // Make a relative link
         if let linkedElement = linkProvider.element(for: destination) {
             let children: [XMLNode] = switch linkedElement.names {
-                case .single(let name):
-                    switch name {
-                        case .conceptual(let name): [ .text(name) ]
-                        case .symbol(let name):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
-                    }
-                    
+                case .single(.conceptual(let name)): [ .text(name) ]
+                case .single(.symbol(let name)):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
+                
                 case .languageSpecificSymbol(let namesByLanguageID):
                     RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
                         .element(named: "code", children: wordBreak(symbolName: name), attributes: ["class": "\(language.id)-only"])
@@ -320,11 +317,8 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         }
         
         let children: [XMLNode] = switch linkedElement.names {
-            case .single(let name):
-                switch name {
-                    case .conceptual(let name): [ .text(name) ]
-                    case .symbol(let name):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
-                }
+            case .single(.conceptual(let name)): [ .text(name) ]
+            case .single(.symbol(let name)):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
                 
             case .languageSpecificSymbol(let namesByLanguageID):
                 RenderHelpers.sortedLanguageSpecificValues(namesByLanguageID).map { language, name in
