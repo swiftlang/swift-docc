@@ -18,7 +18,6 @@ import Foundation
 
 import Testing
 import DocCHTML
-@testable import SwiftDocC
 import Markdown
 
 struct MarkdownRendererTests {
