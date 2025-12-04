@@ -241,6 +241,8 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return .text("")
         }
         
+        let linkedElement = linkProvider.element(for: destination)
+        // Check if the link has an authored link title or if it's an "autolink" (for example `<LINK>` or `[](LINK)`)
         guard link.isAutolink else {
             var customTitle = [XMLNode]()
             for child in link.inlineChildren {
@@ -255,14 +257,14 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 named: "a",
                 children: customTitle,
                 attributes: [
-                    // Use relative links for DocC elements, and the full link otherwise.
-                    "href": linkProvider.element(for: destination).flatMap { path(to: $0.path) } ?? destination.absoluteString
+                    // Use relative links for DocC elements and the full link otherwise.
+                    "href": linkedElement.flatMap { path(to: $0.path) } ?? destination.absoluteString
                 ]
             )
         }
         
         // Make a relative link
-        if let linkedElement = linkProvider.element(for: destination) {
+        if let linkedElement {
             let children: [XMLNode] = switch linkedElement.names {
                 case .single(.conceptual(let name)): [ .text(name) ]
                 case .single(.symbol(let name)):     [ .element(named: "code", children: wordBreak(symbolName: name)) ]
