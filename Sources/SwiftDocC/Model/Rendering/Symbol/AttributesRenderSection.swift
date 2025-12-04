@@ -14,9 +14,9 @@ import Foundation
 public struct AttributesRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .attributes
     /// The section title.
-    public let title: String
+    public var title: String
     /// The list of attributes in this section.
-    public let attributes: [RenderAttribute]?
+    public var attributes: [RenderAttribute]?
     
     /// Creates a new attributes section.
     /// - Parameter title: The section title.

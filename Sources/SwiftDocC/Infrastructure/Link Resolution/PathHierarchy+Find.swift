@@ -197,7 +197,7 @@ extension PathHierarchy {
                     startingPoint = counterpoint
                 default:
                     // Only symbols have counterpoints which means that each node should always have at least one language
-                    if counterpoint.languages.map(\.id).min()! < startingPoint.languages.map(\.id).min()! {
+                    if counterpoint.languages.min()! < startingPoint.languages.min()! {
                         startingPoint = counterpoint
                     }
                 }

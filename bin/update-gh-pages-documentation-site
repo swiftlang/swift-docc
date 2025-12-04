@@ -74,7 +74,7 @@ swift package \
     --hosting-base-path swift-docc \
     --output-path "$DOCC_UTILITIES_OUTPUT_DIR"
 
-echo -e "\033[34;1m Merging docs \033q[0m"
+echo -e "\033[34;1m Merging docs \033[0m"
 
 # Remove the output directory so that the merge command can output there
 rm -rf "$SWIFT_DOCC_ROOT/gh-pages/docs"
@@ -90,6 +90,7 @@ CURRENT_COMMIT_HASH=`git rev-parse --short HEAD`
 
 # Commit and push our changes to the gh-pages branch
 cd gh-pages
+touch docs/.nojekyll # We need this (empty) file so that GitHub Pages will publish our prebuilt documentation.
 git add docs
 
 if [ -n "$(git status --porcelain)" ]; then

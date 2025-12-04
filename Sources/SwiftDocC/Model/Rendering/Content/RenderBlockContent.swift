@@ -688,7 +688,7 @@ public enum RenderBlockContent: Equatable {
         /// A list of rendering block elements.
         public typealias Cell = [RenderBlockContent]
         /// The list of row cells.
-        public let cells: [Cell]
+        public var cells: [Cell]
         
         /// Creates a new table row.
         /// - Parameter cells: The list of row cells to use.
@@ -750,18 +750,18 @@ public enum RenderBlockContent: Equatable {
         /// A term rendered as content.
         public struct Term: Codable, Equatable {
             /// The term content.
-            public let inlineContent: [RenderInlineContent]
+            public var inlineContent: [RenderInlineContent]
         }
         /// A definition rendered as a list of block-content elements.
         public struct Definition: Codable, Equatable {
             /// The definition content.
-            public let content: [RenderBlockContent]
+            public var content: [RenderBlockContent]
         }
         
         /// The term in the term-list item.
-        public let term: Term
+        public var term: Term
         /// The definition in the term-list item.
-        public let definition: Definition
+        public var definition: Definition
     }
     
     /// A row in a grid-based layout system that describes a collection of columns.
@@ -771,18 +771,18 @@ public enum RenderBlockContent: Equatable {
         /// This may be different then the count of ``columns`` array. For example, there may be
         /// individual columns that span multiple columns (specified with the column's
         /// ``Column/size`` property) or the row could be not fully filled with columns.
-        public let numberOfColumns: Int
+        public var numberOfColumns: Int
         
         /// The columns that should be rendered in this row.
-        public let columns: [Column]
+        public var columns: [Column]
         
         /// A column with a row in a grid-based layout system.
         public struct Column: Codable, Equatable {
             /// The number of columns in the parent row this column should span.
-            public let size: Int
+            public var size: Int
             
             /// The content that should be rendered in this column.
-            public let content: [RenderBlockContent]
+            public var content: [RenderBlockContent]
         }
     }
     
@@ -792,21 +792,21 @@ public enum RenderBlockContent: Equatable {
     /// license, or copyright text.
     public struct Small: Codable, Equatable {
         /// The inline content that should be rendered.
-        public let inlineContent: [RenderInlineContent]
+        public var inlineContent: [RenderInlineContent]
     }
     
     /// A collection of content that should be rendered in a tab-based layout.
     public struct TabNavigator: Codable, Equatable {
         /// The tabs that make up this tab navigator.
-        public let tabs: [Tab]
+        public var tabs: [Tab]
         
         /// A titled tab inside a tab-based layout container.
         public struct Tab: Codable, Equatable {
             /// The title that should be used to identify this tab.
-            public let title: String
+            public var title: String
             
             /// The content that should be rendered in this tab.
-            public let content: [RenderBlockContent]
+            public var content: [RenderBlockContent]
         }
     }
     
@@ -828,10 +828,10 @@ public enum RenderBlockContent: Equatable {
         }
         
         /// The style that should be used when rendering the link items.
-        public let style: Style
+        public var style: Style
         
         /// The topic render references for the pages that should be rendered in this links block.
-        public let items: [String]
+        public var items: [String]
         
         /// Create a new links block with the given style and topic render references.
         public init(style: RenderBlockContent.Links.Style, items: [String]) {
@@ -846,7 +846,7 @@ public enum RenderBlockContent: Equatable {
         public let identifier: RenderReferenceIdentifier
         
         /// Any metadata associated with this video, like a caption.
-        public let metadata: RenderContentMetadata?
+        public var metadata: RenderContentMetadata?
         
         /// Create a new video with the given identifier and metadata.
         public init(identifier: RenderReferenceIdentifier, metadata: RenderContentMetadata? = nil) {
