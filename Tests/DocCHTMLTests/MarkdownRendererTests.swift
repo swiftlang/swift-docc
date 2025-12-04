@@ -53,13 +53,13 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <h1 id="one">
-            <a href="#one">One</a>
+              <a href="#one">One</a>
             </h1>
             <h2 id="two">
-            <a href="#two">Two</a>
+              <a href="#two">Two</a>
             </h2>
             <h3 id="three">
-            <a href="#three">Three</a>
+              <a href="#three">Three</a>
             </h3>
             """
         )
@@ -75,10 +75,10 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <h1 id="one">
-            <a href="#one">One</a>
+              <a href="#one">One</a>
             </h1>
             <h2 id="two">
-            <a href="#two">Two</a>
+              <a href="#two">Two</a>
             </h2>
             """
         )
@@ -94,19 +94,19 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <h1 id="one">
-            <a href="#one">
+              <a href="#one">
                 <i>One</i>
-            </a>
+              </a>
             </h1>
             <h2 id="two">
-            <a href="#two">
+              <a href="#two">
                 <b>Two</b>
-            </a>
+              </a>
             </h2>
             <h3 id="three">
-            <a href="#three">
+              <a href="#three">
                 <code>Three</code>
-            </a>
+              </a>
             </h3>
             """
         )
@@ -121,25 +121,24 @@ struct MarkdownRendererTests {
             **One** | _Two_   | 
             """,
             prettyFormatted: true,
-            // It's weird that XMLNode doesn't indent the <table> children
             matches: """
             <table>
-            <thead>
+              <thead>
                 <tr>
-                    <th>First</th>
-                    <th>Second</th>
+                  <th>First</th>
+                  <th>Second</th>
                 </tr>
-            </thead>
-            <tbody>
+              </thead>
+              <tbody>
                 <tr>
-                    <td>
-                        <b>One</b>
-                    </td>
-                    <td>
-                        <i>Two</i>
-                    </td>
+                  <td>
+                    <b>One</b>
+                  </td>
+                  <td>
+                    <i>Two</i>
+                  </td>
                 </tr>
-            </tbody>
+              </tbody>
             </table>
             """
         )
@@ -153,29 +152,28 @@ struct MarkdownRendererTests {
             Five                 |||
             """,
             prettyFormatted: true,
-            // It's weird that XMLNode doesn't indent the <table> children
             matches: """
             <table>
-            <thead>
+              <thead>
                 <tr>
-                    <th>First</th>
-                    <th>Second</th>
-                    <th>Third</th>
+                  <th>First</th>
+                  <th>Second</th>
+                  <th>Third</th>
                 </tr>
-            </thead>
-            <tbody>
+              </thead>
+              <tbody>
                 <tr>
-                    <td colspan="2">One</td>
-                    <td>Two</td>
-                </tr>
-                <tr>
-                    <td>Three</td>
-                    <td colspan="2">Four</td>
+                  <td colspan="2">One</td>
+                  <td>Two</td>
                 </tr>
                 <tr>
-                    <td colspan="3">Five</td>
+                  <td>Three</td>
+                  <td colspan="2">Four</td>
                 </tr>
-            </tbody>
+                <tr>
+                  <td colspan="3">Five</td>
+                </tr>
+              </tbody>
             </table>
             """
         )
@@ -189,31 +187,30 @@ struct MarkdownRendererTests {
             Seven | ^      | ^     | Eight
             """,
             prettyFormatted: true,
-            // It's weird that XMLNode doesn't indent the <table> children
             matches: """
             <table>
-            <thead>
+              <thead>
                 <tr>
-                    <th>First</th>
-                    <th>Second</th>
-                    <th>Third</th>
-                    <th>Fourth</th>
+                  <th>First</th>
+                  <th>Second</th>
+                  <th>Third</th>
+                  <th>Fourth</th>
                 </tr>
-            </thead>
-            <tbody>
+              </thead>
+              <tbody>
                 <tr>
-                    <td rowspan="2">One</td>
-                    <td>Two</td>
-                    <td rowspan="3">Three</td>
-                    <td>Four</td>
-                </tr>
-                <tr>
-                    <td rowspan="2">Five</td>
-                    <td>Six</td>
+                  <td rowspan="2">One</td>
+                  <td>Two</td>
+                  <td rowspan="3">Three</td>
+                  <td>Four</td>
                 </tr>
                 <tr>
-                    <td>Seven</td>
-                    <td>Eight</td>
+                  <td rowspan="2">Five</td>
+                  <td>Six</td>
+                </tr>
+                <tr>
+                  <td>Seven</td>
+                  <td>Eight</td>
                 </tr>
             </tbody>
             </table>
@@ -235,39 +232,38 @@ struct MarkdownRendererTests {
                  * Inner
             """,
             prettyFormatted: true,
-            // It's weird that XMLNode doesn't indent the outmost <ul> children
             matches: """
             <ul>
-            <li>
+              <li>
                 <p>First</p>
-            </li>
-            <li>
+              </li>
+              <li>
                 <p>Second</p>
                 <ul>
-                    <li>
-                        <p>A</p>
-                    </li>
-                    <li>
-                        <p>B</p>
-                    </li>
+                  <li>
+                    <p>A</p>
+                  </li>
+                  <li>
+                    <p>B</p>
+                  </li>
                 </ul>
-            </li>
-            <li>
+              </li>
+              <li>
                 <p>Third</p>
                 <ol>
-                    <li>
-                        <p>One</p>
-                    </li>
-                    <li>
-                        <p>Two</p>
-                        <ul>
-                            <li>
-                                <p>Inner</p>
-                            </li>
-                        </ul>
-                    </li>
+                  <li>
+                    <p>One</p>
+                  </li>
+                  <li>
+                    <p>Two</p>
+                    <ul>
+                      <li>
+                        <p>Inner</p>
+                      </li>
+                    </ul>
+                  </li>
                 </ol>
-            </li>
+              </li>
             </ul>
             """
         )
@@ -282,15 +278,14 @@ struct MarkdownRendererTests {
             > > Important: Something important
             """,
             prettyFormatted: true,
-            // It's weird that XMLNode doesn't indent the <ul> children
             matches: """
             <blockquote class="aside note">
-            <p class="label">Note</p>
-            <p>Something noteworthy</p>
-            <blockquote class="aside important">
+              <p class="label">Note</p>
+              <p>Something noteworthy</p>
+              <blockquote class="aside important">
                 <p class="label">Important</p>
                 <p>Something important</p>
-            </blockquote>
+              </blockquote>
             </blockquote>
             """
         )
@@ -307,8 +302,8 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <pre>
-            <code>Some block of code
-            </code>
+              <code>Some block of code
+              </code>
             </pre>
             """
         )
@@ -320,8 +315,8 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <pre>
-            <code>Some block of code
-            </code>
+              <code>Some block of code
+              </code>
             </pre>
             """
         )
@@ -335,8 +330,8 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <pre class="lang">
-            <code>Some block of code
-            </code>
+              <code>Some block of code
+              </code>
             </pre>
             """
         )
@@ -376,7 +371,7 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../somearticle/index.html">Some Article Title</a>
+              <a href="../somearticle/index.html">Some Article Title</a>
             </p>
             """
         )
@@ -397,12 +392,12 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../someclass/somemethod(_:_:)/index.html">
+              <a href="../someclass/somemethod(_:_:)/index.html">
                 <code>some<wbr/>
-                    Method(<wbr/>
-                    _:<wbr/>
-                    _:)</code>
-            </a>
+                  Method(<wbr/>
+                  _:<wbr/>
+                  _:)</code>
+              </a>
             </p>
             """
         )
@@ -414,18 +409,18 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <a href="../someclass/somemethod(_:_:)/index.html">
+              <a href="../someclass/somemethod(_:_:)/index.html">
                 <code class="swift-only">do<wbr/>
-                    Something(<wbr/>
-                    with:<wbr/>
-                    and:)</code>
+                  Something(<wbr/>
+                  with:<wbr/>
+                  and:)</code>
                 <code class="occ-only">do<wbr/>
-                    Something<wbr/>
-                    With<wbr/>
-                    First:<wbr/>
-                    and<wbr/>
-                    Second:</code>
-            </a>
+                  Something<wbr/>
+                  With<wbr/>
+                  First:<wbr/>
+                  and<wbr/>
+                  Second:</code>
+              </a>
             </p>
             """
         )
@@ -483,9 +478,9 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <picture>
+              <picture>
                 <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../images/com.test.example/some-image.png"/>
-            </picture>
+              </picture>
             </p>
             """
         )
@@ -502,9 +497,9 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <picture>
+              <picture>
                 <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x"/>
-            </picture>
+              </picture>
             </p>
             """
         )
@@ -519,11 +514,11 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <picture>
+              <picture>
                 <source media="(prefers-color-scheme: light)" src="../../../../images/com.test.example/some-image.png"/>
                 <source media="(prefers-color-scheme: dark)" src="../../../../images/com.test.example/some-image~dark.png"/>
                 <img alt="Some alt text" decoding="async" loading="lazy"/>
-            </picture>
+              </picture>
             </p>
             """
         )
@@ -544,11 +539,11 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             matches: """
             <p>
-            <picture>
+              <picture>
                 <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x"/>
                 <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../images/com.test.example/some-image~dark.png 1x"/>
                 <img alt="Some alt text" decoding="async" loading="lazy"/>
-            </picture>
+              </picture>
             </p>
             """
         )

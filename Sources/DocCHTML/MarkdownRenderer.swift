@@ -45,10 +45,35 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         self.linkProvider = linkProvider
     }
     
+    /// Transforms a markdown paragraph into a `<p>` HTML element.
+    ///
+    /// As part of transforming the paragraph, the renderer also transforms all of the its content recursively.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// Some _formatted_ text
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```html
+    /// <p>Some <i>formatted</i> text</p>
+    /// ```
     func visit(_ paragraph: Paragraph) -> XMLNode {
         .element(named: "p", children: visit(paragraph.children))
     }
     
+    /// Transforms a markdown block quote into a `<blockquote>` HTML element that represents an "aside".
+    ///
+    /// As part of transforming the paragraph, the renderer also transforms all of its content recursively.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// > Note: Something noteworthy
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <blockquote class="aside note">
+    ///   <p class="label">Note</p>
+    ///   <p>Something noteworthy</p>
+    /// </blockquote>
+    /// ```
     func visit(_ blockQuote: BlockQuote) -> XMLNode {
         let aside = Aside(blockQuote)
         
@@ -66,6 +91,23 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         )
     }
     
+    /// Transforms a markdown heading into a`<h[1...6]>` HTML element whose content is wrapped in an `<a>` element that references the heading itself.
+    ///
+    /// As part of transforming the heading, the renderer also transforms all of the its content recursively.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// # Some _Formatted_ text
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <h1 id="some-formatted-text">
+    ///   <a href="#some-formatted-text">
+    ///     Some <i>formatted</i>text
+    ///   </a>
+    /// </h1>
+    /// ```
+    ///
+    /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't wrap the headings content in an anchor.
     package func visit(_ heading: Heading) -> XMLNode {
         selfReferencingHeading(level: heading.level, content: visit(heading.children), plainTextTitle: heading.plainText)
     }
@@ -89,34 +131,42 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         }
     }
     
+    /// Transforms a markdown emphasis into a`<i>` HTML element.
     func visit(_ emphasis: Emphasis) -> XMLNode {
         .element(named: "i", children: visit(emphasis.children))
     }
     
+    /// Transforms a markdown strong into a`<b>` HTML element.
     func visit(_ strong: Strong) -> XMLNode {
         .element(named: "b", children: visit(strong.children))
     }
     
+    /// Transforms a markdown strikethrough into a`<s>` HTML element.
     func visit(_ strikethrough: Strikethrough) -> XMLNode {
         .element(named: "s", children: visit(strikethrough.children))
     }
     
+    /// Transforms a markdown inline code into a`<code>` HTML element.
     func visit(_ inlineCode: InlineCode) -> XMLNode {
         .element(named: "code", children: [.text(inlineCode.code)])
     }
     
+    /// Transforms a markdown text into an HTML escaped text node.
     func visit(_ text: Text) -> XMLNode {
         .text(text.string)
     }
     
+    /// Transforms a markdown line break into an empty`<br />` HTML element.
     func visit(_: LineBreak) -> XMLNode {
         .element(named: "br")
     }
     
+    /// Transforms a markdown line break into a single space.
     func visit(_: SoftBreak) -> XMLNode {
         .text(" ") // A soft line break doesn't actually break the content
     }
     
+    /// Transforms a markdown line break into an empty`<hr />` HTML element.
     func visit(_: ThematicBreak) -> XMLNode {
         .element(named: "hr")
     }
@@ -136,6 +186,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         }
     }
     
+    /// Transforms a block of HTML in the source markdown into XML nodes representing the same structure with all the comments removed.
     func visit(_ html: HTMLBlock) -> XMLNode {
         do {
             let parsed = try XMLElement(xmlString: html.rawHTML)
@@ -146,6 +197,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         }
     }
     
+    /// Transforms an inline HTML tag in the source markdown into XML nodes representing the same structure with all the comments removed.
     func visit(_ html: InlineHTML) -> XMLNode {
         // Inline HTML is one tag at a time, meaning that the closing and opening tags are parsed separately
         // Because of this, we can't parse it with `XMLElement` or `XMLParser`.
@@ -167,6 +219,23 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         }
     }
     
+    /// Transforms an already resolved markdown link into a`<a>` HTML element.
+    ///
+    /// The renderer uses its configured ``LinkProvider`` to find information about the referenced page.
+    /// For example, if the link provider returns an element from the ``LinkProvider/element(for:)`` call, the renderer transforms this markdown
+    /// ```md
+    /// <doc://com.example.test/documentation/Something/SomeArticle>
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <a href="../somearticle/index.html">
+    ///   Some Article Title
+    /// </a>
+    /// ```
+    ///
+    /// If the link provider returns `nil`, the renderer instead transforms the link into an HTML version of the provider's ``LinkProvider/fallbackLinkText(linkString:)`` text.
+    ///
+    /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr />` HTML elements in the symbol name.
     func visit(_ link: Link) -> XMLNode {
         guard let destination = link.destination.flatMap({ URL(string: $0) }) else {
             return .text("")
@@ -225,6 +294,23 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         }
     }
     
+    /// Transforms an already resolved markdown symbol link into a`<a>` HTML element.
+    ///
+    /// The renderer uses its configured ``LinkProvider`` to find information about the referenced symbol.
+    /// For example, if the link provider returns an element from the ``LinkProvider/element(for:)`` call, the renderer transforms this markdown
+    /// ```md
+    /// ``doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)``
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <a href="../somemethod(with:and:)/index.html">
+    ///   <code>some<wbr/>Method(<wbr/>with:<wbr/>and:)</code>
+    /// </a>
+    /// ```
+    ///
+    /// If the link provider returns `nil`, the renderer instead transforms the symbol link into a `<code>` HTML element that wraps the provider's ``LinkProvider/fallbackLinkText(linkString:)`` text.
+    ///
+    /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr />` HTML elements in the symbol name.
     func visit(_ symbolLink: SymbolLink) -> XMLNode {
         guard let destination = symbolLink.destination.flatMap({ URL(string: $0) }),
               let linkedElement = linkProvider.element(for: destination)
@@ -272,6 +358,21 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             .lowercased() // Don't make assumptions about a case insensitive hosting environment.
     }
     
+    /// Transforms a markdown image into a`<picture>` HTML element that wraps an `<img>` element and zero or more `<source>` elements.
+    ///
+    /// The renderer uses its configured ``LinkProvider`` to find information about the referenced asset.
+    /// For example, if the link provider returns an asset with both light and dark image representations from the ``LinkProvider/assetNamed(_:)`` call, the renderer transforms this markdown
+    /// ```md
+    /// ![Some alt text](some-image.png)
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <picture>
+    ///   <source media="(prefers-color-scheme: light)" src="relative/path/to/some-image.png"/>
+    ///   <source media="(prefers-color-scheme: dark)" src="relative/path/some-image~dark.png"/>
+    ///   <img alt="Some alt text" decoding="async" loading="lazy"/>
+    /// </picture>
+    /// ```
     func visit(_ image: Image) -> XMLNode {
         guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.images.isEmpty else {
             return .text("") // ???: What do we return for images that won't display anything?
@@ -314,6 +415,21 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         return .element(named: "picture", children: children)
     }
     
+    /// Transforms a markdown code block (either fenced or indented) into a `<pre>` HTML element that wraps a `<code>` HTML element containing the code block's code.
+    ///
+    /// If the fenced code block contains source language information on its opening line, the renderer includes this in the `<pre>` element.
+    /// For example, the renderer transforms this markdown
+    /// ```
+    /// ~~~lang
+    /// Some block of code
+    /// ~~~
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <pre class="lang">
+    ///   <code>Some block of code</code>
+    /// </pre>
+    /// ```
     func visit(_ codeBlock: CodeBlock) -> XMLNode {
         let attributes = codeBlock.language.map {
             ["class": $0]
@@ -331,20 +447,107 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     
     // MARK: List
     
+    /// Transforms a markdown unordered list into a`<ul>` HTML element.
+    ///
+    /// As part of transforming the unordered list, the renderer also transforms all of its list items and their content recursively.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// - First
+    /// - Second
+    ///   + A
+    ///   + B
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <ul>
+    ///   <li>
+    ///     <p>First</p>
+    ///   </li>
+    ///   <li>
+    ///     <p>Second</p>
+    ///     <ul>
+    ///       <li>
+    ///         <p>A</p>
+    ///       </li>
+    ///       <li>
+    ///         <p>B</p>
+    ///       </li>
+    ///     </ul>
+    ///   </li>
+    /// </ul>
+    /// ```
     func visit(_ unorderedList: UnorderedList) -> XMLNode {
         .element(named: "ul", children: visit(unorderedList.children))
     }
     
+    /// Transforms a markdown ordered list into a`<ul>` HTML element.
+    ///
+    /// As part of transforming the ordered list, the renderer also transforms all of its list items and their content recursively.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// 1. One
+    /// 2. Two
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <ol>
+    ///   <li>
+    ///     <p>One</p>
+    ///   </li>
+    ///   <li>
+    ///     <p>Two</p>
+    ///   </li>
+    /// </ol>
+    /// ```
     func visit(_ orderedList: OrderedList) -> XMLNode {
         .element(named: "ol", children: visit(orderedList.children))
     }
     
+    /// Transforms a markdown list item into a`<li>` HTML element.
+    ///
+    /// See ``visit(_:)-(UnorderedList)`` or ``visit(_:)-(OrderedList)`` for examples.
     func visit(_ listItem: ListItem) -> XMLNode {
         .element(named: "li", children: visit(listItem.children))
     }
     
     // MARK: Tables
     
+    /// Transforms a markdown table into a`<table>` HTML element.
+    ///
+    /// As part of transforming the table, the renderer also transforms the table's head and body and all their cells and their content recursively.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// | First | Second | Third |
+    /// | ----- | ------ | ----- |
+    /// | One           || Two   |
+    /// | Three | Four          ||
+    /// | Five                 |||
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <table>
+    ///   <thead>
+    ///     <tr>
+    ///       <th>First</th>
+    ///       <th>Second</th>
+    ///       <th>Third</th>
+    ///     </tr>
+    ///   </thead>
+    ///   <tbody>
+    ///     <tr>
+    ///       <td colspan="2">One</td>
+    ///       <td>Two</td>
+    ///     </tr>
+    ///     <tr>
+    ///       <td>Three</td>
+    ///       <td colspan="2">Four</td>
+    ///     </tr>
+    ///     <tr>
+    ///       <td colspan="3">Five</td>
+    ///     </tr>
+    ///   </tbody>
+    /// </table>
+    /// ```
     func visit(_ table: Table) -> XMLNode {
         let element = XMLElement(name: "table")
                 
