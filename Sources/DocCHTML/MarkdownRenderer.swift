@@ -635,6 +635,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         var children: [XMLNode] = []
         children.reserveCapacity(container.underestimatedCount)
         
+        // Check if the markup contains _any_ inline HTML. If it doesn't, then we can simply visit each child.
         guard container.contains(where: { $0 is InlineHTML }) else {
             for element in container {
                 children.append(visit(element))
@@ -642,48 +643,57 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return children
         }
         
+        // The markup contains at least _some_ inline HTML. This could be either:
+        // - A comment like `<!-- comment -->` that we'd want to exclude from the output.
+        // - An empty element like `<br />` or `<hr />` that's complete on its own.
+        // - An element with children like `<span style="color: red;">Something</span>` that needs to be created out of multiple markup elements.
+        //
+        // FIXME: See if this can be extracted into 2 private functions to make the code easier to read.
+        // Because it may take multiple markdown elements to create an HTML element, we pop elements rather than iterating
         var elements = Array(container)
         outer: while !elements.isEmpty {
             let element = elements.removeFirst()
             
             guard let start = element as? InlineHTML else {
+                // If the markup _isn't_ inline HTML we can simply visit it to transform it.
                 children.append(visit(element))
                 continue
             }
             
-            // Try to parse the smallest valid inline HTML
+            // Otherwise, we need to determine how long this markdown element it.
             var rawHTML = start.rawHTML
             guard !rawHTML.hasPrefix("<!--") else {
-                // Skip plain inline comments
+                // If it's a basic link, simply skip it.
                 continue
             }
             
-            // Check if this is a a complete "empty-element" tag (for example `<br />` or `<hr />`)
+            // Next, check if its empty element (for example `<br />` or `<hr />`) that's complete on its own.
             if let parsed = try? XMLElement(xmlString: rawHTML) {
                 children.append(parsed)
                 continue
             }
             
-            // Gradually increase the content to try and parse
+            // This could be an HTML element with content or it could be invalid HTML.
+            // Don't modify `elements` until we know that we've parsed a valid HTML element.
             var copy = elements
+            
+            // Gradually check a longer and longer series of markup elements to see if they form a valid HTML element.
             inner: while !copy.isEmpty, let next = copy.first as? any InlineMarkup {
                 _ = copy.removeFirst()
                 
+                // Skip any HTML/XML comments _inside_ this HTML tag
                 if let html = next as? InlineHTML, html.rawHTML.hasPrefix("<!--") {
-                    // Skip this comment
                     continue inner
                 }
                 
                 rawHTML += next.format()
                 if let parsed = try? XMLElement(xmlString: rawHTML) {
-                    children.append(parsed)
-                    elements = copy // Skip over all the elements that make up this parsed node
+                    children.append(parsed) // Include the valid HTML element in the output.
+                    elements = copy // Skip over all the elements that were used to create that HTML element.
                     continue outer
                 }
-                
             }
-            // Didn't parse anything valid before running out of inline elements.
-            // Just drop this html tag
+            // If we reached the end of the inline elements without parsing a valid HTML element, skip that first InlineHTML markup and continue from there.
             continue
         }
         
