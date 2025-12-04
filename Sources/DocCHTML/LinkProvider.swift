@@ -20,7 +20,7 @@ package protocol LinkProvider {
     /// Provide the path for a symbol based on its unique identifier, or `nil` if the other symbol with that identifier can't be found.
     func pathForSymbolID(_ usr: String) -> URL?
     
-    /// Provide information about an asset, or `nil` if the asset can't be found.
+    /// Provide information about an asset (for example an image or video), or `nil` if the asset can't be found.
     func assetNamed(_ assetName: String) -> LinkedAsset?
     
     /// Fallback link text for a link string that the provider couldn't provide any information for.
@@ -101,12 +101,13 @@ package struct LinkedElement {
     }
 }
 
+/// Information about a referenced image, video, or download asset that may be represented by more than one file for different color styles and display scales.
 package struct LinkedAsset {
-    /// The path within the output archive to each image variant, by their light/dark style.
-    package var images: [ColorStyle: [Int /* display scale*/: URL]]
+    /// The path within the output archive to each file for this asset, grouped by their light/dark style and display scale.
+    package var files: [ColorStyle: [Int /* display scale*/: URL]]
     
-    package init(images: [ColorStyle : [Int : URL]]) {
-        self.images = images
+    package init(files: [ColorStyle : [Int /* display scale*/: URL]]) {
+        self.files = files
     }
     
     package enum ColorStyle: String {

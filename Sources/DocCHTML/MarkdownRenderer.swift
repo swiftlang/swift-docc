@@ -374,7 +374,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// </picture>
     /// ```
     func visit(_ image: Image) -> XMLNode {
-        guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.images.isEmpty else {
+        guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.files.isEmpty else {
             return .text("") // ???: What do we return for images that won't display anything?
         }
         
@@ -398,12 +398,12 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         }
         
         var children = [XMLNode]()
-        if asset.images.count == 1 {
+        if asset.files.count == 1 {
             // When all image are either dark/light mode, add them directly on the "img" element
-            imgAttributes.merge(srcAttributes(for: asset.images.first!.value), uniquingKeysWith: { _, new in new })
+            imgAttributes.merge(srcAttributes(for: asset.files.first!.value), uniquingKeysWith: { _, new in new })
         } else {
             // Define a "source" element for each dark/light style
-            for (style, images) in asset.images.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // order light images before dark images
+            for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // order light images before dark images
                 var attributes = srcAttributes(for: images)
                 attributes["media"] = "(prefers-color-scheme: \(style.rawValue))"
                 children.append(.element(named: "source", attributes: attributes))

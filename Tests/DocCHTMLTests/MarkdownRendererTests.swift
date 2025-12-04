@@ -472,7 +472,7 @@ struct MarkdownRendererTests {
         // Only a single image representation
         assert(
             rendering: "![Some alt text](some-image.png)",
-            assetToReturn: .init(images: [
+            assetToReturn: .init(files: [
                 .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))]
             ]),
             prettyFormatted: true,
@@ -488,7 +488,7 @@ struct MarkdownRendererTests {
         // Only light mode image representations
         assert(
             rendering: "![Some alt text](some-image.png)",
-            assetToReturn: .init(images: [
+            assetToReturn: .init(files: [
                 .light: [
                     1: try #require(URL(string: "images/com.test.example/some-image.png")),
                     2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
@@ -507,7 +507,7 @@ struct MarkdownRendererTests {
         // Only a single scale factor
         assert(
             rendering: "![Some alt text](some-image.png)",
-            assetToReturn: .init(images: [
+            assetToReturn: .init(files: [
                 .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))],
                 .dark:  [1: try #require(URL(string: "images/com.test.example/some-image~dark.png"))],
             ]),
@@ -526,7 +526,7 @@ struct MarkdownRendererTests {
         // Multiple styles and scale factors
         assert(
             rendering: "![Some alt text](some-image.png)",
-            assetToReturn: .init(images: [
+            assetToReturn: .init(files: [
                 .light: [
                     1: try #require(URL(string: "images/com.test.example/some-image.png")),
                     2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
