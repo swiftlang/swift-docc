@@ -9,6 +9,7 @@ See https://swift.org/LICENSE.txt for license information
 
 add_library(DocCHTML STATIC
   LinkProvider.swift
+  MarkdownRenderer+Availability.swift
   MarkdownRenderer.swift
   WordBreak.swift
   XMLNode+element.swift)
