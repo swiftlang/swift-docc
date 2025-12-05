@@ -337,7 +337,7 @@ private func linkName(filename: some StringProtocol) -> String {
 }
 
 private let whitespaceAndDashes = CharacterSet.whitespaces
-    .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
+    .union(CharacterSet(charactersIn: "-\u{2013}\u{2014}")) // hyphen, en dash, em dash
 
 private extension PathHierarchy.Node {
     func matches(languagesFilter: SmallSourceLanguageSet) -> Bool {
