@@ -131,14 +131,14 @@ public enum RenderBlockContent: Equatable {
         ///
         /// The new aside will have a style set to the lowercased name.
         ///
+        /// - Parameters:
+        ///   - name: The name of the aside.
+        ///   - content: The block content to display in the aside
+        ///
         /// > Note:
         /// > If the lowercased name doesn't match one of the aside styles supported
         /// > by DocC Render (one of note, tip, experiment, important, or warning) this will
         /// > set the style to be note.
-        ///
-        /// - Parameters:
-        ///   - name: The name of the aside.
-        ///   - content: The block content to display in the aside
         public init(name: String, content: [RenderBlockContent]) {
             self.style = .init(rawValue: name)
             self.name = name
@@ -162,14 +162,14 @@ public enum RenderBlockContent: Equatable {
         /// The new aside will have a name and style based on the display name of the
         /// Swift Markdown aside kind.
         ///
+        /// - Parameters:
+        ///   - asideKind: The Swift Markdown aside kind
+        ///   - content: The block content to display in the aside
+        ///
         /// > Note:
         /// > If the Swift Markdown aside kind is unknown, then the new aside will
         /// > have a name and style set to the Swift Markdown aside kind,
         /// > capitalized if necessary.
-        ///
-        /// - Parameters:
-        ///   - asideKind: The Swift Markdown aside kind
-        ///   - content: The block content to display in the aside
         public init(asideKind: Markdown.Aside.Kind, content: [RenderBlockContent]) {
             let name: String
             if let knownDisplayName = Self.knownDisplayNames[asideKind.rawValue.lowercased()] {
@@ -625,15 +625,10 @@ public enum RenderBlockContent: Equatable {
         /// > by DocC Render (one of note, tip, experiment, important, or warning) the
         /// > new aside style's raw value will be set to note.
         public init(rawValue: String) {
-            switch rawValue.lowercased() {
-            case let lowercasedRawValue
-                where [
-                    "important",
-                    "warning",
-                    "experiment",
-                    "tip"
-                ].contains(lowercasedRawValue):
-                self.rawValue = lowercasedRawValue
+            let lowercased = rawValue.lowercased()
+            switch lowercased {
+            case "important", "warning", "experiment", "tip":
+                self.rawValue = lowercased
             default:
                 self.rawValue = "note"
             }

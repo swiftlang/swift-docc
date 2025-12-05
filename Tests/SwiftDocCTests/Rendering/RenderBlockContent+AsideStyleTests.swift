@@ -15,6 +15,34 @@ import XCTest
 
 class RenderBlockContent_AsideStyleTests: XCTestCase {
     private typealias Aside = RenderBlockContent.Aside
+    private typealias AsideStyle = RenderBlockContent.AsideStyle
+
+    func testSupportedDocCRenderStyles() {
+        XCTAssertEqual(
+            AsideStyle(rawValue: "Note").rawValue,
+            "note"
+        )
+        XCTAssertEqual(
+            AsideStyle(rawValue: "Important").rawValue,
+            "important"
+        )
+        XCTAssertEqual(
+            AsideStyle(rawValue: "Warning").rawValue,
+            "warning"
+        )
+        XCTAssertEqual(
+            AsideStyle(rawValue: "Experiment").rawValue,
+            "experiment"
+        )
+        XCTAssertEqual(
+            AsideStyle(rawValue: "Tip").rawValue,
+            "tip"
+        )
+        XCTAssertEqual(
+            AsideStyle(rawValue: "Unknown").rawValue,
+            "note"
+        )
+    }
 
     func testDisplayNameForSpecialRawValue() {
         XCTAssertEqual(
