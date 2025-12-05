@@ -548,6 +548,54 @@ struct MarkdownRendererTests {
         )
     }
     
+    @Test
+    func testParsesAndPreservesHTMLExceptComments() {
+        assert(
+            rendering: "This is a <!-- inline comment --><strong>formatted</strong> paragraph.",
+            matches: "<p>This is a <strong>formatted</strong> paragraph.</p>"
+        )
+        
+        assert(
+            rendering: "This<br/> is a <em><!-- multi\n line\n comment-->formatted</em>paragraph.",
+            matches: "<p>This<br/> is a <em>formatted</em> paragraph.</p>"
+        )
+        
+        assert(
+            rendering: "This is a <span style=\"color: red\"><!-- before -->custom formatted<!-- after --></span> paragraph.",
+            matches: "<p>This is a <span style=\"color: red\">custom formatted</span> paragraph.</p>"
+        )
+        
+        // This markup doesn't properly close the `<strong>` tag (it uses an `</em>` tag.
+        // In this case we drop both tags but not their content in between. This matches what DocC does for inline HTML with regards to the Render JSON output.
+        assert(
+            rendering: "This is a <strong>custom formatted</em> paragraph.",
+            matches: "<p>This is a custom formatted paragraph.</p>"
+        )
+        
+        // Any content _within_ HTML tags in the markdown isn't parsed as markdown content.
+        assert(
+            rendering: "This is a <span>custom **not** formatted</span> paragraph.",
+            matches: "<p>This is a <span>custom **not** formatted</span> paragraph.</p>"
+        )
+        
+        assert(
+            rendering: """
+            <details>
+                <summary>Some summary<!-- comment in summary--></summary>
+                <!-- comment between elements -->
+                <p><!-- comment before -->Some longer<!-- comment between words --> description<!-- comment after --></p>
+            </details>
+            <!-- comment after block element -->
+            """,
+            matches: """
+            <details>
+                <summary>Some summary</summary>
+                <p>Some longer description</p>
+            </details>
+            """
+        )
+    }
+    
     private func assert(
         rendering markdownContent: String,
         elementToReturn: LinkedElement? = nil,
