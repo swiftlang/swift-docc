@@ -91,7 +91,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         )
     }
     
-    /// Transforms a markdown heading into a`<h[1...6]>` HTML element whose content is wrapped in an `<a>` element that references the heading itself.
+    /// Transforms a markdown heading into a`<h[1...6]>` HTML element whose content is wrapped in an `<a>` HTML element that references the heading itself.
     ///
     /// As part of transforming the heading, the renderer also transforms all of the its content recursively.
     /// For example, the renderer transforms this markdown
@@ -107,11 +107,14 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// </h1>
     /// ```
     ///
-    /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't wrap the headings content in an anchor.
+    /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't wrap the heading's content in an anchor.
     package func visit(_ heading: Heading) -> XMLNode {
         selfReferencingHeading(level: heading.level, content: visit(heading.children), plainTextTitle: heading.plainText)
     }
     
+    /// Returns a `<h[1...6]>` HTML element whose content is wrapped in an `<a>` HTML element that references the heading itself.
+    ///
+    /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't wrap the heading's content in an anchor.
     func selfReferencingHeading(level: Int, content: [XMLNode], plainTextTitle: @autoclosure () -> String) -> XMLElement {
         switch goal {
         case .conciseness:
@@ -128,6 +131,34 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 // ... that refers to the heading itself
                 attributes: ["id": id]
             )
+        }
+    }
+    
+    /// Returns a "section" with a level-2 heading that references the section it's in.
+    ///
+    /// When the renderer has a ``RenderGoal/richness`` goal, the returned section is a`<section>` HTML element.
+    /// The first child of that `<section>` HTML element is an `<h2>` HTML element that wraps a `<a>` HTML element that references the section.
+    /// After that `<h2>` HTML element, the section contains the already transformed `content` nodes representing the rest of its HTML content.
+    ///
+    /// When the renderer has a ``RenderGoal/conciseness`` goal, it returns a plain `<h2>` element followed by the already transformed `content` nodes.
+    func selfReferencingSection(named sectionName: String, content: [XMLNode]) -> [XMLNode] {
+        guard !content.isEmpty else { return [] }
+        
+        switch goal {
+        case .richness:
+            let id = urlReadableFragment(sectionName)
+            
+            return [.element(
+                named: "section",
+                children: [
+                    .element(named: "h2", children: [
+                        .element(named: "a", children: [.text(sectionName)], attributes: ["href": "#\(id)"])
+                    ])
+                ] + content,
+                attributes: ["id": id]
+            )]
+        case .conciseness:
+            return [.element(named: "h2", children: [.text(sectionName)]) as XMLNode] + content
         }
     }
     

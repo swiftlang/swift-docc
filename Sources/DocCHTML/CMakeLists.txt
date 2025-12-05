@@ -11,6 +11,7 @@ add_library(DocCHTML STATIC
   LinkProvider.swift
   MarkdownRenderer+Availability.swift
   MarkdownRenderer+Breadcrumbs.swift
+  MarkdownRenderer+Parameters.swift
   MarkdownRenderer.swift
   WordBreak.swift
   XMLNode+element.swift)
