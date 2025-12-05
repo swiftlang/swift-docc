@@ -91,6 +91,10 @@ public struct DocumentationBundle {
 
     /// A custom JSON settings file used to theme renderer output.
     public let themeSettings: URL?
+    
+    /// A custom JSON settings file used to add custom scripts to the renderer output.
+    public let customScripts: URL?
+
     /// A URL prefix to be appended to the relative presentation URL.
     ///
     /// This is used when a built documentation is hosted in a known location.
@@ -107,6 +111,7 @@ public struct DocumentationBundle {
     ///   - customHeader: A custom HTML file to use as the header for rendered output.
     ///   - customFooter: A custom HTML file to use as the footer for rendered output.
     ///   - themeSettings: A custom JSON settings file used to theme renderer output.
+    ///   - customScripts: A custom JSON settings file used to add custom scripts to the renderer output.
     public init(
         info: Info,
         baseURL: URL = URL(string: "/")!,
@@ -115,7 +120,8 @@ public struct DocumentationBundle {
         miscResourceURLs: [URL],
         customHeader: URL? = nil,
         customFooter: URL? = nil,
-        themeSettings: URL? = nil
+        themeSettings: URL? = nil,
+        customScripts: URL? = nil
     ) {
         self.info = info
         self.baseURL = baseURL
@@ -125,6 +131,7 @@ public struct DocumentationBundle {
         self.customHeader = customHeader
         self.customFooter = customFooter
         self.themeSettings = themeSettings
+        self.customScripts = customScripts
         self.rootReference = ResolvedTopicReference(bundleID: info.id, path: "/", sourceLanguage: .swift)
         self.documentationRootReference = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
         self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
