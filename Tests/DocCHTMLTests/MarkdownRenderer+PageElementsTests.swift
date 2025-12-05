@@ -22,6 +22,68 @@ import Markdown
 
 struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
+    func testRenderBreadcrumbs(goal: RenderGoal) {
+        let elements = [
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/index.html")!,
+                names: .single(.symbol("ModuleName")),
+                subheadings: .single(.symbol([.init(text: "ModuleName", kind: .identifier)])),
+                abstract: nil
+            ),
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/Something/index.html")!,
+                names: .languageSpecificSymbol([
+                    .swift:      "Something",
+                    .objectiveC: "TLASomething",
+                ]),
+                subheadings: .languageSpecificSymbol([
+                    .swift: [
+                        .init(text: "class ", kind: .decorator),
+                        .init(text: "Something", kind: .identifier),
+                    ],
+                    .objectiveC: [
+                        .init(text: "class ", kind: .decorator),
+                        .init(text: "TLASomething", kind: .identifier),
+                    ],
+                ]),
+                abstract: nil
+            ),
+        ]
+        let breadcrumbs = makeRenderer(goal: goal, elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path }, currentPageNames: .single(.conceptual("ThisPage")))
+        switch goal {
+        case .richness:
+            breadcrumbs.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <nav id="breadcrumbs">
+              <ul>
+                <li>
+                  <a href="../../index.html">ModuleName</a>
+                </li>
+                <li>
+                  <a href="../index.html">
+                    <span class="swift-only">Something</span>
+                    <span class="occ-only">TLASomething</span>
+                  </a>
+                </li>
+                <li>ThisPage</li>
+              </ul>
+            </nav>
+            """)
+        case .conciseness:
+            breadcrumbs.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <ul>
+              <li>
+                <a href="../../index.html">ModuleName</a>
+              </li>
+              <li>
+                <a href="../index.html">Something</a>
+              </li>
+              <li>ThisPage</li>
+            </ul>
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
     func testRenderAvailability(goal: RenderGoal) {
         let availability = makeRenderer(goal: goal).availability([
             .init(name: "First",  introduced: "1.2", deprecated: "3.4", isBeta: false),
