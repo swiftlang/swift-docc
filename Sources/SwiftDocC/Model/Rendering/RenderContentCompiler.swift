@@ -389,13 +389,10 @@ struct RenderContentCompiler: MarkupVisitor {
                     fatalError("Unexpected content type in note: \(type(of: $0))")
                 }
             }
-        let aside = RenderBlockContent.aside(
-            .init(
-                asideKind: .note,
-                content: content
-            )
-        )
-        return [aside]
+        return [RenderBlockContent.aside(.init(
+            asideKind: .note,
+            content: content
+        ))]
     }
     
     mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> [any RenderContent] {
