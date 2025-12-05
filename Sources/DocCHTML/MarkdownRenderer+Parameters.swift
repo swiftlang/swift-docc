@@ -23,7 +23,7 @@ package extension MarkdownRenderer {
     struct ParameterInfo {
         /// The name of the parameter.
         package var name: String
-        /// The markdown content that describes
+        /// The markdown content that describes the parameter.
         package var content: [any Markup]
         
         package init(name: String, content: [any Markup]) {
@@ -32,12 +32,12 @@ package extension MarkdownRenderer {
         }
     }
     
-    /// Creates a "parameters" section that described all parameters for a piece of API.
+    /// Creates a "parameters" section that describes all the parameters for a symbol.
     ///
-    /// If the API has different parameters in different language representations, pass each language representation's parameter information.
+    /// If each language representation of the API has their own language-specific parameters, pass each language representation's parameter information.
     ///
     /// If the API has the _same_ parameters in all language representations, only pass the parameters for one language.
-    /// This produces in a "parameters" section that doesn't hide any parameters for any of the languages (same as if the symbol only had one language representation)
+    /// This produces a "parameters" section that doesn't hide any parameters for any of the languages (same as if the symbol only had one language representation)
     func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> [XMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
         guard info.contains(where: { _, parameters in !parameters.isEmpty }) else {
@@ -124,7 +124,7 @@ package extension MarkdownRenderer {
             items[index + 1].addAttributes(["class": "\(primary.language.id)-only"])
         }
         
-        // Insert parameter that only exist in the secondary language representation.
+        // Insert parameter that only exists in the secondary language representation.
         for case let .insert(offset, parameter, _) in differences.insertions {
             // Account for any primary-only parameters that appear before this (times 2 because each parameter has a `<dt>` and `<dd>` HTML element)
             let index = (offset + primaryOnlyIndices.count(where: { $0 < offset })) * 2
