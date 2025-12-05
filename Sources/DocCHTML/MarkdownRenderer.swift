@@ -695,7 +695,10 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             }
             
             // Next, check if its empty element (for example `<br />` or `<hr />`) that's complete on its own.
-            if let parsed = try? XMLElement(xmlString: rawHTML) {
+            
+            // On non-Darwin platforms, `XMLElement(xmlString:)` sometimes crashes for certain invalid / incomplete XML string.
+            // To minimize the risk of this happening, don't try to parse the XML string as an empty HTML element unless it ends with "/>"
+            if rawHTML.hasSuffix("/>"), let parsed = try? XMLElement(xmlString: rawHTML) {
                 children.append(parsed)
                 continue
             }
@@ -703,6 +706,8 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             // This could be an HTML element with content or it could be invalid HTML.
             // Don't modify `elements` until we know that we've parsed a valid HTML element.
             var copy = elements
+            let tagName = rawHTML.dropFirst().prefix(while: \.isLetter)
+            let expectedClosingTag = "</\(tagName)>"
             
             // Gradually check a longer and longer series of markup elements to see if they form a valid HTML element.
             inner: while !copy.isEmpty, let next = copy.first as? any InlineMarkup {
@@ -714,7 +719,10 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 }
                 
                 rawHTML += next.format()
-                if let parsed = try? XMLElement(xmlString: rawHTML) {
+                if let maybeClosingHTML = next as? InlineHTML,
+                   maybeClosingHTML.rawHTML == expectedClosingTag,
+                   let parsed = try? XMLElement(xmlString: rawHTML)
+                {
                     children.append(parsed) // Include the valid HTML element in the output.
                     elements = copy // Skip over all the elements that were used to create that HTML element.
                     continue outer
