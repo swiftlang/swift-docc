@@ -114,8 +114,10 @@ public enum RenderBlockContent: Equatable {
         /// The content inside this aside block.
         public var content: [RenderBlockContent]
 
-        /// Create an aside from an aside style. Use the capitalized style
-        /// as the name.
+        /// Creates an aside from an aside style and block content.
+        ///
+        /// The new aside will have a name set to the capitalized style.
+        ///
         /// - Parameters:
         ///   - style: The style of this aside
         ///   - content: The block content to display in the aside
@@ -125,19 +127,26 @@ public enum RenderBlockContent: Equatable {
             self.content = content
         }
 
-        /// Create an aside from a name.
+        /// Creates an aside from a name and block content.
+        ///
+        /// The new aside will have a style set to the lowercased name.
+        ///
+        /// > Note:
+        /// > If the lowercased name doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) this will
+        /// > set the style to be note.
+        ///
         /// - Parameters:
         ///   - name: The name of the aside.
         ///   - content: The block content to display in the aside
-        /// > Note:
-        /// > If the name doesn't match a style supported by DocC Render, set the style to "note".
         public init(name: String, content: [RenderBlockContent]) {
             self.style = .init(rawValue: name)
             self.name = name
             self.content = content
         }
 
-        /// Create an aside from both an aside style and a name.
+        /// Creates an aside from an aside style, name and block content.
+        ///
         /// - Parameters:
         ///   - style: The style of the aside
         ///   - name: The name of the aside
@@ -148,28 +157,28 @@ public enum RenderBlockContent: Equatable {
             self.content = content
         }
 
-        /// Create an aside from a markdown aside kind.
+        /// Creates an aside from a Swift Markdown aside kind and block content.
+        ///
+        /// The new aside will have a name and style based on the display name of the
+        /// Swift Markdown aside kind.
+        ///
+        /// > Note:
+        /// > If the Swift Markdown aside kind is unknown, then the new aside will
+        /// > have a name and style set to the Swift Markdown aside kind,
+        /// > capitalized if necessary.
+        ///
         /// - Parameters:
         ///   - asideKind: The Swift Markdown aside kind
         ///   - content: The block content to display in the aside
-        ///
-        /// For known values, use the Swift Markdown aside kind's display
-        /// name for this aside's name. For other values, use the capitalized kind
-        /// as the name.
         public init(asideKind: Markdown.Aside.Kind, content: [RenderBlockContent]) {
-
-            // Determine which name to use for this aside:
-            // 1. If the provided kind case-insensitive matches one of the known Swift Markdown
-            //    aside kinds, then use the matching kind's display name.
-            // 2. If any character is upper-cased, assume the content has specific casing and
-            //    return the raw value.
-            // 3. Otherwise use the capitalized kind that was provided.
             let name: String
             if let knownDisplayName = Self.knownDisplayNames[asideKind.rawValue.lowercased()] {
                 name = knownDisplayName
             } else if asideKind.rawValue.contains(where: \.isUppercase) {
+                // Assume the content has specific and intentional capitalization.
                 name = asideKind.rawValue
             } else {
+                // Avoid an all lower case display name.
                 name = asideKind.rawValue.capitalized
             }
 
@@ -604,13 +613,17 @@ public enum RenderBlockContent: Equatable {
             return rawValue.capitalized
         }
 
-        /// Create an aside style.
+        /// Creates an aside style.
+        ///
+        /// The new aside style's underlying raw string value will be lowercased.
+        ///
         /// - Parameters:
-        ///   - rawValue: The name of the style to use.
+        ///   - rawValue: The underlying raw string value.
+        ///
         /// > Note:
-        /// > If the style isn't supported by DocC Render (one of
-        /// > note, tip, experiment, important, or warning) coerce the
-        /// > new style to be "note".
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
         public init(rawValue: String) {
             switch rawValue.lowercased() {
             case let lowercasedRawValue
@@ -626,13 +639,18 @@ public enum RenderBlockContent: Equatable {
             }
         }
 
-        /// Create an aside style from a Swift Markdown aside kind.
+        /// Creates an aside style from a Swift Markdown aside kind.
+        ///
+        /// The new aside style's underlying raw string value will be the
+        /// markdown aside kind's raw value.
+        ///
         /// - Parameters:
-        ///   - asideKind: The Swift Markdown aside kind
+        ///   - rawValue: The Swift Markdown aside kind
+        ///
         /// > Note:
-        /// > If the style isn't supported by DocC Render (one of
-        /// > note, tip, experiment, important, and warning) coerce the
-        /// > new style to be "note".
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
         public init(asideKind: Markdown.Aside.Kind) {
             self.init(rawValue: asideKind.rawValue)
         }
@@ -651,8 +669,6 @@ public enum RenderBlockContent: Equatable {
             try container.encode(rawValue)
         }
         
-        /// Creates an aside style by decoding with the specified decoder.
-        /// - Parameter decoder: The decoder to read data from.
         public init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
             self.rawValue = try container.decode(String.self)
