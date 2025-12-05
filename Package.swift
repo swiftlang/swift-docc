@@ -44,6 +44,7 @@ let package = Package(
             name: "SwiftDocC",
             dependencies: [
                 .target(name: "DocCCommon"),
+                .target(name: "DocCHTML"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
