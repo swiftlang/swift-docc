@@ -657,7 +657,7 @@ public enum RenderBlockContent: Equatable {
 
         /// Creates an aside style with the specified display name.
         /// - Parameter displayName: The heading text to use when rendering this style of aside.
-        @available(*, deprecated, message: "Use Aside.init(style:, name:, content:) instead. This deprecated API will be removed after 6.4 is released.")
+        @available(*, deprecated, renamed: "init(rawValue:)", message: "Use 'init(rawValue:)' instead. This deprecated API will be removed after 6.4 is released.")
         public init(displayName: String) {
             self.init(rawValue: displayName)
         }
