@@ -108,6 +108,7 @@ package extension MarkdownRenderer {
         // Find all the inserted and deleted parameters.
         // This assumes that parameters appear in the same _order_ in each language representation, which is true in practice.
         // If that assumption is wrong, it will produce correct looking results but some repeated markup.
+        // TODO: Consider adding a debug assertion that verifies the order and a test that verifies the output of out-of-order parameter names.
         let differences = secondary.parameters.difference(from: primary.parameters, by: { $0.name == $1.name })
         
         // Track which parameters _only_ exist in the primary language in order to insert the secondary languages's _unique_ parameters in the right locations.
