@@ -17,7 +17,7 @@ package import Foundation
 #endif
 
 package extension MarkdownRenderer {
-    /// Creates an HTML element for the breadcrumbs leading up to the renderer's current page.
+    /// Creates an HTML element for the breadcrumbs that lead to the renderer's current page.
     func breadcrumbs(references: [URL], currentPageNames: LinkedElement.Names) -> XMLNode {
         // Breadcrumbs handle symbols differently than most elements in that everything uses a default style (no "code voice")
         func nameElements(for names: LinkedElement.Names) -> [XMLNode] {
