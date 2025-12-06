@@ -2576,18 +2576,20 @@ Document
     
     /// Ensures we render our supported asides from symbol-graph content correctly, whether as a blockquote or as a list item.
     func testRenderAsides() async throws {
+        let asidesSGFURL = Bundle.module.url(forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
+        let catalog = Folder(name: "unit-test.docc", content: [
+            CopyOfFile(original: asidesSGFURL, newName: "Asides.symbols.json"),
+            TextFile(name: "Extension.md", utf8Content: """
+            # Some documentation
+            """),
+        ])
 
-        let asidesSGFURL = Bundle.module.url(
-            forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: []) { url in
-            try? FileManager.default.copyItem(at: asidesSGFURL, to: url.appendingPathComponent("Asides.symbols.json"))
-        }
-        
+        let (_, context) = try await loadBundle(catalog: catalog)
+
+
         func testReference(
             myFuncReference: ResolvedTopicReference,
-            expectedAsideStyles: [String],
-            expectedAsideNames: [String?],
-            expectedAsideTexts: [String],
+            expectedAsides: [RenderBlockContent.Aside],
             file: StaticString = #filePath,
             line: UInt = #line
         ) throws {
@@ -2607,128 +2609,60 @@ Document
             }
             XCTAssertEqual(25, asides.count)
 
-            XCTAssertEqual(expectedAsideStyles, asides.map(\.style.rawValue), file: file, line: line)
-            XCTAssertEqual(expectedAsideNames, asides.map(\.name), file: file, line: line)
-
-            for (expectedAsideText, aside) in zip(expectedAsideTexts, asides) {
-                let expectedInlineContent = [
-                    RenderBlockContent.paragraph(
-                        .init(
-                            inlineContent: [
-                                .text(expectedAsideText)
-                            ]
-                        )
-                    )
-                ]
-                XCTAssertEqual(expectedInlineContent, aside.content, file: file, line: line)
+            for (expectedAside, aside) in zip(expectedAsides, asides) {
+                print()
+                print("EXPECTED: \(expectedAside)")
+                print("ACTUAL:   \(aside)")
+                XCTAssertEqual(expectedAside.style, aside.style, file: file, line: line)
+                XCTAssertEqual(expectedAside.name, aside.name, file: file, line: line)
+                XCTAssertEqual(expectedAside.content, aside.content, file: file, line: line)
             }
         }
 
-        // Instead of creating expected aside objects, type out strings here.
-        // This makes assertion failures much easier to read and parse.
+        func testContent(_ text: String) -> [RenderBlockContent] {
+            return [RenderBlockContent.paragraph(
+                RenderBlockContent.Paragraph(
+                    inlineContent: [
+                        RenderInlineContent.text(text)
+                    ]
+                )
+            )]
+        }
 
-        // The aside styles from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
-        let expectedAsideStyles = [
-            "note",
-            "tip",
-            "important",
-            "experiment",
-            "warning",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-            "note",
-        ]
-
-        // The aside names from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
-        let expectedAsideNames = [
-            "Note",
-            "Tip",
-            "Important",
-            "Experiment",
-            "Warning",
-            "Attention",
-            "Author",
-            "Authors",
-            "Bug",
-            "Complexity",
-            "Copyright",
-            "Date",
-            "Invariant",
-            "Mutating Variant",
-            "Non-Mutating Variant",
-            "Postcondition",
-            "Precondition",
-            "Remark",
-            "Requires",
-            "Since",
-            "To Do",
-            "Version",
-            "See Also",
-            "See Also",
-            "Throws"
-        ]
-
-        // The aside contents from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
-        let expectedAsideContents = [
-            "This is a note.",
-            "Here’s a tip.",
-            "Keep this in mind.",
-            "Try this out.",
-            "Watch out for this.",
-            "Head’s up!",
-            "I wrote this.",
-            "We wrote this.",
-            "This is wrong.",
-            "This takes time.",
-            "2021 Apple Inc.",
-            "1 January 1970",
-            "This shouldn’t change.",
-            "This will change.",
-            "This changes, but not in the data.",
-            "After calling, this should be true.",
-            "Before calling, this should be true.",
-            "Something you should know.",
-            "This needs something.",
-            "The beginning of time.",
-            "This needs work.",
-            "3.1.4",
-            "This other thing.",
-            "And this other thing.",
-            "A serious error.",
+        // Aside blocks from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
+        let expectedAsides: [RenderBlockContent.Aside] = [
+            RenderBlockContent.Aside(name: "Note",                 content: testContent("This is a note.")),
+            RenderBlockContent.Aside(name: "Tip",                  content: testContent("Here’s a tip.")),
+            RenderBlockContent.Aside(name: "Important",            content: testContent("Keep this in mind.")),
+            RenderBlockContent.Aside(name: "Experiment",           content: testContent("Try this out.")),
+            RenderBlockContent.Aside(name: "Warning",              content: testContent("Watch out for this.")),
+            RenderBlockContent.Aside(name: "Attention",            content: testContent("Head’s up!")),
+            RenderBlockContent.Aside(name: "Author",               content: testContent("I wrote this.")),
+            RenderBlockContent.Aside(name: "Authors",              content: testContent("We wrote this.")),
+            RenderBlockContent.Aside(name: "Bug",                  content: testContent("This is wrong.")),
+            RenderBlockContent.Aside(name: "Complexity",           content: testContent("This takes time.")),
+            RenderBlockContent.Aside(name: "Copyright",            content: testContent("2021 Apple Inc.")),
+            RenderBlockContent.Aside(name: "Date",                 content: testContent("1 January 1970")),
+            RenderBlockContent.Aside(name: "Invariant",            content: testContent("This shouldn’t change.")),
+            RenderBlockContent.Aside(name: "Mutating Variant",     content: testContent("This will change.")),
+            RenderBlockContent.Aside(name: "Non-Mutating Variant", content: testContent("This changes, but not in the data.")),
+            RenderBlockContent.Aside(name: "Postcondition",        content: testContent("After calling, this should be true.")),
+            RenderBlockContent.Aside(name: "Precondition",         content: testContent("Before calling, this should be true.")),
+            RenderBlockContent.Aside(name: "Remark",               content: testContent("Something you should know.")),
+            RenderBlockContent.Aside(name: "Requires",             content: testContent("This needs something.")),
+            RenderBlockContent.Aside(name: "Since",                content: testContent("The beginning of time.")),
+            RenderBlockContent.Aside(name: "To Do",                content: testContent("This needs work.")),
+            RenderBlockContent.Aside(name: "Version",              content: testContent("3.1.4")),
+            RenderBlockContent.Aside(name: "See Also",             content: testContent("This other thing.")),
+            RenderBlockContent.Aside(name: "See Also",             content: testContent("And this other thing.")),
+            RenderBlockContent.Aside(name: "Throws",               content: testContent("A serious error.")),
         ]
 
         let quoteReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/quoteAsides()", sourceLanguage: .swift)
-        try testReference(
-            myFuncReference: quoteReference,
-            expectedAsideStyles: expectedAsideStyles,
-            expectedAsideNames: expectedAsideNames,
-            expectedAsideTexts: expectedAsideContents
-        )
+        try testReference(myFuncReference: quoteReference, expectedAsides: expectedAsides)
 
         let dashReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/dashAsides()", sourceLanguage: .swift)
-        try testReference(
-            myFuncReference: dashReference,
-            expectedAsideStyles: expectedAsideStyles,
-            expectedAsideNames: expectedAsideNames,
-            expectedAsideTexts: expectedAsideContents
-        )
+        try testReference(myFuncReference: dashReference, expectedAsides: expectedAsides)
     }
 
     /// Tests parsing origin data from symbol graph.

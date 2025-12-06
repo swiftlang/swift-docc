@@ -663,10 +663,17 @@ public enum RenderBlockContent: Equatable {
             var container = encoder.singleValueContainer()
             try container.encode(rawValue)
         }
-        
+
+        /// Creates an aside style by decoding from the specified decoder.
+        /// - Parameter decoder: The decoder to read data from.
+        ///
+        /// > Note:
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
         public init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
-            self.rawValue = try container.decode(String.self)
+            self.init(rawValue: try container.decode(String.self))
         }
     }
     
@@ -999,13 +1006,17 @@ extension RenderBlockContent: Codable {
         case .paragraph:
             self = try .paragraph(.init(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent)))
         case .aside:
-            self = try .aside(
-                .init(
-                    style: try container.decode(AsideStyle.self, forKey: .style),
-                    name: try container.decode(String.self, forKey: .name),
-                    content: container.decode([RenderBlockContent].self, forKey: .content)
-                )
-            )
+            let aside: Aside
+            let content = try container.decode([RenderBlockContent].self, forKey: .content)
+            let style = try container.decode(AsideStyle.self, forKey: .style)
+            if let name = try container.decodeIfPresent(String.self, forKey: .name) {
+                // Retain both the style and name, if both are present.
+                aside = .init(style: style, name: name, content: content)
+            } else {
+                // Or if the name is not specified, set the name based on the style.
+                aside = .init(style: style, content: content)
+            }
+            self = .aside(aside)
         case .codeListing:
             let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
             let options: CodeBlockOptions?
