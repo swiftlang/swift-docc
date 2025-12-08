@@ -21,7 +21,7 @@ package import DocCCommon
 package extension MarkdownRenderer {
     /// Creates a "returns" section that describes all return values of a symbol.
     ///
-    /// If each language representation of the symbol have their own language-specific return values, pass the return value content for all language representations.
+    /// If each language representation of the symbol has its own language-specific return values, pass the return value content for all language representations.
     ///
     /// If all language representations of the symbol have the _same_ return value, only pass the return value content for one language.
     /// This produces a "returns" section that doesn't hide the return value content for any of the languages (same as if the symbol only had one language representation)

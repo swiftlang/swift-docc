@@ -34,7 +34,7 @@ package extension MarkdownRenderer {
     
     /// Creates a "parameters" section that describes all the parameters for a symbol.
     ///
-    /// If each language representation of the symbol have their own language-specific parameters, pass the parameter information for all language representations.
+    /// If each language representation of the symbol has its own language-specific parameters, pass the parameter information for all language representations.
     ///
     /// If all language representations of the symbol have the _same_ parameters, only pass the parameter information for one language.
     /// This produces a "parameters" section that doesn't hide any parameters for any of the languages (same as if the symbol only had one language representation)
