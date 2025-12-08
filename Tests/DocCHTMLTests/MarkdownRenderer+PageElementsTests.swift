@@ -269,6 +269,66 @@ struct MarkdownRenderer_PageElementsTests {
         """)
     }
     
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderSingleLanguageReturnSections(goal: RenderGoal) {
+        let returns = makeRenderer(goal: goal).returns([
+            .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
+        ])
+        
+        let commonHTML = """
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Return-Value">
+            <h2>
+              <a href="#Return-Value">Return Value</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Return Value</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderLanguageSpecificReturnSections(goal: RenderGoal) {
+        let returns = makeRenderer(goal: goal).returns([
+            .swift:      parseMarkup(string: "First paragraph\n\nSecond paragraph"),
+            .objectiveC: parseMarkup(string: "Other language's paragraph"),
+        ])
+        
+        let commonHTML = """
+        <p class="swift-only">First paragraph</p>
+        <p class="swift-only">Second paragraph</p>
+        <p class="occ-only">Other language’s paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Return-Value">
+            <h2>
+              <a href="#Return-Value">Return Value</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Return Value</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+    
     // MARK: -
     
     private func makeRenderer(
