@@ -675,56 +675,67 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         // - An empty element like `<br />` or `<hr />` that's complete on its own.
         // - An element with children like `<span style="color: red;">Something</span>` that needs to be created out of multiple markup elements.
         //
-        // FIXME: See if this can be extracted into 2 private functions to make the code easier to read.
         // Because it may take multiple markdown elements to create an HTML element, we pop elements rather than iterating
-        var elements = Array(container)
-        outer: while !elements.isEmpty {
-            let element = elements.removeFirst()
-            
-            guard let start = element as? InlineHTML else {
+        var remainder = Array(container)[...]
+        while let element = remainder.popFirst() {
+            guard let openingHTML = element as? InlineHTML else {
                 // If the markup _isn't_ inline HTML we can simply visit it to transform it.
                 children.append(visit(element))
                 continue
             }
             
-            // Otherwise, we need to determine how long this markdown element it.
-            var rawHTML = start.rawHTML
+            // Otherwise, we need to determine how long this markdown element is.
+            let rawHTML = openingHTML.rawHTML
+            // Simply skip any HTML/XML comments.
             guard !rawHTML.hasPrefix("<!--") else {
-                // If it's a basic link, simply skip it.
                 continue
             }
             
             // Next, check if its empty element (for example `<br />` or `<hr />`) that's complete on its own.
-            if let parsed = try? XMLElement(xmlString: rawHTML) {
+            
+            // On non-Darwin platforms, `XMLElement(xmlString:)` sometimes crashes for certain invalid / incomplete XML strings.
+            // To minimize the risk of this happening, don't try to parse the XML string as an empty HTML element unless it ends with "/>"
+            if rawHTML.hasSuffix("/>"), let parsed = try? XMLElement(xmlString: rawHTML) {
                 children.append(parsed)
-                continue
             }
-            
-            // This could be an HTML element with content or it could be invalid HTML.
-            // Don't modify `elements` until we know that we've parsed a valid HTML element.
-            var copy = elements
-            
-            // Gradually check a longer and longer series of markup elements to see if they form a valid HTML element.
-            inner: while !copy.isEmpty, let next = copy.first as? any InlineMarkup {
-                _ = copy.removeFirst()
-                
-                // Skip any HTML/XML comments _inside_ this HTML tag
-                if let html = next as? InlineHTML, html.rawHTML.hasPrefix("<!--") {
-                    continue inner
-                }
-                
-                rawHTML += next.format()
-                if let parsed = try? XMLElement(xmlString: rawHTML) {
-                    children.append(parsed) // Include the valid HTML element in the output.
-                    elements = copy // Skip over all the elements that were used to create that HTML element.
-                    continue outer
-                }
+            // Lastly, check if this is the start of an HTML element that needs to be constructed out of more than one markup element
+            else if let parsed = _findMultiMarkupHTMLElement(in: &remainder, openingRawHTML: rawHTML) {
+                children.append(parsed)
             }
-            // If we reached the end of the inline elements without parsing a valid HTML element, skip that first InlineHTML markup and continue from there.
-            continue
         }
         
         return children
+    }
+    
+    private func _findMultiMarkupHTMLElement(in remainder: inout ArraySlice<any Markup>, openingRawHTML: String) -> XMLNode? {
+        // Don't modify `remainder` until we know that we've parsed a valid HTML element.
+        var copy = remainder
+        
+        var rawHTML = openingRawHTML
+        let tagName = rawHTML.dropFirst(/* the opening "<" */).prefix(while: \.isLetter)
+        let expectedClosingTag = "</\(tagName)>"
+        
+        // Only iterate as long the markup is _inline_ markup.
+        while let next = copy.first as? any InlineMarkup {
+            _ = copy.removeFirst()
+            let html = next as? InlineHTML
+            
+            // Skip any HTML/XML comments _inside_ this HTML tag
+            if let html, html.rawHTML.hasPrefix("<!--") {
+                continue
+            }
+            
+            // If this wasn't a comment, accumulate more raw HTML to try and parse
+            rawHTML += next.format()
+            // On non-Darwin platforms, `XMLElement(xmlString:)` sometimes crashes for certain invalid / incomplete XML strings.
+            // To minimize the risk of this happening, don't try to parse the XML string as an empty HTML element unless it ends with "/>"
+            if html?.rawHTML == expectedClosingTag, let parsed = try? XMLElement(xmlString: rawHTML) {
+                remainder = copy // Skip over all the elements that were used to create that HTML element.
+                return parsed // Include the valid HTML element in the output.
+            }
+        }
+        // If we reached the end of the _inline_ markup without parsing a valid HTML element, skip just that opening markup without updating `remainder`
+        return nil
     }
     
     // MARK: Directives
