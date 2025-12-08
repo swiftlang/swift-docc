@@ -21,6 +21,7 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     }
     
     var markdown = ""
+    // All references to other documents explicitly referenced in the text
     var outgoingReferences: Set<MarkdownOutputManifest.Relationship> = []
      
     private(set) var indentationToRemove: String?

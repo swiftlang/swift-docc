@@ -53,13 +53,12 @@ public protocol ConvertOutputConsumer {
     
 }
 
-@_spi(MarkdownOutput)
-public protocol ConvertOutputMarkdownConsumer {
+package protocol ConvertOutputMarkdownConsumer {
     /// Consumes a markdown output node
     func consume(markdownNode: WritableMarkdownOutputNode) throws
     
     /// Consumes a markdown output manifest
-    func consume(markdownManifest: WritableMarkdownOutputManifest) throws
+    func consume(markdownManifest: MarkdownOutputManifest) throws
 }
 
 // Default implementations that discard the documentation conversion products, for consumers that don't need these

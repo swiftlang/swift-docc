@@ -155,6 +155,7 @@ extension MarkdownOutputSemanticVisitor {
         
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
         markdownWalker.visit(symbol.abstract)
+        // Intentionally only including the primary declaration in the output, because we are only using the primary language. 
         if let declarationFragments = symbol.declaration.first?.value.declarationFragments {
             let declaration = declarationFragments
                 .map { $0.spelling }
@@ -201,7 +202,7 @@ extension MarkdownOutputSemanticVisitor {
 
 import SymbolKit
 
-extension MarkdownOutputNode.Metadata.Symbol {
+private extension MarkdownOutputNode.Metadata.Symbol {
     init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationBundle) {
                 
         // Gather modules
@@ -224,7 +225,7 @@ extension MarkdownOutputNode.Metadata.Symbol {
     }
 }
 
-extension MarkdownOutputNode.Metadata.Availability {
+private extension MarkdownOutputNode.Metadata.Availability {
     init(_ item: SymbolGraph.Symbol.Availability.AvailabilityItem) {
         self.init(
             platform: item.domain?.rawValue ?? "*",

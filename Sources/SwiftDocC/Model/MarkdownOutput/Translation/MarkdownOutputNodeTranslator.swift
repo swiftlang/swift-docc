@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
+import Foundation
 
 /// Creates ``CollectedMarkdownOutput`` from a ``DocumentationNode``.
 internal struct MarkdownOutputNodeTranslator {
@@ -37,28 +37,7 @@ struct CollectedMarkdownOutput {
     }
 }
 
-@_spi(MarkdownOutput)
-public struct WritableMarkdownOutputNode {
-    public let identifier: ResolvedTopicReference
-    public let node: MarkdownOutputNode
-}
-
-extension MarkdownOutputManifest {
-    var writable: WritableMarkdownOutputManifest {
-        get throws {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-            #if DEBUG
-            encoder.outputFormatting.insert(.prettyPrinted)
-            #endif
-            let data = try encoder.encode(self)
-            return WritableMarkdownOutputManifest(title: title, manifestData: data)
-        }
-    }
-}
-
-@_spi(MarkdownOutput)
-public struct WritableMarkdownOutputManifest {
-    public let title: String
-    public let manifestData: Data
+package struct WritableMarkdownOutputNode {
+    package let identifier: ResolvedTopicReference
+    package let node: MarkdownOutputNode
 }

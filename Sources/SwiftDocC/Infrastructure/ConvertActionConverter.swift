@@ -121,7 +121,8 @@ package enum ConvertActionConverter {
                     if
                         FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
                         let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
-                        let markdownNode = converter.markdownOutput(for: entity) {
+                        let markdownNode = converter.markdownOutput(for: entity)
+                    {
                         try markdownConsumer.consume(markdownNode: markdownNode.writable)
                         if
                             FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
@@ -241,8 +242,9 @@ package enum ConvertActionConverter {
         
         if
             FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
-            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer) {
-            try markdownConsumer.consume(markdownManifest: try markdownManifest.writable)
+            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
+        {
+            try markdownConsumer.consume(markdownManifest: markdownManifest)
         }
 
         switch documentationCoverageOptions.level {

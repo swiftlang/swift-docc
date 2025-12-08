@@ -73,9 +73,15 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         try renderNodeWriter.write(markdownNode)
     }
     
-    func consume(markdownManifest: WritableMarkdownOutputManifest) throws {
+    func consume(markdownManifest: MarkdownOutputManifest) throws {
         let url = targetFolder.appendingPathComponent("\(markdownManifest.title)-markdown-manifest.json", isDirectory: false)
-        try fileManager.createFile(at: url, contents: markdownManifest.manifestData)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        #if DEBUG
+        encoder.outputFormatting.insert(.prettyPrinted)
+        #endif
+        let data = try encoder.encode(markdownManifest)
+        try fileManager.createFile(at: url, contents: data)
     }
     
     func consume(externalRenderNode: ExternalRenderNode) throws {
