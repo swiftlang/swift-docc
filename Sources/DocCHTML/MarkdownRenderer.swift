@@ -855,7 +855,7 @@ private extension CharacterSet {
         .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
         .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.
     static let whitespaceAndDashes = CharacterSet.whitespaces
-        .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
+        .union(CharacterSet(charactersIn: "-\u{2013}\u{2014}")) // hyphen, en dash, em dash
 }
 
 /// Creates a more readable version of a fragment by replacing characters that are not allowed in the fragment of a URL with hyphens.
