@@ -684,7 +684,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 continue
             }
             
-            // Otherwise, we need to determine how long this markdown element it.
+            // Otherwise, we need to determine how long this markdown element is.
             let rawHTML = openingHTML.rawHTML
             // Simply skip any HTML/XML comments.
             guard !rawHTML.hasPrefix("<!--") else {
