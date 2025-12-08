@@ -403,7 +403,7 @@ extension MarkdownOutputMarkupWalker {
 
 // MARK: - Manifest construction
 extension MarkdownOutputMarkupWalker {
-    mutating func add(source: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: String?) {
+    mutating func add(source: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
         var targetURI = identifier.path
         if let lastHeading {
             targetURI.append("#\(urlReadableFragment(lastHeading))")

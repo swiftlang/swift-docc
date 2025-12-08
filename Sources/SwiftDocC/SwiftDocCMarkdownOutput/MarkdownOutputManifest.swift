@@ -55,6 +55,17 @@ extension MarkdownOutputManifest {
         case relatedSymbol
     }
     
+    public enum RelationshipSubType: String, Codable, Sendable {
+        /// One or more protocols to which a type conforms.
+        case conformsTo
+        /// One or more types that conform to a protocol.
+        case conformingTypes
+        /// One or more types that are parents of the symbol.
+        case inheritsFrom
+        /// One or more types that are children of the symbol.
+        case inheritedBy
+    }
+    
     /// A relationship between two documents in the manifest.
     ///
     /// Parent / child symbol relationships are not included here, because those relationships are implicit in the URI structure of the documents. See ``children(of:)``.
@@ -62,10 +73,10 @@ extension MarkdownOutputManifest {
         
         public let sourceURI: String
         public let relationshipType: RelationshipType
-        public let subtype: String?
+        public let subtype: RelationshipSubType?
         public let targetURI: String
         
-        public init(sourceURI: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: String? = nil, targetURI: String) {
+        public init(sourceURI: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipSubType? = nil, targetURI: String) {
             self.sourceURI = sourceURI
             self.relationshipType = relationshipType
             self.subtype = subtype
@@ -98,6 +109,7 @@ extension MarkdownOutputManifest {
             self.title = title
         }
         
+        // The URI is a unique identifier so is the only thing included in the hash
         public func hash(into hasher: inout Hasher) {
             hasher.combine(uri)
         }

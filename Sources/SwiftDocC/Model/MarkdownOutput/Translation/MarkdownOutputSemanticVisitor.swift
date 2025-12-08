@@ -50,11 +50,11 @@ extension MarkdownOutputNode.Metadata {
 // MARK: - Manifest construction
 extension MarkdownOutputSemanticVisitor {
     
-    mutating func add(target: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: String?) {
+    mutating func add(target: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
         add(targetURI: target.path, type: type, subtype: subtype)
     }
     
-    mutating func add(fallbackTarget: String, type: MarkdownOutputManifest.RelationshipType, subtype: String?) {
+    mutating func add(fallbackTarget: String, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
         let uri: String
         let components = fallbackTarget.components(separatedBy: ".")
         if components.count > 1 {
@@ -65,7 +65,7 @@ extension MarkdownOutputSemanticVisitor {
         add(targetURI: uri, type: type, subtype: subtype)
     }
     
-    mutating func add(targetURI: String, type: MarkdownOutputManifest.RelationshipType, subtype: String?) {
+    mutating func add(targetURI: String, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
         let relationship = MarkdownOutputManifest.Relationship(sourceURI: identifier.path, relationshipType: type, subtype: subtype, targetURI: targetURI)
         manifest?.relationships.insert(relationship)
     }
@@ -188,10 +188,10 @@ extension MarkdownOutputSemanticVisitor {
             for destination in relationshipGroup.destinations {
                 switch context.resolve(destination, in: identifier) {
                 case .success(let resolved):
-                    add(target: resolved, type: .relatedSymbol, subtype: relationshipGroup.kind.rawValue)
+                    add(target: resolved, type: .relatedSymbol, subtype: relationshipGroup.kind.manifestRelationship)
                 case .failure:
                     if let fallback = symbol.relationships.targetFallbacks[destination] {
-                        add(fallbackTarget: fallback, type: .relatedSymbol, subtype: relationshipGroup.kind.rawValue)
+                        add(fallbackTarget: fallback, type: .relatedSymbol, subtype: relationshipGroup.kind.manifestRelationship)
                     }
                 }
             }
@@ -201,6 +201,18 @@ extension MarkdownOutputSemanticVisitor {
 }
 
 import SymbolKit
+
+private extension RelationshipsGroup.Kind {
+    var manifestRelationship: MarkdownOutputManifest.RelationshipSubType? {
+        // Structured like this to cause a compiler error if a new case is added
+        switch self {
+        case .conformingTypes: .conformingTypes
+        case .conformsTo: .conformsTo
+        case .inheritsFrom: .inheritsFrom
+        case .inheritedBy: .inheritedBy
+        }
+    }
+}
 
 private extension MarkdownOutputNode.Metadata.Symbol {
     init(_ symbol: SwiftDocC.Symbol, context: DocumentationContext, bundle: DocumentationBundle) {
