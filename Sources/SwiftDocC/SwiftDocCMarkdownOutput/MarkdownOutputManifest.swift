@@ -15,10 +15,10 @@ import Foundation
 /// A manifest of markdown-generated documentation from a single catalog
 @_spi(MarkdownOutput)
 public struct MarkdownOutputManifest: Codable, Sendable {
-    public static let version = "0.1.0"
+    public static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
     
     /// The version of this manifest
-    public let manifestVersion: String
+    public let manifestVersion: SemanticVersion
     /// The manifest title, this will typically match the module that the manifest is generated for
     public let title: String
     /// All documents contained in the manifest
@@ -31,6 +31,14 @@ public struct MarkdownOutputManifest: Codable, Sendable {
         self.title = title
         self.documents = documents
         self.relationships = relationships
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(manifestVersion, forKey: .manifestVersion)
+        try container.encode(title, forKey: .title)
+        try container.encode(documents.sorted(), forKey: .documents)
+        try container.encode(relationships.sorted(), forKey: .relationships)
     }
 }
 
@@ -50,7 +58,7 @@ extension MarkdownOutputManifest {
     /// A relationship between two documents in the manifest.
     ///
     /// Parent / child symbol relationships are not included here, because those relationships are implicit in the URI structure of the documents. See ``children(of:)``.
-    public struct Relationship: Codable, Hashable, Sendable {
+    public struct Relationship: Codable, Hashable, Sendable, Comparable {
         
         public let sourceURI: String
         public let relationshipType: RelationshipType
@@ -63,9 +71,20 @@ extension MarkdownOutputManifest {
             self.subtype = subtype
             self.targetURI = targetURI
         }
+        
+        public static func < (lhs: MarkdownOutputManifest.Relationship, rhs: MarkdownOutputManifest.Relationship) -> Bool {
+            if lhs.sourceURI < rhs.sourceURI {
+                return true
+            } else if lhs.sourceURI == rhs.sourceURI {
+                return lhs.targetURI < rhs.targetURI
+            } else {
+                return false
+            }
+        }
     }
     
-    public struct Document: Codable, Hashable, Sendable {
+    public struct Document: Codable, Hashable, Sendable, Comparable {
+        
         /// The URI of the document
         public let uri: String
         /// The type of the document
@@ -81,6 +100,10 @@ extension MarkdownOutputManifest {
         
         public func hash(into hasher: inout Hasher) {
             hasher.combine(uri)
+        }
+        
+        public static func < (lhs: MarkdownOutputManifest.Document, rhs: MarkdownOutputManifest.Document) -> Bool {
+            lhs.uri < rhs.uri
         }
     }
     
