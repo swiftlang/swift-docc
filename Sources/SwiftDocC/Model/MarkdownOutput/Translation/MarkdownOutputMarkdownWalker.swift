@@ -29,12 +29,13 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
     private var lastHeading: String? = nil
     
     /// Perform actions while rendering a link list, which affects the output formatting of links
-    mutating func withRenderingLinkList(_ process: (inout Self) -> Void) {
-        isRenderingLinkList = true
+    mutating func withRenderingLinkList(value: Bool = true, _ process: (inout Self) -> Void) {
+        let previous = isRenderingLinkList
+        isRenderingLinkList = value
         process(&self)
-        isRenderingLinkList = false
+        isRenderingLinkList = previous
     }
-    
+
     /// Perform actions while removing a base level of indentation, typically while processing the contents of block directives.
     mutating func withRemoveIndentation(from base: (any Markup)?, process: (inout Self) -> Void) {
         indentationToRemove = nil
@@ -172,11 +173,10 @@ extension MarkdownOutputMarkupWalker {
         }
         let link = Link(destination: destination, title: linkTitle, [InlineCode(linkTitle)])
         // Only perform the linked list rendering for the first thing you find
-        let previous = isRenderingLinkList
-        isRenderingLinkList = false
-        visit(link)
-        visit(linkListAbstract)
-        isRenderingLinkList = previous
+        withRenderingLinkList(value: false) {
+            $0.visit(link)
+            $0.visit(linkListAbstract)
+        }
     }
     
     mutating func visitLink(_ link: Link) -> () {
@@ -219,6 +219,8 @@ extension MarkdownOutputMarkupWalker {
                 add(source: resolved, type: .belongsToTopic, subtype: nil)
             }
             linkTitle = anchorSection?.title ?? article.title?.plainText ?? resolved.lastPathComponent
+        } else if let symbol = doc.semantic as? Symbol {
+            linkTitle = anchorSection?.title ?? symbol.title
         } else {
             linkTitle = anchorSection?.title ?? resolved.lastPathComponent
         }
@@ -237,11 +239,10 @@ extension MarkdownOutputMarkupWalker {
         
         let link = Link(destination: destination, title: linkTitle, [linkMarkup])
         // Only perform the linked list rendering for the first thing you find
-        let previous = isRenderingLinkList
-        isRenderingLinkList = false
-        defaultVisit(link)
-        visit(linkListAbstract)
-        isRenderingLinkList = previous
+        withRenderingLinkList(value: false) {
+            $0.defaultVisit(link)
+            $0.visit(linkListAbstract)
+        }
     }
     
     

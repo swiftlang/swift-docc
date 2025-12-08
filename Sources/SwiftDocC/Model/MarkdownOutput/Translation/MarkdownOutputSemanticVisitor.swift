@@ -37,11 +37,11 @@ internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
 }
 
 extension MarkdownOutputNode.Metadata {
-    init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference) {
+    init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference, title: String) {
         self.init(
             documentType: documentType,
             uri: reference.path,
-            title: reference.lastPathComponent,
+            title: title,
             framework: bundle.displayName
         )
     }
@@ -75,11 +75,8 @@ extension MarkdownOutputSemanticVisitor {
 extension MarkdownOutputSemanticVisitor {
     
     mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
-        var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: context.inputs, reference: identifier)
-        if let title = article.title?.plainText {
-            metadata.title = title
-        }
-        
+        var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: context.inputs, reference: identifier, title: article.title?.plainText ?? identifier.lastPathComponent)
+                
         let document = MarkdownOutputManifest.Document(
             uri: identifier.path,
             documentType: .article,
@@ -117,7 +114,7 @@ extension MarkdownOutputSemanticVisitor {
     
     mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
         let bundle = context.inputs
-        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier)
+        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, bundle: bundle, reference: identifier, title: symbol.title)
         
         metadata.symbol = .init(symbol, context: context, bundle: bundle)
         metadata.role = symbol.kind.displayName
@@ -275,12 +272,9 @@ extension MarkdownOutputSemanticVisitor {
     }
     
     mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
-        var metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: context.inputs, reference: identifier)
+        let title = tutorial.intro.title.isEmpty ? identifier.lastPathComponent : tutorial.intro.title
+        let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: context.inputs, reference: identifier, title: title)
         
-        if tutorial.intro.title.isEmpty == false {
-            metadata.title = tutorial.intro.title
-        }
-
         let document = MarkdownOutputManifest.Document(
             uri: identifier.path,
             documentType: .tutorial,
