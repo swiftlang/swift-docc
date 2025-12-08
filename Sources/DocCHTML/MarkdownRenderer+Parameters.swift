@@ -34,9 +34,9 @@ package extension MarkdownRenderer {
     
     /// Creates a "parameters" section that describes all the parameters for a symbol.
     ///
-    /// If each language representation of the API has their own language-specific parameters, pass each language representation's parameter information.
+    /// If each language representation of the symbol has its own language-specific parameters, pass the parameter information for all language representations.
     ///
-    /// If the API has the _same_ parameters in all language representations, only pass the parameters for one language.
+    /// If all language representations of the symbol have the _same_ parameters, only pass the parameter information for one language.
     /// This produces a "parameters" section that doesn't hide any parameters for any of the languages (same as if the symbol only had one language representation)
     func parameters(_ info: [SourceLanguage: [ParameterInfo]]) -> [XMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(info)
