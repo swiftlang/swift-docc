@@ -30,7 +30,7 @@ public struct MarkdownOutputNode: Sendable {
 extension MarkdownOutputNode {
     public struct Metadata: Codable, Sendable {
     
-        static let version = "0.1.0"
+        static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
         
         public enum DocumentType: String, Codable, Sendable {
             case article, tutorial, symbol
@@ -39,17 +39,17 @@ extension MarkdownOutputNode {
         public struct Availability: Codable, Equatable, Sendable {
             
             public let platform: String
+            /// A string representation of the introduced version
             public let introduced: String?
+            /// A string representation of the deprecated version
             public let deprecated: String?
             public let unavailable: Bool
                         
             public init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
                 self.platform = platform
-                // Can't have deprecated without an introduced
-                self.introduced = introduced ?? deprecated
+                self.introduced = introduced
                 self.deprecated = deprecated
-                // If no introduced, we are unavailable
-                self.unavailable = unavailable || introduced == nil
+                self.unavailable = unavailable
             }
             
             // For a compact representation on-disk and for human and machine readers, availability is stored as a single string:
@@ -86,7 +86,7 @@ extension MarkdownOutputNode {
             
             public init(stringRepresentation: String) {
                 let words = stringRepresentation.split(separator: ":", maxSplits: 1)
-                if words.count != 2 {
+                guard words.count == 2 else {
                     platform = stringRepresentation
                     unavailable = true
                     introduced = nil
@@ -112,18 +112,24 @@ extension MarkdownOutputNode {
         }
         
         public struct Symbol: Codable, Sendable {
-            public let kind: String
+            public let kindDisplayName: String
             public let preciseIdentifier: String
             public let modules: [String]
             
+            public enum CodingKeys: String, CodingKey {
+                case kindDisplayName = "kind"
+                case preciseIdentifier
+                case modules
+            }
             
-            public init(kind: String, preciseIdentifier: String, modules: [String]) {
-                self.kind = kind
+            public init(kindDisplayName: String, preciseIdentifier: String, modules: [String]) {
+                self.kindDisplayName = kindDisplayName
                 self.preciseIdentifier = preciseIdentifier
                 self.modules = modules
             }
         }
-               
+          
+        /// A string representation of the metadata version
         public let metadataVersion: String
         public let documentType: DocumentType
         public var role: String?
@@ -135,7 +141,7 @@ extension MarkdownOutputNode {
            
         public init(documentType: DocumentType, uri: String, title: String, framework: String) {
             self.documentType = documentType
-            self.metadataVersion = Self.version
+            self.metadataVersion = Self.version.stringRepresentation()
             self.uri = uri
             self.title = title
             self.framework = framework
@@ -149,35 +155,36 @@ extension MarkdownOutputNode {
 
 // MARK: I/O
 extension MarkdownOutputNode {
-    /// Data for this node to be rendered to disk
-    public var data: Data {
-        get throws {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-            let metadata = try encoder.encode(metadata)
-            var data = Data()
-            data.append(contentsOf: Self.commentOpen)
-            data.append(metadata)
-            data.append(contentsOf: Self.commentClose)
-            data.append(contentsOf: markdown.utf8)
-            return data
-        }
+    /// Data for this node to be rendered to disk as a markdown file. This method renders the metadata as a JSON header wrapped in an HTML comment block, then includes the document content.
+    public func generateDataRepresentation() throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        let metadata = try encoder.encode(metadata)
+        var data = Data()
+        data.append(contentsOf: Self.commentOpen)
+        data.append(metadata)
+        data.append(contentsOf: Self.commentClose)
+        data.append(contentsOf: markdown.utf8)
+        return data
     }
     
     private static let commentOpen = "<!--\n".utf8
     private static let commentClose = "\n-->\n\n".utf8
     
-    public enum MarkdownOutputNodeDecodingError: Error {
+    public enum MarkdownOutputNodeDecodingError: DescribedError {
         
         case metadataSectionNotFound
         case metadataDecodingFailed(any Error)
+        case markdownSectionDecodingFailed
         
-        var localizedDescription: String {
+        public var errorDescription: String {
             switch self {
             case .metadataSectionNotFound:
                 "The data did not contain a metadata section."
             case .metadataDecodingFailed(let error):
                 "Metadata decoding failed: \(error.localizedDescription)"
+            case .markdownSectionDecodingFailed:
+                "Markdown section was not UTF-8 encoded"
             }
         }
     }
@@ -194,6 +201,9 @@ extension MarkdownOutputNode {
             throw MarkdownOutputNodeDecodingError.metadataDecodingFailed(error)
         }
         
-        self.markdown = String(data: data[close.endIndex...], encoding: .utf8) ?? ""
+        guard let markdown = String(data: data[close.endIndex...], encoding: .utf8) else {
+            throw MarkdownOutputNodeDecodingError.markdownSectionDecodingFailed
+        }
+        self.markdown = markdown
     }
 }

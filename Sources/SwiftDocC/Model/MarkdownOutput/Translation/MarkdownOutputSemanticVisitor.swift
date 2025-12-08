@@ -217,7 +217,7 @@ extension MarkdownOutputNode.Metadata.Symbol {
             modules.append(extended)
         }
         self.init(
-            kind: symbol.kind.identifier.identifier,
+            kindDisplayName: symbol.kind.displayName,
             preciseIdentifier: symbol.externalID ?? "",
             modules: modules
         )

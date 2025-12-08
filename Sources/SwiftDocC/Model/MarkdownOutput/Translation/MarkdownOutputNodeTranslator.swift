@@ -34,7 +34,7 @@ struct CollectedMarkdownOutput {
     
     var writable: WritableMarkdownOutputNode {
         get throws {
-            WritableMarkdownOutputNode(identifier: identifier, nodeData: try node.data)
+            WritableMarkdownOutputNode(identifier: identifier, nodeData: try node.generateDataRepresentation())
         }
     }
 }

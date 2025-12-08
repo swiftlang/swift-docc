@@ -618,7 +618,7 @@ final class MarkdownOutputTests: XCTestCase {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/init(name:)")
         XCTAssert(node.metadata.title == "init(name:)")
-        XCTAssert(node.metadata.symbol?.kind == "init")
+        XCTAssert(node.metadata.symbol?.kindDisplayName == "Initializer")
         XCTAssert(node.metadata.role == "Initializer")
         XCTAssertEqual(node.metadata.symbol?.modules, ["MarkdownOutput"])
     }
@@ -848,7 +848,7 @@ final class MarkdownOutputTests: XCTestCase {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
-        let data = try node.data
+        let data = try node.generateDataRepresentation()
         let fromData = try MarkdownOutputNode(data)
         XCTAssertEqual(node.markdown, fromData.markdown)
         XCTAssertEqual(node.metadata.uri, fromData.metadata.uri)
