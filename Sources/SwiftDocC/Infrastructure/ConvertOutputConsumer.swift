@@ -53,7 +53,6 @@ public protocol ConvertOutputConsumer {
     
 }
 
-// Merge into ConvertOutputMarkdownConsumer when no longer SPI
 @_spi(MarkdownOutput)
 public protocol ConvertOutputMarkdownConsumer {
     /// Consumes a markdown output node

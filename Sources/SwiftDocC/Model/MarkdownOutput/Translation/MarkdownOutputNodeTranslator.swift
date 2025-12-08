@@ -33,16 +33,14 @@ struct CollectedMarkdownOutput {
     let manifest: MarkdownOutputManifest?
     
     var writable: WritableMarkdownOutputNode {
-        get throws {
-            WritableMarkdownOutputNode(identifier: identifier, nodeData: try node.generateDataRepresentation())
-        }
+        WritableMarkdownOutputNode(identifier: identifier, node: node)
     }
 }
 
 @_spi(MarkdownOutput)
 public struct WritableMarkdownOutputNode {
     public let identifier: ResolvedTopicReference
-    public let nodeData: Data
+    public let node: MarkdownOutputNode
 }
 
 extension MarkdownOutputManifest {

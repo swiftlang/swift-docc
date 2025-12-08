@@ -100,7 +100,8 @@ class JSONEncodingRenderNodeWriter {
                 
         // The path on disk to write the markdown file at.
         let (_, markdownNodeTargetFileURL) = try targetFilePathAndURL(for: markdownNode.identifier, pathExtension: "md")
-        try fileManager.createFile(at: markdownNodeTargetFileURL, contents: markdownNode.nodeData, options: nil)
+        let data = try markdownNode.node.generateDataRepresentation()
+        try fileManager.createFile(at: markdownNodeTargetFileURL, contents: data, options: nil)
     }
     
     /// Returns the target URL for a given reference identifier, safely creating the containing directory structure if necessary
