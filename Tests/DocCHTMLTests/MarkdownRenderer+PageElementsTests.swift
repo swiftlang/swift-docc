@@ -42,7 +42,7 @@ struct MarkdownRenderer_PageElementsTests {
                         .init(text: "Something", kind: .identifier),
                     ],
                     .objectiveC: [
-                        .init(text: "class ", kind: .decorator),
+                        .init(text: "@interface ",  kind: .decorator),
                         .init(text: "TLASomething", kind: .identifier),
                     ],
                 ]),
@@ -478,6 +478,165 @@ struct MarkdownRenderer_PageElementsTests {
             <pre>
               <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
             </pre>
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
+    func testRenderSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
+        let elements = [
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
+                names: .languageSpecificSymbol([
+                    .swift:      "SomeClass",
+                    .objectiveC: "TLASomeClass",
+                ]),
+                subheadings: .languageSpecificSymbol([
+                    .swift: [
+                        .init(text: "class ",    kind: .decorator),
+                        .init(text: "SomeClass", kind: .identifier),
+                    ],
+                    .objectiveC: [
+                        .init(text: "@interface ",  kind: .decorator),
+                        .init(text: "TLASomeClass", kind: .identifier),
+                    ],
+                ]),
+                abstract: parseMarkup(string: "Some _formatted_ description of this class").first as? Paragraph
+            ),
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeArticle/index.html")!,
+                names: .single(.conceptual("Some Article")),
+                subheadings: .single(.conceptual("Some Article")),
+                abstract: parseMarkup(string: "Some **formatted** description of this _article_.").first as? Paragraph
+            ),
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
+                names: .languageSpecificSymbol([
+                    .swift:      "someMethod(with:and:)",
+                    .objectiveC: "someMethodWithFirst:andSecond:",
+                ]),
+                subheadings: .languageSpecificSymbol([
+                    .swift: [
+                        .init(text: "func ",      kind: .decorator),
+                        .init(text: "someMethod", kind: .identifier),
+                        .init(text: "(",          kind: .decorator),
+                        .init(text: "with",       kind: .identifier),
+                        .init(text: ": Int, ",    kind: .decorator),
+                        .init(text: "and",        kind: .identifier),
+                        .init(text: ": String)",  kind: .decorator),
+                    ],
+                    .objectiveC: [
+                        .init(text: "- ", kind: .decorator),
+                        .init(text: "someMethodWithFirst:andSecond:", kind: .identifier),
+                    ],
+                ]),
+                abstract: nil
+            ),
+        ]
+        
+        let renderer = makeRenderer(goal: goal, elementsToReturn: elements)
+        let expectedSectionID = expectedGroupTitle.replacingOccurrences(of: " ", with: "-")
+        let groupedSection = renderer.groupedSection(named: expectedGroupTitle, groups: [
+            .swift: [
+                .init(title: "Group title", content: parseMarkup(string: "Some description of this group"), references: [
+                    URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
+                    URL(string: "/documentation/ModuleName/SomeArticle/index.html")!,
+                    URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
+                ])
+            ]
+        ])
+        
+        switch goal {
+        case .richness:
+            groupedSection.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="\(expectedSectionID)">
+              <h2>
+                <a href="#\(expectedSectionID)">\(expectedGroupTitle)</a>
+              </h2>
+              <h3 id="Group-title">
+                <a href="#Group-title">Group title</a>
+              </h3>
+              <p>Some description of this group</p>
+              <ul>
+                <li>
+                  <a href="../../someclass/index.html">
+                    <code class="swift-only">
+                      <span class="decorator">class </span>
+                      <span class="identifier">Some<wbr/>
+                        Class</span>
+                    </code>
+                    <code class="occ-only">
+                      <span class="decorator">@interface </span>
+                      <span class="identifier">TLASome<wbr/>
+                          Class</span>
+                    </code>
+                    <p>Some <i>formatted</i>
+                       description of this class</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="../../somearticle/index.html">
+                    <p>Some Article</p>
+                    <p>Some <b>formatted</b>
+                       description of this <i>article</i>
+                      .</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="../../someclass/somemethod(with:and:)/index.html">
+                    <code class="swift-only">
+                      <span class="decorator">func </span>
+                      <span class="identifier">some<wbr/>
+                        Method</span>
+                      <span class="decorator">(</span>
+                      <span class="identifier">with</span>
+                      <span class="decorator">:<wbr/>
+                         Int, </span>
+                      <span class="identifier">and</span>
+                      <span class="decorator">:<wbr/>
+                         String)</span>
+                    </code>
+                    <code class="occ-only">
+                      <span class="decorator">- </span>
+                      <span class="identifier">some<wbr/>
+                        Method<wbr/>
+                        With<wbr/>
+                        First:<wbr/>
+                        and<wbr/>
+                        Second:</span>
+                    </code>
+                  </a>
+                </li>
+            </ul>
+            </section>
+            """)
+        case .conciseness:
+            groupedSection.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>\(expectedGroupTitle)</h2>
+            <h3>Group title</h3>
+            <p>Some description of this group</p>
+            <ul>
+            <li>
+              <a href="../../someclass/index.html">
+                <code>class SomeClass</code>
+                <p>Some <i>formatted</i>
+                   description of this class</p>
+              </a>
+            </li>
+            <li>
+              <a href="../../somearticle/index.html">
+                <p>Some Article</p>
+                <p>Some <b>formatted</b>
+                   description of this <i>article</i>
+                  .</p>
+              </a>
+            </li>
+            <li>
+              <a href="../../someclass/somemethod(with:and:)/index.html">
+                <code>func someMethod(with: Int, and: String)</code>
+              </a>
+            </li>
+            </ul>
             """)
         }
     }
