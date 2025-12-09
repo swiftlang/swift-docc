@@ -269,6 +269,219 @@ struct MarkdownRenderer_PageElementsTests {
         """)
     }
     
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderSingleLanguageReturnSections(goal: RenderGoal) {
+        let returns = makeRenderer(goal: goal).returns([
+            .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
+        ])
+        
+        let commonHTML = """
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Return-Value">
+            <h2>
+              <a href="#Return-Value">Return Value</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Return Value</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderLanguageSpecificReturnSections(goal: RenderGoal) {
+        let returns = makeRenderer(goal: goal).returns([
+            .swift:      parseMarkup(string: "First paragraph\n\nSecond paragraph"),
+            .objectiveC: parseMarkup(string: "Other language's paragraph"),
+        ])
+        
+        let commonHTML = """
+        <p class="swift-only">First paragraph</p>
+        <p class="swift-only">Second paragraph</p>
+        <p class="occ-only">Other language’s paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Return-Value">
+            <h2>
+              <a href="#Return-Value">Return Value</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Return Value</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderSwiftDeclaration(goal: RenderGoal) {
+        let symbolPaths = [
+            "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
+            "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
+            "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
+        ]
+        
+        let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "doSomething", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",           preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "with",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue", preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "and",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "second",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "throws",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "-> ",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
+            ]
+        ])
+        switch goal {
+        case .richness:
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <pre id="declaration">
+            <code>
+              <span class="token-keyword">func</span>
+               <span class="token-identifier">doSomething</span>
+              (<span class="token-externalParam">with</span>
+               <span class="token-internalParam">first</span>
+              : <a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              , <span class="token-externalParam">and</span>
+               <span class="token-internalParam">second</span>
+              : <a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              ) <span class="token-keyword">throws</span>
+              -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+            </code>
+            </pre>
+            """)
+        case .conciseness:
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <pre>
+              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
+            </pre>
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderLanguageSpecificDeclarations(goal: RenderGoal) {
+        let symbolPaths = [
+            "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
+            "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
+            "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
+            "error-parameter-symbol-id":  URL(string: "/documentation/Foundation/NSError/index.html")!,
+        ]
+        
+        let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "doSomething", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",           preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "with",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue", preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "and",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "second",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "throws",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "-> ",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
+            ],
+            
+            .objectiveC:  [
+                .init(kind: .text,              spelling: "- (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "doSomethingWithFirst", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue", preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "andSecond",   preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "second",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "error",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "NSError",     preciseIdentifier: "error-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " **) ",       preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "error",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ";",           preciseIdentifier: nil),
+            ]
+        ])
+        switch goal {
+        case .richness:
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <pre id="declaration">
+            <code class="swift-only">
+              <span class="token-keyword">func</span>
+               <span class="token-identifier">doSomething</span>
+              (<span class="token-externalParam">with</span>
+               <span class="token-internalParam">first</span>
+              : <a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              , <span class="token-externalParam">and</span>
+               <span class="token-internalParam">second</span>
+              : <a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              ) <span class="token-keyword">throws</span>
+              -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+            </code>
+            <code class="occ-only">- (<a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+              ) <span class="token-identifier">doSomethingWithFirst</span>
+              : (<a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              ) <span class="token-internalParam">first</span>
+               <span class="token-identifier">andSecond</span>
+              : (<a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              ) <span class="token-internalParam">second</span>
+               <span class="token-identifier">error</span>
+              : (<a class="token-typeIdentifier" href="../../../foundation/nserror/index.html">NSError</a>
+               **) <span class="token-internalParam">error</span>
+              ;</code>
+            </pre>
+            """)
+            
+        case .conciseness:
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <pre>
+              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
+            </pre>
+            """)
+        }
+    }
+    
     @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
     func testRenderSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
         let elements = [
