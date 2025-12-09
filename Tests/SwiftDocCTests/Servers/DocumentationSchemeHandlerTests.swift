@@ -24,7 +24,7 @@ class DocumentationSchemeHandlerTests: XCTestCase {
         forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
     
     func testDocumentationSchemeHandler() {
-        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
+        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
         let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
         
         let request = URLRequest(url:  baseURL.appendingPathComponent("/images/figure1.jpg"))
@@ -50,7 +50,7 @@ class DocumentationSchemeHandlerTests: XCTestCase {
     }
     
     func testSetData() {
-        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
+        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
         let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
         
         let data = "hello!".data(using: .utf8)!
