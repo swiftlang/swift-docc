@@ -38,10 +38,10 @@ package extension MarkdownRenderer {
     
     /// Creates a grouped section with a given name, for example "topics" or "see also" that describes and organizes groups of related API.
     ///
-    /// If each language representation of the API has their own language-specific parameters, pass each language representation's parameter information.
+    /// If each language representation of the API has its own task groups, pass the task groups for each language representation.
     ///
-    /// If the API has the _same_ parameters in all language representations, only pass the parameters for one language.
-    /// This produces a "parameters" section that doesn't hide any parameters for any of the languages (same as if the symbol only had one language representation)
+    /// If the API has the _same_ task groups in all language representations, only pass the task groups for one language.
+    /// This produces a named section that doesn't hide any task groups for any of the languages (the same as if the symbol only had one language representation).
     func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> [XMLNode] {
         let taskGroups = RenderHelpers.sortedLanguageSpecificValues(taskGroups)
         
@@ -112,6 +112,8 @@ package extension MarkdownRenderer {
             items = if fragmentsByLanguage.count == 1 {
                 [ _symbolSubheading(fragmentsByLanguage.first!.value, languageFilter: nil) ]
             } else if goal == .conciseness, let fragments = fragmentsByLanguage.first?.value {
+                // On the rendered page, language specific symbol names _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
+                // So that tools don't need to filter out language specific names themselves, include only the primary language's subheading.
                 [ _symbolSubheading(fragments, languageFilter: nil) ]
             } else {
                 fragmentsByLanguage.map { language, fragments in
@@ -131,6 +133,20 @@ package extension MarkdownRenderer {
         ])
     }
     
+    /// Transforms the symbol name fragments into a `<code>` HTML element that represents a symbol's subheading.
+    ///
+    /// When the renderer has a ``RenderGoal/richness`` goal, it creates one `<span>` HTML element per fragment that could be styled differently through CSS:
+    /// ```
+    /// <code class="swift-only">
+    ///   <span class="decorator">class </span>
+    ///   <span class="identifier">Some<wbr/>Class</span>
+    /// </code>
+    /// ```
+    ///
+    /// When the renderer has a ``RenderGoal/conciseness`` goal, it joins the fragment's text into a single string:
+    /// ```
+    /// <code>class SomeClass</code>
+    /// ```
     private func _symbolSubheading(_ fragments: [LinkedElement.SymbolNameFragment], languageFilter: SourceLanguage?) -> XMLElement {
         switch goal {
         case .richness:
