@@ -31,8 +31,11 @@ package extension MarkdownRenderer {
         let fragmentsByLanguage = RenderHelpers.sortedLanguageSpecificValues(fragmentsByLanguage)
         
         guard goal == .richness else {
-            // If the goal is conciseness, display only the primary language's plain text declaration
+            // On the rendered page, language specific content _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
+            // So that tools don't need to filter out language specific content themselves, include only the primary language's (plain text) declaration.
             let plainTextDeclaration: [XMLNode] = fragmentsByLanguage.first.map { _, fragments in
+                // The main purpose of individual HTML elements per declaration fragment would be syntax highlighting on the rendered page.
+                // That structure likely won't be beneficial (and could even be detrimental) to the tool's ability to consume the declaration information.
                 [.element(named: "code", children: [.text(fragments.map(\.spelling).joined())])]
             } ?? []
             return .element(named: "pre", children: plainTextDeclaration)
