@@ -8,4 +8,6 @@ See https://swift.org/LICENSE.txt for license information
 #]]
 
 add_library(DocCCommon STATIC
+  FixedSizeBitSet.swift
+  Mutex.swift
   SourceLanguage.swift)

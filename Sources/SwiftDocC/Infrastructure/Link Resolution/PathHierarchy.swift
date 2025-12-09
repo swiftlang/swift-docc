@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import DocCCommon
 
 /// An opaque identifier that uniquely identifies a resolved entry in the path hierarchy,
 ///
@@ -149,6 +150,7 @@ struct PathHierarchy {
 
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
             var topLevelCandidates = nodes.filter { _, node in node.parent == nil }
+            let graphLanguageID = language?.id
             for relationship in graph.relationships where relationship.kind.formsHierarchy {
                 guard let sourceNode = nodes[relationship.source], let expectedContainerName = sourceNode.symbol?.pathComponents.dropLast().last else {
                     continue
@@ -188,7 +190,7 @@ struct PathHierarchy {
                     }
                     
                     // Prefer the symbol that matches the relationship's language.
-                    if let targetNode = targetNodes.first(where: { $0.symbol!.identifier.interfaceLanguage == language?.id }) {
+                    if let targetNode = targetNodes.first(where: { $0.symbol!.identifier.interfaceLanguage == graphLanguageID }) {
                         targetNode.add(symbolChild: sourceNode)
                     } else {
                         // It's not clear which target to add the source to, so we add it to all of them.
@@ -516,7 +518,7 @@ extension PathHierarchy {
         /// The symbol, if a node has one.
         fileprivate(set) var symbol: SymbolGraph.Symbol?
         /// The languages where this node's symbol is represented.
-        fileprivate(set) var languages: Set<SourceLanguage> = []
+        fileprivate(set) var languages = SmallSourceLanguageSet()
         /// The other language representation of this symbol.
         ///
         /// > Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
@@ -574,7 +576,7 @@ extension PathHierarchy {
         
         fileprivate func deepClone(
             separating separatedLanguage: SourceLanguage,
-            keeping otherLanguages: Set<SourceLanguage>,
+            keeping otherLanguages: SmallSourceLanguageSet,
             symbolsByUSR: borrowing [String: SymbolGraph.Symbol],
             didCloneNode: (Node, SymbolGraph.Symbol) -> Void
         ) -> Node {
