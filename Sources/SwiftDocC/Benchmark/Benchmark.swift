@@ -48,6 +48,8 @@ public class Benchmark: Encodable {
     public let platform = "Android"
     #elseif os(FreeBSD)
     public let platform = "FreeBSD"
+    #elseif os(OpenBSD)
+    public let platform = "OpenBSD"
     #else
     public let platform = "unsupported"
     #endif
