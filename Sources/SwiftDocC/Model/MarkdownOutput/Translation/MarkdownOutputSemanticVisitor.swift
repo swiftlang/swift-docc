@@ -87,7 +87,8 @@ extension MarkdownOutputSemanticVisitor {
         
         if
             let metadataAvailability = article.metadata?.availability,
-            !metadataAvailability.isEmpty {
+            !metadataAvailability.isEmpty
+        {
             metadata.availability = metadataAvailability.map { .init($0) }
         }
         metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
@@ -193,7 +194,9 @@ extension MarkdownOutputSemanticVisitor {
                 }
             }
         }
+        // TODO: add support for missing sections rdar://166124742
         return MarkdownOutputNode(metadata: metadata, markdown: markdownWalker.markdown)
+        
     }
 }
 
@@ -435,6 +438,7 @@ extension MarkdownOutputSemanticVisitor {
         return nil
     }
     
+    // TODO: Add support for tutorial articles rdar://166124907
     mutating func visitTutorialArticle(_ article: TutorialArticle) -> MarkdownOutputNode? {
         return nil
     }

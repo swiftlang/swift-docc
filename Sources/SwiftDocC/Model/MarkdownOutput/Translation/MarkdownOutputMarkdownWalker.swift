@@ -105,6 +105,7 @@ extension MarkdownOutputMarkupWalker {
     }
     
     mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> () {
+        //TODO: support formatting of term lists rdar://166128254
         guard isRenderingLinkList else {
             return defaultVisit(unorderedList)
         }
@@ -121,13 +122,17 @@ extension MarkdownOutputMarkupWalker {
             return
         }
         let unescaped = source.removingPercentEncoding ?? source
-        var filename = source
         if
-            let resolved = context.resolveAsset(named: unescaped, in: identifier, withType: .image), let first = resolved.variants.first?.value {
-            filename = first.lastPathComponent
+            let resolved = context.resolveAsset(named: unescaped, in: identifier, withType: .image),
+            let first = resolved.variants.first?.value,
+            first.isFileURL
+        {
+            let filename = first.lastPathComponent
+            markdown.append("![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
+        } else {
+            markdown.append(image.format())
         }
                     
-        markdown.append("![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
     }
        
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> () {

@@ -10,8 +10,6 @@
 
 import Foundation
 
-// Consumers of `MarkdownOutputManifest` in other packages should be able to lift this file and be able to use it standalone, without any dependencies from SwiftDocC.
-
 /// A manifest of markdown-generated documentation from a single catalog
 @_spi(MarkdownOutput)
 public struct MarkdownOutputManifest: Codable, Sendable {
@@ -108,17 +106,13 @@ extension MarkdownOutputManifest {
             self.documentType = documentType
             self.title = title
         }
-        
-        // The URI is a unique identifier so is the only thing included in the hash
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(uri)
-        }
-        
+                
         public static func < (lhs: MarkdownOutputManifest.Document, rhs: MarkdownOutputManifest.Document) -> Bool {
             lhs.uri < rhs.uri
         }
     }
     
+    /// All documents in the manifest that have a given document as a parent, e.g. Framework/Symbol/property is a child of Framework/Symbol
     public func children(of parent: Document) -> Set<Document> {
         let parentPrefix = parent.uri + "/"
         let prefixEnd = parentPrefix.endIndex

@@ -10,8 +10,6 @@
 
 public import Foundation
 
-// Consumers of `MarkdownOutputNode` in other packages should be able to lift this file and be able to use it standalone, without any dependencies from SwiftDocC.
-
 /// A markdown version of a documentation node.
 @_spi(MarkdownOutput)
 public struct MarkdownOutputNode: Sendable {

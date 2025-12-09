@@ -460,7 +460,15 @@ final class MarkdownOutputTests: XCTestCase {
         
         let catalog = catalog(files: [articleWithSnippet, graph])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "SnippetArticle")
-        XCTAssert(node.markdown.contains(explanation))
+        guard let codeRange = node.markdown.range(of: snippetContent) else {
+            XCTFail("Code not included in snippet output")
+            return
+        }
+        guard let explanationRange = node.markdown.range(of: explanation) else {
+            XCTFail("Explanation not included in snippet output")
+            return
+        }
+        XCTAssert(explanationRange.lowerBound < codeRange.lowerBound)
     }
       
     private func makeSnippet(
@@ -521,6 +529,58 @@ final class MarkdownOutputTests: XCTestCase {
         
         XCTAssertEqual(node.markdown, expected)
     }
+        
+    func testImages() async throws {
+        let catalog = catalog(files: [
+            TextFile(name: "ImageArticle.md", utf8Content: """
+                # Images
+                
+                Shows how images are represented in markdown output
+                
+                ## Overview
+                
+                ![Alternative Title](image.png)
+                ![](image.png)
+                ![Web Image](https://www.example.com/webimage.png)
+                ![Unresolved Image](unresolved.png)
+                """),
+            Folder(name: "Resources", content: [
+                Folder(name: "Images", content: [
+                    CopyOfFile(original: Bundle.module.url(forResource: "image", withExtension: "png", subdirectory: "Test Resources")!)
+                ])
+            ])
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "ImageArticle")
+        XCTAssert(node.markdown.contains("![Alternative Title](images/MarkdownOutput/image.png"))
+        XCTAssert(node.markdown.contains("![](images/MarkdownOutput/image.png"))
+        XCTAssert(node.markdown.contains("![Web Image](https://www.example.com/webimage.png)"))
+        XCTAssert(node.markdown.contains("![Unresolved Image](unresolved.png)"))
+    }
+    
+    func testAside() async throws {
+        let content = """
+        # Asides
+        
+        Shows how asides are represented in markdown output
+        
+        ## Overview
+        
+        Here is some content
+        
+        > Tip: This is an aside
+        
+        Here is some post-aside content
+        """
+        let catalog = catalog(files: [
+            TextFile(name: "AsideArticle.md", utf8Content: content)
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "AsideArticle")
+        XCTAssertEqual(node.markdown, content)
+    }
+    
+    
     
     // MARK: - Metadata
     
