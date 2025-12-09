@@ -2586,7 +2586,6 @@ Document
 
         let (_, context) = try await loadBundle(catalog: catalog)
 
-
         func testReference(
             myFuncReference: ResolvedTopicReference,
             expectedAsides: [RenderBlockContent.Aside],
@@ -2610,9 +2609,6 @@ Document
             XCTAssertEqual(25, asides.count)
 
             for (expectedAside, aside) in zip(expectedAsides, asides) {
-                print()
-                print("EXPECTED: \(expectedAside)")
-                print("ACTUAL:   \(aside)")
                 XCTAssertEqual(expectedAside.style, aside.style, file: file, line: line)
                 XCTAssertEqual(expectedAside.name, aside.name, file: file, line: line)
                 XCTAssertEqual(expectedAside.content, aside.content, file: file, line: line)
@@ -2631,31 +2627,31 @@ Document
 
         // Aside blocks from Tests/SwiftDocCTests/Test Resources/Asides.symbols.json
         let expectedAsides: [RenderBlockContent.Aside] = [
-            RenderBlockContent.Aside(name: "Note",                 content: testContent("This is a note.")),
-            RenderBlockContent.Aside(name: "Tip",                  content: testContent("Here’s a tip.")),
-            RenderBlockContent.Aside(name: "Important",            content: testContent("Keep this in mind.")),
-            RenderBlockContent.Aside(name: "Experiment",           content: testContent("Try this out.")),
-            RenderBlockContent.Aside(name: "Warning",              content: testContent("Watch out for this.")),
-            RenderBlockContent.Aside(name: "Attention",            content: testContent("Head’s up!")),
-            RenderBlockContent.Aside(name: "Author",               content: testContent("I wrote this.")),
-            RenderBlockContent.Aside(name: "Authors",              content: testContent("We wrote this.")),
-            RenderBlockContent.Aside(name: "Bug",                  content: testContent("This is wrong.")),
-            RenderBlockContent.Aside(name: "Complexity",           content: testContent("This takes time.")),
-            RenderBlockContent.Aside(name: "Copyright",            content: testContent("2021 Apple Inc.")),
-            RenderBlockContent.Aside(name: "Date",                 content: testContent("1 January 1970")),
-            RenderBlockContent.Aside(name: "Invariant",            content: testContent("This shouldn’t change.")),
-            RenderBlockContent.Aside(name: "Mutating Variant",     content: testContent("This will change.")),
-            RenderBlockContent.Aside(name: "Non-Mutating Variant", content: testContent("This changes, but not in the data.")),
-            RenderBlockContent.Aside(name: "Postcondition",        content: testContent("After calling, this should be true.")),
-            RenderBlockContent.Aside(name: "Precondition",         content: testContent("Before calling, this should be true.")),
-            RenderBlockContent.Aside(name: "Remark",               content: testContent("Something you should know.")),
-            RenderBlockContent.Aside(name: "Requires",             content: testContent("This needs something.")),
-            RenderBlockContent.Aside(name: "Since",                content: testContent("The beginning of time.")),
-            RenderBlockContent.Aside(name: "To Do",                content: testContent("This needs work.")),
-            RenderBlockContent.Aside(name: "Version",              content: testContent("3.1.4")),
-            RenderBlockContent.Aside(name: "See Also",             content: testContent("This other thing.")),
-            RenderBlockContent.Aside(name: "See Also",             content: testContent("And this other thing.")),
-            RenderBlockContent.Aside(name: "Throws",               content: testContent("A serious error.")),
+            .init(name: "Note",                 content: testContent("This is a note.")),
+            .init(name: "Tip",                  content: testContent("Here’s a tip.")),
+            .init(name: "Important",            content: testContent("Keep this in mind.")),
+            .init(name: "Experiment",           content: testContent("Try this out.")),
+            .init(name: "Warning",              content: testContent("Watch out for this.")),
+            .init(name: "Attention",            content: testContent("Head’s up!")),
+            .init(name: "Author",               content: testContent("I wrote this.")),
+            .init(name: "Authors",              content: testContent("We wrote this.")),
+            .init(name: "Bug",                  content: testContent("This is wrong.")),
+            .init(name: "Complexity",           content: testContent("This takes time.")),
+            .init(name: "Copyright",            content: testContent("2021 Apple Inc.")),
+            .init(name: "Date",                 content: testContent("1 January 1970")),
+            .init(name: "Invariant",            content: testContent("This shouldn’t change.")),
+            .init(name: "Mutating Variant",     content: testContent("This will change.")),
+            .init(name: "Non-Mutating Variant", content: testContent("This changes, but not in the data.")),
+            .init(name: "Postcondition",        content: testContent("After calling, this should be true.")),
+            .init(name: "Precondition",         content: testContent("Before calling, this should be true.")),
+            .init(name: "Remark",               content: testContent("Something you should know.")),
+            .init(name: "Requires",             content: testContent("This needs something.")),
+            .init(name: "Since",                content: testContent("The beginning of time.")),
+            .init(name: "To Do",                content: testContent("This needs work.")),
+            .init(name: "Version",              content: testContent("3.1.4")),
+            .init(name: "See Also",             content: testContent("This other thing.")),
+            .init(name: "See Also",             content: testContent("And this other thing.")),
+            .init(name: "Throws",               content: testContent("A serious error.")),
         ]
 
         let quoteReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Asides/quoteAsides()", sourceLanguage: .swift)
