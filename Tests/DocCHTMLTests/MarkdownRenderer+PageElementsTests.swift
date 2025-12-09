@@ -42,7 +42,7 @@ struct MarkdownRenderer_PageElementsTests {
                         .init(text: "Something", kind: .identifier),
                     ],
                     .objectiveC: [
-                        .init(text: "class ", kind: .decorator),
+                        .init(text: "@interface ",  kind: .decorator),
                         .init(text: "TLASomething", kind: .identifier),
                     ],
                 ]),
@@ -497,7 +497,7 @@ struct MarkdownRenderer_PageElementsTests {
                         .init(text: "SomeClass", kind: .identifier),
                     ],
                     .objectiveC: [
-                        .init(text: "class ",       kind: .decorator),
+                        .init(text: "@interface ",  kind: .decorator),
                         .init(text: "TLASomeClass", kind: .identifier),
                     ],
                 ]),
@@ -566,7 +566,7 @@ struct MarkdownRenderer_PageElementsTests {
                         Class</span>
                     </code>
                     <code class="occ-only">
-                      <span class="decorator">class </span>
+                      <span class="decorator">@interface </span>
                       <span class="identifier">TLASome<wbr/>
                           Class</span>
                     </code>
