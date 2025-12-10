@@ -2579,9 +2579,6 @@ Document
         let asidesSGFURL = Bundle.module.url(forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
         let catalog = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: asidesSGFURL, newName: "Asides.symbols.json"),
-            TextFile(name: "Extension.md", utf8Content: """
-            # Some documentation
-            """),
         ])
 
         let (_, context) = try await loadBundle(catalog: catalog)
@@ -2606,7 +2603,7 @@ Document
                 }
                 return aside
             }
-            XCTAssertEqual(25, asides.count)
+            XCTAssertEqual(expectedAsides.count, asides.count)
 
             for (expectedAside, aside) in zip(expectedAsides, asides) {
                 XCTAssertEqual(expectedAside.style, aside.style, file: file, line: line)
@@ -2616,10 +2613,10 @@ Document
         }
 
         func testContent(_ text: String) -> [RenderBlockContent] {
-            return [RenderBlockContent.paragraph(
-                RenderBlockContent.Paragraph(
+            return [.paragraph(
+                .init(
                     inlineContent: [
-                        RenderInlineContent.text(text)
+                        .text(text)
                     ]
                 )
             )]

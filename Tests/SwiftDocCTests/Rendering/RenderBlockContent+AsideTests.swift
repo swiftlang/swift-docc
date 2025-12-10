@@ -31,11 +31,7 @@ struct RenderBlockContent_AsideTests {
     }
 
     private func decodeAsideRenderBlock(_ json: String) throws -> Aside? {
-        guard let data = json.data(using: .utf8) else {
-            Issue.record("Found unexpected string encoding.")
-            return nil
-        }
-        let decodedBlock = try JSONDecoder().decode(RenderBlockContent.self, from: data)
+        let decodedBlock = try JSONDecoder().decode(RenderBlockContent.self, from: Data(json.utf8))
         guard case let .aside(aside) = decodedBlock else {
             Issue.record("Decoded an unexpected type of block.")
             return nil
