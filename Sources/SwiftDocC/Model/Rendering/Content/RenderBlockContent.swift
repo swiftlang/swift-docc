@@ -609,6 +609,7 @@ public enum RenderBlockContent: Equatable {
         public var rawValue: String
 
         /// The heading text to use when rendering this style of aside.
+        @available(*, deprecated, message: "Use 'Aside.name' instead. This deprecated API will be removed after 6.4 is released.")
         public var displayName: String {
             return rawValue.capitalized
         }
