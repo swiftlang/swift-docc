@@ -33,34 +33,6 @@ private struct ContextLinkProvider: LinkProvider {
             return nil
         }
         
-        let names: LinkedElement.Names
-        if let symbol = node.semantic as? Symbol,
-           case .symbol(let primaryTitle) = node.name
-        {
-            // Check if this symbol has any language-specific titles
-            let titles = symbol.titleVariants.allValues
-            if titles.contains(where: { _, title in title != primaryTitle }) {
-                // This symbol has multiple unique names
-                let titles = [SourceLanguage: String](
-                    titles.map { trait, title in
-                        (trait.sourceLanguage ?? .swift, title)
-                    },
-                    uniquingKeysWith: { _, new in new }
-                )
-                
-                names = .languageSpecificSymbol(titles)
-            } else {
-                // There are multiple names, but the're all the same
-                names = .single(.symbol(primaryTitle))
-            }
-        } else {
-            let name: LinkedElement.Name = switch node.name {
-                case .conceptual(let title):   .conceptual(title)
-                case .symbol(name: let title): .symbol(title)
-            }
-            names = .single(name)
-        }
-        
         // A helper function that transforms SymbolKit fragments into renderable identifier/decorator fragments
         func convert(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [LinkedElement.SymbolNameFragment] {
             func convert(kind: SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind) -> LinkedElement.SymbolNameFragment.Kind {
@@ -88,32 +60,23 @@ private struct ContextLinkProvider: LinkProvider {
             return result
         }
         
-        let subheadings: DocCHTML.LinkedElement.Subheadings
-        if let symbol = node.semantic as? Symbol {
-            // Check if this symbol has any language-specific _sub headings_
-            let primarySubheading = symbol.subHeading
-            let allSubheadings = symbol.subHeadingVariants.allValues
-            
-            if allSubheadings.contains(where: { _, title in title != primarySubheading }) {
-                // This symbol has multiple unique subheadings
-                subheadings = .languageSpecificSymbol(.init(
-                    allSubheadings.map { trait, subheading in (
-                        key:   trait.sourceLanguage ?? .swift,
-                        value: convert(subheading)
-                    )},
-                    uniquingKeysWith: { _, new in new }
-                ))
-            } else {
-                // There are multiple subheadings, but the're all the same
-                subheadings = .single(.symbol(convert(primarySubheading ?? [])))
+        let subheadings: LinkedElement.Subheadings = if let symbol = node.semantic as? Symbol {
+            switch symbol.subHeadingVariants.values() {
+                case .single(let subHeading):
+                    .single(.symbol(convert(subHeading)))
+                case .languageSpecific(let subHeadings):
+                    .languageSpecificSymbol(subHeadings.mapValues(convert))
+                case .empty:
+                    // This shouldn't happen but because of a shortcoming in the API design of `DocumentationDataVariants`, it can't be guaranteed.
+                    .single(.symbol([]))
             }
         } else {
-            subheadings = .single(.conceptual(node.name.plainText))
+            .single(.conceptual(node.name.plainText))
         }
         
         return .init(
             path: Self.filePath(for: node.reference),
-            names: names,
+            names: node.makeNames(),
             subheadings: subheadings,
             abstract: (node.semantic as? (any Abstracted))?.abstract
         )
@@ -151,6 +114,8 @@ private struct ContextLinkProvider: LinkProvider {
     }
 }
 
+// MARK: HTML Renderer
+
 /// A type that renders documentation pages into semantic HTML elements.
 struct HTMLRenderer {
     let reference: ResolvedTopicReference
@@ -174,7 +139,7 @@ struct HTMLRenderer {
     struct RenderedPageInfo {
         /// The HTML content of the page as an XMLNode hierarchy.
         ///
-        /// The string representation of those node hierarchy is intended to be inserted _somewhere_ inside the `<body>` HTML element.
+        /// The string representation of this node hierarchy is intended to be inserted _somewhere_ inside the `<body>` HTML element.
         /// It _doesn't_ include a page header, footer, navigator, etc. and may be an insufficient representation of the "entire" page
         var content: XMLNode
         /// The title and description/abstract of the page.
@@ -222,8 +187,6 @@ struct HTMLRenderer {
     }
     
     mutating func renderSymbol(_ symbol: Symbol) -> RenderedPageInfo {
-        let node = context.documentationCache[reference]!
-        
         let main = XMLElement(name: "main")
         let articleElement = XMLElement(name: "article")
         main.addChild(articleElement)
@@ -232,20 +195,34 @@ struct HTMLRenderer {
         articleElement.addChild(hero)
         
         // Title
-        let titleVariants = symbol.titleVariants.allValues.sorted(by: { $0.trait < $1.trait })
-        for (trait, languageSpecificTitle) in titleVariants {
-            guard let language = trait.sourceLanguage else { continue }
-            
-            let attributes: [String: String]?
-            if goal == .richness, titleVariants.count < 1 {
-                attributes = ["class": "\(language.id)-only"]
-            } else {
-                attributes = nil
-            }
-            
-            hero.addChild(
-                .element(named: "h1", children: renderer.wordBreak(symbolName: languageSpecificTitle), attributes: attributes)
-            )
+        switch symbol.titleVariants.values() {
+            case .single(let title):
+                hero.addChild(
+                    .element(named: "h1", children: renderer.wordBreak(symbolName: title))
+                )
+            case .languageSpecific(let languageSpecificTitles):
+                if goal == .conciseness {
+                    // On the rendered page, language specific symbol names _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
+                    // So that tools don't need to filter out language specific names themselves, include only the primary language's title.
+                    hero.addChild(
+                        .element(named: "h1", children: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
+                    )
+                } else if languageSpecificTitles.count == 1 {
+                    hero.addChild(
+                        .element(named: "h1", children: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
+                    )
+                } else {
+                    for (language, languageSpecificTitle) in languageSpecificTitles.sorted(by: { $0.key < $1.key }) {
+                        hero.addChild(
+                            .element(named: "h1", children: renderer.wordBreak(symbolName: languageSpecificTitle), attributes: ["class": "\(language.id)-only"])
+                        )
+                    }
+                }
+            case .empty:
+                // This shouldn't happen but because of a shortcoming in the API design of `DocumentationDataVariants`, it can't be guaranteed.
+                hero.addChild(
+                    .element(named: "h1", children: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
+                )
         }
         
         // Abstract
@@ -269,6 +246,8 @@ struct HTMLRenderer {
     // TODO: As a future enhancement, add another layer on top of this that creates complete HTML pages (both `<head>` and `<body>`) (rdar://165912669)
 }
 
+// MARK: Helpers
+
 // Note; this isn't a Comparable conformance so that it can remain private to this file.
 private extension DocumentationDataVariantsTrait {
     static func < (lhs: DocumentationDataVariantsTrait, rhs: DocumentationDataVariantsTrait) -> Bool {
@@ -286,6 +265,77 @@ private extension XMLElement {
     func addChildren(_ nodes: [XMLNode]) {
         for node in nodes {
             addChild(node)
+        }
+    }
+}
+
+private extension DocumentationNode {
+    func makeNames() -> LinkedElement.Names {
+        switch name {
+        case .conceptual(let title):
+            // This node has a single "conceptual" name.
+            // It could either be an article or a symbol with an authored `@DisplayName`.
+            .single(.conceptual(title))
+        case .symbol(let nodeTitle):
+            if let symbol = semantic as? Symbol {
+                symbol.makeNames(fallbackTitle: nodeTitle)
+            } else {
+                // This node has a symbol name, but for some reason doesn't have a symbol semantic.
+                // That's a bit strange and unexpected, but we can still make a single name for it.
+                .single(.symbol(nodeTitle))
+            }
+        }
+    }
+}
+
+private extension Symbol {
+    func makeNames(fallbackTitle: String) -> LinkedElement.Names {
+        switch titleVariants.values() {
+            case .single(let title):
+                .single(.symbol(title))
+            case .languageSpecific(let titles):
+                .languageSpecificSymbol(titles)
+            case .empty:
+                // This shouldn't happen but because of a shortcoming in the API design of `DocumentationDataVariants`, it can't be guaranteed.
+                .single(.symbol(fallbackTitle))
+        }
+    }
+}
+
+private enum VariantValues<Value> {
+    case single(Value)
+    case languageSpecific([SourceLanguage: Value])
+    // This is necessary because of a shortcoming in the API design of `DocumentationDataVariants`.
+    case empty
+}
+
+// Both `DocumentationDataVariants` and `VariantCollection` are really hard to work with correctly and neither offer a good API that both:
+// - Makes a clear distinction between when a value will always exist and when the "values" can be empty.
+// - Allows the caller to iterate over all the values.
+// TODO: Design and implement a better solution for representing language specific variations of a value (rdar://166211961)
+private extension DocumentationDataVariants where Variant: Equatable {
+    func values() -> VariantValues<Variant> {
+        guard let primaryValue = firstValue else {
+            return .empty
+        }
+               
+        let values = allValues
+        guard allValues.count > 1 else {
+            // Return a single value to simplify the caller's code
+            return .single(primaryValue)
+        }
+        
+        // Check if the variants has any language-specific values (that are _actually_ different from the primary value)
+        if values.contains(where: { _, value in value != primaryValue }) {
+            // There are multiple distinct values
+            return .languageSpecific([SourceLanguage: Variant](
+                values.map { trait, value in
+                    (trait.sourceLanguage ?? .swift, value)
+                }, uniquingKeysWith: { _, new in new }
+            ))
+        } else {
+            // There are multiple values, but the're all the same
+            return .single(primaryValue)
         }
     }
 }
