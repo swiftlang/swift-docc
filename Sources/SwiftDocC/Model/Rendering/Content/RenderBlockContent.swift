@@ -123,7 +123,7 @@ public enum RenderBlockContent: Equatable {
         ///   - content: The block content to display in the aside
         public init(style: AsideStyle, content: [RenderBlockContent]) {
             self.style = style
-            self.name = style.displayName
+            self.name = style.rawValue.capitalized
             self.content = content
         }
 
