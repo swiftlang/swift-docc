@@ -286,9 +286,9 @@ struct RenderBlockContent_AsideTests {
 
     // Asides with different names and styles.
     @Test(arguments: [
-        ("Important", "tip"),
-        ("Custom", "warning"),
-        ("Special", "note"),
+        "Important": "tip",
+        "Custom":    "warning",
+        "Special":   "note",
     ])
     func testCreatingSupportedAside(name: String, styleName: String) throws {
 
