@@ -23,6 +23,7 @@ import SymbolKit
 private struct ContextLinkProvider: LinkProvider {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
+    let goal: RenderGoal
     
     func element(for url: URL) -> LinkedElement? {
         guard url.scheme == "doc",
@@ -61,7 +62,7 @@ private struct ContextLinkProvider: LinkProvider {
         }
         
         let subheadings: LinkedElement.Subheadings = if let symbol = node.semantic as? Symbol {
-            switch symbol.subHeadingVariants.values() {
+            switch symbol.subHeadingVariants.values(goal: goal) {
                 case .single(let subHeading):
                     .single(.symbol(convert(subHeading)))
                 case .languageSpecific(let subHeadings):
@@ -76,7 +77,7 @@ private struct ContextLinkProvider: LinkProvider {
         
         return .init(
             path: Self.filePath(for: node.reference),
-            names: node.makeNames(),
+            names: node.makeNames(goal: goal),
             subheadings: subheadings,
             abstract: (node.semantic as? (any Abstracted))?.abstract
         )
@@ -131,7 +132,7 @@ struct HTMLRenderer {
         self.renderer = MarkdownRenderer(
             path: ContextLinkProvider.filePath(for: reference),
             goal: goal,
-            linkProvider: ContextLinkProvider(reference: reference, context: context)
+            linkProvider: ContextLinkProvider(reference: reference, context: context, goal: goal)
         )
     }
     
@@ -195,28 +196,16 @@ struct HTMLRenderer {
         articleElement.addChild(hero)
         
         // Title
-        switch symbol.titleVariants.values() {
+        switch symbol.titleVariants.values(goal: goal) {
             case .single(let title):
                 hero.addChild(
                     .element(named: "h1", children: renderer.wordBreak(symbolName: title))
                 )
             case .languageSpecific(let languageSpecificTitles):
-                if goal == .conciseness {
-                    // On the rendered page, language specific symbol names _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
-                    // So that tools don't need to filter out language specific names themselves, include only the primary language's title.
+                for (language, languageSpecificTitle) in languageSpecificTitles.sorted(by: { $0.key < $1.key }) {
                     hero.addChild(
-                        .element(named: "h1", children: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
+                        .element(named: "h1", children: renderer.wordBreak(symbolName: languageSpecificTitle), attributes: ["class": "\(language.id)-only"])
                     )
-                } else if languageSpecificTitles.count == 1 {
-                    hero.addChild(
-                        .element(named: "h1", children: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
-                    )
-                } else {
-                    for (language, languageSpecificTitle) in languageSpecificTitles.sorted(by: { $0.key < $1.key }) {
-                        hero.addChild(
-                            .element(named: "h1", children: renderer.wordBreak(symbolName: languageSpecificTitle), attributes: ["class": "\(language.id)-only"])
-                        )
-                    }
                 }
             case .empty:
                 // This shouldn't happen but because of a shortcoming in the API design of `DocumentationDataVariants`, it can't be guaranteed.
@@ -270,7 +259,7 @@ private extension XMLElement {
 }
 
 private extension DocumentationNode {
-    func makeNames() -> LinkedElement.Names {
+    func makeNames(goal: RenderGoal) -> LinkedElement.Names {
         switch name {
         case .conceptual(let title):
             // This node has a single "conceptual" name.
@@ -278,7 +267,7 @@ private extension DocumentationNode {
             .single(.conceptual(title))
         case .symbol(let nodeTitle):
             if let symbol = semantic as? Symbol {
-                symbol.makeNames(fallbackTitle: nodeTitle)
+                symbol.makeNames(goal: goal, fallbackTitle: nodeTitle)
             } else {
                 // This node has a symbol name, but for some reason doesn't have a symbol semantic.
                 // That's a bit strange and unexpected, but we can still make a single name for it.
@@ -289,8 +278,8 @@ private extension DocumentationNode {
 }
 
 private extension Symbol {
-    func makeNames(fallbackTitle: String) -> LinkedElement.Names {
-        switch titleVariants.values() {
+    func makeNames(goal: RenderGoal, fallbackTitle: String) -> LinkedElement.Names {
+        switch titleVariants.values(goal: goal) {
             case .single(let title):
                 .single(.symbol(title))
             case .languageSpecific(let titles):
@@ -314,11 +303,17 @@ private enum VariantValues<Value> {
 // - Allows the caller to iterate over all the values.
 // TODO: Design and implement a better solution for representing language specific variations of a value (rdar://166211961)
 private extension DocumentationDataVariants where Variant: Equatable {
-    func values() -> VariantValues<Variant> {
+    func values(goal: RenderGoal) -> VariantValues<Variant> {
         guard let primaryValue = firstValue else {
             return .empty
         }
                
+        guard goal == .richness else {
+            // On the rendered page, language specific symbol information _could_ be hidden through CSS but that wouldn't help the tool that reads the raw HTML.
+            // So that tools don't need to filter out language specific information themselves, include only the primary language's value.
+            return .single(primaryValue)
+        }
+        
         let values = allValues
         guard allValues.count > 1 else {
             // Return a single value to simplify the caller's code
