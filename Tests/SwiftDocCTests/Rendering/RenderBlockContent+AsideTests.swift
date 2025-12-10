@@ -30,13 +30,17 @@ struct RenderBlockContent_AsideTests {
         .init(rawValue: name)
     }
 
-    private func decodeAsideRenderBlock(_ json: String) throws -> Aside? {
+    private func decodeAsideRenderBlock(_ json: String) throws -> Aside {
         let decodedBlock = try JSONDecoder().decode(RenderBlockContent.self, from: Data(json.utf8))
         guard case let .aside(aside) = decodedBlock else {
             Issue.record("Decoded an unexpected type of block.")
-            return nil
+            throw DecodingError.unexpectedBlockType
         }
         return aside
+    }
+    
+    private enum DecodingError: Error {
+        case unexpectedBlockType
     }
 
     // Styles supported by DocC Render
@@ -107,7 +111,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == name.lowercased())
         #expect(aside.name == name)
         #expect(aside.content == [testBlock])
@@ -133,7 +137,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == name.lowercased())
         #expect(aside.name == name)
         #expect(aside.content == [testBlock])
@@ -158,7 +162,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == name.lowercased())
         #expect(aside.name == name.capitalized)
         #expect(aside.content == [testBlock])
@@ -224,7 +228,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == "note")
         #expect(aside.name == name)
         #expect(aside.content == [testBlock])
@@ -250,7 +254,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == "note") // coerced to lowercase
         #expect(aside.name == name)
         #expect(aside.content == [testBlock])
@@ -274,7 +278,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == "note")
         #expect(aside.name == "Note")
         #expect(aside.content == [testBlock])
@@ -322,7 +326,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == styleName)
         #expect(aside.name == name)
         #expect(aside.content == [testBlock])
@@ -348,7 +352,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == styleName)
         #expect(aside.name == name)
         #expect(aside.content == [testBlock])
@@ -378,7 +382,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        var aside = try #require(try decodeAsideRenderBlock(json))
+        var aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == "note") // not "custom"
         #expect(aside.name == "Custom")
         #expect(aside.content == [testBlock])
@@ -400,7 +404,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == "note") // not "custom"
         #expect(aside.name == "Note") // discard the invalid style in this case
         #expect(aside.content == [testBlock])
@@ -428,7 +432,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        var aside = try #require(try decodeAsideRenderBlock(json))
+        var aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == "tip")
         #expect(aside.name == "Important")
         #expect(aside.content == [testBlock])
@@ -451,7 +455,7 @@ struct RenderBlockContent_AsideTests {
               ]
             }
             """
-        aside = try #require(try decodeAsideRenderBlock(json))
+        aside = try decodeAsideRenderBlock(json)
         #expect(aside.style.rawValue == "note") // coerced to "note"
         #expect(aside.name == "Custom")
         #expect(aside.content == [testBlock])
