@@ -30,17 +30,13 @@ struct RenderBlockContent_AsideTests {
         .init(rawValue: name)
     }
 
-    private func decodeAsideRenderBlock(_ json: String) throws -> Aside {
+    private func decodeAsideRenderBlock(_ json: String, sourceLocation: Testing.SourceLocation = #_sourceLocation) throws -> Aside {
         let decodedBlock = try JSONDecoder().decode(RenderBlockContent.self, from: Data(json.utf8))
-        guard case let .aside(aside) = decodedBlock else {
-            Issue.record("Decoded an unexpected type of block.")
-            throw DecodingError.unexpectedBlockType
+        var result: Aside?
+        if case let .aside(aside) = decodedBlock {
+            result = aside
         }
-        return aside
-    }
-    
-    private enum DecodingError: Error {
-        case unexpectedBlockType
+        return try #require(result, "Decoded an unexpected type of block.", sourceLocation: sourceLocation)
     }
 
     // Styles supported by DocC Render
