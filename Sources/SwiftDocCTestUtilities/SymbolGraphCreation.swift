@@ -90,6 +90,7 @@ extension XCTestCase {
         location: (position: SymbolGraph.LineList.SourceRange.Position, url: URL)? = (defaultSymbolPosition, defaultSymbolURL),
         signature: SymbolGraph.Symbol.FunctionSignature? = nil,
         availability: [SymbolGraph.Symbol.Availability.AvailabilityItem]? = nil,
+        declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment]? = nil,
         otherMixins: [any Mixin] = []
     ) -> SymbolGraph.Symbol {
         precondition(!pathComponents.isEmpty, "Need at least one path component to name the symbol")
@@ -104,10 +105,24 @@ extension XCTestCase {
         if let availability {
             mixins.append(SymbolGraph.Symbol.Availability(availability: availability))
         }
+        if let declaration {
+            mixins.append(SymbolGraph.Symbol.DeclarationFragments(declarationFragments: declaration))
+        }
+        
+        let names = if let declaration {
+            SymbolGraph.Symbol.Names(
+                title: pathComponents.last!, // Verified above to exist
+                navigator: declaration,
+                subHeading: declaration,
+                prose: nil
+            )
+        } else {
+            makeSymbolNames(name: pathComponents.last!) // Verified above to exist
+        }
         
         return SymbolGraph.Symbol(
             identifier: SymbolGraph.Symbol.Identifier(precise: id, interfaceLanguage: language.id),
-            names: makeSymbolNames(name: pathComponents.last!),
+            names: names,
             pathComponents: pathComponents,
             docComment: docComment.map {
                 makeLineList(
