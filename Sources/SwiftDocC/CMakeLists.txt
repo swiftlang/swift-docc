@@ -175,8 +175,6 @@ add_library(SwiftDocC
   Model/Rendering/Diffing/Differences.swift
   Model/Rendering/Diffing/RenderNode+Diffable.swift
   Model/Rendering/DocumentationContentRenderer.swift
-  Model/Rendering/HTML/HTMLContentConsumer.swift
-  Model/Rendering/HTML/HTMLRenderer.swift
   Model/Rendering/LinkTitleResolver.swift
   "Model/Rendering/Navigation Tree/RenderHierarchy.swift"
   "Model/Rendering/Navigation Tree/RenderHierarchyChapter.swift"
@@ -467,8 +465,6 @@ add_library(SwiftDocC
   Utility/Version.swift)
 target_link_libraries(SwiftDocC PRIVATE
   DocCCommon)
-target_link_libraries(SwiftDocC PRIVATE
-  DocCHTML)
 target_link_libraries(SwiftDocC PUBLIC
   SwiftMarkdown::Markdown
   DocC::SymbolKit

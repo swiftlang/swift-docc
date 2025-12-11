@@ -563,7 +563,6 @@ class ExternalRenderNodeTests: XCTestCase {
         let problems = try ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
-            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: false,
             documentationCoverageOptions: .noCoverage
