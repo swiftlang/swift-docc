@@ -14,7 +14,6 @@ add_library(SwiftDocCUtilities STATIC
   Action/Actions/Convert/ConvertAction.swift
   Action/Actions/Convert/ConvertFileWritingConsumer.swift
   Action/Actions/Convert/CoverageDataEntry+generateSummary.swift
-  Action/Actions/Convert/FileWritingHTMLContentConsumer.swift
   Action/Actions/Convert/Indexer.swift
   Action/Actions/Convert/JSONEncodingRenderNodeWriter.swift
   Action/Actions/CoverageAction.swift
