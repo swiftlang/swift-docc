@@ -223,6 +223,32 @@ struct HTMLRenderer {
             hero.addChild(paragraph)
         }
         
+        if FeatureFlags.current.isMentionedInEnabled {
+            articleElement.addChildren(
+                renderer.groupedListSection(named: "Mentioned In", groups: [
+                    .swift: [.init(title: nil, references: context.articleSymbolMentions.articlesMentioning(reference).map(\.url))]
+                ])
+            )
+        }
+        
+        if let relationships = symbol.relationshipsVariants
+            .values(goal: goal, by: { $0.groups.elementsEqual($1.groups, by: { $0 == $1 }) })
+            .valuesByLanguage()
+        {
+            articleElement.addChildren(
+                renderer.groupedListSection(named: "Relationships", groups: relationships.mapValues { section in
+                    section.groups.map {
+                        .init(title: $0.sectionTitle, references: $0.destinations.compactMap { topic in
+                            switch topic {
+                                case .resolved(.success(let reference)): reference.url
+                                case .unresolved, .resolved(.failure):   nil
+                            }
+                        })
+                    }
+                })
+            )
+        }
+        
         return RenderedPageInfo(
             content: goal == .richness ? main : articleElement,
             metadata: .init(
@@ -291,19 +317,36 @@ private extension Symbol {
     }
 }
 
+private extension RelationshipsGroup {
+    static func == (lhs: RelationshipsGroup, rhs: RelationshipsGroup) -> Bool {
+        lhs.kind == rhs.kind && lhs.destinations == rhs.destinations // Everything else is derived from the `kind`
+    }
+}
+
 private enum VariantValues<Value> {
     case single(Value)
     case languageSpecific([SourceLanguage: Value])
     // This is necessary because of a shortcoming in the API design of `DocumentationDataVariants`.
     case empty
+    
+    func valuesByLanguage() -> [SourceLanguage: Value]? {
+        switch self {
+            case .single(let value):
+                [.swift: value] // The language doesn't matter when there's only one
+            case .languageSpecific(let values):
+                values
+            case .empty:
+                nil
+        }
+    }
 }
 
 // Both `DocumentationDataVariants` and `VariantCollection` are really hard to work with correctly and neither offer a good API that both:
 // - Makes a clear distinction between when a value will always exist and when the "values" can be empty.
 // - Allows the caller to iterate over all the values.
 // TODO: Design and implement a better solution for representing language specific variations of a value (rdar://166211961)
-private extension DocumentationDataVariants where Variant: Equatable {
-    func values(goal: RenderGoal) -> VariantValues<Variant> {
+private extension DocumentationDataVariants {
+    func values(goal: RenderGoal, by areEquivalent: (Variant, Variant) -> Bool) -> VariantValues<Variant> {
         guard let primaryValue = firstValue else {
             return .empty
         }
@@ -321,7 +364,7 @@ private extension DocumentationDataVariants where Variant: Equatable {
         }
         
         // Check if the variants has any language-specific values (that are _actually_ different from the primary value)
-        if values.contains(where: { _, value in value != primaryValue }) {
+        if values.contains(where: { _, value in !areEquivalent(value, primaryValue) }) {
             // There are multiple distinct values
             return .languageSpecific([SourceLanguage: Variant](
                 values.map { trait, value in
@@ -332,5 +375,11 @@ private extension DocumentationDataVariants where Variant: Equatable {
             // There are multiple values, but the're all the same
             return .single(primaryValue)
         }
+    }
+}
+
+private extension DocumentationDataVariants where Variant: Equatable {
+    func values(goal: RenderGoal) -> VariantValues<Variant> {
+        values(goal: goal, by: ==)
     }
 }
