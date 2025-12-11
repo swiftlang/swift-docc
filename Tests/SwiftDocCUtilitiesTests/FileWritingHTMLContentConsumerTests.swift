@@ -195,9 +195,30 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <noscript>
               <article>
                 <section>
+                  <ul>
+                    <li>ModuleName</li>
+                  </ul>
+                  <p>Framework</p>
                   <h1>ModuleName</h1>
                   <p>Some <b>formatted</b> description of this module</p>
                 </section>
+                <h2>Topics</h2>
+                <h3>Something custom</h3>
+                <p>A custom <i>formatted</i> description of this topic section</p>
+                <ul>
+                  <li>
+                    <a href="somearticle/index.html">
+                      <p>Some article</p>
+                      <p>This is an <i>formatted</i> article.</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="someclass/index.html">
+                      <code>class SomeClass</code>
+                      <p>Some in-source description of this class.</p>
+                    </a>
+                  </li>
+                </ul>
               </article>
             </noscript>
             <div id="app"></div>
@@ -217,9 +238,29 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <noscript>
               <article>
                 <section>
+                  <ul>
+                    <li>
+                      <a href="../index.html">ModuleName</a>
+                    </li>
+                    <li>SomeClass</li>
+                  </ul>
+                  <p>Class</p>
                   <h1>SomeClass</h1>
                   <p>Some in-source description of this class.</p>
+                  <pre>
+                    <code>class SomeClass</code>
+                  </pre>
                 </section>
+                <h2>Topics</h2>
+                <h3>Instance Methods</h3>
+                <ul>
+                  <li>
+                    <a href="somemethod(with:and:)/index.html">
+                      <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
+                      <p>Some in-source description of this method.</p>
+                    </a>
+                  </li>
+                </ul>
               </article>
             </noscript>
             <div id="app"></div>
@@ -238,10 +279,50 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
           <body>
             <noscript>
               <article>
-                <section>
-                  <h1>someMethod(with:and:)</h1>
-                  <p>Some in-source description of this method.</p>
-                </section>
+              <section>
+                <ul>
+                  <li>
+                    <a href="../../index.html">ModuleName</a>
+                  </li>
+                  <li>
+                    <a href="../index.html">SomeClass</a>
+                  </li>
+                  <li>someMethod(with:and:)</li>
+                </ul>
+                <p>Instance Method</p>
+                <h1>someMethod(with:and:)</h1>
+                <p>Some in-source description of this method.</p>
+                <pre>
+                  <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
+                </pre>
+              </section>
+              <h2>Parameters</h2>
+              <dl>
+                <dt>
+                  <code>first</code>
+                </dt>
+                <dd>
+                  <p>Description of the <code>first</code> parameter.</p>
+                </dd>
+                <dt>
+                  <code>second</code>
+                </dt>
+                <dd>
+                  <p>Description of the <code>second</code> parameter.</p>
+                </dd>
+              </dl>
+              <h2>Return Value</h2>
+              <p>Description of the return value.</p>
+              <h2>See Also</h2>
+              <h3>Related Documentation</h3>
+              <ul>
+                <li>
+                  <a href="../../somearticle/index.html">
+                    <p>Some article</p>
+                    <p>This is an <i>formatted</i> article.</p>
+                  </a>
+                </li>
+              </ul>
               </article>
             </noscript>
             <div id="app"></div>
@@ -259,11 +340,28 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
           <meta content="This is an formatted article." name="description"/></head>
           <body>
             <noscript>
-              <article>
-                <section>
-                  <h1>Some article</h1>
-                  <p>This is an <i>formatted</i> article.</p>
-                </section>
+            <article>
+              <section>
+                <ul>
+                  <li>
+                    <a href="../index.html">ModuleName</a>
+                  </li>
+                  <li>Some article</li>
+                </ul>
+                <p>Article</p>
+                <h1>Some article</h1>
+                <p>This is an <i>formatted</i> article.</p>
+              </section>
+              <h2>See Also</h2>
+              <h3>Related Documentation</h3>
+              <ul>
+                <li>
+                  <a href="../someclass/index.html">
+                    <code>class SomeClass</code>
+                    <p>Some in-source description of this class.</p>
+                  </a>
+                </li>
+              </ul>
               </article>
             </noscript>
             <div id="app"></div>
