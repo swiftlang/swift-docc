@@ -178,6 +178,11 @@ struct HTMLRenderer {
             addAbstract(abstract, to: hero)
         }
         
+        // Deprecation message
+        if let deprecationMessage = article.deprecationSummary?.elements {
+            addDeprecationSummary(markup: deprecationMessage, to: hero)
+        }
+        
         // Topics
         if let topics = article.topics {
             separateSectionsIfNeeded(in: articleElement)
@@ -279,6 +284,11 @@ struct HTMLRenderer {
             }
         }
         
+        // Deprecation message
+        if let deprecationMessage = symbol.deprecatedSummary?.content {
+            addDeprecationSummary(markup: deprecationMessage, to: hero)
+        }
+        
         // Parameters
         if let parameterSections = symbol.parametersSectionVariants
             .values(goal: goal, by: { $0.parameters.elementsEqual($1.parameters, by: { $0.name == $1.name }) })
@@ -359,6 +369,19 @@ struct HTMLRenderer {
             paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
         }
         element.addChild(paragraph)
+    }
+    
+    private func addDeprecationSummary(markup: [any Markup], to element: XMLElement) {
+        var children: [XMLNode] = [
+            .element(named: "p", children: [.text("Deprecated")], attributes: ["class": "label"])
+        ]
+        for child in markup {
+            children.append(renderer.visit(child))
+        }
+        
+        element.addChild(
+            .element(named: "blockquote", children: children, attributes: ["class": "aside deprecated"])
+        )
     }
     
     private func separateSectionsIfNeeded(in element: XMLElement) {

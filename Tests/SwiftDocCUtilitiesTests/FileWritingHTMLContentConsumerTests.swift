@@ -25,6 +25,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             
             This is an _formatted_ article.
             
+            @DeprecationSummary {
+              Description of why this _article_ is deprecated.
+            }
+            
             ## Custom discussion
             
             It explains how a developer can perform some task using ``SomeClass`` in this module.
@@ -52,6 +56,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     Some in-source description of this method.
                     
                     Further description of this method and how to use it.
+                    
+                    @DeprecationSummary {
+                      Some **formatted** description of why this method is deprecated.
+                    }
                     
                     - Parameters: 
                       - first:  Description of the `first` parameter.
@@ -295,6 +303,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <pre>
                   <code>func someMethod(with first: Int, and second: String) -&gt; Bool</code>
                 </pre>
+                <blockquote class="aside deprecated">
+                  <p class="label">Deprecated</p>
+                  <p>Some <b>formatted</b> description of why this method is deprecated.</p>
+                </blockquote>
               </section>
               <h2>Parameters</h2>
               <dl>
@@ -351,6 +363,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <p>Article</p>
                 <h1>Some article</h1>
                 <p>This is an <i>formatted</i> article.</p>
+                <blockquote class="aside deprecated">
+                  <p class="label">Deprecated</p>
+                  <p>Description of why this <i>article</i> is deprecated.</p>
+                </blockquote>
               </section>
               <h2>See Also</h2>
               <h3>Related Documentation</h3>
