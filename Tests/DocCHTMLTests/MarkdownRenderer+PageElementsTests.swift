@@ -641,6 +641,79 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
     
+    @Test(arguments: RenderGoal.allCases)
+    func testEmptyDiscussionSection(goal: RenderGoal) {
+        let renderer = makeRenderer(goal: goal)
+        let discussion = renderer.discussion([], fallbackSectionName: "Fallback")
+        #expect(discussion.isEmpty)
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testDiscussionSectionWithoutHeading(goal: RenderGoal) {
+        let renderer = makeRenderer(goal: goal)
+        let discussion = renderer.discussion(parseMarkup(string: """
+        First paragraph
+        
+        Second paragraph
+        """), fallbackSectionName: "Fallback")
+        
+        let commonHTML = """
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Fallback">
+            <h2>
+              <a href="#Fallback">Fallback</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Fallback</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testDiscussionSectionWithHeading(goal: RenderGoal) {
+        let renderer = makeRenderer(goal: goal)
+        let discussion = renderer.discussion(parseMarkup(string: """
+        ## Some Heading
+        
+        First paragraph
+        
+        Second paragraph
+        """), fallbackSectionName: "Fallback")
+        
+        let commonHTML = """
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Some-Heading">
+            <h2>
+              <a href="#Some-Heading">Some Heading</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Some Heading</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+    
     // MARK: -
     
     private func makeRenderer(
