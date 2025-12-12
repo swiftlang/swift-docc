@@ -242,6 +242,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   <h1>someMethod(with:and:)</h1>
                   <p>Some in-source description of this method.</p>
                 </section>
+                <h2>Discussion</h2>
+                <p>Further description of this method and how to use it.</p>
               </article>
             </noscript>
             <div id="app"></div>
@@ -264,6 +266,10 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   <h1>Some article</h1>
                   <p>This is an <i>formatted</i> article.</p>
                 </section>
+                <h2>Custom discussion</h2>
+                <p>It explains how a developer can perform some task using <a href="../someclass/index.html"><code>SomeClass</code></a> in this module.</p>
+                <h3>Details</h3>
+                <p>This subsection describes something more detailed.</p>
               </article>
             </noscript>
             <div id="app"></div>
