@@ -178,6 +178,13 @@ struct HTMLRenderer {
             hero.addChild(paragraph)
         }
         
+        // Discussion
+        if let discussion = article.discussion {
+            articleElement.addChildren(
+                renderer.discussion(discussion.content, fallbackSectionName: "Overview")
+            )
+        }
+        
         return RenderedPageInfo(
             content: goal == .richness ? main : articleElement,
             metadata: .init(
@@ -221,6 +228,13 @@ struct HTMLRenderer {
                 paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
             }
             hero.addChild(paragraph)
+        }
+        
+        // Discussion
+        if let discussion = symbol.discussion {
+            articleElement.addChildren(
+                renderer.discussion(discussion.content, fallbackSectionName: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
+            )
         }
         
         return RenderedPageInfo(
