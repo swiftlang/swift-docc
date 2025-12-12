@@ -157,12 +157,16 @@ struct HTMLRenderer {
     mutating func renderArticle(_ article: Article) -> RenderedPageInfo {
         let node = context.documentationCache[reference]!
         
-        let main = XMLElement(name: "main")
         let articleElement = XMLElement(name: "article")
-        main.addChild(articleElement)
-        
         let hero = XMLElement(name: "section")
         articleElement.addChild(hero)
+        
+        // Breadcrumbs and Eyebrow
+        hero.addChild(renderer.breadcrumbs(
+            references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.url },
+            currentPageNames: .single(.conceptual(node.name.plainText))
+        ))
+        addEyebrow(text: article.topics == nil ? "Article": "API Collection", to: hero)
         
         // Title
         hero.addChild(
@@ -171,15 +175,46 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = article.abstract {
-            let paragraph = renderer.visit(abstract) as! XMLElement
-            if goal == .richness {
-                paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
-            }
-            hero.addChild(paragraph)
+            addAbstract(abstract, to: hero)
         }
         
+        // Deprecation message
+        if let deprecationMessage = article.deprecationSummary?.elements {
+            addDeprecationSummary(markup: deprecationMessage, to: hero)
+        }
+        
+        // Discussion
+        if let discussion = article.discussion {
+            articleElement.addChildren(
+                renderer.discussion(discussion.content, fallbackSectionName: "Overview")
+            )
+        }
+        
+        // Topics
+        if let topics = article.topics {
+            separateSectionsIfNeeded(in: articleElement)
+            
+            // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
+            articleElement.addChildren(
+                renderer.groupedSection(named: "Topics", groups: [
+                    .swift: topics.taskGroups.map { group in
+                        .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
+                            $0.destination.flatMap { URL(string: $0) }
+                        })
+                    }
+                ])
+            )
+        }
+        // Articles don't have _automatic_ topic sections.
+        
+        // See Also
+        if let seeAlso = article.seeAlso {
+            addSeeAlso(seeAlso, to: articleElement)
+        }
+        // _Automatic_ See Also sections are very heavily tied into the RenderJSON model and require information from the JSON to determine.
+        
         return RenderedPageInfo(
-            content: goal == .richness ? main : articleElement,
+            content: articleElement,
             metadata: .init(
                 title: article.title?.plainText ?? node.name.plainText,
                 plainDescription: article.abstract?.plainText
@@ -188,12 +223,18 @@ struct HTMLRenderer {
     }
     
     mutating func renderSymbol(_ symbol: Symbol) -> RenderedPageInfo {
-        let main = XMLElement(name: "main")
-        let articleElement = XMLElement(name: "article")
-        main.addChild(articleElement)
+        let node = context.documentationCache[reference]!
         
+        let articleElement = XMLElement(name: "article")
         let hero = XMLElement(name: "section")
         articleElement.addChild(hero)
+        
+        // Breadcrumbs and Eyebrow
+        hero.addChild(renderer.breadcrumbs(
+            references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
+            currentPageNames: node.makeNames(goal: goal)
+        ))
+        addEyebrow(text: symbol.roleHeading, to: hero)
         
         // Title
         switch symbol.titleVariants.values(goal: goal) {
@@ -216,19 +257,194 @@ struct HTMLRenderer {
         
         // Abstract
         if let abstract = symbol.abstract {
-            let paragraph = renderer.visit(abstract) as! XMLElement
-            if goal == .richness {
-                paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
+            addAbstract(abstract, to: hero)
+        }
+        
+        // Availability
+        if let availability = symbol.availability?.availability.filter({ $0.domain != nil }).sorted(by: \.domain!.rawValue),
+           !availability.isEmpty
+        {
+            hero.addChild(
+                renderer.availability(availability.map { item in
+                        .init(
+                            name: item.domain!.rawValue, // Verified non-empty above
+                            introduced: item.introducedVersion.map { "\($0.major).\($0.minor)" },
+                            deprecated: item.deprecatedVersion.map { "\($0.major).\($0.minor)" },
+                            isBeta: false // TODO: Derive and pass beta information
+                    )
+                })
+            )
+        }
+        
+        // Declaration
+        if !symbol.declarationVariants.allValues.isEmpty {
+            // TODO: Display platform specific declarations
+            
+            var fragmentsByLanguage = [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
+            for (trait, variant) in symbol.declarationVariants.allValues {
+                guard let language = trait.sourceLanguage else { continue }
+                fragmentsByLanguage[language] = variant.values.first?.declarationFragments
             }
-            hero.addChild(paragraph)
+            
+            if fragmentsByLanguage.values.contains(where: { !$0.isEmpty }) {
+                hero.addChild( renderer.declaration(fragmentsByLanguage) )
+            }
+        }
+        
+        // Deprecation message
+        if let deprecationMessage = symbol.deprecatedSummary?.content {
+            addDeprecationSummary(markup: deprecationMessage, to: hero)
+        }
+        
+        // Parameters
+        if let parameterSections = symbol.parametersSectionVariants
+            .values(goal: goal, by: { $0.parameters.elementsEqual($1.parameters, by: { $0.name == $1.name }) })
+            .valuesByLanguage()
+        {
+            articleElement.addChildren(renderer.parameters(
+                parameterSections.mapValues { section in
+                    section.parameters.map {
+                        MarkdownRenderer<ContextLinkProvider>.ParameterInfo(name: $0.name, content: $0.contents)
+                    }
+                }
+            ))
+        }
+        
+        // Return value
+        if !symbol.returnsSectionVariants.allValues.isEmpty {
+            articleElement.addChildren(
+                renderer.returns(
+                    .init(
+                        symbol.returnsSectionVariants.allValues.map { trait, returnSection in (
+                            key:   trait.sourceLanguage ?? .swift,
+                            value: returnSection.content
+                        )},
+                        uniquingKeysWith: { _, new in new }
+                    )
+                )
+            )
+        }
+        
+        // Mentioned In
+        if FeatureFlags.current.isMentionedInEnabled {
+            articleElement.addChildren(
+                renderer.groupedListSection(named: "Mentioned In", groups: [
+                    .swift: [.init(title: nil, references: context.articleSymbolMentions.articlesMentioning(reference).map(\.url))]
+                ])
+            )
+        }
+
+        // Discussion
+        if let discussion = symbol.discussion {
+            articleElement.addChildren(
+                renderer.discussion(discussion.content, fallbackSectionName: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
+            )
+        }
+        
+        // Topics
+        do {
+            // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
+            var taskGroupInfo: [MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo] = []
+            
+            if let authored = symbol.topics?.taskGroups {
+                taskGroupInfo.append(contentsOf: authored.map { group in
+                    .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
+                        $0.destination.flatMap { URL(string: $0) }
+                    })
+                })
+            }
+            if let automatic = try? AutomaticCuration.topics(for: node, withTraits: [.swift, .objectiveC], context: context) {
+                taskGroupInfo.append(contentsOf: automatic.map { group in
+                    .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
+                })
+            }
+            
+            if !taskGroupInfo.isEmpty {
+                separateSectionsIfNeeded(in: articleElement)
+                
+                articleElement.addChildren(renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
+            }
+        }
+        
+        // Relationships
+        if let relationships = symbol.relationshipsVariants
+            .values(goal: goal, by: { $0.groups.elementsEqual($1.groups, by: { $0 == $1 }) })
+            .valuesByLanguage()
+        {
+            articleElement.addChildren(
+                renderer.groupedListSection(named: "Relationships", groups: relationships.mapValues { section in
+                    section.groups.map {
+                        .init(title: $0.sectionTitle, references: $0.destinations.compactMap { topic in
+                            switch topic {
+                                case .resolved(.success(let reference)): reference.url
+                                case .unresolved, .resolved(.failure):   nil
+                            }
+                        })
+                    }
+                })
+            )
+        }
+        
+        // See Also
+        if let seeAlso = symbol.seeAlso {
+            addSeeAlso(seeAlso, to: articleElement)
         }
         
         return RenderedPageInfo(
-            content: goal == .richness ? main : articleElement,
+            content: articleElement,
             metadata: .init(
                 title: symbol.title,
                 plainDescription: symbol.abstract?.plainText
             )
+        )
+    }
+   
+    private func addEyebrow(text: String, to element: XMLElement) {
+        element.addChild(
+            .element(named: "p", children: [.text(text)], attributes: goal == .richness ? ["id": "eyebrow"] : [:])
+        )
+    }
+    
+    private func addAbstract(_ abstract: Paragraph, to element: XMLElement) {
+        let paragraph = renderer.visit(abstract) as! XMLElement
+        if goal == .richness {
+            paragraph.addAttribute(XMLNode.attribute(withName: "id", stringValue: "abstract") as! XMLNode)
+        }
+        element.addChild(paragraph)
+    }
+    
+    private func addDeprecationSummary(markup: [any Markup], to element: XMLElement) {
+        var children: [XMLNode] = [
+            .element(named: "p", children: [.text("Deprecated")], attributes: ["class": "label"])
+        ]
+        for child in markup {
+            children.append(renderer.visit(child))
+        }
+        
+        element.addChild(
+            .element(named: "blockquote", children: children, attributes: ["class": "aside deprecated"])
+        )
+    }
+    
+    private func separateSectionsIfNeeded(in element: XMLElement) {
+        guard goal == .richness, ((element.children ?? []).last as? XMLElement)?.name == "section" else {
+            return
+        }
+        
+        element.addChild(.element(named: "hr")) // Separate the sections with a thematic break
+    }
+    
+    private func addSeeAlso(_ seeAlso: SeeAlsoSection, to element: XMLElement) {
+        separateSectionsIfNeeded(in: element)
+        
+        element.addChildren(
+            renderer.groupedSection(named: "See Also", groups: [
+                .swift: seeAlso.taskGroups.map { group in
+                    .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
+                        $0.destination.flatMap { URL(string: $0) }
+                    })
+                }
+            ])
         )
     }
     
@@ -291,19 +507,36 @@ private extension Symbol {
     }
 }
 
+private extension RelationshipsGroup {
+    static func == (lhs: RelationshipsGroup, rhs: RelationshipsGroup) -> Bool {
+        lhs.kind == rhs.kind && lhs.destinations == rhs.destinations // Everything else is derived from the `kind`
+    }
+}
+
 private enum VariantValues<Value> {
     case single(Value)
     case languageSpecific([SourceLanguage: Value])
     // This is necessary because of a shortcoming in the API design of `DocumentationDataVariants`.
     case empty
+    
+    func valuesByLanguage() -> [SourceLanguage: Value]? {
+        switch self {
+            case .single(let value):
+                [.swift: value] // The language doesn't matter when there's only one
+            case .languageSpecific(let values):
+                values
+            case .empty:
+                nil
+        }
+    }
 }
 
 // Both `DocumentationDataVariants` and `VariantCollection` are really hard to work with correctly and neither offer a good API that both:
 // - Makes a clear distinction between when a value will always exist and when the "values" can be empty.
 // - Allows the caller to iterate over all the values.
 // TODO: Design and implement a better solution for representing language specific variations of a value (rdar://166211961)
-private extension DocumentationDataVariants where Variant: Equatable {
-    func values(goal: RenderGoal) -> VariantValues<Variant> {
+private extension DocumentationDataVariants {
+    func values(goal: RenderGoal, by areEquivalent: (Variant, Variant) -> Bool) -> VariantValues<Variant> {
         guard let primaryValue = firstValue else {
             return .empty
         }
@@ -321,7 +554,7 @@ private extension DocumentationDataVariants where Variant: Equatable {
         }
         
         // Check if the variants has any language-specific values (that are _actually_ different from the primary value)
-        if values.contains(where: { _, value in value != primaryValue }) {
+        if values.contains(where: { _, value in !areEquivalent(value, primaryValue) }) {
             // There are multiple distinct values
             return .languageSpecific([SourceLanguage: Variant](
                 values.map { trait, value in
@@ -332,5 +565,11 @@ private extension DocumentationDataVariants where Variant: Equatable {
             // There are multiple values, but the're all the same
             return .single(primaryValue)
         }
+    }
+}
+
+private extension DocumentationDataVariants where Variant: Equatable {
+    func values(goal: RenderGoal) -> VariantValues<Variant> {
+        values(goal: goal, by: ==)
     }
 }
