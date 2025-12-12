@@ -12,7 +12,6 @@ import Foundation
 import XCTest
 import SwiftDocCTestUtilities
 import SymbolKit
-@_spi(MarkdownOutput) import SwiftDocC
 @testable import SwiftDocC
 
 final class MarkdownOutputTests: XCTestCase {

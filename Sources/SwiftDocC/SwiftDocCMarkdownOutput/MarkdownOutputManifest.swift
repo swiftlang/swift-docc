@@ -11,27 +11,26 @@
 import Foundation
 
 /// A manifest of markdown-generated documentation from a single catalog
-@_spi(MarkdownOutput)
-public struct MarkdownOutputManifest: Codable, Sendable {
-    public static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
+package struct MarkdownOutputManifest: Codable, Sendable {
+    package static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
     
     /// The version of this manifest
-    public let manifestVersion: SemanticVersion
+    package let manifestVersion: SemanticVersion
     /// The manifest title, this will typically match the module that the manifest is generated for
-    public let title: String
+    package let title: String
     /// All documents contained in the manifest
-    public var documents: Set<Document>
+    package var documents: Set<Document>
     /// Relationships involving documents in the manifest
-    public var relationships: Set<Relationship>
+    package var relationships: Set<Relationship>
     
-    public init(title: String, documents: Set<Document> = [], relationships: Set<Relationship> = []) {
+    package init(title: String, documents: Set<Document> = [], relationships: Set<Relationship> = []) {
         self.manifestVersion = Self.version
         self.title = title
         self.documents = documents
         self.relationships = relationships
     }
     
-    public func encode(to encoder: any Encoder) throws {
+    package func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(manifestVersion, forKey: .manifestVersion)
         try container.encode(title, forKey: .title)
@@ -42,18 +41,18 @@ public struct MarkdownOutputManifest: Codable, Sendable {
 
 extension MarkdownOutputManifest {
     
-    public enum DocumentType: String, Codable, Sendable {
+    package enum DocumentType: String, Codable, Sendable {
         case article, tutorial, symbol
     }
     
-    public enum RelationshipType: String, Codable, Sendable {
+    package enum RelationshipType: String, Codable, Sendable {
         /// For this relationship, the source URI will be the URI of a document, and the target URI will be the topic to which it belongs
         case belongsToTopic
         /// For this relationship, the source and target URIs will be indicated by the directionality of the subtype, e.g. source "conformsTo" target. 
         case relatedSymbol
     }
     
-    public enum RelationshipSubType: String, Codable, Sendable {
+    package enum RelationshipSubType: String, Codable, Sendable {
         /// One or more protocols to which a type conforms.
         case conformsTo
         /// One or more types that conform to a protocol.
@@ -67,21 +66,21 @@ extension MarkdownOutputManifest {
     /// A relationship between two documents in the manifest.
     ///
     /// Parent / child symbol relationships are not included here, because those relationships are implicit in the URI structure of the documents. See ``children(of:)``.
-    public struct Relationship: Codable, Hashable, Sendable, Comparable {
+    package struct Relationship: Codable, Hashable, Sendable, Comparable {
         
-        public let sourceURI: String
-        public let relationshipType: RelationshipType
-        public let subtype: RelationshipSubType?
-        public let targetURI: String
+        package let sourceURI: String
+        package let relationshipType: RelationshipType
+        package let subtype: RelationshipSubType?
+        package let targetURI: String
         
-        public init(sourceURI: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipSubType? = nil, targetURI: String) {
+        package init(sourceURI: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipSubType? = nil, targetURI: String) {
             self.sourceURI = sourceURI
             self.relationshipType = relationshipType
             self.subtype = subtype
             self.targetURI = targetURI
         }
         
-        public static func < (lhs: MarkdownOutputManifest.Relationship, rhs: MarkdownOutputManifest.Relationship) -> Bool {
+        package static func < (lhs: MarkdownOutputManifest.Relationship, rhs: MarkdownOutputManifest.Relationship) -> Bool {
             if lhs.sourceURI < rhs.sourceURI {
                 return true
             } else if lhs.sourceURI == rhs.sourceURI {
@@ -92,28 +91,28 @@ extension MarkdownOutputManifest {
         }
     }
     
-    public struct Document: Codable, Hashable, Sendable, Comparable {
+    package struct Document: Codable, Hashable, Sendable, Comparable {
         
         /// The URI of the document
-        public let uri: String
+        package let uri: String
         /// The type of the document
-        public let documentType: DocumentType
+        package let documentType: DocumentType
         /// The title of the document
-        public let title: String
+        package let title: String
                 
-        public init(uri: String, documentType: MarkdownOutputManifest.DocumentType, title: String) {
+        package init(uri: String, documentType: MarkdownOutputManifest.DocumentType, title: String) {
             self.uri = uri
             self.documentType = documentType
             self.title = title
         }
                 
-        public static func < (lhs: MarkdownOutputManifest.Document, rhs: MarkdownOutputManifest.Document) -> Bool {
+        package static func < (lhs: MarkdownOutputManifest.Document, rhs: MarkdownOutputManifest.Document) -> Bool {
             lhs.uri < rhs.uri
         }
     }
     
     /// All documents in the manifest that have a given document as a parent, e.g. Framework/Symbol/property is a child of Framework/Symbol
-    public func children(of parent: Document) -> Set<Document> {
+    package func children(of parent: Document) -> Set<Document> {
         let parentPrefix = parent.uri + "/"
         let prefixEnd = parentPrefix.endIndex
         return documents.filter { document in

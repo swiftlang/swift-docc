@@ -10,7 +10,6 @@
 
 import Foundation
 import SwiftDocC
-@_spi(MarkdownOutput) import SwiftDocC
 
 /// An object that writes render nodes, as JSON files, into a target folder.
 ///
