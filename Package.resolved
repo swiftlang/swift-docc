@@ -1,4 +1,5 @@
 {
+  "originHash" : "6a2fba12d9d8cf682094fa377600d56c196ce947a70bf82d12a7faff1b81c530",
   "pins" : [
     {
       "identity" : "swift-argument-parser",
@@ -87,7 +88,7 @@
       "location" : "https://github.com/swiftlang/swift-markdown.git",
       "state" : {
         "branch" : "main",
-        "revision" : "5ad49ed3219261b085e86da832d0657752bba63c"
+        "revision" : "b2135f426fca19029430fbf26564e953b2d0f3d3"
       }
     },
     {
@@ -109,5 +110,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
