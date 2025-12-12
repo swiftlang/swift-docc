@@ -183,6 +183,13 @@ struct HTMLRenderer {
             addDeprecationSummary(markup: deprecationMessage, to: hero)
         }
         
+        // Discussion
+        if let discussion = article.discussion {
+            articleElement.addChildren(
+                renderer.discussion(discussion.content, fallbackSectionName: "Overview")
+            )
+        }
+        
         // Topics
         if let topics = article.topics {
             separateSectionsIfNeeded(in: articleElement)
@@ -318,6 +325,22 @@ struct HTMLRenderer {
             )
         }
         
+        // Mentioned In
+        if FeatureFlags.current.isMentionedInEnabled {
+            articleElement.addChildren(
+                renderer.groupedListSection(named: "Mentioned In", groups: [
+                    .swift: [.init(title: nil, references: context.articleSymbolMentions.articlesMentioning(reference).map(\.url))]
+                ])
+            )
+        }
+
+        // Discussion
+        if let discussion = symbol.discussion {
+            articleElement.addChildren(
+                renderer.discussion(discussion.content, fallbackSectionName: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
+            )
+        }
+        
         // Topics
         do {
             // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
@@ -341,6 +364,25 @@ struct HTMLRenderer {
                 
                 articleElement.addChildren(renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
             }
+        }
+        
+        // Relationships
+        if let relationships = symbol.relationshipsVariants
+            .values(goal: goal, by: { $0.groups.elementsEqual($1.groups, by: { $0 == $1 }) })
+            .valuesByLanguage()
+        {
+            articleElement.addChildren(
+                renderer.groupedListSection(named: "Relationships", groups: relationships.mapValues { section in
+                    section.groups.map {
+                        .init(title: $0.sectionTitle, references: $0.destinations.compactMap { topic in
+                            switch topic {
+                                case .resolved(.success(let reference)): reference.url
+                                case .unresolved, .resolved(.failure):   nil
+                            }
+                        })
+                    }
+                })
+            )
         }
         
         // See Also
@@ -462,6 +504,12 @@ private extension Symbol {
                 // This shouldn't happen but because of a shortcoming in the API design of `DocumentationDataVariants`, it can't be guaranteed.
                 .single(.symbol(fallbackTitle))
         }
+    }
+}
+
+private extension RelationshipsGroup {
+    static func == (lhs: RelationshipsGroup, rhs: RelationshipsGroup) -> Bool {
+        lhs.kind == rhs.kind && lhs.destinations == rhs.destinations // Everything else is derived from the `kind`
     }
 }
 
