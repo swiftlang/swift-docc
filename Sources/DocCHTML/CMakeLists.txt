@@ -14,6 +14,7 @@ add_library(DocCHTML STATIC
   MarkdownRenderer+Declaration.swift
   MarkdownRenderer+Discussion.swift
   MarkdownRenderer+Parameters.swift
+  MarkdownRenderer+Relationships.swift
   MarkdownRenderer+Returns.swift
   MarkdownRenderer+Topics.swift
   MarkdownRenderer.swift
