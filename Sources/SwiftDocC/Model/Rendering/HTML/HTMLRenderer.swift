@@ -178,6 +178,13 @@ struct HTMLRenderer {
             hero.addChild(paragraph)
         }
         
+        // Discussion
+        if let discussion = article.discussion {
+            articleElement.addChildren(
+                renderer.discussion(discussion.content, fallbackSectionName: "Overview")
+            )
+        }
+        
         return RenderedPageInfo(
             content: goal == .richness ? main : articleElement,
             metadata: .init(
@@ -223,6 +230,7 @@ struct HTMLRenderer {
             hero.addChild(paragraph)
         }
         
+        // Mentioned In
         if FeatureFlags.current.isMentionedInEnabled {
             articleElement.addChildren(
                 renderer.groupedListSection(named: "Mentioned In", groups: [
@@ -230,7 +238,15 @@ struct HTMLRenderer {
                 ])
             )
         }
+
+        // Discussion
+        if let discussion = symbol.discussion {
+            articleElement.addChildren(
+                renderer.discussion(discussion.content, fallbackSectionName: symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion")
+            )
+        }
         
+        // Relationships
         if let relationships = symbol.relationshipsVariants
             .values(goal: goal, by: { $0.groups.elementsEqual($1.groups, by: { $0 == $1 }) })
             .valuesByLanguage()
