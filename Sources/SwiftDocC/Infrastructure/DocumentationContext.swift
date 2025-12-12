@@ -1194,7 +1194,7 @@ public class DocumentationContext {
                             bundleID: reference.bundleID,
                             path: symbolPath,
                             fragment: nil,
-                            sourceLanguages: reference.sourceLanguages
+                            sourceLanguages: reference._sourceLanguages
                         )
                         
                         if let existing = uncuratedDocumentationExtensions[symbolReference] {
@@ -1938,7 +1938,7 @@ public class DocumentationContext {
         // for each language it's available in.
         if let symbol = node.semantic as? Symbol {
             for sourceLanguage in node.availableSourceLanguages {
-                symbol.automaticTaskGroupsVariants[.init(interfaceLanguage: sourceLanguage.id)] = [automaticTaskGroup]
+                symbol.automaticTaskGroupsVariants[.init(sourceLanguage: sourceLanguage)] = [automaticTaskGroup]
             }
         } else if var taskGroupProviding = node.semantic as? (any AutomaticTaskGroupsProviding) {
             taskGroupProviding.automaticTaskGroups = [automaticTaskGroup]
@@ -2950,14 +2950,7 @@ extension DocumentationContext {
         var problems = [Problem]()
 
         func listSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> String {
-            sourceLanguages.sorted(by: { language1, language2 in
-                // Emit Swift first, then alphabetically.
-                switch (language1, language2) {
-                case (.swift, _): return true
-                case (_, .swift): return false
-                default: return language1.id < language2.id
-                }
-            }).map(\.name).list(finalConjunction: .and)
+            sourceLanguages.sorted().map(\.name).list(finalConjunction: .and)
         }
         func removeAlternateRepresentationSolution(_ alternateRepresentation: AlternateRepresentation) -> [Solution] {
             [Solution(

@@ -223,7 +223,7 @@ extension RenderIndex {
         public init(
             title: String,
             path: String?,
-            type: String,
+            type: String?,
             children: [Node]?,
             isDeprecated: Bool,
             isExternal: Bool,

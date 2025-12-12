@@ -219,7 +219,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             }
 
             var declarations: [DeclarationRenderSection] = []
-            let languages = [
+            let renderLanguageIDs = [
                 trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
             ]
             for pair in declaration {
@@ -263,7 +263,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 declarations.append(
                     DeclarationRenderSection(
-                        languages: languages,
+                        languages: renderLanguageIDs,
                         platforms: platformNames,
                         tokens: renderedTokens,
                         otherDeclarations: otherDeclarations
@@ -281,7 +281,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                         declarations.append(
                             DeclarationRenderSection(
-                                languages: languages,
+                                languages: renderLanguageIDs,
                                 platforms: platformNames,
                                 tokens: renderedTokens
                             )

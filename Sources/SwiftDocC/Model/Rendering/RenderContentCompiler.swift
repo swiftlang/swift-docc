@@ -36,10 +36,10 @@ struct RenderContentCompiler: MarkupVisitor {
         let aside = Aside(blockQuote)
         
         let newAside = RenderBlockContent.Aside(
-            style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
+            asideKind: aside.kind,
             content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]
         )
-            
+
         return [RenderBlockContent.aside(newAside.capitalizingFirstWord())]
     }
     
@@ -390,7 +390,7 @@ struct RenderContentCompiler: MarkupVisitor {
                 }
             }
         return [RenderBlockContent.aside(.init(
-            style: .init(asideKind: .note),
+            asideKind: .note,
             content: content
         ))]
     }
