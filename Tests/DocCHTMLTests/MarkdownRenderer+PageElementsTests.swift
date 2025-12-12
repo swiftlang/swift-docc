@@ -131,17 +131,13 @@ struct MarkdownRenderer_PageElementsTests {
                 <a href="#Parameters">Parameters</a>
               </h2>
               <dl>
-                <dt>
-                  <code>First</code>
-                </dt>
+                <dt>First</dt>
                 <dd>
                   <p>
                     Some <i>formatted</i> description with <code>code</code>
                   </p>
                 </dd>
-                <dt>
-                  <code>Second</code>
-                </dt>
+                <dt>Second</dt>
                 <dd>
                   <p>
                     Some <b>other</b> <i>formatted</i> description</p>
@@ -154,16 +150,12 @@ struct MarkdownRenderer_PageElementsTests {
             parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
             <h2>Parameters</h2>
             <dl>
-              <dt>
-                <code>First</code>
-              </dt>
+              <dt>First</dt>
               <dd>
                 <p>Some <i>formatted</i>description with <code>code</code>
                 </p>
               </dd>
-              <dt>
-                <code>Second</code>
-              </dt>
+              <dt>Second</dt>
               <dd>
                 <p>
                   Some <b>other</b> <i>formatted</i> description</p>
@@ -194,27 +186,19 @@ struct MarkdownRenderer_PageElementsTests {
             <a href="#Parameters">Parameters</a>
           </h2>
           <dl>
-            <dt>
-              <code>FirstCommon</code>
-            </dt>
+            <dt>FirstCommon</dt>
             <dd>
               <p>Available in both languages</p>
             </dd>
-            <dt class="swift-only">
-              <code>SwiftOnly</code>
-            </dt>
+            <dt class="swift-only">SwiftOnly</dt>
             <dd class="swift-only">
               <p>Only available in Swift</p>
             </dd>
-            <dt>
-              <code>SecondCommon</code>
-            </dt>
+            <dt>SecondCommon</dt>
             <dd>
               <p>Also available in both languages</p>
             </dd>
-            <dt class="occ-only">
-              <code>ObjectiveCOnly</code>
-            </dt>
+            <dt class="occ-only">ObjectiveCOnly</dt>
             <dd class="occ-only">
               <p>Only available in Objective-C</p>
             </dd>
@@ -242,25 +226,19 @@ struct MarkdownRenderer_PageElementsTests {
             <a href="#Parameters">Parameters</a>
           </h2>
           <dl class="swift-only">
-            <dt>
-              <code>First</code>
-            </dt>
+            <dt>First</dt>
             <dd>
               <p>Some description</p>
             </dd>
           </dl>
           <dl class="data-only">
-            <dt>
-              <code>Third</code>
-            </dt>
+            <dt>Third</dt>
             <dd>
               <p>Some description</p>
             </dd>
           </dl>
           <dl class="occ-only">
-            <dt>
-              <code>Second</code>
-            </dt>
+            <dt>Second</dt>
             <dd>
               <p>Some description</p>
             </dd>
