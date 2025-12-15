@@ -117,19 +117,19 @@ final class MarkdownOutputTests: XCTestCase {
             ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
-        let expectedInline = "inline link: [Rows and Columns](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)"
+        let expectedInline = "inline link: [Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)"
         XCTAssert(node.markdown.contains(expectedInline))
         
-        let expectedInlineAnchor = "inline link with a heading: [Overview](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns#Overview)"
+        let expectedInlineAnchor = "inline link with a heading: [Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)"
         XCTAssert(node.markdown.contains(expectedInlineAnchor))
-        let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
+        let expectedInlineAnchorMultiWord = "inline link with a multi-word heading: [Multi-word heading](/documentation/MarkdownOutput/RowsAndColumns#Multi-word-heading)"
         XCTAssert(node.markdown.contains(expectedInlineAnchorMultiWord))
         
-        let expectedLinkList = "[Rows and Columns](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns)\n\nJust here for the links"
+        let expectedLinkList = "[Rows and Columns](/documentation/MarkdownOutput/RowsAndColumns)\n\nJust here for the links"
         XCTAssert(node.markdown.contains(expectedLinkList))
         
         // No abstract
-        let expectedLinkListAnchor = "[Overview](doc://MarkdownOutput/documentation/MarkdownOutput/RowsAndColumns#Overview)\n\n###"
+        let expectedLinkListAnchor = "[Overview](/documentation/MarkdownOutput/RowsAndColumns#Overview)\n\n###"
         XCTAssert(node.markdown.contains(expectedLinkListAnchor))
     }
        
@@ -160,10 +160,10 @@ final class MarkdownOutputTests: XCTestCase {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
-        let expectedInline = "inline link: [`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)"
+        let expectedInline = "inline link: [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)"
         XCTAssert(node.markdown.contains(expectedInline))
         
-        let expectedLinkList = "[`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output"
+        let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output"
         XCTAssert(node.markdown.contains(expectedLinkList))
         
         let unresolvableLink = "[`Unresolvable`]"
@@ -199,10 +199,10 @@ final class MarkdownOutputTests: XCTestCase {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "Links")
-        let expectedInline = "inline link: [`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)"
+        let expectedInline = "inline link: [`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)"
         XCTAssert(node.markdown.contains(expectedInline))
         
-        let expectedLinkList = "[`MarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](doc://MarkdownOutput/documentation/MarkdownOutput/OtherMarkdownSymbol)"
+        let expectedLinkList = "[`MarkdownSymbol`](/documentation/MarkdownOutput/MarkdownSymbol)\n\nA basic symbol to test markdown output. Different to [`OtherMarkdownSymbol`](/documentation/MarkdownOutput/OtherMarkdownSymbol)"
         XCTAssert(node.markdown.contains(expectedLinkList))
     }
         

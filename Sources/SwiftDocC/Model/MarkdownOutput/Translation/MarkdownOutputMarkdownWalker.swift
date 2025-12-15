@@ -187,7 +187,6 @@ extension MarkdownOutputMarkupWalker {
     mutating func visitLink(_ link: Link) -> () {
                 
         guard
-            link.isAutolink,
             let destination = link.destination,
             let resolved = context.referenceIndex[destination]
         else {
@@ -196,15 +195,16 @@ extension MarkdownOutputMarkupWalker {
         
         let doc: DocumentationNode
         let anchorSection: AnchorSection?
-        
+        var outputDestination = resolved.path
         // Does the link have a fragment?
-        if let _ = resolved.fragment {
+        if let fragment = resolved.fragment {
             let noFragment = resolved.withFragment(nil)
             guard let parent = try? context.entity(with: noFragment) else {
                 return defaultVisit(link)
             }
             doc = parent
             anchorSection = doc.anchorSections.first(where: { $0.reference == resolved })
+            outputDestination.append("#" + fragment)
         } else {
             anchorSection = nil
             if let found = try? context.entity(with: resolved) {
@@ -242,7 +242,7 @@ extension MarkdownOutputMarkupWalker {
             linkMarkup = Text(linkTitle)
         }
         
-        let link = Link(destination: destination, title: linkTitle, [linkMarkup])
+        let link = Link(destination: outputDestination, title: linkTitle, [linkMarkup])
         // Only perform the linked list rendering for the first thing you find
         withRenderingLinkList(value: false) {
             $0.defaultVisit(link)
