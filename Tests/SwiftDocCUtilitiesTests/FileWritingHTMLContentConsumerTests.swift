@@ -474,6 +474,108 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         """)
     }
 
+    func testAddsTagsToTemplateIfMissing() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            TextFile(name: "RootArticle.md", utf8Content: """
+            # A single article
+            
+            This is an _formatted_ article that becomes the root page (because there's only one page).
+            """)
+        ])
+        
+        for withTitleTag in [true, false] {
+            for withNoScriptTag in [true, false] {
+                let maybeTitleTag = withTitleTag ? "<title>Documentation</title>" : ""
+                let maybeNoScriptTag = withNoScriptTag ? """
+                  <noscript>
+                    <p>Some existing information inside the no script tag</p>
+                  </noscript>
+                """ : ""
+                
+                let htmlTemplate = TextFile(name: "index.html", utf8Content: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    \(maybeTitleTag)
+                  </head>
+                  <body>
+                  \(maybeNoScriptTag)
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+                
+                let fileSystem = try TestFileSystem(folders: [
+                    Folder(name: "path", content: [
+                        Folder(name: "to", content: [
+                            catalog
+                        ])
+                    ]),
+                    Folder(name: "template", content: [
+                        htmlTemplate
+                    ]),
+                    Folder(name: "output-dir", content: [])
+                ])
+                
+                let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+                    .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/path/to/\(catalog.name)"), options: .init())
+                
+                let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
+                
+                let htmlConsumer = try FileWritingHTMLContentConsumer(
+                    targetFolder: URL(fileURLWithPath: "/output-dir"),
+                    fileManager: fileSystem,
+                    htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
+                    prettyPrintOutput: true
+                )
+                
+                _ = try ConvertActionConverter.convert(
+                    context: context,
+                    outputConsumer: TestOutputConsumer(),
+                    htmlContentConsumer: htmlConsumer,
+                    sourceRepository: nil,
+                    emitDigest: false,
+                    documentationCoverageOptions: .noCoverage
+                )
+                
+                // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
+                XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output-dir"), """
+                output-dir/
+                ╰─ documentation/
+                   ╰─ rootarticle/
+                      ╰─ index.html
+                """)
+                
+                try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>A single article</title>
+                    <meta content="This is an formatted article that becomes the root page (because there’s only one page)." name="description"/>
+                  </head>
+                  <body>
+                    <noscript>
+                      <article>
+                        <section>
+                          <ul>
+                            <li>RootArticle</li>
+                          </ul>
+                          <p>
+                          Article</p>
+                          <h1>RootArticle</h1>
+                          <p>This is an <i> formatted</i> article that becomes the root page (because there’s only one page).</p>
+                        </section>
+                      </article>
+                    </noscript>
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+            }
+        }
+    }
 }
 
 // MARK: Helpers

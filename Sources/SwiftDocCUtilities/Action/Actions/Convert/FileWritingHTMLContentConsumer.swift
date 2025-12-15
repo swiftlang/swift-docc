@@ -31,23 +31,42 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         var descriptionReplacementRange: Range<String.Index>
         
         init(data: Data) throws {
-            let content = String(decoding: data, as: UTF8.self)
+            var content = String(decoding: data, as: UTF8.self)
             
-            // ???: Should we parse the content with XMLParser instead? If so, what do we do if it's not valid XHTML?
-            let noScriptStart = content.utf8.firstRange(of:  "<noscript>".utf8)!.upperBound
-            let noScriptEnd   = content.utf8.firstRange(of: "</noscript>".utf8)!.lowerBound
+            // Ensure that the index.html file has at least a `<head>` and a `<body>`.
+            guard var beforeEndOfHead  = content.utf8.firstRange(of: "</head>".utf8)?.lowerBound,
+                  var afterStartOfBody = content.range(of: "<body[^>]*>", options: .regularExpression)?.upperBound
+            else {
+                struct MissingRequiredTagsError: DescribedError {
+                    let errorDescription = "Missing required `<head>` and `<body>` elements in \"index.html\" file."
+                }
+                throw MissingRequiredTagsError()
+            }
             
-            let titleStart = content.utf8.firstRange(of:  "<title>".utf8)!.upperBound
-            let titleEnd   = content.utf8.firstRange(of: "</title>".utf8)!.lowerBound
+            if let titleStart = content.utf8.firstRange(of:  "<title>".utf8)?.upperBound,
+               let titleEnd   = content.utf8.firstRange(of: "</title>".utf8)?.lowerBound
+            {
+                titleReplacementRange = titleStart ..< titleEnd
+            } else {
+                content.insert(contentsOf: "<title></title>", at: beforeEndOfHead)
+                content.utf8.formIndex(&beforeEndOfHead,  offsetBy: "<title></title>".utf8.count)
+                content.utf8.formIndex(&afterStartOfBody, offsetBy: "<title></title>".utf8.count)
+                let titleInside = content.utf8.index(beforeEndOfHead, offsetBy: -"</title>".utf8.count)
+                titleReplacementRange = titleInside ..< titleInside
+            }
             
-            let beforeHeadEnd = content.utf8.firstRange(of: "</head>".utf8)!.lowerBound
-            
+            if let noScriptStart = content.utf8.firstRange(of:  "<noscript>".utf8)?.upperBound,
+               let noScriptEnd   = content.utf8.firstRange(of: "</noscript>".utf8)?.lowerBound
+            {
+                contentReplacementRange = noScriptStart ..< noScriptEnd
+            } else {
+                content.insert(contentsOf: "<noscript></noscript>", at: afterStartOfBody)
+                let noScriptInside = content.utf8.index(afterStartOfBody, offsetBy: "<noscript>".utf8.count)
+                contentReplacementRange = noScriptInside ..< noScriptInside
+            }
+                        
             original = content
-            // TODO: If the template doesn't already contain a <noscript> element, add one to the start of the <body> element
-            // TODO: If the template doesn't already contain a <title> element, add one to the end of the <head> element
-            contentReplacementRange     = noScriptStart ..< noScriptEnd
-            titleReplacementRange       = titleStart    ..< titleEnd
-            descriptionReplacementRange = beforeHeadEnd ..< beforeHeadEnd
+            descriptionReplacementRange = beforeEndOfHead ..< beforeEndOfHead
             
             assert(titleReplacementRange.upperBound       < descriptionReplacementRange.lowerBound, "The title replacement range should be before the description replacement range")
             assert(descriptionReplacementRange.upperBound < contentReplacementRange.lowerBound,     "The description replacement range should be before the content replacement range")
