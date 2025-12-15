@@ -20,8 +20,6 @@ import SwiftDocC
 import DocCHTML
 
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
-    var targetFolder: URL
-    var fileManager: any FileManagerProtocol
     var prettyPrintOutput: Bool
     
     private struct HTMLTemplate {
@@ -109,8 +107,6 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         customFooter: URL?,
         prettyPrintOutput: Bool = shouldPrettyPrintOutputJSON
     ) throws {
-        self.targetFolder = targetFolder
-        self.fileManager = fileManager
         var customTemplates: [HTMLTemplate.CustomTemplate] = []
         if let customHeader {
             customTemplates.append(.init(
