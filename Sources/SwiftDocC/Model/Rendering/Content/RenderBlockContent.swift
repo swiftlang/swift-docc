@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -103,17 +103,95 @@ public enum RenderBlockContent: Equatable {
     }
 
     /// An aside block.
-    public struct Aside: Equatable {
+    public struct Aside: Codable, Equatable {
+
         /// The style of this aside block.
         public var style: AsideStyle
+
+        /// The name of this aside block.
+        public var name: String
 
         /// The content inside this aside block.
         public var content: [RenderBlockContent]
 
+        /// Creates an aside from an aside style and block content.
+        ///
+        /// The new aside will have a name set to the capitalized style.
+        ///
+        /// - Parameters:
+        ///   - style: The style of this aside
+        ///   - content: The block content to display in the aside
         public init(style: AsideStyle, content: [RenderBlockContent]) {
             self.style = style
+            self.name = style.rawValue.capitalized
             self.content = content
         }
+
+        /// Creates an aside from a name and block content.
+        ///
+        /// The new aside will have a style set to the lowercased name.
+        ///
+        /// - Parameters:
+        ///   - name: The name of the aside.
+        ///   - content: The block content to display in the aside
+        ///
+        /// > Note:
+        /// > If the lowercased name doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) this will
+        /// > set the style to be note.
+        public init(name: String, content: [RenderBlockContent]) {
+            self.style = .init(rawValue: name)
+            self.name = name
+            self.content = content
+        }
+
+        /// Creates an aside from an aside style, name and block content.
+        ///
+        /// - Parameters:
+        ///   - style: The style of the aside
+        ///   - name: The name of the aside
+        ///   - content: The block content to display in the aside
+        public init(style: AsideStyle, name: String, content: [RenderBlockContent]) {
+            self.style = style
+            self.name = name
+            self.content = content
+        }
+
+        /// Creates an aside from a Swift Markdown aside kind and block content.
+        ///
+        /// The new aside will have a name and style based on the display name of the
+        /// Swift Markdown aside kind.
+        ///
+        /// - Parameters:
+        ///   - asideKind: The Swift Markdown aside kind
+        ///   - content: The block content to display in the aside
+        ///
+        /// > Note:
+        /// > If the Swift Markdown aside kind is unknown, then the new aside will
+        /// > have a name and style set to the Swift Markdown aside kind,
+        /// > capitalized if necessary.
+        public init(asideKind: Markdown.Aside.Kind, content: [RenderBlockContent]) {
+            let name: String
+            if let knownDisplayName = Self.knownDisplayNames[asideKind.rawValue.lowercased()] {
+                name = knownDisplayName
+            } else if asideKind.rawValue.contains(where: \.isUppercase) {
+                // Assume the content has specific and intentional capitalization.
+                name = asideKind.rawValue
+            } else {
+                // Avoid an all lower case display name.
+                name = asideKind.rawValue.capitalized
+            }
+
+            self.init(
+                style: .init(asideKind: asideKind),
+                name: name,
+                content: content
+            )
+        }
+
+        private static let knownDisplayNames: [String: String] = Dictionary(
+            uniqueKeysWithValues: Markdown.Aside.Kind.allCases.map { ($0.rawValue.lowercased(), $0.displayName) }
+        )
     }
 
     /// A block of sample code.
@@ -515,10 +593,7 @@ public enum RenderBlockContent: Equatable {
     
     /// A type the describes an aside style.
     public struct AsideStyle: Codable, Equatable {
-        private static let knownDisplayNames: [String: String] = Dictionary(
-            uniqueKeysWithValues: Markdown.Aside.Kind.allCases.map { ($0.rawValue.lowercased(), $0.displayName) }
-        )
-        
+
         /// Returns a Boolean value indicating whether two aside styles are equal.
         ///
         /// The comparison uses ``rawValue`` and is case-insensitive.
@@ -529,75 +604,77 @@ public enum RenderBlockContent: Equatable {
         public static func ==(lhs: AsideStyle, rhs: AsideStyle) -> Bool {
             lhs.rawValue.caseInsensitiveCompare(rhs.rawValue) == .orderedSame
         }
-        
+
         /// The underlying raw string value.
         public var rawValue: String
 
         /// The heading text to use when rendering this style of aside.
+        @available(*, deprecated, message: "Use 'Aside.name' instead. This deprecated API will be removed after 6.4 is released.")
         public var displayName: String {
-            if let value = Self.knownDisplayNames[rawValue.lowercased()] {
-                return value
-            } else if rawValue.contains(where: \.isUppercase) {
-                // If any character is upper-cased, assume the content has
-                // specific casing and return the raw value.
-                return rawValue
-            } else {
-                return rawValue.capitalized
-            }
+            return rawValue.capitalized
         }
 
-        /// The style of aside to use when rendering.
+        /// Creates an aside style.
         ///
-        /// DocC Render currently has five styles of asides: Note, Tip, Experiment, Important, and Warning. Asides
-        /// of these styles can emit their own style into the output, but other styles need to be rendered as one of
-        /// these five styles. This property maps aside styles to the render style used in the output.
-        var renderKind: String {
-            switch rawValue.lowercased() {
-            case let lowercasedRawValue
-                where [
-                    "important",
-                    "warning",
-                    "experiment",
-                    "tip"
-                ].contains(lowercasedRawValue):
-                return lowercasedRawValue
+        /// The new aside style's underlying raw string value will be lowercased.
+        ///
+        /// - Parameters:
+        ///   - rawValue: The underlying raw string value.
+        ///
+        /// > Note:
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
+        public init(rawValue: String) {
+            let lowercased = rawValue.lowercased()
+            switch lowercased {
+            case "important", "warning", "experiment", "tip":
+                self.rawValue = lowercased
             default:
-                return "note"
+                self.rawValue = "note"
             }
         }
 
-        /// Creates an aside type for the specified aside kind.
-        /// - Parameter asideKind: The aside kind that provides the display name.
+        /// Creates an aside style from a Swift Markdown aside kind.
+        ///
+        /// The new aside style's underlying raw string value will be the
+        /// markdown aside kind's raw value.
+        ///
+        /// - Parameters:
+        ///   - rawValue: The Swift Markdown aside kind
+        ///
+        /// > Note:
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
         public init(asideKind: Markdown.Aside.Kind) {
-            self.rawValue = asideKind.rawValue
+            self.init(rawValue: asideKind.rawValue)
         }
-        
-        /// Creates an aside style for the specified raw value.
-        /// - Parameter rawValue: The heading text to use when rendering this style of aside.
-        public init(rawValue: String) {
-            self.rawValue = rawValue
-        }
-        
+
         /// Creates an aside style with the specified display name.
         /// - Parameter displayName: The heading text to use when rendering this style of aside.
+        @available(*, deprecated, renamed: "init(rawValue:)", message: "Use 'init(rawValue:)' instead. This deprecated API will be removed after 6.4 is released.")
         public init(displayName: String) {
-            self.rawValue = Self.knownDisplayNames.first(where: { $0.value == displayName })?.key ?? displayName
+            self.init(rawValue: displayName)
         }
         
         /// Encodes the aside style into the specified encoder.
         /// - Parameter encoder: The encoder to write data to.
         public func encode(to encoder: any Encoder) throws {
-            // For backwards compatibility, encode only the display name and
-            // not a key-value pair.
             var container = encoder.singleValueContainer()
             try container.encode(rawValue)
         }
-        
-        /// Creates an aside style by decoding the specified decoder.
+
+        /// Creates an aside style by decoding from the specified decoder.
         /// - Parameter decoder: The decoder to read data from.
+        ///
+        /// > Note:
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
         public init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
-            self.rawValue = try container.decode(String.self)
+            self.init(rawValue: try container.decode(String.self))
         }
     }
     
@@ -930,11 +1007,17 @@ extension RenderBlockContent: Codable {
         case .paragraph:
             self = try .paragraph(.init(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent)))
         case .aside:
-            var style = try container.decode(AsideStyle.self, forKey: .style)
-            if let displayName = try container.decodeIfPresent(String.self, forKey: .name) {
-                style = AsideStyle(displayName: displayName)
+            let aside: Aside
+            let content = try container.decode([RenderBlockContent].self, forKey: .content)
+            let style = try container.decode(AsideStyle.self, forKey: .style)
+            if let name = try container.decodeIfPresent(String.self, forKey: .name) {
+                // Retain both the style and name, if both are present.
+                aside = .init(style: style, name: name, content: content)
+            } else {
+                // Or if the name is not specified, set the name based on the style.
+                aside = .init(style: style, content: content)
             }
-            self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))
+            self = .aside(aside)
         case .codeListing:
             let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
             let options: CodeBlockOptions?
@@ -1049,8 +1132,8 @@ extension RenderBlockContent: Codable {
         case .paragraph(let p):
             try container.encode(p.inlineContent, forKey: .inlineContent)
         case .aside(let a):
-            try container.encode(a.style.renderKind, forKey: .style)
-            try container.encode(a.style.displayName, forKey: .name)
+            try container.encode(a.style, forKey: .style)
+            try container.encode(a.name, forKey: .name)
             try container.encode(a.content, forKey: .content)
         case .codeListing(let l):
             try container.encode(l.syntax, forKey: .syntax)

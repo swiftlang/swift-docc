@@ -42,7 +42,7 @@ struct MarkdownRenderer_PageElementsTests {
                         .init(text: "Something", kind: .identifier),
                     ],
                     .objectiveC: [
-                        .init(text: "class ", kind: .decorator),
+                        .init(text: "@interface ",  kind: .decorator),
                         .init(text: "TLASomething", kind: .identifier),
                     ],
                 ]),
@@ -324,6 +324,391 @@ struct MarkdownRenderer_PageElementsTests {
         case .conciseness:
             returns.assertMatches(prettyFormatted: true, expectedXMLString: """
             <h2>Return Value</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderSwiftDeclaration(goal: RenderGoal) {
+        let symbolPaths = [
+            "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
+            "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
+            "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
+        ]
+        
+        let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "doSomething", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",           preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "with",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue", preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "and",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "second",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "throws",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "-> ",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
+            ]
+        ])
+        switch goal {
+        case .richness:
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <pre id="declaration">
+            <code>
+              <span class="token-keyword">func</span>
+               <span class="token-identifier">doSomething</span>
+              (<span class="token-externalParam">with</span>
+               <span class="token-internalParam">first</span>
+              : <a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              , <span class="token-externalParam">and</span>
+               <span class="token-internalParam">second</span>
+              : <a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              ) <span class="token-keyword">throws</span>
+              -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+            </code>
+            </pre>
+            """)
+        case .conciseness:
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <pre>
+              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
+            </pre>
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testRenderLanguageSpecificDeclarations(goal: RenderGoal) {
+        let symbolPaths = [
+            "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
+            "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
+            "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
+            "error-parameter-symbol-id":  URL(string: "/documentation/Foundation/NSError/index.html")!,
+        ]
+        
+        let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "doSomething", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",           preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "with",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue", preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "and",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "second",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "throws",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "-> ",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
+            ],
+            
+            .objectiveC:  [
+                .init(kind: .text,              spelling: "- (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue", preciseIdentifier: "return-value-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "doSomethingWithFirst", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue", preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "andSecond",   preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
+                .init(kind: .text,              spelling: ") ",          preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "second",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "error",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "NSError",     preciseIdentifier: "error-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " **) ",       preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "error",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ";",           preciseIdentifier: nil),
+            ]
+        ])
+        switch goal {
+        case .richness:
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <pre id="declaration">
+            <code class="swift-only">
+              <span class="token-keyword">func</span>
+               <span class="token-identifier">doSomething</span>
+              (<span class="token-externalParam">with</span>
+               <span class="token-internalParam">first</span>
+              : <a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              , <span class="token-externalParam">and</span>
+               <span class="token-internalParam">second</span>
+              : <a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              ) <span class="token-keyword">throws</span>
+              -&gt; <a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+            </code>
+            <code class="occ-only">- (<a class="token-typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a>
+              ) <span class="token-identifier">doSomethingWithFirst</span>
+              : (<a class="token-typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a>
+              ) <span class="token-internalParam">first</span>
+               <span class="token-identifier">andSecond</span>
+              : (<a class="token-typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a>
+              ) <span class="token-internalParam">second</span>
+               <span class="token-identifier">error</span>
+              : (<a class="token-typeIdentifier" href="../../../foundation/nserror/index.html">NSError</a>
+               **) <span class="token-internalParam">error</span>
+              ;</code>
+            </pre>
+            """)
+            
+        case .conciseness:
+            declaration.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <pre>
+              <code>func doSomething(with first: FirstParameterValue, and second: SecondParameterValue) throws-&gt; ReturnValue</code>
+            </pre>
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
+    func testRenderSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
+        let elements = [
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
+                names: .languageSpecificSymbol([
+                    .swift:      "SomeClass",
+                    .objectiveC: "TLASomeClass",
+                ]),
+                subheadings: .languageSpecificSymbol([
+                    .swift: [
+                        .init(text: "class ",    kind: .decorator),
+                        .init(text: "SomeClass", kind: .identifier),
+                    ],
+                    .objectiveC: [
+                        .init(text: "@interface ",  kind: .decorator),
+                        .init(text: "TLASomeClass", kind: .identifier),
+                    ],
+                ]),
+                abstract: parseMarkup(string: "Some _formatted_ description of this class").first as? Paragraph
+            ),
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeArticle/index.html")!,
+                names: .single(.conceptual("Some Article")),
+                subheadings: .single(.conceptual("Some Article")),
+                abstract: parseMarkup(string: "Some **formatted** description of this _article_.").first as? Paragraph
+            ),
+            LinkedElement(
+                path: URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
+                names: .languageSpecificSymbol([
+                    .swift:      "someMethod(with:and:)",
+                    .objectiveC: "someMethodWithFirst:andSecond:",
+                ]),
+                subheadings: .languageSpecificSymbol([
+                    .swift: [
+                        .init(text: "func ",      kind: .decorator),
+                        .init(text: "someMethod", kind: .identifier),
+                        .init(text: "(",          kind: .decorator),
+                        .init(text: "with",       kind: .identifier),
+                        .init(text: ": Int, ",    kind: .decorator),
+                        .init(text: "and",        kind: .identifier),
+                        .init(text: ": String)",  kind: .decorator),
+                    ],
+                    .objectiveC: [
+                        .init(text: "- ", kind: .decorator),
+                        .init(text: "someMethodWithFirst:andSecond:", kind: .identifier),
+                    ],
+                ]),
+                abstract: nil
+            ),
+        ]
+        
+        let renderer = makeRenderer(goal: goal, elementsToReturn: elements)
+        let expectedSectionID = expectedGroupTitle.replacingOccurrences(of: " ", with: "-")
+        let groupedSection = renderer.groupedSection(named: expectedGroupTitle, groups: [
+            .swift: [
+                .init(title: "Group title", content: parseMarkup(string: "Some description of this group"), references: [
+                    URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
+                    URL(string: "/documentation/ModuleName/SomeArticle/index.html")!,
+                    URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
+                ])
+            ]
+        ])
+        
+        switch goal {
+        case .richness:
+            groupedSection.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="\(expectedSectionID)">
+              <h2>
+                <a href="#\(expectedSectionID)">\(expectedGroupTitle)</a>
+              </h2>
+              <h3 id="Group-title">
+                <a href="#Group-title">Group title</a>
+              </h3>
+              <p>Some description of this group</p>
+              <ul>
+                <li>
+                  <a href="../../someclass/index.html">
+                    <code class="swift-only">
+                      <span class="decorator">class </span>
+                      <span class="identifier">Some<wbr/>
+                        Class</span>
+                    </code>
+                    <code class="occ-only">
+                      <span class="decorator">@interface </span>
+                      <span class="identifier">TLASome<wbr/>
+                          Class</span>
+                    </code>
+                    <p>Some <i>formatted</i>
+                       description of this class</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="../../somearticle/index.html">
+                    <p>Some Article</p>
+                    <p>Some <b>formatted</b>
+                       description of this <i>article</i>
+                      .</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="../../someclass/somemethod(with:and:)/index.html">
+                    <code class="swift-only">
+                      <span class="decorator">func </span>
+                      <span class="identifier">some<wbr/>
+                        Method</span>
+                      <span class="decorator">(</span>
+                      <span class="identifier">with</span>
+                      <span class="decorator">:<wbr/>
+                         Int, </span>
+                      <span class="identifier">and</span>
+                      <span class="decorator">:<wbr/>
+                         String)</span>
+                    </code>
+                    <code class="occ-only">
+                      <span class="decorator">- </span>
+                      <span class="identifier">some<wbr/>
+                        Method<wbr/>
+                        With<wbr/>
+                        First:<wbr/>
+                        and<wbr/>
+                        Second:</span>
+                    </code>
+                  </a>
+                </li>
+            </ul>
+            </section>
+            """)
+        case .conciseness:
+            groupedSection.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>\(expectedGroupTitle)</h2>
+            <h3>Group title</h3>
+            <p>Some description of this group</p>
+            <ul>
+            <li>
+              <a href="../../someclass/index.html">
+                <code>class SomeClass</code>
+                <p>Some <i>formatted</i>
+                   description of this class</p>
+              </a>
+            </li>
+            <li>
+              <a href="../../somearticle/index.html">
+                <p>Some Article</p>
+                <p>Some <b>formatted</b>
+                   description of this <i>article</i>
+                  .</p>
+              </a>
+            </li>
+            <li>
+              <a href="../../someclass/somemethod(with:and:)/index.html">
+                <code>func someMethod(with: Int, and: String)</code>
+              </a>
+            </li>
+            </ul>
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testEmptyDiscussionSection(goal: RenderGoal) {
+        let renderer = makeRenderer(goal: goal)
+        let discussion = renderer.discussion([], fallbackSectionName: "Fallback")
+        #expect(discussion.isEmpty)
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testDiscussionSectionWithoutHeading(goal: RenderGoal) {
+        let renderer = makeRenderer(goal: goal)
+        let discussion = renderer.discussion(parseMarkup(string: """
+        First paragraph
+        
+        Second paragraph
+        """), fallbackSectionName: "Fallback")
+        
+        let commonHTML = """
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Fallback">
+            <h2>
+              <a href="#Fallback">Fallback</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Fallback</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func testDiscussionSectionWithHeading(goal: RenderGoal) {
+        let renderer = makeRenderer(goal: goal)
+        let discussion = renderer.discussion(parseMarkup(string: """
+        ## Some Heading
+        
+        First paragraph
+        
+        Second paragraph
+        """), fallbackSectionName: "Fallback")
+        
+        let commonHTML = """
+        <p>First paragraph</p>
+        <p>Second paragraph</p>
+        """
+        
+        switch goal {
+        case .richness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Some-Heading">
+            <h2>
+              <a href="#Some-Heading">Some Heading</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            discussion.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Some Heading</h2>
             \(commonHTML)
             """)
         }
