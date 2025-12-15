@@ -594,7 +594,7 @@ private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     func consume(externalRenderNode: ExternalRenderNode) throws { }
 }
 
-private func assert(readHTML: Data, matches expectedHTML: String, file: StaticString = #filePath, line: UInt = #line) {
+func assert(readHTML: Data, matches expectedHTML: String, file: StaticString = #filePath, line: UInt = #line) {
     // XMLNode on macOS and Linux pretty print with different indentation.
     // To compare the XML structure without getting false positive failures because of indentation and other formatting differences,
     // we explicitly process each string into an easy-to-compare format.

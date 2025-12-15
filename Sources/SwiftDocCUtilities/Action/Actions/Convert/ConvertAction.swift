@@ -193,6 +193,8 @@ public struct ConvertAction: AsyncAction {
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
     var _extraTestWork: (() async -> Void)?
 
+    var _completelySkipBuildingIndex: Bool = false
+    
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
@@ -290,7 +292,7 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        let indexer = try Indexer(outputURL: temporaryFolder, bundleID: inputs.id)
+        let indexer = _completelySkipBuildingIndex ? nil : try Indexer(outputURL: temporaryFolder, bundleID: inputs.id)
 
         let registerInterval = signposter.beginInterval("Register", id: signposter.makeSignpostID())
         let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
@@ -387,7 +389,7 @@ public struct ConvertAction: AsyncAction {
         }
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
-        do {
+        if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
             
             // Always emit a JSON representation of the index but only emit the LMDB

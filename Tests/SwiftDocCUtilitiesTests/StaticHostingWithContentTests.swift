@@ -1,0 +1,124 @@
+/*
+ This source file is part of the Swift.org open source project
+
+ Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+import XCTest
+import Foundation
+@testable import SwiftDocC
+@testable import SwiftDocCUtilities
+import SwiftDocCTestUtilities
+
+class StaticHostingWithContentTests: XCTestCase {
+
+    func testIncludesBasePathInPerPageIndexHTMLFile() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            TextFile(name: "RootArticle.md", utf8Content: """
+            # A single article
+            
+            This is an _formatted_ article that becomes the root page (because there's only one page).
+            """)
+        ])
+        let htmlTemplateContent = """
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <link rel="icon" href="{{BASE_PATH}}/favicon.ico" />
+            <title>Documentation</title>
+          </head>
+          <body>
+            <noscript>
+              <p>Some existing information inside the no script tag</p>
+            </noscript>
+            <div id="app"></div>
+          </body>
+        </html>
+        """
+        
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    catalog
+                ])
+            ]),
+            Folder(name: "template", content: [
+                TextFile(name: "index.html", utf8Content: htmlTemplateContent.replacingOccurrences(of: "{{BASE_PATH}}", with: "")),
+                TextFile(name: "index-template.html", utf8Content: htmlTemplateContent),
+            ]),
+            Folder(name: "output-dir", content: [])
+        ])
+        
+        let basePath = "some/test/base-path"
+        
+        var action = try ConvertAction(
+            documentationBundleURL: URL(fileURLWithPath: "/path/to/\(catalog.name)"),
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: URL(fileURLWithPath: "/output-dir"),
+            htmlTemplateDirectory: URL(fileURLWithPath: "/template"),
+            emitDigest: false,
+            currentPlatforms: nil,
+            buildIndex: false,
+            fileManager: fileSystem,
+            temporaryDirectory: URL(fileURLWithPath: "/tmp"),
+            transformForStaticHosting: true,
+            includeContentInEachHTMLFile: true,
+            hostingBasePath: basePath
+        )
+        // The old `Indexer` type doesn't work with virtual file systems.
+        action._completelySkipBuildingIndex = true
+        
+        _ = try await action.perform(logHandle: .none)
+        
+        // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output-dir"), """
+        output-dir/
+        ├─ data/
+        │  ╰─ documentation/
+        │     ╰─ rootarticle.json
+        ├─ documentation/
+        │  ╰─ rootarticle/
+        │     ╰─ index.html
+        ├─ downloads/
+        │  ╰─ Something/
+        ├─ images/
+        │  ╰─ Something/
+        ├─ index.html
+        ├─ metadata.json
+        ╰─ videos/
+           ╰─ Something/
+        """)
+        
+        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <link rel="icon" href="/some/test/base-path/favicon.ico" />
+            <title>A single article</title>
+            <meta content="This is an formatted article that becomes the root page (because there’s only one page)." name="description"/>
+          </head>
+          <body>
+            <noscript>
+              <article>
+                <section>
+                  <ul>
+                    <li>RootArticle</li>
+                  </ul>
+                  <p>
+                  Article</p>
+                  <h1>RootArticle</h1>
+                  <p>This is an <i> formatted</i> article that becomes the root page (because there’s only one page).</p>
+                </section>
+              </article>
+            </noscript>
+            <div id="app"></div>
+          </body>
+        </html>
+        """)
+    }
+}
