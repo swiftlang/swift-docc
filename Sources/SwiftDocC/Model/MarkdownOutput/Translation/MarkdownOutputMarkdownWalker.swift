@@ -43,7 +43,8 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
             .format()
             .splitByNewlines
             .first(where: { $0.isEmpty == false })?
-            .prefix(while: { $0.isWhitespace && !$0.isNewline }) {
+            .prefix(while: { $0.isWhitespace && !$0.isNewline })
+        {
             if toRemove.isEmpty == false {
                 indentationToRemove = String(toRemove)
             }
@@ -122,10 +123,9 @@ extension MarkdownOutputMarkupWalker {
             return
         }
         let unescaped = source.removingPercentEncoding ?? source
-        if
-            let resolved = context.resolveAsset(named: unescaped, in: identifier, withType: .image),
-            let first = resolved.variants.first?.value,
-            first.isFileURL
+        if let resolved = context.resolveAsset(named: unescaped, in: identifier, withType: .image),
+           let first = resolved.variants.first?.value,
+           first.isFileURL
         {
             let filename = first.lastPathComponent
             markdown.append("![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
@@ -159,10 +159,9 @@ extension MarkdownOutputMarkupWalker {
         
         let linkTitle: String
         var linkListAbstract: (any Markup)?
-        if
-            isRenderingLinkList,
-            let doc = try? context.entity(with: resolved),
-            let symbol = doc.semantic as? Symbol
+        if isRenderingLinkList,
+           let doc = try? context.entity(with: resolved),
+           let symbol = doc.semantic as? Symbol
         {
             linkListAbstract = (doc.semantic as? Symbol)?.abstract
             if let fragments = symbol.navigator {
@@ -216,9 +215,7 @@ extension MarkdownOutputMarkupWalker {
         
         var linkTitle: String
         var linkListAbstract: (any Markup)?
-        if
-            let article = doc.semantic as? Article
-        {
+        if let article = doc.semantic as? Article {
             if isRenderingLinkList {
                 linkListAbstract = article.abstract
                 add(source: resolved, type: .belongsToTopic, subtype: nil)
@@ -293,9 +290,9 @@ extension MarkdownOutputMarkupWalker {
             guard let tabs = TabNavigator(from: blockDirective, for: bundle) else {
                 return
             }
-            if
-                let defaultLanguage = context.sourceLanguages(for: identifier).first?.name,
-                let languageMatch = tabs.tabs.first(where: { $0.title.lowercased() == defaultLanguage.lowercased() }) {
+            if let defaultLanguage = context.sourceLanguages(for: identifier).first?.name,
+               let languageMatch = tabs.tabs.first(where: { $0.title.lowercased() == defaultLanguage.lowercased() })
+            {
                 visit(container: languageMatch.content)
             } else {
                 for tab in tabs.tabs {
@@ -364,8 +361,9 @@ extension MarkdownOutputMarkupWalker {
     mutating func visit(_ video: VideoMedia) -> Void {
         let unescaped = video.source.path.removingPercentEncoding ?? video.source.path
         var filename = video.source.url.lastPathComponent
-        if
-            let resolvedVideos = context.resolveAsset(named: unescaped, in: identifier, withType: .video), let first = resolvedVideos.variants.first?.value {
+        if let resolvedVideos = context.resolveAsset(named: unescaped, in: identifier, withType: .video),
+           let first = resolvedVideos.variants.first?.value
+        {
             filename = first.lastPathComponent
         }
                     
@@ -376,7 +374,9 @@ extension MarkdownOutputMarkupWalker {
     mutating func visit(_ image: ImageMedia) -> Void {
         let unescaped = image.source.path.removingPercentEncoding ?? image.source.path
         var filename = image.source.url.lastPathComponent
-        if let resolvedImages = context.resolveAsset(named: unescaped, in: identifier, withType: .image), let first = resolvedImages.variants.first?.value {
+        if let resolvedImages = context.resolveAsset(named: unescaped, in: identifier, withType: .image),
+           let first = resolvedImages.variants.first?.value
+        {
             filename = first.lastPathComponent
         }
         markdown.append("\n\n![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
@@ -388,13 +388,12 @@ extension MarkdownOutputMarkupWalker {
         }
         let fileReference = ResourceReference(bundleID: code.fileReference.bundleID, path: codeIdentifier)
         let codeText: String
-        if
-            let data = try? context.resource(with: fileReference),
-            let string = String(data: data, encoding: .utf8) {
+        if let data = try? context.resource(with: fileReference),
+           let string = String(data: data, encoding: .utf8)
+        {
             codeText = string
-        } else if
-            let asset = context.resolveAsset(named: code.fileReference.path, in: identifier),
-            let string = try? String(contentsOf: asset.data(bestMatching: .init()).url, encoding: .utf8)
+        } else if let asset = context.resolveAsset(named: code.fileReference.path, in: identifier),
+                  let string = try? String(contentsOf: asset.data(bestMatching: .init()).url, encoding: .utf8)
         {
             codeText = string
         } else {

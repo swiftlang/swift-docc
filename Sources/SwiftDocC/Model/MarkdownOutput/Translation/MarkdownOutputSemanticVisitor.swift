@@ -85,9 +85,8 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [document])
         
-        if
-            let metadataAvailability = article.metadata?.availability,
-            !metadataAvailability.isEmpty
+        if let metadataAvailability = article.metadata?.availability,
+           !metadataAvailability.isEmpty
         {
             metadata.availability = metadataAvailability.map { .init($0) }
         }

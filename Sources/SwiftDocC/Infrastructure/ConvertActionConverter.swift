@@ -132,15 +132,13 @@ package enum ConvertActionConverter {
                         return
                     }
                     
-                    if
-                        FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
-                        let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
-                        let markdownNode = converter.markdownOutput(for: entity)
+                    if FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
+                       let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
+                       let markdownNode = converter.markdownOutput(for: entity)
                     {
                         try markdownConsumer.consume(markdownNode: markdownNode.writable)
-                        if
-                            FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
-                            let manifest = markdownNode.manifest
+                        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+                           let manifest = markdownNode.manifest
                         {
                             resultsGroup.async(queue: resultsSyncQueue) {
                                 markdownManifest.documents.formUnion(manifest.documents)
@@ -254,9 +252,8 @@ package enum ConvertActionConverter {
             }
         }
         
-        if
-            FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
-            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
+        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+           let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
         {
             try markdownConsumer.consume(markdownManifest: markdownManifest)
         }
