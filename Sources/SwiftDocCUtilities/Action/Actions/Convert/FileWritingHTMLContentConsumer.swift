@@ -30,7 +30,11 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         var titleReplacementRange:       Range<String.Index>
         var descriptionReplacementRange: Range<String.Index>
         
-        init(data: Data) throws {
+        struct CustomTemplate {
+            var id, content: String
+        }
+        
+        init(data: Data, customTemplates: [CustomTemplate]) throws {
             var content = String(decoding: data, as: UTF8.self)
             
             // Ensure that the index.html file has at least a `<head>` and a `<body>`.
@@ -41,6 +45,10 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
                     let errorDescription = "Missing required `<head>` and `<body>` elements in \"index.html\" file."
                 }
                 throw MissingRequiredTagsError()
+            }
+            
+            for template in customTemplates { // Use the order as `ConvertFileWritingConsumer`
+                content.insert(contentsOf: "<template id=\"\(template.id)\">\(template.content)</template>", at: afterStartOfBody)
             }
             
             if let titleStart = content.utf8.firstRange(of:  "<title>".utf8)?.upperBound,
@@ -97,11 +105,29 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         targetFolder: URL,
         fileManager: some FileManagerProtocol,
         htmlTemplate: URL,
+        customHeader: URL?,
+        customFooter: URL?,
         prettyPrintOutput: Bool = shouldPrettyPrintOutputJSON
     ) throws {
         self.targetFolder = targetFolder
         self.fileManager = fileManager
-        self.htmlTemplate = try HTMLTemplate(data: fileManager.contents(of: htmlTemplate))
+        var customTemplates: [HTMLTemplate.CustomTemplate] = []
+        if let customHeader {
+            customTemplates.append(.init(
+                id: "custom-header",
+                content: String(decoding: try fileManager.contents(of: customHeader), as: UTF8.self)
+            ))
+        }
+        if let customFooter {
+            customTemplates.append(.init(
+                id: "custom-footer",
+                content: String(decoding: try fileManager.contents(of: customFooter), as: UTF8.self)
+            ))
+        }
+        self.htmlTemplate = try HTMLTemplate(
+            data: fileManager.contents(of: htmlTemplate),
+            customTemplates: customTemplates
+        )
         self.prettyPrintOutput = prettyPrintOutput
         self.fileWriter = JSONEncodingRenderNodeWriter(
             targetFolder: targetFolder,

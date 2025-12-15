@@ -173,6 +173,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             targetFolder: URL(fileURLWithPath: "/output-dir"),
             fileManager: fileSystem,
             htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
+            customHeader: nil,
+            customFooter: nil,
             prettyPrintOutput: true
         )
         
@@ -527,6 +529,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     targetFolder: URL(fileURLWithPath: "/output-dir"),
                     fileManager: fileSystem,
                     htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
+                    customHeader: nil,
+                    customFooter: nil,
                     prettyPrintOutput: true
                 )
                 

@@ -312,7 +312,13 @@ public struct ConvertAction: AsyncAction {
         
         let htmlConsumer: FileWritingHTMLContentConsumer?
         if includeContentInEachHTMLFile, let indexHTML {
-            htmlConsumer = try FileWritingHTMLContentConsumer(targetFolder: temporaryFolder, fileManager: fileManager, htmlTemplate: indexHTML)
+            htmlConsumer = try FileWritingHTMLContentConsumer(
+                targetFolder: temporaryFolder,
+                fileManager: fileManager,
+                htmlTemplate: indexHTML,
+                customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
+                customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil
+            )
         } else {
             htmlConsumer = nil
         }

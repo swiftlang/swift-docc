@@ -22,7 +22,14 @@ class StaticHostingWithContentTests: XCTestCase {
             # A single article
             
             This is an _formatted_ article that becomes the root page (because there's only one page).
-            """)
+            """),
+            
+            TextFile(name: "header.html", utf8Content: """
+            <p>Some header content</p>
+            """),
+            TextFile(name: "footer.html", utf8Content: """
+            <p>Some footer content</p>
+            """),
         ])
         let htmlTemplateContent = """
         <html>
@@ -55,70 +62,88 @@ class StaticHostingWithContentTests: XCTestCase {
         
         let basePath = "some/test/base-path"
         
-        var action = try ConvertAction(
-            documentationBundleURL: URL(fileURLWithPath: "/path/to/\(catalog.name)"),
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: URL(fileURLWithPath: "/output-dir"),
-            htmlTemplateDirectory: URL(fileURLWithPath: "/template"),
-            emitDigest: false,
-            currentPlatforms: nil,
-            buildIndex: false,
-            fileManager: fileSystem,
-            temporaryDirectory: URL(fileURLWithPath: "/tmp"),
-            transformForStaticHosting: true,
-            includeContentInEachHTMLFile: true,
-            hostingBasePath: basePath
-        )
-        // The old `Indexer` type doesn't work with virtual file systems.
-        action._completelySkipBuildingIndex = true
-        
-        _ = try await action.perform(logHandle: .none)
-        
-        // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
-        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output-dir"), """
-        output-dir/
-        ├─ data/
-        │  ╰─ documentation/
-        │     ╰─ rootarticle.json
-        ├─ documentation/
-        │  ╰─ rootarticle/
-        │     ╰─ index.html
-        ├─ downloads/
-        │  ╰─ Something/
-        ├─ images/
-        │  ╰─ Something/
-        ├─ index.html
-        ├─ metadata.json
-        ╰─ videos/
-           ╰─ Something/
-        """)
-        
-        try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <link rel="icon" href="/some/test/base-path/favicon.ico" />
+        for includeHTMLContent in [true, false] {
+            
+            var action = try ConvertAction(
+                documentationBundleURL: URL(fileURLWithPath: "/path/to/\(catalog.name)"),
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: URL(fileURLWithPath: "/output-dir"),
+                htmlTemplateDirectory: URL(fileURLWithPath: "/template"),
+                emitDigest: false,
+                currentPlatforms: nil,
+                buildIndex: false,
+                fileManager: fileSystem,
+                temporaryDirectory: URL(fileURLWithPath: "/tmp"),
+                experimentalEnableCustomTemplates: true,
+                transformForStaticHosting: true,
+                includeContentInEachHTMLFile: includeHTMLContent,
+                hostingBasePath: basePath
+            )
+            // The old `Indexer` type doesn't work with virtual file systems.
+            action._completelySkipBuildingIndex = true
+            
+            _ = try await action.perform(logHandle: .none)
+            
+            // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
+            XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output-dir"), """
+            output-dir/
+            ├─ data/
+            │  ╰─ documentation/
+            │     ╰─ rootarticle.json
+            ├─ documentation/
+            │  ╰─ rootarticle/
+            │     ╰─ index.html
+            ├─ downloads/
+            │  ╰─ Something/
+            ├─ images/
+            │  ╰─ Something/
+            ├─ index.html
+            ├─ metadata.json
+            ╰─ videos/
+               ╰─ Something/
+            """)
+            
+            let expectedTitleAndMetaContent = includeHTMLContent ? """
             <title>A single article</title>
             <meta content="This is an formatted article that becomes the root page (because there’s only one page)." name="description"/>
-          </head>
-          <body>
-            <noscript>
-              <article>
-                <section>
-                  <ul>
-                    <li>RootArticle</li>
-                  </ul>
-                  <p>
-                  Article</p>
-                  <h1>RootArticle</h1>
-                  <p>This is an <i> formatted</i> article that becomes the root page (because there’s only one page).</p>
-                </section>
-              </article>
-            </noscript>
-            <div id="app"></div>
-          </body>
-        </html>
-        """)
+            """ : "<title>Documentation</title>"
+            
+            let expectedNoScriptContent = includeHTMLContent ? """
+            <article>
+              <section>
+                <ul>
+                  <li>RootArticle</li>
+                </ul>
+                <p>
+                Article</p>
+                <h1>RootArticle</h1>
+                <p>This is an <i> formatted</i> article that becomes the root page (because there’s only one page).</p>
+              </section>
+            </article>
+            """ : "<p>Some existing information inside the no script tag</p>"
+            
+            try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
+            <html>
+              <head>
+                <meta charset="utf-8" />
+                <link rel="icon" href="/some/test/base-path/favicon.ico" />
+                \(expectedTitleAndMetaContent)
+              </head>
+              <body>
+                <template id="custom-footer">
+                  <p>Some footer content</p>
+                </template>
+                <template id="custom-header">
+                  <p>Some header content</p>
+                </template>
+                <noscript>
+                  \(expectedNoScriptContent)
+                </noscript>
+                <div id="app"></div>
+              </body>
+            </html>
+            """)
+        }
     }
 }
