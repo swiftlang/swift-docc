@@ -481,7 +481,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             TextFile(name: "RootArticle.md", utf8Content: """
             # A single article
             
-            This is an _formatted_ article that becomes the root page (because there's only one page).
+            This is an _formatted_ article that becomes the root page (because there is only one page).
             """)
         ])
         
@@ -557,7 +557,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <meta charset="utf-8" />
                     <link rel="icon" href="/favicon.ico" />
                     <title>A single article</title>
-                    <meta content="This is an formatted article that becomes the root page (because there’s only one page)." name="description"/>
+                    <meta content="This is an formatted article that becomes the root page (because there is only one page)." name="description"/>
                   </head>
                   <body>
                     <noscript>
@@ -569,7 +569,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                           <p>
                           Article</p>
                           <h1>RootArticle</h1>
-                          <p>This is an <i> formatted</i> article that becomes the root page (because there’s only one page).</p>
+                          <p>This is an <i> formatted</i> article that becomes the root page (because there is only one page).</p>
                         </section>
                       </article>
                     </noscript>
