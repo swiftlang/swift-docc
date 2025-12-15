@@ -184,6 +184,20 @@ extension Docc {
                 help: "Produce a DocC archive that supports static hosting environments."
             )
             var transformForStaticHosting = true
+            
+            @Flag(help: "Include documentation content in each HTML file for static hosting environments.")
+            var experimentalTransformForStaticHostingWithContent = false
+            
+            mutating func validate() throws {
+                if experimentalTransformForStaticHostingWithContent, !transformForStaticHosting {
+                    warnAboutDiagnostic(.init(
+                        severity: .warning,
+                        identifier: "org.swift.docc.IgnoredNoTransformForStaticHosting",
+                        summary: "Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect."
+                    ))
+                    transformForStaticHosting = true
+                }
+            }
         }
         
         /// A Boolean value that is true if the DocC archive produced by this conversion will support static hosting environments.
@@ -192,6 +206,12 @@ extension Docc {
         public var transformForStaticHosting: Bool {
             get { hostingOptions.transformForStaticHosting }
             set { hostingOptions.transformForStaticHosting = newValue }
+        }
+        
+        /// A Boolean value that is true if the DocC archive produced by this conversion will support browsing without JavaScript enabled.
+        public var experimentalTransformForStaticHostingWithContent: Bool {
+            get { hostingOptions.experimentalTransformForStaticHostingWithContent }
+            set { hostingOptions.experimentalTransformForStaticHostingWithContent = newValue }
         }
         
         /// A user-provided relative path to be used in the archived output
