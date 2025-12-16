@@ -185,7 +185,7 @@ public struct GeneratedCurationWriter {
         let languagesToCurate = node.availableSourceLanguages.sorted()
         var topicsByLanguage = [SourceLanguage: [AutomaticCuration.TaskGroup]]()
         for language in languagesToCurate {
-            topicsByLanguage[language] = try? AutomaticCuration.topics(for: node, withTraits: [.init(interfaceLanguage: language.id)], context: context)
+            topicsByLanguage[language] = try? AutomaticCuration.topics(for: node, withTraits: [.init(sourceLanguage: language)], context: context)
         }
         
         guard topicsByLanguage.count > 1 else {

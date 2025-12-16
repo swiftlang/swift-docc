@@ -155,7 +155,7 @@ private extension DocumentationContentRendererTests {
             sourceLanguage: .swift,
             availableSourceLanguages: [
                 .swift,
-                .init(id: DocumentationDataVariantsTrait.otherLanguage.interfaceLanguage!)
+                DocumentationDataVariantsTrait.otherLanguage.sourceLanguage!
             ],
             name: .symbol(name: ""),
             markup: Document(parsing: ""),

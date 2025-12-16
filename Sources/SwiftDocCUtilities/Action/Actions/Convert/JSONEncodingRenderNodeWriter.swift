@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,6 @@ import SwiftDocC
 ///
 /// The render node writer writes the JSON files into a hierarchy of folders and subfolders based on the relative URL for each node.
 class JSONEncodingRenderNodeWriter {
-    private let renderNodeURLGenerator: NodeURLGenerator
     private let targetFolder: URL
     private let transformForStaticHostingIndexHTML: URL?
     private let fileManager: any FileManagerProtocol
@@ -27,9 +26,6 @@ class JSONEncodingRenderNodeWriter {
     ///   - targetFolder: The folder to which the writer object writes the files.
     ///   - fileManager: The file manager with which the writer object writes data to files.
     init(targetFolder: URL, fileManager: any FileManagerProtocol, transformForStaticHostingIndexHTML: URL?) {
-        self.renderNodeURLGenerator = NodeURLGenerator(
-            baseURL: targetFolder.appendingPathComponent("data", isDirectory: true)
-        )
         self.targetFolder = targetFolder
         self.transformForStaticHostingIndexHTML = transformForStaticHostingIndexHTML
         self.fileManager = fileManager
@@ -52,34 +48,11 @@ class JSONEncodingRenderNodeWriter {
             lowercased: true
         )
         
-        // The path on disk to write the render node JSON file at.
-        let renderNodeTargetFileURL = renderNodeURLGenerator
-            .urlForReference(
-                renderNode.identifier,
-                fileSafePath: fileSafePath
-            )
-            .appendingPathExtension("json")
-        
-        let renderNodeTargetFolderURL = renderNodeTargetFileURL.deletingLastPathComponent()
-        
-        // On Linux sometimes it takes a moment for the directory to be created and that leads to
-        // errors when trying to write files concurrently in the same target location.
-        // We keep an index in `directoryIndex` and create new sub-directories as needed.
-        // When the symbol's directory already exists no code is executed during the lock below
-        // besides the set lookup.
-        try directoryIndex.sync { directoryIndex in
-            let (insertedRenderNodeTargetFolderURL, _) = directoryIndex.insert(renderNodeTargetFolderURL)
-            if insertedRenderNodeTargetFolderURL {
-                try fileManager.createDirectory(
-                    at: renderNodeTargetFolderURL,
-                    withIntermediateDirectories: true,
-                    attributes: nil
-                )
-            }
-        }
-        
-        let data = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache)
-        try fileManager.createFile(at: renderNodeTargetFileURL, contents: data, options: nil)
+        try write(
+            renderNode.encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache),
+            // The path on disk to write the render node JSON file at.
+            toFileSafePath: "data/\(fileSafePath).json"
+        )
         
         guard let indexHTML = transformForStaticHostingIndexHTML else {
             return
@@ -114,5 +87,29 @@ class JSONEncodingRenderNodeWriter {
             try fileManager.removeItem(at: htmlTargetFileURL)
             try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
         }
+    }
+    
+    func write(_ data: Data, toFileSafePath fileSafePath: String) throws {
+        // The path on disk to write the data at.
+        let fileURL = targetFolder.appendingPathComponent(fileSafePath, isDirectory: false)
+        let containingFolderURL = fileURL.deletingLastPathComponent()
+        
+        // On Linux sometimes it takes a moment for the directory to be created and that leads to
+        // errors when trying to write files concurrently in the same target location.
+        // We keep an index in `directoryIndex` and create new sub-directories as needed.
+        // When the symbol's directory already exists no code is executed during the lock below
+        // besides the set lookup.
+        try directoryIndex.sync { directoryIndex in
+            let (insertedRenderNodeTargetFolderURL, _) = directoryIndex.insert(containingFolderURL)
+            if insertedRenderNodeTargetFolderURL {
+                try fileManager.createDirectory(
+                    at: containingFolderURL,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
+            }
+        }
+        
+        try fileManager.createFile(at: fileURL, contents: data, options: nil)
     }
 }

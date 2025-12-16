@@ -296,7 +296,7 @@ struct ParametersAndReturnValidator {
         
         var traitsWithNonVoidReturnValues = Set(signatures.keys)
         for (trait, signature) in signatures {
-            let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:))
+            let language = trait.sourceLanguage
             
             // The function signature for Swift initializers indicate a Void return type.
             // However, initializers have a _conceptual_ return value that's sometimes worth documenting (rdar://131913065).
