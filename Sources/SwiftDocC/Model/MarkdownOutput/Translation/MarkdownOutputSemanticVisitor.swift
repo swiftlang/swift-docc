@@ -9,7 +9,7 @@
 */
 
 /// Visits the semantic structure of a documentation node and returns a ``MarkdownOutputNode``
-internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
+struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     
     let context: DocumentationContext
     let documentationNode: DocumentationNode
@@ -31,7 +31,7 @@ internal struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     private var stepIndex = 0
     private var lastCode: Code?
     
-    mutating func start() -> MarkdownOutputNode? {
+    mutating func createOutput() -> MarkdownOutputNode? {
         visit(documentationNode.semantic)
     }
 }
@@ -449,4 +449,19 @@ extension MarkdownOutputSemanticVisitor {
     mutating func visitDeprecationSummary(_ summary: DeprecationSummary) -> MarkdownOutputNode? {
         return nil
     }
+}
+
+struct CollectedMarkdownOutput {
+    let identifier: ResolvedTopicReference
+    let node: MarkdownOutputNode
+    let manifest: MarkdownOutputManifest?
+    
+    var writable: WritableMarkdownOutputNode {
+        WritableMarkdownOutputNode(identifier: identifier, node: node)
+    }
+}
+
+struct WritableMarkdownOutputNode {
+    let identifier: ResolvedTopicReference
+    let node: MarkdownOutputNode
 }

@@ -122,11 +122,12 @@ public class DocumentationContextConverter {
         guard !node.isVirtual else {
             return nil
         }
-
-        var translator = MarkdownOutputNodeTranslator(
-            context: context,
-            node: node
-        )
-        return translator.createOutput()
+        
+        var visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
+        
+        if let node = visitor.createOutput() {
+            return CollectedMarkdownOutput(identifier: visitor.identifier, node: node, manifest: visitor.manifest)
+        }
+        return nil
     }
 }
