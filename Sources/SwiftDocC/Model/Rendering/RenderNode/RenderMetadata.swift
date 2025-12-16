@@ -177,7 +177,6 @@ public struct RenderMetadata: VariantContainer {
     /// It's the renderer's responsibility to fetch the full version of the page, for example using
     /// the ``RenderNode/variants`` property.
     public var hasNoExpandedDocumentation: Bool = false
-    
 }
 
 extension RenderMetadata: Codable {
