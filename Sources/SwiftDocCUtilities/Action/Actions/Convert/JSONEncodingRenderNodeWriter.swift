@@ -101,7 +101,7 @@ class JSONEncodingRenderNodeWriter {
             markdownNode.identifier,
             lowercased: true
         )
-        let data = try markdownNode.node.generateDataRepresentation()
+        
         try write(
             markdownNode.node.generateDataRepresentation(),
             toFileSafePath: "data/\(fileSafePath).md"
