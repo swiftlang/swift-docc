@@ -98,6 +98,7 @@ extension XCTestCase {
         try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: sourceRepository,
             emitDigest: false,
             documentationCoverageOptions: .noCoverage

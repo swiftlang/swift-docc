@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import DocCCommon
 
 /// A type that encapsulates resolving links by searching a hierarchy of path components.
 final class PathHierarchyBasedLinkResolver {
@@ -58,7 +59,7 @@ final class PathHierarchyBasedLinkResolver {
     ///   - reference: The identifier of the page whose descendants to return.
     ///   - languagesFilter: A set of source languages to filter descendants against.
     /// - Returns: The references of each direct descendant that has a language representation in at least one of the given languages.
-    func directDescendants(of reference: ResolvedTopicReference, languagesFilter: Set<SourceLanguage>) -> Set<ResolvedTopicReference> {
+    func directDescendants(of reference: ResolvedTopicReference, languagesFilter: SmallSourceLanguageSet) -> Set<ResolvedTopicReference> {
         guard let id = resolvedReferenceMap[reference] else { return [] }
         let node = pathHierarchy.lookup[id]!
         
@@ -336,10 +337,10 @@ private func linkName(filename: some StringProtocol) -> String {
 }
 
 private let whitespaceAndDashes = CharacterSet.whitespaces
-    .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
+    .union(CharacterSet(charactersIn: "-\u{2013}\u{2014}")) // hyphen, en dash, em dash
 
 private extension PathHierarchy.Node {
-    func matches(languagesFilter: Set<SourceLanguage>) -> Bool {
+    func matches(languagesFilter: SmallSourceLanguageSet) -> Bool {
         languagesFilter.isEmpty || !self.languages.isDisjoint(with: languagesFilter)
     }
 }

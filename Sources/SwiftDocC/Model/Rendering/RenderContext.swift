@@ -61,7 +61,7 @@ public struct RenderContext {
             )
         }
         
-        #if os(macOS) || os(iOS) || os(Android) || os(Windows) || os(FreeBSD)
+        #if os(macOS) || os(iOS) || os(Android) || os(Windows) || os(FreeBSD) || os(OpenBSD)
         // Concurrently render content on macOS/iOS, Windows & Android
         let results: [(reference: ResolvedTopicReference, content: RenderReferenceStore.TopicContent)] = references.concurrentPerform { reference, results in
             results.append((reference, renderContentFor(reference)))
@@ -104,7 +104,7 @@ public struct RenderContext {
                     path: url.path,
                     fragment: url.fragment,
                     // TopicRenderReference doesn't have language information. Also, the reference's languages _doesn't_ specify the languages of the linked entity.
-                    sourceLanguages: reference.sourceLanguages
+                    sourceLanguages: reference._sourceLanguages
                 )
                 topics[dependencyReference] = .init(renderReference: dependency, canonicalPath: nil, taskGroups: nil, source: nil, isDocumentationExtensionContent: false)
             }

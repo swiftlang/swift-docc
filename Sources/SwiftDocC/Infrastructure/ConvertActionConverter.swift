@@ -26,12 +26,14 @@ package enum ConvertActionConverter {
     /// - Parameters:
     ///   - context: The context that the bundle is a part of.
     ///   - outputConsumer: The consumer that the conversion passes outputs of the conversion to.
+    ///   - htmlContentConsumer: The consumer for HTML content that the conversion produces, or `nil` if the conversion shouldn't produce any HTML content.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - emitDigest: Whether the conversion should pass additional metadata output––such as linkable entities information, indexing information, or asset references by asset type––to the consumer.
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
     package static func convert(
         context: DocumentationContext,
         outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
+        htmlContentConsumer: (any HTMLContentConsumer)?,
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
@@ -83,6 +85,18 @@ package enum ConvertActionConverter {
                 for identifier in slice {
                     try autoreleasepool {
                         let entity = try context.entity(with: identifier)
+
+                        if let htmlContentConsumer {
+                           var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness)
+                            
+                            if let symbol = entity.semantic as? Symbol {
+                                let renderedPageInfo = renderer.renderSymbol(symbol)
+                                try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                            } else if let article = entity.semantic as? Article {
+                                let renderedPageInfo = renderer.renderArticle(article)
+                                try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                            }
+                        }
 
                         guard let renderNode = converter.renderNode(for: entity) else {
                             // No render node was produced for this entity, so just skip it.
@@ -202,4 +216,17 @@ private struct SupplementaryRenderInformation {
     var linkSummaries = [LinkDestinationSummary]()
     var assets = [RenderReferenceType : [any RenderReference]]()
     var coverageInfo = [CoverageDataEntry]()
+}
+
+private extension HTMLContentConsumer {
+    func consume(pageInfo: HTMLRenderer.RenderedPageInfo, forPage reference: ResolvedTopicReference) throws {
+        try consume(
+            mainContent: pageInfo.content,
+            metadata: (
+                title: pageInfo.metadata.title,
+                description: pageInfo.metadata.plainDescription
+            ),
+            forPage: reference
+        )
+    }
 }

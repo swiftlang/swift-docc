@@ -318,6 +318,7 @@ public struct ConvertAction: AsyncAction {
             try await ConvertActionConverter.convert(
                 context: context,
                 outputConsumer: outputConsumer,
+                htmlContentConsumer: nil,
                 sourceRepository: sourceRepository,
                 emitDigest: emitDigest,
                 documentationCoverageOptions: documentationCoverageOptions

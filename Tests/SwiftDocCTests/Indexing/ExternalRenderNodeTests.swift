@@ -563,6 +563,7 @@ class ExternalRenderNodeTests: XCTestCase {
         try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: false,
             documentationCoverageOptions: .noCoverage

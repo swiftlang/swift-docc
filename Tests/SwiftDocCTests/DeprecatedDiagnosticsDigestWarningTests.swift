@@ -29,6 +29,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
         try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: true,
             documentationCoverageOptions: .noCoverage
@@ -53,6 +54,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
         try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: true,
             documentationCoverageOptions: .noCoverage
