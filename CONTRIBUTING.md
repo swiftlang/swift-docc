@@ -209,7 +209,7 @@ automated testing in CI as well.
 
 ### Adding new tests
 
-We recommend that you use [Swift Testing](https://developer.apple.com/documentation/testing) when you add new tests. 
+Please use [Swift Testing](https://developer.apple.com/documentation/testing) when you add new tests. 
 Currently there are few existing tests to draw inspiration from, so here are a few recommendations:
 
 - Prefer small test inputs that ideally use a virtual file system for both reading and writing.
@@ -217,7 +217,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
 - Think about what information would be helpful to someone else who might debug that test case if it fails in the future.
 - Use `#require` rather that force unwrapping for behaviors that would change due to unexpected bugs in the code you're testing. 
 
-If you're updating an existing test case with additional logic, we appreciate it if you also modernize that test, but we don't expect it.
+If you're updating an existing test case with additional logic, we appreciate if you also modernize that test while updating it, but we don't expect it.
 If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing.
 
 If you modernize an existing test case, consider not only the syntactical differences between Swift Testing and XCTest, 
