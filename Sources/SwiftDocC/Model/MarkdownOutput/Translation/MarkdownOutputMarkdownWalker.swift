@@ -55,13 +55,13 @@ internal struct MarkdownOutputMarkupWalker: MarkupWalker {
 }
 
 extension MarkdownOutputMarkupWalker {
-    mutating func visit(_ optionalMarkup: (any Markup)?) -> Void {
+    mutating func visit(_ optionalMarkup: (any Markup)?) {
         if let markup = optionalMarkup {
             self.visit(markup)
         }
     }
     
-    mutating func visit(section: (any Section)?, addingHeading: String? = nil) -> Void {
+    mutating func visit(section: (any Section)?, addingHeading: String? = nil) {
         guard
             let section = section,
             section.content.isEmpty == false else {
@@ -89,7 +89,7 @@ extension MarkdownOutputMarkupWalker {
 
 extension MarkdownOutputMarkupWalker {
     
-    mutating func defaultVisit(_ markup: any Markup) -> () {
+    mutating func defaultVisit(_ markup: any Markup) {
         var output = markup.format()
         if let indentationToRemove, output.hasPrefix(indentationToRemove) {
             output.removeFirst(indentationToRemove.count)
@@ -97,7 +97,7 @@ extension MarkdownOutputMarkupWalker {
         markdown.append(output)
     }
         
-    mutating func visitHeading(_ heading: Heading) -> () {
+    mutating func visitHeading(_ heading: Heading) {
         startNewParagraphIfRequired()
         markdown.append(heading.detachedFromParent.format())
         if heading.level > 1 {
@@ -105,7 +105,7 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> () {
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) {
         //TODO: support formatting of term lists rdar://166128254
         guard isRenderingLinkList else {
             return defaultVisit(unorderedList)
@@ -118,7 +118,7 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    mutating func visitImage(_ image: Image) -> () {
+    mutating func visitImage(_ image: Image) {
         guard let source = image.source else {
             return
         }
@@ -135,12 +135,12 @@ extension MarkdownOutputMarkupWalker {
                     
     }
        
-    mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> () {
+    mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
         startNewParagraphIfRequired()
         markdown.append(codeBlock.detachedFromParent.format())
     }
     
-    mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> () {
+    mutating func visitSymbolLink(_ symbolLink: SymbolLink) {
         guard let destination = symbolLink.destination else {
             return
         }
@@ -183,7 +183,7 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    mutating func visitLink(_ link: Link) -> () {
+    mutating func visitLink(_ link: Link) {
                 
         guard
             let destination = link.destination,
@@ -248,11 +248,11 @@ extension MarkdownOutputMarkupWalker {
     }
     
     
-    mutating func visitSoftBreak(_ softBreak: SoftBreak) -> () {
+    mutating func visitSoftBreak(_ softBreak: SoftBreak) {
         markdown.append("\n")
     }
         
-    mutating func visitParagraph(_ paragraph: Paragraph) -> () {
+    mutating func visitParagraph(_ paragraph: Paragraph) {
         
         startNewParagraphIfRequired()
         
@@ -261,7 +261,7 @@ extension MarkdownOutputMarkupWalker {
         }
     }
     
-    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> () {
+    mutating func visitBlockDirective(_ blockDirective: BlockDirective) {
         let bundle = context.inputs
         switch blockDirective.name {
         case VideoMedia.directiveName:
@@ -352,13 +352,13 @@ extension MarkdownOutputMarkupWalker {
 // Semantic handling
 extension MarkdownOutputMarkupWalker {
     
-    mutating func visit(container: MarkupContainer?) -> Void {
+    mutating func visit(container: MarkupContainer?) {
         container?.elements.forEach {
             self.visit($0)
         }
     }
     
-    mutating func visit(_ video: VideoMedia) -> Void {
+    mutating func visit(_ video: VideoMedia) {
         let unescaped = video.source.path.removingPercentEncoding ?? video.source.path
         var filename = video.source.url.lastPathComponent
         if let resolvedVideos = context.resolveAsset(named: unescaped, in: identifier, withType: .video),
@@ -371,7 +371,7 @@ extension MarkdownOutputMarkupWalker {
         visit(container: video.caption)
     }
     
-    mutating func visit(_ image: ImageMedia) -> Void {
+    mutating func visit(_ image: ImageMedia) {
         let unescaped = image.source.path.removingPercentEncoding ?? image.source.path
         var filename = image.source.url.lastPathComponent
         if let resolvedImages = context.resolveAsset(named: unescaped, in: identifier, withType: .image),
@@ -382,7 +382,7 @@ extension MarkdownOutputMarkupWalker {
         markdown.append("\n\n![\(image.altText ?? "")](images/\(context.inputs.id)/\(filename))")
     }
     
-    mutating func visit(_ code: Code) -> Void {
+    mutating func visit(_ code: Code) {
         guard let codeIdentifier = context.identifier(forAssetName: code.fileReference.path, in: identifier) else {
             return
         }
