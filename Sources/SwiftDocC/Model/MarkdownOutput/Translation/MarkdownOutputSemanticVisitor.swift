@@ -443,6 +443,7 @@ extension MarkdownOutputSemanticVisitor {
         return nil
     }
     
+    // TODO: Add support for stacks rdar://166608793
     mutating func visitStack(_ stack: Stack) -> MarkdownOutputNode? {
         return nil
     }
@@ -462,7 +463,7 @@ struct CollectedMarkdownOutput {
     }
 }
 
-struct WritableMarkdownOutputNode {
-    let identifier: ResolvedTopicReference
-    let node: MarkdownOutputNode
+package struct WritableMarkdownOutputNode {
+    package let identifier: ResolvedTopicReference
+    package let node: MarkdownOutputNode
 }
