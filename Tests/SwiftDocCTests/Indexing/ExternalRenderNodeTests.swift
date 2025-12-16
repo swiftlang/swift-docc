@@ -507,4 +507,151 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, objcTitle)
         XCTAssertTrue(objcNavigatorExternalRenderNode.metadata.isBeta)
     }
+
+    func testExternalLinksInContentDontAffectNavigatorIndex() async throws {
+        let externalResolver = ExternalReferenceResolverTests.TestExternalReferenceResolver()
+        externalResolver.expectedReferencePath = "/documentation/testbundle/sampleclass"
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            This is an internal article with an external link <doc://\(externalResolver.bundleID)/documentation/TestBundle/SampleClass> which clashes with the curated local link.
+            
+            External links in content should not affect the navigator.
+                        
+            ## Topics
+            
+            - ``SampleClass``
+            """),
+            TextFile(name: "SampleClass.md", utf8Content: """
+            # ``SampleClass``
+            
+            This extends the documentation for this symbol.
+                        
+            ## Topics
+            
+            - <doc:ChildArticleA>
+            - <doc:ChildArticleB>
+            """),
+            TextFile(name: "ChildArticleA.md", utf8Content: """
+            # ChildArticleA
+            
+            A child article.
+            """),
+            TextFile(name: "ChildArticleB.md", utf8Content: """
+            # ChildArticleB
+            
+            A child article.
+            """),
+            // Symbol graph with a class that matches an external link path
+            JSONFile(name: "TestBundle.symbols.json", content: makeSymbolGraph(moduleName: "TestBundle", symbols: [
+                makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SampleClass"])
+            ])),
+        ])
+
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        XCTAssert(context.problems.isEmpty, "Unexpectedly found problems: \(context.problems.map(\.diagnostic.summary))")
+
+        let renderIndexFolder = try createTemporaryDirectory()
+        let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        indexBuilder.setup()
+        let outputConsumer = TestExternalRenderNodeOutputConsumer(indexBuilder: indexBuilder)
+
+        let problems = try ConvertActionConverter.convert(
+            context: context,
+            outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
+            sourceRepository: nil,
+            emitDigest: false,
+            documentationCoverageOptions: .noCoverage
+        )
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
+        indexBuilder.finalize(emitJSONRepresentation: true, emitLMDBRepresentation: false)
+
+        XCTAssertEqual(
+            try RenderIndex.fromURL(renderIndexFolder.appendingPathComponent("index.json", isDirectory: false)),
+            try RenderIndex.fromString(
+                """
+                {
+                  "includedArchiveIdentifiers": [
+                    "unit-test"
+                  ],
+                  "interfaceLanguages": {
+                    "swift": [
+                      {
+                        "children": [
+                          {
+                            "title": "Articles",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "path": "/documentation/unit-test/childarticlea",
+                                    "title": "ChildArticleA",
+                                    "type": "article"
+                                  },
+                                  {
+                                    "path": "/documentation/unit-test/childarticleb",
+                                    "title": "ChildArticleB",
+                                    "type": "article"
+                                  }
+                                ],
+                                "path": "/documentation/testbundle/sampleclass",
+                                "title": "SampleClass",
+                                "type": "class"
+                              }
+                            ],
+                            "path": "/documentation/unit-test/article",
+                            "title": "Article",
+                            "type": "symbol"
+                          }
+                        ],
+                        "path": "/documentation/testbundle",
+                        "title": "TestBundle",
+                        "type": "module"
+                      }
+                    ]
+                  },
+                  "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 2
+                  }
+                }
+                """
+            )
+        )
+    }
+}
+
+private class TestExternalRenderNodeOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
+    let indexBuilder: Synchronized<NavigatorIndex.Builder>!
+
+    init(indexBuilder: NavigatorIndex.Builder) {
+        self.indexBuilder = Synchronized<NavigatorIndex.Builder>(indexBuilder)
+    }
+
+    func consume(externalRenderNode: ExternalRenderNode) throws {
+        try self.indexBuilder.sync { try $0.index(renderNode: externalRenderNode) }
+    }
+
+    func consume(renderNode: RenderNode) throws {
+        try self.indexBuilder.sync { try $0.index(renderNode: renderNode) }
+    }
+
+    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
+    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
+    func consume(indexingRecords: [IndexingRecord]) throws { }
+    func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }
+    func consume(benchmarks: Benchmark) throws { }
+    func consume(documentationCoverageInfo: [CoverageDataEntry]) throws { }
+    func consume(renderReferenceStore: RenderReferenceStore) throws { }
+    func consume(buildMetadata: BuildMetadata) throws { }
+    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
 }

@@ -11,6 +11,7 @@
 public import Foundation
 public import Markdown
 import SymbolKit
+import DocCCommon
 
 /// A visitor which converts a semantic model into a render node.
 ///
@@ -632,9 +633,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
         // advertising the page as "Swift", which is the language DocC assigns to pages in article only catalogs.
         // (github.com/swiftlang/swift-docc/issues/240).
-        if let topLevelModule = context.soleRootModuleReference,
-           try! context.entity(with: topLevelModule).kind.isSymbol
-        {
+        let isArticleOnlyCatalog = context.rootModules.allSatisfy { !context.isSymbol(reference: $0) }
+        if !isArticleOnlyCatalog {
             node.variants = variants(for: documentationNode)
         }
         
@@ -1063,10 +1063,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                let referenceSourceLanguageIDs = Set(context.sourceLanguages(for: reference).map(\.id))
+                let referenceSourceLanguages = SmallSourceLanguageSet(context.sourceLanguages(for: reference))
                 
-                let availableSourceLanguageTraits = Set(availableTraits.compactMap(\.interfaceLanguage))
-                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguageIDs) {
+                let availableSourceLanguageTraits = SmallSourceLanguageSet(availableTraits.compactMap(\.sourceLanguage))
+                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
                     // The set of available source language traits has no members in common with the
                     // set of source languages the given reference is available in.
                     //
@@ -1075,10 +1075,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                return referenceSourceLanguageIDs.contains { sourceLanguageID in
-                    allowedTraits.contains { trait in
-                        trait.interfaceLanguage == sourceLanguageID
-                    }
+                return allowedTraits.contains { trait in
+                    trait.sourceLanguage.map { referenceSourceLanguages.contains($0) } ?? false
                 }
             }
             
@@ -1870,7 +1868,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.
                 // If the current symbol and its custom alternate representation share language representations, the custom language representation is ignored.
                 allVariants.merge(
-                    alternateRepresentationReference.sourceLanguages.map { ($0, alternateRepresentationReference) }
+                    alternateRepresentationReference._sourceLanguages.map { ($0, alternateRepresentationReference) }
                 ) { existing, _ in existing }
             }
         }
@@ -2054,13 +2052,8 @@ extension ContentRenderSection: RenderTree {}
 
 private extension Sequence<SourceLanguage> {
     func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
-        traits.contains(where: {
-            guard let languageID = $0.interfaceLanguage,
-                  let traitLanguage = SourceLanguage(knownLanguageIdentifier: languageID)
-            else {
-                return false
-            }
-            return self.contains(traitLanguage)
+        traits.contains(where: { trait in
+            trait.sourceLanguage.map { self.contains($0) } ?? false
         })
     }
 }

@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocCUtilities
 
-#if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
+#if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
 fileprivate extension NSNotification.Name {
     static let testNodeUpdated = NSNotification.Name(rawValue: "testNodeUpdated")
     static let testDirectoryReloaded = NSNotification.Name(rawValue: "testDirectoryReloaded")
@@ -24,7 +24,7 @@ func fileURLsAreEqual(_ url1: URL, _ url2: URL) -> Bool {
 #endif
 
 class DirectoryMonitorTests: XCTestCase {
-    #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
+    #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
     // - MARK: Directory watching test infra
     
     /// Method that automates setting up a directory monitor, setting up the relevant expectations for a test,
@@ -88,10 +88,13 @@ class DirectoryMonitorTests: XCTestCase {
         }
     }
     
-    /// - Warning: Please do not overuse this method as it takes 10s of wait time and can potentially slow down running the test suite.
     private func monitorNoUpdates(url: URL, testBlock: @escaping () throws -> Void, file: StaticString = #filePath, line: UInt = #line) throws {
+        let fileUpdateEvent = expectation(description: "Unexpectedly triggered an update event")
+        // This test does not expect any file change events
+        fileUpdateEvent.isInverted = true
+
         let monitor = try DirectoryMonitor(root: url) { rootURL, url in
-            XCTFail("Did produce file update event for a hidden file", file: file, line: line)
+            fileUpdateEvent.fulfill()
         }
         
         try monitor.start()
@@ -99,17 +102,11 @@ class DirectoryMonitorTests: XCTestCase {
             monitor.stop()
         }
         
-        let didNotTriggerUpdateForHiddenFile = expectation(description: "Doesn't trigger update")
-        DispatchQueue.global().async {
-            try? testBlock()
-        }
-        
-        // For the test purposes we assume a file change event will be delivered within generous 10 seconds.
-        DispatchQueue.global().asyncAfter(deadline: .now() + 10) {
-            didNotTriggerUpdateForHiddenFile.fulfill()
-        }
-        
-        wait(for: [didNotTriggerUpdateForHiddenFile], timeout: 20)        
+        // For test purposes, we assume a file change event will be delivered within 1.5 seconds.
+        // This also aligns with the `monitor()` method above, that ensures that file change events
+        // in tests are received within 1.5 seconds. If this works too eagerly, then the other tests
+        // in this suite will fail.
+        waitForExpectations(timeout: 1.5)
     }
     #endif
     
@@ -118,7 +115,7 @@ class DirectoryMonitorTests: XCTestCase {
     /// Tests a succession of file system changes and verifies that they produce
     /// the expected monitor events.
     func testMonitorUpdates() throws {
-        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
+        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
 
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
@@ -167,7 +164,7 @@ class DirectoryMonitorTests: XCTestCase {
     }
     
     func testMonitorDoesNotTriggerUpdates() throws {
-        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
+        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
         
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
@@ -200,7 +197,7 @@ class DirectoryMonitorTests: XCTestCase {
     
     /// Tests a zero sum change aggregation triggers an event.
     func testMonitorZeroSumSizeChangesUpdates() throws {
-        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD)
+        #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
 
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")

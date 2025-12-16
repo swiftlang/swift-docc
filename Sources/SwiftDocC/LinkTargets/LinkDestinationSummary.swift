@@ -83,6 +83,11 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// The relative presentation URL for this element.
     public let relativePresentationURL: URL
     
+    /// The absolute presentation URL for this element, or `nil` if only the _relative_ presentation URL is known.
+    ///
+    /// - Note: The absolute presentation URL (if one exists) and the relative presentation URL will always have the same path and fragment components.
+    let absolutePresentationURL: URL?
+    
     /// The resolved topic reference URL to this element.
     public var referenceURL: URL
     
@@ -107,7 +112,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
     //  so that external documentation sources don't need to provide that data.
     //  Adding new required properties is considered breaking change since existing external documentation sources
     //  wouldn't necessarily meet these new requirements.
-    
+    //  Make sure to update the encoding, decoding and Equatable implementations when adding new properties.
+
     /// A collection of identifiers that all relate to some common task, as described by the title.
     @available(*, deprecated, message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
     public struct TaskGroup: Codable, Equatable {
@@ -385,6 +391,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.kind = kind
         self.language = language
         self.relativePresentationURL = relativePresentationURL
+        self.absolutePresentationURL = nil
         self.referenceURL = referenceURL
         self.title = title
         self.abstract = abstract
@@ -556,7 +563,7 @@ extension LinkDestinationSummary {
         let topicImages = renderNode.metadata.images
         let referenceIdentifiers = topicImages.map(\.identifier)
         
-        guard let symbol = documentationNode.semantic as? Symbol, let summaryTrait = documentationNode.availableVariantTraits.first(where: { $0.interfaceLanguage == documentationNode.sourceLanguage.id }) else {
+        guard let symbol = documentationNode.semantic as? Symbol, let summaryTrait = documentationNode.availableVariantTraits.first(where: { $0.sourceLanguage == documentationNode.sourceLanguage }) else {
             // Only symbol documentation currently support multi-language variants (rdar://86580915)
             let references = referenceIdentifiers
                 .compactMap { renderNode.references[$0.identifier] }
@@ -605,7 +612,7 @@ extension LinkDestinationSummary {
 
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
             // Skip the variant for the summarized elements source language.
-            guard let interfaceLanguage = trait.interfaceLanguage, interfaceLanguage != documentationNode.sourceLanguage.id else {
+            guard let sourceLanguage = trait.sourceLanguage, sourceLanguage != documentationNode.sourceLanguage else {
                 return nil
             }
             
@@ -616,7 +623,7 @@ extension LinkDestinationSummary {
             }
             
             let plainTextDeclarationVariant = symbol.plainTextDeclaration(for: trait)
-            let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(interfaceLanguage)]
+            let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(sourceLanguage.id)]
             
             // Use the abbreviated declaration fragments instead of the full declaration fragments.
             // These have been derived from the symbol's subheading declaration fragments as part of rendering.
@@ -630,7 +637,7 @@ extension LinkDestinationSummary {
             return Variant(
                 traits: variantTraits,
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
-                language: nilIfEqual(main: language, variant: SourceLanguage(knownLanguageIdentifier: interfaceLanguage)),
+                language: nilIfEqual(main: language, variant: sourceLanguage),
                 relativePresentationURL: nil, // The symbol variant uses the same relative path
                 title: nilIfEqual(main: title, variant: symbol.titleVariants[trait]),
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
@@ -751,7 +758,7 @@ extension LinkDestinationSummary {
         } else {
             try container.encode(kind, forKey: .kind)
         }
-        try container.encode(relativePresentationURL, forKey: .relativePresentationURL)
+        try container.encode(absolutePresentationURL ?? relativePresentationURL, forKey: .relativePresentationURL)
         try container.encode(referenceURL, forKey: .referenceURL)
         try container.encode(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
@@ -794,7 +801,9 @@ extension LinkDestinationSummary {
         } catch {
             kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
         }
-        relativePresentationURL = try container.decode(URL.self, forKey: .relativePresentationURL)
+        let decodedURL = try container.decode(URL.self, forKey: .relativePresentationURL)
+        (relativePresentationURL, absolutePresentationURL) = Self.checkIfDecodedURLWasAbsolute(decodedURL)
+        
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
@@ -837,6 +846,28 @@ extension LinkDestinationSummary {
         }
         
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
+    }
+    
+    private static func checkIfDecodedURLWasAbsolute(_ decodedURL: URL) -> (relative: URL, absolute: URL?) {
+        guard decodedURL.isAbsoluteWebURL,
+              var components = URLComponents(url: decodedURL, resolvingAgainstBaseURL: false)
+        else {
+            // If the decoded URL isn't an absolute web URL that's valid according to RFC 3986, then treat it as relative.
+            return (relative: decodedURL, absolute: nil)
+        }
+        
+        // Remove the scheme, user, port, and host to create a relative URL.
+        components.scheme = nil
+        components.user   = nil
+        components.host   = nil
+        components.port   = nil
+            
+        guard let relativeURL = components.url else {
+            // If we can't create a relative URL that's valid according to RFC 3986, then treat the original as relative.
+            return (relative: decodedURL, absolute: nil)
+        }
+        
+        return (relative: relativeURL, absolute: decodedURL)
     }
 }
 
@@ -933,11 +964,14 @@ extension LinkDestinationSummary {
         guard lhs.kind == rhs.kind else { return false }
         guard lhs.language == rhs.language else { return false }
         guard lhs.relativePresentationURL == rhs.relativePresentationURL else { return false }
+        guard lhs.absolutePresentationURL == rhs.absolutePresentationURL else { return false }
         guard lhs.title == rhs.title else { return false }
         guard lhs.abstract == rhs.abstract else { return false }
         guard lhs.availableLanguages == rhs.availableLanguages else { return false }
         guard lhs.platforms == rhs.platforms else { return false }
+        guard lhs.plainTextDeclaration == rhs.plainTextDeclaration else { return false }
         guard lhs.subheadingDeclarationFragments == rhs.subheadingDeclarationFragments else { return false }
+        guard lhs.navigatorDeclarationFragments == rhs.navigatorDeclarationFragments else { return false }
         guard lhs.redirects == rhs.redirects else { return false }
         guard lhs.topicImages == rhs.topicImages else { return false }
         guard lhs.variants == rhs.variants else { return false }
@@ -1010,7 +1044,18 @@ private extension DocumentationNode {
         // specialized articles, like sample code pages, that benefit from being treated as articles in
         // some parts of the compilation process (like curation) but not others (like link destination
         // summary creation and render node translation).
-        return metadata?.pageKind?.kind.documentationNodeKind ?? kind
+        let baseKind = metadata?.pageKind?.kind.documentationNodeKind ?? kind
+
+        // For articles, check if they should be treated as API Collections (collectionGroup).
+        // This ensures that linkable entities have the same kind detection logic as the rendering system,
+        // fixing cross-framework references where API Collections were incorrectly showing as articles.
+        if baseKind == .article,
+           let article = semantic as? Article,
+           DocumentationContentRenderer.roleForArticle(article, nodeKind: kind) == .collectionGroup {
+            return .collectionGroup
+        }
+
+        return baseKind
     }
 }
 

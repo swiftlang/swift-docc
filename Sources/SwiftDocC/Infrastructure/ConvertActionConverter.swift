@@ -26,6 +26,7 @@ package enum ConvertActionConverter {
     /// - Parameters:
     ///   - context: The context that the bundle is a part of.
     ///   - outputConsumer: The consumer that the conversion passes outputs of the conversion to.
+    ///   - htmlContentConsumer: The consumer for HTML content that the conversion produces, or `nil` if the conversion shouldn't produce any HTML content.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - emitDigest: Whether the conversion should pass additional metadata output––such as linkable entities information, indexing information, or asset references by asset type––to the consumer.
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
@@ -33,6 +34,7 @@ package enum ConvertActionConverter {
     package static func convert(
         context: DocumentationContext,
         outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
+        htmlContentConsumer: (any HTMLContentConsumer)?,
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
@@ -100,19 +102,10 @@ package enum ConvertActionConverter {
         
         let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
         let resultsGroup = DispatchGroup()
-        
-        // Consume external links and add them into the sidebar.
-        for externalLink in context.externalCache {
-            // Here we're associating the external node with the **current** bundle's bundle ID.
-            // This is needed because nodes are only considered children if the parent and child's bundle ID match.
-            // Otherwise, the node will be considered as a separate root node and displayed separately.
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
-            try outputConsumer.consume(externalRenderNode: externalRenderNode)
-        }
-        
+
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
-        var conversionProblems: [Problem] = context.knownPages.concurrentPerform { identifier, results in
+        var conversionProblems: [Problem] = context.knownPages.concurrentPerform { [htmlContentConsumer] identifier, results in
             // If cancelled skip all concurrent conversion work in this block.
             guard !Task.isCancelled else { return }
             
@@ -120,7 +113,19 @@ package enum ConvertActionConverter {
             autoreleasepool {
                 do {
                     let entity = try context.entity(with: identifier)
-
+                    
+                    if let htmlContentConsumer {
+                        var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness)
+                        
+                        if let symbol = entity.semantic as? Symbol {
+                            let renderedPageInfo = renderer.renderSymbol(symbol)
+                            try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                        } else if let article = entity.semantic as? Article {
+                            let renderedPageInfo = renderer.renderArticle(article)
+                            try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                        }
+                    }
+                    
                     guard let renderNode = converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
                         return
@@ -172,7 +177,27 @@ package enum ConvertActionConverter {
         signposter.endInterval("Render", renderSignpostHandle)
         
         guard !Task.isCancelled else { return [] }
-        
+
+        // Consumes all external links and adds them into the sidebar.
+        // This consumes all external links referenced across all content, and indexes them so they're available for reference in the navigator.
+        // This is not ideal as it means that links outside of the Topics section can impact the content of the navigator.
+        // TODO: It would be more correct to only index external links which have been curated as part of the Topics section.
+        //
+        // This has to run after all local nodes have been indexed because we're associating the external node with the **local** documentation's identifier,
+        // which makes it possible for there be clashes between local and external render nodes.
+        // When there are duplicate nodes, only the first one will be indexed,
+        // so in order to prefer local entities whenever there are any clashes, we have to index external nodes second.
+        // TODO: External render nodes should be associated with the correct documentation identifier.
+        try signposter.withIntervalSignpost("Index external links", id: signposter.makeSignpostID()) {
+            for externalLink in context.externalCache {
+                // Here we're associating the external node with the **local** documentation's identifier.
+                // This is needed because nodes are only considered children if the parent and child's identifier match.
+                // Otherwise, the node will be considered as a separate root node and displayed separately.
+                let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
+                try outputConsumer.consume(externalRenderNode: externalRenderNode)
+            }
+        }
+
         // Write various metadata
         if emitDigest {
             signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
@@ -234,5 +259,18 @@ package enum ConvertActionConverter {
         benchmark(add: Benchmark.PeakMemory())
         
         return conversionProblems
+    }
+}
+
+private extension HTMLContentConsumer {
+    func consume(pageInfo: HTMLRenderer.RenderedPageInfo, forPage reference: ResolvedTopicReference) throws {
+        try consume(
+            mainContent: pageInfo.content,
+            metadata: (
+                title: pageInfo.metadata.title,
+                description: pageInfo.metadata.plainDescription
+            ),
+            forPage: reference
+        )
     }
 }

@@ -337,7 +337,7 @@ public class DocumentationContentRenderer {
             let containerReference = ResolvedTopicReference(
                 bundleID: reference.bundleID,
                 path: reference.path,
-                sourceLanguages: reference.sourceLanguages
+                sourceLanguages: reference._sourceLanguages
             )
             abstractedNode = try? context.entity(with: containerReference)
         }

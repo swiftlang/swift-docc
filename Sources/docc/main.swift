@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if os(macOS) || os(Linux) || os(Android) || os(Windows) || os(FreeBSD)
+#if os(macOS) || os(Linux) || os(Android) || os(Windows) || os(FreeBSD) || os(OpenBSD)
 import SwiftDocCUtilities
 
 await Task {
