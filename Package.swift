@@ -44,6 +44,7 @@ let package = Package(
             name: "SwiftDocC",
             dependencies: [
                 .target(name: "DocCCommon"),
+                .target(name: "DocCHTML"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
@@ -113,8 +114,8 @@ let package = Package(
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
-        
         ),
+        
         // A few common types and core functionality that's useable by all other targets.
         .target(
             name: "DocCCommon",
@@ -122,6 +123,7 @@ let package = Package(
                 // This target shouldn't have any local dependencies so that all other targets can depend on it.
                 // We can add dependencies on SymbolKit and Markdown here but they're not needed yet.
             ],
+            exclude: ["CMakeLists.txt"],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         
@@ -129,6 +131,27 @@ let package = Package(
             name: "DocCCommonTests",
             dependencies: [
                 .target(name: "DocCCommon"),
+                .target(name: "DocCTestUtilities"),
+            ],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
+        .target(
+            name: "DocCHTML",
+            dependencies: [
+                .target(name: "DocCCommon"),
+                .product(name: "Markdown", package: "swift-markdown"),
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .testTarget(
+            name: "DocCHTMLTests",
+            dependencies: [
+                .target(name: "DocCHTML"),
+                .target(name: "SwiftDocC"),
+                .product(name: "Markdown", package: "swift-markdown"),
                 .target(name: "DocCTestUtilities"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
