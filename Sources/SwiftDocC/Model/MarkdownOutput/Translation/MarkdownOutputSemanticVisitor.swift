@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+//TODO: rdar://166607119 consider an alternative to a semantic visitor for this work
 /// Visits the semantic structure of a documentation node and returns a ``MarkdownOutputNode``
 struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     
