@@ -1,23 +1,19 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-
-import Foundation
-public import XCTest
+package import Foundation
 package import SymbolKit
 package import SwiftDocC
 
 // MARK: - Symbol Graph objects
 
-extension XCTestCase {
-    
     package func makeSymbolGraph(
         moduleName: String,
         platform: SymbolGraph.Platform = .init(),
@@ -196,7 +192,7 @@ extension XCTestCase {
         }
         return SymbolGraph.Symbol.Kind(parsedIdentifier: kindID, displayName: documentationNodeKind.name)
     }
-}
+
     
 // MARK: Constants
 
@@ -205,8 +201,10 @@ private let defaultSymbolURL = URL(fileURLWithPath: "/Users/username/path/to/Som
 
 // MARK: - JSON strings
 
+package import XCTest
+
 extension XCTestCase {
-    public func makeSymbolGraphString(moduleName: String, symbols: String = "", relationships: String = "", platform: String = "") -> String {
+    package func makeSymbolGraphString(moduleName: String, symbols: String = "", relationships: String = "", platform: String = "") -> String {
         return """
         {
           "metadata": {
