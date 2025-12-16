@@ -1,4 +1,5 @@
 {
+  "originHash" : "c3b4cec841388568b016ec78166c46f027dbf0c9a4b404a1d025e8ddf5974113",
   "pins" : [
     {
       "identity" : "swift-argument-parser",
@@ -68,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-docc-symbolkit.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "65fa99b0b84db5c743415a00ee7f0099837aae1b"
+        "branch" : "release/6.3",
+        "revision" : "89e737aca30bd42a9f7e114e609884267ea6aabe"
       }
     },
     {
@@ -77,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-lmdb.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "c42582487fe84f72a4d417dd2d8493757bd4d072"
+        "branch" : "release/6.3",
+        "revision" : "1ad9a2d80b6fcde498c2242f509bd1be7d667ff8"
       }
     },
     {
@@ -86,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-markdown.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "5ad49ed3219261b085e86da832d0657752bba63c"
+        "branch" : "release/6.3",
+        "revision" : "de3e245b6044386b623ecce11d1ccb5fe766e3db"
       }
     },
     {
@@ -109,5 +110,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
