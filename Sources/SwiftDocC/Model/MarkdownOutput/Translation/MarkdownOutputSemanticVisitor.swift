@@ -152,7 +152,7 @@ extension MarkdownOutputSemanticVisitor {
         
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
         markdownWalker.visit(symbol.abstract)
-        // Intentionally only including the primary declaration in the output, because we are only using the primary language. 
+        // TODO: rdar://166606746 include alternate declarations
         if let declarationFragments = symbol.declaration.first?.value.declarationFragments {
             let declaration = declarationFragments
                 .map { $0.spelling }
