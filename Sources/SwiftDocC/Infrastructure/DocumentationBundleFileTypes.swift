@@ -84,4 +84,12 @@ public enum DocumentationBundleFileTypes {
     public static func isThemeSettingsFile(_ url: URL) -> Bool {
         return url.lastPathComponent == themeSettingsFileName
     }
+
+    private static let customFaviconFileName = "favicon.ico"
+    /// Checks if a file is a custom favicon.
+    /// - Parameter url: The file to check.
+    /// - Returns: Whether or not the file at `url` is a custom favicon.
+    public static func isCustomFavicon(_ url: URL) -> Bool {
+        return url.lastPathComponent.lowercased() == customFaviconFileName
+    }
 }
