@@ -65,26 +65,26 @@ extension MarkdownOutputManifest {
     
     /// A relationship between two documents in the manifest.
     ///
-    /// Parent / child symbol relationships are not included here, because those relationships are implicit in the URI structure of the documents. See ``children(of:)``.
+    /// Parent / child symbol relationships are not included here, because those relationships are implicit in the identifier structure of the documents. See ``children(of:)``.
     package struct Relationship: Codable, Hashable, Sendable, Comparable {
         
-        package let sourceURI: String
+        package let sourceIdentifier: String
         package let relationshipType: RelationshipType
         package let subtype: RelationshipSubType?
-        package let targetURI: String
+        package let targetIdentifier: String
         
-        package init(sourceURI: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipSubType? = nil, targetURI: String) {
-            self.sourceURI = sourceURI
+        package init(sourceIdentifier: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipSubType? = nil, targetIdentifier: String) {
+            self.sourceIdentifier = sourceIdentifier
             self.relationshipType = relationshipType
             self.subtype = subtype
-            self.targetURI = targetURI
+            self.targetIdentifier = targetIdentifier
         }
         
         package static func < (lhs: MarkdownOutputManifest.Relationship, rhs: MarkdownOutputManifest.Relationship) -> Bool {
-            if lhs.sourceURI < rhs.sourceURI {
+            if lhs.sourceIdentifier < rhs.sourceIdentifier {
                 return true
-            } else if lhs.sourceURI == rhs.sourceURI {
-                return lhs.targetURI < rhs.targetURI
+            } else if lhs.sourceIdentifier == rhs.sourceIdentifier {
+                return lhs.targetIdentifier < rhs.targetIdentifier
             } else {
                 return false
             }
@@ -93,33 +93,33 @@ extension MarkdownOutputManifest {
     
     package struct Document: Codable, Hashable, Sendable, Comparable {
         
-        /// The URI of the document
-        package let uri: String
+        /// The identifier of the document
+        package let identifier: String
         /// The type of the document
         package let documentType: DocumentType
         /// The title of the document
         package let title: String
                 
-        package init(uri: String, documentType: MarkdownOutputManifest.DocumentType, title: String) {
-            self.uri = uri
+        package init(identifier: String, documentType: MarkdownOutputManifest.DocumentType, title: String) {
+            self.identifier = identifier
             self.documentType = documentType
             self.title = title
         }
                 
         package static func < (lhs: MarkdownOutputManifest.Document, rhs: MarkdownOutputManifest.Document) -> Bool {
-            lhs.uri < rhs.uri
+            lhs.identifier < rhs.identifier
         }
     }
     
     /// All documents in the manifest that have a given document as a parent, e.g. Framework/Symbol/property is a child of Framework/Symbol
     package func children(of parent: Document) -> Set<Document> {
-        let parentPrefix = parent.uri + "/"
+        let parentPrefix = parent.identifier + "/"
         let prefixEnd = parentPrefix.endIndex
         return documents.filter { document in
-            guard document.uri.hasPrefix(parentPrefix) else {
+            guard document.identifier.hasPrefix(parentPrefix) else {
                 return false
             }
-            let components = document.uri[prefixEnd...].components(separatedBy: "/")
+            let components = document.identifier[prefixEnd...].components(separatedBy: "/")
             return components.count == 1
         }
     }

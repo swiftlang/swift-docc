@@ -130,16 +130,16 @@ extension MarkdownOutputNode {
         package let metadataVersion: String
         package let documentType: DocumentType
         package var role: String?
-        package let uri: String
+        package let identifier: String
         package var title: String
         package let framework: String
         package var symbol: Symbol?
         package var availability: [Availability]?
            
-        package init(documentType: DocumentType, uri: String, title: String, framework: String) {
+        package init(documentType: DocumentType, identifier: String, title: String, framework: String) {
             self.documentType = documentType
             self.metadataVersion = Self.version.stringRepresentation()
-            self.uri = uri
+            self.identifier = identifier
             self.title = title
             self.framework = framework
         }

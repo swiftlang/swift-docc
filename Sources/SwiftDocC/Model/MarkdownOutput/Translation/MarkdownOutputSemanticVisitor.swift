@@ -41,7 +41,7 @@ extension MarkdownOutputNode.Metadata {
     init(documentType: DocumentType, bundle: DocumentationBundle, reference: ResolvedTopicReference, title: String) {
         self.init(
             documentType: documentType,
-            uri: reference.path,
+            identifier: reference.path,
             title: title,
             framework: bundle.displayName
         )
@@ -52,22 +52,22 @@ extension MarkdownOutputNode.Metadata {
 extension MarkdownOutputSemanticVisitor {
     
     mutating func add(target: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
-        add(targetURI: target.path, type: type, subtype: subtype)
+        add(targetIdentifier: target.path, type: type, subtype: subtype)
     }
     
     mutating func add(fallbackTarget: String, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
-        let uri: String
+        let targetIdentifier: String
         let components = fallbackTarget.components(separatedBy: ".")
         if components.count > 1 {
-            uri = "/documentation/\(components.joined(separator: "/"))"
+            targetIdentifier = "/documentation/\(components.joined(separator: "/"))"
         } else {
-            uri = fallbackTarget
+            targetIdentifier = fallbackTarget
         }
-        add(targetURI: uri, type: type, subtype: subtype)
+        add(targetIdentifier: targetIdentifier, type: type, subtype: subtype)
     }
     
-    mutating func add(targetURI: String, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
-        let relationship = MarkdownOutputManifest.Relationship(sourceURI: identifier.path, relationshipType: type, subtype: subtype, targetURI: targetURI)
+    mutating func add(targetIdentifier: String, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
+        let relationship = MarkdownOutputManifest.Relationship(sourceIdentifier: identifier.path, relationshipType: type, subtype: subtype, targetIdentifier: targetIdentifier)
         manifest?.relationships.insert(relationship)
     }
 }
@@ -79,7 +79,7 @@ extension MarkdownOutputSemanticVisitor {
         var metadata = MarkdownOutputNode.Metadata(documentType: .article, bundle: context.inputs, reference: identifier, title: article.title?.plainText ?? identifier.lastPathComponent)
                 
         let document = MarkdownOutputManifest.Document(
-            uri: identifier.path,
+            identifier: identifier.path,
             documentType: .article,
             title: metadata.title
         )
@@ -121,7 +121,7 @@ extension MarkdownOutputSemanticVisitor {
         metadata.role = symbol.kind.displayName
         
         let document = MarkdownOutputManifest.Document(
-            uri: identifier.path,
+            identifier: identifier.path,
             documentType: .symbol,
             title: metadata.title
         )
@@ -279,7 +279,7 @@ extension MarkdownOutputSemanticVisitor {
         let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, bundle: context.inputs, reference: identifier, title: title)
         
         let document = MarkdownOutputManifest.Document(
-            uri: identifier.path,
+            identifier: identifier.path,
             documentType: .tutorial,
             title: metadata.title
         )

@@ -26,10 +26,10 @@ final class MarkdownOutputTests: XCTestCase {
         }
         let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
         let node = try XCTUnwrap(context.entity(with: reference))
-        var translator = MarkdownOutputNodeTranslator(context: context, node: node)
-        let output = try XCTUnwrap(translator.createOutput())
-        let manifest = try XCTUnwrap(output.manifest)
-        return (output.node, manifest)
+        var visitor = MarkdownOutputSemanticVisitor(context: context, node: node)
+        let markdownNode = try XCTUnwrap(visitor.createOutput())
+        let manifest = try XCTUnwrap(visitor.manifest)
+        return (markdownNode, manifest)
     }
     
     private func catalog(files: [any File] = []) -> Folder {
@@ -599,7 +599,7 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(node.metadata.documentType == .article)
         XCTAssert(node.metadata.role == RenderMetadata.Role.article.rawValue)
         XCTAssert(node.metadata.title == "Article Role")
-        XCTAssert(node.metadata.uri == "/documentation/MarkdownOutput/ArticleRole")
+        XCTAssert(node.metadata.identifier == "/documentation/MarkdownOutput/ArticleRole")
         XCTAssert(node.metadata.framework == "MarkdownOutput")
     }
     
@@ -910,7 +910,7 @@ final class MarkdownOutputTests: XCTestCase {
         let data = try node.generateDataRepresentation()
         let fromData = try MarkdownOutputNode(data)
         XCTAssertEqual(node.markdown, fromData.markdown)
-        XCTAssertEqual(node.metadata.uri, fromData.metadata.uri)
+        XCTAssertEqual(node.metadata.identifier, fromData.metadata.identifier)
     }
     
     // MARK: - Manifest
@@ -956,15 +956,15 @@ final class MarkdownOutputTests: XCTestCase {
         
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "Links")
         let rows = MarkdownOutputManifest.Relationship(
-            sourceURI: "/documentation/MarkdownOutput/RowsAndColumns",
+            sourceIdentifier: "/documentation/MarkdownOutput/RowsAndColumns",
             relationshipType: .belongsToTopic,
-            targetURI: "/documentation/MarkdownOutput/Links#Links-with-abstracts"
+            targetIdentifier: "/documentation/MarkdownOutput/Links#Links-with-abstracts"
         )
         
         let symbol = MarkdownOutputManifest.Relationship(
-            sourceURI: "/documentation/MarkdownOutput/MarkdownSymbol",
+            sourceIdentifier: "/documentation/MarkdownOutput/MarkdownSymbol",
             relationshipType: .belongsToTopic,
-            targetURI: "/documentation/MarkdownOutput/Links#Links-with-abstracts"
+            targetIdentifier: "/documentation/MarkdownOutput/Links#Links-with-abstracts"
         )
         
         XCTAssert(manifest.relationships.contains(rows))
@@ -984,12 +984,12 @@ final class MarkdownOutputTests: XCTestCase {
         ]
         
         let documents = documentURIs.map {
-            MarkdownOutputManifest.Document(uri: $0, documentType: .symbol, title: $0)
+            MarkdownOutputManifest.Document(identifier: $0, documentType: .symbol, title: $0)
         }
         let manifest = MarkdownOutputManifest(title: "Test", documents: Set(documents))
         
-        let document = try XCTUnwrap(manifest.documents.first(where: { $0.uri == "/documentation/MarkdownOutput/MarkdownSymbol" }))
-        let children = manifest.children(of: document).map { $0.uri }
+        let document = try XCTUnwrap(manifest.documents.first(where: { $0.identifier == "/documentation/MarkdownOutput/MarkdownSymbol" }))
+        let children = manifest.children(of: document).map { $0.identifier }
         XCTAssertEqual(children.count, 4)
         
         XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/name"))
@@ -1018,13 +1018,13 @@ final class MarkdownOutputTests: XCTestCase {
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalSubclass")
         let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         XCTAssert(related.contains(where: {
-            $0.targetURI == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == .inheritsFrom
+            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalSuperclass" && $0.subtype == .inheritsFrom
         }))
         
         let (_, parentManifest) = try await markdownOutput(catalog: catalog, path: "LocalSuperclass")
         let parentRelated = parentManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         XCTAssert(parentRelated.contains(where: {
-            $0.targetURI == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == .inheritedBy
+            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalSubclass" && $0.subtype == .inheritedBy
         }))
     }
         
@@ -1049,19 +1049,19 @@ final class MarkdownOutputTests: XCTestCase {
         let (_, manifest) = try await markdownOutput(catalog: catalog, path: "LocalConformer")
         let related = manifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         XCTAssert(related.contains(where: {
-            $0.targetURI == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == .conformsTo
+            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalProtocol" && $0.subtype == .conformsTo
         }))
         
         let (_, protocolManifest) = try await markdownOutput(catalog: catalog, path: "LocalProtocol")
         let protocolRelated = protocolManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         XCTAssert(protocolRelated.contains(where: {
-            $0.targetURI == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == .conformingTypes
+            $0.targetIdentifier == "/documentation/MarkdownOutput/LocalConformer" && $0.subtype == .conformingTypes
         }))
         
         let (_, externalManifest) = try await markdownOutput(catalog: catalog, path: "ExternalConformer")
         let externalRelated = externalManifest.relationships.filter { $0.relationshipType == .relatedSymbol }
         XCTAssert(externalRelated.contains(where: {
-            $0.targetURI == "/documentation/Swift/Hashable" && $0.subtype == .conformsTo
+            $0.targetIdentifier == "/documentation/Swift/Hashable" && $0.subtype == .conformsTo
         }))
     }
 }
