@@ -51,18 +51,7 @@ extension MarkdownOutputManifest {
         /// For this relationship, the source and target URIs will be indicated by the directionality of the subtype, e.g. source "conformsTo" target. 
         case relatedSymbol
     }
-    
-    package enum RelationshipSubType: String, Codable, Sendable {
-        /// One or more protocols to which a type conforms.
-        case conformsTo
-        /// One or more types that conform to a protocol.
-        case conformingTypes
-        /// One or more types that are parents of the symbol.
-        case inheritsFrom
-        /// One or more types that are children of the symbol.
-        case inheritedBy
-    }
-    
+        
     /// A relationship between two documents in the manifest.
     ///
     /// Parent / child symbol relationships are not included here, because those relationships are implicit in the identifier structure of the documents. See ``children(of:)``.
@@ -70,10 +59,17 @@ extension MarkdownOutputManifest {
         
         package let sourceIdentifier: String
         package let relationshipType: RelationshipType
-        package let subtype: RelationshipSubType?
+        package let subtype: RelationshipsGroup.Kind?
         package let targetIdentifier: String
         
-        package init(sourceIdentifier: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipSubType? = nil, targetIdentifier: String) {
+        enum CodingKeys: String, CodingKey {
+            case sourceIdentifier
+            case relationshipType
+            case subtype
+            case targetIdentifier
+        }
+
+        package init(sourceIdentifier: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind? = nil, targetIdentifier: String) {
             self.sourceIdentifier = sourceIdentifier
             self.relationshipType = relationshipType
             self.subtype = subtype
@@ -88,6 +84,23 @@ extension MarkdownOutputManifest {
             } else {
                 return false
             }
+        }
+        
+        package init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: MarkdownOutputManifest.Relationship.CodingKeys.self)
+            self.sourceIdentifier = try container.decode(String.self, forKey: .sourceIdentifier)
+            self.relationshipType = try container.decode(RelationshipType.self, forKey: .relationshipType)
+            let subtypeValue = try container.decodeIfPresent(String.self, forKey: .subtype)
+            self.subtype = subtypeValue.flatMap(RelationshipsGroup.Kind.init(rawValue:))
+            self.targetIdentifier = try container.decode(String.self, forKey: .targetIdentifier)
+        }
+        
+        package func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(sourceIdentifier, forKey: .sourceIdentifier)
+            try container.encode(relationshipType, forKey: .relationshipType)
+            try container.encodeIfPresent(subtype?.rawValue, forKey: .subtype)
+            try container.encode(targetIdentifier, forKey: .targetIdentifier)
         }
     }
     

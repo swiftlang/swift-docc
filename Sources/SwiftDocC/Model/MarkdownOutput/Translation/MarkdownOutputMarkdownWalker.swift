@@ -408,7 +408,7 @@ extension MarkdownOutputMarkupWalker {
 
 // MARK: - Manifest construction
 extension MarkdownOutputMarkupWalker {
-    mutating func add(source: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: MarkdownOutputManifest.RelationshipSubType?) {
+    mutating func add(source: ResolvedTopicReference, type: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind?) {
         var targetIdentifier = identifier.path
         if let lastHeading {
             targetIdentifier.append("#\(urlReadableFragment(lastHeading))")
