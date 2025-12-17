@@ -15,15 +15,15 @@ package struct MarkdownOutputManifest: Codable, Sendable {
     package static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
     
     /// The version of this manifest
-    package let manifestVersion: SemanticVersion
+    let manifestVersion: SemanticVersion
     /// The manifest title, this will typically match the module that the manifest is generated for
     package let title: String
     /// All documents contained in the manifest
-    package var documents: Set<Document>
+    var documents: Set<Document>
     /// Relationships involving documents in the manifest
-    package var relationships: Set<Relationship>
+    var relationships: Set<Relationship>
     
-    package init(title: String, documents: Set<Document> = [], relationships: Set<Relationship> = []) {
+    init(title: String, documents: Set<Document> = [], relationships: Set<Relationship> = []) {
         self.manifestVersion = Self.version
         self.title = title
         self.documents = documents
@@ -41,11 +41,11 @@ package struct MarkdownOutputManifest: Codable, Sendable {
 
 extension MarkdownOutputManifest {
     
-    package enum DocumentType: String, Codable, Sendable {
+    enum DocumentType: String, Codable, Sendable {
         case article, tutorial, symbol
     }
     
-    package enum RelationshipType: String, Codable, Sendable {
+    enum RelationshipType: String, Codable, Sendable {
         /// For this relationship, the source URI will be the URI of a document, and the target URI will be the topic to which it belongs
         case belongsToTopic
         /// For this relationship, the source and target URIs will be indicated by the directionality of the subtype, e.g. source "conformsTo" target. 
@@ -54,13 +54,13 @@ extension MarkdownOutputManifest {
         
     /// A relationship between two documents in the manifest.
     ///
-    /// Parent / child symbol relationships are not included here, because those relationships are implicit in the identifier structure of the documents. See ``children(of:)``.
-    package struct Relationship: Codable, Hashable, Sendable, Comparable {
+    /// Parent / child symbol relationships are not included here, because those relationships are implicit in the identifier structure of the documents. 
+    struct Relationship: Codable, Hashable, Sendable, Comparable {
         
-        package let sourceIdentifier: String
-        package let relationshipType: RelationshipType
-        package let subtype: RelationshipsGroup.Kind?
-        package let targetIdentifier: String
+        let sourceIdentifier: String
+        let relationshipType: RelationshipType
+        let subtype: RelationshipsGroup.Kind?
+        let targetIdentifier: String
         
         enum CodingKeys: String, CodingKey {
             case sourceIdentifier
@@ -69,14 +69,14 @@ extension MarkdownOutputManifest {
             case targetIdentifier
         }
 
-        package init(sourceIdentifier: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind? = nil, targetIdentifier: String) {
+        init(sourceIdentifier: String, relationshipType: MarkdownOutputManifest.RelationshipType, subtype: RelationshipsGroup.Kind? = nil, targetIdentifier: String) {
             self.sourceIdentifier = sourceIdentifier
             self.relationshipType = relationshipType
             self.subtype = subtype
             self.targetIdentifier = targetIdentifier
         }
         
-        package static func < (lhs: MarkdownOutputManifest.Relationship, rhs: MarkdownOutputManifest.Relationship) -> Bool {
+        static func < (lhs: MarkdownOutputManifest.Relationship, rhs: MarkdownOutputManifest.Relationship) -> Bool {
             if lhs.sourceIdentifier < rhs.sourceIdentifier {
                 return true
             } else if lhs.sourceIdentifier == rhs.sourceIdentifier {
@@ -86,7 +86,7 @@ extension MarkdownOutputManifest {
             }
         }
         
-        package init(from decoder: any Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: MarkdownOutputManifest.Relationship.CodingKeys.self)
             self.sourceIdentifier = try container.decode(String.self, forKey: .sourceIdentifier)
             self.relationshipType = try container.decode(RelationshipType.self, forKey: .relationshipType)
@@ -95,7 +95,7 @@ extension MarkdownOutputManifest {
             self.targetIdentifier = try container.decode(String.self, forKey: .targetIdentifier)
         }
         
-        package func encode(to encoder: any Encoder) throws {
+        func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(sourceIdentifier, forKey: .sourceIdentifier)
             try container.encode(relationshipType, forKey: .relationshipType)
@@ -104,36 +104,23 @@ extension MarkdownOutputManifest {
         }
     }
     
-    package struct Document: Codable, Hashable, Sendable, Comparable {
+    struct Document: Codable, Hashable, Sendable, Comparable {
         
         /// The identifier of the document
-        package let identifier: String
+        let identifier: String
         /// The type of the document
-        package let documentType: DocumentType
+        let documentType: DocumentType
         /// The title of the document
-        package let title: String
+        let title: String
                 
-        package init(identifier: String, documentType: MarkdownOutputManifest.DocumentType, title: String) {
+        init(identifier: String, documentType: MarkdownOutputManifest.DocumentType, title: String) {
             self.identifier = identifier
             self.documentType = documentType
             self.title = title
         }
                 
-        package static func < (lhs: MarkdownOutputManifest.Document, rhs: MarkdownOutputManifest.Document) -> Bool {
+        static func < (lhs: MarkdownOutputManifest.Document, rhs: MarkdownOutputManifest.Document) -> Bool {
             lhs.identifier < rhs.identifier
-        }
-    }
-    
-    /// All documents in the manifest that have a given document as a parent, e.g. Framework/Symbol/property is a child of Framework/Symbol
-    package func children(of parent: Document) -> Set<Document> {
-        let parentPrefix = parent.identifier + "/"
-        let prefixEnd = parentPrefix.endIndex
-        return documents.filter { document in
-            guard document.identifier.hasPrefix(parentPrefix) else {
-                return false
-            }
-            let components = document.identifier[prefixEnd...].components(separatedBy: "/")
-            return components.count == 1
         }
     }
 }

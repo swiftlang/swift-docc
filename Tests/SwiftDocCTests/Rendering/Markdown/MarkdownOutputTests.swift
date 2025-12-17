@@ -970,34 +970,7 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssert(manifest.relationships.contains(rows))
         XCTAssert(manifest.relationships.contains(symbol))
     }
-    
-    func testSymbolManifestChildSymbols() async throws {
-        // This is a calculated function so we don't need to ingest anything
-        let documentURIs: [String] = [
-            "/documentation/MarkdownOutput/MarkdownSymbol",
-            "/documentation/MarkdownOutput/MarkdownSymbol/name",
-            "/documentation/MarkdownOutput/MarkdownSymbol/otherName",
-            "/documentation/MarkdownOutput/MarkdownSymbol/fullName",
-            "/documentation/MarkdownOutput/MarkdownSymbol/init(name:)",
-            "documentation/MarkdownOutput/MarkdownSymbol/Child/Grandchild",
-            "documentation/MarkdownOutput/Sibling/name"
-        ]
         
-        let documents = documentURIs.map {
-            MarkdownOutputManifest.Document(identifier: $0, documentType: .symbol, title: $0)
-        }
-        let manifest = MarkdownOutputManifest(title: "Test", documents: Set(documents))
-        
-        let document = try XCTUnwrap(manifest.documents.first(where: { $0.identifier == "/documentation/MarkdownOutput/MarkdownSymbol" }))
-        let children = manifest.children(of: document).map { $0.identifier }
-        XCTAssertEqual(children.count, 4)
-        
-        XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/name"))
-        XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/otherName"))
-        XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/fullName"))
-        XCTAssert(children.contains("/documentation/MarkdownOutput/MarkdownSymbol/init(name:)"))
-    }
-    
     func testSymbolManifestInheritance() async throws {
         
         let symbols = [
