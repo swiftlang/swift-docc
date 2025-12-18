@@ -249,7 +249,7 @@ Currently there are few existing tests to draw inspiration from, so here are a f
 - Think about what information would be helpful to someone else who might debug that test case if it fails in the future.
   
   In an open source project like Swift-DocC, it's possible that a person you've never met will continue to work on code that you wrote.
-  It could be that they're working on the same feature as you but it could also be that they're working on something entirely different but that their changes broke a test that you wrote.
+  It could be that they're working on the same feature as you, or it could also be that they're working on something entirely different but their changes broke a test that you wrote.
   To help make their experience better, we appreciate any time that you spend considering if there's any information that you would have wanted to tell that person, as if they were a colleague.
   
   One way to convey this information could be to verify assumptions (like "this test content has no user-facing warnings") using `#expect`.
@@ -275,6 +275,8 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   A similar situation occurs when you "know" that an array contains _N_ elements. If your test accesses them through indexed subscripting, it will trap if that array was unexpectedly short due to a bug that someone introduced.
   In this situation you can use `problems.dropFirst(N-1).first` to access the _Nth_ element safely. 
   This could either be used as an optional value in a `#expect` call, or be unwrapped using `#require` depending on how the element is used in the test.  
+
+### Updating existing tests
 
 If you're updating an existing test case with additional logic, we appreciate if you also modernize that test while updating it, but we don't expect it.
 If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing.

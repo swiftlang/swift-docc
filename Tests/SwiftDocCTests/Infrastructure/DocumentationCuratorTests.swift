@@ -703,7 +703,7 @@ struct DocumentationCuratorTests_New {
         
         // Verify that the rendered top-level page doesn't have an automatic "Classes" topic section anymore.
         let converter = DocumentationNodeConverter(context: context)
-        let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
+        let moduleReference = try #require(context.soleRootModuleReference)
         let rootRenderNode = converter.convert(try context.entity(with: moduleReference))
         
         #expect(rootRenderNode.topicSections.map(\.title) == [shouldCurateAPICollection ? "Explicit curation" : "Articles"],
