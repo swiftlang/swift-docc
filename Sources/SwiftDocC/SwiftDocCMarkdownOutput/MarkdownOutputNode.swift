@@ -14,35 +14,35 @@ package import Foundation
 package struct MarkdownOutputNode: Sendable {
 
     /// The metadata about this node
-    package var metadata: Metadata
+    var metadata: Metadata
     /// The markdown content of this node
-    package var markdown: String = ""
+    var markdown: String = ""
     
-    package init(metadata: Metadata, markdown: String) {
+    init(metadata: Metadata, markdown: String) {
         self.metadata = metadata
         self.markdown = markdown
     }
 }
 
 extension MarkdownOutputNode {
-    package struct Metadata: Codable, Sendable {
+    struct Metadata: Codable, Sendable {
     
         static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
         
-        package enum DocumentType: String, Codable, Sendable {
+        enum DocumentType: String, Codable, Sendable {
             case article, tutorial, symbol
         }
         
-        package struct Availability: Codable, Equatable, Sendable {
+        struct Availability: Codable, Equatable, Sendable {
             
-            package let platform: String
+            let platform: String
             /// A string representation of the introduced version
-            package let introduced: String?
+            let introduced: String?
             /// A string representation of the deprecated version
-            package let deprecated: String?
-            package let unavailable: Bool
+            let deprecated: String?
+            let unavailable: Bool
                         
-            package init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
+            init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
                 self.platform = platform
                 self.introduced = introduced
                 self.deprecated = deprecated
@@ -53,18 +53,18 @@ extension MarkdownOutputNode {
             // platform: introduced -               (not deprecated)
             // platform: introduced - deprecated    (deprecated)
             // platform: -                          (unavailable)
-            package func encode(to encoder: any Encoder) throws {
+            func encode(to encoder: any Encoder) throws {
                 var container = encoder.singleValueContainer()
                 try container.encode(stringRepresentation)
             }
             
-            package init(from decoder: any Decoder) throws {
+            init(from decoder: any Decoder) throws {
                 let container = try decoder.singleValueContainer()
                 let stringRepresentation = try container.decode(String.self)
                 self.init(stringRepresentation: stringRepresentation)
             }
             
-            package var stringRepresentation: String {
+            var stringRepresentation: String {
                 var stringRepresentation = "\(platform): "
                 if unavailable {
                     stringRepresentation += "-"
@@ -81,7 +81,7 @@ extension MarkdownOutputNode {
                 return stringRepresentation
             }
             
-            package init(stringRepresentation: String) {
+            init(stringRepresentation: String) {
                 let words = stringRepresentation.split(separator: ":", maxSplits: 1)
                 guard words.count == 2 else {
                     platform = stringRepresentation
@@ -108,18 +108,18 @@ extension MarkdownOutputNode {
 
         }
         
-        package struct Symbol: Codable, Sendable {
-            package let kindDisplayName: String
-            package let preciseIdentifier: String
-            package let modules: [String]
+        struct Symbol: Codable, Sendable {
+            let kindDisplayName: String
+            let preciseIdentifier: String
+            let modules: [String]
             
-            package enum CodingKeys: String, CodingKey {
+            enum CodingKeys: String, CodingKey {
                 case kindDisplayName = "kind"
                 case preciseIdentifier
                 case modules
             }
             
-            package init(kindDisplayName: String, preciseIdentifier: String, modules: [String]) {
+            init(kindDisplayName: String, preciseIdentifier: String, modules: [String]) {
                 self.kindDisplayName = kindDisplayName
                 self.preciseIdentifier = preciseIdentifier
                 self.modules = modules
@@ -127,25 +127,21 @@ extension MarkdownOutputNode {
         }
           
         /// A string representation of the metadata version
-        package let metadataVersion: String
-        package let documentType: DocumentType
-        package var role: String?
-        package let identifier: String
-        package var title: String
-        package let framework: String
-        package var symbol: Symbol?
-        package var availability: [Availability]?
+        let metadataVersion: String
+        let documentType: DocumentType
+        var role: String?
+        let identifier: String
+        var title: String
+        let framework: String
+        var symbol: Symbol?
+        var availability: [Availability]?
            
-        package init(documentType: DocumentType, identifier: String, title: String, framework: String) {
+        init(documentType: DocumentType, identifier: String, title: String, framework: String) {
             self.documentType = documentType
             self.metadataVersion = Self.version.stringRepresentation()
             self.identifier = identifier
             self.title = title
             self.framework = framework
-        }
-                
-        package func availability(for platform: String) -> Availability? {
-            availability?.first(where: { $0.platform == platform })
         }
     }
 }
@@ -186,8 +182,8 @@ extension MarkdownOutputNode {
         }
     }
     
-    /// Recreates the node from the data exported in ``data``
-    package init(_ data: Data) throws {
+    /// Recreates the node from the data exported in ``generateDataRepresentation()``
+    init(_ data: Data) throws {
         guard let open = data.range(of: Data(Self.commentOpen)), let close = data.range(of: Data(Self.commentClose)) else {
             throw MarkdownOutputNodeDecodingError.metadataSectionNotFound
         }

@@ -1038,3 +1038,9 @@ final class MarkdownOutputTests: XCTestCase {
         }))
     }
 }
+
+extension MarkdownOutputNode.Metadata {    
+    func availability(for platform: String) -> Availability? {
+        availability?.first(where: { $0.platform == platform })
+    }
+}
