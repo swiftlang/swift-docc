@@ -24,7 +24,7 @@ import SwiftDocCTestUtilities
 ///   - diagnosticFilterLevel: The minimum severity for diagnostics to emit.
 ///   - logOutput: An output stream to capture log output from creating the context.
 ///   - configuration: Configuration for the created context.
-/// - Returns: The loaded documentation bundle and context for the given catalog input.
+/// - Returns: The loaded documentation context for the given catalog input.
 func load(
     catalog: Folder,
     otherFileSystemDirectories: [Folder] = [],
@@ -64,7 +64,16 @@ func makeEmptyContext() async throws -> DocumentationContext {
 
 // MARK: Using the real file system
 
-/// Loads a documentation bundle from the given source URL and creates a documentation context.
+/// Loads a documentation catalog from the given source URL on the real file system and creates a documentation context.
+///
+/// - Parameters:
+///   - catalogURL: The file url of the documentation catalog to load from the real file system.
+///   - externalResolvers: A collection of resolvers for documentation from other sources, grouped by their identifier.
+///   - externalSymbolResolver: A resolver for symbol identifiers of all symbols from non-local modules.
+///   - fallbackResolver: An optional fallback resolver for local for testing behaviors specific to a ``ConvertService``.
+///   - diagnosticEngine: The diagnostic engine to configure the documentation context with.
+///   - configuration: Configuration to apply to a documentation context during initialization.
+/// - Returns: The loaded documentation context for the given catalog input.
 func loadFromDisk(
     catalogURL: URL,
     externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
@@ -79,12 +88,20 @@ func loadFromDisk(
     configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
     configuration.externalMetadata.diagnosticLevel = diagnosticEngine.filterLevel
     
-    let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
+    let (inputs, dataProvider) = try DocumentationContext.InputsProvider()
         .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
     
-    return try await DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
+    return try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
 }
 
+/// Loads a documentation catalog for a test fixture with the given catalog name from the real file system and creates a documentation context.
+///
+/// - Parameters:
+///   - catalogName: The name of the documentation catalog fixture to load.
+///   - externalResolvers: A collection of resolvers for documentation from other sources, grouped by their identifier.
+///   - fallbackResolver: An optional fallback resolver for local for testing behaviors specific to a ``ConvertService``.
+///   - configuration: Configuration to apply to a documentation context during initialization.
+/// - Returns: The loaded documentation context for the given catalog input.
 func loadFromDisk(
     catalogName: String,
     externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
