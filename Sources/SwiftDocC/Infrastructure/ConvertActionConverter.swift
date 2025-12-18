@@ -166,7 +166,7 @@ package enum ConvertActionConverter {
                     }
                     
                     if emitDigest {
-                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: true)
+                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                         let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
                         
                         resultsGroup.async(queue: resultsSyncQueue) {
@@ -175,7 +175,7 @@ package enum ConvertActionConverter {
                             indexingRecords.append(contentsOf: nodeIndexingRecords)
                         }
                     } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                         
                         resultsGroup.async(queue: resultsSyncQueue) {
                             linkSummaries.append(contentsOf: nodeLinkSummaries)

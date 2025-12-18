@@ -12,7 +12,7 @@ import XCTest
 import SymbolKit
 @testable @_spi(ExternalLinks) import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 func diffDescription(lhs: String, rhs: String) -> String {
     let leftLines = lhs.components(separatedBy: .newlines)
@@ -5534,7 +5534,7 @@ let expected = """
                 let entity = try context.entity(with: reference)
                 let renderNode = try XCTUnwrap(converter.convert(entity))
                 
-                return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+                return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
             }
             let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
             

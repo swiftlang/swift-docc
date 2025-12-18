@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import SymbolKit
 @testable import SwiftDocC
 
