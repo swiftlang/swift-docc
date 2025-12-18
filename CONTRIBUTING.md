@@ -274,7 +274,13 @@ Currently there are few existing tests to draw inspiration from, so here are a f
   
   A similar situation occurs when you "know" that an array contains _N_ elements. If your test accesses them through indexed subscripting, it will trap if that array was unexpectedly short due to a bug that someone introduced.
   In this situation you can use `problems.dropFirst(N-1).first` to access the _Nth_ element safely. 
-  This could either be used as an optional value in a `#expect` call, or be unwrapped using `#require` depending on how the element is used in the test.  
+  This could either be used as an optional value in a `#expect` call, or be unwrapped using `#require` depending on how the element is used in the test.
+  
+- Use a descriptive and readable phrase as the test name.
+
+  It can be easier to understand a test's implementation if its name describes the _behavior_ that the test verifies.
+  A phrase that start with a verb can often help make a test's name a more readable description of what it's verifying. 
+  For example: `sortsSwiftFirstAndThenByID`, `raisesDiagnosticAboutCyclicCuration`, `isDisabledByDefault`, and `considersCurationInUncuratedAPICollection`.
 
 ### Updating existing tests
 
