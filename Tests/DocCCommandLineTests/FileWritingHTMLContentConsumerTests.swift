@@ -23,7 +23,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some article
             
-            This is an _formatted_ article.
+            This is a _formatted_ article.
             
             @DeprecationSummary {
               Description of why this _article_ is deprecated.
@@ -230,7 +230,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   <li>
                     <a href="somearticle/index.html">
                       <p>Some article</p>
-                      <p>This is an <i>formatted</i> article.</p>
+                      <p>This is a <i>formatted</i> article.</p>
                     </a>
                   </li>
                   <li>
@@ -368,7 +368,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <li>
                   <a href="../../somearticle/index.html">
                     <p>Some article</p>
-                    <p>This is an <i>formatted</i> article.</p>
+                    <p>This is a <i>formatted</i> article.</p>
                   </a>
                 </li>
               </ul>
@@ -386,7 +386,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <link rel="icon" href="/favicon.ico" />
             <title>Some article</title>
             <script>var baseUrl = "/"</script>
-            <meta content="This is an formatted article." name="description"/>
+            <meta content="This is a formatted article." name="description"/>
           </head>
           <body>
             <noscript>
@@ -400,7 +400,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   </ul>
                   <p>Article</p>
                   <h1>Some article</h1>
-                  <p>This is an <i>formatted</i> article.</p>
+                  <p>This is a <i>formatted</i> article.</p>
                   <blockquote class="aside deprecated">
                     <p class="label">Deprecated</p>
                     <p>Description of why this <i>article</i> is deprecated.</p>
