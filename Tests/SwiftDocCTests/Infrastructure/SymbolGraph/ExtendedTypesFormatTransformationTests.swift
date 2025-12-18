@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class ExtendedTypesFormatTransformationTests: XCTestCase {
     /// Tests the general transformation structure of ``ExtendedTypesFormatTransformation/transformExtensionBlockFormatToExtendedTypeFormat(_:)``
