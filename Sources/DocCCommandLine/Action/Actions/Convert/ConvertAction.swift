@@ -193,6 +193,9 @@ public struct ConvertAction: AsyncAction {
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
     var _extraTestWork: (() async -> Void)?
 
+    /// The `Indexer` type doesn't work with virtual file systems.
+    ///
+    /// Tests that don't verify the contents of the navigator index can set this to `true` so that they can use a virtual, in-memory, file system.
     var _completelySkipBuildingIndex: Bool = false
     
     /// Converts each eligible file from the source documentation bundle,

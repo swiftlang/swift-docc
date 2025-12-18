@@ -123,6 +123,7 @@ class StaticHostingWithContentTests: XCTestCase {
             </article>
             """ : "<p>Some existing information inside the no script tag</p>"
             
+            // The footer comes before the header to match the behavior of ConvertFileWritingConsumer.
             try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
             <html>
               <head>
