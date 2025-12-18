@@ -166,7 +166,7 @@ If you have commit access, you can run the required tests by commenting the foll
 
 If you do not have commit access, please ask one of the code owners to trigger them for you.
 For more details on Swift-DocC's continuous integration, see the
-[Continous Integration](#continuous-integration) section below.
+[Continuous Integration](#continuous-integration) section below.
 
 ### Introducing source breaking changes
 
@@ -207,7 +207,90 @@ by navigating to the root of the repository and running the following:
 By running tests locally with the `test` script you will be best prepared for
 automated testing in CI as well.
 
-### Testing in Xcode
+### Adding new tests
+
+Please use [Swift Testing](https://developer.apple.com/documentation/testing) when you add new tests. 
+Currently there are few existing tests to draw inspiration from, so here are a few recommendations:
+
+- Prefer small test inputs that ideally use a virtual file system for both reading and writing.
+  
+  For example, if you want to test a behavior related to a symbol's in-source documentation and its documentation extension file, you only need one symbol for that. 
+  You can use `load(catalog:...)`, `makeSymbolGraph(...)`, and `makeSymbol(...)` to define such inputs in a virtual file system and create a `DocumentationContext` from it:
+  
+  ```swift
+  let catalog = Folder(name: "Something.docc", content: [
+      JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+          makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+          This is the in-source documentation for this class.    
+          """)
+      ])),
+      
+      TextFile(name: "Something.md", utf8Content: """
+      # ``SomeClass``
+      
+      This is additional documentation for this class
+      """),
+  ])
+  let context = try await load(catalog: catalog)
+  // Test rest of your test
+  ```
+  
+- Consider using parameterized tests if you're making the same verifications in multiple configurations or on multiple elements.
+  
+  You can find some examples of this if you search for `@Test(arguments:`.
+  Additionally, you might encounter a `XCTestCase` test that loops over one or more values and performs the same validation for all combinations:
+  ```swift
+  for withExplicitTechnologyRoot in [true, false] {
+      for withPageColor in [true, false] { 
+         ...
+  ```
+  Such `XCTestCase` tests can sometimes be expressed more nicely as parameterized tests in Swift Testing.
+  
+- Think about what information would be helpful to someone else who might debug that test case if it fails in the future.
+  
+  In an open source project like Swift-DocC, it's possible that a person you've never met will continue to work on code that you wrote.
+  It could be that they're working on the same feature as you, or it could also be that they're working on something entirely different but their changes broke a test that you wrote.
+  To help make their experience better, we appreciate any time that you spend considering if there's any information that you would have wanted to tell that person, as if they were a colleague.
+  
+  One way to convey this information could be to verify assumptions (like "this test content has no user-facing warnings") using `#expect`.
+  Additionally, if there's any information that you can surface right in the test failure that will save the next developer from needing to add a breakpoint and run the test again to inspect the value,
+  that's a nice small little thing that you can do for the developer coming after you:
+  ```swift
+  #expect(problems.isEmpty, "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+  ```
+  
+  Similarly, code comments or `#expect` descriptions can be a way to convey information about _why_ the test is expecting a _specific_ value.
+  ```swift
+  #expect(graph.cycles(from: 0) == [
+      [7,9], // through breadth-first-traversal, 7 is reached before 9.
+  ])
+  ```
+  That reason may be clear to you, but could be a mystery to a person who is unfamiliar with that part of the code base---or even a future you that may have forgotten certain details about how the code works.
+  
+- Use `#require` rather that force unwrapping for behaviors that would change due to unexpected bugs in the code you're testing. 
+
+  If you know that some value will always be non-`nil` only _because_ the rest of the code behaves correctly, consider writing the test more defensively using `#require` instead of force unwrapping the value.
+  This has the benefit that if someone else working on Swift-DocC introduces a bug in that behavior that the test relied on, then the test will fail gracefully rather than crashing and aborting the rest of the test execution.
+  
+  A similar situation occurs when you "know" that an array contains _N_ elements. If your test accesses them through indexed subscripting, it will trap if that array was unexpectedly short due to a bug that someone introduced.
+  In this situation you can use `problems.dropFirst(N-1).first` to access the _Nth_ element safely. 
+  This could either be used as an optional value in a `#expect` call, or be unwrapped using `#require` depending on how the element is used in the test.
+  
+- Use a descriptive and readable phrase as the test name.
+
+  It can be easier to understand a test's implementation if its name describes the _behavior_ that the test verifies.
+  A phrase that start with a verb can often help make a test's name a more readable description of what it's verifying. 
+  For example: `sortsSwiftFirstAndThenByID`, `raisesDiagnosticAboutCyclicCuration`, `isDisabledByDefault`, and `considersCurationInUncuratedAPICollection`.
+
+### Updating existing tests
+
+If you're updating an existing test case with additional logic, we appreciate if you also modernize that test while updating it, but we don't expect it.
+If the test case is part of a large file, you can create new test suite which contains just the test case that you're modernizing.
+
+If you modernize an existing test case, consider not only the syntactical differences between Swift Testing and XCTest, 
+but also if there are any Swift Testing features or other changes that would make the test case easier to read, maintain, or debug.
+
+### Testing DocC's integration with Xcode
 
 You can test a locally built version of Swift-DocC in Xcode 13 or later by setting
 the `DOCC_EXEC` build setting to the path of your local `docc`:
