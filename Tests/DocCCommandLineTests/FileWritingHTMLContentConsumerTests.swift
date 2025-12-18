@@ -349,15 +349,11 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
               </section>
               <h2>Parameters</h2>
               <dl>
-                <dt>
-                  <code>first</code>
-                </dt>
+                <dt>first</dt>
                 <dd>
                   <p>Description of the <code>first</code> parameter.</p>
                 </dd>
-                <dt>
-                  <code>second</code>
-                </dt>
+                <dt>second</dt>
                 <dd>
                   <p>Description of the <code>second</code> parameter.</p>
                 </dd>
@@ -557,7 +553,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     <meta charset="utf-8" />
                     <link rel="icon" href="/favicon.ico" />
                     <title>A single article</title>
-                    <meta content="This is an formatted article that becomes the root page (because there is only one page)." name="description"/>
+                    <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description"/>
                   </head>
                   <body>
                     <noscript>
@@ -569,7 +565,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                           <p>
                           Article</p>
                           <h1>RootArticle</h1>
-                          <p>This is an <i> formatted</i> article that becomes the root page (because there is only one page).</p>
+                          <p>This is a <i> formatted</i> article that becomes the root page (because there is only one page).</p>
                         </section>
                       </article>
                     </noscript>
