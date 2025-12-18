@@ -15,7 +15,7 @@ import SwiftDocCTestUtilities
 
 struct NonInclusiveLanguageCheckerTests {
     @Test
-    func testMatchTermInTitle() throws {
+    func matchesTermsInTitle() throws {
         let source = """
 # A Whitelisted title
 """
@@ -33,7 +33,7 @@ struct NonInclusiveLanguageCheckerTests {
     }
 
     @Test
-    func testMatchTermWithSpaces() throws {
+    func matchesTermsWithSpaces() throws {
         let source = """
         # A White  listed title
         # A Black    listed title
@@ -67,7 +67,7 @@ struct NonInclusiveLanguageCheckerTests {
     }
 
     @Test
-    func testMatchTermInAbstract() throws {
+    func matchesTermsInAbstract() throws {
         let source = """
 # Title
 
@@ -87,7 +87,7 @@ The blacklist is in the abstract.
     }
 
     @Test
-    func testMatchTermInParagraph() throws {
+    func matchesTermsInParagraph() throws {
         let source = """
 # Title
 
@@ -112,7 +112,7 @@ master branch is the default.
     }
 
     @Test
-    func testMatchTermInList() throws {
+    func matchesTermsInList() throws {
         let source = """
 - Item 1 is ok
 - Item 2 is blacklisted
@@ -132,7 +132,7 @@ master branch is the default.
     }
 
     @Test
-    func testMatchTermInInlineCode() throws {
+    func matchesTermsInInlineCode() throws {
         let source = """
 The name `MachineSlave` is unacceptable.
 """
@@ -150,7 +150,7 @@ The name `MachineSlave` is unacceptable.
     }
 
     @Test
-    func testMatchTermInCodeBlock() throws {
+    func matchesTermsInCodeBlock() throws {
         let source = """
 A code block:
 
@@ -184,7 +184,7 @@ func aBlackListedFunc() {
     """
 
     @Test
-    func testDisabledByDefault() async throws {
+    func isDisabledByDefault() async throws {
         // Create a test bundle with some non-inclusive content.
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
@@ -200,15 +200,15 @@ func aBlackListedFunc() {
         DiagnosticSeverity.warning:     false,
         DiagnosticSeverity.error:       false,
     ])
-    func testEnablingTheChecker(configuredDiagnosticSeverity: DiagnosticSeverity, expectsToIncludeANonInclusiveDiagnostic: Bool) async throws {
+    func raisesDiagnostics(configuredDiagnosticFilterLevel: DiagnosticSeverity, expectsToIncludeNonInclusiveDiagnostics: Bool) async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
         ])
         var configuration = DocumentationContext.Configuration()
-        configuration.externalMetadata.diagnosticLevel = configuredDiagnosticSeverity
-        let context = try await load(catalog: catalog, diagnosticFilterLevel: configuredDiagnosticSeverity, configuration: configuration)
+        configuration.externalMetadata.diagnosticLevel = configuredDiagnosticFilterLevel
+        let context = try await load(catalog: catalog, diagnosticFilterLevel: configuredDiagnosticFilterLevel, configuration: configuration)
         
         // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
-        #expect(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }) == expectsToIncludeANonInclusiveDiagnostic)
+        #expect(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }) == expectsToIncludeNonInclusiveDiagnostics)
     }
 }

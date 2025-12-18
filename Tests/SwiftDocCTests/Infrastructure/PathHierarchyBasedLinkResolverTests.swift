@@ -12,8 +12,8 @@ import Testing
 @testable import SwiftDocC
 
 struct PathHierarchyBasedLinkResolverTests {
-    @Test()
-    func testOverloadedSymbolsWithOverloadGroups() async throws {
+    @Test
+    func listingOverloadedSymbolsBelogningToOverloadGroups() async throws {
         let currentValue = FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
         FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = true
         defer {

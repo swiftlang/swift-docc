@@ -13,7 +13,7 @@ import Testing
 
 struct DirectedGraphTests {
     @Test
-    func testGraphWithSingleAdjacency() {
+    func traversingGraphWithSingleAdjacency() {
         // 1───▶2◀───3
         //      │
         //      ▼
@@ -71,7 +71,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testGraphWithTreeStructure() {
+    func traversingGraphWithTreeStructure() {
         //        ┌▶5
         //   ┌─▶2─┤
         //   │    └▶6
@@ -106,7 +106,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testGraphWithTreeStructureAndMultipleAdjacency() {
+    func traversingGraphWithTreeStructureAndMultipleAdjacency() {
         //   ┌─▶2─┐
         //   │    │
         // 1─┼─▶3─┼▶5──▶6
@@ -141,7 +141,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testComplexGraphWithMultipleAdjacency() {
+    func traversingComplexGraphWithMultipleAdjacency() {
         // 1      ┌──▶5
         // │      │   │
         // ▼      │   ▼
@@ -182,7 +182,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testSimpleCycle() {
+    func detectsCyclesInSimpleGraph() {
         do {
             // ┌──────▶2
             // │       │
@@ -217,7 +217,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testSimpleCycleRotation() {
+    func detectsRotationsOfSameCycleInGraph() {
         do {
             // ┌───▶1───▶2
             // │    ▲    │
@@ -238,7 +238,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testGraphWithCycleAndSingleAdjacency() {
+    func traversingGraphWithCycleAndSingleAdjacency() {
         // 1───▶2◀───3
         //      │
         //      ▼
@@ -283,7 +283,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testGraphsWithCycleAndManyLeafNodes() {
+    func traversingGraphWithCycleAndManyLeafNodes() {
         do {
             //             6   10
             //             ▲    ▲
@@ -336,7 +336,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testGraphWithManyCycles() {
+    func traversingGraphWithManyCycles() {
         // ┌──┐    ┌───▶4────┐
         // │  │    │    │    │
         // │  │    │    ▼    ▼
@@ -401,7 +401,7 @@ struct DirectedGraphTests {
     }
     
     @Test
-    func testGraphWithMultiplePathsToEnterCycle() {
+    func traversingGraphWithMultiplePathsToEnterCycle() {
         //    ┌─▶2◀─┐
         //    │  │  │
         //    │  ▼  │

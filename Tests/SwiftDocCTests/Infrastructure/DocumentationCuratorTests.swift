@@ -580,7 +580,7 @@ import Testing
 
 struct DocumentationCuratorTests_New {
     @Test
-    func testCyclicCurationDiagnostic() async throws {
+    func raisesDiagnosticAboutCyclicCuration() async throws {
         let context = try await load(catalog:
             Folder(name: "unit-test.docc", content: [
                 // A number of articles with this cyclic curation:
@@ -646,9 +646,9 @@ struct DocumentationCuratorTests_New {
     }
     
     @Test(arguments: [true, false])
-    func testCurationInUncuratedAPICollection(shouldCurateAPICollection: Bool) async throws {
+    func considersCurationInUncuratedAPICollection(shouldExplicitlyCurateAPICollection: Bool) async throws {
         // Everything should behave the same when an API Collection is automatically curated as when it is explicitly curated
-        let assertionMessageDescription = "when the API collection is \(shouldCurateAPICollection ? "explicitly curated" : "auto-curated as an article under the module")."
+        let assertionMessageDescription = "when the API collection is \(shouldExplicitlyCurateAPICollection ? "explicitly curated" : "auto-curated as an article under the module")."
         
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
@@ -658,7 +658,7 @@ struct DocumentationCuratorTests_New {
             TextFile(name: "ModuleName.md", utf8Content: """
             # ``ModuleName``
             
-            \(shouldCurateAPICollection ? "## Topics\n\n### Explicit curation\n\n- <doc:API-Collection>" : "")
+            \(shouldExplicitlyCurateAPICollection ? "## Topics\n\n### Explicit curation\n\n- <doc:API-Collection>" : "")
             """),
             
             TextFile(name: "API-Collection.md", utf8Content: """
@@ -706,7 +706,7 @@ struct DocumentationCuratorTests_New {
         let moduleReference = try #require(context.soleRootModuleReference)
         let rootRenderNode = converter.convert(try context.entity(with: moduleReference))
         
-        #expect(rootRenderNode.topicSections.map(\.title) == [shouldCurateAPICollection ? "Explicit curation" : "Articles"],
+        #expect(rootRenderNode.topicSections.map(\.title) == [shouldExplicitlyCurateAPICollection ? "Explicit curation" : "Articles"],
             "Unexpected rendered topic sections on the module page \(assertionMessageDescription)"
         )
         #expect(rootRenderNode.topicSections.map(\.identifiers) == [

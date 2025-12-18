@@ -23,7 +23,7 @@ struct ParseDirectiveArgumentsTests {
         // Duplicate argument
         "@Directive(argumentA: value, argumentA: value)": "org.swift.docc.Directive.DuplicateArgument",
     ])
-    func testEmitsWarningsForInvalidMarkup(invalidMarkup: String, expectedDiagnosticID: String) throws {
+    func emitsWarningsForInvalidMarkup(_ invalidMarkup: String, expectedDiagnosticID: String) throws {
         let document = Document(parsing: invalidMarkup, options: .parseBlockDirectives)
         var problems = [Problem]()
         _ = (document.child(at: 0) as? BlockDirective)?.arguments(problems: &problems)
