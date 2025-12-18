@@ -58,7 +58,7 @@ let package = Package(
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -70,7 +70,7 @@ let package = Package(
         ),
         // Command-line tool library
         .target(
-            name: "SwiftDocCUtilities",
+            name: "DocCCommandLine",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
@@ -81,12 +81,12 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "SwiftDocCUtilitiesTests",
+            name: "DocCCommandLineTests",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -97,7 +97,7 @@ let package = Package(
         
         // Test utility library
         .target(
-            name: "SwiftDocCTestUtilities",
+            name: "DocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
@@ -110,7 +110,7 @@ let package = Package(
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
@@ -131,7 +131,7 @@ let package = Package(
             name: "DocCCommonTests",
             dependencies: [
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
@@ -152,16 +152,16 @@ let package = Package(
                 .target(name: "DocCHTML"),
                 .target(name: "SwiftDocC"),
                 .product(name: "Markdown", package: "swift-markdown"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
 
-        // Test app for SwiftDocCUtilities
+        // Test app for DocCCommandLine
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             path: "Tests/signal-test-app",
             swiftSettings: swiftSettings

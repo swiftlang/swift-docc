@@ -12,14 +12,14 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class AutoCapitalizationTests: XCTestCase {
     
     // MARK: Test helpers
     
     private func makeSymbolGraph(docComment: String, parameters: [String]) -> SymbolGraph {
-        makeSymbolGraph(
+        DocCTestUtilities.makeSymbolGraph(
             moduleName: "ModuleName",
             symbols: [
                 makeSymbol(

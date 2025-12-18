@@ -22,7 +22,7 @@ import Markdown
 
 struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
-    func testRenderBreadcrumbs(goal: RenderGoal) {
+    func renderingBreadcrumbs(goal: RenderGoal) {
         let elements = [
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/index.html")!,
@@ -84,7 +84,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderAvailability(goal: RenderGoal) {
+    func renderingAvailability(goal: RenderGoal) {
         let availability = makeRenderer(goal: goal).availability([
             .init(name: "First",  introduced: "1.2", deprecated: "3.4", isBeta: false),
             .init(name: "Second", introduced: "1.2.3",                  isBeta: false),
@@ -111,7 +111,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderSingleLanguageParameters(goal: RenderGoal) {
+    func renderingSingleLanguageParameters(goal: RenderGoal) {
         let parameters = makeRenderer(goal: goal).parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
@@ -167,7 +167,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test
-    func testRenderLanguageSpecificParameters() {
+    func renderingLanguageSpecificParameters() {
         let parameters = makeRenderer(goal: .richness).parameters([
             .swift: [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
@@ -208,7 +208,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test
-    func testRenderManyLanguageSpecificParameters() {
+    func renderingManyLanguageSpecificParameters() {
         let parameters = makeRenderer(goal: .richness).parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some description")),
@@ -248,7 +248,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderSingleLanguageReturnSections(goal: RenderGoal) {
+    func renderingSingleLanguageReturnSections(goal: RenderGoal) {
         let returns = makeRenderer(goal: goal).returns([
             .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
         ])
@@ -277,7 +277,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderLanguageSpecificReturnSections(goal: RenderGoal) {
+    func renderingLanguageSpecificReturnSections(goal: RenderGoal) {
         let returns = makeRenderer(goal: goal).returns([
             .swift:      parseMarkup(string: "First paragraph\n\nSecond paragraph"),
             .objectiveC: parseMarkup(string: "Other language's paragraph"),
@@ -308,7 +308,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
 
     @Test(arguments: RenderGoal.allCases)
-    func testRenderSwiftDeclaration(goal: RenderGoal) {
+    func renderingSwiftDeclaration(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
@@ -366,7 +366,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderLanguageSpecificDeclarations(goal: RenderGoal) {
+    func renderingLanguageSpecificDeclarations(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
@@ -461,7 +461,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
-    func testRenderSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
+    func renderingSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
         let elements = [
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/SomeClass/index.html")!,

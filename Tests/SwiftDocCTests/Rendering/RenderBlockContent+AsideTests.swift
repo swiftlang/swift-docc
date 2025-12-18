@@ -47,7 +47,7 @@ struct RenderBlockContent_AsideTests {
         "Important", "important",
         "Warning", "warning"
     ])
-    func testCreatingSupportedAside(name: String) throws {
+    func creatingSupportedAside(name: String) throws {
 
         // Creating a style will lowercase the name
         let style = testStyle(for: name)
@@ -166,7 +166,7 @@ struct RenderBlockContent_AsideTests {
 
     // Custom styles, not supported by DocC Render
     @Test(arguments: ["Custom", "unknown", "Special"])
-    func testCreatingCustomAside(name: String) throws {
+    func creatingCustomAside(name: String) throws {
 
         let style = testStyle(for: name)
 
@@ -286,7 +286,7 @@ struct RenderBlockContent_AsideTests {
         "Custom":    "warning",
         "Special":   "note",
     ])
-    func testCreatingSupportedAside(name: String, styleName: String) throws {
+    func creatingSupportedAside(name: String, styleName: String) throws {
 
         let style = testStyle(for: styleName)
 
@@ -358,7 +358,7 @@ struct RenderBlockContent_AsideTests {
     // DocC Render styles. Test that invalid, known styles are coerced to "note"
     // when decoded.
     @Test
-    func testJSONWithInvalidStyle() throws {
+    func decodingJSONWithInvalidStyle() throws {
 
         var json = """
             {
@@ -408,7 +408,7 @@ struct RenderBlockContent_AsideTests {
 
     // If the name and style do not match, retain both.
     @Test
-    func testJSONDifferentNameAndStyle() throws {
+    func decodingJSONDifferentNameAndStyle() throws {
 
         var json = """
             {
