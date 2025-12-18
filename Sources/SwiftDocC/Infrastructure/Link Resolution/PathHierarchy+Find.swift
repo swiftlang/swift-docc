@@ -84,7 +84,9 @@ extension PathHierarchy {
             if let moduleMatch = modules.first(where: { $0.matches(firstComponent) }) {
                 return try searchForNode(descendingFrom: moduleMatch, pathComponents: remaining.dropFirst(), onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
             }
-            if modules.count == 1 {
+            // For absolute links, only use the single-module fallback if the first component doesn't match
+            // any module name
+            if modules.count == 1 && !isAbsolute {
                 do {
                     return try searchForNode(descendingFrom: modules.first!, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 } catch {
@@ -195,7 +197,7 @@ extension PathHierarchy {
                     startingPoint = counterpoint
                 default:
                     // Only symbols have counterpoints which means that each node should always have at least one language
-                    if counterpoint.languages.map(\.id).min()! < startingPoint.languages.map(\.id).min()! {
+                    if counterpoint.languages.min()! < startingPoint.languages.min()! {
                         startingPoint = counterpoint
                     }
                 }

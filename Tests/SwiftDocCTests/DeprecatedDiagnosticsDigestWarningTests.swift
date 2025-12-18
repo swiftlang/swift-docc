@@ -10,7 +10,7 @@
 
 import Foundation
 import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import XCTest
 
 // THIS SHOULD BE REMOVED, RIGHT?!
@@ -29,6 +29,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
         _ = try ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: true,
             documentationCoverageOptions: .noCoverage
@@ -53,6 +54,7 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
         _ = try ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: true,
             documentationCoverageOptions: .noCoverage
