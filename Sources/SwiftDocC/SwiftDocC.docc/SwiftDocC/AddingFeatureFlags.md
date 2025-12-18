@@ -22,7 +22,7 @@ This type implements the `ParsableArguments` protocol from Swift Argument Parser
 group for the `convert` and `preview` commands.
 
 These options are then handled in `ConvertAction.init(fromConvertCommand:)`, still in
-`docCCommandLine`, where they are written into the global feature flags ``FeatureFlags/current``
+`DocCCommandLine`, where they are written into the global feature flags ``FeatureFlags/current``
 instance, which can then be used during the compilation process.
 
 ### Feature flags in Info.plist

@@ -1,4 +1,4 @@
-# ``DoCCCommandLine``
+# ``DocCCommandLine``
 
 Build custom documentation workflows by leveraging the DocC compiler pipeline.
 
