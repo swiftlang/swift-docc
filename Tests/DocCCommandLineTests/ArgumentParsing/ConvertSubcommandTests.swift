@@ -598,7 +598,7 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testStaticHostingWithContentFlag() throws {
-        // The feature is enabled when no flag is passed.
+        // The feature is disabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
         XCTAssertEqual(noFlagConvert.experimentalTransformForStaticHostingWithContent, false)
         

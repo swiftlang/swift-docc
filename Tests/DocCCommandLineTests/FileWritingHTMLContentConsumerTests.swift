@@ -481,7 +481,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             TextFile(name: "RootArticle.md", utf8Content: """
             # A single article
             
-            This is an _formatted_ article that becomes the root page (because there is only one page).
+            This is a _formatted_ article that becomes the root page (because there is only one page).
             """)
         ])
         
@@ -543,7 +543,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     documentationCoverageOptions: .noCoverage
                 )
                 
-                // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
+                // Because the TestOutputConsumer below doesn't create any files, we only expect the HTML files in the output directory
                 XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output-dir"), """
                 output-dir/
                 ╰─ documentation/
