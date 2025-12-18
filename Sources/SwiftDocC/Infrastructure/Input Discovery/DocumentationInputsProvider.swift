@@ -27,6 +27,7 @@ extension DocumentationContext {
     ///  ``DocumentationBundle/themeSettings``    | ``DocumentationBundleFileTypes/isThemeSettingsFile(_:)``
     ///  ``DocumentationBundle/customHeader``     | ``DocumentationBundleFileTypes/isCustomHeader(_:)``
     ///  ``DocumentationBundle/customFooter``     | ``DocumentationBundleFileTypes/isCustomFooter(_:)``
+    ///  ``DocumentationBundle/customFavicon``    | ``DocumentationBundleFileTypes/isCustomFavicon(_:)``
     ///  ``DocumentationBundle/miscResourceURLs`` | Any file not already matched above.
     ///
     /// ## Topics
@@ -165,7 +166,8 @@ extension DocumentationContext.InputsProvider {
             miscResourceURLs: foundContents.resources,
             customHeader:  shallowContent.first(where: FileTypes.isCustomHeader),
             customFooter:  shallowContent.first(where: FileTypes.isCustomFooter),
-            themeSettings: shallowContent.first(where: FileTypes.isThemeSettingsFile)
+            themeSettings: shallowContent.first(where: FileTypes.isThemeSettingsFile),
+            customFavicon: shallowContent.first(where: FileTypes.isCustomFavicon)
         )
     }
 

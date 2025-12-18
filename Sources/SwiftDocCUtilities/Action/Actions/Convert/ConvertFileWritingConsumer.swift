@@ -150,6 +150,16 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
             }
             try fileManager._copyItem(at: themeSettings, to: targetFile)
         }
+
+        // If a custom favicon is provided, it will be copied in the output directory
+        // The custom favicon will override the default one.
+        if let customFavicon = bundle.customFavicon {
+            let targetFile = targetFolder.appendingPathComponent(customFavicon.lastPathComponent, isDirectory: false)
+            if fileManager.fileExists(atPath: targetFile.path) {
+                try fileManager.removeItem(at: targetFile)
+            }
+            try fileManager._copyItem(at: customFavicon, to: targetFile)
+        }
     }
     
     func consume(linkableElementSummaries summaries: [LinkDestinationSummary]) throws {
