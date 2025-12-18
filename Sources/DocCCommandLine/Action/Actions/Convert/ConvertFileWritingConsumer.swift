@@ -237,7 +237,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
         let template = "<template id=\"\(id.rawValue)\">\(templateContents)</template>"
         var newIndexContents = indexContents
         newIndexContents.replaceSubrange(bodyTagRange, with: indexContents[bodyTagRange] + template)
-        try newIndexContents.write(to: index, atomically: true, encoding: .utf8)
+        try fileManager.createFile(at: index, contents: Data(newIndexContents.utf8))
     }
     
     /// File name for the documentation coverage file emitted during conversion.

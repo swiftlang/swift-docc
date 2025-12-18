@@ -30,6 +30,7 @@ public struct ConvertAction: AsyncAction {
     let diagnosticEngine: DiagnosticEngine
 
     private let transformForStaticHosting: Bool
+    private let includeContentInEachHTMLFile: Bool
     private let hostingBasePath: String?
     
     let sourceRepository: SourceRepository?
@@ -64,6 +65,7 @@ public struct ConvertAction: AsyncAction {
     ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
     ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
     ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
+    ///   - includeContentInEachHTMLFile: `true` if the convert action should process each static hosting HTML file so that it includes documentation content for environments without JavaScript enabled, otherwise `false`.
     ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation bundle if it doesn't discover another bundle, otherwise `false`.
     ///   - hostingBasePath: The base path where the built documentation archive will be hosted at.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
@@ -91,6 +93,7 @@ public struct ConvertAction: AsyncAction {
         experimentalEnableCustomTemplates: Bool = false,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool = false,
+        includeContentInEachHTMLFile: Bool = false,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
         sourceRepository: SourceRepository? = nil,
@@ -105,6 +108,7 @@ public struct ConvertAction: AsyncAction {
         self.temporaryDirectory = temporaryDirectory
         self.documentationCoverageOptions = documentationCoverageOptions
         self.transformForStaticHosting = transformForStaticHosting
+        self.includeContentInEachHTMLFile = includeContentInEachHTMLFile
         self.hostingBasePath = hostingBasePath
         self.sourceRepository = sourceRepository
         
@@ -189,6 +193,11 @@ public struct ConvertAction: AsyncAction {
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
     var _extraTestWork: (() async -> Void)?
 
+    /// The `Indexer` type doesn't work with virtual file systems.
+    ///
+    /// Tests that don't verify the contents of the navigator index can set this to `true` so that they can use a virtual, in-memory, file system.
+    var _completelySkipBuildingIndex: Bool = false
+    
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
@@ -286,7 +295,7 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        let indexer = try Indexer(outputURL: temporaryFolder, bundleID: inputs.id)
+        let indexer = _completelySkipBuildingIndex ? nil : try Indexer(outputURL: temporaryFolder, bundleID: inputs.id)
 
         let registerInterval = signposter.beginInterval("Register", id: signposter.makeSignpostID())
         let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
@@ -299,9 +308,23 @@ public struct ConvertAction: AsyncAction {
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
-            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
+            // Don't transform for static hosting if the `FileWritingHTMLContentConsumer` will create per-page index.html files
+            transformForStaticHostingIndexHTML: transformForStaticHosting && !includeContentInEachHTMLFile ? indexHTML : nil,
             bundleID: inputs.id
         )
+        
+        let htmlConsumer: FileWritingHTMLContentConsumer?
+        if includeContentInEachHTMLFile, let indexHTML {
+            htmlConsumer = try FileWritingHTMLContentConsumer(
+                targetFolder: temporaryFolder,
+                fileManager: fileManager,
+                htmlTemplate: indexHTML,
+                customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
+                customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil
+            )
+        } else {
+            htmlConsumer = nil
+        }
 
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
             let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: catalogURL)
@@ -318,7 +341,7 @@ public struct ConvertAction: AsyncAction {
             try await ConvertActionConverter.convert(
                 context: context,
                 outputConsumer: outputConsumer,
-                htmlContentConsumer: nil,
+                htmlContentConsumer: htmlConsumer,
                 sourceRepository: sourceRepository,
                 emitDigest: emitDigest,
                 documentationCoverageOptions: documentationCoverageOptions
@@ -372,7 +395,7 @@ public struct ConvertAction: AsyncAction {
         }
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
-        do {
+        if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
             
             // Always emit a JSON representation of the index but only emit the LMDB

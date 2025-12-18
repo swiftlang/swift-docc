@@ -596,6 +596,37 @@ class ConvertSubcommandTests: XCTestCase {
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-mentioned-in"])
         XCTAssertEqual(disabledFlagConvert.enableMentionedIn, false)
     }
+    
+    func testStaticHostingWithContentFlag() throws {
+        // The feature is disabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        XCTAssertEqual(noFlagConvert.experimentalTransformForStaticHostingWithContent, false)
+        
+        let enabledFlagConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content"])
+        XCTAssertEqual(enabledFlagConvert.experimentalTransformForStaticHostingWithContent, true)
+        
+        // The '...-transform...-with-content' flag also implies the base '--transform-...' flag.
+        do {
+            let originalErrorLogHandle = Docc.Convert._errorLogHandle
+            let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
+            defer {
+                Docc.Convert._errorLogHandle = originalErrorLogHandle
+                Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
+            }
+            
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
+            
+            let conflictingFlagsConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content", "--no-transform-for-static-hosting"])
+            XCTAssertEqual(conflictingFlagsConvert.experimentalTransformForStaticHostingWithContent, true)
+            XCTAssertEqual(conflictingFlagsConvert.transformForStaticHosting, true)
+            
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines), """
+            warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
+            """)
+        }
+    }
 
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
