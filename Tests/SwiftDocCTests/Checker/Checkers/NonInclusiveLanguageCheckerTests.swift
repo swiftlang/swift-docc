@@ -11,7 +11,7 @@
 import Testing
 import Markdown
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 struct NonInclusiveLanguageCheckerTests {
     @Test
