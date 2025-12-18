@@ -19,7 +19,7 @@ class AutoCapitalizationTests: XCTestCase {
     // MARK: Test helpers
     
     private func makeSymbolGraph(docComment: String, parameters: [String]) -> SymbolGraph {
-        makeSymbolGraph(
+        DocCTestUtilities.makeSymbolGraph(
             moduleName: "ModuleName",
             symbols: [
                 makeSymbol(

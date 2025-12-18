@@ -971,7 +971,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         parameters: [(name: String, externalName: String?)],
         returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment
     ) -> SymbolGraph {
-        return makeSymbolGraph(
+        DocCTestUtilities.makeSymbolGraph(
             moduleName: "ModuleName", // Don't use `docCommentModuleName` here.
             platform: platform,
             symbols: [
