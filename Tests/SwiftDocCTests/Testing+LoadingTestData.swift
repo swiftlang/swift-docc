@@ -12,7 +12,7 @@ import Foundation
 import Testing
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 // MARK: Using an in-memory file system
 

@@ -10,7 +10,7 @@
 
 import Foundation
 import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import XCTest
 
 // FIXME: Remove this after 6.3 is released
