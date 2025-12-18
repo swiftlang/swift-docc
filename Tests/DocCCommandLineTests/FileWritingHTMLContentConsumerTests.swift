@@ -23,7 +23,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             TextFile(name: "SomeArticle.md", utf8Content: """
             # Some article
             
-            This is an _formatted_ article.
+            This is a _formatted_ article.
             
             @DeprecationSummary {
               Description of why this _article_ is deprecated.
@@ -173,6 +173,8 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             targetFolder: URL(fileURLWithPath: "/output-dir"),
             fileManager: fileSystem,
             htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
+            customHeader: nil,
+            customFooter: nil,
             prettyPrintOutput: true
         )
         
@@ -228,7 +230,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   <li>
                     <a href="somearticle/index.html">
                       <p>Some article</p>
-                      <p>This is an <i>formatted</i> article.</p>
+                      <p>This is a <i>formatted</i> article.</p>
                     </a>
                   </li>
                   <li>
@@ -366,7 +368,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                 <li>
                   <a href="../../somearticle/index.html">
                     <p>Some article</p>
-                    <p>This is an <i>formatted</i> article.</p>
+                    <p>This is a <i>formatted</i> article.</p>
                   </a>
                 </li>
               </ul>
@@ -384,7 +386,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             <link rel="icon" href="/favicon.ico" />
             <title>Some article</title>
             <script>var baseUrl = "/"</script>
-            <meta content="This is an formatted article." name="description"/>
+            <meta content="This is a formatted article." name="description"/>
           </head>
           <body>
             <noscript>
@@ -398,7 +400,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                   </ul>
                   <p>Article</p>
                   <h1>Some article</h1>
-                  <p>This is an <i>formatted</i> article.</p>
+                  <p>This is a <i>formatted</i> article.</p>
                   <blockquote class="aside deprecated">
                     <p class="label">Deprecated</p>
                     <p>Description of why this <i>article</i> is deprecated.</p>
@@ -470,6 +472,110 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
         """)
     }
 
+    func testAddsTagsToTemplateIfMissing() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            TextFile(name: "RootArticle.md", utf8Content: """
+            # A single article
+            
+            This is a _formatted_ article that becomes the root page (because there is only one page).
+            """)
+        ])
+        
+        for withTitleTag in [true, false] {
+            for withNoScriptTag in [true, false] {
+                let maybeTitleTag = withTitleTag ? "<title>Documentation</title>" : ""
+                let maybeNoScriptTag = withNoScriptTag ? """
+                  <noscript>
+                    <p>Some existing information inside the no script tag</p>
+                  </noscript>
+                """ : ""
+                
+                let htmlTemplate = TextFile(name: "index.html", utf8Content: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    \(maybeTitleTag)
+                  </head>
+                  <body>
+                  \(maybeNoScriptTag)
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+                
+                let fileSystem = try TestFileSystem(folders: [
+                    Folder(name: "path", content: [
+                        Folder(name: "to", content: [
+                            catalog
+                        ])
+                    ]),
+                    Folder(name: "template", content: [
+                        htmlTemplate
+                    ]),
+                    Folder(name: "output-dir", content: [])
+                ])
+                
+                let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+                    .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/path/to/\(catalog.name)"), options: .init())
+                
+                let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider, configuration: .init())
+                
+                let htmlConsumer = try FileWritingHTMLContentConsumer(
+                    targetFolder: URL(fileURLWithPath: "/output-dir"),
+                    fileManager: fileSystem,
+                    htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
+                    customHeader: nil,
+                    customFooter: nil,
+                    prettyPrintOutput: true
+                )
+                
+                _ = try ConvertActionConverter.convert(
+                    context: context,
+                    outputConsumer: TestOutputConsumer(),
+                    htmlContentConsumer: htmlConsumer,
+                    sourceRepository: nil,
+                    emitDigest: false,
+                    documentationCoverageOptions: .noCoverage
+                )
+                
+                // Because the TestOutputConsumer below doesn't create any files, we only expect the HTML files in the output directory
+                XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/output-dir"), """
+                output-dir/
+                ╰─ documentation/
+                   ╰─ rootarticle/
+                      ╰─ index.html
+                """)
+                
+                try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/rootarticle/index.html")), matches: """
+                <html>
+                  <head>
+                    <meta charset="utf-8" />
+                    <link rel="icon" href="/favicon.ico" />
+                    <title>A single article</title>
+                    <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description"/>
+                  </head>
+                  <body>
+                    <noscript>
+                      <article>
+                        <section>
+                          <ul>
+                            <li>RootArticle</li>
+                          </ul>
+                          <p>
+                          Article</p>
+                          <h1>RootArticle</h1>
+                          <p>This is a <i> formatted</i> article that becomes the root page (because there is only one page).</p>
+                        </section>
+                      </article>
+                    </noscript>
+                    <div id="app"></div>
+                  </body>
+                </html>
+                """)
+            }
+        }
+    }
 }
 
 // MARK: Helpers
@@ -488,7 +594,7 @@ private class TestOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
     func consume(externalRenderNode: ExternalRenderNode) throws { }
 }
 
-private func assert(readHTML: Data, matches expectedHTML: String, file: StaticString = #filePath, line: UInt = #line) {
+func assert(readHTML: Data, matches expectedHTML: String, file: StaticString = #filePath, line: UInt = #line) {
     // XMLNode on macOS and Linux pretty print with different indentation.
     // To compare the XML structure without getting false positive failures because of indentation and other formatting differences,
     // we explicitly process each string into an easy-to-compare format.
