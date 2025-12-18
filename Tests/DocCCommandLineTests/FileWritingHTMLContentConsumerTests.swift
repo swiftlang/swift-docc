@@ -347,15 +347,11 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
               </section>
               <h2>Parameters</h2>
               <dl>
-                <dt>
-                  <code>first</code>
-                </dt>
+                <dt>first</dt>
                 <dd>
                   <p>Description of the <code>first</code> parameter.</p>
                 </dd>
-                <dt>
-                  <code>second</code>
-                </dt>
+                <dt>second</dt>
                 <dd>
                   <p>Description of the <code>second</code> parameter.</p>
                 </dd>
