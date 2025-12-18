@@ -8,31 +8,32 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
 import Markdown
 @testable import SwiftDocC
 import SwiftDocCTestUtilities
 
-class NonInclusiveLanguageCheckerTests: XCTestCase {
-
-    func testMatchTermInTitle() throws {
+struct NonInclusiveLanguageCheckerTests {
+    @Test
+    func matchesTermsInTitle() throws {
         let source = """
 # A Whitelisted title
 """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        XCTAssertEqual(checker.problems.count, 1)
+        #expect(checker.problems.count == 1)
 
-        let problem = try XCTUnwrap(checker.problems.first)
-        let range = try XCTUnwrap(problem.diagnostic.range)
-        XCTAssertEqual(range.lowerBound.line, 1)
-        XCTAssertEqual(range.lowerBound.column, 5)
-        XCTAssertEqual(range.upperBound.line, 1)
-        XCTAssertEqual(range.upperBound.column, 16)
+        let problem = try #require(checker.problems.first)
+        let range = try #require(problem.diagnostic.range)
+        #expect(range.lowerBound.line == 1)
+        #expect(range.lowerBound.column == 5)
+        #expect(range.upperBound.line == 1)
+        #expect(range.upperBound.column == 16)
     }
 
-    func testMatchTermWithSpaces() throws {
+    @Test
+    func matchesTermsWithSpaces() throws {
         let source = """
         # A White  listed title
         # A Black    listed title
@@ -41,31 +42,32 @@ class NonInclusiveLanguageCheckerTests: XCTestCase {
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        XCTAssertEqual(checker.problems.count, 3)
+        #expect(checker.problems.count == 3)
 
-        let problem = try XCTUnwrap(checker.problems.first)
-        let range = try XCTUnwrap(problem.diagnostic.range)
-        XCTAssertEqual(range.lowerBound.line, 1)
-        XCTAssertEqual(range.lowerBound.column, 5)
-        XCTAssertEqual(range.upperBound.line, 1)
-        XCTAssertEqual(range.upperBound.column, 18)
+        let problem = try #require(checker.problems.first)
+        let range = try #require(problem.diagnostic.range)
+        #expect(range.lowerBound.line == 1)
+        #expect(range.lowerBound.column == 5)
+        #expect(range.upperBound.line == 1)
+        #expect(range.upperBound.column == 18)
 
-        let problemTwo = try XCTUnwrap(checker.problems[1])
-        let rangeTwo = try XCTUnwrap(problemTwo.diagnostic.range)
-        XCTAssertEqual(rangeTwo.lowerBound.line, 2)
-        XCTAssertEqual(rangeTwo.lowerBound.column, 5)
-        XCTAssertEqual(rangeTwo.upperBound.line, 2)
-        XCTAssertEqual(rangeTwo.upperBound.column, 20)
+        let problemTwo = try #require(checker.problems.dropFirst(1).first)
+        let rangeTwo = try #require(problemTwo.diagnostic.range)
+        #expect(rangeTwo.lowerBound.line == 2)
+        #expect(rangeTwo.lowerBound.column == 5)
+        #expect(rangeTwo.upperBound.line == 2)
+        #expect(rangeTwo.upperBound.column == 20)
 
-        let problemThree = try XCTUnwrap(checker.problems[2])
-        let rangeThree = try XCTUnwrap(problemThree.diagnostic.range)
-        XCTAssertEqual(rangeThree.lowerBound.line, 3)
-        XCTAssertEqual(rangeThree.lowerBound.column, 5)
-        XCTAssertEqual(rangeThree.upperBound.line, 3)
-        XCTAssertEqual(rangeThree.upperBound.column, 17)
+        let problemThree = try #require(checker.problems.dropFirst(2).first)
+        let rangeThree = try #require(problemThree.diagnostic.range)
+        #expect(rangeThree.lowerBound.line == 3)
+        #expect(rangeThree.lowerBound.column == 5)
+        #expect(rangeThree.upperBound.line == 3)
+        #expect(rangeThree.upperBound.column == 17)
     }
 
-    func testMatchTermInAbstract() throws {
+    @Test
+    func matchesTermsInAbstract() throws {
         let source = """
 # Title
 
@@ -74,17 +76,18 @@ The blacklist is in the abstract.
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        XCTAssertEqual(checker.problems.count, 1)
+        #expect(checker.problems.count == 1)
 
-        let problem = try XCTUnwrap(checker.problems.first)
-        let range = try XCTUnwrap(problem.diagnostic.range)
-        XCTAssertEqual(range.lowerBound.line, 3)
-        XCTAssertEqual(range.lowerBound.column, 5)
-        XCTAssertEqual(range.upperBound.line, 3)
-        XCTAssertEqual(range.upperBound.column, 14)
+        let problem = try #require(checker.problems.first)
+        let range = try #require(problem.diagnostic.range)
+        #expect(range.lowerBound.line == 3)
+        #expect(range.lowerBound.column == 5)
+        #expect(range.upperBound.line == 3)
+        #expect(range.upperBound.column == 14)
     }
 
-    func testMatchTermInParagraph() throws {
+    @Test
+    func matchesTermsInParagraph() throws {
         let source = """
 # Title
 
@@ -98,17 +101,18 @@ master branch is the default.
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        XCTAssertEqual(checker.problems.count, 1)
+        #expect(checker.problems.count == 1)
 
-        let problem = try XCTUnwrap(checker.problems.first)
-        let range = try XCTUnwrap(problem.diagnostic.range)
-        XCTAssertEqual(range.lowerBound.line, 8)
-        XCTAssertEqual(range.lowerBound.column, 1)
-        XCTAssertEqual(range.upperBound.line, 8)
-        XCTAssertEqual(range.upperBound.column, 7)
+        let problem = try #require(checker.problems.first)
+        let range = try #require(problem.diagnostic.range)
+        #expect(range.lowerBound.line == 8)
+        #expect(range.lowerBound.column == 1)
+        #expect(range.upperBound.line == 8)
+        #expect(range.upperBound.column == 7)
     }
 
-    func testMatchTermInList() throws {
+    @Test
+    func matchesTermsInList() throws {
         let source = """
 - Item 1 is ok
 - Item 2 is blacklisted
@@ -117,34 +121,36 @@ master branch is the default.
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        XCTAssertEqual(checker.problems.count, 1)
+        #expect(checker.problems.count == 1)
 
-        let problem = try XCTUnwrap(checker.problems.first)
-        let range = try XCTUnwrap(problem.diagnostic.range)
-        XCTAssertEqual(range.lowerBound.line, 2)
-        XCTAssertEqual(range.lowerBound.column, 13)
-        XCTAssertEqual(range.upperBound.line, 2)
-        XCTAssertEqual(range.upperBound.column, 24)
+        let problem = try #require(checker.problems.first)
+        let range = try #require(problem.diagnostic.range)
+        #expect(range.lowerBound.line == 2)
+        #expect(range.lowerBound.column == 13)
+        #expect(range.upperBound.line == 2)
+        #expect(range.upperBound.column == 24)
     }
 
-    func testMatchTermInInlineCode() throws {
+    @Test
+    func matchesTermsInInlineCode() throws {
         let source = """
 The name `MachineSlave` is unacceptable.
 """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        XCTAssertEqual(checker.problems.count, 1)
+        #expect(checker.problems.count == 1)
 
-        let problem = try XCTUnwrap(checker.problems.first)
-        let range = try XCTUnwrap(problem.diagnostic.range)
-        XCTAssertEqual(range.lowerBound.line, 1)
-        XCTAssertEqual(range.lowerBound.column, 18)
-        XCTAssertEqual(range.upperBound.line, 1)
-        XCTAssertEqual(range.upperBound.column, 23)
+        let problem = try #require(checker.problems.first)
+        let range = try #require(problem.diagnostic.range)
+        #expect(range.lowerBound.line == 1)
+        #expect(range.lowerBound.column == 18)
+        #expect(range.upperBound.line == 1)
+        #expect(range.upperBound.column == 23)
     }
 
-    func testMatchTermInCodeBlock() throws {
+    @Test
+    func matchesTermsInCodeBlock() throws {
         let source = """
 A code block:
 
@@ -158,13 +164,13 @@ func aBlackListedFunc() {
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
-        XCTAssertEqual(checker.problems.count, 1)
-        let problem = try XCTUnwrap(checker.problems.first)
-        let range = try XCTUnwrap(problem.diagnostic.range)
-        XCTAssertEqual(range.lowerBound.line, 5)
-        XCTAssertEqual(range.lowerBound.column, 7)
-        XCTAssertEqual(range.upperBound.line, 5)
-        XCTAssertEqual(range.upperBound.column, 18)
+        #expect(checker.problems.count == 1)
+        let problem = try #require(checker.problems.first)
+        let range = try #require(problem.diagnostic.range)
+        #expect(range.lowerBound.line == 5)
+        #expect(range.lowerBound.column == 7)
+        #expect(range.upperBound.line == 5)
+        #expect(range.upperBound.column == 18)
     }
     
     private let nonInclusiveContent = """
@@ -177,36 +183,32 @@ func aBlackListedFunc() {
      - item three
     """
 
-    func testDisabledByDefault() async throws {
+    @Test
+    func isDisabledByDefault() async throws {
         // Create a test bundle with some non-inclusive content.
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
         ])
-        let (_, context) = try await loadBundle(catalog: catalog)
+        let context = try await load(catalog: catalog)
         
-        XCTAssertEqual(context.problems.count, 0) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
+        #expect(context.problems.isEmpty) // Non-inclusive content is an info-level diagnostic, so it's filtered out.
     }
 
-    func testEnablingTheChecker() async throws {
-        // The expectations of the checker being run, depending on the diagnostic level
-        // set to to the documentation context for the compilation.
-        let expectations: [(DiagnosticSeverity, Bool)] = [
-            (.hint, true),
-            (.information, true),
-            (.warning, false),
-            (.error, false),
-        ]
-
-        for (severity, enabled) in expectations {
-            let catalog = Folder(name: "unit-test.docc", content: [
-                TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
-            ])
-            var configuration = DocumentationContext.Configuration()
-            configuration.externalMetadata.diagnosticLevel = severity
-            let (_, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: severity, configuration: configuration)
-            
-            // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
-            XCTAssertEqual(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }), enabled)
-        }
+    @Test(arguments: [
+        DiagnosticSeverity.hint:        true,
+        DiagnosticSeverity.information: true,
+        DiagnosticSeverity.warning:     false,
+        DiagnosticSeverity.error:       false,
+    ])
+    func raisesDiagnostics(configuredDiagnosticFilterLevel: DiagnosticSeverity, expectsToIncludeNonInclusiveDiagnostics: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: nonInclusiveContent)
+        ])
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.diagnosticLevel = configuredDiagnosticFilterLevel
+        let context = try await load(catalog: catalog, diagnosticFilterLevel: configuredDiagnosticFilterLevel, configuration: configuration)
+        
+        // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
+        #expect(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }) == expectsToIncludeNonInclusiveDiagnostics)
     }
 }

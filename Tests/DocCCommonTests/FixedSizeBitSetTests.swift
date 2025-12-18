@@ -13,7 +13,7 @@ import Testing
 
 struct FixedSizeBitSetTests {
     @Test
-    func testBehavesSameAsSet() {
+    func behavesSameAsSet() {
         var tiny = _FixedSizeBitSet<UInt64>()
         var real = Set<Int>()
         
@@ -83,7 +83,7 @@ struct FixedSizeBitSetTests {
         [              7,8,     11,      14],
         [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     ])
-    func testBehavesSameAsArray(_ real: [Int]) throws {
+    func behavesSameAsArray(_ real: [Int]) throws {
         let tiny = _FixedSizeBitSet<UInt16>(real)
         
         #expect(tiny.elementsEqual(real))
@@ -159,8 +159,8 @@ struct FixedSizeBitSetTests {
         }
     }
     
-    @Test()
-    func testCombinations() {
+    @Test
+    func producingCombinations() {
         do {
             let tiny: _FixedSizeBitSet<UInt8> = [0,1,2]
             #expect(tiny.allCombinationsOfValues().map { $0.sorted() } == [
@@ -229,7 +229,7 @@ struct FixedSizeBitSetTests {
     }
     
     @Test
-    func testIsSameSizeAsWrappedStorageType() async {
+    func isSameSizeAsWrappedStorageType() async {
         // Size
         #expect(MemoryLayout<_FixedSizeBitSet<   Int8 >>.size == MemoryLayout<   Int8 >.size)
         #expect(MemoryLayout<_FixedSizeBitSet<  UInt8 >>.size == MemoryLayout<  UInt8 >.size)
