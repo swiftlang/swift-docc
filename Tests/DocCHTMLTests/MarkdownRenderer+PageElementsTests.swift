@@ -22,7 +22,7 @@ import Markdown
 
 struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
-    func testRenderBreadcrumbs(goal: RenderGoal) {
+    func renderingBreadcrumbs(goal: RenderGoal) {
         let elements = [
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/index.html")!,
@@ -84,7 +84,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderAvailability(goal: RenderGoal) {
+    func renderingAvailability(goal: RenderGoal) {
         let availability = makeRenderer(goal: goal).availability([
             .init(name: "First",  introduced: "1.2", deprecated: "3.4", isBeta: false),
             .init(name: "Second", introduced: "1.2.3",                  isBeta: false),
@@ -111,7 +111,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderSingleLanguageParameters(goal: RenderGoal) {
+    func renderingSingleLanguageParameters(goal: RenderGoal) {
         let parameters = makeRenderer(goal: goal).parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
@@ -131,17 +131,13 @@ struct MarkdownRenderer_PageElementsTests {
                 <a href="#Parameters">Parameters</a>
               </h2>
               <dl>
-                <dt>
-                  <code>First</code>
-                </dt>
+                <dt>First</dt>
                 <dd>
                   <p>
                     Some <i>formatted</i> description with <code>code</code>
                   </p>
                 </dd>
-                <dt>
-                  <code>Second</code>
-                </dt>
+                <dt>Second</dt>
                 <dd>
                   <p>
                     Some <b>other</b> <i>formatted</i> description</p>
@@ -154,16 +150,12 @@ struct MarkdownRenderer_PageElementsTests {
             parameters.assertMatches(prettyFormatted: true, expectedXMLString: """
             <h2>Parameters</h2>
             <dl>
-              <dt>
-                <code>First</code>
-              </dt>
+              <dt>First</dt>
               <dd>
                 <p>Some <i>formatted</i>description with <code>code</code>
                 </p>
               </dd>
-              <dt>
-                <code>Second</code>
-              </dt>
+              <dt>Second</dt>
               <dd>
                 <p>
                   Some <b>other</b> <i>formatted</i> description</p>
@@ -175,7 +167,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test
-    func testRenderLanguageSpecificParameters() {
+    func renderingLanguageSpecificParameters() {
         let parameters = makeRenderer(goal: .richness).parameters([
             .swift: [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
@@ -194,27 +186,19 @@ struct MarkdownRenderer_PageElementsTests {
             <a href="#Parameters">Parameters</a>
           </h2>
           <dl>
-            <dt>
-              <code>FirstCommon</code>
-            </dt>
+            <dt>FirstCommon</dt>
             <dd>
               <p>Available in both languages</p>
             </dd>
-            <dt class="swift-only">
-              <code>SwiftOnly</code>
-            </dt>
+            <dt class="swift-only">SwiftOnly</dt>
             <dd class="swift-only">
               <p>Only available in Swift</p>
             </dd>
-            <dt>
-              <code>SecondCommon</code>
-            </dt>
+            <dt>SecondCommon</dt>
             <dd>
               <p>Also available in both languages</p>
             </dd>
-            <dt class="occ-only">
-              <code>ObjectiveCOnly</code>
-            </dt>
+            <dt class="occ-only">ObjectiveCOnly</dt>
             <dd class="occ-only">
               <p>Only available in Objective-C</p>
             </dd>
@@ -224,7 +208,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test
-    func testRenderManyLanguageSpecificParameters() {
+    func renderingManyLanguageSpecificParameters() {
         let parameters = makeRenderer(goal: .richness).parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some description")),
@@ -242,25 +226,19 @@ struct MarkdownRenderer_PageElementsTests {
             <a href="#Parameters">Parameters</a>
           </h2>
           <dl class="swift-only">
-            <dt>
-              <code>First</code>
-            </dt>
+            <dt>First</dt>
             <dd>
               <p>Some description</p>
             </dd>
           </dl>
           <dl class="data-only">
-            <dt>
-              <code>Third</code>
-            </dt>
+            <dt>Third</dt>
             <dd>
               <p>Some description</p>
             </dd>
           </dl>
           <dl class="occ-only">
-            <dt>
-              <code>Second</code>
-            </dt>
+            <dt>Second</dt>
             <dd>
               <p>Some description</p>
             </dd>
@@ -270,7 +248,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderSingleLanguageReturnSections(goal: RenderGoal) {
+    func renderingSingleLanguageReturnSections(goal: RenderGoal) {
         let returns = makeRenderer(goal: goal).returns([
             .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
         ])
@@ -299,7 +277,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderLanguageSpecificReturnSections(goal: RenderGoal) {
+    func renderingLanguageSpecificReturnSections(goal: RenderGoal) {
         let returns = makeRenderer(goal: goal).returns([
             .swift:      parseMarkup(string: "First paragraph\n\nSecond paragraph"),
             .objectiveC: parseMarkup(string: "Other language's paragraph"),
@@ -330,7 +308,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
 
     @Test(arguments: RenderGoal.allCases)
-    func testRenderSwiftDeclaration(goal: RenderGoal) {
+    func renderingSwiftDeclaration(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
@@ -388,7 +366,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
-    func testRenderLanguageSpecificDeclarations(goal: RenderGoal) {
+    func renderingLanguageSpecificDeclarations(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
             "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
@@ -483,7 +461,7 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases, ["Topics", "See Also"])
-    func testRenderSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
+    func renderingSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
         let elements = [
             LinkedElement(
                 path: URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
