@@ -12,7 +12,7 @@ import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class SymbolTests: XCTestCase {
     
@@ -1110,7 +1110,7 @@ class SymbolTests: XCTestCase {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             
-            let newDocComment = self.makeLineList(
+            let newDocComment = makeLineList(
                 docComment: """
                 A cool API to call.
 

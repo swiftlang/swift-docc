@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class SymbolGraphLoaderTests: XCTestCase {
     

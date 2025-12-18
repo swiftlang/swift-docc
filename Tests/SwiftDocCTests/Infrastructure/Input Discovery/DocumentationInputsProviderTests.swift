@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 @testable import SwiftDocC
 
 class DocumentationInputsProviderTests: XCTestCase {
@@ -28,9 +28,10 @@ class DocumentationInputsProviderTests: XCTestCase {
                         // This top-level Info.plist will be read for bundle information
                         InfoPlist(displayName: "CustomDisplayName"),
                         
-                        // These top-level files will be treated as a custom footer and a custom theme
+                        // These top-level files will be treated as a custom footer, custom theme, and custom favicon
                         TextFile(name: "footer.html", utf8Content: ""),
                         TextFile(name: "theme-settings.json", utf8Content: ""),
+                        DataFile(name: "favicon.ico", data: Data()),
                         
                         // Top-level content will be found
                         TextFile(name: "CCC.md", utf8Content: ""),
@@ -95,6 +96,7 @@ class DocumentationInputsProviderTests: XCTestCase {
                 "Found.docc/Inner/Info.plist",
                 "Found.docc/Inner/header.html",
                 "Found.docc/Inner/second.png",
+                "Found.docc/favicon.ico",
                 "Found.docc/first.png",
                 "Found.docc/footer.html",
                 "Found.docc/theme-settings.json",
@@ -107,6 +109,7 @@ class DocumentationInputsProviderTests: XCTestCase {
             XCTAssertEqual(bundle.customFooter.map(relativePathString), "Found.docc/footer.html")
             XCTAssertEqual(bundle.customHeader.map(relativePathString), nil)
             XCTAssertEqual(bundle.themeSettings.map(relativePathString), "Found.docc/theme-settings.json")
+            XCTAssertEqual(bundle.customFavicon.map(relativePathString), "Found.docc/favicon.ico")
         }
     }
     
