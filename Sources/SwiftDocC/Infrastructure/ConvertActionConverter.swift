@@ -116,14 +116,14 @@ package enum ConvertActionConverter {
                         }
                         
                         if emitDigest {
-                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: true)
+                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                             let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
                             
                             supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
                             supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                             supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
                         } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                             
                             supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                         }
