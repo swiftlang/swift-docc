@@ -89,6 +89,25 @@ class JSONEncodingRenderNodeWriter {
         }
     }
     
+    /// Writes a markdown node to a file at a location based on the node's relative URL.
+    ///
+    /// If the target path to the markdown file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
+    /// create those intermediate folders before writing the markdown file.
+    ///
+    /// - Parameters:
+    ///   - markdownNode: The node which the writer object writes
+    func write(_ markdownNode: WritableMarkdownOutputNode) throws {
+        let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
+            markdownNode.identifier,
+            lowercased: true
+        )
+        
+        try write(
+            markdownNode.node.generateDataRepresentation(),
+            toFileSafePath: "data/\(fileSafePath).md"
+        )
+    }
+    
     func write(_ data: Data, toFileSafePath fileSafePath: String) throws {
         // The path on disk to write the data at.
         let fileURL = targetFolder.appendingPathComponent(fileSafePath, isDirectory: false)
