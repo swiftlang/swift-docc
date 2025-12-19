@@ -103,6 +103,19 @@ package enum ConvertActionConverter {
                             return
                         }
                         
+                        if FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
+                           let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
+                           let markdownNode = converter.markdownOutput(for: entity)
+                        {
+                            try markdownConsumer.consume(markdownNode: markdownNode.writable)
+                            if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+                               let manifest = markdownNode.manifest
+                            {
+                                supplementaryRenderInfo.markdownManifestDocuments.formUnion(manifest.documents)
+                                supplementaryRenderInfo.markdownManifestRelationships.formUnion(manifest.relationships)
+                            }
+                        }
+
                         try outputConsumer.consume(renderNode: renderNode)
 
                         switch documentationCoverageOptions.level {
@@ -138,6 +151,8 @@ package enum ConvertActionConverter {
                 accumulated.linkSummaries.append(contentsOf: partialResult.linkSummaries)
                 accumulated.indexingRecords.append(contentsOf: partialResult.indexingRecords)
                 accumulated.coverageInfo.append(contentsOf: partialResult.coverageInfo)
+                accumulated.markdownManifestDocuments.formUnion(partialResult.markdownManifestDocuments)
+                accumulated.markdownManifestRelationships.formUnion(partialResult.markdownManifestRelationships)
             }
         )
         
@@ -190,6 +205,18 @@ package enum ConvertActionConverter {
                 try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
         }
+        
+        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+           let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
+        {
+            try markdownConsumer.consume(
+                markdownManifest: MarkdownOutputManifest(
+                    title: context.inputs.displayName,
+                    documents: supplementaryRenderInfo.markdownManifestDocuments,
+                    relationships: supplementaryRenderInfo.markdownManifestRelationships
+                )
+            )
+        }
 
         switch documentationCoverageOptions.level {
         case .detailed, .brief:
@@ -216,6 +243,8 @@ private struct SupplementaryRenderInformation {
     var linkSummaries = [LinkDestinationSummary]()
     var assets = [RenderReferenceType : [any RenderReference]]()
     var coverageInfo = [CoverageDataEntry]()
+    var markdownManifestDocuments = Set<MarkdownOutputManifest.Document>()
+    var markdownManifestRelationships = Set<MarkdownOutputManifest.Relationship>()
 }
 
 private extension HTMLContentConsumer {
