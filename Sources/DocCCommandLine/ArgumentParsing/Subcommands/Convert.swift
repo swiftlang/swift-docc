@@ -543,6 +543,12 @@ extension Docc {
             @available(*, deprecated, message: "This flag is unused and only exist for backwards compatibility")
             var _unusedExperimentalMentionedInFlagForBackwardsCompatibility = false
 
+            @Flag(help: "Experimental: Create markdown versions of documents")
+            var enableExperimentalMarkdownOutput = false
+            
+            @Flag(help: "Experimental: Create manifest file of markdown outputs. Ignored if --enable-experimental-markdown-output is not set.")
+            var enableExperimentalMarkdownOutputManifest = false
+            
             @Flag(
                 name: .customLong("parameters-and-returns-validation"),
                 inversion: .prefixedEnableDisable,
@@ -636,6 +642,18 @@ extension Docc {
         public var enableExperimentalOverloadedSymbolPresentation: Bool {
             get { featureFlags.enableExperimentalOverloadedSymbolPresentation }
             set { featureFlags.enableExperimentalOverloadedSymbolPresentation = newValue }
+        }
+        
+        /// A user-provided value that is true if the user enables experimental markdown output
+        public var enableExperimentalMarkdownOutput: Bool {
+            get { featureFlags.enableExperimentalMarkdownOutput }
+            set { featureFlags.enableExperimentalMarkdownOutput = newValue }
+        }
+        
+        /// A user-provided value that is true if the user enables experimental markdown output
+        public var enableExperimentalMarkdownOutputManifest: Bool {
+            get { featureFlags.enableExperimentalMarkdownOutputManifest }
+            set { featureFlags.enableExperimentalMarkdownOutputManifest = newValue }
         }
 
         /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in"
