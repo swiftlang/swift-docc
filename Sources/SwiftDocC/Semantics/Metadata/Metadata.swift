@@ -247,8 +247,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         validateUnsupportedMetadataDirective(for: titleHeading)
         validateUnsupportedMetadataDirective(for: redirects)
         validateUnsupportedMetadataDirective(for: supportedLanguages)
-        validateUnsupportedMetadataDirective(for: pageImages)
-        
+
         documentationOptions = nil
         technologyRoot       = nil
         displayName          = nil
@@ -258,6 +257,5 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         titleHeading         = nil
         redirects            = nil
         supportedLanguages   = []
-        pageImages           = []
     }
 }

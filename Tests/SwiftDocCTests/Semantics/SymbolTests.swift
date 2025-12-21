@@ -1218,14 +1218,69 @@ class SymbolTests: XCTestCase {
                 """,
             extensionFileContent: nil
         )
-        
+
         XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
-        
+
         let availability = try XCTUnwrap(node.metadata?.availability.first)
         XCTAssertEqual(availability.platform, .other("customOS"))
         XCTAssertEqual(availability.introduced.description, "1.2.3")
     }
-    
+
+    func testParsesPageImageDirectiveFromDocComment() async throws {
+        let (node, problems) = try await makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Metadata {
+                  @PageImage(source: "my-image.png", purpose: icon)
+                }
+                """,
+            extensionFileContent: nil
+        )
+
+        // Filter out resource-not-found warnings since we don't have actual image files in this test.
+        // The important thing is that there's no "InvalidPageImageInDocumentationComment" warning.
+        let unexpectedProblems = problems.filter { !$0.diagnostic.summary.contains("couldn't be found") }
+        XCTAssertEqual(unexpectedProblems.count, 0, "Unexpected problems: \(unexpectedProblems.map(\.diagnostic.summary).sorted())")
+
+        let pageImages = try XCTUnwrap(node.metadata?.pageImages)
+        XCTAssertEqual(pageImages.count, 1)
+
+        let pageImage = try XCTUnwrap(pageImages.first)
+        XCTAssertEqual(pageImage.purpose, .icon)
+        XCTAssertEqual(pageImage.source.path, "my-image.png")
+    }
+
+    func testParsesMultiplePageImageDirectivesFromDocComment() async throws {
+        let (node, problems) = try await makeDocumentationNodeForSymbol(
+            docComment: """
+                The symbol's abstract.
+
+                @Metadata {
+                  @PageImage(source: "icon-image.png", purpose: icon)
+                  @PageImage(source: "card-image.png", purpose: card)
+                }
+                """,
+            extensionFileContent: nil
+        )
+
+        // Filter out resource-not-found warnings since we don't have actual image files in this test.
+        // The important thing is that there's no "InvalidPageImageInDocumentationComment" warning.
+        let unexpectedProblems = problems.filter { !$0.diagnostic.summary.contains("couldn't be found") }
+        XCTAssertEqual(unexpectedProblems.count, 0, "Unexpected problems: \(unexpectedProblems.map(\.diagnostic.summary).sorted())")
+
+        let pageImages = try XCTUnwrap(node.metadata?.pageImages)
+        XCTAssertEqual(pageImages.count, 2)
+
+        let iconImage = pageImages.first { $0.purpose == .icon }
+        let cardImage = pageImages.first { $0.purpose == .card }
+
+        XCTAssertNotNil(iconImage)
+        XCTAssertNotNil(cardImage)
+        XCTAssertEqual(iconImage?.source.path, "icon-image.png")
+        XCTAssertEqual(cardImage?.source.path, "card-image.png")
+    }
+
     func testEmitsWarningsInMetadataDirectives() async throws {
         let (_, problems) = try await makeDocumentationNodeForSymbol(
             docComment: """
@@ -1284,13 +1339,12 @@ class SymbolTests: XCTestCase {
                 @Metadata {
                   @Available("Platform from doc comment", introduced: 1.2.3)
                   @CustomMetadata(key: "key", value: "value")
-                  
+
                   @Comment(The directives below this are invalid in documentation comments)
-                
+
                   @DocumentationExtension(mergeBehavior: override)
                   @TechnologyRoot
                   @DisplayName(Title)
-                  @PageImage(source: test, purpose: icon)
                   @CallToAction(url: "https://example.com/sample.zip", purpose: download)
                   @PageKind(sampleCode)
                   @SupportedLanguage(swift)
@@ -1301,14 +1355,13 @@ class SymbolTests: XCTestCase {
                 """,
             extensionFileContent: nil
         )
-        
+
         XCTAssertEqual(
             Set(problems.map(\.diagnostic.identifier)),
             [
                 "org.swift.docc.Metadata.InvalidDocumentationExtensionInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidTechnologyRootInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidDisplayNameInDocumentationComment",
-                "org.swift.docc.Metadata.InvalidPageImageInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidCallToActionInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidPageKindInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidSupportedLanguageInDocumentationComment",
