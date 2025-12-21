@@ -178,7 +178,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
             prettyPrintOutput: true
         )
         
-        _ = try ConvertActionConverter.convert(
+        try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: TestOutputConsumer(),
             htmlContentConsumer: htmlConsumer,
@@ -530,7 +530,7 @@ final class FileWritingHTMLContentConsumerTests: XCTestCase {
                     prettyPrintOutput: true
                 )
                 
-                _ = try ConvertActionConverter.convert(
+                try await ConvertActionConverter.convert(
                     context: context,
                     outputConsumer: TestOutputConsumer(),
                     htmlContentConsumer: htmlConsumer,
