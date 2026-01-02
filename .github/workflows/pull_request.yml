@@ -18,6 +18,8 @@ jobs:
     with:
       linux_os_versions: '["amazonlinux2", "bookworm", "noble", "jammy", "rhel-ubi9"]'
       linux_host_archs: '["x86_64", "aarch64"]'
+      linux_swift_versions: '["nightly-main", "nightly-6.3"]'
+      windows_swift_versions: '["nightly-main", "nightly-6.3"]'
       enable_linux_static_sdk_build: true
       enable_macos_checks: true
   cmake-smoke-test:
