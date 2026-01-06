@@ -36,7 +36,7 @@ display scale, and file extension components. Don't include the path to the
 image.
 
 ```markdown
-![A sloth hanging off a tree.](sloth)
+![A sloth dangling off a tree.](sloth)
 ```
 
 <!-- Copyright (c) 2023-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
