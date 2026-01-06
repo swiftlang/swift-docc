@@ -28,7 +28,7 @@ class SignalTests: XCTestCase {
     
     /// Runs `signal-test-app` and confirms that it exits with code 99.
     ///
-    /// `signal-test-app` sends a kill signal to itself and uses ``Signal`` to intercept that signal
+    /// `signal-test-app` sends a terminate signal to itself and uses ``Signal`` to intercept that signal
     /// and set the exit code to 99.
     func testTrappingSignal() throws {
         let signalTestAppPath = productDirectory.appendingPathComponent("signal-test-app").path

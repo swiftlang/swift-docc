@@ -2144,9 +2144,9 @@ Root
 
         // Verify that beta status was captured in the render index
         XCTAssertEqual(betaNodes.map(\.title), ["MyClass"])
-        XCTAssert(betaNodes.allSatisfy(\.isBeta))  // Sanity check
+        XCTAssert(betaNodes.allSatisfy(\.isBeta))  // Consistency check
         XCTAssertEqual(nonBetaNodes.map(\.title).sorted(), ["Classes", "MyOtherClass", "MyThirdClass"])
-        XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false }) // Sanity check
+        XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false }) // Consistency check
     }
     
     private func findNodesWithBetaStatus(in nodes: [RenderIndex.Node], isBeta: Bool) -> [RenderIndex.Node] {
