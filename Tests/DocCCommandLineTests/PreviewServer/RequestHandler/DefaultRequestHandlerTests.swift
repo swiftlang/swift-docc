@@ -51,7 +51,7 @@ class DefaultRequestHandlerTests: XCTestCase {
         let request = makeRequestHead(uri: "/existing.html")
         let factory = DefaultRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
-        
+
         // Expected content
         XCTAssertEqual(response.body, "Hello!")
     }
