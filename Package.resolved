@@ -1,5 +1,5 @@
 {
-  "originHash" : "eeed44b5b6e983a51b5d5a022a8c2b97a40041bb6c47f5b37c72fe7a3c051a91",
+  "originHash" : "1f35de2f773e873433e84e604e18ee5d9f2c2323865416a6d3af9854db9beb79",
   "pins" : [
     {
       "identity" : "swift-argument-parser",
@@ -67,10 +67,10 @@
     {
       "identity" : "swift-docc-symbolkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-docc-symbolkit.git",
+      "location" : "https://github.com/d-ronnqvist/swift-docc-symbolkit.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "65fa99b0b84db5c743415a00ee7f0099837aae1b"
+        "branch" : "missing-public-init",
+        "revision" : "644ad1ce48fadb0359206913c6eee1facd21aacc"
       }
     },
     {

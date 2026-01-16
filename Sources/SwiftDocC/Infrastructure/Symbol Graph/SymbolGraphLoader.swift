@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import DocCCommon
 
 /// Loads symbol graph files from a documentation bundle.
 ///
@@ -69,14 +70,7 @@ struct SymbolGraphLoader {
                 // Load and decode a single symbol graph file
                 let data = try dataProvider.contents(of: symbolGraphURL)
 
-                var symbolGraph: SymbolGraph
-                
-                switch decodingStrategy {
-                case .concurrentlyAllFiles:
-                    symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: data)
-                case .concurrentlyEachFileInBatches:
-                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
-                }
+                var symbolGraph: SymbolGraph = try FastSymbolGraphJSONDecoder.decode(SymbolGraph.self, from: data)
                 
                 Self.applyWorkaroundFor139305015(to: &symbolGraph)
                 

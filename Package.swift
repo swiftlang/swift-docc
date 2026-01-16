@@ -121,7 +121,8 @@ let package = Package(
             name: "DocCCommon",
             dependencies: [
                 // This target shouldn't have any local dependencies so that all other targets can depend on it.
-                // We can add dependencies on SymbolKit and Markdown here but they're not needed yet.
+                // Dependencies on SymbolKit and Markdown are find to add if they're needed for any functionality.
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -188,7 +189,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
         .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),
-        .package(url: "https://github.com/swiftlang/swift-docc-symbolkit.git", branch: "main"),
+        .package(url: "https://github.com/d-ronnqvist/swift-docc-symbolkit.git", branch: "missing-public-init"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.2.0"),
     ]
