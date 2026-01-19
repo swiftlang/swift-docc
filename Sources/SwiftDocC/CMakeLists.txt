@@ -161,6 +161,8 @@ add_library(SwiftDocC
   Model/DocumentationNode.swift
   Model/Identifier.swift
   Model/Kind.swift
+  Model/MarkdownOutput/Translation/MarkdownOutputSemanticVisitor.swift
+  Model/MarkdownOutput/Translation/MarkdownOutputMarkdownWalker.swift
   Model/Markup+parsing.swift
   Model/Name.swift
   Model/ParametersAndReturnValidator.swift
@@ -400,6 +402,8 @@ add_library(SwiftDocC
   Servers/DocumentationSchemeHandler.swift
   Servers/FileServer.swift
   SourceRepository/SourceRepository.swift
+  SwiftDocCMarkdownOutput/MarkdownOutputManifest.swift
+  SwiftDocCMarkdownOutput/MarkdownOutputNode.swift
   Utility/Checksum.swift
   Utility/Collection+ConcurrentPerform.swift
   Utility/CollectionChanges.swift
