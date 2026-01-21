@@ -108,6 +108,11 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     /// As the decoder scans through the JSON data, it advances this pointer.
     private var pointer: UnsafeRawPointer
     /// The raw pointer to the JSON data's "past the end" position.
+    ///
+    /// The decoder uses this pointer to perform bounds checks using `try _boundsCheck()`.
+    /// This usually happens right after advancing the pointer but some private functions, for example `_skipWhitespace()` or `_descendIntoArray()`,
+    /// advance the pointer but push this bounds checking responsibility on the caller.
+    /// These private functions each document this behavior in a "note" callout.
     private let endOfData: UnsafeRawPointer
     
     /// Creates a new fast symbol graph JSON decoder from a raw buffer of JSON data.
@@ -151,6 +156,8 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     package mutating func descendIntoObject() throws(DecodingError) {
         do {
             try _descendIntoObject()
+            // Even if we only expect this to skip whitespace and the "{" character, verify that the decoder didn't go beyond the data's bounds doing so.
+            try _boundsCheck()
         } catch .unexpectedCharacter {
             throw makeTypeMismatchError([AnyHashable: Any].self) // We don't know of a more specific type at this point.
         } catch {
@@ -467,6 +474,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
                 
                 result[consume key] = consume value
             }
+            try _boundsCheck()
         } catch ScanningError.unexpectedCharacter {
             throw makeTypeMismatchError(type)
         } catch let error as DecodingError {
@@ -533,6 +541,10 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     }
     
     /// Verifies and skips over the next byte, raising an error if the decoder's next byte doesn't match the expected byte.
+    ///
+    /// - Note:
+    ///   Despite advancing the pointer by 1, this private function _doesn't_ call `try _boundsCheck()`.
+    ///   Instead it's the caller's responsibility to do a final bounds check before returning any value from any non-private method.
     private mutating func _skipExpectedByte(_ byte: UInt8) throws(ScanningError) {
         guard pointer.nextByte == byte else {
             throw .unexpectedCharacter
@@ -541,12 +553,15 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     }
     
     /// Skips past any leading whitespace, advancing the decoder's state to just past the last leading whitespace.
+    ///
+    /// - Note:
+    ///   Despite advancing the pointer, this private function _doesn't_ call `try _boundsCheck()`.
+    ///   Instead it's the caller's responsibility to do a final bounds check before returning any value from any non-private method.
     private mutating func _skipWhitespace() {
         var length = 0
         while pointer.load(fromByteOffset: length, as: UInt8.self).isJSONWhitespace {
             length &+= 1
         }
-        
         pointer.removeFirst(length)
     }
     
@@ -564,6 +579,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
             try _boundsCheck()
             return false
         } else {
+            // Do a bounds check in case skipping leading whitespace went beyond the data's bounds.
             try _boundsCheck()
             throw .unexpectedCharacter
         }
@@ -579,6 +595,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
             try _boundsCheck()
             return true
         } else {
+            // Do a bounds check in case skipping leading whitespace went beyond the data's bounds.
             try _boundsCheck()
             return false
         }
@@ -652,8 +669,9 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
             }
         }
         
-        // Verify that the scanned number isn't empty and isn't out of bounds
+        // Verify that the scanned number isn't empty
         guard 0 < length else {
+            // Do a bounds check here to match the JSONDecoder error message when the data is all whitespace.
             if endOfData <= pointer.advanced(by: length) {
                 throw .unexpectedEndOfFile
             } else {
@@ -727,7 +745,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
                 //         ╰─────╴escaped slash
                 break
             } else {
-                // An off number of slashes means that the last slash escapes the quote, so this byte is part of the string's content.
+                // An odd number of slashes means that the last slash escapes the quote, so this byte is part of the string's content.
                 // For example, consider a string that ends in 3 slashes. The 1st slash escapes the 2nd leaving 3rd slash to escape the quotation mark:
                 //
                 //     "ABC\\\"
@@ -747,6 +765,12 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     }
     
     /// Advance the decoder's state to just past the "begin array" structural character (`[`).
+    ///
+    /// - Note:
+    ///   Despite advancing the pointer, this private function _doesn't_ call `try _boundsCheck()`.
+    ///   Instead it's the caller's responsibility to do a final bounds check before returning any value from any non-private method.
+    ///   - The package access `decode(_:)->[Value]` method does the a single bounds check just before returning.
+    ///   - The private `_ignoreValue()` method does so after finding the "end array" structural character (`]`).
     private mutating func _descendIntoArray() throws(ScanningError) {
         _skipWhitespace()
         
@@ -754,6 +778,12 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     }
     
     /// Advance the decoder's state to just past the "begin object" structural character (`{`).
+    ///
+    /// - Note:
+    ///   Despite advancing the pointer, this private function _doesn't_ call `try _boundsCheck()`.
+    ///   Instead it's the caller's responsibility to do a final bounds check before returning any value from any non-private method.
+    ///   - The package access `decode(_:)->[String: Value]` method does the a single bounds check just before returning.
+    ///   - The private `_ignoreValue()` method does so just before returning.
     private mutating func _descendIntoObject() throws(ScanningError) {
         _skipWhitespace()
         
@@ -824,6 +854,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
             case .init(ascii: "-"), .init(ascii: "0") ... .init(ascii: "9"):
                 let (length, _, _, _) = try _scanNumber()
                 pointer.removeFirst(length)
+                // The bounds check happens after the swift-statement.
                 
             case .init(ascii: "{"):
                 try _descendIntoObject()
@@ -891,6 +922,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         do {
             (length, isFloatingPoint, _, _) = try _scanNumber()
             pointer.removeFirst(length)
+            try _boundsCheck()
         } catch .unexpectedCharacter {
             throw makeTypeMismatchError(SymbolGraph.AnyNumber.self)
         } catch {
