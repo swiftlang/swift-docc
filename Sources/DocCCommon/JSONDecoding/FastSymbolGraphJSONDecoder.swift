@@ -1093,44 +1093,46 @@ private struct ByteMatches: ~Copyable {
         //
         //            k        i        n        d        "        :                 "
         //           6B       69       6E       64       22       3A       20       22
-        //     _11_1_11 _11_1__1 _11_111_ _11__1__ __1___1_ __111_1_ __1_____ __1___1_
+        //     _11_1_11 _11_1__1 _11_111_ _11__1__ __1___1_ __111_1_ __1_____ __1___1_   = bytes
         //
         // If the caller is looking for the locations of string delimiter, it will pass a search pattern---
         // like `ByteMatches.quoteSearchPattern`---which repeats the "quote" character (`0x22`) 8 times.
         //
         //            "        "        "        "        "        "        "        "
         //           22       22       22       22       22       22       22       22
-        //     __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_
+        //     __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_   = searchPattern
         
         // The first step to find the matching locations it to XOR the 8 bytes with the search pattern:
-        //     _11_1_11 _11_1__1 _11_111_ _11__1__ __1___1_ __111_1_ __1_____ __1___1_
-        //     __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_
-        //   = _1__1__1 _1__1_11 _1__11__ _1___11_ ________ ___11___ ______1_ ________
+        //     _11_1_11 _11_1__1 _11_111_ _11__1__ __1___1_ __111_1_ __1_____ __1___1_   (bytes)
+        //     __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_ __1___1_   (searchPattern)
+        //   = _1__1__1 _1__1_11 _1__11__ _1___11_ ________ ___11___ ______1_ ________   = matches
         //
         // This produces all zeros for the bytes that match the search pattern exactly, and garbage elsewhere.
         let matches = bytes ^ searchPattern
         // Next, we wrapping subtract a bit pattern where each byte only has the lowest bit set:
-        //     _1__1__1 _1__1_11 _1__11__ _1___11_ ________ ___11___ ______1_ ________
-        //     _______1 _______1 _______1 _______1 _______1 _______1 _______1 _______1
-        //   = _1__1___ _1__1_1_ _1__1_11 _1___1_1 11111111 ___1_11_ _______1 11111111
+        //     _1__1__1 _1__1_11 _1__11__ _1___11_ ________ ___11___ ______1_ ________   (matches)
+        //     _______1 _______1 _______1 _______1 _______1 _______1 _______1 _______1   (lowBitInEachByte)
+        //   = _1__1___ _1__1_1_ _1__1_11 _1___1_1 11111111 ___1_11_ _______1 11111111   = result
         //
         // This produces all ones for the bytes that match the search pattern exactly, and garbage elsewhere.
         var result = matches &- Self.lowBitInEachByte
         // Next, we bitwise inverse the `matches` ...
-        //     _1__1__1 _1__1_11 _1__11__ _1___11_ ________ ___11___ ______1_ ________
-        //     1_11_11_ 1_11_1__ 1_11__11 1_111__1 11111111 111__111 111111_1 11111111
+        //     _1__1__1 _1__1_11 _1__11__ _1___11_ ________ ___11___ ______1_ ________   (matches)
+        //   = 1_11_11_ 1_11_1__ 1_11__11 1_111__1 11111111 111__111 111111_1 11111111   = ~matches
         //
         // This also produces all ones for the exact matching byte location, and different garbage elsewhere.
         // However, these garbage bytes and the previous garbage bytes together have an important attribute:
         // they can't _both_ have the highest bit set.
         //
         // This means that if we bitwise-and this inverse `match` with the result so far ...
-        //     1_11_11_ 1_11_1__ 1_11__11 1_111__1 11111111 111__111 111111_1 11111111
-        //     ________ ________ ______11 _______1 11111111 _____11_ _______1 11111111
+        //     _1__1___ _1__1_1_ _1__1_11 _1___1_1 11111111 ___1_11_ _______1 11111111   (result)
+        //     1_11_11_ 1_11_1__ 1_11__11 1_111__1 11111111 111__111 111111_1 11111111   (~matches)
+        //     ________ ________ ______11 _______1 11111111 _____11_ _______1 11111111   = updated result
         result &= ~matches
         // ... and then bitwise-and with a mask that only has the top bit set:
-        //     1_______ 1_______ 1_______ 1_______ 1_______ 1_______ 1_______ 1_______
-        //     ________ ________ ________ ________ 1_______ ________ ________ 1_______
+        //     ________ ________ ______11 _______1 11111111 _____11_ _______1 11111111   (result)
+        //     1_______ 1_______ 1_______ 1_______ 1_______ 1_______ 1_______ 1_______   (highBitInEachByte)
+        //     ________ ________ ________ ________ 1_______ ________ ________ 1_______   = updated result
         //
         // This produces all zeroes for the locations where the byte didn't match the search pattern and `0x80`
         // for the locations that did match the search pattern exactly.
