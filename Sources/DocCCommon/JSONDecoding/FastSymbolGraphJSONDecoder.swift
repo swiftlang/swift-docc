@@ -628,7 +628,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         
         // Check for a floating point number
         let isFloatingPoint = pointer.load(fromByteOffset: length, as: UInt8.self) == .init(ascii: ".")
-        if isNegative {
+        if isFloatingPoint {
             length &+= 1
             
             // Check for fractional digits
