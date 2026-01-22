@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import struct Foundation.Data
-import struct Foundation.URL
+package import struct Foundation.Data
+package import struct Foundation.URL
 
 /// A protocol for types that can be decoded using a `FastSymbolGraphJSONDecoder`.
 ///
