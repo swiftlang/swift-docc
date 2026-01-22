@@ -142,7 +142,6 @@ add_library(SwiftDocC
   "Infrastructure/Symbol Graph/ExtendedTypeFormatTransformation.swift"
   "Infrastructure/Symbol Graph/GeneratedDocumentationTopics.swift"
   "Infrastructure/Symbol Graph/ResolvedTopicReference+Symbol.swift"
-  "Infrastructure/Symbol Graph/SymbolGraphConcurrentDecoder.swift"
   "Infrastructure/Symbol Graph/SymbolGraphLoader.swift"
   "Infrastructure/Symbol Graph/SymbolGraphRelationshipsBuilder.swift"
   "Infrastructure/Symbol Graph/SymbolReference.swift"
