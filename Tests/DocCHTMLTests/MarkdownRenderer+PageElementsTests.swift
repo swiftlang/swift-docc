@@ -755,7 +755,7 @@ struct MultiValueLinkProvider: LinkProvider {
 }
 
 extension RenderGoal: CaseIterable {
-    package static var allCases: [RenderGoal] {
+    static var allCases: [RenderGoal] {
         [.richness, .conciseness]
     }
 }
