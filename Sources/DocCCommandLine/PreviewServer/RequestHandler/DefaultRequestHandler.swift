@@ -24,9 +24,6 @@ struct DefaultRequestHandler: RequestHandlerFactory {
     /// The root of the documentation to serve.
     let rootURL: URL
 
-    /// Whether to inject the live reload script into the response.
-    var injectLiveReload: Bool = false
-
     /// Script injected before `</body>` to enable live reload via SSE.
     private static let liveReloadScript = Data("""
         <script>
@@ -46,8 +43,7 @@ struct DefaultRequestHandler: RequestHandlerFactory {
         return { context, head in
             var response = try Data(contentsOf: self.rootURL.appendingPathComponent("index.html"))
 
-            // Inject live reload script if enabled
-            if self.injectLiveReload, let range = response.range(of: Self.bodyEndTag) {
+            if let range = response.range(of: Self.bodyEndTag) {
                 response.replaceSubrange(range, with: Self.liveReloadScript)
             }
             

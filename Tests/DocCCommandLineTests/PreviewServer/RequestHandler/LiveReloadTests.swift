@@ -29,7 +29,7 @@ private func makeTempFolder(content: [any File]) throws -> URL {
 struct LiveReloadTests {
 
     @Test
-    func scriptNotInjectedByDefault() throws {
+    func scriptInjected() throws {
         let tempFolderURL = try makeTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
         ])
@@ -37,22 +37,6 @@ struct LiveReloadTests {
 
         let request = makeRequestHead(uri: "/")
         let factory = DefaultRequestHandler(rootURL: tempFolderURL)
-        let response = try responseWithPipeline(request: request, handler: factory)
-
-        #expect(response.body == "<html><body>Hello!</body></html>")
-        #expect(response.body?.contains("__docc-live-reload__") == false)
-    }
-
-    @Test
-    func scriptInjectedWhenEnabled() throws {
-        let tempFolderURL = try makeTempFolder(content: [
-            TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
-        ])
-        defer { try? FileManager.default.removeItem(at: tempFolderURL) }
-
-        let request = makeRequestHead(uri: "/")
-        var factory = DefaultRequestHandler(rootURL: tempFolderURL)
-        factory.injectLiveReload = true
         let response = try responseWithPipeline(request: request, handler: factory)
 
         let body = try #require(response.body)
@@ -74,8 +58,7 @@ struct LiveReloadTests {
         defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
-        var factory = DefaultRequestHandler(rootURL: tempFolderURL)
-        factory.injectLiveReload = true
+        let factory = DefaultRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
 
         #expect(response.body == "<html>No body tag here</html>")

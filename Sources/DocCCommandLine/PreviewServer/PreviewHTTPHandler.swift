@@ -78,8 +78,8 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
                 // Serve a static asset file.
                 handler = FileRequestHandler(rootURL: rootURL)
             } else {
-                // Serve the fallback index file with live reload script.
-                handler = DefaultRequestHandler(rootURL: rootURL, injectLiveReload: true)
+                // Serve the fallback index file.
+                handler = DefaultRequestHandler(rootURL: rootURL)
             }
             state = .requestInProgress(requestHead: head, handler: handler.create(channelHandler: self))
             
