@@ -31,9 +31,7 @@ final class LiveReloadClients: @unchecked Sendable {
     /// The channel is automatically removed when the connection closes.
     func register(_ channel: any Channel) {
         let id = ObjectIdentifier(channel)
-        lock.lock()
-        clients[id] = channel
-        lock.unlock()
+        lock.withLock { clients[id] = channel }
 
         channel.closeFuture.whenComplete { [weak self] _ in
             self?.remove(id)
@@ -41,18 +39,14 @@ final class LiveReloadClients: @unchecked Sendable {
     }
 
     private func remove(_ id: ObjectIdentifier) {
-        lock.lock()
-        clients.removeValue(forKey: id)
-        lock.unlock()
+        lock.withLock { _ = clients.removeValue(forKey: id) }
     }
 
     /// Sends a reload event to all connected SSE clients.
     func notifyAll() {
         let message = "event: reload\ndata: {}\n\n"
 
-        lock.lock()
-        let currentClients = clients
-        lock.unlock()
+        let currentClients = lock.withLock { clients }
 
         for (id, channel) in currentClients {
             guard channel.isActive else {
