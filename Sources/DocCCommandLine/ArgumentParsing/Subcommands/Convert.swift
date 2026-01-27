@@ -262,14 +262,20 @@ extension Docc {
             var warningsAsErrors = false
             
             @Option(
-                name: [.customLong("Werror")], // This matches Swift's spellings
+                name: [
+                    .customLong("Werror"), // This matches Swift's spellings
+                    .customLong("Werror", withSingleDash: true), // This matches Clang's spellings
+                ],
                 parsing: ArrayParsingStrategy.singleValue,
                 help: ArgumentHelp("Treat this diagnostic group as an error", valueName: "diagnostic-id")
             )
             var warningGroupsWithErrorSeverity: [String] = []
             
             @Option(
-                name: [.customLong("Wwarning")], // This matches Swift's spellings
+                name: [
+                    .customLong("Wwarning"), // This matches Swift's spellings
+                    .customLong("Wwarning", withSingleDash: true), // This matches Clang's spellings
+                ],
                 parsing: ArrayParsingStrategy.singleValue,
                 help: ArgumentHelp(
                     "Treat this diagnostic group as a warning",
