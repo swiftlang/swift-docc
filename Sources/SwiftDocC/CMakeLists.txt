@@ -10,13 +10,13 @@ See https://swift.org/LICENSE.txt for license information
 add_library(SwiftDocC
   Benchmark/Benchmark.swift
   Benchmark/BenchmarkResults.swift
+  Benchmark/Metrics.swift
   Benchmark/Metrics/Duration.swift
   Benchmark/Metrics/ExternalTopicsHash.swift
   Benchmark/Metrics/OutputSize.swift
   Benchmark/Metrics/PeakMemory.swift
   Benchmark/Metrics/TopicAnchorHash.swift
   Benchmark/Metrics/TopicGraphHash.swift
-  Benchmark/Metrics.swift
   "Catalog Processing/GeneratedCurationWriter.swift"
   Checker/Checker.swift
   Checker/Checkers/AbstractContainsFormattedTextOnly.swift
@@ -142,7 +142,6 @@ add_library(SwiftDocC
   "Infrastructure/Symbol Graph/ExtendedTypeFormatTransformation.swift"
   "Infrastructure/Symbol Graph/GeneratedDocumentationTopics.swift"
   "Infrastructure/Symbol Graph/ResolvedTopicReference+Symbol.swift"
-  "Infrastructure/Symbol Graph/SymbolGraphConcurrentDecoder.swift"
   "Infrastructure/Symbol Graph/SymbolGraphLoader.swift"
   "Infrastructure/Symbol Graph/SymbolGraphRelationshipsBuilder.swift"
   "Infrastructure/Symbol Graph/SymbolReference.swift"
@@ -161,6 +160,8 @@ add_library(SwiftDocC
   Model/DocumentationNode.swift
   Model/Identifier.swift
   Model/Kind.swift
+  Model/MarkdownOutput/Translation/MarkdownOutputSemanticVisitor.swift
+  Model/MarkdownOutput/Translation/MarkdownOutputMarkdownWalker.swift
   Model/Markup+parsing.swift
   Model/Name.swift
   Model/ParametersAndReturnValidator.swift
@@ -175,6 +176,8 @@ add_library(SwiftDocC
   Model/Rendering/Diffing/Differences.swift
   Model/Rendering/Diffing/RenderNode+Diffable.swift
   Model/Rendering/DocumentationContentRenderer.swift
+  Model/Rendering/HTML/HTMLContentConsumer.swift
+  Model/Rendering/HTML/HTMLRenderer.swift
   Model/Rendering/LinkTitleResolver.swift
   "Model/Rendering/Navigation Tree/RenderHierarchy.swift"
   "Model/Rendering/Navigation Tree/RenderHierarchyChapter.swift"
@@ -198,16 +201,16 @@ add_library(SwiftDocC
   Model/Rendering/RenderContentCompiler.swift
   Model/Rendering/RenderContentConvertible.swift
   Model/Rendering/RenderContext.swift
+  Model/Rendering/RenderNode.Tag.swift
+  Model/Rendering/RenderNode.swift
+  Model/Rendering/RenderNodeTranslator.swift
+  Model/Rendering/RenderNodeVariant.swift
   Model/Rendering/RenderNode/AnyMetadata.swift
   Model/Rendering/RenderNode/CodableContentSection.swift
   Model/Rendering/RenderNode/CodableRenderReference.swift
   Model/Rendering/RenderNode/CodableRenderSection.swift
   Model/Rendering/RenderNode/RenderMetadata.swift
   Model/Rendering/RenderNode/RenderNode+Codable.swift
-  Model/Rendering/RenderNode.swift
-  Model/Rendering/RenderNode.Tag.swift
-  Model/Rendering/RenderNodeTranslator.swift
-  Model/Rendering/RenderNodeVariant.swift
   Model/Rendering/RenderReferenceStore.swift
   Model/Rendering/RenderSection.swift
   Model/Rendering/RenderSectionTranslator/AttributesSectionTranslator.swift
@@ -238,22 +241,22 @@ add_library(SwiftDocC
   Model/Rendering/Symbol/PossibleValuesRenderSection.swift
   Model/Rendering/Symbol/PropertiesRenderSection.swift
   Model/Rendering/Symbol/PropertyListDetailsRenderSection.swift
-  Model/Rendering/Symbol/RelationshipsRenderSection.swift
   Model/Rendering/Symbol/RESTBodyRenderSection.swift
   Model/Rendering/Symbol/RESTEndpointRenderSection.swift
   Model/Rendering/Symbol/RESTExampleRenderSection.swift
   Model/Rendering/Symbol/RESTParametersRenderSection.swift
   Model/Rendering/Symbol/RESTResponseRenderSection.swift
+  Model/Rendering/Symbol/RelationshipsRenderSection.swift
   Model/Rendering/Symbol/SampleDownloadSection.swift
   Model/Rendering/Symbol/TaskGroupRenderSection.swift
   Model/Rendering/TopicsSectionStyle.swift
+  "Model/Rendering/Tutorial Article/TutorialArticleSection.swift"
   Model/Rendering/Tutorial/LineHighlighter.swift
   Model/Rendering/Tutorial/References/DownloadReference.swift
   Model/Rendering/Tutorial/References/XcodeRequirementReference.swift
   Model/Rendering/Tutorial/Sections/IntroRenderSection.swift
   Model/Rendering/Tutorial/Sections/TutorialAssessmentsRenderSection.swift
   Model/Rendering/Tutorial/Sections/TutorialSectionsRenderSection.swift
-  "Model/Rendering/Tutorial Article/TutorialArticleSection.swift"
   "Model/Rendering/Tutorials Overview/Resources/RenderTile.swift"
   "Model/Rendering/Tutorials Overview/Sections/CallToActionSection.swift"
   "Model/Rendering/Tutorials Overview/Sections/ContentAndMediaGroupSection.swift"
@@ -299,7 +302,6 @@ add_library(SwiftDocC
   Model/Semantics/Parameter.swift
   Model/Semantics/Return.swift
   Model/Semantics/Throw.swift
-  Model/SourceLanguage.swift
   Model/TaskGroup.swift
   Semantics/Abstracted.swift
   Semantics/Article/Article.swift
@@ -358,11 +360,11 @@ add_library(SwiftDocC
   Semantics/Options/TopicsVisualStyle.swift
   Semantics/Redirect.swift
   Semantics/Redirected.swift
+  Semantics/ReferenceResolver.swift
   Semantics/Reference/Links.swift
   Semantics/Reference/Row.swift
   Semantics/Reference/Small.swift
   Semantics/Reference/TabNavigator.swift
-  Semantics/ReferenceResolver.swift
   Semantics/Semantic.swift
   Semantics/SemanticAnalyzer.swift
   Semantics/Snippets/Snippet.swift
@@ -381,6 +383,8 @@ add_library(SwiftDocC
   Semantics/Technology/Volume/Volume.swift
   Semantics/Timed.swift
   Semantics/Titled.swift
+  Semantics/TutorialArticle/Stack.swift
+  Semantics/TutorialArticle/TutorialArticle.swift
   Semantics/Tutorial/Assessments/Assessments.swift
   "Semantics/Tutorial/Assessments/Multiple Choice/Choice/Choice.swift"
   "Semantics/Tutorial/Assessments/Multiple Choice/Choice/Justification.swift"
@@ -391,17 +395,18 @@ add_library(SwiftDocC
   Semantics/Tutorial/Tasks/TutorialSection.swift
   Semantics/Tutorial/Tutorial.swift
   Semantics/Tutorial/XcodeRequirement.swift
-  Semantics/TutorialArticle/Stack.swift
-  Semantics/TutorialArticle/TutorialArticle.swift
   Semantics/Visitor/SemanticVisitor.swift
   Semantics/Walker/SemanticWalker.swift
   Semantics/Walker/Walkers/SemanticTreeDumper.swift
   Servers/DocumentationSchemeHandler.swift
   Servers/FileServer.swift
   SourceRepository/SourceRepository.swift
+  SwiftDocCMarkdownOutput/MarkdownOutputManifest.swift
+  SwiftDocCMarkdownOutput/MarkdownOutputNode.swift
   Utility/Checksum.swift
   Utility/Collection+ConcurrentPerform.swift
   Utility/CollectionChanges.swift
+  Utility/CommonTypeExports.swift
   Utility/DataStructures/BidirectionalMap.swift
   Utility/DataStructures/GroupedSequence.swift
   Utility/DispatchGroup+Async.swift
@@ -440,14 +445,14 @@ add_library(SwiftDocC
   Utility/Graphs/DirectedGraph+Paths.swift
   Utility/Graphs/DirectedGraph+Traversal.swift
   Utility/Graphs/DirectedGraph.swift
-  Utility/Language/EnglishLanguage.swift
-  Utility/Language/NativeLanguage.swift
-  Utility/ListItemUpdatable.swift
   Utility/LMDB/LMDB+Database.swift
   Utility/LMDB/LMDB+Environment.swift
   Utility/LMDB/LMDB+Error.swift
   Utility/LMDB/LMDB+Transaction.swift
   Utility/LMDB/LMDB.swift
+  Utility/Language/EnglishLanguage.swift
+  Utility/Language/NativeLanguage.swift
+  Utility/ListItemUpdatable.swift
   Utility/LogHandle.swift
   Utility/MarkupExtensions/AnyLink.swift
   Utility/MarkupExtensions/BlockDirectiveExtensions.swift
@@ -463,6 +468,10 @@ add_library(SwiftDocC
   Utility/Synchronization.swift
   Utility/ValidatedURL.swift
   Utility/Version.swift)
+target_link_libraries(SwiftDocC PRIVATE
+  DocCCommon)
+target_link_libraries(SwiftDocC PRIVATE
+  DocCHTML)
 target_link_libraries(SwiftDocC PUBLIC
   SwiftMarkdown::Markdown
   DocC::SymbolKit

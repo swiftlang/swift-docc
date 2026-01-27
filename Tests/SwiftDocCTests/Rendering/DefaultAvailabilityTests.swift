@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class DefaultAvailabilityTests: XCTestCase {
 
@@ -594,7 +594,7 @@ class DefaultAvailabilityTests: XCTestCase {
                    "Foo"
                ],
                "names": {
-                   "title": "Foo",
+                   "title": "Foo"
                },
                "accessLevel": "public",
                "availability" : [
@@ -620,7 +620,7 @@ class DefaultAvailabilityTests: XCTestCase {
                    "Foo"
                ],
                "names": {
-                   "title": "Bar",
+                   "title": "Bar"
                },
                "accessLevel": "public"
            }

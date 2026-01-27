@@ -2,7 +2,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,9 +14,9 @@ import class Foundation.ProcessInfo
 
 let swiftSettings: [SwiftSetting] = [
     .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
-    
+
     .swiftLanguageMode(.v5),
-    
+
     .enableUpcomingFeature("ConciseMagicFile"), // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
     .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
     .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
@@ -43,6 +43,8 @@ let package = Package(
         .target(
             name: "SwiftDocC",
             dependencies: [
+                .target(name: "DocCCommon"),
+                .target(name: "DocCHTML"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
@@ -55,7 +57,8 @@ let package = Package(
             name: "SwiftDocCTests",
             dependencies: [
                 .target(name: "SwiftDocC"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCCommon"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -67,9 +70,10 @@ let package = Package(
         ),
         // Command-line tool library
         .target(
-            name: "SwiftDocCUtilities",
+            name: "DocCCommandLine",
             dependencies: [
                 .target(name: "SwiftDocC"),
+                .target(name: "DocCCommon"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
@@ -77,11 +81,12 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "SwiftDocCUtilitiesTests",
+            name: "DocCCommandLineTests",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
                 .target(name: "SwiftDocC"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCCommon"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -89,12 +94,13 @@ let package = Package(
             ],
             swiftSettings: swiftSettings
         ),
-        
+
         // Test utility library
         .target(
-            name: "SwiftDocCTestUtilities",
+            name: "DocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
+                .target(name: "DocCCommon"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             swiftSettings: swiftSettings
@@ -104,17 +110,59 @@ let package = Package(
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: swiftSettings
         ),
 
-        // Test app for SwiftDocCUtilities
+        // A few common types and core functionality that's useable by all other targets.
+        .target(
+            name: "DocCCommon",
+            dependencies: [
+                // This target shouldn't have any local dependencies so that all other targets can depend on it.
+                // Dependencies on SymbolKit and Markdown are find to add if they're needed for any functionality.
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
+        .testTarget(
+            name: "DocCCommonTests",
+            dependencies: [
+                .target(name: "DocCCommon"),
+                .target(name: "DocCTestUtilities"),
+            ],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
+        .target(
+            name: "DocCHTML",
+            dependencies: [
+                .target(name: "DocCCommon"),
+                .product(name: "Markdown", package: "swift-markdown"),
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .testTarget(
+            name: "DocCHTMLTests",
+            dependencies: [
+                .target(name: "DocCHTML"),
+                .target(name: "SwiftDocC"),
+                .product(name: "Markdown", package: "swift-markdown"),
+                .target(name: "DocCTestUtilities"),
+            ],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
+        // Test app for DocCCommandLine
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             path: "Tests/signal-test-app",
             swiftSettings: swiftSettings
@@ -137,7 +185,7 @@ let package = Package(
 if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
     // Building standalone, so fetch all dependencies remotely.
     package.dependencies += [
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.53.0"),
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.92.2"),
         .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
         .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),

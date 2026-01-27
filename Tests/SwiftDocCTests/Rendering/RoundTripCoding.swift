@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -59,4 +59,25 @@ func assertJSONRepresentation<Value: Decodable & Equatable>(
     XCTAssertNoThrow(decoded = try decoder.decode(Value.self, from: XCTUnwrap(json.data(using: encoding))))
 
     XCTAssertEqual(decoded, value, file: (file), line: line)
+}
+
+/// Asserts that the given value and its JSON representation are equal, by encoding the given value into JSON.
+/// - Parameters:
+///   - value: The value to test.
+///   - json: The expected JSON, encoded without whitespace and with sorted keys.
+/// - Throws: An error if encoding the given value failed.
+func assertJSONEncoding<Value: Encodable & Equatable>(
+    _ value: Value,
+    jsonSortedKeysNoWhitespace: String,
+    file: StaticString = #filePath,
+    line: UInt = #line
+) throws {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .sortedKeys
+    let encoded = try encoder.encode(value)
+    guard let json = String(data: encoded, encoding: .utf8) else {
+        XCTFail("Invalid encoded data", file: file, line: line)
+        return
+    }
+    XCTAssertEqual(json, jsonSortedKeysNoWhitespace, file: file, line: line)
 }

@@ -200,9 +200,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             func expandPlatformsWithFallbacks(_ platforms: [PlatformName?]) -> [PlatformName?] {
                 guard !platforms.isEmpty else { return platforms }
 
-                // Add fallback platforms if their primary platform is present but the fallback is missing
-                let fallbacks = DefaultAvailability.fallbackPlatforms.compactMap { fallback, primary in
-                    platforms.contains(primary) && !platforms.contains(fallback) ? fallback : nil
+                // Add fallback platforms if the platform is missing but the fallback is present
+                let fallbacks = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback in
+                    platforms.contains(fallback) && !platforms.contains(platform) ? platform : nil
                 }
                 return platforms + fallbacks
             }
@@ -219,7 +219,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             }
 
             var declarations: [DeclarationRenderSection] = []
-            let languages = [
+            let renderLanguageIDs = [
                 trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
             ]
             for pair in declaration {
@@ -263,7 +263,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 declarations.append(
                     DeclarationRenderSection(
-                        languages: languages,
+                        languages: renderLanguageIDs,
                         platforms: platformNames,
                         tokens: renderedTokens,
                         otherDeclarations: otherDeclarations
@@ -281,7 +281,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                         declarations.append(
                             DeclarationRenderSection(
-                                languages: languages,
+                                languages: renderLanguageIDs,
                                 platforms: platformNames,
                                 tokens: renderedTokens
                             )

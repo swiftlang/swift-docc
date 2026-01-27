@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import DocCCommon
 
 /// Loads symbol graph files from a documentation bundle.
 ///
@@ -69,14 +70,7 @@ struct SymbolGraphLoader {
                 // Load and decode a single symbol graph file
                 let data = try dataProvider.contents(of: symbolGraphURL)
 
-                var symbolGraph: SymbolGraph
-                
-                switch decodingStrategy {
-                case .concurrentlyAllFiles:
-                    symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: data)
-                case .concurrentlyEachFileInBatches:
-                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
-                }
+                var symbolGraph: SymbolGraph = try FastSymbolGraphJSONDecoder.decode(SymbolGraph.self, from: data)
                 
                 Self.applyWorkaroundFor139305015(to: &symbolGraph)
                 
@@ -224,35 +218,37 @@ struct SymbolGraphLoader {
             for (selector, _) in symbol.mixins {
                 if var symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
                     guard !symbolAvailability.availability.isEmpty else { continue }
-                    // For platforms with a fallback option (e.g., Catalyst and iOS), apply the explicit availability annotation of the fallback platform when it is not explicitly available on the primary platform.
-                    DefaultAvailability.fallbackPlatforms.forEach { (fallbackPlatform, inheritedPlatform) in
+                    // For platforms with a fallback option (e.g. Catalyst and iPadOS),
+                    // if the availability is not explicitly available for the platform,
+                    // apply the explicit availability annotation of the fallback platform.
+                    DefaultAvailability.fallbackPlatforms.forEach { (platform, fallback) in
                         guard
-                            var inheritedAvailability = symbolAvailability.availability.first(where: {
-                                $0.matches(inheritedPlatform)
+                            var fallbackAvailability = symbolAvailability.availability.first(where: {
+                                $0.matches(fallback)
                             }),
-                            let fallbackAvailabilityIntroducedVersion = symbolAvailability.availability.first(where: {
-                                $0.matches(fallbackPlatform)
+                            let platformAvailabilityIntroducedVersion = symbolAvailability.availability.first(where: {
+                                $0.matches(platform)
                             })?.introducedVersion,
-                            let defaultAvailabilityIntroducedVersion = defaultAvailabilities.first(where: { $0.platformName ==  fallbackPlatform })?.introducedVersion
+                            let defaultAvailabilityIntroducedVersion = defaultAvailabilities.first(where: { $0.platformName ==  platform })?.introducedVersion
                         else { return }
                         // Ensure that the availability version is not overwritten if the symbol has an explicit availability annotation for that platform.
-                        if SymbolGraph.SemanticVersion(string: defaultAvailabilityIntroducedVersion) == fallbackAvailabilityIntroducedVersion {
-                            inheritedAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
+                        if SymbolGraph.SemanticVersion(string: defaultAvailabilityIntroducedVersion) == platformAvailabilityIntroducedVersion {
+                            fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: platform.rawValue)
                             symbolAvailability.availability.removeAll(where: {
-                                $0.matches(fallbackPlatform)
+                                $0.matches(platform)
                             })
-                            symbolAvailability.availability.append(inheritedAvailability)
+                            symbolAvailability.availability.append(fallbackAvailability)
                         }
                     }
                     // Add fallback availability.
-                    for (fallbackPlatform, inheritedPlatform) in missingFallbackPlatforms {
-                        if !symbolAvailability.contains(fallbackPlatform) {
+                    for (platform, fallback) in missingFallbackPlatforms {
+                        if !symbolAvailability.contains(platform) {
                             for var fallbackAvailability in symbolAvailability.availability {
                                 // Add the platform fallback to the availability mixin the platform is inheriting from.
                                 // The added availability copies the entire availability information,
                                 // including deprecated and obsolete versions.
-                                if fallbackAvailability.matches(inheritedPlatform) {
-                                    fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
+                                if fallbackAvailability.matches(fallback) {
+                                    fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: platform.rawValue)
                                     symbolAvailability.availability.append(fallbackAvailability)
                                 }
                             }
