@@ -28,6 +28,7 @@ private func makeTempFolder(content: [any File]) throws -> URL {
 
 struct LiveReloadTests {
 
+    #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
     @Test
     func scriptInjected() throws {
         let tempFolderURL = try makeTempFolder(content: [
@@ -64,6 +65,22 @@ struct LiveReloadTests {
         #expect(response.body == "<html>No body tag here</html>")
         #expect(response.body?.contains("EventSource") == false)
     }
+    #else
+    @Test
+    func scriptNotInjectedOnUnsupportedPlatform() throws {
+        let tempFolderURL = try makeTempFolder(content: [
+            TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
+        ])
+        defer { try? FileManager.default.removeItem(at: tempFolderURL) }
+
+        let request = makeRequestHead(uri: "/")
+        let factory = DefaultRequestHandler(rootURL: tempFolderURL)
+        let response = try responseWithPipeline(request: request, handler: factory)
+
+        #expect(response.body == "<html><body>Hello!</body></html>")
+        #expect(response.body?.contains("EventSource") == false)
+    }
+    #endif
 
 }
 #endif

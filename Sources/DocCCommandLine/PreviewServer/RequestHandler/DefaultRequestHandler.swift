@@ -24,6 +24,7 @@ struct DefaultRequestHandler: RequestHandlerFactory {
     /// The root of the documentation to serve.
     let rootURL: URL
 
+    #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
     /// Script injected before `</body>` to enable live reload via SSE.
     private static let liveReloadScript = Data("""
         <script>
@@ -36,6 +37,7 @@ struct DefaultRequestHandler: RequestHandlerFactory {
         """.utf8)
 
     private static let bodyEndTag = Data("</body>".utf8)
+    #endif
 
     func create<ChannelHandler: ChannelInboundHandler>(channelHandler: ChannelHandler) -> RequestHandler
         where ChannelHandler.OutboundOut == HTTPServerResponsePart {
@@ -43,9 +45,11 @@ struct DefaultRequestHandler: RequestHandlerFactory {
         return { context, head in
             var response = try Data(contentsOf: self.rootURL.appendingPathComponent("index.html"))
 
+            #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
             if let range = response.range(of: Self.bodyEndTag) {
                 response.replaceSubrange(range, with: Self.liveReloadScript)
             }
+            #endif
             
             var content = context.channel.allocator.buffer(capacity: response.count)
             content.writeBytes(response)
