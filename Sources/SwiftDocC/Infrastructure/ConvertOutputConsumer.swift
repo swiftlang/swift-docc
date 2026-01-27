@@ -30,7 +30,7 @@ public protocol ConvertOutputConsumer {
     /// Consumes the linkable element summaries produced during a conversion.
     func finishedConsumingLinkElementSummaries() throws
     
-    @available(*, deprecated, renamed: "consume(linkableElementSummary:)", message: "Use 'consume(linkableElementSummary:)' instead. This deprecated API will be removed after 6.3 is released")
+    @available(*, deprecated, renamed: "consume(linkableElementSummary:)", message: "Use 'consume(linkableElementSummary:)' instead. This deprecated API will be removed after 6.4 is released")
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws
     
     /// Consumes the indexing records produced during a conversion.
