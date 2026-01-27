@@ -30,7 +30,6 @@ package enum ConvertActionConverter {
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     ///   - emitDigest: Whether the conversion should pass additional metadata output––such as linkable entities information, indexing information, or asset references by asset type––to the consumer.
     ///   - documentationCoverageOptions: The level of experimental documentation coverage information that the conversion should pass to the consumer.
-    /// - Returns: A list of problems that occurred during the conversion (excluding the problems that the context already encountered).
     package static func convert(
         context: DocumentationContext,
         outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer,
@@ -38,7 +37,7 @@ package enum ConvertActionConverter {
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
-    ) throws -> [Problem] {
+    ) async throws {
         let signposter = Self.signposter
         
         defer {
@@ -56,7 +55,7 @@ package enum ConvertActionConverter {
             if emitDigest {
                 try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
-            return []
+            return
         }
         
         // Precompute the render context
@@ -74,126 +73,93 @@ package enum ConvertActionConverter {
             sourceRepository: sourceRepository
         )
         
-        // Arrays to gather additional metadata if `emitDigest` is `true`.
-        var indexingRecords = [IndexingRecord]()
-        var linkSummaries = [LinkDestinationSummary]()
-        var assets = [RenderReferenceType : [any RenderReference]]()
-        var coverageInfo = [CoverageDataEntry]()
-        let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
-        var markdownManifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [])
-        
-        // An inner function to gather problems for errors encountered during the conversion.
-        //
-        // These problems only represent unexpected thrown errors and aren't particularly user-facing.
-        // For now we emit them as diagnostics because `DocumentationConverter.convert(outputConsumer:)` (which this replaced) used to do that.
-        //
-        // FIXME: In the future we could simplify this control flow by not catching these errors and turning them into diagnostics.
-        // Since both error-level diagnostics and thrown errors fail the documentation build,
-        // the only practical different this would have is that we stop on the first unexpected error instead of processing all pages and gathering all unexpected errors.
-        func recordProblem(from error: any Swift.Error, in problems: inout [Problem], withIdentifier identifier: String) {
-            let problem = Problem(diagnostic: Diagnostic(
-                severity: .error,
-                identifier: "org.swift.docc.documentation-converter.\(identifier)",
-                summary: error.localizedDescription
-            ), possibleSolutions: [])
-            
-            context.diagnosticEngine.emit(problem)
-            problems.append(problem)
-        }
-        
-        let resultsSyncQueue = DispatchQueue(label: "Convert Serial Queue", qos: .unspecified, attributes: [])
-        let resultsGroup = DispatchGroup()
-
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
-        var conversionProblems: [Problem] = context.knownPages.concurrentPerform { [htmlContentConsumer] identifier, results in
-            // If cancelled skip all concurrent conversion work in this block.
-            guard !Task.isCancelled else { return }
-            
-            // Wrap JSON encoding in an autorelease pool to avoid retaining the autoreleased ObjC objects returned by `JSONSerialization`
-            autoreleasepool {
-                do {
-                    let entity = try context.entity(with: identifier)
-                    
-                    if let htmlContentConsumer {
-                        var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness)
-                        
-                        if let symbol = entity.semantic as? Symbol {
-                            let renderedPageInfo = renderer.renderSymbol(symbol)
-                            try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
-                        } else if let article = entity.semantic as? Article {
-                            let renderedPageInfo = renderer.renderArticle(article)
-                            try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
-                        }
-                    }
-                    
-                    guard let renderNode = converter.renderNode(for: entity) else {
-                        // No render node was produced for this entity, so just skip it.
-                        return
-                    }
-                    
-                    if FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
-                       let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
-                       let markdownNode = converter.markdownOutput(for: entity)
-                    {
-                        try markdownConsumer.consume(markdownNode: markdownNode.writable)
-                        if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
-                           let manifest = markdownNode.manifest
-                        {
-                            resultsGroup.async(queue: resultsSyncQueue) {
-                                markdownManifest.documents.formUnion(manifest.documents)
-                                markdownManifest.relationships.formUnion(manifest.relationships)
-                            }
-                        }
-                    }
-                    
-                    try outputConsumer.consume(renderNode: renderNode)
+        // Render all pages and gather their supplementary "digest" information if enabled.
+        let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
+        let supplementaryRenderInfo = try await context.knownPages._concurrentPerform(
+            taskName: "Render",
+            batchWork: { slice in
+                var supplementaryRenderInfo = SupplementaryRenderInformation()
+                
+                for identifier in slice {
+                    try autoreleasepool {
+                        let entity = try context.entity(with: identifier)
 
-                    switch documentationCoverageOptions.level {
-                    case .detailed, .brief:
-                        let coverageEntry = try CoverageDataEntry(
-                            documentationNode: entity,
-                            renderNode: renderNode,
-                            context: context
-                        )
-                        if coverageFilterClosure(coverageEntry) {
-                            resultsGroup.async(queue: resultsSyncQueue) {
-                                coverageInfo.append(coverageEntry)
+                        if let htmlContentConsumer {
+                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness)
+                            
+                            if let symbol = entity.semantic as? Symbol {
+                                let renderedPageInfo = renderer.renderSymbol(symbol)
+                                try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
+                            } else if let article = entity.semantic as? Article {
+                                let renderedPageInfo = renderer.renderArticle(article)
+                                try htmlContentConsumer.consume(pageInfo: renderedPageInfo, forPage: identifier)
                             }
                         }
-                    case .none:
-                        break
-                    }
-                    
-                    if emitDigest {
-                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-                        let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
-                        
-                        resultsGroup.async(queue: resultsSyncQueue) {
-                            assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
-                            linkSummaries.append(contentsOf: nodeLinkSummaries)
-                            indexingRecords.append(contentsOf: nodeIndexingRecords)
+
+                        guard let renderNode = converter.renderNode(for: entity) else {
+                            // No render node was produced for this entity, so just skip it.
+                            return
                         }
-                    } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
                         
-                        resultsGroup.async(queue: resultsSyncQueue) {
-                            linkSummaries.append(contentsOf: nodeLinkSummaries)
+                        if FeatureFlags.current.isExperimentalMarkdownOutputEnabled,
+                           let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer),
+                           let markdownNode = converter.markdownOutput(for: entity)
+                        {
+                            try markdownConsumer.consume(markdownNode: markdownNode.writable)
+                            if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
+                               let manifest = markdownNode.manifest
+                            {
+                                supplementaryRenderInfo.markdownManifestDocuments.formUnion(manifest.documents)
+                                supplementaryRenderInfo.markdownManifestRelationships.formUnion(manifest.relationships)
+                            }
+                        }
+
+                        try outputConsumer.consume(renderNode: renderNode)
+
+                        switch documentationCoverageOptions.level {
+                        case .detailed, .brief:
+                            let coverageEntry = try CoverageDataEntry(documentationNode: entity, renderNode: renderNode, context: context)
+                            if coverageFilterClosure(coverageEntry) {
+                                supplementaryRenderInfo.coverageInfo.append(coverageEntry)
+                            }
+                        case .none:
+                            break
+                        }
+                        
+                        if emitDigest {
+                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+                            let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
+                            
+                            supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
+                            supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
+                            supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
+                        } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+                            
+                            supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                         }
                     }
-                } catch {
-                    recordProblem(from: error, in: &results, withIdentifier: "render-node")
                 }
+                
+                return supplementaryRenderInfo
+            },
+            initialResult: SupplementaryRenderInformation(),
+            combineResults: { accumulated, partialResult in
+                accumulated.assets.merge(partialResult.assets, uniquingKeysWith: +)
+                accumulated.linkSummaries.append(contentsOf: partialResult.linkSummaries)
+                accumulated.indexingRecords.append(contentsOf: partialResult.indexingRecords)
+                accumulated.coverageInfo.append(contentsOf: partialResult.coverageInfo)
+                accumulated.markdownManifestDocuments.formUnion(partialResult.markdownManifestDocuments)
+                accumulated.markdownManifestRelationships.formUnion(partialResult.markdownManifestRelationships)
             }
-        }
-        
-        // Wait for any concurrent updates to complete.
-        resultsGroup.wait()
+        )
         
         signposter.endInterval("Render", renderSignpostHandle)
         
-        guard !Task.isCancelled else { return [] }
-
+        guard !Task.isCancelled else { return }
+        
         // Consumes all external links and adds them into the sidebar.
         // This consumes all external links referenced across all content, and indexes them so they're available for reference in the navigator.
         // This is not ideal as it means that links outside of the Topics section can impact the content of the navigator.
@@ -216,55 +182,45 @@ package enum ConvertActionConverter {
 
         // Write various metadata
         if emitDigest {
-            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                do {
-                    try outputConsumer.consume(linkableElementSummaries: linkSummaries)
-                    try outputConsumer.consume(indexingRecords: indexingRecords)
-                    try outputConsumer.consume(assets: assets)
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
-                }
+            try signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
+                try outputConsumer.consume(linkableElementSummaries: supplementaryRenderInfo.linkSummaries)
+                try outputConsumer.consume(indexingRecords: supplementaryRenderInfo.indexingRecords)
+                try outputConsumer.consume(assets: supplementaryRenderInfo.assets)
             }
         }
         
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-            signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
-                do {
-                    let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
-                    try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
-                    
-                    if !emitDigest {
-                        try outputConsumer.consume(linkableElementSummaries: linkSummaries)
-                    }
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
+            try signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
+                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
+                try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+                
+                if !emitDigest {
+                    try outputConsumer.consume(linkableElementSummaries: supplementaryRenderInfo.linkSummaries)
                 }
             }
         }
         
         if emitDigest {
-            signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                do {
-                    try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + conversionProblems)
-                } catch {
-                    recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
-                }
+            try signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
+                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
         }
         
         if FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled,
            let markdownConsumer = outputConsumer as? (any ConvertOutputMarkdownConsumer)
         {
-            try markdownConsumer.consume(markdownManifest: markdownManifest)
+            try markdownConsumer.consume(
+                markdownManifest: MarkdownOutputManifest(
+                    title: context.inputs.displayName,
+                    documents: supplementaryRenderInfo.markdownManifestDocuments,
+                    relationships: supplementaryRenderInfo.markdownManifestRelationships
+                )
+            )
         }
 
         switch documentationCoverageOptions.level {
         case .detailed, .brief:
-            do {
-                try outputConsumer.consume(documentationCoverageInfo: coverageInfo)
-            } catch {
-                recordProblem(from: error, in: &conversionProblems, withIdentifier: "coverage")
-            }
+            try outputConsumer.consume(documentationCoverageInfo: supplementaryRenderInfo.coverageInfo)
         case .none:
             break
         }
@@ -279,9 +235,16 @@ package enum ConvertActionConverter {
         benchmark(add: Benchmark.ExternalTopicsHash(context: context))
         // Log the peak memory.
         benchmark(add: Benchmark.PeakMemory())
-        
-        return conversionProblems
     }
+}
+
+private struct SupplementaryRenderInformation {
+    var indexingRecords = [IndexingRecord]()
+    var linkSummaries = [LinkDestinationSummary]()
+    var assets = [RenderReferenceType : [any RenderReference]]()
+    var coverageInfo = [CoverageDataEntry]()
+    var markdownManifestDocuments = Set<MarkdownOutputManifest.Document>()
+    var markdownManifestRelationships = Set<MarkdownOutputManifest.Relationship>()
 }
 
 private extension HTMLContentConsumer {
