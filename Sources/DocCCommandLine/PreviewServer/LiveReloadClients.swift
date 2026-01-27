@@ -24,7 +24,7 @@ final class LiveReloadClients: @unchecked Sendable {
     private var clients: [ObjectIdentifier: any Channel] = [:]
     private let lock = NSLock()
 
-    private init() {}
+    init() {}
 
     /// Registers a channel to receive reload notifications.
     ///
