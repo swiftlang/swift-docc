@@ -560,7 +560,7 @@ class ExternalRenderNodeTests: XCTestCase {
         indexBuilder.setup()
         let outputConsumer = TestExternalRenderNodeOutputConsumer(indexBuilder: indexBuilder)
 
-        let problems = try ConvertActionConverter.convert(
+        try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
             htmlContentConsumer: nil,
@@ -568,7 +568,6 @@ class ExternalRenderNodeTests: XCTestCase {
             emitDigest: false,
             documentationCoverageOptions: .noCoverage
         )
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         indexBuilder.finalize(emitJSONRepresentation: true, emitLMDBRepresentation: false)
 
         XCTAssertEqual(
