@@ -594,7 +594,7 @@ class DefaultAvailabilityTests: XCTestCase {
                    "Foo"
                ],
                "names": {
-                   "title": "Foo",
+                   "title": "Foo"
                },
                "accessLevel": "public",
                "availability" : [
@@ -620,7 +620,7 @@ class DefaultAvailabilityTests: XCTestCase {
                    "Foo"
                ],
                "names": {
-                   "title": "Bar",
+                   "title": "Bar"
                },
                "accessLevel": "public"
            }

@@ -999,6 +999,6 @@
             "kind": "memberOf",
             "source": "c:@E@Foo@second",
             "target": "c:@E@Foo"
-        },
+        }
     ]
 }

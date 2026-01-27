@@ -121,7 +121,8 @@ let package = Package(
             name: "DocCCommon",
             dependencies: [
                 // This target shouldn't have any local dependencies so that all other targets can depend on it.
-                // We can add dependencies on SymbolKit and Markdown here but they're not needed yet.
+                // Dependencies on SymbolKit and Markdown are find to add if they're needed for any functionality.
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             exclude: ["CMakeLists.txt"],
             swiftSettings: [.swiftLanguageMode(.v6)]
