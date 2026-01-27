@@ -87,7 +87,7 @@ package enum ConvertActionConverter {
                         let entity = try context.entity(with: identifier)
 
                         if let htmlContentConsumer {
-                           var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness)
+                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: .conciseness)
                             
                             if let symbol = entity.semantic as? Symbol {
                                 let renderedPageInfo = renderer.renderSymbol(symbol)
