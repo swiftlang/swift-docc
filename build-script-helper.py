@@ -176,6 +176,11 @@ def get_swiftpm_options(action, args):
     ]
     if action == 'install':
       swiftpm_args += ['--disable-local-rpath']
+  elif build_os.startswith('openbsd'):
+    swiftpm_args += [
+      '-Xlinker', '-rpath', '-Xlinker', '$ORIGIN/../lib/swift/openbsd',
+      '-Xlinker', '-z', '-Xlinker', 'origin',
+    ]
   else:
     swiftpm_args += [
       # Library rpath for swift, dispatch, Foundation, etc. when installing

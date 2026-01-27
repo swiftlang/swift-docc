@@ -20,6 +20,7 @@ extension Constraint.Kind {
         case .conformance: return "conforms to"
         case .sameType: return "is"
         case .superclass: return "inherits"
+        case .sameShape: return "is the same shape as"
         }
     }
 }

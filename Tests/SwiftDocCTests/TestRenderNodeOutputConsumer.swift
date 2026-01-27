@@ -91,17 +91,16 @@ extension XCTestCase {
         sourceRepository: SourceRepository? = nil,
         configureBundle: ((URL) throws -> Void)? = nil
     ) async throws -> TestRenderNodeOutputConsumer {
-        let (_, bundle, context) = try await testBundleAndContext(
+        let (_, _, context) = try await testBundleAndContext(
             copying: bundleName,
             configureBundle: configureBundle
         )
-        
         let outputConsumer = TestRenderNodeOutputConsumer()
         
-        _ = try ConvertActionConverter.convert(
-            bundle: bundle,
+        try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: sourceRepository,
             emitDigest: false,
             documentationCoverageOptions: .noCoverage

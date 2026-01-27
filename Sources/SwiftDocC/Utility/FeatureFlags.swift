@@ -13,7 +13,10 @@ public struct FeatureFlags: Codable {
     /// The current feature flags that Swift-DocC uses to conditionally enable
     /// (usually experimental) behavior in Swift-DocC.
     public static var current = FeatureFlags()
-    
+
+    /// Whether or not experimental annotation of code blocks is enabled.
+    public var isExperimentalCodeBlockAnnotationsEnabled = false
+
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
 
@@ -28,6 +31,12 @@ public struct FeatureFlags: Codable {
     
     /// Whether or not experimental support for combining overloaded symbol pages is enabled.
     public var isExperimentalOverloadedSymbolPresentationEnabled = false
+    
+    /// Whether or not experimental markdown generation is enabled
+    public var isExperimentalMarkdownOutputEnabled = false
+    
+    /// Whether or not experimental markdown manifest generation is enabled
+    public var isExperimentalMarkdownOutputManifestEnabled = false
     
     /// Whether support for automatically rendering links on symbol documentation to articles that mention that symbol is enabled.
     public var isMentionedInEnabled = true

@@ -11,7 +11,7 @@
 import Foundation
 import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class ExternalRenderNodeTests: XCTestCase {
     private func generateExternalResolver() -> TestMultiResultExternalReferenceResolver {
@@ -244,16 +244,16 @@ class ExternalRenderNodeTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
             try builder.index(renderNode: externalRenderNode)
         }
         for identifier in context.knownPages {
@@ -275,10 +275,10 @@ class ExternalRenderNodeTests: XCTestCase {
         
         // Verify that the curated external links are part of the index.
         let swiftExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .swift))
-        XCTAssertEqual(swiftExternalNodes.count, 2)
+        XCTAssertEqual(swiftExternalNodes.count, 3)
 
         let objcExternalNodes = try XCTUnwrap(externalTopLevelNodes(for: .objectiveC))
-        XCTAssertEqual(objcExternalNodes.count, 2)
+        XCTAssertEqual(objcExternalNodes.count, 3)
 
         let swiftArticleExternalNode = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/swiftarticle" }))
         let swiftSymbolExternalNode = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/swiftsymbol" }))
@@ -300,6 +300,19 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(objcSymbolExternalNode.title, "- (void) ObjCSymbol")
         XCTAssertEqual(objcSymbolExternalNode.isBeta, false)
         XCTAssertEqual(objcSymbolExternalNode.type, "func")
+
+        // External articles curated in the Topics section appear in all language variants. This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
+        // FIXME: This should ideally be solved by making the article language-agnostic rather than accomodating the "Swift" language and special-casing for non-symbols.
+        let swiftArticleInObjcTree = try XCTUnwrap(objcExternalNodes.first(where: { $0.path == "/path/to/external/swiftarticle" }))
+        let objcArticleInSwiftTree = try XCTUnwrap(swiftExternalNodes.first(where: { $0.path == "/path/to/external/objcarticle" }))
+
+        XCTAssertEqual(swiftArticleInObjcTree.title, "SwiftArticle")
+        XCTAssertEqual(swiftArticleInObjcTree.isBeta, false)
+        XCTAssertEqual(swiftArticleInObjcTree.type, "article")
+
+        XCTAssertEqual(objcArticleInSwiftTree.title, "ObjCArticle")
+        XCTAssertEqual(objcArticleInSwiftTree.isBeta, true)
+        XCTAssertEqual(objcArticleInSwiftTree.type, "article")
     }
     
     func testNavigatorWithExternalNodesWithNavigatorTitle() async throws {
@@ -334,16 +347,16 @@ class ExternalRenderNodeTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
             try builder.index(renderNode: externalRenderNode)
         }
         for identifier in context.knownPages {
@@ -412,16 +425,16 @@ class ExternalRenderNodeTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         let externalResolver = generateExternalResolver()
         configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
-        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        let (_, context) = try await loadBundle(catalog: catalog, configuration: configuration)
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
-            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: bundle.id)
+            let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
             try builder.index(renderNode: externalRenderNode)
         }
         for identifier in context.knownPages {
@@ -440,11 +453,11 @@ class ExternalRenderNodeTests: XCTestCase {
         let swiftExternalNodes = (renderIndex.interfaceLanguages[SourceLanguage.swift.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
         let objcExternalNodes  = (renderIndex.interfaceLanguages[SourceLanguage.objectiveC.id]?.first?.children?.filter(\.isExternal) ?? []).sorted(by: \.title)
         XCTAssertEqual(swiftExternalNodes.count, 1)
-        XCTAssertEqual(objcExternalNodes.count, 1)
+        XCTAssertEqual(objcExternalNodes.count, 2)
         XCTAssertEqual(swiftExternalNodes.map(\.title), ["SwiftArticle"])
-        XCTAssertEqual(objcExternalNodes.map(\.title), ["- (void) ObjCSymbol"])
+        XCTAssertEqual(objcExternalNodes.map(\.title), ["- (void) ObjCSymbol", "SwiftArticle"])
         XCTAssertEqual(swiftExternalNodes.map(\.type), ["article"])
-        XCTAssertEqual(objcExternalNodes.map(\.type), ["func"])
+        XCTAssertEqual(objcExternalNodes.map(\.type), ["func", "article"])
     }
 
     func testExternalRenderNodeVariantRepresentationWhenIsBeta() throws {
@@ -494,4 +507,150 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssertEqual(objcNavigatorExternalRenderNode.metadata.title, objcTitle)
         XCTAssertTrue(objcNavigatorExternalRenderNode.metadata.isBeta)
     }
+
+    func testExternalLinksInContentDontAffectNavigatorIndex() async throws {
+        let externalResolver = ExternalReferenceResolverTests.TestExternalReferenceResolver()
+        externalResolver.expectedReferencePath = "/documentation/testbundle/sampleclass"
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            This is an internal article with an external link <doc://\(externalResolver.bundleID)/documentation/TestBundle/SampleClass> which clashes with the curated local link.
+            
+            External links in content should not affect the navigator.
+                        
+            ## Topics
+            
+            - ``SampleClass``
+            """),
+            TextFile(name: "SampleClass.md", utf8Content: """
+            # ``SampleClass``
+            
+            This extends the documentation for this symbol.
+                        
+            ## Topics
+            
+            - <doc:ChildArticleA>
+            - <doc:ChildArticleB>
+            """),
+            TextFile(name: "ChildArticleA.md", utf8Content: """
+            # ChildArticleA
+            
+            A child article.
+            """),
+            TextFile(name: "ChildArticleB.md", utf8Content: """
+            # ChildArticleB
+            
+            A child article.
+            """),
+            // Symbol graph with a class that matches an external link path
+            JSONFile(name: "TestBundle.symbols.json", content: makeSymbolGraph(moduleName: "TestBundle", symbols: [
+                makeSymbol(id: "some-symbol-id", language: .swift, kind: .class, pathComponents: ["SampleClass"])
+            ])),
+        ])
+
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources[externalResolver.bundleID] = externalResolver
+        let (bundle, context) = try await loadBundle(catalog: catalog, configuration: configuration)
+        XCTAssert(context.problems.isEmpty, "Unexpectedly found problems: \(context.problems.map(\.diagnostic.summary))")
+
+        let renderIndexFolder = try createTemporaryDirectory()
+        let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        indexBuilder.setup()
+        let outputConsumer = TestExternalRenderNodeOutputConsumer(indexBuilder: indexBuilder)
+
+        try await ConvertActionConverter.convert(
+            context: context,
+            outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
+            sourceRepository: nil,
+            emitDigest: false,
+            documentationCoverageOptions: .noCoverage
+        )
+        indexBuilder.finalize(emitJSONRepresentation: true, emitLMDBRepresentation: false)
+
+        XCTAssertEqual(
+            try RenderIndex.fromURL(renderIndexFolder.appendingPathComponent("index.json", isDirectory: false)),
+            try RenderIndex.fromString(
+                """
+                {
+                  "includedArchiveIdentifiers": [
+                    "unit-test"
+                  ],
+                  "interfaceLanguages": {
+                    "swift": [
+                      {
+                        "children": [
+                          {
+                            "title": "Articles",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "children": [
+                              {
+                                "children": [
+                                  {
+                                    "path": "/documentation/unit-test/childarticlea",
+                                    "title": "ChildArticleA",
+                                    "type": "article"
+                                  },
+                                  {
+                                    "path": "/documentation/unit-test/childarticleb",
+                                    "title": "ChildArticleB",
+                                    "type": "article"
+                                  }
+                                ],
+                                "path": "/documentation/testbundle/sampleclass",
+                                "title": "SampleClass",
+                                "type": "class"
+                              }
+                            ],
+                            "path": "/documentation/unit-test/article",
+                            "title": "Article",
+                            "type": "symbol"
+                          }
+                        ],
+                        "path": "/documentation/testbundle",
+                        "title": "TestBundle",
+                        "type": "module"
+                      }
+                    ]
+                  },
+                  "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 2
+                  }
+                }
+                """
+            )
+        )
+    }
+}
+
+private class TestExternalRenderNodeOutputConsumer: ConvertOutputConsumer, ExternalNodeConsumer {
+    let indexBuilder: Synchronized<NavigatorIndex.Builder>!
+
+    init(indexBuilder: NavigatorIndex.Builder) {
+        self.indexBuilder = Synchronized<NavigatorIndex.Builder>(indexBuilder)
+    }
+
+    func consume(externalRenderNode: ExternalRenderNode) throws {
+        try self.indexBuilder.sync { try $0.index(renderNode: externalRenderNode) }
+    }
+
+    func consume(renderNode: RenderNode) throws {
+        try self.indexBuilder.sync { try $0.index(renderNode: renderNode) }
+    }
+
+    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
+    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
+    func consume(indexingRecords: [IndexingRecord]) throws { }
+    func consume(assets: [RenderReferenceType: [any RenderReference]]) throws { }
+    func consume(benchmarks: Benchmark) throws { }
+    func consume(documentationCoverageInfo: [CoverageDataEntry]) throws { }
+    func consume(renderReferenceStore: RenderReferenceStore) throws { }
+    func consume(buildMetadata: BuildMetadata) throws { }
+    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
 }

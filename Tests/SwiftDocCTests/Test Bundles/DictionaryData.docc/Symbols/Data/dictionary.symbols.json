@@ -277,7 +277,7 @@
       },
       "pathComponents": [
         "Month"
-      ],
+      ]
     },
     {
       "accessLevel": "public",

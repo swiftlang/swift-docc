@@ -10,10 +10,10 @@
 
 import Foundation
 import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import XCTest
 
-// THIS SHOULD BE REMOVED, RIGHT?!
+// FIXME: Remove this after 6.3 is released
 class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
     func testNoDeprecationWarningWhenThereAreNoOtherWarnings() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
@@ -23,14 +23,13 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             An empty root page
             """)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-        
+        let (_, context) = try await loadBundle(catalog: catalog)
         let outputConsumer = TestOutputConsumer()
         
-        _ = try ConvertActionConverter.convert(
-            bundle: bundle,
+        try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: true,
             documentationCoverageOptions: .noCoverage
@@ -49,14 +48,13 @@ class DeprecatedDiagnosticsDigestWarningTests: XCTestCase {
             This link will result in a warning: ``NotFound``.
             """)
         ])
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-        
+        let (_, context) = try await loadBundle(catalog: catalog)
         let outputConsumer = TestOutputConsumer()
         
-        _ = try ConvertActionConverter.convert(
-            bundle: bundle,
+        try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: true,
             documentationCoverageOptions: .noCoverage

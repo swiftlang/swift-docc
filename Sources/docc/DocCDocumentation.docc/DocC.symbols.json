@@ -4167,13 +4167,43 @@
             "text" : "You can use this directive to set the image used when rendering a user-interface element representing the page."
           },
           {
-            "text" : "For example, use the page image directive to customize the icon used to represent this page in the navigation sidebar,"
+            "text" : ""
           },
           {
-            "text" : "or the card image used to represent this page when using the ``Links`` directive and the ``Links\/VisualStyle\/detailedGrid``"
+            "text" : "Use the \"icon\" purpose to customize the icon that DocC uses to represent this page in the navigation sidebar."
           },
           {
-            "text" : "visual style."
+            "text" : "For article pages, DocC also uses this icon to represent the article in topics sections and in ``Links`` directives that use the `list` visual style."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip: Page images with the \"icon\" purpose work best when they're square and when they have good visual clarity at small sizes (less than 20×20 points)."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use the \"card\" purpose to customize the image that DocC uses to represent this page inside ``Links`` directives that use the either the `detailedGrid` or the `compactGrid` visual style."
+          },
+          {
+            "text" : "For article pages, DocC also incorporates a partially faded out version of the card image in the background of the page itself."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip: Page images with the \"card\" purpose work best when they have a 16:9 aspect ratio. Currently, the largest size that DocC displays a card image is 640×360 points."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "If you specify an \"icon\" page image without specifying a \"card\" page image, DocC will use the icon as a fallback in places where the card image is preferred."
+          },
+          {
+            "text" : "To avoid upscaled pixelated icons in these places, either configure a \"card\" page image as well or use a scalable vector image asset for the \"icon\" page image."
           },
           {
             "text" : "- Parameters:"
@@ -5317,10 +5347,19 @@
             "text" : ""
           },
           {
+            "text" : "Use a `Snippet` directive to embed a code example from the project's \"Snippets\" directory on the page."
+          },
+          {
+            "text" : "The `path` argument is the relative path from the package's top-level \"Snippets\" directory to your snippet file without the `.swift` extension."
+          },
+          {
+            "text" : ""
+          },
+          {
             "text" : "```markdown"
           },
           {
-            "text" : "@Snippet(path: \"my-package\/Snippets\/example-snippet\", slice: \"setup\")"
+            "text" : "@Snippet(path: \"example-snippet\", slice: \"setup\")"
           },
           {
             "text" : "```"
@@ -5329,55 +5368,73 @@
             "text" : ""
           },
           {
-            "text" : "Place the `Snippet` directive to embed a code example from the project's snippet directory."
+            "text" : "If you prefer, you can specify the relative path from the package's _root_ directory (by including a \"Snippets\/\" prefix)."
           },
           {
-            "text" : "The path that references the snippet is identified with three parts:"
+            "text" : "You can also include the package name---as defined in `Package.swift`---before the \"Snippets\/\" prefix."
           },
           {
-            "text" : ""
-          },
-          {
-            "text" : "1. The package name as defined in `Package.swift`"
+            "text" : "Neither of these leading path components are necessary because all your snippet code files are always located in your package's \"Snippets\" directory."
           },
           {
             "text" : ""
           },
           {
-            "text" : "2. The directory path to the snippet file, starting with \"Snippets\"."
+            "text" : "> Earlier Versions:"
+          },
+          {
+            "text" : "> Before Swift-DocC 6.2.1, the `@Snippet` path needed to include both the package name component and the \"Snippets\" component:"
+          },
+          {
+            "text" : ">"
+          },
+          {
+            "text" : "> ```markdown"
+          },
+          {
+            "text" : "> @Snippet(path: \"my-package\/Snippets\/example-snippet\")"
+          },
+          {
+            "text" : "> ```"
           },
           {
             "text" : ""
           },
           {
-            "text" : "3. The name of your snippet file without the `.swift` extension"
+            "text" : "You can define named slices of your snippet by annotating the snippet file with `\/\/ snippet.<name>` and `\/\/ snippet.end` lines."
+          },
+          {
+            "text" : "A named slice automatically ends at the start of the next named slice, without an explicit `snippet.end` annotation."
           },
           {
             "text" : ""
           },
           {
-            "text" : "If the snippet had slices annotated within it, an individual slice of the snippet can be referenced with the `slice` option."
+            "text" : "If the referenced snippet includes annotated slices, you can limit the embedded code example to a certain line range by specifying a `slice` name."
           },
           {
-            "text" : "Without the option defined, the directive embeds the entire snippet."
+            "text" : "By default, the embedded code example includes the full snippet. For more information, see <doc:adding-code-snippets-to-your-content#Slice-up-your-snippet-to-break-it-up-in-your-content>."
           },
           {
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - path: The path components of a symbol link that would be used to resolve a reference to a snippet,"
-          },
-          {
-            "text" : "     only occurring as a block directive argument."
+            "text" : "  - path: The relative path from your package's top-level \"Snippets\" directory to the snippet file that you want to embed in the page, without the `.swift` file extension."
           },
           {
             "text" : "     **(required)**"
           },
           {
-            "text" : "  - slice: An optional named range to limit the lines shown."
+            "text" : "  - slice: The name of a snippet slice to limit the embedded code example to a certain line range."
           },
           {
             "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     "
+          },
+          {
+            "text" : "     By default, the embedded code example includes the full snippet."
           }
         ]
       },

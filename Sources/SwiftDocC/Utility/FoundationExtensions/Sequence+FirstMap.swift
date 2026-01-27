@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,7 +30,7 @@ extension Sequence {
     /// - Parameter predicate: A mapping closure that accepts an element of this sequence as its parameter and returns a transformed value or `nil`.
     /// - Throws: Any error that's raised by the mapping closure.
     /// - Returns: The first mapped, non-nil value, or `nil` if the mapping closure returned `nil` for every value in the sequence.
-    func mapFirst<T>(where predicate: (Element) throws -> T?) rethrows -> T? {
+    func mapFirst<Result, Error>(where predicate: (Element) throws(Error) -> Result?) throws(Error) -> Result? {
         for element in self {
             if let result = try predicate(element) {
                 return result

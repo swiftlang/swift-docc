@@ -1,0 +1,134 @@
+/*
+ This source file is part of the Swift.org open source project
+
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+import Foundation
+import SwiftDocC
+
+/// An object that writes render nodes, as JSON files, into a target folder.
+///
+/// The render node writer writes the JSON files into a hierarchy of folders and subfolders based on the relative URL for each node.
+class JSONEncodingRenderNodeWriter {
+    private let targetFolder: URL
+    private let transformForStaticHostingIndexHTML: URL?
+    private let fileManager: any FileManagerProtocol
+    private let renderReferenceCache = RenderReferenceCache([:])
+    
+    /// Creates a writer object that write render node JSON into a given folder.
+    ///
+    /// - Parameters:
+    ///   - targetFolder: The folder to which the writer object writes the files.
+    ///   - fileManager: The file manager with which the writer object writes data to files.
+    init(targetFolder: URL, fileManager: any FileManagerProtocol, transformForStaticHostingIndexHTML: URL?) {
+        self.targetFolder = targetFolder
+        self.transformForStaticHostingIndexHTML = transformForStaticHostingIndexHTML
+        self.fileManager = fileManager
+    }
+    
+    // The already created directories on disk
+    let directoryIndex = Synchronized(Set<URL>())
+    
+    /// Writes a render node to a JSON file at a location based on the node's relative URL.
+    ///
+    /// If the target path to the JSON file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
+    /// create those intermediate folders before writing the JSON file.
+    ///
+    /// - Parameters:
+    ///   - renderNode: The node which the writer object writes to a JSON file.
+    ///   - encoder: The encoder to serialize the render node with.
+    func write(_ renderNode: RenderNode, encoder: JSONEncoder) throws {
+        let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
+            renderNode.identifier,
+            lowercased: true
+        )
+        
+        try write(
+            renderNode.encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache),
+            // The path on disk to write the render node JSON file at.
+            toFileSafePath: "data/\(fileSafePath).json"
+        )
+        
+        guard let indexHTML = transformForStaticHostingIndexHTML else {
+            return
+        }
+        
+        let htmlTargetFolderURL = targetFolder.appendingPathComponent(
+            fileSafePath,
+            isDirectory: true
+        )
+        let htmlTargetFileURL = htmlTargetFolderURL.appendingPathComponent(
+            HTMLTemplate.indexFileName.rawValue,
+            isDirectory: false
+        )
+        
+        // Note that it doesn't make sense to use the above-described `directoryIndex` for this use
+        // case since we expect every 'index.html' file to require the creation of
+        // its own unique parent directory.
+        try fileManager.createDirectory(
+            at: htmlTargetFolderURL,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+        
+        do {
+            try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
+        } catch let error as NSError where error.code == NSFileWriteFileExistsError {
+            // We already have an 'index.html' file at this path. This could be because
+            // we're writing to an output directory that already contains built documentation
+            // or because we we're given bad input such that multiple documentation pages
+            // have the same path on the filesystem. Either way, we don't want this to error out
+            // so just remove the destination item and try the copy operation again.
+            try fileManager.removeItem(at: htmlTargetFileURL)
+            try fileManager._copyItem(at: indexHTML, to: htmlTargetFileURL)
+        }
+    }
+    
+    /// Writes a markdown node to a file at a location based on the node's relative URL.
+    ///
+    /// If the target path to the markdown file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
+    /// create those intermediate folders before writing the markdown file.
+    ///
+    /// - Parameters:
+    ///   - markdownNode: The node which the writer object writes
+    func write(_ markdownNode: WritableMarkdownOutputNode) throws {
+        let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
+            markdownNode.identifier,
+            lowercased: true
+        )
+        
+        try write(
+            markdownNode.node.generateDataRepresentation(),
+            toFileSafePath: "data/\(fileSafePath).md"
+        )
+    }
+    
+    func write(_ data: Data, toFileSafePath fileSafePath: String) throws {
+        // The path on disk to write the data at.
+        let fileURL = targetFolder.appendingPathComponent(fileSafePath, isDirectory: false)
+        let containingFolderURL = fileURL.deletingLastPathComponent()
+        
+        // On Linux sometimes it takes a moment for the directory to be created and that leads to
+        // errors when trying to write files concurrently in the same target location.
+        // We keep an index in `directoryIndex` and create new sub-directories as needed.
+        // When the symbol's directory already exists no code is executed during the lock below
+        // besides the set lookup.
+        try directoryIndex.sync { directoryIndex in
+            let (insertedRenderNodeTargetFolderURL, _) = directoryIndex.insert(containingFolderURL)
+            if insertedRenderNodeTargetFolderURL {
+                try fileManager.createDirectory(
+                    at: containingFolderURL,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
+            }
+        }
+        
+        try fileManager.createFile(at: fileURL, contents: data, options: nil)
+    }
+}

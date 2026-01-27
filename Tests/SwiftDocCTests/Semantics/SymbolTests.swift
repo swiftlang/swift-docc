@@ -12,7 +12,7 @@ import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class SymbolTests: XCTestCase {
     
@@ -1110,7 +1110,7 @@ class SymbolTests: XCTestCase {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             
-            let newDocComment = self.makeLineList(
+            let newDocComment = makeLineList(
                 docComment: """
                 A cool API to call.
 
@@ -1315,8 +1315,6 @@ class SymbolTests: XCTestCase {
                 "org.swift.docc.Metadata.InvalidPageColorInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidTitleHeadingInDocumentationComment",
                 "org.swift.docc.Metadata.InvalidRedirectedInDocumentationComment",
-                
-                "org.swift.docc.unresolvedResource", // For the "test" asset that doesn't exist.
             ]
         )
         
@@ -1611,8 +1609,7 @@ class SymbolTests: XCTestCase {
             )
         }
         
-        let diagnosticEngine = DiagnosticEngine(filterLevel: diagnosticEngineFilterLevel)
-        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: catalogContent), diagnosticEngine: diagnosticEngine)
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: catalogContent), diagnosticFilterLevel: diagnosticEngineFilterLevel)
         
         let node = try XCTUnwrap(context.documentationCache[methodUSR], file: file, line: line)
         

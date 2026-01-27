@@ -1,6 +1,9 @@
 {
   "features": [
     {
+      "name": "code-block-annotations"
+    },
+    {
       "name": "diagnostics-file"
     },
     {
@@ -11,6 +14,9 @@
     },
     {
       "name": "synthesized-landing-page-name"
+    },
+    {
+      "name": "static-hosting-with-content"
     }
   ]
 }

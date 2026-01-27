@@ -11,7 +11,7 @@
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import Markdown
 
 class PathHierarchyTests: XCTestCase {
@@ -1237,8 +1237,11 @@ class PathHierarchyTests: XCTestCase {
         // The added article above has the same path as an existing symbol in the this module.
         let symbolNode = try tree.findNode(path: "/MixedLanguageFramework/Bar", onlyFindSymbols: true)
         XCTAssertNotNil(symbolNode.symbol, "Symbol link finds the symbol")
+        
         let articleNode = try tree.findNode(path: "/MixedLanguageFramework/Bar", onlyFindSymbols: false)
-        XCTAssertNil(articleNode.symbol, "General documentation link find the article")
+        XCTAssertNotNil(articleNode.symbol, "This should be an article but can't be because of rdar://79745455")
+        // FIXME: Verify that article matches are preferred for general (non-symbol) links once  https://github.com/swiftlang/swift-docc/issues/593 is fixed
+//        XCTAssertNil(articleNode.symbol, "General documentation link find the article")
     }
     
     func testArticleSelfAnchorLinks() async throws {
@@ -2035,6 +2038,71 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("doSomething()-9kd0v", in: tree, asSymbolID: "some-function-id-AnyObject")
     }
     
+    func testParameterDisambiguationWithKeyPathType() async throws {
+        // Create two overloads with different key path parameter types
+        let parameterTypes: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+            // Swift.Int
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            // Swift.Bool
+            .init(kind: .typeIdentifier, spelling: "Bool", preciseIdentifier: "s:Sb"),
+        ]
+        
+        let catalog = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: parameterTypes.map { parameterTypeFragment in
+                makeSymbol(id: "some-function-id-\(parameterTypeFragment.spelling)-KeyPath", kind: .func, pathComponents: ["doSomething(keyPath:)"], signature: .init(
+                    parameters: [
+                        // "keyPath: KeyPath<String, Int>" or "keyPath: KeyPath<String, Bool>"
+                        .init(name: "keyPath", externalName: nil, declarationFragments: [
+                            .init(kind: .identifier, spelling: "keyPath", preciseIdentifier: nil),
+                            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                            .init(kind: .typeIdentifier, spelling: "KeyPath", preciseIdentifier: "s:s7KeyPathC"),
+                            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                            .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                            parameterTypeFragment,
+                            .init(kind: .text, spelling: ">", preciseIdentifier: nil)
+                        ], children: [])
+                    ],
+                    returns: [
+                        .init(kind: .text, spelling: "()", preciseIdentifier: nil) // 'Void' in text representation
+                    ]
+                ))
+            })),
+        ])
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        
+        XCTAssertEqual(paths["some-function-id-Int-KeyPath"],  "/ModuleName/doSomething(keyPath:)-(KeyPath<String,Int>)")
+        XCTAssertEqual(paths["some-function-id-Bool-KeyPath"], "/ModuleName/doSomething(keyPath:)-(KeyPath<String,Bool>)")
+        
+        try assertPathCollision("doSomething(keyPath:)", in: tree, collisions: [
+            ("some-function-id-Int-KeyPath",  "-(KeyPath<String,Int>)"),
+            ("some-function-id-Bool-KeyPath", "-(KeyPath<String,Bool>)"),
+        ])
+        
+        try assertPathRaisesErrorMessage("doSomething(keyPath:)", in: tree, context: context, expectedErrorMessage: "'doSomething(keyPath:)' is ambiguous at '/ModuleName'") { error in
+            XCTAssertEqual(error.solutions.count, 2)
+            
+            // These test symbols don't have full declarations. A real solution would display enough information to distinguish these.
+            XCTAssertEqual(error.solutions.dropFirst(0).first, .init(summary: "Insert '-(KeyPath<String,Bool>)' for \n'doSomething(keyPath:)'" , replacements: [("-(KeyPath<String,Bool>)", 21, 21)]))
+            XCTAssertEqual(error.solutions.dropFirst(1).first, .init(summary: "Insert '-(KeyPath<String,Int>)' for \n'doSomething(keyPath:)'" /* the test symbols don't have full declarations */, replacements: [("-(KeyPath<String,Int>)", 21, 21)]))
+        }
+        
+        assertParsedPathComponents("doSomething(keyPath:)-(KeyPath<String,Int>)", [("doSomething(keyPath:)", .typeSignature(parameterTypes: ["KeyPath<String,Int>"], returnTypes: nil))])
+        try assertFindsPath("doSomething(keyPath:)-(KeyPath<String,Int>)", in: tree, asSymbolID: "some-function-id-Int-KeyPath")
+        try assertFindsPath("doSomething(keyPath:)-(KeyPath<String,Int>)->()", in: tree, asSymbolID: "some-function-id-Int-KeyPath")
+        try assertFindsPath("doSomething(keyPath:)-2zg7h", in: tree, asSymbolID: "some-function-id-Int-KeyPath")
+        
+        assertParsedPathComponents("doSomething(keyPath:)-(KeyPath<String,Bool>)", [("doSomething(keyPath:)", .typeSignature(parameterTypes: ["KeyPath<String,Bool>"], returnTypes: nil))])
+        try assertFindsPath("doSomething(keyPath:)-(KeyPath<String,Bool>)", in: tree, asSymbolID: "some-function-id-Bool-KeyPath")
+        try assertFindsPath("doSomething(keyPath:)-(KeyPath<String,Bool>)->()", in: tree, asSymbolID: "some-function-id-Bool-KeyPath")
+        try assertFindsPath("doSomething(keyPath:)-2frrn", in: tree, asSymbolID: "some-function-id-Bool-KeyPath")
+    }
+    
     func testOverloadGroupSymbolsResolveLinksWithoutHash() async throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
@@ -2335,31 +2403,6 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    func testSnippets() async throws {
-        let (_, context) = try await testBundleAndContext(named: "Snippets")
-        let tree = context.linkResolver.localResolver.pathHierarchy
-        
-        try assertFindsPath("/Snippets/Snippets/MySnippet", in: tree, asSymbolID: "$snippet__Test.Snippets.MySnippet")
-        
-        let paths = tree.caseInsensitiveDisambiguatedPaths()
-        XCTAssertEqual(paths["$snippet__Test.Snippets.MySnippet"],
-                       "/Snippets/Snippets/MySnippet")
-        
-        // Test relative links from the article that overlap with the snippet's path
-        let snippetsArticleID = try tree.find(path: "/Snippets/Snippets", onlyFindSymbols: false)
-        XCTAssertEqual(try tree.findSymbol(path: "MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "Snippets/Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "/Snippets/Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        
-        // Test relative links from another article (which doesn't overlap with the snippet's path)
-        let sliceArticleID = try tree.find(path: "/Snippets/SliceIndentation", onlyFindSymbols: false)
-        XCTAssertThrowsError(try tree.findSymbol(path: "MySnippet", parent: sliceArticleID))
-        XCTAssertEqual(try tree.findSymbol(path: "Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "Snippets/Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-        XCTAssertEqual(try tree.findSymbol(path: "/Snippets/Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
-    }
-    
     func testInheritedOperators() async throws {
         let (_, context) = try await testBundleAndContext(named: "InheritedOperators")
         let tree = context.linkResolver.localResolver.pathHierarchy
@@ -2514,13 +2557,17 @@ class PathHierarchyTests: XCTestCase {
             // Links to non-symbols can use only the file name, without specifying the module or catalog name.
             let articleID = try tree.find(path: "Wrapper", onlyFindSymbols: false)
             let articleMatch = try XCTUnwrap(tree.lookup[articleID])
-            XCTAssertNil(articleMatch.symbol, "Should have found the article")
+            XCTAssertNotNil(articleMatch.symbol, "This should be an article but can't be because of rdar://79745455")
+            // FIXME: Verify that article matches are preferred for general (non-symbol) links once rdar://79745455 https://github.com/swiftlang/swift-docc/issues/593 is fixed
+//            XCTAssertNil(articleMatch.symbol, "Should have found the article")
         }
         do {
             // Links to non-symbols can also use module-relative links.
             let articleID = try tree.find(path: "/Something/Wrapper", onlyFindSymbols: false)
             let articleMatch = try XCTUnwrap(tree.lookup[articleID])
-            XCTAssertNil(articleMatch.symbol, "Should have found the article")
+            XCTAssertNotNil(articleMatch.symbol, "This should be an article but can't be because of rdar://79745455")
+            // FIXME: Verify that article matches are preferred for general (non-symbol) links once rdar://79745455 https://github.com/swiftlang/swift-docc/issues/593 is fixed
+//            XCTAssertNil(articleMatch.symbol, "Should have found the article")
         }
         // Symbols can only use absolute links or be found relative to another page.
         let symbolID = try tree.find(path: "/Something/Wrapper", onlyFindSymbols: true)
@@ -2820,8 +2867,6 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testLanguageRepresentationsWithDifferentParentKinds() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
 
@@ -3149,7 +3194,89 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MainModule/TopLevelProtocol/extensionMember(_:)", in: tree, asSymbolID: "extensionMember1")
         try assertFindsPath("/MainModule/TopLevelProtocol/InnerStruct/extensionMember(_:)", in: tree, asSymbolID: "extensionMember2")
     }
-    
+
+    func testAbsoluteLinksToOtherModuleWithExtensions() async throws {
+        let extendedTypeID = "extended-type-id"
+        let extensionID = "extension-id"
+        let extensionMethodID = "extension-method-id"
+
+        let extensionMixin = SymbolGraph.Symbol.Swift.Extension(
+            extendedModule: "ExtendedModule",
+            typeKind: .struct,
+            constraints: []
+        )
+
+        let catalog = Folder(name: "TestCatalog.docc", content: [
+            JSONFile(name: "MainModule.symbols.json", content: makeSymbolGraph(moduleName: "MainModule", symbols: [])),
+            JSONFile(name: "MainModule@ExtendedModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "MainModule",
+                symbols: [
+                    makeSymbol(
+                        id: extensionID,
+                        kind: .extension,
+                        pathComponents: ["ExtendedType"],
+                        otherMixins: [extensionMixin]
+                    ),
+                    makeSymbol(
+                        id: extensionMethodID,
+                        kind: .method,
+                        pathComponents: ["ExtendedType", "extensionMethod()"],
+                        otherMixins: [extensionMixin]
+                    )
+                ],
+                relationships: [
+                    .init(
+                        source: extensionMethodID,
+                        target: extensionID,
+                        kind: .memberOf,
+                        targetFallback: "ExtendedModule.ExtendedType"
+                    ),
+                    .init(
+                        source: extensionID,
+                        target: extendedTypeID,
+                        kind: .extensionTo,
+                        targetFallback: "ExtendedModule.ExtendedType"
+                    )
+                ]
+            ))
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalog)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        try assertFindsPath(
+            "/MainModule/ExtendedModule/ExtendedType/extensionMethod()",
+            in: tree,
+            asSymbolID: extensionMethodID
+        )
+
+        try assertFindsPath(
+            "ExtendedModule/ExtendedType",
+            in: tree,
+            asSymbolID: extensionID
+        )
+        try assertFindsPath(
+            "ExtendedModule/ExtendedType/extensionMethod()",
+            in: tree,
+            asSymbolID: extensionMethodID
+        )
+
+        // Verify that a link that resolves relative to the module
+        // fails to resolve as an absolute link, with a moduleNotFound error.
+        try assertPathRaisesErrorMessage(
+            "/ExtendedModule/ExtendedType",
+            in: tree,
+            context: context,
+            expectedErrorMessage: "No module named 'ExtendedModule'"
+        )
+        try assertPathRaisesErrorMessage(
+            "/ExtendedModule/ExtendedType/extensionMethod()",
+            in: tree,
+            context: context,
+            expectedErrorMessage: "No module named 'ExtendedModule'"
+        )
+    }
+
     func testMissingRequiredMemberOfSymbolGraphRelationshipInOneLanguageAcrossManyPlatforms() async throws {
         // We make a best-effort attempt to create a valid path hierarchy, even if the symbol graph inputs are not valid.
         
@@ -4427,6 +4554,26 @@ class PathHierarchyTests: XCTestCase {
         }
         
         assertParsedPathComponents("operator[]-(std::string&)->std::string&", [("operator[]", .typeSignature(parameterTypes: ["std::string&"], returnTypes: ["std::string&"]))])
+        
+        // Nested generic types
+        assertParsedPathComponents("functionName-(KeyPath<String,Int>)", [("functionName", .typeSignature(parameterTypes: ["KeyPath<String,Int>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->KeyPath<String,Int>",  [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["KeyPath<String,Int>"]))])
+        
+        assertParsedPathComponents("functionName-(KeyPath<String,Int>,Dictionary<Int,Int>)",  [("functionName", .typeSignature(parameterTypes: ["KeyPath<String,Int>", "Dictionary<Int,Int>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->(KeyPath<String,Int>,Dictionary<Int,Int>)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["KeyPath<String,Int>", "Dictionary<Int,Int>"]))])
+        
+        assertParsedPathComponents("functionName-(KeyPath<String,Dictionary<Int,Int>>)", [("functionName", .typeSignature(parameterTypes: ["KeyPath<String,Dictionary<Int,Int>>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->KeyPath<String,Dictionary<Int,Int>>",  [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["KeyPath<String,Dictionary<Int,Int>>"]))])
+        
+        assertParsedPathComponents("functionName-(KeyPath<Array<Bool>,Dictionary<Int,(Bool,Bool))>>)", [("functionName", .typeSignature(parameterTypes: ["KeyPath<Array<Bool>,Dictionary<Int,(Bool,Bool))>>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->KeyPath<Array<Bool>,Dictionary<Int,(Bool,Bool))>>",  [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["KeyPath<Array<Bool>,Dictionary<Int,(Bool,Bool))>>"]))])
+        
+        // Nested generics and tuple types
+        assertParsedPathComponents( "functionName-(A<B,C>,(D<E,F,G>,H<(I,J),(K,L)>),M<N,(O<P,Q>,R),S>)", [("functionName", .typeSignature(parameterTypes: ["A<B,C>", "(D<E,F,G>,H<(I,J),(K,L)>)", "M<N,(O<P,Q>,R),S>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->(A<B,C>,(D<E,F,G>,H<(I,J),(K,L)>),M<N,(O<P,Q>,R),S>)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["A<B,C>", "(D<E,F,G>,H<(I,J),(K,L)>)", "M<N,(O<P,Q>,R),S>"]))])
+        // With special characters
+        assertParsedPathComponents( "functionName-(Å<𝔹,©>,(Δ<∃,⨍,𝄞>,ℌ<(𝓲,ⅉ),(🄺,ƛ)>),𝔐<𝚗,(Ω<π,Ⓠ>,℟),𝔖>)", [("functionName", .typeSignature(parameterTypes: ["Å<𝔹,©>", "(Δ<∃,⨍,𝄞>,ℌ<(𝓲,ⅉ),(🄺,ƛ)>)", "𝔐<𝚗,(Ω<π,Ⓠ>,℟),𝔖>"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->(Å<𝔹,©>,(Δ<∃,⨍,𝄞>,ℌ<(𝓲,ⅉ),(🄺,ƛ)>),𝔐<𝚗,(Ω<π,Ⓠ>,℟),𝔖>)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["Å<𝔹,©>", "(Δ<∃,⨍,𝄞>,ℌ<(𝓲,ⅉ),(🄺,ƛ)>)", "𝔐<𝚗,(Ω<π,Ⓠ>,℟),𝔖>"]))])
     }
     
     func testResolveExternalLinkFromTechnologyRoot() async throws {

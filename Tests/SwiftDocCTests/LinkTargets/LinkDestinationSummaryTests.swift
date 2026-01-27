@@ -11,7 +11,7 @@
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class LinkDestinationSummaryTests: XCTestCase {
     
@@ -90,11 +90,11 @@ class LinkDestinationSummaryTests: XCTestCase {
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
+        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
         
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
         let renderNode = converter.convert(node)
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
@@ -104,11 +104,6 @@ class LinkDestinationSummaryTests: XCTestCase {
         XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial")
         XCTAssertEqual(pageSummary.language, .swift)
         XCTAssertEqual(pageSummary.kind, .tutorial)
-        XCTAssertEqual(pageSummary.taskGroups, [
-            .init(title: nil,
-                  identifiers: ["doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project-%F0%9F%92%BB"]
-            ),
-        ])
         XCTAssertEqual(pageSummary.availableLanguages, [.swift])
         XCTAssertEqual(pageSummary.platforms, renderNode.metadata.platforms)
         XCTAssertEqual(pageSummary.redirects, nil)
@@ -126,7 +121,6 @@ class LinkDestinationSummaryTests: XCTestCase {
         XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         XCTAssertEqual(sectionSummary.language, .swift)
         XCTAssertEqual(sectionSummary.kind, .onPageLandmark)
-        XCTAssertEqual(sectionSummary.taskGroups, [])
         XCTAssertEqual(sectionSummary.availableLanguages, [.swift])
         XCTAssertEqual(sectionSummary.platforms, nil)
         XCTAssertEqual(sectionSummary.redirects, [
@@ -151,8 +145,8 @@ class LinkDestinationSummaryTests: XCTestCase {
     }
 
     func testSymbolSummaries() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let converter = DocumentationNodeConverter(context: context)
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
@@ -165,22 +159,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .class)
             XCTAssertEqual(summary.abstract, [.text("MyClass abstract.")])
-            XCTAssertEqual(summary.taskGroups?.map { $0.title }, [
-                "MyClass members (relative)",
-                "MyClass members (module level)",
-                "MyClass members (absolute)",
-                "MyClass members (topic relative)",
-                "MyClass members (topic module level)",
-                "MyClass members (topic absolute)",
-            ])
-            for group in summary.taskGroups ?? [] {
-                // All 6 topic sections curate the same 3 symbols using different syntax and different specificity
-                XCTAssertEqual(group.identifiers, [
-                    summary.referenceURL.appendingPathComponent("init()-33vaw").absoluteString,
-                    summary.referenceURL.appendingPathComponent("init()-3743d").absoluteString,
-                    summary.referenceURL.appendingPathComponent("myFunction()").absoluteString,
-                ])
-            }
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC")
@@ -213,17 +191,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .protocol)
             XCTAssertEqual(summary.abstract, [.text("An abstract of a protocol using a "), .codeVoice(code: "String"), .text(" id value.")])
-            XCTAssertEqual(summary.taskGroups, [
-                .init(
-                    title: "Task Group Exercising Symbol Links",
-                    identifiers: [
-                        // MyClass is curated 3 times using different syntax.
-                        summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
-                        summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
-                        summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
-                    ]
-                ),
-            ])
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ProtocolP")
@@ -258,7 +225,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .instanceMethod)
             XCTAssertEqual(summary.abstract, [.text("A cool API to call.")])
-            XCTAssertEqual(summary.taskGroups, [])
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
@@ -295,7 +261,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .function)
             XCTAssertEqual(summary.abstract, nil)
-            XCTAssertEqual(summary.taskGroups, [])
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
@@ -334,7 +299,7 @@ class LinkDestinationSummaryTests: XCTestCase {
     }
     
     func testTopicImageReferences() async throws {
-        let (url, bundle, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
+        let (url, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             let extensionFile = """
             # ``MyKit/MyClass/myFunction()``
 
@@ -349,7 +314,7 @@ class LinkDestinationSummaryTests: XCTestCase {
             let fileURL = url.appendingPathComponent("documentation").appendingPathComponent("myFunction.md")
             try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
         }
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(context: context)
         
         do {
             let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
@@ -363,7 +328,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .instanceMethod)
             XCTAssertEqual(summary.abstract, [.text("A cool API to call.")])
-            XCTAssertEqual(summary.taskGroups, [])
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
@@ -438,24 +402,24 @@ class LinkDestinationSummaryTests: XCTestCase {
             summary.references = summary.references?.compactMap { (original: RenderReference) -> (any RenderReference)? in
                 guard var imageRef = original as? ImageReference else { return nil }
                 imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
-                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: bundle.id.rawValue)
+                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: context.inputs.id.rawValue)
                 }
                 imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
-                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: bundle.id.rawValue), value)
+                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: context.inputs.id.rawValue), value)
                 })
                 return imageRef as (any RenderReference)
             }
             
             
-            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: bundle.id.rawValue).encode(summary)
+            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: context.inputs.id.rawValue).encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
             XCTAssertEqual(decoded, summary)
         }
     }
     
     func testVariantSummaries() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
+        let converter = DocumentationNodeConverter(context: context)
         
         // Check a symbol that's represented as a class in both Swift and Objective-C
         do {
@@ -470,14 +434,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .class)
             XCTAssertEqual(summary.abstract, [.text("A bar.")])
-            XCTAssertEqual(summary.taskGroups, [
-                .init(
-                    title: "Type Methods",
-                    identifiers: [
-                        summary.referenceURL.appendingPathComponent("myStringFunction(_:)").absoluteString,
-                    ]
-                ),
-            ])
             XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar")
@@ -515,7 +471,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(variant.abstract, nil)
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
-            XCTAssertEqual(variant.taskGroups, nil)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -536,15 +491,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(summary.kind, .typeMethod)
             
             XCTAssertEqual(summary.abstract, [.text("Does a string function.")])
-            XCTAssertEqual(
-                summary.taskGroups,
-                [],
-                """
-                Expected no task groups for the Swift documentation because the symbol \
-                it curates (``Foo-c.typealias``) is available in Objective-C only.
-                """
-            )
-            
             XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar(cm)myStringFunction:error:")
@@ -585,20 +531,6 @@ class LinkDestinationSummaryTests: XCTestCase {
             XCTAssertEqual(variant.abstract, nil)
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
-            XCTAssertEqual(
-                variant.taskGroups,
-                [
-                    .init(
-                        title: "Custom",
-                        identifiers: [
-                            summary.referenceURL
-                                .deletingLastPathComponent() // myStringFunction:error:
-                                .deletingLastPathComponent() // Bar
-                                .appendingPathComponent("Foo-c.typealias").absoluteString,
-                        ]
-                    )
-                ]
-            )
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -723,110 +655,94 @@ class LinkDestinationSummaryTests: XCTestCase {
         
         XCTAssert(decoded.variants.isEmpty)
     }
-
-    /// Ensure that the task group link summary for overload group pages doesn't overwrite any manual curation.
-    func testOverloadSymbolsWithManualCuration() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
-        let symbolGraph = SymbolGraph.init(
-            metadata: .init(formatVersion: .init(string: "1.0.0")!, generator: "unit-test"),
-            module: .init(name: "MyModule", platform: .init()),
-            symbols: [
-                .init(
-                    identifier: .init(precise: "s:MyClass", interfaceLanguage: "swift"),
-                    names: .init(title: "MyClass", navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: ["MyClass"],
-                    docComment: nil,
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: .class, displayName: "Class"),
-                    mixins: [:]
-                ),
-                .init(
-                    identifier: .init(precise: "s:MyClass:myFunc-1", interfaceLanguage: "swift"),
-                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: ["MyClass", "myFunc()"],
-                    docComment: .init([
-                        .init(
-                            text: """
-                            A wonderful overloaded function.
-
-                            ## Topics
-
-                            ### Other Cool Symbols
-
-                            - ``MyStruct``
-                            """,
-                            range: nil)
-                    ]),
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
-                    mixins: [:]
-                ),
-                .init(
-                    identifier: .init(precise: "s:MyClass:myFunc-2", interfaceLanguage: "swift"),
-                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: ["MyClass", "myFunc()"],
-                    docComment: nil,
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
-                    mixins: [:]
-                ),
-                .init(
-                    identifier: .init(precise: "s:MyStruct", interfaceLanguage: "swift"),
-                    names: .init(title: "MyStruct", navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: ["MyStruct"],
-                    docComment: nil,
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: .struct, displayName: "Structure"),
-                    mixins: [:]
-                ),
-            ],
-            relationships: [
-                .init(
-                    source: "s:MyClass:myFunc-1",
-                    target: "s:MyClass",
-                    kind: .memberOf,
-                    targetFallback: nil
-                ),
-                .init(
-                    source: "s:MyClass:myFunc-2",
-                    target: "s:MyClass",
-                    kind: .memberOf,
-                    targetFallback: nil
-                ),
-            ]
+    
+    /// Tests that API Collections (articles with Topics sections) are correctly identified as `.collectionGroup`
+    /// kind in linkable entities, ensuring cross-framework references display the correct icon.
+    func testAPICollectionKindForLinkDestinationSummary() async throws {
+        let symbolGraph = makeSymbolGraph(
+            moduleName: "TestModule",
+            symbols: [makeSymbol(id: "test-class", kind: .class, pathComponents: ["TestClass"])]
         )
 
         let catalogHierarchy = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "MyModule.symbols.json", content: symbolGraph),
-            InfoPlist(displayName: "MyModule", identifier: "com.example.mymodule")
-        ])
-        let (bundle, context) = try await loadBundle(catalog: catalogHierarchy)
-        
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            TextFile(name: "APICollection.md", utf8Content: """
+                # API Collection
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
+                This is an API Collection that curates symbols.
+
+                ## Topics
+
+                - ``TestModule/TestClass``
+                """),
+            JSONFile(name: "TestModule.symbols.json", content: symbolGraph)
+        ])
+
+        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+        let converter = DocumentationNodeConverter(context: context)
+
+        let apiCollectionReference = ResolvedTopicReference(
+            bundleID: context.inputs.id,
+            path: "/documentation/unit-test/APICollection",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: apiCollectionReference)
         let renderNode = converter.convert(node)
 
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-        let pageSummary = summaries[0]
+        let pageSummary = try XCTUnwrap(summaries.first)
 
-        let taskGroups = try XCTUnwrap(pageSummary.taskGroups)
+        XCTAssertEqual(pageSummary.kind, .collectionGroup)
+        XCTAssertEqual(pageSummary.title, "API Collection")
+        XCTAssertEqual(pageSummary.abstract, [.text("This is an API Collection that curates symbols.")])
 
-        guard taskGroups.count == 2 else {
-            XCTFail("Expected 2 task groups, found \(taskGroups.count): \(taskGroups.map(\.title))")
-            return
-        }
+        // Verify round-trip encoding preserves the correct kind
+        try assertRoundTripCoding(pageSummary)
+    }
 
-        XCTAssertEqual(taskGroups[0].title, "Other Cool Symbols")
-        XCTAssertEqual(taskGroups[0].identifiers, [
-            "doc://com.example.mymodule/documentation/MyModule/MyStruct"
+    /// Tests that explicit `@PageKind(article)` metadata overrides API Collection detection,
+    /// ensuring that explicit page kind directives take precedence over automatic detection.
+    func testExplicitPageKindOverridesAPICollectionDetection() async throws {
+        let symbolGraph = makeSymbolGraph(
+            moduleName: "TestModule",
+            symbols: [makeSymbol(id: "test-class", kind: .class, pathComponents: ["TestClass"])]
+        )
+
+        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "ExplicitArticle.md", utf8Content: """
+                # Explicit Article
+
+                This looks like an API Collection but is explicitly marked as an article.
+
+                @Metadata {
+                    @PageKind(article)
+                }
+
+                ## Topics
+
+                - ``TestModule/TestClass``
+                """),
+            JSONFile(name: "TestModule.symbols.json", content: symbolGraph)
         ])
 
-        XCTAssertEqual(taskGroups[1].title, "Overloads")
-        XCTAssertEqual(Set(taskGroups[1].identifiers), [
-            "doc://com.example.mymodule/documentation/MyModule/MyClass/myFunc()-9a7pr",
-            "doc://com.example.mymodule/documentation/MyModule/MyClass/myFunc()-9a7po",
-        ])
+        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+        let converter = DocumentationNodeConverter(context: context)
+
+        let explicitArticleReference = ResolvedTopicReference(
+            bundleID: context.inputs.id,
+            path: "/documentation/unit-test/ExplicitArticle",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: explicitArticleReference)
+        let renderNode = converter.convert(node)
+
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let pageSummary = try XCTUnwrap(summaries.first)
+
+        // Should be .article because of explicit @PageKind(article), not .collectionGroup
+        XCTAssertEqual(pageSummary.kind, .article)
+        XCTAssertEqual(pageSummary.title, "Explicit Article")
+
+        // Verify round-trip encoding preserves the correct kind
+        try assertRoundTripCoding(pageSummary)
     }
 }

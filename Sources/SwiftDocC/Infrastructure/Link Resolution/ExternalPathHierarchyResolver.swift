@@ -44,12 +44,10 @@ final class ExternalPathHierarchyResolver {
             }
             
             return .success(foundReference)
-        } catch let error as PathHierarchy.Error {
+        } catch {
             return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo() { collidingNode in
                 self.fullName(of: collidingNode) // If the link was ambiguous, determine the full name of each colliding node to be presented in the link diagnostic.
             })
-        } catch {
-            fatalError("Only PathHierarchy.Error errors are raised from the symbol link resolution code above.")
         }
     }
     
@@ -130,7 +128,7 @@ final class ExternalPathHierarchyResolver {
                     continue
                 }
                 let identifier = identifiers[index]
-                self.resolvedReferences[identifier] = ResolvedTopicReference(bundleID: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+                self.resolvedReferences[identifier] = ResolvedTopicReference(bundleID: fileRepresentation.documentationID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
             }
         }
         // Finally, the Identifier -> Symbol mapping can be constructed by iterating over the nodes and looking up the reference for each USR.
@@ -194,7 +192,7 @@ extension LinkDestinationSummary {
             identifier: .init(referenceURL.absoluteString),
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
-            url: relativePresentationURL.absoluteString,
+            url: absolutePresentationURL?.absoluteString ?? relativePresentationURL.absoluteString,
             kind: kind,
             required: false,
             role: role,

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 import SymbolKit
-
+import DocCCommon
 
 private let automaticSeeAlsoLimit: Int = {
     ProcessInfo.processInfo.environment["DOCC_AUTOMATIC_SEE_ALSO_LIMIT"].flatMap { Int($0) } ?? 15
@@ -56,9 +56,7 @@ public struct AutomaticCuration {
         withTraits variantsTraits: Set<DocumentationDataVariantsTrait>,
         context: DocumentationContext
     ) throws -> [TaskGroup] {
-        let languagesFilter = Set(variantsTraits.compactMap {
-            $0.interfaceLanguage.map { SourceLanguage(id: $0) }
-        })
+        let languagesFilter = SmallSourceLanguageSet(variantsTraits.compactMap(\.sourceLanguage))
         
         // Because the `TopicGraph` uses the same nodes for both language representations and doesn't have awareness of language specific edges,
         // it can't correctly determine language specific automatic curation. Instead we ask the `PathHierarchy` which is source-language-aware.
@@ -155,7 +153,6 @@ public struct AutomaticCuration {
         for node: DocumentationNode,
         withTraits variantsTraits: Set<DocumentationDataVariantsTrait>,
         context: DocumentationContext,
-        bundle: DocumentationBundle,
         renderContext: RenderContext?,
         renderer: DocumentationContentRenderer
     ) -> TaskGroup? {
@@ -172,9 +169,7 @@ public struct AutomaticCuration {
             return nil
         }
         
-        let variantLanguages = Set(variantsTraits.compactMap { traits in
-            traits.interfaceLanguage.map { SourceLanguage(id: $0) }
-        })
+        let variantLanguages = SmallSourceLanguageSet(variantsTraits.compactMap(\.sourceLanguage))
         
         func isRelevant(_ filteredGroup: DocumentationContentRenderer.ReferenceGroup) -> Bool {
             // Check if the task group is filtered to a subset of languages

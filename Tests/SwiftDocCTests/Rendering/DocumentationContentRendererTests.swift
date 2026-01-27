@@ -139,8 +139,8 @@ private extension DocumentationDataVariantsTrait {
 
 private extension DocumentationContentRendererTests {
     func makeDocumentationContentRenderer() async throws -> DocumentationContentRenderer {
-        let (bundle, context) = try await testBundleAndContext()
-        return DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        let (_, context) = try await testBundleAndContext()
+        return DocumentationContentRenderer(context: context)
     }
     
     var nodeWithSubheadingAndNavigatorVariants: DocumentationNode {
@@ -155,7 +155,7 @@ private extension DocumentationContentRendererTests {
             sourceLanguage: .swift,
             availableSourceLanguages: [
                 .swift,
-                .init(id: DocumentationDataVariantsTrait.otherLanguage.interfaceLanguage!)
+                DocumentationDataVariantsTrait.otherLanguage.sourceLanguage!
             ],
             name: .symbol(name: ""),
             markup: Document(parsing: ""),

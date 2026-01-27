@@ -56,7 +56,7 @@ struct MeasureOptions: ParsableCommand {
     }
 }
 
-struct Measure: ParsableCommand {
+struct Measure: @MainActor ParsableCommand {
     @Option(
         name: .customLong("output"),
         help: "The path to write the output benchmark measurements file.",
@@ -93,6 +93,7 @@ struct Measure: ParsableCommand {
         }
     }
     
+    @MainActor
     mutating func run() throws {
         try MeasureAction(
             repeatCount: measureOptions.repeatCount,
@@ -111,6 +112,7 @@ struct MeasureAction {
     var doccConvertCommand: [String]
     var computeMissingOutputSizeMetrics: Bool
     
+    @MainActor
     func run() throws {
         print("Building docc in release configuration".styled(.bold))
         let doccURL = try Self.buildDocC(at: doccProjectRootURL)

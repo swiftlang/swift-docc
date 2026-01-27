@@ -18,7 +18,7 @@ here="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 function replace_acceptable_years() {
     # this needs to replace all acceptable forms with 'YEARS'
-    sed -e 's/20[12][789012345]-20[12][89012345]/YEARS/' -e 's/20[12][89012345]/YEARS/'
+    sed -e 's/20[12][7890123456]-20[12][890123456]/YEARS/' -e 's/20[12][890123456]/YEARS/'
 }
 
 printf "=> Checking for unacceptable language… "
@@ -48,7 +48,7 @@ for language in swift-or-c bash md-or-tutorial html docker; do
   reader=head
   case "$language" in
       swift-or-c)
-        exceptions=( -name Package.swift -o -path "./Tests/SwiftDocCTests/Test Bundles/*" -o -path "./Tests/SwiftDocCUtilitiesTests/Test Bundles/*")
+        exceptions=( -name Package.swift -o -path "./Tests/SwiftDocCTests/Test Bundles/*" -o -path "./Tests/DocCCommandLineTests/Test Bundles/*")
         matching_files=( -name '*.swift' -o -name '*.c' -o -name '*.h' )
         cat > "$tmp" <<"EOF"
 /*

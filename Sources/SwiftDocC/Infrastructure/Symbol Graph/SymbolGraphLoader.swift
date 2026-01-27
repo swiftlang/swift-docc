@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import DocCCommon
 
 /// Loads symbol graph files from a documentation bundle.
 ///
@@ -17,6 +18,7 @@ import SymbolKit
 /// which makes detecting symbol collisions and overloads easier.
 struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
+    private(set) var snippetSymbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private let dataProvider: any DataProvider
@@ -57,7 +59,7 @@ struct SymbolGraphLoader {
         
         let loadingLock = Lock()
 
-        var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
+        var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, isSnippetGraph: Bool, graph: SymbolKit.SymbolGraph)]()
         var loadError: (any Error)?
 
         let loadGraphAtURL: (URL) -> Void = { [dataProvider] symbolGraphURL in
@@ -68,14 +70,7 @@ struct SymbolGraphLoader {
                 // Load and decode a single symbol graph file
                 let data = try dataProvider.contents(of: symbolGraphURL)
 
-                var symbolGraph: SymbolGraph
-                
-                switch decodingStrategy {
-                case .concurrentlyAllFiles:
-                    symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: data)
-                case .concurrentlyEachFileInBatches:
-                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
-                }
+                var symbolGraph: SymbolGraph = try FastSymbolGraphJSONDecoder.decode(SymbolGraph.self, from: data)
                 
                 Self.applyWorkaroundFor139305015(to: &symbolGraph)
                 
@@ -98,9 +93,13 @@ struct SymbolGraphLoader {
                     usesExtensionSymbolFormat = symbolGraph.symbols.isEmpty ? nil : containsExtensionSymbols
                 }
                 
+                // If the graph doesn't have any symbols we treat it as a regular, but empty, graph.
+                //                                                   v
+                let isSnippetGraph = symbolGraph.symbols.values.first?.kind.identifier.isSnippetKind == true
+                
                 // Store the decoded graph in `loadedGraphs`
                 loadingLock.sync {
-                    loadedGraphs[symbolGraphURL] = (usesExtensionSymbolFormat, symbolGraph)
+                    loadedGraphs[symbolGraphURL] = (usesExtensionSymbolFormat, isSnippetGraph, symbolGraph)
                 }
             } catch {
                 // If the symbol graph was invalid, store the error
@@ -140,8 +139,9 @@ struct SymbolGraphLoader {
         let mergeSignpostHandle = signposter.beginInterval("Build unified symbol graph", id: signposter.makeSignpostID())
         let graphLoader = GraphCollector(extensionGraphAssociationStrategy: usingExtensionSymbolFormat ? .extendingGraph : .extendedGraph)
         
-        // feed the loaded graphs into the `graphLoader`
-        for (url, (_, graph)) in loadedGraphs {
+        
+        // feed the loaded non-snippet graphs into the `graphLoader`
+        for (url, (_, isSnippets, graph)) in loadedGraphs where !isSnippets {
             graphLoader.mergeSymbolGraph(graph, at: url)
         }
         
@@ -151,7 +151,8 @@ struct SymbolGraphLoader {
             throw loadError
         }
         
-        self.symbolGraphs = loadedGraphs.mapValues(\.graph)
+        self.symbolGraphs        = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? nil   : graph })
+        self.snippetSymbolGraphs = loadedGraphs.compactMapValues({ _, isSnippets, graph in isSnippets ? graph : nil   })
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
             createOverloadGroups: FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
         )
@@ -217,35 +218,37 @@ struct SymbolGraphLoader {
             for (selector, _) in symbol.mixins {
                 if var symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
                     guard !symbolAvailability.availability.isEmpty else { continue }
-                    // For platforms with a fallback option (e.g., Catalyst and iOS), apply the explicit availability annotation of the fallback platform when it is not explicitly available on the primary platform.
-                    DefaultAvailability.fallbackPlatforms.forEach { (fallbackPlatform, inheritedPlatform) in
+                    // For platforms with a fallback option (e.g. Catalyst and iPadOS),
+                    // if the availability is not explicitly available for the platform,
+                    // apply the explicit availability annotation of the fallback platform.
+                    DefaultAvailability.fallbackPlatforms.forEach { (platform, fallback) in
                         guard
-                            var inheritedAvailability = symbolAvailability.availability.first(where: {
-                                $0.matches(inheritedPlatform)
+                            var fallbackAvailability = symbolAvailability.availability.first(where: {
+                                $0.matches(fallback)
                             }),
-                            let fallbackAvailabilityIntroducedVersion = symbolAvailability.availability.first(where: {
-                                $0.matches(fallbackPlatform)
+                            let platformAvailabilityIntroducedVersion = symbolAvailability.availability.first(where: {
+                                $0.matches(platform)
                             })?.introducedVersion,
-                            let defaultAvailabilityIntroducedVersion = defaultAvailabilities.first(where: { $0.platformName ==  fallbackPlatform })?.introducedVersion
+                            let defaultAvailabilityIntroducedVersion = defaultAvailabilities.first(where: { $0.platformName ==  platform })?.introducedVersion
                         else { return }
                         // Ensure that the availability version is not overwritten if the symbol has an explicit availability annotation for that platform.
-                        if SymbolGraph.SemanticVersion(string: defaultAvailabilityIntroducedVersion) == fallbackAvailabilityIntroducedVersion {
-                            inheritedAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
+                        if SymbolGraph.SemanticVersion(string: defaultAvailabilityIntroducedVersion) == platformAvailabilityIntroducedVersion {
+                            fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: platform.rawValue)
                             symbolAvailability.availability.removeAll(where: {
-                                $0.matches(fallbackPlatform)
+                                $0.matches(platform)
                             })
-                            symbolAvailability.availability.append(inheritedAvailability)
+                            symbolAvailability.availability.append(fallbackAvailability)
                         }
                     }
                     // Add fallback availability.
-                    for (fallbackPlatform, inheritedPlatform) in missingFallbackPlatforms {
-                        if !symbolAvailability.contains(fallbackPlatform) {
+                    for (platform, fallback) in missingFallbackPlatforms {
+                        if !symbolAvailability.contains(platform) {
                             for var fallbackAvailability in symbolAvailability.availability {
                                 // Add the platform fallback to the availability mixin the platform is inheriting from.
                                 // The added availability copies the entire availability information,
                                 // including deprecated and obsolete versions.
-                                if fallbackAvailability.matches(inheritedPlatform) {
-                                    fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
+                                if fallbackAvailability.matches(fallback) {
+                                    fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: platform.rawValue)
                                     symbolAvailability.availability.append(fallbackAvailability)
                                 }
                             }
@@ -517,5 +520,11 @@ private extension SymbolGraph.Symbol.Availability {
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     func matches(_ platform: PlatformName) -> Bool {
         domain?.rawValue.lowercased() == platform.rawValue.lowercased()
+    }
+}
+
+extension SymbolGraph.Symbol.KindIdentifier {
+    var isSnippetKind: Bool {
+        self == .snippet || self == .snippetGroup
     }
 }

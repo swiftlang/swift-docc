@@ -11,6 +11,7 @@
 import Foundation
 import SymbolKit
 import Markdown
+import DocCCommon
 
 /// A collection of APIs to generate documentation topics.
 enum GeneratedDocumentationTopics {
@@ -96,15 +97,13 @@ enum GeneratedDocumentationTopics {
     
     private static let defaultImplementationGroupTitle = "Default Implementations"
     
-    private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext, bundle: DocumentationBundle) throws {
-        let automaticCurationSourceLanguage: SourceLanguage
-        let automaticCurationSourceLanguages: Set<SourceLanguage>
-        automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
-        automaticCurationSourceLanguages = Set(identifiers.flatMap { identifier in context.sourceLanguages(for: identifier) })
+    private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext) throws {
+        let automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
+        let automaticCurationSourceLanguages = SmallSourceLanguageSet(identifiers.flatMap { identifier in context.sourceLanguages(for: identifier) })
         
         // Create the collection topic reference
         let collectionReference = ResolvedTopicReference(
-            bundleID: bundle.id,
+            bundleID: context.inputs.id,
             path: NodeURLGenerator.Path.documentationCuration(
                 parentPath: parent.path,
                 articleName: title
@@ -121,8 +120,8 @@ enum GeneratedDocumentationTopics {
         let node = try context.entity(with: parent)
         if let symbol = node.semantic as? Symbol {
             for trait in node.availableVariantTraits {
-                guard let language = trait.interfaceLanguage,
-                      automaticCurationSourceLanguages.lazy.map(\.id).contains(language)
+                guard let language = trait.sourceLanguage,
+                      automaticCurationSourceLanguages.contains(language)
                 else {
                     // If the collection is not available in this trait, don't curate it in this symbol's variant.
                     continue
@@ -190,7 +189,7 @@ enum GeneratedDocumentationTopics {
             reference: collectionReference,
             kind: .collectionGroup,
             sourceLanguage: automaticCurationSourceLanguage,
-            availableSourceLanguages: automaticCurationSourceLanguages,
+            availableSourceLanguages: Set(automaticCurationSourceLanguages),
             name: DocumentationNode.Name.conceptual(title: title),
             markup: Document(parsing: ""),
             semantic: collectionArticle
@@ -227,8 +226,7 @@ enum GeneratedDocumentationTopics {
     ///   - relationships: A set of relationships to inspect.
     ///   - symbolsURLHierarchy: A symbol graph hierarchy as created during symbol registration.
     ///   - context: A documentation context to update.
-    ///   - bundle: The current documentation bundle.
-    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, context: DocumentationContext, bundle: DocumentationBundle) throws {
+    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, context: DocumentationContext) throws {
         var inheritanceIndex = InheritedSymbols()
         
         // Walk the symbol graph relationships and look for parent <-> child links that stem in a different module.
@@ -258,7 +256,7 @@ enum GeneratedDocumentationTopics {
         for (typeReference, collections) in inheritanceIndex.implementingTypes where !collections.inheritedFromTypeName.isEmpty {
             for (_, collection) in collections.inheritedFromTypeName where !collection.identifiers.isEmpty {
                 // Create a collection for the given provider type's inherited symbols
-                try createCollectionNode(parent: typeReference, title: collection.title, identifiers: collection.identifiers, context: context, bundle: bundle)
+                try createCollectionNode(parent: typeReference, title: collection.title, identifiers: collection.identifiers, context: context)
             }
         }
     }

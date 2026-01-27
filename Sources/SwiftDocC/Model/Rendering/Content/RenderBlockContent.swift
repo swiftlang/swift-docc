@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -103,17 +103,95 @@ public enum RenderBlockContent: Equatable {
     }
 
     /// An aside block.
-    public struct Aside: Equatable {
+    public struct Aside: Codable, Equatable {
+
         /// The style of this aside block.
         public var style: AsideStyle
+
+        /// The name of this aside block.
+        public var name: String
 
         /// The content inside this aside block.
         public var content: [RenderBlockContent]
 
+        /// Creates an aside from an aside style and block content.
+        ///
+        /// The new aside will have a name set to the capitalized style.
+        ///
+        /// - Parameters:
+        ///   - style: The style of this aside
+        ///   - content: The block content to display in the aside
         public init(style: AsideStyle, content: [RenderBlockContent]) {
             self.style = style
+            self.name = style.rawValue.capitalized
             self.content = content
         }
+
+        /// Creates an aside from a name and block content.
+        ///
+        /// The new aside will have a style set to the lowercased name.
+        ///
+        /// - Parameters:
+        ///   - name: The name of the aside.
+        ///   - content: The block content to display in the aside
+        ///
+        /// > Note:
+        /// > If the lowercased name doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) this will
+        /// > set the style to be note.
+        public init(name: String, content: [RenderBlockContent]) {
+            self.style = .init(rawValue: name)
+            self.name = name
+            self.content = content
+        }
+
+        /// Creates an aside from an aside style, name and block content.
+        ///
+        /// - Parameters:
+        ///   - style: The style of the aside
+        ///   - name: The name of the aside
+        ///   - content: The block content to display in the aside
+        public init(style: AsideStyle, name: String, content: [RenderBlockContent]) {
+            self.style = style
+            self.name = name
+            self.content = content
+        }
+
+        /// Creates an aside from a Swift Markdown aside kind and block content.
+        ///
+        /// The new aside will have a name and style based on the display name of the
+        /// Swift Markdown aside kind.
+        ///
+        /// - Parameters:
+        ///   - asideKind: The Swift Markdown aside kind
+        ///   - content: The block content to display in the aside
+        ///
+        /// > Note:
+        /// > If the Swift Markdown aside kind is unknown, then the new aside will
+        /// > have a name and style set to the Swift Markdown aside kind,
+        /// > capitalized if necessary.
+        public init(asideKind: Markdown.Aside.Kind, content: [RenderBlockContent]) {
+            let name: String
+            if let knownDisplayName = Self.knownDisplayNames[asideKind.rawValue.lowercased()] {
+                name = knownDisplayName
+            } else if asideKind.rawValue.contains(where: \.isUppercase) {
+                // Assume the content has specific and intentional capitalization.
+                name = asideKind.rawValue
+            } else {
+                // Avoid an all lower case display name.
+                name = asideKind.rawValue.capitalized
+            }
+
+            self.init(
+                style: .init(asideKind: asideKind),
+                name: name,
+                content: content
+            )
+        }
+
+        private static let knownDisplayNames: [String: String] = Dictionary(
+            uniqueKeysWithValues: Markdown.Aside.Kind.allCases.map { ($0.rawValue.lowercased(), $0.displayName) }
+        )
     }
 
     /// A block of sample code.
@@ -124,12 +202,229 @@ public enum RenderBlockContent: Equatable {
         public var code: [String]
         /// Additional metadata for this code block.
         public var metadata: RenderContentMetadata?
+        /// Annotations for code blocks
+        public var options: CodeBlockOptions?
 
         /// Make a new `CodeListing` with the given data.
-        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?) {
+        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?, options: CodeBlockOptions?) {
             self.syntax = syntax
             self.code = code
             self.metadata = metadata
+            self.options = options
+        }
+    }
+
+    public struct CodeBlockOptions: Equatable {
+        public var language: String?
+        public var copyToClipboard: Bool
+        public var showLineNumbers: Bool
+        public var wrap: Int
+        public var lineAnnotations: [LineAnnotation]
+
+        public struct Position: Equatable, Comparable, Codable {
+            public static func < (lhs: RenderBlockContent.CodeBlockOptions.Position, rhs: RenderBlockContent.CodeBlockOptions.Position) -> Bool {
+                if lhs.line == rhs.line, let lhsCharacter = lhs.character, let rhsCharacter = rhs.character {
+                    return lhsCharacter < rhsCharacter
+                }
+                return lhs.line < rhs.line
+            }
+
+            public init(line: Int, character: Int? = nil) {
+                self.line = line
+                self.character = character
+            }
+
+            public var line: Int
+            public var character: Int?
+        }
+
+        public struct LineAnnotation: Equatable, Codable {
+            public var style: String
+            public var range: Range<Position>
+            
+            public init(style: String, range: Range<Position>) {
+                self.style = style
+                self.range = range
+            }
+        }
+
+        public enum OptionName: String, CaseIterable {
+            case _nonFrozenEnum_useDefaultCase
+            case nocopy
+            case wrap
+            case highlight
+            case showLineNumbers
+            case strikeout
+            case unknown
+
+            init?(caseInsensitive raw: some StringProtocol) {
+                self.init(rawValue: raw.lowercased())
+            }
+        }
+
+        public static var knownOptions: Set<String> {
+            Set(OptionName.allCases.map(\.rawValue))
+        }
+
+        // empty initializer with default values
+        public init() {
+            self.language = ""
+            self.copyToClipboard = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
+            self.showLineNumbers = false
+            self.wrap = 0
+            self.lineAnnotations = []
+        }
+
+        public init(parsingLanguageString language: String?) {
+            let (lang, tokens) = Self.tokenizeLanguageString(language)
+
+            self.language = lang
+            self.copyToClipboard = !tokens.contains { $0.name == .nocopy }
+            self.showLineNumbers = tokens.contains { $0.name == .showLineNumbers }
+
+            if let wrapString = tokens.first(where: { $0.name == .wrap })?.value,
+               let wrapValue = Int(wrapString) {
+                self.wrap = wrapValue
+            } else {
+                self.wrap = 0
+            }
+
+            var annotations: [LineAnnotation] = []
+
+            if let highlightString = tokens.first(where: { $0.name == .highlight })?.value {
+                let highlightValue = Self.parseCodeBlockOptionsArray(highlightString)
+                for line in highlightValue {
+                    let pos = Position(line: line, character: nil)
+                    let range = pos..<pos
+                    annotations.append(LineAnnotation(style: "highlight", range: range))
+                }
+            }
+
+            if let strikeoutString = tokens.first(where: { $0.name == .strikeout })?.value {
+                let strikeoutValue = Self.parseCodeBlockOptionsArray(strikeoutString)
+                for line in strikeoutValue {
+                    let pos = Position(line: line, character: nil)
+                    let range = pos..<pos
+                    annotations.append(LineAnnotation(style: "strikeout", range: range))
+                }
+            }
+
+            self.lineAnnotations = annotations
+        }
+
+        public init(copyToClipboard: Bool = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled, showLineNumbers: Bool = false, wrap: Int, highlight: [Int], strikeout: [Int]) {
+            self.copyToClipboard = copyToClipboard
+            self.showLineNumbers = showLineNumbers
+            self.wrap = wrap
+
+            var annotations: [LineAnnotation] = []
+            for line in highlight {
+                    let pos = Position(line: line, character: nil)
+                    let range = pos..<pos
+                    annotations.append(LineAnnotation(style: "highlight", range: range))
+            }
+            for line in strikeout {
+                    let pos = Position(line: line, character: nil)
+                    let range = pos..<pos
+                    annotations.append(LineAnnotation(style: "strikeout", range: range))
+            }
+            self.lineAnnotations = annotations
+        }
+
+        public init(copyToClipboard: Bool, showLineNumbers: Bool, wrap: Int, lineAnnotations: [LineAnnotation]) {
+            self.copyToClipboard = copyToClipboard
+            self.showLineNumbers = showLineNumbers
+            self.wrap = wrap
+            self.lineAnnotations = lineAnnotations
+        }
+
+        /// A function that parses array values on code block options from the language line string
+        static internal func parseCodeBlockOptionsArray(_ value: String?) -> [Int] {
+            guard var s = value?.trimmingCharacters(in: .whitespaces), !s.isEmpty else { return [] }
+
+            if s.hasPrefix("[") && s.hasSuffix("]") {
+                s.removeFirst()
+                s.removeLast()
+            }
+
+            return s.split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+        }
+
+        /// A function that parses the language line options on code blocks, returning the language and tokens, an array of OptionName and option values
+        static internal func tokenizeLanguageString(_ input: String?) -> (lang: String?, tokens: [(name: OptionName, value: String?)]) {
+            guard let input else { return (lang: nil, tokens: []) }
+
+            let parts = parseLanguageString(input)
+            var tokens: [(OptionName, String?)] = []
+            var lang: String? = nil
+
+            for (index, part) in parts.enumerated() {
+                if let eq = part.firstIndex(of: "=") {
+                    let key = part[..<eq].trimmingCharacters(in: .whitespaces).lowercased()
+                    let value = part[part.index(after: eq)...].trimmingCharacters(in: .whitespaces)
+                    if key == "wrap" {
+                        tokens.append((.wrap, value))
+                    } else if key == "highlight" {
+                        tokens.append((.highlight, value))
+                    } else if key == "strikeout" {
+                        tokens.append((.strikeout, value))
+                    } else {
+                        tokens.append((.unknown, key))
+                    }
+                } else {
+                    let key = part.trimmingCharacters(in: .whitespaces).lowercased()
+                    if key == "nocopy" {
+                        tokens.append((.nocopy, nil as String?))
+                    } else if key == "showlinenumbers" {
+                        tokens.append((.showLineNumbers, nil as String?))
+                    } else if key == "wrap" {
+                        tokens.append((.wrap, nil as String?))
+                    } else if key == "highlight" {
+                        tokens.append((.highlight, nil as String?))
+                    } else if key == "strikeout" {
+                        tokens.append((.strikeout, nil as String?))
+                    } else if index == 0 && !key.contains("[") && !key.contains("]") {
+                        lang = key
+                    } else {
+                        tokens.append((.unknown, key))
+                    }
+                }
+            }
+            return (lang, tokens)
+        }
+
+        // helper function for tokenizeLanguageString to parse the language line
+        static func parseLanguageString(_ input: String?) -> [Substring] {
+
+            guard let input else { return [] }
+            var parts: [Substring] = []
+            var start = input.startIndex
+            var i = input.startIndex
+
+            var bracketDepth = 0
+
+            while i < input.endIndex {
+                let c = input[i]
+
+                if c == "[" { bracketDepth += 1 }
+                else if c == "]" { bracketDepth = max(0, bracketDepth - 1) }
+                else if c == "," && bracketDepth == 0 {
+                    let seq = input[start..<i]
+                    if !seq.isEmpty {
+                        parts.append(seq)
+                    }
+                    input.formIndex(after: &i)
+                    start = i
+                    continue
+                }
+                input.formIndex(after: &i)
+            }
+            let tail = input[start..<input.endIndex]
+            if !tail.isEmpty {
+                parts.append(tail)
+            }
+
+            return parts
         }
     }
 
@@ -298,10 +593,7 @@ public enum RenderBlockContent: Equatable {
     
     /// A type the describes an aside style.
     public struct AsideStyle: Codable, Equatable {
-        private static let knownDisplayNames: [String: String] = Dictionary(
-            uniqueKeysWithValues: Markdown.Aside.Kind.allCases.map { ($0.rawValue.lowercased(), $0.displayName) }
-        )
-        
+
         /// Returns a Boolean value indicating whether two aside styles are equal.
         ///
         /// The comparison uses ``rawValue`` and is case-insensitive.
@@ -312,75 +604,77 @@ public enum RenderBlockContent: Equatable {
         public static func ==(lhs: AsideStyle, rhs: AsideStyle) -> Bool {
             lhs.rawValue.caseInsensitiveCompare(rhs.rawValue) == .orderedSame
         }
-        
+
         /// The underlying raw string value.
         public var rawValue: String
 
         /// The heading text to use when rendering this style of aside.
+        @available(*, deprecated, message: "Use 'Aside.name' instead. This deprecated API will be removed after 6.4 is released.")
         public var displayName: String {
-            if let value = Self.knownDisplayNames[rawValue.lowercased()] {
-                return value
-            } else if rawValue.contains(where: \.isUppercase) {
-                // If any character is upper-cased, assume the content has
-                // specific casing and return the raw value.
-                return rawValue
-            } else {
-                return rawValue.capitalized
-            }
+            return rawValue.capitalized
         }
 
-        /// The style of aside to use when rendering.
+        /// Creates an aside style.
         ///
-        /// DocC Render currently has five styles of asides: Note, Tip, Experiment, Important, and Warning. Asides
-        /// of these styles can emit their own style into the output, but other styles need to be rendered as one of
-        /// these five styles. This property maps aside styles to the render style used in the output.
-        var renderKind: String {
-            switch rawValue.lowercased() {
-            case let lowercasedRawValue
-                where [
-                    "important",
-                    "warning",
-                    "experiment",
-                    "tip"
-                ].contains(lowercasedRawValue):
-                return lowercasedRawValue
+        /// The new aside style's underlying raw string value will be lowercased.
+        ///
+        /// - Parameters:
+        ///   - rawValue: The underlying raw string value.
+        ///
+        /// > Note:
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
+        public init(rawValue: String) {
+            let lowercased = rawValue.lowercased()
+            switch lowercased {
+            case "important", "warning", "experiment", "tip":
+                self.rawValue = lowercased
             default:
-                return "note"
+                self.rawValue = "note"
             }
         }
 
-        /// Creates an aside type for the specified aside kind.
-        /// - Parameter asideKind: The aside kind that provides the display name.
+        /// Creates an aside style from a Swift Markdown aside kind.
+        ///
+        /// The new aside style's underlying raw string value will be the
+        /// markdown aside kind's raw value.
+        ///
+        /// - Parameters:
+        ///   - rawValue: The Swift Markdown aside kind
+        ///
+        /// > Note:
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
         public init(asideKind: Markdown.Aside.Kind) {
-            self.rawValue = asideKind.rawValue
+            self.init(rawValue: asideKind.rawValue)
         }
-        
-        /// Creates an aside style for the specified raw value.
-        /// - Parameter rawValue: The heading text to use when rendering this style of aside.
-        public init(rawValue: String) {
-            self.rawValue = rawValue
-        }
-        
+
         /// Creates an aside style with the specified display name.
         /// - Parameter displayName: The heading text to use when rendering this style of aside.
+        @available(*, deprecated, renamed: "init(rawValue:)", message: "Use 'init(rawValue:)' instead. This deprecated API will be removed after 6.4 is released.")
         public init(displayName: String) {
-            self.rawValue = Self.knownDisplayNames.first(where: { $0.value == displayName })?.key ?? displayName
+            self.init(rawValue: displayName)
         }
         
         /// Encodes the aside style into the specified encoder.
         /// - Parameter encoder: The encoder to write data to.
         public func encode(to encoder: any Encoder) throws {
-            // For backwards compatibility, encode only the display name and
-            // not a key-value pair.
             var container = encoder.singleValueContainer()
             try container.encode(rawValue)
         }
-        
-        /// Creates an aside style by decoding the specified decoder.
+
+        /// Creates an aside style by decoding from the specified decoder.
         /// - Parameter decoder: The decoder to read data from.
+        ///
+        /// > Note:
+        /// > If the lowercased raw value doesn't match one of the aside styles supported
+        /// > by DocC Render (one of note, tip, experiment, important, or warning) the
+        /// > new aside style's raw value will be set to note.
         public init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
-            self.rawValue = try container.decode(String.self)
+            self.init(rawValue: try container.decode(String.self))
         }
     }
     
@@ -413,7 +707,7 @@ public enum RenderBlockContent: Equatable {
         /// A list of rendering block elements.
         public typealias Cell = [RenderBlockContent]
         /// The list of row cells.
-        public let cells: [Cell]
+        public var cells: [Cell]
         
         /// Creates a new table row.
         /// - Parameter cells: The list of row cells to use.
@@ -475,18 +769,18 @@ public enum RenderBlockContent: Equatable {
         /// A term rendered as content.
         public struct Term: Codable, Equatable {
             /// The term content.
-            public let inlineContent: [RenderInlineContent]
+            public var inlineContent: [RenderInlineContent]
         }
         /// A definition rendered as a list of block-content elements.
         public struct Definition: Codable, Equatable {
             /// The definition content.
-            public let content: [RenderBlockContent]
+            public var content: [RenderBlockContent]
         }
         
         /// The term in the term-list item.
-        public let term: Term
+        public var term: Term
         /// The definition in the term-list item.
-        public let definition: Definition
+        public var definition: Definition
     }
     
     /// A row in a grid-based layout system that describes a collection of columns.
@@ -496,18 +790,18 @@ public enum RenderBlockContent: Equatable {
         /// This may be different then the count of ``columns`` array. For example, there may be
         /// individual columns that span multiple columns (specified with the column's
         /// ``Column/size`` property) or the row could be not fully filled with columns.
-        public let numberOfColumns: Int
+        public var numberOfColumns: Int
         
         /// The columns that should be rendered in this row.
-        public let columns: [Column]
+        public var columns: [Column]
         
         /// A column with a row in a grid-based layout system.
         public struct Column: Codable, Equatable {
             /// The number of columns in the parent row this column should span.
-            public let size: Int
+            public var size: Int
             
             /// The content that should be rendered in this column.
-            public let content: [RenderBlockContent]
+            public var content: [RenderBlockContent]
         }
     }
     
@@ -517,21 +811,21 @@ public enum RenderBlockContent: Equatable {
     /// license, or copyright text.
     public struct Small: Codable, Equatable {
         /// The inline content that should be rendered.
-        public let inlineContent: [RenderInlineContent]
+        public var inlineContent: [RenderInlineContent]
     }
     
     /// A collection of content that should be rendered in a tab-based layout.
     public struct TabNavigator: Codable, Equatable {
         /// The tabs that make up this tab navigator.
-        public let tabs: [Tab]
+        public var tabs: [Tab]
         
         /// A titled tab inside a tab-based layout container.
         public struct Tab: Codable, Equatable {
             /// The title that should be used to identify this tab.
-            public let title: String
+            public var title: String
             
             /// The content that should be rendered in this tab.
-            public let content: [RenderBlockContent]
+            public var content: [RenderBlockContent]
         }
     }
     
@@ -553,10 +847,10 @@ public enum RenderBlockContent: Equatable {
         }
         
         /// The style that should be used when rendering the link items.
-        public let style: Style
+        public var style: Style
         
         /// The topic render references for the pages that should be rendered in this links block.
-        public let items: [String]
+        public var items: [String]
         
         /// Create a new links block with the given style and topic render references.
         public init(style: RenderBlockContent.Links.Style, items: [String]) {
@@ -571,7 +865,7 @@ public enum RenderBlockContent: Equatable {
         public let identifier: RenderReferenceIdentifier
         
         /// Any metadata associated with this video, like a caption.
-        public let metadata: RenderContentMetadata?
+        public var metadata: RenderContentMetadata?
         
         /// Create a new video with the given identifier and metadata.
         public init(identifier: RenderReferenceIdentifier, metadata: RenderContentMetadata? = nil) {
@@ -697,7 +991,7 @@ extension RenderBlockContent.Table: Codable {
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
         case type
-        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start
+        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start, copyToClipboard, showLineNumbers, wrap, lineAnnotations
         case request, response
         case header, rows
         case numberOfColumns, columns
@@ -713,16 +1007,35 @@ extension RenderBlockContent: Codable {
         case .paragraph:
             self = try .paragraph(.init(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent)))
         case .aside:
-            var style = try container.decode(AsideStyle.self, forKey: .style)
-            if let displayName = try container.decodeIfPresent(String.self, forKey: .name) {
-                style = AsideStyle(displayName: displayName)
+            let aside: Aside
+            let content = try container.decode([RenderBlockContent].self, forKey: .content)
+            let style = try container.decode(AsideStyle.self, forKey: .style)
+            if let name = try container.decodeIfPresent(String.self, forKey: .name) {
+                // Retain both the style and name, if both are present.
+                aside = .init(style: style, name: name, content: content)
+            } else {
+                // Or if the name is not specified, set the name based on the style.
+                aside = .init(style: style, content: content)
             }
-            self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))
+            self = .aside(aside)
         case .codeListing:
+            let copy = FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled
+            let options: CodeBlockOptions?
+            if !Set(container.allKeys).isDisjoint(with: [.copyToClipboard, .showLineNumbers, .wrap, .lineAnnotations]) {
+                options = try CodeBlockOptions(
+                    copyToClipboard: container.decodeIfPresent(Bool.self, forKey: .copyToClipboard) ?? copy,
+                    showLineNumbers: container.decodeIfPresent(Bool.self, forKey: .showLineNumbers) ?? false,
+                    wrap: container.decodeIfPresent(Int.self, forKey: .wrap) ?? 0,
+                    lineAnnotations: container.decodeIfPresent([CodeBlockOptions.LineAnnotation].self, forKey: .lineAnnotations) ?? []
+                )
+            } else {
+                options = nil
+            }
             self = try .codeListing(.init(
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
-                metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
+                metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata),
+                options: options
             ))
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
@@ -819,13 +1132,17 @@ extension RenderBlockContent: Codable {
         case .paragraph(let p):
             try container.encode(p.inlineContent, forKey: .inlineContent)
         case .aside(let a):
-            try container.encode(a.style.renderKind, forKey: .style)
-            try container.encode(a.style.displayName, forKey: .name)
+            try container.encode(a.style, forKey: .style)
+            try container.encode(a.name, forKey: .name)
             try container.encode(a.content, forKey: .content)
         case .codeListing(let l):
             try container.encode(l.syntax, forKey: .syntax)
             try container.encode(l.code, forKey: .code)
             try container.encodeIfPresent(l.metadata, forKey: .metadata)
+            try container.encodeIfPresent(l.options?.copyToClipboard, forKey: .copyToClipboard)
+            try container.encodeIfPresent(l.options?.showLineNumbers, forKey: .showLineNumbers)
+            try container.encodeIfPresent(l.options?.wrap, forKey: .wrap)
+            try container.encodeIfPresent(l.options?.lineAnnotations, forKey: .lineAnnotations)
         case .heading(let h):
             try container.encode(h.level, forKey: .level)
             try container.encode(h.text, forKey: .text)

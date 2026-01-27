@@ -14,7 +14,7 @@ import SwiftDocC
 
 // For argument parsing and validation
 
-struct Diff: ParsableCommand {
+struct Diff: @MainActor ParsableCommand {
     @Argument(
         help: "The benchmark.json file to treat as the 'before' values in the diff.",
         transform: { URL(fileURLWithPath: $0) }
@@ -34,6 +34,7 @@ struct Diff: ParsableCommand {
     )
     var jsonOutputFile: URL?
     
+    @MainActor
     mutating func run() throws {
         try DiffAction(
             beforeFile: beforeFile,
@@ -50,6 +51,7 @@ struct DiffAction {
     var afterFile: URL
     var jsonOutputFile: URL?
     
+    @MainActor
     func run() throws {
         let beforeMetrics = try JSONDecoder().decode(BenchmarkResultSeries.self, from: Data(contentsOf: beforeFile)).metrics
         let afterMetrics = try JSONDecoder().decode(BenchmarkResultSeries.self, from: Data(contentsOf: afterFile)).metrics
@@ -62,10 +64,11 @@ struct DiffAction {
             try result.analysis.append(DiffResults.analyze(before: beforeMetric, after: afterMetric))
         }
         
-        DiffResultsTable.columns[2] = tableColumnInfo(file: beforeFile)
-        DiffResultsTable.columns[3] = tableColumnInfo(file: afterFile)
+        var columns = DiffResultsTable.Columns()
+        columns.beforeInfo = tableColumnInfo(file: beforeFile)
+        columns.afterInfo  = tableColumnInfo(file: afterFile)
         
-        let table = DiffResultsTable(results: result)
+        let table = DiffResultsTable(results: result, columns: columns)
         print(table.output)
         
         if let jsonOutputFile {
