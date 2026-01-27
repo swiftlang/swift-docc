@@ -797,8 +797,6 @@ extension NavigatorIndex {
             // Process the children
             var children = [Identifier]()
             for (index, child) in renderNode.navigatorChildren(for: traits).enumerated() {
-                let groupIdentifier: Identifier?
-                
                 if let title = child.name {
                     let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
                     
@@ -824,10 +822,6 @@ extension NavigatorIndex {
                     
                     identifierToNode[identifier] = navigatorGroup
                     children.append(identifier)
-                    
-                    groupIdentifier = identifier
-                } else {
-                    groupIdentifier = nil
                 }
                 
                 let identifiers = child.references.map { reference in
@@ -838,14 +832,8 @@ extension NavigatorIndex {
                     )
                 }
                 
-                var nestedChildren = [Identifier]()
                 for identifier in identifiers {
-                    if child.referencesAreNested {
-                        nestedChildren.append(identifier)
-                    } else {
-                        children.append(identifier)
-                    }
-                    
+                    children.append(identifier)
                     // If a topic has been already curated and has a valid node processed, flag it as multi-curated.
                     if curatedIdentifiers.contains(identifier) && pendingUncuratedReferences.contains(identifier) {
                         multiCurated[identifier] = identifierToNode[identifier]
@@ -854,10 +842,6 @@ extension NavigatorIndex {
                     } else { // Otherwise keep track for later.
                         curatedIdentifiers.insert(identifier)
                     }
-                }
-                
-                if let groupIdentifier, !nestedChildren.isEmpty {
-                    identifierToChildren[groupIdentifier] = nestedChildren
                 }
             }
             

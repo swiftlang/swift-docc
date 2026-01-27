@@ -343,20 +343,17 @@ public struct ConvertAction: AsyncAction {
             }
         }
         
-        let analysisProblems: [Problem]
-        let conversionProblems: [Problem]
         do {
-            conversionProblems = try signposter.withIntervalSignpost("Process") {
-                try ConvertActionConverter.convert(
-                    context: context,
-                    outputConsumer: outputConsumer,
-                    htmlContentConsumer: htmlConsumer,
-                    sourceRepository: sourceRepository,
-                    emitDigest: emitDigest,
-                    documentationCoverageOptions: documentationCoverageOptions
-                )
-            }
-            analysisProblems = context.problems
+            let processInterval = signposter.beginInterval("Process", id: signposter.makeSignpostID())
+            try await ConvertActionConverter.convert(
+                context: context,
+                outputConsumer: outputConsumer,
+                htmlContentConsumer: htmlConsumer,
+                sourceRepository: sourceRepository,
+                emitDigest: emitDigest,
+                documentationCoverageOptions: documentationCoverageOptions
+            )
+            signposter.endInterval("Process", processInterval)
         } catch {
             if emitDigest {
                 let problem = Problem(description: (error as? (any DescribedError))?.errorDescription ?? error.localizedDescription, source: nil)
@@ -366,7 +363,7 @@ public struct ConvertAction: AsyncAction {
             throw error
         }
 
-        var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
+        var didEncounterError = context.problems.containsErrors
         let hasTutorial = context.knownPages.contains(where: {
             guard let kind = try? context.entity(with: $0).kind else { return false }
             return kind == .tutorial || kind == .tutorialArticle
