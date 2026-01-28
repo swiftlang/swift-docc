@@ -209,6 +209,9 @@ extension PreviewAction {
                         throw ErrorsEncountered()
                     }
                     self.print("Done.")
+
+                    // Notify connected browsers to reload
+                    LiveReloadClients.shared.notifyAll()
                 } catch DocumentationContext.ContextError.registrationDisabled {
                     // The context cancelled loading the bundles and threw to yield execution early.
                     self.print("\nConversion cancelled...")
