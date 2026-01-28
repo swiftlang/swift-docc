@@ -18,7 +18,7 @@ import NIOHTTP1
 
 @Suite
 @MainActor
-struct LiveReloadClientTests {
+struct LiveReloadClientsTests {
 
     @Test
     func registeredChannelReceivesNotification() throws {
@@ -43,6 +43,7 @@ struct LiveReloadClientTests {
         let clients = LiveReloadClients()
         let channel = EmbeddedChannel()
         try channel.connect(to: SocketAddress(ipAddress: "127.0.0.1", port: 1)).wait()
+        defer { _ = try? channel.finish() }
 
         clients.register(channel)
         try channel.close().wait()
@@ -92,7 +93,10 @@ struct LiveReloadClientTests {
         let inactiveChannel = EmbeddedChannel()
         try activeChannel.connect(to: SocketAddress(ipAddress: "127.0.0.1", port: 1)).wait()
         try inactiveChannel.connect(to: SocketAddress(ipAddress: "127.0.0.1", port: 1)).wait()
-        defer { _ = try? activeChannel.finish() }
+        defer {
+            _ = try? activeChannel.finish()
+            _ = try? inactiveChannel.finish()
+        }
 
         clients.register(activeChannel)
         clients.register(inactiveChannel)

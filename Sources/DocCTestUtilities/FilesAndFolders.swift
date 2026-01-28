@@ -253,6 +253,23 @@ public struct DataFile: File, DataRepresentable {
     }
 }
 
+/// Creates a ``Folder`` and writes its content to a temporary location on disk.
+///
+/// This is a freestanding function that can be used with both XCTest and Swift Testing.
+/// The caller is responsible for cleaning up the temporary folder when done.
+///
+/// - Parameters:
+///   - content: The files and subfolders to write to a temporary location
+///   - pathPrefix: A prefix to use for the temporary folder name.
+/// - Returns: The temporary location where the temporary folder was written.
+public func createTempFolder(content: [any File], pathPrefix: String = "TempDirectory") throws -> URL {
+    let temporaryDirectory = URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
+        .appendingPathComponent("\(pathPrefix)-\(ProcessInfo.processInfo.globallyUniqueString)")
+    let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
+    try folder.write(to: temporaryDirectory)
+    return temporaryDirectory
+}
+
 extension XCTestCase {
     /// Creates a ``Folder`` and writes its content to a temporary location on disk.
     ///

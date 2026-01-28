@@ -17,23 +17,14 @@ import DocCTestUtilities
 import NIO
 import NIOHTTP1
 
-/// Creates a temporary folder with the given content and returns its URL.
-private func makeTempFolder(content: [any File]) throws -> URL {
-    let tempDir = URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
-        .appendingPathComponent("LiveReloadTests-\(ProcessInfo.processInfo.globallyUniqueString)")
-    let folder = Folder(name: tempDir.lastPathComponent, content: content)
-    try folder.write(to: tempDir)
-    return tempDir
-}
-
 struct LiveReloadTests {
 
     #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
     @Test
     func scriptInjected() throws {
-        let tempFolderURL = try makeTempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
-        ])
+        ], pathPrefix: "LiveReloadTests")
         defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
@@ -53,9 +44,9 @@ struct LiveReloadTests {
 
     @Test
     func scriptNotInjectedWithoutBodyTag() throws {
-        let tempFolderURL = try makeTempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "<html>No body tag here</html>"),
-        ])
+        ], pathPrefix: "LiveReloadTests")
         defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
@@ -68,9 +59,9 @@ struct LiveReloadTests {
     #else
     @Test
     func scriptNotInjectedOnUnsupportedPlatform() throws {
-        let tempFolderURL = try makeTempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
-        ])
+        ], pathPrefix: "LiveReloadTests")
         defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
