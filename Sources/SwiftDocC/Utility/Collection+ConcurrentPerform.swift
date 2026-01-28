@@ -144,3 +144,103 @@ extension Collection where Index == Int, Self: SendableMetatype {
         return allResults.sync({ $0 })
     }
 }
+
+extension Collection {
+    /// Concurrently performs work on slices of the collection's elements, combining the partial results into a final result.
+    ///
+    /// This method is intended as a building block that other higher-level `concurrent...` methods can be built upon.
+    /// That said, calling code can opt to use this method directly as opposed to writing overly specific single-use helper methods.
+    ///
+    /// - Parameters:
+    ///   - taskName: A human readable name of the tasks that the collection uses to perform this work.
+    ///   - batchWork: The concurrent work to perform on each slice of the collection's elements.
+    ///   - initialResult: The initial result to accumulate the partial results into.
+    ///   - combineResults: A closure that updates the accumulated result with a partial result from performing the work over one slice of the collection's elements.
+    /// - Returns: The final result of accumulating all partial results, out of order, into the initial result.
+    func _concurrentPerform<Result, PartialResult>(
+        taskName: String? = nil,
+        batchWork: (consuming SubSequence) throws -> PartialResult,
+        initialResult: Result,
+        combineResults: (inout Result, consuming PartialResult) -> Void
+    ) async throws -> Result {
+        try await withThrowingTaskGroup(of: PartialResult.self, returning: Result.self) { taskGroup in
+            try await withoutActuallyEscaping(batchWork) { work in
+                try await withoutActuallyEscaping(combineResults) { combineResults in
+                    var remaining = self[...]
+                    
+                    // Don't run more tasks in parallel than there are cores to run them
+                    let maxParallelTasks: Int = ProcessInfo.processInfo.processorCount
+                    // Finding the right number of tasks is a balancing act.
+                    // If the tasks are too small, then there's increased overhead from scheduling a lot of tasks and accumulating their results.
+                    // If the tasks are too large, then there's a risk that some tasks take longer to complete than others, increasing the amount of idle time.
+                    //
+                    // Here, we aim to schedule at most 10 tasks per core but create fewer tasks if the collection is fairly small to avoid some concurrent overhead.
+                    // The table below shows the approximate number of tasks per CPU core and the number of elements per task, within parenthesis,
+                    // for different collection sizes and number of CPU cores, given a minimum task size of 20 elements:
+                    //
+                    //               |     500    |    1000    |    2500    |    5000    |    10000    |    25000
+                    //     ----------|------------|------------|------------|------------|-------------|-------------
+                    //       8 cores |  ~3,2 (20) |  ~6,3 (20) |  ~9,8 (32) |  ~9,9 (63) |  ~9,9 (126) |  ~9,9 (313)
+                    //      12 cores |  ~2,1 (20) |  ~4,2 (20) | ~10,0 (21) | ~10,0 (42) | ~10,0  (84) | ~10,0 (209)
+                    //      16 cores |  ~1,6 (20) |  ~3,2 (20) |  ~7,9 (20) |  ~9,8 (32) |  ~9,9  (63) | ~10,0 (157)
+                    //      32 cores |  ~0,8 (20) |  ~1,6 (20) |  ~4,0 (20) |  ~7,9 (20) |  ~9,8  (32) |  ~9,9  (79)
+                    //
+                    let numberOfElementsPerTask: Int = Swift.max(
+                        Int(Double(remaining.count) / Double(maxParallelTasks * 10) + 1),
+                        20 // (this is a completely arbitrary task size threshold)
+                    )
+                    
+                    // Start the first round of work.
+                    // If the collection is big, this will add one task per core.
+                    // If the collection is small, this will only add a few tasks.
+                    for _ in 0..<maxParallelTasks {
+                        if !remaining.isEmpty {
+                            let slice = remaining.prefix(numberOfElementsPerTask)
+                            remaining = remaining.dropFirst(numberOfElementsPerTask)
+                            
+                            // Start work of one slice of the known pages
+                            #if compiler(<6.2)
+                            taskGroup.addTask {
+                                return try work(slice)
+                            }
+                            #else
+                            taskGroup.addTask(name: taskName) {
+                                return try work(slice)
+                            }
+                            #endif
+                        }
+                    }
+                    
+                    var result = initialResult
+                    
+                    for try await partialResult in taskGroup {
+                        // Check if the larger task group has been cancelled and if so, avoid doing any further work.
+                        try Task.checkCancellation()
+                        
+                        combineResults(&result, partialResult)
+                        
+                        // Now that one task has finished, and one core is available for work,
+                        // see if we have more slices to process and add one more task to process that slice.
+                        if !remaining.isEmpty {
+                            let slice = remaining.prefix(numberOfElementsPerTask)
+                            remaining = remaining.dropFirst(numberOfElementsPerTask)
+                            
+                            // Start work of one slice of the known pages
+                            #if compiler(<6.2)
+                            taskGroup.addTask {
+                                return try work(slice)
+                            }
+                            #else
+                            taskGroup.addTask(name: taskName) {
+                                return try work(slice)
+                            }
+                            #endif
+                        }
+                    }
+                    
+                    return result
+                }
+            }
+        }
+    }
+}
