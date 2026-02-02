@@ -5512,8 +5512,6 @@ let expected = """
     }
 
     func testResolveExternalLinkFromTechnologyRoot() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-        
         let externalModuleName = "ExternalModuleName"
         
         func makeExternalDependencyFiles() async throws -> (SerializableLinkResolutionInformation, [LinkDestinationSummary]) {
@@ -5536,7 +5534,7 @@ let expected = """
                 
                 return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
             }
-            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
+            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(documentationID: context.inputs.id)
             
             return (linkResolutionInformation, linkSummaries)
         }

@@ -73,10 +73,20 @@ package enum ConvertActionConverter {
             sourceRepository: sourceRepository
         )
         
+        async let serializeLinkHierarchy: Void = {
+            guard FeatureFlags.current.isLinkHierarchySerializationEnabled else { return }
+            
+            try signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
+                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(documentationID: context.inputs.id)
+                try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+            }
+        }()
+        
         let renderSignpostHandle = signposter.beginInterval("Render", id: signposter.makeSignpostID(), "Render \(context.knownPages.count) pages")
         
         // Render all pages and gather their supplementary "digest" information if enabled.
         let coverageFilterClosure = documentationCoverageOptions.generateFilterClosure()
+        let shouldSerializeLinkHierarchy = emitDigest || FeatureFlags.current.isLinkHierarchySerializationEnabled
         let supplementaryRenderInfo = try await context.knownPages._concurrentPerform(
             taskName: "Render",
             batchWork: { slice in
@@ -128,17 +138,17 @@ package enum ConvertActionConverter {
                             break
                         }
                         
+                        if shouldSerializeLinkHierarchy {
+                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+                            for linkSummary in nodeLinkSummaries {
+                                try outputConsumer.consumeIncremental(linkableElementSummary: linkSummary)
+                            }
+                        }
+                        
                         if emitDigest {
-                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-                            let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
-                            
                             supplementaryRenderInfo.assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
-                            supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
+                            let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
                             supplementaryRenderInfo.indexingRecords.append(contentsOf: nodeIndexingRecords)
-                        } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-                            let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-                            
-                            supplementaryRenderInfo.linkSummaries.append(contentsOf: nodeLinkSummaries)
                         }
                     }
                 }
@@ -148,7 +158,6 @@ package enum ConvertActionConverter {
             initialResult: SupplementaryRenderInformation(),
             combineResults: { accumulated, partialResult in
                 accumulated.assets.merge(partialResult.assets, uniquingKeysWith: +)
-                accumulated.linkSummaries.append(contentsOf: partialResult.linkSummaries)
                 accumulated.indexingRecords.append(contentsOf: partialResult.indexingRecords)
                 accumulated.coverageInfo.append(contentsOf: partialResult.coverageInfo)
                 accumulated.markdownManifestDocuments.formUnion(partialResult.markdownManifestDocuments)
@@ -157,6 +166,8 @@ package enum ConvertActionConverter {
         )
         
         signposter.endInterval("Render", renderSignpostHandle)
+        
+        _ = try await serializeLinkHierarchy
         
         guard !Task.isCancelled else { return }
         
@@ -181,28 +192,15 @@ package enum ConvertActionConverter {
         }
 
         // Write various metadata
-        if emitDigest {
+        if shouldSerializeLinkHierarchy {
             try signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                try outputConsumer.consume(linkableElementSummaries: supplementaryRenderInfo.linkSummaries)
-                try outputConsumer.consume(indexingRecords: supplementaryRenderInfo.indexingRecords)
-                try outputConsumer.consume(assets: supplementaryRenderInfo.assets)
-            }
-        }
-        
-        if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-            try signposter.withIntervalSignpost("Serialize link hierarchy", id: signposter.makeSignpostID()) {
-                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
-                try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
-                
-                if !emitDigest {
-                    try outputConsumer.consume(linkableElementSummaries: supplementaryRenderInfo.linkSummaries)
+                try outputConsumer.finishedConsumingLinkElementSummaries()
+                if emitDigest {
+                    // Only emit the other digest files if `--emit-digest` is passed
+                    try outputConsumer.consume(indexingRecords: supplementaryRenderInfo.indexingRecords)
+                    try outputConsumer.consume(assets: supplementaryRenderInfo.assets)
+                    try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
                 }
-            }
-        }
-        
-        if emitDigest {
-            try signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
         }
         
@@ -240,7 +238,6 @@ package enum ConvertActionConverter {
 
 private struct SupplementaryRenderInformation {
     var indexingRecords = [IndexingRecord]()
-    var linkSummaries = [LinkDestinationSummary]()
     var assets = [RenderReferenceType : [any RenderReference]]()
     var coverageInfo = [CoverageDataEntry]()
     var markdownManifestDocuments = Set<MarkdownOutputManifest.Document>()

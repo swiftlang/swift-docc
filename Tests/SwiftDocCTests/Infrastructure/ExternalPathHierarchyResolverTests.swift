@@ -16,11 +16,6 @@ import DocCTestUtilities
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
-    override func setUp() {
-        super.setUp()
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-    }
-    
     // These tests resolve absolute symbol links in both a local and external context to verify that external links work the same local links.
     
     func testUnambiguousAbsolutePaths() async throws {
@@ -716,7 +711,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyContext.inputs.id)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(documentationID: dependencyContext.inputs.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -996,7 +991,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: context.inputs.id)
+        let resolverInfo = try localResolver.prepareForSerialization(documentationID: context.inputs.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         

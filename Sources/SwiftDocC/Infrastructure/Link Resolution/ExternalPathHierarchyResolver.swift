@@ -128,7 +128,7 @@ final class ExternalPathHierarchyResolver {
                     continue
                 }
                 let identifier = identifiers[index]
-                self.resolvedReferences[identifier] = ResolvedTopicReference(bundleID: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+                self.resolvedReferences[identifier] = ResolvedTopicReference(bundleID: fileRepresentation.documentationID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
             }
         }
         // Finally, the Identifier -> Symbol mapping can be constructed by iterating over the nodes and looking up the reference for each USR.

@@ -287,8 +287,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testAmbiguousPaths() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-        
         let (_, context) = try await testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
         
@@ -2869,8 +2867,6 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testLanguageRepresentationsWithDifferentParentKinds() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
 
@@ -3200,8 +3196,6 @@ class PathHierarchyTests: XCTestCase {
     }
 
     func testAbsoluteLinksToOtherModuleWithExtensions() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-
         let extendedTypeID = "extended-type-id"
         let extensionID = "extension-id"
         let extensionMethodID = "extension-method-id"
@@ -4583,8 +4577,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testResolveExternalLinkFromTechnologyRoot() async throws {
-        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
-        
         let catalog = Folder(name: "unit-test.docc", content: [
             TextFile(name: "Root.md", utf8Content: """
             # Some root page
