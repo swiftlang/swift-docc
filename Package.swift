@@ -14,6 +14,7 @@ import class Foundation.ProcessInfo
 
 let swiftSettings: [SwiftSetting] = [
     .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
+    .unsafeFlags(["-Xllvm", "-sil-print-function=s14SwiftDocCTests17ValidatedURLTestsC13testValidURLsyyF"]),
 
     .swiftLanguageMode(.v5),
 
