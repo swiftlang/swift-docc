@@ -14,3 +14,5 @@ add_library(DocCCommon STATIC
   JSONDecoding/UnsafeRawPointer+HasASCIIPrefix.swift
   Mutex.swift
   SourceLanguage.swift)
+target_link_libraries(DocCCommon PRIVATE
+  DocC::SymbolKit)

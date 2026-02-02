@@ -723,15 +723,13 @@
           {
             "children" : [
               {
-                "children" : [
-                  {
-                    "path" : "\/documentation\/sidekit\/sideprotocol\/func()-2dxqn",
-                    "title" : "func1()",
-                    "type" : "method"
-                  }
-                ],
                 "title" : "SideProtocol Implementations",
                 "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/sidekit\/sideprotocol\/func()-2dxqn",
+                "title" : "func1()",
+                "type" : "method"
               }
             ],
             "path" : "\/documentation\/sidekit\/sideprotocol\/func()",
