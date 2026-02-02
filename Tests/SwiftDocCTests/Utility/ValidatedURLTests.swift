@@ -23,13 +23,13 @@ class ValidatedURLTests: XCTestCase {
         ]
         
         // Test ValidatedURL.init(String)
-        validURLs.forEach { url in
+        for url in validURLs {
             let validated = ValidatedURL(parsingExact: url.absoluteString)
             XCTAssertEqual(url.absoluteString, validated?.absoluteString)
         }
 
         // Test ValidatedURL.init(URL)
-        validURLs.forEach { url in
+        for url in validURLs {
             let validated = ValidatedURL(url)
             XCTAssertEqual(url.absoluteString, validated?.absoluteString)
         }
@@ -49,18 +49,14 @@ class ValidatedURLTests: XCTestCase {
         ]
         
         // Test successful requiring
-        validURLs
-            .filter { $0.scheme == "ftp" }
-            .forEach { url in
-                XCTAssertEqual(url.absoluteString, ValidatedURL(url)?.requiring(scheme: "ftp")?.absoluteString)
-            }
+        for url in validURLs where url.scheme == "ftp" {
+            XCTAssertEqual(url.absoluteString, ValidatedURL(url)?.requiring(scheme: "ftp")?.absoluteString)
+        }
 
         // Test unsuccessful requiring
-        validURLs
-            .filter { $0.scheme != "ftp" }
-            .forEach { url in
-                XCTAssertNil(ValidatedURL(url)?.requiring(scheme: "ftp"))
-            }
+        for url in validURLs where url.scheme != "ftp" {
+            XCTAssertNil(ValidatedURL(url)?.requiring(scheme: "ftp"))
+        }
     }
     
     // We need to validate fragment parsing because former approach using `URL`
@@ -74,10 +70,9 @@ class ValidatedURLTests: XCTestCase {
         ]
 
         // Test successful fragment parsing
-        fragmentDestinations
-            .forEach { url in
-                XCTAssertNotNil(ValidatedURL(parsingExact: url)?.components.fragment)
-            }
+        for url in fragmentDestinations {
+            XCTAssertNotNil(ValidatedURL(parsingExact: url)?.components.fragment)
+        }
     }
     
     func testQueryIsPartOfPathForAuthoredLinks() throws {

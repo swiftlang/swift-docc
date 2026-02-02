@@ -989,7 +989,7 @@ extension NavigatorIndex {
             if sortRootChildrenByName {
                 root.children.sort(by: \.item.title)
                 if groupByLanguage {
-                    root.children.forEach { (languageGroup) in
+                    for languageGroup in root.children {
                         languageGroup.children.sort(by: \.item.title)
                     }
                 }
@@ -1007,9 +1007,11 @@ extension NavigatorIndex {
                                                                            path: ""),
                                                                            bundleIdentifier: bundleIdentifier)
                     languageMaskToNode[InterfaceLanguage.any.mask] = otherNode
-                    fallouts.forEach { (node) in
-                        root.children.removeAll(where: { $0 == node})
-                        node.children.forEach { otherNode.add(child: $0) }
+                    for node in fallouts {
+                        root.children.removeAll(where: { $0 == node })
+                        for child in node.children {
+                            otherNode.add(child: child)
+                        }
                     }
                     root.add(child: otherNode)
                 }
@@ -1330,7 +1332,7 @@ extension LMDB.Database {
     */
     func put(records: [NavigatorIndex.Builder.Record], flags: WriteFlags = []) throws {
         try LMDB.Transaction(environment: environment).run { database in
-            try records.forEach { record in
+            for record in records {
                 do {
                     try database.put(key: record.nodeMapping.0, value: record.nodeMapping.1, in: self, flags: flags)
                     try database.put(key: record.curationMapping.0, value: record.curationMapping.1, in: self, flags: flags)

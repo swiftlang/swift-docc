@@ -970,7 +970,9 @@ public class DocumentationContext {
                 ))
             }
         }
-        results.forEach { addPreparedSymbolToContext($0) }
+        for result in results {
+            addPreparedSymbolToContext(result)
+        }
     }
 
     /// Adds a prepared symbol data including a topic graph node and documentation node to the context.
@@ -1418,7 +1420,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the dictionary keys for each target into their section variants.
-        keysByTarget.forEach { targetIdentifier, keys in
+        for (targetIdentifier, keys) in keysByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let keys = keys.sorted(by: \.name)
@@ -1431,7 +1433,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the parameters for each target into their section variants.
-        parametersByTarget.forEach { targetIdentifier, parameters in
+        for (targetIdentifier, parameters) in parametersByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let parameters = parameters.sorted(by: \.name)
@@ -1444,7 +1446,7 @@ public class DocumentationContext {
         }
         
         // Merge in the body for each target into their section variants.
-        bodyByTarget.forEach { targetIdentifier, body in
+        for (targetIdentifier, body) in bodyByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 // Add any body parameters to existing body record
@@ -1461,7 +1463,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the responses for each target into their section variants.
-        responsesByTarget.forEach { targetIdentifier, responses in
+        for (targetIdentifier, responses) in responsesByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let responses = responses.sorted(by: \.statusCode)
@@ -1579,7 +1581,9 @@ public class DocumentationContext {
         }
 
         // Add any new symbols to the documentation cache.
-        results.forEach { addPreparedSymbolToContext($0) }
+        for result in results {
+            addPreparedSymbolToContext(result)
+        }
     }
     
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]

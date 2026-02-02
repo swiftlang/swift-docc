@@ -120,15 +120,17 @@ struct DocumentationMarkup {
         var seeAlsoIndex: Int?
         
         // Index all headings as a lookup during parsing the content
-        markup.children.enumerated().forEach({ pair in
+        for (index, child) in markup.children.enumerated() {
             // If we've parsed the last section we're interested in, skip through the rest
-            guard currentSection <= parseUpToSection || currentSection == .end else { return }
-            
-            let (index, child) = pair
+            guard currentSection <= parseUpToSection || currentSection == .end else {
+                continue
+            }
             let isLastChild = index == (markup.childCount - 1)
             
             // Already parsed all expected content, return.
-            guard currentSection != .end else { return }
+            guard currentSection != .end else {
+                continue
+            }
             
             // Parse an H1 title, if found.
             if currentSection == .title {
@@ -137,34 +139,35 @@ struct DocumentationMarkup {
                 // Index the title child node.
                 if let heading = child as? Heading, heading.level == 1 {
                     titleHeading = heading
-                    return
+                    continue
                 }
             }
             
             // The deprecation summary directive is allowed to have an effect in multiple sections of the content.
             if let directive = child as? BlockDirective,
                directive.name == DeprecationSummary.directiveName,
-               Self.allowedSectionsForDeprecationSummary.contains(currentSection) {
+               Self.allowedSectionsForDeprecationSummary.contains(currentSection)
+            {
                 deprecation = MarkupContainer(directive.children)
-                return
+                continue
             }
             
             // Parse an abstract, if found
             if currentSection == .abstract {
                 if abstractSection == nil, let firstParagraph = child as? Paragraph {
                     abstractSection = AbstractSection(paragraph: firstParagraph)
-                    return
+                    continue
                 } else if let directive = child as? BlockDirective {
                     if BlockDirective.directivesRemovedFromContent.contains(directive.name) {
                         // These directives don't affect content so they shouldn't break us out of
                         // the automatic abstract section.
-                        return
+                        continue
                     } else {
                         currentSection = .discussion
                     }
                 } else if let _ = child as? HTMLBlock {
                     // Skip HTMLBlock comment.
-                    return
+                    continue
                 } else {
                     // Only directives and a single paragraph allowed in an abstract,
                     // advance to a discussion section.
@@ -196,10 +199,10 @@ struct DocumentationMarkup {
                         switch heading.plainText {
                         case TopicsSection.title:
                             currentSection = .topics
-                            return
+                            continue
                         case SeeAlsoSection.title:
                             currentSection = .seeAlso
-                            return
+                            continue
                         default: break
                         }
                     }
@@ -208,7 +211,9 @@ struct DocumentationMarkup {
                     discussionIndex = index
                 }
                 
-                guard let discussionIndex else { return }
+                guard let discussionIndex else {
+                    continue
+                }
                 
                 // Level 2 heading found inside discussion
                 if let heading = child as? Heading, heading.level == 2 {
@@ -218,14 +223,14 @@ struct DocumentationMarkup {
                         discussionSection = discussion
                         discussionTags = tags
                         currentSection = .topics
-                        return
+                        continue
                         
                     case SeeAlsoSection.title:
                         let (discussion, tags) = parseDiscussion(markup.children(at: discussionIndex ..< index))
                         discussionSection = discussion
                         discussionTags = tags
                         currentSection = .seeAlso
-                        return
+                        continue
                     default: break
                     }
                 }
@@ -248,7 +253,7 @@ struct DocumentationMarkup {
                                 topicsSection = TopicsSection(content: markup.children(at: topicsIndex ..< index))
                             }
                             currentSection = .seeAlso
-                            return
+                            continue
                         default: break
                         }
                     }
@@ -280,7 +285,7 @@ struct DocumentationMarkup {
                         seeAlsoSection = SeeAlsoSection(content: markup.children(at: seeAlsoIndex ..< index))
                     }
                     currentSection = .end
-                    return
+                    continue
                 }
                 
                 if seeAlsoIndex == nil { seeAlsoIndex = index }
@@ -290,7 +295,7 @@ struct DocumentationMarkup {
                     seeAlsoSection = SeeAlsoSection(content: markup.children(at: seeAlsoIndex! ... index))
                 }
             }
-        })
+        }
     }
 }
 

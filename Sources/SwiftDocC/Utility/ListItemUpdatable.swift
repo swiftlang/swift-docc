@@ -25,7 +25,9 @@ extension Array where Element: ListItemUpdatable {
     func insertAndUpdate(_ newElements: [Element], updater: (Element, Element) -> Element) -> [Element] {
         // Build a lookup table of the new elements
         var newElementLookup = [String: Element]()
-        newElements.forEach { newElementLookup[$0.listItemIdentifier.description] = $0 }
+        for newElement in newElements {
+           newElementLookup[newElement.listItemIdentifier.description] = newElement
+        }
         
         // Update existing elements with new data being passed in.
         var updatedElements = self.map { existingElement -> Element in

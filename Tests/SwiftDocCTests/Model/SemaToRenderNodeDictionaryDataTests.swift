@@ -212,13 +212,11 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             }
         }
         XCTAssertEqual(genrePropertyAllowedValues.count, 1)
-        genrePropertyAllowedValues.forEach { attribute in
-            if case let .allowedValues(values) = attribute {
-                XCTAssertEqual(values.count, 3)
-                XCTAssertEqual(values[0], "Classic Rock")
-                XCTAssertEqual(values[1], "Folk")
-                XCTAssertEqual(values[2], "null")
-            }
+        for case let .allowedValues(values) in genrePropertyAllowedValues {
+            XCTAssertEqual(values.count, 3)
+            XCTAssertEqual(values[0], "Classic Rock")
+            XCTAssertEqual(values[1], "Folk")
+            XCTAssertEqual(values[2], "null")
         }
         
         let monthProperty = propertiesSection.items[2]
@@ -231,12 +229,10 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         }
         attributeTitles = monthProperty.attributes?.map{$0.title.lowercased()}.sorted() ?? []
         XCTAssertEqual(attributeTitles, ["possible types"])
-        monthProperty.attributes?.forEach { attribute in
-            if case let .allowedTypes(decls) = attribute {
-                XCTAssertEqual(decls.count, 2)
-                XCTAssertEqual(decls[0][0].text, "integer")
-                XCTAssertEqual(decls[1][0].text, "string")
-            }
+        for case let .allowedTypes(decls) in monthProperty.attributes ?? [] {
+            XCTAssertEqual(decls.count, 2)
+            XCTAssertEqual(decls[0][0].text, "integer")
+            XCTAssertEqual(decls[1][0].text, "string")
         }
         
         let nameProperty = propertiesSection.items[3]

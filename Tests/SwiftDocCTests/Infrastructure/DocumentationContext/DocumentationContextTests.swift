@@ -2849,7 +2849,7 @@ let expected = """
         let symbolReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let symbol = try XCTUnwrap((try? context.entity(with: symbolReference))?.semantic as? Symbol)
         let symbolTopics = try XCTUnwrap(symbol.topics)
-        symbolTopics.originalLinkRangesByGroup.forEach { group in
+        for group in symbolTopics.originalLinkRangesByGroup {
             XCTAssertTrue(group.allSatisfy({ $0 != nil }))
         }
         
@@ -2857,7 +2857,7 @@ let expected = """
         let articleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         let article = try XCTUnwrap((try? context.entity(with: articleReference))?.semantic as? Article)
         let articleTopics = try XCTUnwrap(article.topics)
-        articleTopics.originalLinkRangesByGroup.forEach { group in
+        for group in articleTopics.originalLinkRangesByGroup {
             XCTAssertTrue(group.allSatisfy({ $0 != nil }))
         }
     }
