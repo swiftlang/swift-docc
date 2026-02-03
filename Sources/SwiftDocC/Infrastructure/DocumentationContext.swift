@@ -2555,7 +2555,7 @@ public class DocumentationContext {
                 range: nil,
                 identifier: "org.swift.docc.MultipleMainModules",
                 summary: "The documentation input contains more than one main module: \(sortedModuleNames.map { $0.singleQuoted }.joined(separator: ", "))",
-                explanation: "DocC doesn't support building combined documentation for multiple modules. Each module should be documented separately."
+                explanation: "DocC doesn't support building combined documentation for multiple modules in a single catalog. Each module should be documented separately."
             )
             diagnosticEngine.emit(Problem(diagnostic: diagnostic))
         }
@@ -2573,7 +2573,7 @@ public class DocumentationContext {
                     range: article.value.metadata?.technologyRoot?.originalMarkup.range,
                     identifier: "org.swift.docc.TechnologyRootWithSymbols",
                     summary: "The '\(TechnologyRoot.directiveName)' directive creates an additional root page, but the documentation already has a root from its symbols",
-                    explanation: "When documentation contains symbols (from symbol graph files), those symbols provide a module root. The '\(TechnologyRoot.directiveName)' directive creates an additional root page which results in unexpected documentation structure.",
+                    explanation: "When documentation contains symbols from source files or libraries, those symbols provide a module root. The '\(TechnologyRoot.directiveName)' directive creates an additional root page which results in an unexpected documentation structure.",
                     notes: symbolGraphNotes
                 )
 
@@ -2598,7 +2598,7 @@ public class DocumentationContext {
                     range: article.value.metadata?.technologyRoot?.originalMarkup.range,
                     identifier: "org.swift.docc.MultipleTechnologyRoots",
                     summary: "The documentation has multiple articles with the '\(TechnologyRoot.directiveName)' directive",
-                    explanation: "Only one article should use the '\(TechnologyRoot.directiveName)' directive to define the documentation's root page. Having multiple root pages results in unexpected documentation structure."
+                    explanation: "Only one article should use the '\(TechnologyRoot.directiveName)' directive to define the documentation's root page. Having multiple root pages results in an unexpected documentation structure."
                 )
 
                 guard let range = article.value.metadata?.technologyRoot?.originalMarkup.range else {
