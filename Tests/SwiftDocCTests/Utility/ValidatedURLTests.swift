@@ -8,80 +8,65 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 @testable import SwiftDocC
 
-class ValidatedURLTests: XCTestCase {
+struct ValidatedURLTests {
     
-    func testValidURLs() {
-        let validURLs = [
-            URL(string: "http://domain")!,
-            URL(string: "http://www.domain.com")!,
-            URL(string: "http://www.domain.com/path")!,
-            URL(string: "https://www.domain.com/path")!,
-            URL(string: "ftp://www.domain.com/path/file.ext")!,
-        ]
-        
-        // Test ValidatedURL.init(String)
-        for url in validURLs {
-            let validated = ValidatedURL(parsingExact: url.absoluteString)
-            XCTAssertEqual(url.absoluteString, validated?.absoluteString)
-        }
-
-        // Test ValidatedURL.init(URL)
-        for url in validURLs {
-            let validated = ValidatedURL(url)
-            XCTAssertEqual(url.absoluteString, validated?.absoluteString)
-        }
+    @Test(arguments: [
+        URL(string: "http://domain")!,
+        URL(string: "http://www.domain.com")!,
+        URL(string: "http://www.domain.com/path")!,
+        URL(string: "https://www.domain.com/path")!,
+        URL(string: "ftp://www.domain.com/path/file.ext")!,
+    ])
+    func initializeFromURL(url: URL) {
+        // Check two different initializers
+        #expect(url.absoluteString == ValidatedURL(parsingExact: url.absoluteString)?.absoluteString)
+        #expect(url.absoluteString == ValidatedURL(url)?.absoluteString)
     }
 
-    func testInvalidURLs() {
-        XCTAssertNil(ValidatedURL(parsingExact: "http://:domain"))
+    @Test
+    func initializeFromInvalidURL() {
+        #expect(ValidatedURL(parsingExact: "http://:domain") == nil)
 
-        XCTAssertNil(URL(string: "http://:domain").flatMap { ValidatedURL($0) })
+        #expect(URL(string: "http://:domain").flatMap { ValidatedURL($0) } == nil)
     }
 
-    func testRequiringScheme() {
-        let validURLs = [
-            URL(string: "http://domain")!,
-            URL(string: "https://www.domain.com")!,
-            URL(string: "ftp://www.domain.com/path")!,
-        ]
-        
-        // Test successful requiring
-        for url in validURLs where url.scheme == "ftp" {
-            XCTAssertEqual(url.absoluteString, ValidatedURL(url)?.requiring(scheme: "ftp")?.absoluteString)
-        }
-
-        // Test unsuccessful requiring
-        for url in validURLs where url.scheme != "ftp" {
-            XCTAssertNil(ValidatedURL(url)?.requiring(scheme: "ftp"))
+    @Test(arguments: [
+        URL(string: "http://domain")!,
+        URL(string: "https://www.domain.com")!,
+        URL(string: "ftp://www.domain.com/path")!,
+    ])
+    func requiringScheme(url: URL) {
+        let validated = ValidatedURL(url)?.requiring(scheme: "ftp")
+        if url.scheme == "ftp" {
+            #expect(url.absoluteString == validated?.absoluteString)
+        } else {
+            #expect(validated == nil)
         }
     }
     
     // We need to validate fragment parsing because former approach using `URL`
     // led to failing to parse the fragment for some variants of the test strings below.
-    func testFragment() {
-        let fragmentDestinations = [
-            "scheme://domain/path#fragment",
-            "scheme:/path#fragment",
-            "scheme:path#fragment",
-            "scheme:#fragment",
-        ]
-
-        // Test successful fragment parsing
-        for url in fragmentDestinations {
-            XCTAssertNotNil(ValidatedURL(parsingExact: url)?.components.fragment)
-        }
+    @Test(arguments: [
+        "scheme://domain/path#fragment",
+        "scheme:/path#fragment",
+        "scheme:path#fragment",
+        "scheme:#fragment",
+    ])
+    func accessingFragment(string: String) {
+        #expect(ValidatedURL(parsingExact: string)?.components.fragment != nil)
     }
     
-    func testQueryIsPartOfPathForAuthoredLinks() throws {
-        
-        func validate(linkText: String, expectedPath: String, expectedFragment: String? = nil,file: StaticString = #filePath, line: UInt = #line) throws {
-            let validated = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
-            XCTAssertNil(validated.components.queryItems, "Authored documentation links don't include query items", file: file, line: line)
-            XCTAssertEqual(validated.components.path, expectedPath, file: file, line: line)
-            XCTAssertEqual(validated.components.fragment, expectedFragment, file: file, line: line)
+    @Test
+    func queryIsPartOfPathForAuthoredLinks() throws {
+        func validate(linkText: String, expectedPath: String, expectedFragment: String? = nil, sourceLocation: SourceLocation = #_sourceLocation) throws {
+            let validated = try #require(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
+            #expect(validated.components.queryItems == nil, "Authored documentation links don't include query items", sourceLocation: sourceLocation)
+            #expect(validated.components.path == expectedPath, sourceLocation: sourceLocation)
+            #expect(validated.components.fragment == expectedFragment, sourceLocation: sourceLocation)
         }
         
         // Test return type disambiguation
@@ -133,23 +118,24 @@ class ValidatedURLTests: XCTestCase {
         try validate(linkText: linkText, expectedPath: expectedPath)
     }
     
-    func testEscapedFragment() throws {
-        let escapedFragment = try XCTUnwrap("💻".addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed))
-        XCTAssertEqual(escapedFragment, "%F0%9F%92%BB")
+    @Test(arguments: [
+        "SymbolName#",
+        "doc:SymbolName#",
+        "doc://com.example.test/SymbolName#",
+    ])
+    func parsingAuthoredLinkWithEscapedFragment(baseLink: String) throws {
+        let escapedFragment = try #require("💻".addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed))
+        #expect(escapedFragment == "%F0%9F%92%BB")
         
-        for linkText in [
-            "SymbolName#\(escapedFragment)",
-            "doc:SymbolName#\(escapedFragment)",
-            "doc://com.example.test/SymbolName#\(escapedFragment)",
-        ] {
-            let expectedPath = linkText.hasPrefix("doc://")
-                ? "/SymbolName"
-                :  "SymbolName"
-            
-            let validated = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
-            
-            XCTAssertEqual(validated.components.path, expectedPath)
-            XCTAssertEqual(validated.components.fragment, "💻")
-        }
+        let linkText = baseLink + escapedFragment
+        
+        let expectedPath = linkText.hasPrefix("doc://")
+            ? "/SymbolName"
+            :  "SymbolName"
+        
+        let validated = try #require(ValidatedURL(parsingAuthoredLink: linkText), "Failed to parse \(linkText.singleQuoted) as authored link")
+        
+        #expect(validated.components.path == expectedPath)
+        #expect(validated.components.fragment == "💻")
     }
 }
