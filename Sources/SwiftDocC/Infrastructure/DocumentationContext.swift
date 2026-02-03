@@ -1134,6 +1134,22 @@ public class DocumentationContext {
                 uniqueRelationships.formUnion(unifiedSymbolGraph.orphanRelationships)
             }
             
+            // Warn when the documentation contains more than one main module
+            if moduleReferences.count > 1 {
+                let diagnostic = Diagnostic(
+                    source: nil,
+                    severity: .warning,
+                    range: nil,
+                    identifier: "org.swift.docc.MultipleMainModules",
+                    summary: "Documentation contains more than one main module",
+                    explanation: """
+                    The documentation inputs contain symbol graphs for more than one main module: \(moduleReferences.keys.sorted().joined(separator: ", ")).
+                    This may lead to unexpected behaviors in the generated documentation.
+                    """
+                )
+                diagnosticEngine.emit(Problem(diagnostic: diagnostic))
+            }
+            
             try shouldContinueRegistration()
             
             // Only add the symbol mapping now if the path hierarchy based resolver is the main implementation.
@@ -2039,6 +2055,38 @@ public class DocumentationContext {
         try shouldContinueRegistration()
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
+        // Warn when the documentation contains more than one root page
+        if rootPageArticles.count > 1 {
+            let extraRootPageProblems = rootPageArticles.map { rootPageArticle -> Problem in
+                let diagnostic = Diagnostic(
+                    source: rootPageArticle.source,
+                    severity: .warning,
+                    range: rootPageArticle.value.metadata?.technologyRoot?.originalMarkup.range,
+                    identifier: "org.swift.docc.MultipleTechnologyRoots",
+                    summary: "Documentation contains more than one root page",
+                    explanation: """
+                    The documentation contains \(rootPageArticles.count) articles with \(TechnologyRoot.directiveName.singleQuoted) directives.
+                    Only one article should be marked as a technology root to avoid unexpected behaviors.
+                    """
+                )
+                
+                guard let range = rootPageArticle.value.metadata?.technologyRoot?.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+                
+                let solution = Solution(
+                    summary: "Remove the \(TechnologyRoot.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            }
+            
+            diagnosticEngine.emit(extraRootPageProblems)
+        }
+        
         let globalOptions = (allArticles + documentationExtensions).compactMap { article in
             return article.value.options[.global]
         }
@@ -2113,6 +2161,51 @@ public class DocumentationContext {
                 return nil
             }
             return node.reference
+        }
+        
+        // Warn when the documentation contains both symbols (modules) and @TechnologyRoot pages
+        // This is an unsupported setup that creates multiple roots in the documentation hierarchy
+        if !rootModules.isEmpty && !rootPageArticles.isEmpty {
+            let problems = rootPageArticles.map { rootPageArticle -> Problem in
+                // Create notes pointing to symbol graph files that are causing the multiple roots issue
+                let symbolGraphNotes: [DiagnosticNote] = bundle.symbolGraphURLs.map { symbolGraphURL in
+                    let fileName = symbolGraphURL.lastPathComponent
+                    let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
+                    return DiagnosticNote(
+                        source: symbolGraphURL,
+                        range: zeroRange,
+                        message: "Symbol graph file '\(fileName)' creates a module root"
+                    )
+                }
+                
+                let diagnostic = Diagnostic(
+                    source: rootPageArticle.source,
+                    severity: .warning,
+                    range: rootPageArticle.value.metadata?.technologyRoot?.originalMarkup.range,
+                    identifier: "org.swift.docc.TechnologyRootWithSymbols",
+                    summary: "Documentation contains both symbols and articles with @TechnologyRoot directives",
+                    explanation: """
+                    When documentation contains symbols (from symbol graph files), @TechnologyRoot directives create an unsupported setup with multiple roots in the documentation hierarchy.
+                    Remove the @TechnologyRoot directive so that this page is treated as an article under the module.
+                    """,
+                    notes: symbolGraphNotes
+                )
+                
+                guard let range = rootPageArticle.value.metadata?.technologyRoot?.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+                
+                let solution = Solution(
+                    summary: "Remove the \(TechnologyRoot.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            }
+            
+            diagnosticEngine.emit(problems)
         }
         
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
