@@ -9,6 +9,7 @@
 */
 
 import SymbolKit
+import DocCCommon
 
 extension PathHierarchyBasedLinkResolver {
     

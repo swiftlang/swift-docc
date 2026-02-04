@@ -11,6 +11,7 @@
 import Foundation
 import SwiftDocC
 import Markdown
+private import DocCCommon
 
 /// An action that merges a list of documentation archives into a combined archive.
 struct MergeAction: AsyncAction {

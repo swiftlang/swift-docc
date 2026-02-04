@@ -12,6 +12,10 @@ import Foundation
 import SymbolKit
 import DocCCommon
 
+#if canImport(os)
+private import os
+#endif
+
 /// Loads symbol graph files from a documentation bundle.
 ///
 /// A type that groups a bundle's symbol graphs by the module they describe,

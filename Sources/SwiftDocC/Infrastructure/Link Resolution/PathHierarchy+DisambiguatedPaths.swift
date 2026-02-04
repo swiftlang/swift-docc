@@ -9,6 +9,8 @@
 */
 
 import Foundation
+private import SymbolKit
+private import DocCCommon
 
 private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted.union(["/"])
 

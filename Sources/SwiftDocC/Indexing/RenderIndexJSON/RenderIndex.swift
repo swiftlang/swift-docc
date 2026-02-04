@@ -9,6 +9,7 @@
 */
 
 import SymbolKit
+private import Foundation
 
 /// A navigation index of the content in a DocC archive, optimized for rendering.
 ///

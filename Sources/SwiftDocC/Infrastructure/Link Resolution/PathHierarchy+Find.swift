@@ -9,6 +9,7 @@
 */
 
 import SymbolKit
+private import DocCCommon
 
 extension PathHierarchy {
     /// Attempts to find an element in the path hierarchy for a given path relative to another element.

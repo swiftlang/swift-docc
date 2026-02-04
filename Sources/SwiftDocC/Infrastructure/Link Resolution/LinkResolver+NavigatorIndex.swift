@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+private import DocCCommon
 
 /// A rendering-friendly representation of a external node.
 package struct ExternalRenderNode {

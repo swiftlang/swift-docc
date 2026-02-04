@@ -13,6 +13,7 @@ import Testing
 @testable import SwiftDocC
 import Markdown
 import DocCTestUtilities
+import DocCCommon
 
 // MARK: Using an in-memory file system
 

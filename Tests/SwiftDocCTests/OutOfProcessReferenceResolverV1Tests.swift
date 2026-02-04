@@ -13,6 +13,7 @@ import Foundation
 import SymbolKit
 @_spi(ExternalLinks) @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
 
 // This tests the deprecated V1 implementation of `OutOfProcessReferenceResolver`.
 // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.

@@ -11,6 +11,7 @@
 public import Foundation
 import Markdown
 import SymbolKit
+public import DocCCommon
 
 // Link resolution works in two parts:
 //

@@ -14,6 +14,8 @@ import Foundation
 package import os
 #endif
 
+private import DocCHTML
+
 package enum ConvertActionConverter {
 #if canImport(os)
     static package let signposter = OSSignposter(subsystem: "org.swift.docc", category: "Convert")

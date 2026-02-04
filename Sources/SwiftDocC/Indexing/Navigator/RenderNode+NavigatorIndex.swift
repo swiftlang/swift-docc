@@ -8,6 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+private import DocCCommon
+
 /// A language specific representation of a render node value for building a navigator index.
 protocol NavigatorIndexableRenderNodeRepresentation<Metadata> {
     associatedtype Metadata: NavigatorIndexableRenderMetadataRepresentation

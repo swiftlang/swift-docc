@@ -9,6 +9,7 @@
 */
 
 import SymbolKit
+private import DocCCommon
 
 /// All known symbol kind identifiers.
 ///

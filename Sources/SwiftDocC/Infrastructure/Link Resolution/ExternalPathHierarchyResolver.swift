@@ -11,6 +11,7 @@
 import Foundation
 import SymbolKit
 import Markdown
+private import DocCCommon
 
 /// A class that resolves links to an already built documentation archives.
 final class ExternalPathHierarchyResolver {

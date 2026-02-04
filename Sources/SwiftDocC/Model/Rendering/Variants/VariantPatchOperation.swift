@@ -8,6 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+private import DocCCommon
+
 /// A patch to update a render node value.
 public enum VariantPatchOperation<Value: Codable> {
     /// A replacement operation.
