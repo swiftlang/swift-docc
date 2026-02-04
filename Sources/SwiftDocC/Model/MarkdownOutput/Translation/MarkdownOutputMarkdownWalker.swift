@@ -77,8 +77,8 @@ extension MarkdownOutputMarkupWalker {
             }
         }
         
-        section.content.forEach {
-            self.visit($0)
+        for content in section.content {
+            self.visit(content)
         }
     }
         
@@ -113,7 +113,9 @@ extension MarkdownOutputMarkupWalker {
         
         startNewParagraphIfRequired()
         for item in unorderedList.listItems {
-            item.children.forEach { visit($0) }
+            for child in item.children {
+                visit(child)
+            }
             startNewParagraphIfRequired()
         }
     }
@@ -353,8 +355,8 @@ extension MarkdownOutputMarkupWalker {
 extension MarkdownOutputMarkupWalker {
     
     mutating func visit(container: MarkupContainer?) {
-        container?.elements.forEach {
-            self.visit($0)
+        for element in container?.elements ?? [] {
+            visit(element)
         }
     }
     

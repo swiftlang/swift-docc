@@ -183,7 +183,7 @@ struct DocumentationCurator {
         let addedGroups = automaticallyGeneratedTaskGroups ?? []
         
         // Validate the node groups' links
-        (taskGroups + authoredSeeAlsoGroups).forEach({ group in
+        for group in (taskGroups + authoredSeeAlsoGroups) {
             problems.append(contentsOf:
                 group.problemsForGroupLinks().map({ problem -> Problem in
                     var diagnostic = problem.diagnostic
@@ -191,11 +191,11 @@ struct DocumentationCurator {
                     return Problem(diagnostic: diagnostic, possibleSolutions: problem.possibleSolutions)
                 })
             )
-        })
+        }
 
         // Crawl the automated curation
-        try addedGroups.forEach { section in
-            try section.references.forEach { childReference in
+        for section in addedGroups {
+            for childReference in section.references {
                 // Descend further into curated topics
                 try crawlChildren(of: childReference, prepareForCuration: prepareForCuration, relateNodes: relateNodes)
             }

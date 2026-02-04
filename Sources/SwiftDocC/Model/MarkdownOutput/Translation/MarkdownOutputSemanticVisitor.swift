@@ -127,23 +127,23 @@ extension MarkdownOutputSemanticVisitor {
         )
         manifest = MarkdownOutputManifest(title: bundle.displayName, documents: [document])
         
-        // Availability - defaults, overridden with symbol, overriden with metadata
+        // Availability - defaults, overridden with symbol, overridden with metadata
         
         var availabilities: [String: MarkdownOutputNode.Metadata.Availability] = [:]
         if let primaryModule = metadata.symbol?.modules.first {
-            bundle.info.defaultAvailability?.modules[primaryModule]?.forEach {
-                let meta = MarkdownOutputNode.Metadata.Availability($0)
+            for availability in bundle.info.defaultAvailability?.modules[primaryModule] ?? [] {
+                let meta = MarkdownOutputNode.Metadata.Availability(availability)
                 availabilities[meta.platform] = meta
             }
         }
          
-        symbol.availability?.availability.forEach {
-            let meta = MarkdownOutputNode.Metadata.Availability($0)
+        for availability in symbol.availability?.availability ?? [] {
+            let meta = MarkdownOutputNode.Metadata.Availability(availability)
             availabilities[meta.platform] = meta
         }
         
-        documentationNode.metadata?.availability.forEach {
-            let meta = MarkdownOutputNode.Metadata.Availability($0)
+        for availability in documentationNode.metadata?.availability ?? [] {
+            let meta = MarkdownOutputNode.Metadata.Availability(availability)
             availabilities[meta.platform] = meta
         }
         

@@ -62,7 +62,7 @@ public struct VideoReference: MediaReference, URLReference, Equatable {
         // rebuild the data asset
         asset = DataAsset()
         let variants = try values.decode([VariantProxy].self, forKey: .variants)
-        variants.forEach { (variant) in
+        for variant in variants {
             asset.register(variant.url, with: DataTraitCollection(from: variant.traits))
         }
         
@@ -80,7 +80,7 @@ public struct VideoReference: MediaReference, URLReference, Equatable {
         
         // convert the data asset to a serializable object
         var result = [VariantProxy]()
-        asset.variants.sorted(by: \.value.path).forEach { (key, value) in
+        for (key, value) in asset.variants.sorted(by: \.value.path) {
             let url = renderURL(for: value, prefixComponent: encoder.assetPrefixComponent)
             result.append(VariantProxy(url: url, traits: key))
         }
