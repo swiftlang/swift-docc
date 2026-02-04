@@ -482,6 +482,10 @@ target_link_libraries(SwiftDocC PUBLIC
   libcmark-gfm
   libcmark-gfm-extensions)
 
+target_compile_options(SwiftDocC PRIVATE
+  "SHELL:-swift-version 5"
+  "SHELL:-enable-upcoming-feature ConciseMagicFile")
+
 if(BUILD_SHARED_LIBS)
   install(TARGETS SwiftDocC
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

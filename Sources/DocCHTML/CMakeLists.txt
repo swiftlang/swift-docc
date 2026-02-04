@@ -29,3 +29,5 @@ target_link_libraries(DocCHTML PUBLIC
 target_link_libraries(DocCHTML PUBLIC
   libcmark-gfm
   libcmark-gfm-extensions)
+target_compile_options(DocCHTML PRIVATE
+  "SHELL:-swift-version 6")
