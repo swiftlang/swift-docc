@@ -482,6 +482,8 @@ target_link_libraries(SwiftDocC PUBLIC
   libcmark-gfm
   libcmark-gfm-extensions)
 
+set_target_properties(SwiftDocC PROPERTIES
+  Swift_LANGUAGE_VERSION 5)
 target_compile_options(SwiftDocC PRIVATE
   "SHELL:-swift-version 5"
   "SHELL:-enable-upcoming-feature ConciseMagicFile")

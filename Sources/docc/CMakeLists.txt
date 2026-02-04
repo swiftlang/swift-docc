@@ -11,6 +11,8 @@ add_executable(docc
   main.swift)
 target_link_libraries(docc PRIVATE
   DocCCommandLine)
+set_target_properties(docc PROPERTIES
+  Swift_LANGUAGE_VERSION 5)
 target_compile_options(docc PRIVATE
   "SHELL:-swift-version 5"
   "SHELL:-enable-upcoming-feature ConciseMagicFile")

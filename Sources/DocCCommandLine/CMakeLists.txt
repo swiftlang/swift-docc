@@ -73,6 +73,8 @@ add_library(DocCCommandLine STATIC
 target_link_libraries(DocCCommandLine PUBLIC
   ArgumentParser
   SwiftDocC)
+set_target_properties(DocCCommandLine PROPERTIES
+  Swift_LANGUAGE_VERSION 5)
 target_compile_options(DocCCommandLine PRIVATE
   "SHELL:-swift-version 5"
   "SHELL:-enable-upcoming-feature ConciseMagicFile")
