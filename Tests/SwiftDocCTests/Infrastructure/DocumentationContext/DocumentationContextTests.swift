@@ -4815,7 +4815,7 @@ let expected = """
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]), // Collision
             ])),
             
-            TextFile(name: "SomeClass.md", utf8Content: """
+            TextFile(name: "SoMeClAsS.md", utf8Content: """
             # Some article
             
             This article has the same reference as the symbol. One will override the other. 
@@ -4836,12 +4836,12 @@ let expected = """
         XCTAssert(node.kind.isSymbol, "Given #593 / rdar://79745455 we should deterministically prioritize the symbol over the article")
         
         XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
-            "Article 'SomeClass.md' (Some article) would override class 'SomeClass'."
+            "Article 'SoMeClAsS.md' (Some article) would override class 'SomeClass'."
         ])
         
         let problem = try XCTUnwrap(context.problems.first)
         let solution = try XCTUnwrap(problem.possibleSolutions.first)
-        XCTAssertEqual(solution.summary, "Rename 'SomeClass.md'")
+        XCTAssertEqual(solution.summary, "Rename 'SoMeClAsS.md'")
     }
     
     func testContextRecognizesOverloads() async throws {
