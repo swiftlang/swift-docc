@@ -127,7 +127,7 @@ struct DocumentationMarkup {
             }
             let isLastChild = index == (markup.childCount - 1)
             
-            // Already parsed all expected content, return.
+            // Already parsed all expected content.
             guard currentSection != .end else {
                 continue
             }
