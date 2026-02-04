@@ -1972,7 +1972,7 @@ Root
     func testPathHasher() throws {
         let pathHasher = try XCTUnwrap(PathHasher(rawValue: "MD5"))
         // Test that the results are stable for the given inputs
-        (0...100).forEach { _ in
+        for _ in (0...100) {
             XCTAssertEqual("41dc6c05a0b5", pathHasher.hash("/documentation/foundation/nsurlsessionwebsockettask"))
             XCTAssertEqual("ffdc704430d3", pathHasher.hash("/documentation/foundation/urlsessionwebsockettask/3281790-send"))
             XCTAssertEqual("1161063e700c", pathHasher.hash("/documentation/swiftui/texteditor/disableautocorrection(_:)"))

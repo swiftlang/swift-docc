@@ -15,7 +15,7 @@ class String_HashingTests: XCTestCase {
     
     func testFNV1aHash() {
         // Test that the results are stable for the given inputs
-        (0...100).forEach { _ in
+        for _ in (0...100) {
             XCTAssertEqual("146ys", "".stableHashString)
             XCTAssertEqual("1if00", "Hello".stableHashString)
             XCTAssertEqual("3c6o6", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.".stableHashString)
@@ -25,7 +25,7 @@ class String_HashingTests: XCTestCase {
     
     func testUSRHash() {
         // Test that the results are stable for the given inputs
-        (0...100).forEach { _ in
+        for _ in (0...100) {
             XCTAssertEqual("ztntfp", ExternalIdentifier.usr("").hash)
             XCTAssertEqual("1kf2iw4", ExternalIdentifier.usr("s:5SideKit0A5ClassC10elementT").hash)
             XCTAssertEqual("n3jy95", ExternalIdentifier.usr("s:5SideKit0A5ClassC10value_int").hash)

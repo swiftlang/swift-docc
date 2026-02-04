@@ -400,7 +400,7 @@ class ReferenceResolverTests: XCTestCase {
         }
             
         for resolvedReferencesOfSection in sectionReferences {
-            zip(resolvedReferencesOfSection, expectedReferences).forEach { resolved, expected in
+            for (resolved, expected) in zip(resolvedReferencesOfSection, expectedReferences) {
                 XCTAssertEqual(resolved.identifier, expected)
             }
         }

@@ -72,8 +72,8 @@ public struct RenderContext {
         
         #elseif os(Linux)
         // Serially render on Linux
-        references.forEach {
-            topics[$0] = renderContentFor($0)
+        for reference in references {
+            topics[reference] = renderContentFor(reference)
         }
         #else
         #error("Unexpected platform.")

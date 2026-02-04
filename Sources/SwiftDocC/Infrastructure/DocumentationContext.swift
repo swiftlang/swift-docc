@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -970,7 +970,9 @@ public class DocumentationContext {
                 ))
             }
         }
-        results.forEach { addPreparedSymbolToContext($0) }
+        for result in results {
+            addPreparedSymbolToContext(result)
+        }
     }
 
     /// Adds a prepared symbol data including a topic graph node and documentation node to the context.
@@ -1418,7 +1420,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the dictionary keys for each target into their section variants.
-        keysByTarget.forEach { targetIdentifier, keys in
+        for (targetIdentifier, keys) in keysByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let keys = keys.sorted(by: \.name)
@@ -1431,7 +1433,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the parameters for each target into their section variants.
-        parametersByTarget.forEach { targetIdentifier, parameters in
+        for (targetIdentifier, parameters) in parametersByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let parameters = parameters.sorted(by: \.name)
@@ -1444,7 +1446,7 @@ public class DocumentationContext {
         }
         
         // Merge in the body for each target into their section variants.
-        bodyByTarget.forEach { targetIdentifier, body in
+        for (targetIdentifier, body) in bodyByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 // Add any body parameters to existing body record
@@ -1461,7 +1463,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the responses for each target into their section variants.
-        responsesByTarget.forEach { targetIdentifier, responses in
+        for (targetIdentifier, responses) in responsesByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let responses = responses.sorted(by: \.statusCode)
@@ -1579,7 +1581,9 @@ public class DocumentationContext {
         }
 
         // Add any new symbols to the documentation cache.
-        results.forEach { addPreparedSymbolToContext($0) }
+        for result in results {
+            addPreparedSymbolToContext(result)
+        }
     }
     
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
@@ -1712,7 +1716,20 @@ public class DocumentationContext {
     ///   - articles: Articles to register with the documentation cache.
     /// - Returns: The articles that were registered, with their topic graph node updated to what's been added to the topic graph.
     private func registerArticles(_ articles: DocumentationContext.Articles) -> DocumentationContext.Articles {
-        articles.map { article in
+        // Because of rdar://79745455, articles can collide with top-level symbols.
+        // If the file system is case insensitive, this collision also happens for articles that case _in_sensitive match a top-level symbol's reference.
+        // To help detect this; pre-build a lookup of the lowercase paths of all top-level symbols so that we can match the articles against that.
+        let topLevelSymbolsThatCanCollideWithArticles: [String /* lowercased path */: ResolvedTopicReference] = {
+            let topLevelSymbols = linkResolver.localResolver.topLevelSymbols()
+            var result = [String: ResolvedTopicReference]()
+            result.reserveCapacity(topLevelSymbols.count)
+            for reference in topLevelSymbols {
+                result[reference.path.lowercased()] = reference
+            }
+            return result
+        }()
+                    
+        return articles.compactMap { article in
             guard let (documentation, title) = Self.documentationNodeAndTitle(
                 for: article,
                 // By default, articles are available in the languages the module that's being documented
@@ -1726,7 +1743,9 @@ public class DocumentationContext {
             }
             let reference = documentation.reference
             
-            if let existing = documentationCache[reference], existing.kind.isSymbol {
+            if let existingSymbolReference = topLevelSymbolsThatCanCollideWithArticles[reference.path.lowercased()],
+               let existing = documentationCache[existingSymbolReference]
+            {
                 // By the time we get here it's already to late to fix the collision. All we can do is make the author aware of it and handle the collision deterministically.
                 // rdar://79745455 and https://github.com/swiftlang/swift-docc/issues/593 tracks fixing the root cause of this issue, avoiding the collision and allowing the article and symbol to both exist.
                 diagnosticEngine.emit(
@@ -1742,7 +1761,7 @@ public class DocumentationContext {
                         ]
                     )
                 )
-                return article // Don't continue processing this article
+                return nil // Don't continue processing this article
             } else {
                 documentationCache[reference] = documentation
             }
