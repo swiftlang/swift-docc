@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -189,7 +189,7 @@ class PreviewActionIntegrationTests: XCTestCase {
     
     func testThrowsHumanFriendlyErrorWhenCannotStartServerOnAGivenPort() async throws {
         // Binding an invalid address
-        try await assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on port -1")
+        try await assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on port -1 on host localhost")
     }
     
     func assert(bindPort: Int, expectedErrorMessage: String, file: StaticString = #filePath, line: UInt = #line) async throws {
@@ -307,7 +307,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let boundPort = try XCTUnwrap(servers[preview.serverIdentifier]?.channel.localAddress?.port)
 
         // Try to start another preview on the same port
-        try await assert(bindPort: boundPort, expectedErrorMessage: "Port \(boundPort) is not available at the moment, try a different port number")
+        try await assert(bindPort: boundPort, expectedErrorMessage: "Port \(boundPort) on host localhost is not available at the moment, try a different port number")
 
         try preview.stop()
         
@@ -316,6 +316,79 @@ class PreviewActionIntegrationTests: XCTestCase {
         #endif
     }
     
+    func testCustomHostParameter() async throws {
+        #if os(macOS)
+        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
+        defer {
+            try? FileManager.default.removeItem(at: sourceURL)
+            try? FileManager.default.removeItem(at: outputURL)
+            try? FileManager.default.removeItem(at: templateURL)
+        }
+
+        let convertActionTempDirectory = try createTemporaryDirectory()
+        let createConvertAction = {
+            try ConvertAction(
+                documentationBundleURL: sourceURL,
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: outputURL,
+                htmlTemplateDirectory: templateURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory)
+        }
+
+        // Create a preview action with a custom host
+        let customHost = "0.0.0.0"
+        let preview = try PreviewAction(
+            host: customHost,
+            port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
+            createConvertAction: createConvertAction
+        )
+        defer {
+            try? preview.stop()
+        }
+
+        preview.bindServerToSocketPath = try createTemporaryTestSocketPath()
+
+        let logStorage = LogHandle.LogStorage()
+
+        // Start the preview server and verify the custom host is used in the log output
+        do {
+            let didStartServerExpectation = asyncLogExpectation(log: logStorage, description: "Did start the preview server", expectedText: "=======")
+
+            // Start the preview and keep it running for the asserts that follow inside this test.
+            Task {
+                var logHandle = LogHandle.memory(logStorage)
+                let result = try await preview.perform(logHandle: &logHandle)
+
+                guard !result.problems.containsErrors else {
+                    throw ErrorsEncountered()
+                }
+            }
+
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [didStartServerExpectation], timeout: 20.0)
+
+            // Check the log output to confirm that the custom host is used in the preview URLs
+            let logOutput = logStorage.text
+
+            // Verify the custom host appears in the preview server addresses
+            if let previewInfoStart = logOutput.range(of: "=====\n")?.upperBound,
+               let previewInfoEnd = logOutput[previewInfoStart...].range(of: "\n=====")?.lowerBound {
+                let previewInfo = logOutput[previewInfoStart..<previewInfoEnd]
+                XCTAssertTrue(previewInfo.contains("http://\(customHost):8080/documentation/mykit"),
+                              "Expected custom host '\(customHost)' in documentation URL")
+                XCTAssertTrue(previewInfo.contains("http://\(customHost):8080/tutorials/overview"),
+                              "Expected custom host '\(customHost)' in tutorials URL")
+            } else {
+                XCTFail("Missing preview information in log/print output")
+            }
+        }
+        #endif
+    }
+
     func testCancelsConversion() async throws {
         #if os(macOS)
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())

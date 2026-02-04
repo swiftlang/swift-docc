@@ -390,8 +390,11 @@ Starting Local Preview Server
 Monitoring ~/Developer/swift-docc/Sources/SwiftDocC/SwiftDocC.docc for changes...
 ```
 
-And if you navigate to <http://localhost:8080/documentation/swiftdocc> you'll see
-the rendered documentation for `SwiftDocC`.
+And if you navigate to <http://localhost:8080/documentation/swiftdocc> you'll
+see the rendered documentation for `SwiftDocC`. If your browser isn't running
+on the same computer as Swift-DocC, you may need to provide the server's public
+host name or IP address (or just `0.0.0.0`) with the `--host` option to allow
+the browser to connect.
 
 ### Using Docker to Test Swift-DocC for Linux
 
@@ -628,4 +631,4 @@ project's technical documentation:
   with support for building and viewing documentation for your framework and
   its dependencies.
 
-<!-- Copyright (c) 2021-2025 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2026 Apple Inc and the Swift Project authors. All Rights Reserved. -->

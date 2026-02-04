@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,6 +24,7 @@ extension PreviewAction {
     {
         // Initialize the `PreviewAction` from the options provided by the `Preview` command
         try self.init(
+            host: previewOptions.host,
             port: previewOptions.port,
             createConvertAction: {
                 try ConvertAction(

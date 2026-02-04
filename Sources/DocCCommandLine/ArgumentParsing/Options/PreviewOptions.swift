@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,6 +17,15 @@ import Foundation
 public struct PreviewOptions: ParsableArguments {
     public init() { }
 
+    /// The host name to use for the preview web server.
+    ///
+    /// Defaults to `localhost`.
+    @Option(
+        name: .long,
+        help: ArgumentHelp(
+            "Host name to use for the preview web server.",
+            valueName: "host-name"))
+    public var host: String = "localhost"
     /// The port number to use for the preview web server.
     ///
     /// Defaults to `8080`.

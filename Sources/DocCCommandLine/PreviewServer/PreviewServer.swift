@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -45,16 +45,16 @@ final class PreviewServer {
         /// The server did not find the content directory.
         case pathNotFound(String)
         /// Cannot bind the server to the given address
-        case cannotStartServer(port: Int)
+        case cannotStartServer(host: String, port: Int)
         /// The given port is not available
-        case portNotAvailable(port: Int)
+        case portNotAvailable(host: String, port: Int)
         
         var errorDescription: String {
             switch self {
                 case .failedToStart: return "Failed to start preview server"
                 case .pathNotFound(let path): return "The preview content path '\(path)' is not found"
-                case .cannotStartServer(let port): return "Can't start the preview server on port \(port)"
-                case .portNotAvailable(let port): return "Port \(port) is not available at the moment, "
+                case .cannotStartServer(let host, let port): return "Can't start the preview server on port \(port) on host \(host)"
+                case .portNotAvailable(let host, let port): return "Port \(port) on host \(host) is not available at the moment, "
                     + "try a different port number by adding the option '--port XXXX' "
                     + "to your command invocation where XXXX is the desired (free) port."
             }
@@ -72,15 +72,15 @@ final class PreviewServer {
     /// A list of server-bind destinations.
     public enum Bind: CustomStringConvertible {
         /// A port on the local machine.
-        case localhost(port: Int)
+        case localhost(host: String, port: Int)
         
         /// A file socket on disk.
         case socket(path: String)
         
         var description: String {
             switch self {
-            case .localhost(port: let port):
-                return "localhost:\(port)"
+            case .localhost(host: let host, port: let port):
+                return "\(host):\(port)"
             case .socket(path: let path):
                 return path
             }
@@ -145,21 +145,21 @@ final class PreviewServer {
         do {
             // Bind to the given destination
             switch bindTo {
-            case .localhost(let port):
-                channel = try bootstrap.bind(host: "localhost", port: port).wait()
+            case .localhost(let host, let port):
+                channel = try bootstrap.bind(host: host, port: port).wait()
             case .socket(let path):
                 channel = try bootstrap.bind(unixDomainSocketPath: path).wait()
             }
         } catch let error as NIO.IOError where error.errnoCode == EADDRINUSE {
             // The given port is not available.
             switch bindTo {
-                case .localhost(let port): throw Error.portNotAvailable(port: port)
+                case .localhost(let host, let port): throw Error.portNotAvailable(host: host, port: port)
                 default: throw error
             }
         } catch {
             // Cannot bind the given address/port.
             switch bindTo {
-                case .localhost(let port): throw Error.cannotStartServer(port: port)
+                case .localhost(let host, let port): throw Error.cannotStartServer(host: host, port: port)
                 default: throw error
             }
         }

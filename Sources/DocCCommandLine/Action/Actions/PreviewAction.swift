@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -38,6 +38,8 @@ public final class PreviewAction: AsyncAction {
     static var allowConcurrentPreviews = false
 
     private let printHTMLTemplatePath: Bool
+
+    let host: String
     
     let port: Int
     
@@ -58,6 +60,7 @@ public final class PreviewAction: AsyncAction {
     /// Creates a new preview action from the given parameters.
     ///
     /// - Parameters:
+    ///   - host: The host name used by the preview server.
     ///   - port: The port number used by the preview server.
     ///   - createConvertAction: A closure that returns the action used to convert the documentation before preview.
     ///
@@ -66,6 +69,7 @@ public final class PreviewAction: AsyncAction {
     ///     is performed.
     /// - Throws: If an error is encountered while initializing the documentation context.
     public init(
+        host: String = "localhost",
         port: Int,
         createConvertAction: @escaping () throws -> ConvertAction,
         printTemplatePath: Bool = true
@@ -75,6 +79,7 @@ public final class PreviewAction: AsyncAction {
         }
         
         // Initialize the action context.
+        self.host = host
         self.port = port
         self.createConvertAction = createConvertAction
         self.convertAction = try createConvertAction()
@@ -123,13 +128,13 @@ public final class PreviewAction: AsyncAction {
         // Preview the output and monitor the source bundle for changes.
         do {
             print(String(repeating: "=", count: 40))
-            if let previewURL = URL(string: "http://localhost:\(port)") {
+            if let previewURL = URL(string: "http://\(host):\(port)") {
                 print("Starting Local Preview Server")
                 printPreviewAddresses(base: previewURL)
                 print(String(repeating: "=", count: 40))
             }
 
-            let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
+            let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(host: host, port: port)
             var logHandleCopy = logHandle.sync { $0 }
             servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandleCopy)
             
