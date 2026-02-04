@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 public import SymbolKit
 public import DocCCommon
 

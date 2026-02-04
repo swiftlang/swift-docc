@@ -16,8 +16,8 @@ import FoundationEssentials
 import Foundation
 #endif
 import DocCHTML
-import Markdown
-import SymbolKit
+private import Markdown
+private import SymbolKit
 private import DocCCommon
 
 /// A link provider that provider structured information about resolved links and assets to the underlying HTML renderer.

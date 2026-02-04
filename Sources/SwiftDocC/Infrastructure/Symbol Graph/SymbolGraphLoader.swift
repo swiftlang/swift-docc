@@ -10,7 +10,7 @@
 
 import Foundation
 import SymbolKit
-import DocCCommon
+private import DocCCommon
 
 #if canImport(os)
 private import os

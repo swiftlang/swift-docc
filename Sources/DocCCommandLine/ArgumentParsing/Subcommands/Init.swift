@@ -9,7 +9,7 @@
 */
 
 public import ArgumentParser
-import SwiftDocC
+private import SwiftDocC
 
 extension Docc {
     public struct Init: AsyncParsableCommand {

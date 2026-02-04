@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
+private import ArgumentParser
 
 extension EmitGeneratedCurationAction {
     /// Initializes ``EmitGeneratedCurationAction`` from the options in the ``EmitGeneratedCuration`` command.

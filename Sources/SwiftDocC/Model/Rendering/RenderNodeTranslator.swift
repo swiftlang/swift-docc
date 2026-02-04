@@ -11,7 +11,7 @@
 public import Foundation
 public import Markdown
 import SymbolKit
-import DocCCommon
+private import DocCCommon
 
 /// A visitor which converts a semantic model into a render node.
 ///

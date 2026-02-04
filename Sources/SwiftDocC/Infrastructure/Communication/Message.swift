@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 /// A message to send or receive from a documentation renderer using a communication bridge.
 public struct Message {

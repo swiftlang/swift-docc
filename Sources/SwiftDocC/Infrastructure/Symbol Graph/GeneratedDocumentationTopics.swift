@@ -9,8 +9,8 @@
 */
 
 import SymbolKit
-import Markdown
-import DocCCommon
+private import Markdown
+private import DocCCommon
 
 /// A collection of APIs to generate documentation topics.
 enum GeneratedDocumentationTopics {

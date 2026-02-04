@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+private import Markdown
 private import DocCCommon
 import SymbolKit
 

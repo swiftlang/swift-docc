@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 extension UnresolvedTopicReference {
     /// Creates an unresolved reference out of a symbol reference.

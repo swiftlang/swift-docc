@@ -9,7 +9,7 @@
 */
 
 public import Foundation
-import Crypto
+private import Crypto
 import DocCCommon
 
 /**
