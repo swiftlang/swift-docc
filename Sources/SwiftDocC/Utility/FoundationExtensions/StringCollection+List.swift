@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A conjunction in a grammatical list.
 enum Conjunction: String {
     /// "or"

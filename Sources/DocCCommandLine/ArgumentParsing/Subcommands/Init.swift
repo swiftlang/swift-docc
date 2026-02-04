@@ -9,7 +9,6 @@
 */
 
 public import ArgumentParser
-import Foundation
 import SwiftDocC
 
 extension Docc {

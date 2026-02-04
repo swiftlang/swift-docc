@@ -8,9 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
-
 /**
  The severity of a diagnostic.
 

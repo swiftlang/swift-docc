@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension KeyedEncodingContainer {
     /// Encodes the given variant collection.
     mutating func encodeVariantCollection<Value>(

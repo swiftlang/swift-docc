@@ -9,7 +9,6 @@
 */
 
 public import ArgumentParser
-import Foundation
 public import SwiftDocC
 
 /// Resolves and validates the arguments needed to enable the documentation coverage feature.
