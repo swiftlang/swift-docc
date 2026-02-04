@@ -27,6 +27,8 @@ include(GNUInstallDirs)
 
 add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-upcoming-feature ExistentialAny>")
 add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-upcoming-feature InternalImportsByDefault>")
+# Only enable the `ConciseMagicFile` upcoming feature for Swift 5.
+add_compile_options("$<$<AND:$<COMPILE_LANGUAGE:Swift>,$<EQUAL:$<TARGET_PROPERTY:Swift_LANGUAGE_VERSION>,5>>:SHELL:-enable-upcoming-feature ConciseMagicFile>")
 
 find_package(ArgumentParser)
 find_package(SwiftASN1)

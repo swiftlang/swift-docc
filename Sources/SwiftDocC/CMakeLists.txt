@@ -484,9 +484,6 @@ target_link_libraries(SwiftDocC PUBLIC
 
 set_target_properties(SwiftDocC PROPERTIES
   Swift_LANGUAGE_VERSION 5)
-target_compile_options(SwiftDocC PRIVATE
-  "SHELL:-swift-version 5"
-  "SHELL:-enable-upcoming-feature ConciseMagicFile")
 
 if(BUILD_SHARED_LIBS)
   install(TARGETS SwiftDocC

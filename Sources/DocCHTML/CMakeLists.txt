@@ -31,5 +31,3 @@ target_link_libraries(DocCHTML PUBLIC
   libcmark-gfm-extensions)
 set_target_properties(DocCHTML PROPERTIES
   Swift_LANGUAGE_VERSION 6)
-target_compile_options(DocCHTML PRIVATE
-  "SHELL:-swift-version 6")
