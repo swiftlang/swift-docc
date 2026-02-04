@@ -508,7 +508,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             
             An article in a mixed-language framework. This symbol link should display the correct title depending on \
             the language we're browsing this article in: ``MixedLanguageFramework/Bar/myStringFunction(_:)``.
-            """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
+            """.write(to: url.appendingPathComponent("my-article.md"), atomically: true, encoding: .utf8)
         }
         
         let articleRenderNode = try outputConsumer.renderNode(withTitle: "MyArticle")
