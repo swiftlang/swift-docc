@@ -20,13 +20,12 @@ class AnchorSectionTests: XCTestCase {
         let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
-        [
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift),
-        ]
-        .forEach { sectionReference in
-            XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
-        }
+        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
+            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift)
+        ))
+        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
+            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift)
+        ))
         
         // Load the module page
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", sourceLanguage: .swift)
@@ -58,10 +57,10 @@ class AnchorSectionTests: XCTestCase {
         }
         
         // Verify the links have been resolved
-        links[0...2].forEach { link in
+        for link in links[0...2] {
             XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/TechnologyX/Article#Article-Sub-Section")
         }
-        links[3...5].forEach { link in
+        for link in links[3...5] {
             XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/TechnologyX/Article#Article-Sub-Sub-Section")
         }
 
@@ -78,13 +77,12 @@ class AnchorSectionTests: XCTestCase {
         let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
-        [
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift),
-        ]
-        .forEach { sectionReference in
-            XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
-        }
+        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
+            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Section", sourceLanguage: .swift)
+        ))
+        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
+            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift)
+        ))
         
         // Load the module page
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", sourceLanguage: .swift)
@@ -116,10 +114,10 @@ class AnchorSectionTests: XCTestCase {
         }
         
         // Verify the links have been resolved
-        links[6...8].forEach { link in
+        for link in links[6...8] {
             XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/CoolFramework/CoolClass#Symbol-Sub-Section")
         }
-        links[9...11].forEach { link in
+        for link in links[9...11] {
             XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/CoolFramework/CoolClass#Symbol-Sub-Sub-Section")
         }
 
@@ -136,13 +134,12 @@ class AnchorSectionTests: XCTestCase {
         let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
-        [
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", fragment: "Module-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift),
-        ]
-        .forEach { sectionReference in
-            XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
-        }
+        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
+            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", fragment: "Module-Sub-Section", sourceLanguage: .swift)
+        ))
+        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
+            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift)
+        ))
         
         // Load the article page
         let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TechnologyX/Article", sourceLanguage: .swift)
@@ -174,10 +171,10 @@ class AnchorSectionTests: XCTestCase {
         }
         
         // Verify the links have been resolved
-        links[0...2].forEach { link in
+        for link in links[0...2] {
             XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/CoolFramework#Module-Sub-Section")
         }
-        links[3...5].forEach { link in
+        for link in links[3...5] {
             XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/CoolFramework#Module-Sub-Sub-Section")
         }
 

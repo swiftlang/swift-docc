@@ -175,7 +175,9 @@ extension ExtendedTypeFormatTransformation {
         symbolGraph.relationships.append(contentsOf: memberOfRelationships)
         symbolGraph.relationships.append(contentsOf: conformsToRelationships)
         symbolGraph.relationships.append(contentsOf: contextOfRelationships)
-        extendedTypeSymbols.values.forEach { symbol in symbolGraph.symbols[symbol.identifier.precise] = symbol }
+        for symbol in extendedTypeSymbols.values {
+            symbolGraph.symbols[symbol.identifier.precise] = symbol
+        }
         
         try synthesizeExtendedModuleSymbolAndDeclaredInRelationships(on: &symbolGraph,
                                                                       using: extendedTypeSymbols.values.filter { symbol in symbol.pathComponents.count == 2 }.map(\.identifier.precise),
