@@ -21,7 +21,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(CMAKE_Swift_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/swift)
 set(CMAKE_Swift_COMPILE_OPTIONS_MSVC_RUNTIME_LIBRARY MultiThreadedDLL)
-set(CMAKE_Swift_LANGUAGE_VERSION 5)
+# Overridden per-target.
+set(CMAKE_Swift_LANGUAGE_VERSION invalid)
 
 include(GNUInstallDirs)
 
