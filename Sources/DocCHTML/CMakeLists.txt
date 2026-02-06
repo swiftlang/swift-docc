@@ -29,3 +29,5 @@ target_link_libraries(DocCHTML PUBLIC
 target_link_libraries(DocCHTML PUBLIC
   libcmark-gfm
   libcmark-gfm-extensions)
+set_target_properties(DocCHTML PROPERTIES
+  Swift_LANGUAGE_VERSION 6)
