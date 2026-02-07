@@ -253,10 +253,6 @@ struct DocumentationContext_MultipleRootPageTests {
         let solution = try #require(problem.possibleSolutions.first)
         #expect(solution.summary == "Remove the 'TechnologyRoot' directive")
 
-        // Diagnostic notes should point to the symbol graph file
-        let note = try #require(problem.diagnostic.notes.first, "Expected a note pointing to the symbol graph")
-        #expect(note.source.lastPathComponent.hasSuffix(".symbols.json"), "Note should reference the symbol graph file")
-
         // Verify mutually exclusive: no MultipleTechnologyRoots warning
         let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots" }
         #expect(multipleRootsProblems.isEmpty, "Should not emit MultipleTechnologyRoots when symbols provide the root")

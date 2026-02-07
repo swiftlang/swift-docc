@@ -2544,13 +2544,28 @@ public class DocumentationContext {
 
     /// Emits warnings when the documentation contains multiple root pages.
     private func emitWarningsForMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
-        let mainSymbolGraphURLs = inputs.symbolGraphURLs.filter { !$0.lastPathComponent.contains("@") }
-        let mainModuleNames = Set(mainSymbolGraphURLs.compactMap { SymbolGraphLoader.moduleNameFor($0) })
+        // Get module names from symbol sources (not from @TechnologyRoot articles).
+        // Filter out virtual modules (like snippets) which shouldn't count as separate roots.
+        let symbolModuleNames: Set<String> = Set(rootModules.compactMap { reference in
+            // Top-level modules have paths like /documentation/ModuleName (2 components).
+            // The path check is needed because `rootModules` may include nested symbols that
+            // happen to have kind `.module` (e.g., when testing all symbol kinds). Without this
+            // check, those nested symbols would incorrectly be counted as separate modules.
+            let pathComponents = reference.path.split(separator: "/")
+            guard pathComponents.count == 2, pathComponents.first == "documentation" else { return nil }
 
-        if mainModuleNames.count > 1 {
-            let sortedModuleNames = mainModuleNames.sorted()
+            guard let node = topicGraph.nodeWithReference(reference),
+                  !node.isVirtual,
+                  let docNode = documentationCache[reference],
+                  docNode.kind == .module
+            else { return nil }
+            return docNode.name.plainText
+        })
+
+        if symbolModuleNames.count > 1 {
+            let sortedModuleNames = symbolModuleNames.sorted()
             let diagnostic = Diagnostic(
-                source: mainSymbolGraphURLs.first,
+                source: nil,
                 severity: .warning,
                 range: nil,
                 identifier: "org.swift.docc.MultipleMainModules",
@@ -2560,11 +2575,9 @@ public class DocumentationContext {
             diagnosticEngine.emit(Problem(diagnostic: diagnostic))
         }
 
-        if !mainModuleNames.isEmpty && !rootPageArticles.isEmpty {
-            let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
-            let symbolGraphNotes: [DiagnosticNote] = mainSymbolGraphURLs.map { url in
-                DiagnosticNote(source: url, range: zeroRange, message: "Symbol graph '\(url.lastPathComponent)' provides a module root")
-            }
+        if !symbolModuleNames.isEmpty && !rootPageArticles.isEmpty {
+            let sortedModuleNames = symbolModuleNames.sorted()
+            let moduleList = sortedModuleNames.map { $0.singleQuoted }.joined(separator: ", ")
 
             let problems = rootPageArticles.map { article -> Problem in
                 let diagnostic = Diagnostic(
@@ -2573,8 +2586,7 @@ public class DocumentationContext {
                     range: article.value.metadata?.technologyRoot?.originalMarkup.range,
                     identifier: "org.swift.docc.TechnologyRootWithSymbols",
                     summary: "The '\(TechnologyRoot.directiveName)' directive creates an additional root page, but the documentation already has a root from its symbols",
-                    explanation: "When documentation contains symbols from source files or libraries, those symbols provide a module root. The '\(TechnologyRoot.directiveName)' directive creates an additional root page which results in an unexpected documentation structure.",
-                    notes: symbolGraphNotes
+                    explanation: "The symbol input provides \(moduleList) as the module root. The '\(TechnologyRoot.directiveName)' directive creates an additional root page which results in an unexpected documentation structure."
                 )
 
                 guard let range = article.value.metadata?.technologyRoot?.originalMarkup.range else {
@@ -2590,7 +2602,7 @@ public class DocumentationContext {
             return
         }
 
-        if mainModuleNames.isEmpty && rootPageArticles.count > 1 {
+        if symbolModuleNames.isEmpty && rootPageArticles.count > 1 {
             let problems = rootPageArticles.map { article -> Problem in
                 let diagnostic = Diagnostic(
                     source: article.source,
