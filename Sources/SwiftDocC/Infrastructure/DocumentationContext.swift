@@ -2133,7 +2133,9 @@ public class DocumentationContext {
             }
             return node.reference
         }
-        
+
+        emitWarningsForMultipleRootPages(rootPageArticles: rootPageArticles)
+
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
         if configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot || rootNodeForAutomaticCuration != nil {
@@ -2558,7 +2560,91 @@ public class DocumentationContext {
             diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: articleResult.source, severity: .information, range: nil, identifier: "org.swift.docc.ArticleUncurated", summary: "You haven't curated \(articleResult.topicGraphNode.reference.description.singleQuoted)"), possibleSolutions: []))
         }
     }
-    
+
+    /// Emits warnings when the documentation contains multiple root pages.
+    private func emitWarningsForMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
+        // Get module names from symbol sources (not from @TechnologyRoot articles).
+        // Filter out virtual modules (like snippets) which shouldn't count as separate roots.
+        let symbolModuleNames: Set<String> = Set(rootModules.compactMap { reference in
+            // Top-level modules have paths like /documentation/ModuleName (2 components).
+            // The path check is needed because `rootModules` may include nested symbols that
+            // happen to have kind `.module` (e.g., when testing all symbol kinds). Without this
+            // check, those nested symbols would incorrectly be counted as separate modules.
+            let pathComponents = reference.path.split(separator: "/")
+            guard pathComponents.count == 2, pathComponents.first == "documentation" else { return nil }
+
+            guard let node = topicGraph.nodeWithReference(reference),
+                  !node.isVirtual,
+                  let docNode = documentationCache[reference],
+                  docNode.kind == .module
+            else { return nil }
+            return docNode.name.plainText
+        })
+
+        if symbolModuleNames.count > 1 {
+            let sortedModuleNames = symbolModuleNames.sorted()
+            let diagnostic = Diagnostic(
+                source: nil,
+                severity: .warning,
+                range: nil,
+                identifier: "org.swift.docc.MultipleMainModules",
+                summary: "The documentation input contains more than one main module: \(sortedModuleNames.map { $0.singleQuoted }.joined(separator: ", "))",
+                explanation: "DocC doesn't support building combined documentation for multiple modules in a single catalog. Each module should be documented separately."
+            )
+            diagnosticEngine.emit(Problem(diagnostic: diagnostic))
+        }
+
+        if !symbolModuleNames.isEmpty && !rootPageArticles.isEmpty {
+            let sortedModuleNames = symbolModuleNames.sorted()
+            let moduleList = sortedModuleNames.map { $0.singleQuoted }.joined(separator: ", ")
+
+            let problems = rootPageArticles.map { article -> Problem in
+                let diagnostic = Diagnostic(
+                    source: article.source,
+                    severity: .warning,
+                    range: article.value.metadata?.technologyRoot?.originalMarkup.range,
+                    identifier: "org.swift.docc.TechnologyRootWithSymbols",
+                    summary: "The '\(TechnologyRoot.directiveName)' directive creates an additional root page, but the documentation already has a root from its symbols",
+                    explanation: "The symbol input provides \(moduleList) as the module root. The '\(TechnologyRoot.directiveName)' directive creates an additional root page which results in an unexpected documentation structure."
+                )
+
+                guard let range = article.value.metadata?.technologyRoot?.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+
+                return Problem(diagnostic: diagnostic, possibleSolutions: [
+                    Solution(summary: "Remove the '\(TechnologyRoot.directiveName)' directive", replacements: [Replacement(range: range, replacement: "")])
+                ])
+            }
+
+            diagnosticEngine.emit(problems)
+            return
+        }
+
+        if symbolModuleNames.isEmpty && rootPageArticles.count > 1 {
+            let problems = rootPageArticles.map { article -> Problem in
+                let diagnostic = Diagnostic(
+                    source: article.source,
+                    severity: .warning,
+                    range: article.value.metadata?.technologyRoot?.originalMarkup.range,
+                    identifier: "org.swift.docc.MultipleTechnologyRoots",
+                    summary: "The documentation has multiple articles with the '\(TechnologyRoot.directiveName)' directive",
+                    explanation: "Only one article should use the '\(TechnologyRoot.directiveName)' directive to define the documentation's root page. Having multiple root pages results in an unexpected documentation structure."
+                )
+
+                guard let range = article.value.metadata?.technologyRoot?.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+
+                return Problem(diagnostic: diagnostic, possibleSolutions: [
+                    Solution(summary: "Remove the '\(TechnologyRoot.directiveName)' directive", replacements: [Replacement(range: range, replacement: "")])
+                ])
+            }
+
+            diagnosticEngine.emit(problems)
+        }
+    }
+
     /**
      Analysis that runs after all nodes are successfully registered in the context.
      Useful for checks that need the complete node graph.
