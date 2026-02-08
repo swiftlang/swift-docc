@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 /// A type that collects and dispatches diagnostics during compilation.
 public final class DiagnosticEngine {

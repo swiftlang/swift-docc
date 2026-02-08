@@ -8,10 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 import SymbolKit
-import Markdown
-import DocCCommon
+private import Markdown
+private import DocCCommon
 
 /// A collection of APIs to generate documentation topics.
 enum GeneratedDocumentationTopics {

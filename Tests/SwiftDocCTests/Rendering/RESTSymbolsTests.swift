@@ -13,6 +13,7 @@ import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
 import SymbolKit
+import DocCCommon
 
 fileprivate extension [RenderBlockContent] {
     var firstParagraphText: String? {

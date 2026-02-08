@@ -9,7 +9,8 @@
 */
 
 public import Foundation
-import Crypto
+private import Crypto
+import DocCCommon
 
 /**
  A `NavigatorIndex` contains all the necessary information to display the data inside a navigator.

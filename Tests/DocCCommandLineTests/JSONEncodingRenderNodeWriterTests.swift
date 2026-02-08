@@ -11,6 +11,8 @@
 import XCTest
 import SwiftDocC
 @testable import DocCCommandLine
+import DocCTestUtilities
+import DocCCommon
 
 class JSONEncodingRenderNodeWriterTests: XCTestCase {
     /// Verifies that if we fail during writing a JSON file the execution

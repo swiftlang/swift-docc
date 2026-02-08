@@ -11,6 +11,7 @@
 public import Foundation
 public import XCTest
 public import SwiftDocC
+import DocCCommon
 
 /*
     This file contains API for working with folder hierarchies, and is extensible to allow for testing

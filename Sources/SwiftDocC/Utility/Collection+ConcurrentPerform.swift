@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 // Until we find a better way to manage memory on Linux we will disable
 // concurrency in the Collection extensions in this file and have tests expect

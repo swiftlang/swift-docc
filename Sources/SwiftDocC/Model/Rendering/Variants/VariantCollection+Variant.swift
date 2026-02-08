@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 public extension VariantCollection {
     /// A variant for a render node value.
     struct Variant {

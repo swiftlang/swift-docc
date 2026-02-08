@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+private import SymbolKit
 
 /// Translates a symbol's constraints and details into a render node's Attributes section.
 struct AttributesSectionTranslator: RenderSectionTranslator {

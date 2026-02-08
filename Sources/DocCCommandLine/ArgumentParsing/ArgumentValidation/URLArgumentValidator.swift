@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import ArgumentParser
+private import ArgumentParser
 import Foundation
 
 /// Simplifies validation of URL command-line arguments.

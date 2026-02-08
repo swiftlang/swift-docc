@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
+private import SymbolKit
+private import DocCCommon
 
 /// All known symbol kind identifiers.
 ///

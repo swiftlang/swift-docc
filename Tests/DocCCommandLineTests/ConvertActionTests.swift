@@ -15,6 +15,8 @@ import Foundation
 import SymbolKit
 import Markdown
 @testable import DocCTestUtilities
+import DocCCommon
+import ArgumentParser
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)

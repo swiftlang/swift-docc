@@ -9,6 +9,9 @@
 */
 
 import Markdown
+private import SymbolKit
+private import DocCCommon
+import Foundation
 
 /// Performs any markup processing necessary to build the final output markdown
 internal struct MarkdownOutputMarkupWalker: MarkupWalker {

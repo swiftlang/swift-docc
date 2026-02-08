@@ -11,6 +11,8 @@
 #if canImport(NIOHTTP1)
 import XCTest
 @testable import DocCCommandLine
+import DocCTestUtilities
+import ArgumentParser
 
 class PreviewSubcommandTests: XCTestCase {
     func testOptionsValidation() throws {

@@ -12,6 +12,7 @@ import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
 import SymbolKit
+import DocCCommon
 
 class ReferenceResolverTests: XCTestCase {
     func testResolvesMediaForIntro() async throws {

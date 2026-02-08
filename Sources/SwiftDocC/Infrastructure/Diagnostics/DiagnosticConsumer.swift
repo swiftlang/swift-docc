@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A type that can receive diagnostics.
 public protocol DiagnosticConsumer: AnyObject {
     /// Receive diagnostics encountered by a ``DiagnosticEngine``.

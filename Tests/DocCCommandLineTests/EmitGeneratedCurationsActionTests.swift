@@ -12,6 +12,7 @@ import XCTest
 import Foundation
 @testable import DocCCommandLine
 import DocCTestUtilities
+import SwiftDocC
 
 class EmitGeneratedCurationsActionTests: XCTestCase {
     

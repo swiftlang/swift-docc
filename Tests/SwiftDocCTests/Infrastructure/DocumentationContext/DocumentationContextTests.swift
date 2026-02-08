@@ -13,6 +13,7 @@ import SymbolKit
 @testable @_spi(ExternalLinks) import SwiftDocC
 import Markdown
 import DocCTestUtilities
+import DocCCommon
 
 func diffDescription(lhs: String, rhs: String) -> String {
     let leftLines = lhs.components(separatedBy: .newlines)

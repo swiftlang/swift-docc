@@ -9,7 +9,6 @@
 */
 
 package import SwiftDocC
-import Foundation
 
 extension AsyncAction {
     /// Performs the action and checks for any problems in the result.

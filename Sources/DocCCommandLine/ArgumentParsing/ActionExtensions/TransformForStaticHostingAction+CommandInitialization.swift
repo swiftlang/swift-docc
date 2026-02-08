@@ -9,8 +9,6 @@
 */
 
 import Foundation
-import ArgumentParser
-
 
 extension TransformForStaticHostingAction {
     /// Initializes ``TransformForStaticHostingAction`` from the options in the ``TransformForStaticHosting`` command.

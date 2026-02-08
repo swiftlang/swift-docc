@@ -10,7 +10,7 @@
 
 import Foundation
 import Markdown
-import SymbolKit
+private import SymbolKit
 
 private func invalidLinkDestinationProblem(destination: String, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     let diagnostic = Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.invalidLinkDestination", summary: "Link destination \(destination.singleQuoted) is not a valid URL")

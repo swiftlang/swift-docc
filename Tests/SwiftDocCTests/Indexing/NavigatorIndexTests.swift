@@ -11,6 +11,8 @@
 import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
+import SymbolKit
+import DocCCommon
 
 typealias Node = NavigatorTree.Node
 typealias PageType = NavigatorIndex.PageType

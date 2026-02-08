@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
 
 class NodeTagsTests: XCTestCase {
     func testSPIMetadata() async throws {

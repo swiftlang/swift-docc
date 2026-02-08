@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
+private import SymbolKit
+private import DocCCommon
 
 extension PathHierarchy {
     /// Attempts to find an element in the path hierarchy for a given path relative to another element.

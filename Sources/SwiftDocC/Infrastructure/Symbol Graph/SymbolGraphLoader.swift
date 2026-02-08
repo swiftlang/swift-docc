@@ -10,7 +10,11 @@
 
 import Foundation
 import SymbolKit
-import DocCCommon
+private import DocCCommon
+
+#if canImport(os)
+private import os
+#endif
 
 /// Loads symbol graph files from a documentation bundle.
 ///

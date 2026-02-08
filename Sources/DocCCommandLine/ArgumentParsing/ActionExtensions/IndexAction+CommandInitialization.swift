@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension IndexAction {
     /// Initializes ``IndexAction`` from the options in the ``Index`` command.
     init(fromIndexCommand index: Docc.Index) {

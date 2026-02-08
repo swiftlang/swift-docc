@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A wrapper type that adds contextual information relating to a convert request.
 public struct ConvertRequestContextWrapper<Payload: Codable>: Codable {
     /// The identifier of the convert request associated with this payload.

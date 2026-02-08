@@ -13,6 +13,8 @@ import Foundation
 import SymbolKit
 @_spi(ExternalLinks) @testable import SwiftDocC
 import DocCTestUtilities
+import Markdown
+import DocCCommon
 
 #if os(macOS)
 class OutOfProcessReferenceResolverV2Tests: XCTestCase {

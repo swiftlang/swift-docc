@@ -14,6 +14,7 @@ import SymbolKit
 import Markdown
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
 
 class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     

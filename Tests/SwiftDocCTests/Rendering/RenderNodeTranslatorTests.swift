@@ -14,6 +14,7 @@ import XCTest
 import DocCTestUtilities
 import Markdown
 import SymbolKit
+import DocCCommon
 
 class RenderNodeTranslatorTests: XCTestCase {
     private func findDiscussion(forSymbolPath: String, configureBundle: ((URL) throws -> Void)? = nil) async throws -> ContentRenderSection? {

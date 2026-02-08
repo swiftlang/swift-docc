@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import DocCCommon
 
 /// A hierarchy translator that converts a part of the topic graph into a hierarchy tree.
 struct RenderHierarchyTranslator {

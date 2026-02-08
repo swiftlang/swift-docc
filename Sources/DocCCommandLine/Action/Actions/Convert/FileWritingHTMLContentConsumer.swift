@@ -17,7 +17,7 @@ import Foundation
 #endif
 
 import SwiftDocC
-import DocCHTML
+private import DocCHTML
 
 struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     var prettyPrintOutput: Bool

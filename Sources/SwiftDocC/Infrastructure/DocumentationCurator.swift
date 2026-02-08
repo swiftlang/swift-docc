@@ -10,7 +10,7 @@
 
 import Foundation
 import Markdown
-import SymbolKit
+private import SymbolKit
 
 /// Crawls a context and curates nodes if necessary.
 struct DocumentationCurator {

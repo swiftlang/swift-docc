@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// The patch operation to apply.
 ///
 /// Values of this type follow the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.

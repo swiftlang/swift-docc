@@ -9,6 +9,7 @@
 */
 
 public import Foundation
+import DocCCommon
 
 /// A collection of the build inputs for a unit of documentation.
 ///

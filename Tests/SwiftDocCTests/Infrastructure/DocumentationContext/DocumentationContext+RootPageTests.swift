@@ -12,6 +12,8 @@ import XCTest
 import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
+import Markdown
 
 class DocumentationContext_RootPageTests: XCTestCase {
     func testArticleOnlyCatalogWithExplicitTechnologyRoot() async throws {

@@ -12,6 +12,7 @@ import XCTest
 import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
 
 class LinkDestinationSummaryTests: XCTestCase {
     

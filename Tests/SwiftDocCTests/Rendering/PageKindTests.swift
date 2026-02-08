@@ -12,6 +12,7 @@ import Foundation
 import Markdown
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class PageKindTests: XCTestCase {
     

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 /// A handler that intercepts system signal-events.
 #if !os(Windows)

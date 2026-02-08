@@ -10,6 +10,7 @@
 
 import Foundation
 import Markdown
+private import SymbolKit
 
 func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
     var notes = uncuratedArticleMatch.map {
