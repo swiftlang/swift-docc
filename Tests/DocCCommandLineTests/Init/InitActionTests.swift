@@ -12,6 +12,7 @@ import XCTest
 import Foundation
 import DocCTestUtilities
 @testable import DocCCommandLine
+import SwiftDocC
 
 final class InitActionTests: XCTestCase {
     private let documentationTitle = "MyTestDocumentation"

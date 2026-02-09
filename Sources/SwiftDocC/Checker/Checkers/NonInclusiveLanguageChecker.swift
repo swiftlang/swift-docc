@@ -49,7 +49,7 @@ public struct NonInclusiveLanguageChecker: Checker {
     public mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> () {
         for term in terms {
             let termRanges = ranges(for: term, in: codeBlock.code, of: codeBlock)
-            termRanges.forEach { range in
+            for range in termRanges {
                 // Need to offset the lines by +1 to take into account the start
                 // of the code fence
                 let start = SourceLocation(
@@ -71,7 +71,7 @@ public struct NonInclusiveLanguageChecker: Checker {
     public mutating func visitInlineCode(_ inlineCode: InlineCode) -> () {
         for term in terms {
             let termRanges = ranges(for: term, in: inlineCode.code, of: inlineCode)
-            termRanges.forEach { range in
+            for range in termRanges {
                 // Need to offset the columns by +1 to account for the `
                 let start = SourceLocation(
                     line: range.lowerBound.line,
@@ -91,7 +91,9 @@ public struct NonInclusiveLanguageChecker: Checker {
 
     public mutating func visitText(_ text: Text) {
         for term in terms {
-            ranges(for: term, in: text.string, of: text).forEach { matched(term, at: $0) }
+            for range in ranges(for: term, in: text.string, of: text) {
+                matched(term, at: range)
+            }
         }
     }
 

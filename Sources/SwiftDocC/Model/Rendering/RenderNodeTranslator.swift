@@ -11,7 +11,7 @@
 public import Foundation
 public import Markdown
 import SymbolKit
-import DocCCommon
+private import DocCCommon
 
 /// A visitor which converts a semantic model into a render node.
 ///
@@ -1999,7 +1999,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             // Extract the availability information
             if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
-                availabilityItems.forEach { item in
+                for item in availabilityItems {
                     if deprecated == nil && (item.isUnconditionallyDeprecated || item.deprecatedVersion != nil) {
                         deprecated = true
                     }

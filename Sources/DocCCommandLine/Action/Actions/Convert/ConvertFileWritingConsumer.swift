@@ -10,6 +10,7 @@
 
 import Foundation
 import SwiftDocC
+private import Markdown
 
 struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, ConvertOutputMarkdownConsumer {
     var targetFolder: URL

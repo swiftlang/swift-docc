@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+private import Markdown
 
 /// A generic section that contains groups of links.
 public protocol GroupedSection: Section {

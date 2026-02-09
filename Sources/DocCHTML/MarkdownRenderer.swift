@@ -17,6 +17,7 @@ internal import struct Foundation.CharacterSet
 package import Foundation
 #endif
 package import Markdown
+private import DocCCommon
 
 /// The primary goal for the rendered HTML output.
 package enum RenderGoal {

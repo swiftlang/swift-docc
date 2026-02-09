@@ -11,6 +11,7 @@
 package import Foundation
 package import SymbolKit
 package import SwiftDocC
+import DocCCommon
 
 // MARK: - Symbol Graph objects
 

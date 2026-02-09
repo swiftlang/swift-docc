@@ -8,9 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SwiftDocC
-
 struct CatalogTemplate {
     
     let files: [String: String]

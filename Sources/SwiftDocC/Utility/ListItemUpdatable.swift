@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// Protocol that provides merging and updating capabilities for list item entities that merge content between markdown files and symbol graphs.
 /// 
 /// The single property, ``listItemIdentifier`` returns the value that uniquely identifies the entity within the list item markdown.
@@ -25,7 +23,9 @@ extension Array where Element: ListItemUpdatable {
     func insertAndUpdate(_ newElements: [Element], updater: (Element, Element) -> Element) -> [Element] {
         // Build a lookup table of the new elements
         var newElementLookup = [String: Element]()
-        newElements.forEach { newElementLookup[$0.listItemIdentifier.description] = $0 }
+        for newElement in newElements {
+           newElementLookup[newElement.listItemIdentifier.description] = newElement
+        }
         
         // Update existing elements with new data being passed in.
         var updatedElements = self.map { existingElement -> Element in

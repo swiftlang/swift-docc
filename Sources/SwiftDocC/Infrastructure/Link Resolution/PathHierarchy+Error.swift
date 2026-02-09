@@ -8,10 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 import struct Markdown.SourceRange
 import struct Markdown.SourceLocation
-import SymbolKit
+private import SymbolKit
 
 extension PathHierarchy {
     /// An error finding an entry in the path hierarchy.

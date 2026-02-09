@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import SymbolKit
 
 /// Translates a symbol's endpoints into a render node's URL section.
 struct HTTPEndpointSectionTranslator: RenderSectionTranslator {

@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension String {
     /// A copy of the string without a leading slash ("/") or the original string if it doesn't start with a leading slash.
     var removingLeadingSlash: String {

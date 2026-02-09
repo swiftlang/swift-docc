@@ -9,7 +9,6 @@
 */
 
 #if canImport(NIOHTTP1)
-import Foundation
 import NIOHTTP1
 
 extension HTTPResponseHead {

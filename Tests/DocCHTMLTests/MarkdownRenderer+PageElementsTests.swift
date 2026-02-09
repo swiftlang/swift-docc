@@ -19,6 +19,8 @@ import Foundation
 import Testing
 import DocCHTML
 import Markdown
+import DocCCommon
+import SymbolKit
 
 struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
@@ -755,7 +757,7 @@ struct MultiValueLinkProvider: LinkProvider {
 }
 
 extension RenderGoal: CaseIterable {
-    package static var allCases: [RenderGoal] {
+    static var allCases: [RenderGoal] {
         [.richness, .conciseness]
     }
 }

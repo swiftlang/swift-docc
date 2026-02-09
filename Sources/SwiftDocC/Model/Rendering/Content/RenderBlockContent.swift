@@ -9,6 +9,7 @@
 */
 
 public import Markdown
+import Foundation
 
 /// A block content element.
 ///

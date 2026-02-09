@@ -12,6 +12,11 @@ package import Foundation
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
 public import SwiftDocC
+private import Markdown
+
+#if canImport(os)
+private import os
+#endif
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: AsyncAction {
@@ -373,7 +378,7 @@ public struct ConvertAction: AsyncAction {
         if context.tutorialTableOfContentsReferences.isEmpty, hasTutorial {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
-            var replacements = [Replacement]()
+            var replacements = [SwiftDocC.Replacement]()
             if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(inputs.displayName)[tableOfContentsFilename] {
                 replacements.append(
                     Replacement(

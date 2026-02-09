@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension Sequence {
     /// Returns a list of only the unique elements in a sequence, in the order they first appeared.
     ///

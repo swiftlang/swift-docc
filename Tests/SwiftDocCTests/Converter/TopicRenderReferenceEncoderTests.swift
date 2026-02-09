@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class TopicRenderReferenceEncoderTests: XCTestCase {
 
@@ -149,7 +150,11 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         }
         
         // Pipe through encoding errors.
-        encodingErrors.sync({ $0.forEach({ XCTFail(String(describing: $0)) }) })
+        encodingErrors.sync({ errors in
+            for error in errors {
+                XCTFail(String(describing: error))
+            }
+        })
         
         // Verify all references have been cached
         XCTAssertEqual(cache.sync({ $0.keys.count }), 1000)

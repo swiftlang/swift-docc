@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 extension ConvertService {
     /// Creates a bundle and an associated in-memory data provider from the information of a given convert request

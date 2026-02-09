@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A type that resolves references to documentation from other sources.
 ///
 /// Use this protocol to integrate documentation content from other sources. Your implementation needs to be able to:

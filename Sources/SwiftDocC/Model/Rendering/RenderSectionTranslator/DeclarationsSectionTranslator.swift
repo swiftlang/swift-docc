@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import DocCCommon
 
 typealias OverloadDeclaration = (
     declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment],

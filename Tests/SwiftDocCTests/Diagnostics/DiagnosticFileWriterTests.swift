@@ -11,6 +11,7 @@
 import XCTest
 import Markdown
 @testable import SwiftDocC
+import DocCTestUtilities
 
 class DiagnosticFileWriterTests: XCTestCase {
     

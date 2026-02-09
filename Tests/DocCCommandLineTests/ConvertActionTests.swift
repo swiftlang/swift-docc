@@ -15,6 +15,8 @@ import Foundation
 import SymbolKit
 import Markdown
 @testable import DocCTestUtilities
+import DocCCommon
+import ArgumentParser
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)
@@ -466,7 +468,7 @@ class ConvertActionTests: XCTestCase {
         let decoder = JSONDecoder()
         
         // Process all of the render JSON:
-        try renderNodeURLs.forEach { renderNodeURL in
+        for renderNodeURL in renderNodeURLs {
             // Get the data for the render json
             let renderNodeJSON = try testDataProvider.contentsOfURL(renderNodeURL)
             
@@ -535,7 +537,7 @@ class ConvertActionTests: XCTestCase {
         let decoder = JSONDecoder()
         
         // Process all of the render JSON:
-        try renderNodeURLs.forEach { renderNodeURL in
+        for renderNodeURL in renderNodeURLs {
             // Get the data for the render json
             let renderNodeJSON = try testDataProvider.contentsOfURL(renderNodeURL)
             

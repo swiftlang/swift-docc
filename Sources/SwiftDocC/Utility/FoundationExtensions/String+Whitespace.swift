@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 extension String {
     /// Returns a copy of the string with all whitespace and punctuation replaced with a given separator.

@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 class ExternalLinkTitleTests: XCTestCase {
     private func getTranslatorAndBlockContentForMarkup(_ markupSource: String) async throws -> (translator: RenderNodeTranslator, content: [RenderBlockContent]) {
