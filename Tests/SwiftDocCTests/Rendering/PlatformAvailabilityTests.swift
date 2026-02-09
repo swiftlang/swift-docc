@@ -69,12 +69,18 @@ class PlatformAvailabilityTests: XCTestCase {
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 1)
-        let iosAvailability = try XCTUnwrap(availability.first)
-        XCTAssertEqual(iosAvailability.name, "iOS")
+        let availabilities = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        XCTAssertEqual(availabilities.count, 3)
+        XCTAssertEqual(availabilities.compactMap(\.name), ["iOS", "iPadOS", "Mac Catalyst"])
+        let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.introduced, "16.0")
         XCTAssert(iosAvailability.isBeta != true)
+        // Ensure that the fallback platforms have the same version and beta status as iOS
+        for availability in availabilities.dropFirst() {
+            XCTAssertEqual(availability.introduced, iosAvailability.introduced)
+            XCTAssertEqual(availability.isBeta, iosAvailability.isBeta)
+        }
     }
 
     func testMultiplePlatformAvailabilityFromArticle() async throws {
@@ -242,12 +248,17 @@ class PlatformAvailabilityTests: XCTestCase {
         let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 1)
-        let iosAvailability = try XCTUnwrap(availability.first)
-        XCTAssertEqual(iosAvailability.name, "iOS")
+        let availabilities = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        XCTAssertEqual(availabilities.count, 3)
+        XCTAssertEqual(availabilities.compactMap(\.name), ["iOS", "iPadOS", "Mac Catalyst"])
+        let iosAvailability = try XCTUnwrap(availabilities.first)
         XCTAssertEqual(iosAvailability.introduced, "16.0")
         XCTAssert(iosAvailability.isBeta == true)
+        // Ensure that fallback platforms are also marked as beta
+        for availability in availabilities.dropFirst() {
+            XCTAssert(availability.isBeta == true)
+        }
     }
 
     
