@@ -1309,15 +1309,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: defaultAvailability)
 
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
-            let renderAvailability = availability.compactMap({
-                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
-                }
-                return .init($0, current: currentPlatform)
-            }).sorted(by: AvailabilityRenderOrder.compare)
+            let allRenderAvailabilities = renderAvailabilities(
+                from: availability,
+                currentPlatforms: context.configuration.externalMetadata.currentPlatforms
+            )
 
-            if !renderAvailability.isEmpty {
-                node.metadata.platformsVariants.defaultValue = renderAvailability
+            if !allRenderAvailabilities.isEmpty {
+                node.metadata.platformsVariants.defaultValue = allRenderAvailabilities
             }
         }
         
