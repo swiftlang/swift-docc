@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCTestUtilities
 
 class OutputSizeTests: XCTestCase {
     func testOutputSize() throws {

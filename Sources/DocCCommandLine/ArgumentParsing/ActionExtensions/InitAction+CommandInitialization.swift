@@ -8,9 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SwiftDocC
-import Foundation
-
 extension InitAction {
     /// Creates a init action from the options given in the init command.
     /// 

@@ -9,7 +9,8 @@
 */
 
 public import Foundation
-import SymbolKit
+private import SymbolKit
+private import DocCCommon
 
 /// A type that writes the auto-generated curation into documentation extension files.
 public struct GeneratedCurationWriter {

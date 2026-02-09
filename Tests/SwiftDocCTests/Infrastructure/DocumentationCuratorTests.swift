@@ -15,6 +15,7 @@ import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
 import Markdown
+import DocCCommon
 
 class DocumentationCuratorTests: XCTestCase {
     fileprivate struct ParentChild: Hashable, Equatable {

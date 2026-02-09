@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+private import SymbolKit
 
 /// A context object that pre-renders commonly used pieces of content.
 ///

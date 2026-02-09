@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 // A type that sorts and filters a list of strings based on how "similar" they are to a given string.
 //
 // This is meant mainly for diagnostics that wan't to offer meaning full suggestions to the end-user.

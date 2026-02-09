@@ -13,6 +13,7 @@ import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
 import Markdown
+import DocCCommon
 
 class PathHierarchyTests: XCTestCase {
     

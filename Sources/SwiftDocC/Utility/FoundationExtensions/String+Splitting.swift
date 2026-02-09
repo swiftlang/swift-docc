@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 extension String {
     /// A list of the lines in this string, derived by splitting the string on its line breaks.

@@ -984,7 +984,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
     }
 }
 
-import SymbolKit
+private import SymbolKit
 
 extension SymbolGraph.AnyNumber: FastJSONDecodable {
     package init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {

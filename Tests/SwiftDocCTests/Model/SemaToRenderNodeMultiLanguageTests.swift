@@ -13,6 +13,7 @@ import Foundation
 import SymbolKit
 import DocCTestUtilities
 import XCTest
+import DocCCommon
 
 class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func testBaseRenderNodeFromMixedLanguageFramework() async throws {

@@ -11,6 +11,8 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
+import Markdown
 
 class DeprecationSummaryTests: XCTestCase {
     func testDecodeDeprecatedSymbol() throws {

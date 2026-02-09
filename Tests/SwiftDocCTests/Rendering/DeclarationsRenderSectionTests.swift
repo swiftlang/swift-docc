@@ -13,6 +13,7 @@ import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
 import SymbolKit
+import DocCCommon
 
 class DeclarationsRenderSectionTests: XCTestCase {
     func testDecodingTokens() throws {

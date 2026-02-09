@@ -12,6 +12,8 @@ import Foundation
 import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
 import DocCTestUtilities
+import SymbolKit
+import DocCCommon
 
 class ExternalRenderNodeTests: XCTestCase {
     private func generateExternalResolver() -> TestMultiResultExternalReferenceResolver {

@@ -15,6 +15,7 @@ package import FoundationEssentials
 #else
 package import Foundation
 #endif
+private import DocCCommon
 
 package extension MarkdownRenderer {
     /// Creates an HTML element for the breadcrumbs that lead to the renderer's current page.

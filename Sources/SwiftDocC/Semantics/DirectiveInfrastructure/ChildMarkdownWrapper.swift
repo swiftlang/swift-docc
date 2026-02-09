@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+private import Markdown
 
 protocol _ChildMarkupProtocol {
     var numberOfParagraphs: _ChildMarkupParagraphs { get }

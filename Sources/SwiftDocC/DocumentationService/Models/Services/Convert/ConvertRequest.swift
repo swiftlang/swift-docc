@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SymbolKit
+private import SymbolKit
 public import Foundation
 
 /// A request to convert in-memory documentation.

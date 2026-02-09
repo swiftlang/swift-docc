@@ -8,7 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 package import SwiftDocC
 
 /// An independent unit of work in the command-line workflow.

@@ -9,7 +9,9 @@
 */
 
 import Foundation
-import Markdown
+private import Markdown
+private import DocCCommon
+import SymbolKit
 
 /// A type that resolves values that are appropriate as link titles for documentation nodes.
 struct LinkTitleResolver {

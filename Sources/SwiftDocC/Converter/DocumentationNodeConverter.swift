@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A converter from documentation nodes to render nodes.
 public struct DocumentationNodeConverter {
     /// The context the converter uses to resolve references it finds in the documentation node's content.

@@ -9,8 +9,13 @@
 */
 
 public import Foundation
-import Markdown
+private import Markdown
+public import DocCCommon
 import SymbolKit
+
+#if canImport(os)
+private import os
+#endif
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///

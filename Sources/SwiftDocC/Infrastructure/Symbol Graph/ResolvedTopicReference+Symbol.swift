@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SymbolKit
+private import SymbolKit
 
 extension ResolvedTopicReference {
     /// Creates a resolved topic reference out of a symbol reference.

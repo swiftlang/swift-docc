@@ -10,7 +10,7 @@
 
 import Foundation
 import Markdown
-import SymbolKit
+private import SymbolKit
 
 protocol RenderContent {}
 extension RenderBlockContent: RenderContent {}
