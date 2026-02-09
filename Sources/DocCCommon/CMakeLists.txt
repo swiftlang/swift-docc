@@ -16,3 +16,5 @@ add_library(DocCCommon STATIC
   SourceLanguage.swift)
 target_link_libraries(DocCCommon PRIVATE
   DocC::SymbolKit)
+set_target_properties(DocCCommon PROPERTIES
+  Swift_LANGUAGE_VERSION 6)
