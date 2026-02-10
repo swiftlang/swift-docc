@@ -2544,19 +2544,11 @@ public class DocumentationContext {
 
     /// Emits warnings when the documentation contains multiple root pages.
     private func emitWarningsForMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
-        // Get module names from symbol sources (not from @TechnologyRoot articles).
-        // Filter out virtual modules (like snippets) which shouldn't count as separate roots.
-        let symbolModuleNames: Set<String> = Set(rootModules.compactMap { reference in
-            // Top-level modules have paths like /documentation/ModuleName (2 components).
-            // The path check is needed because `rootModules` may include nested symbols that
-            // happen to have kind `.module` (e.g., when testing all symbol kinds). Without this
-            // check, those nested symbols would incorrectly be counted as separate modules.
-            let pathComponents = reference.path.split(separator: "/")
-            guard pathComponents.count == 2, pathComponents.first == "documentation" else { return nil }
-
-            guard let node = topicGraph.nodeWithReference(reference),
-                  !node.isVirtual,
-                  let docNode = documentationCache[reference],
+        // Get module names from the link resolver, which already has properly filtered modules
+        // (excludes snippets and isn't affected by nested symbols with `.module` kind).
+        // Filter to only include symbol-based modules (not @TechnologyRoot articles).
+        let symbolModuleNames: Set<String> = Set(linkResolver.localResolver.modules().compactMap { reference in
+            guard let docNode = documentationCache[reference],
                   docNode.kind == .module
             else { return nil }
             return docNode.name.plainText
