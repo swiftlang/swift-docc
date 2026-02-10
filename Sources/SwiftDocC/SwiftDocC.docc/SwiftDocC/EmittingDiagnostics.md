@@ -25,6 +25,10 @@ return Problem(diagnostic: diagnostic, possibleSolutions: [])
 
 ## Topics
 
+### Essentials
+
+- <doc:Adding-Diagnostics> 
+
 ### Diagnostics
 
 - ``Problem``
@@ -39,4 +43,4 @@ return Problem(diagnostic: diagnostic, possibleSolutions: [])
 - ``Solution``
 - ``Replacement``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021, 2026 Apple Inc and the Swift Project authors. All Rights Reserved. -->
