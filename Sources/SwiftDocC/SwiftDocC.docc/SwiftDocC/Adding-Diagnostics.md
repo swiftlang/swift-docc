@@ -90,6 +90,48 @@ Following these recommendations help your new diagnostic fit in with both DocC's
   ```
 
 
+#### Explain the issue in more detail
+
+The diagnostic's ``Diagnostic/explanation`` is your opportunity to go into more detail about the issue.
+Unlike the `summary`, you are free to phrase the `explanation` however makes the most sense for the specific issue.
+There aren't any _specific_ length restrictions---although for most issues it's good to keep to at most a paragraph or two---
+and there aren't any specific patterns or common phrasings to follow. 
+
+When writing the explanation for your diagnostic, it can be good to imagine yourself receiving the diagnostic and think about what questions you have and try to preemptively answer those.
+For example, consider the five questions below. Their answers make for very good explanations to their respective diagnostics. 
+
+> Question: Why do I need a `@Tutorials` page when after I add a tutorial? 
+> 
+> **Answer** \
+> `@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the hierarchy and recommended reading order of your documentation.
+
+> Question: Why do I need to specify a "purpose" for my `CallToAction` directive?
+>
+> **Answer** \
+> Without either a `purpose` or `label`, the Call to Action has no text to display for its link on the page.
+
+> Question: Why can't I use _another_ first-level heading?
+>
+> **Answer** \
+> A first-level heading is reserved for specifying the title of an article or to define which symbol a documentation extension file is associated with. 
+
+> Question: Why can't I organize this symbol under that other symbol?
+>
+> **Answer** \
+> Links in a 'Topics' section organize your documentation into hierarchy. Pages can appear in more than one place but the hierarchy should remain a tree. 
+> If this link contributed to the documentation hierarchy it would introduce this cycle: `<ASCII_DIAGRAM>`
+
+> Question: Why can't I specify `@TechologyRoot` for this symbol?  
+>
+> **Answer** \
+> Symbols inherently belong to a module (in this case 'MODULE_NAME') which is already the root of the documentation hierarchy. 
+> If this symbol became a root page it would move out of 'MODULE_NAME', creating a disjoint documentation hierarchy with two possible starting points.
+
+Don't merely repeat or rephrase information from the summary just to add an `explanation`.
+If you can't think of anything that's unclear about the issue, unclear about how the developer can address it, or anything else that you think would make sense to describe in more detail, 
+then it's possible that this diagnostic doesn't need an `explanation` and that it's clear and actionable from the summary alone. 
+
+
 ### Provide solutions
 
 If you can identify one or more possible actions that would address the issue, 
