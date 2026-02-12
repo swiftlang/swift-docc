@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A builder that collects ``Differences`` between two objects of the same type.
 ///
 /// The DifferenceBuilder is used when diffing two ``RenderNode`` objects against each other.

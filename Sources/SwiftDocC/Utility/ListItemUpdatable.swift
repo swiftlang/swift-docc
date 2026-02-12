@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// Protocol that provides merging and updating capabilities for list item entities that merge content between markdown files and symbol graphs.
 /// 
 /// The single property, ``listItemIdentifier`` returns the value that uniquely identifies the entity within the list item markdown.

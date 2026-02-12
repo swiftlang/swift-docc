@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+private import SymbolKit
 
 #if canImport(os)
     import os

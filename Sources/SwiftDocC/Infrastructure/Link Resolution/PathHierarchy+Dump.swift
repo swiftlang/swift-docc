@@ -11,7 +11,7 @@
 // This API isn't exposed anywhere and is only used from a debugger.
 #if DEBUG
 
-import SymbolKit
+private import SymbolKit
 
 /// A node in a tree structure that can be printed into a visual representation for debugging.
 private struct DumpableNode {

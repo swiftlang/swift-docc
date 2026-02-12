@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Markdown
+private import Markdown
 import Foundation
 
 protocol ListableItem {}

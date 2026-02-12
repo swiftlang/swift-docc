@@ -13,6 +13,7 @@ import Markdown
 import XCTest
 import SymbolKit
 import DocCTestUtilities
+import DocCCommon
 
 class SemaToRenderNodeTests: XCTestCase {
     func testCompileTutorial() async throws {

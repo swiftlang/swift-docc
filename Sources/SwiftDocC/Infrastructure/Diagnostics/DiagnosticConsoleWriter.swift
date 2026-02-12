@@ -9,7 +9,7 @@
 */
 
 public import Foundation
-import Markdown
+private import Markdown
 
 /// Writes diagnostic messages to a text output stream.
 ///

@@ -13,6 +13,7 @@ import XCTest
 import Markdown
 @testable import SymbolKit
 @testable import SwiftDocC
+import DocCCommon
 
 class AnchorSectionTests: XCTestCase {
         

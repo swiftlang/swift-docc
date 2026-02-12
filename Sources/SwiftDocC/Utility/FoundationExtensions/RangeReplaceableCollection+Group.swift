@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension RangeReplaceableCollection {
     /// Groups successive elements as long as check determines that they belong together.
     ///

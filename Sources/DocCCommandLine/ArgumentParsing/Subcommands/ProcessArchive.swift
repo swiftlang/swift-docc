@@ -9,7 +9,6 @@
 */
 
 import ArgumentParser
-import Foundation
 
 extension Docc {
     /// Processes an action on an archive

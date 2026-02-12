@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A list of JSON patches generated as differences between two documents.
 public typealias JSONPatchDifferences = [JSONPatchOperation]
 

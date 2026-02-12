@@ -10,6 +10,7 @@
 
 @testable import SwiftDocC
 import XCTest
+import DocCCommon
 
 class RenderHierarchyTranslatorTests: XCTestCase {
     func test() async throws {

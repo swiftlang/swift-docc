@@ -12,6 +12,8 @@ import XCTest
 import Foundation
 @testable import SwiftDocC
 @testable import DocCCommandLine
+import DocCTestUtilities
+import DocCCommon
 
 class ConvertActionIndexerTests: XCTestCase {
     

@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import Markdown
+private import Foundation
+private import Markdown
 import SymbolKit
-import DocCCommon
+private import DocCCommon
 
 private let automaticSeeAlsoLimit: Int = {
     ProcessInfo.processInfo.environment["DOCC_AUTOMATIC_SEE_ALSO_LIMIT"].flatMap { Int($0) } ?? 15

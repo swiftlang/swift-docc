@@ -13,6 +13,8 @@ import SymbolKit
 import Foundation
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
+import Markdown
 
 
 class PropertyListPossibleValuesSectionTests: XCTestCase {
