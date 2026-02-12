@@ -64,11 +64,14 @@ Following these recommendations help your new diagnostic fit in with both DocC's
   Try to be specific about _what_ is and isn't allowed rather than saying that something is unsupported or not valid. 
   For example:
   ```diff
-  - Unsupported symbol link to article
-  + Symbol links can only resolve symbols
+  - Cannot organize 'NAME' under itself
+  + Organizing 'NAME' under itself forms a cycle
 
   - Invalid use of level-1 heading
   + Page title can only be specified once
+
+  - Incorrect use of symbol link
+  + Symbol links can only find symbols; did you mean to use a '<doc:>' link?
   ```
 
 - Lead with the information that's most specific about the issue and follow with information that provide context.
