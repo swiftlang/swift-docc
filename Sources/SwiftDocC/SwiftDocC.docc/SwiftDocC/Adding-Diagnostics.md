@@ -96,8 +96,27 @@ That said, don't overwhelm the developer with far fetched or irrelevant solution
 If the developer specified an unsupported value but DocC knows the list of all possible values (for example, the names of all image assets in the catalog or the names of all top-level symbols). 
 Use ``NearMiss.bestMatches(for:against:)`` to both filter and order the long list of possibilities based on how closely they match what the developer wrote.
 
+Write your solution's ``Solution/summary`` as a verb phrase that describes the action that the developer should take to address the issue. 
+For example:
+- "Rename 'FILE_NAME'"
+- "Replace 'WRONG' with 'CORRECT'"
+- "Change to level-2 heading"
+- "Remove duplicate parameter documentation"
+- "Add a page title"
+
+> Note: 
+> A developer reading the diagnostic on the command line can't apply the solution's ``Solution/replacements``. 
+> For this reason, include any hard to come by information---such as necessary link disambiguation---in the solution's `summary` as well.
+
 If the solution requires some additional unknowable information that the developer needs to provide (for example, the value of a missing directive argument), use Xcode-syntax placeholders (`<#placeholder#>`) as necessary.
 It's better to offer a solution with a placeholder in it than to offer no solution at all.
+For example:
+
+Solution summary    | Replacement text
+--------------------|-----------------------------
+Add a title         | `# <#Title#>` 
+Document 'NAME'     | `- Parameter NAME: <#parameter description#>` 
+Change heading name | `### <#New heading name#>`
 
 
 ### Organize diagnostics into groups
