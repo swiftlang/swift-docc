@@ -172,3 +172,185 @@ class DocumentationContext_RootPageTests: XCTestCase {
         XCTAssertEqual(context.problems.count, 0)
     }
 }
+
+// MARK: - Multiple Root Page Warnings (Swift Testing)
+
+import Testing
+
+struct DocumentationContext_MultipleRootPageTests {
+
+    @Test
+    func warnsAboutMultipleTechnologyRootDirectives() async throws {
+        let context = try await load(catalog:
+            Folder(name: "multiple-roots.docc", content: [
+                TextFile(name: "FirstRoot.md", utf8Content: """
+                # First Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                This is the first root page.
+                """),
+
+                TextFile(name: "SecondRoot.md", utf8Content: """
+                # Second Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                This is the second root page.
+                """),
+
+                TextFile(name: "ThirdRoot.md", utf8Content: """
+                # Third Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                This is the third root page.
+                """),
+            ])
+        )
+
+        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots" }
+        #expect(multipleRootsProblems.count == 3, "Expected warnings for all three TechnologyRoot directives, got: \(multipleRootsProblems.count)")
+
+        let problemSources = multipleRootsProblems.compactMap { $0.diagnostic.source?.lastPathComponent }.sorted()
+        #expect(problemSources == ["FirstRoot.md", "SecondRoot.md", "ThirdRoot.md"])
+
+        for problem in multipleRootsProblems {
+            let solution = try #require(problem.possibleSolutions.first, "Expected a solution for removing the directive")
+            #expect(solution.summary == "Remove the 'TechnologyRoot' directive")
+            #expect(solution.replacements.count == 1)
+        }
+
+        // Verify mutually exclusive: no other root-related warnings
+        let otherRootProblems = context.problems.filter {
+            $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" ||
+            $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules"
+        }
+        #expect(otherRootProblems.isEmpty, "Unexpected root-related warnings: \(otherRootProblems.map(\.diagnostic.summary))")
+    }
+
+    @Test
+    func warnsAboutTechnologyRootWithSymbols() async throws {
+        let context = try await load(catalog:
+            Folder(name: "symbols-with-root.docc", content: [
+                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(moduleName: "MyModule")),
+
+                TextFile(name: "GettingStarted.md", utf8Content: """
+                # Getting Started
+                @Metadata {
+                   @TechnologyRoot
+                }
+                Learn how to use MyModule.
+                """),
+            ])
+        )
+
+        let symbolsWithRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
+        #expect(symbolsWithRootProblems.count == 1, "Expected one warning for @TechnologyRoot with symbols")
+
+        let problem = try #require(symbolsWithRootProblems.first)
+        #expect(problem.diagnostic.source?.lastPathComponent == "GettingStarted.md")
+        #expect(problem.diagnostic.severity == .warning)
+
+        let solution = try #require(problem.possibleSolutions.first)
+        #expect(solution.summary == "Remove the 'TechnologyRoot' directive")
+
+        // Verify mutually exclusive: no MultipleTechnologyRoots warning
+        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots" }
+        #expect(multipleRootsProblems.isEmpty, "Should not emit MultipleTechnologyRoots when symbols provide the root")
+    }
+
+    @Test
+    func emitsTechnologyRootWithSymbolsNotMultipleTechnologyRoots() async throws {
+        // When symbols exist AND multiple @TechnologyRoot directives are present,
+        // only TechnologyRootWithSymbols warnings should be emitted (not MultipleTechnologyRoots).
+        // This tests the mutually exclusive warning logic.
+        let context = try await load(catalog:
+            Folder(name: "symbols-with-multiple-roots.docc", content: [
+                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(moduleName: "MyModule")),
+
+                TextFile(name: "FirstRoot.md", utf8Content: """
+                # First Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                First root page.
+                """),
+
+                TextFile(name: "SecondRoot.md", utf8Content: """
+                # Second Root
+                @Metadata {
+                   @TechnologyRoot
+                }
+                Second root page.
+                """),
+            ])
+        )
+
+        let symbolsWithRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
+        #expect(symbolsWithRootProblems.count == 2, "Expected TechnologyRootWithSymbols for each @TechnologyRoot directive")
+
+        let problemSources = symbolsWithRootProblems.compactMap { $0.diagnostic.source?.lastPathComponent }.sorted()
+        #expect(problemSources == ["FirstRoot.md", "SecondRoot.md"])
+
+        // Mutually exclusive: no MultipleTechnologyRoots warnings
+        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots" }
+        #expect(multipleRootsProblems.isEmpty, "MultipleTechnologyRoots should not be emitted when symbols provide a root")
+    }
+
+    @Test
+    func warnsAboutMultipleMainModules() async throws {
+        let context = try await load(catalog:
+            Folder(name: "multiple-modules.docc", content: [
+                JSONFile(name: "ModuleA.symbols.json", content: makeSymbolGraph(moduleName: "ModuleA")),
+                JSONFile(name: "ModuleB.symbols.json", content: makeSymbolGraph(moduleName: "ModuleB")),
+            ])
+        )
+
+        let multipleModulesProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules" }
+        #expect(multipleModulesProblems.count == 1, "Expected one warning about multiple main modules")
+
+        let problem = try #require(multipleModulesProblems.first)
+        #expect(problem.diagnostic.severity == .warning)
+        #expect(problem.diagnostic.summary.contains("ModuleA"), "Summary should list ModuleA")
+        #expect(problem.diagnostic.summary.contains("ModuleB"), "Summary should list ModuleB")
+    }
+
+    @Test
+    func noWarningForSingleModule() async throws {
+        let context = try await load(catalog:
+            Folder(name: "single-module.docc", content: [
+                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(moduleName: "MyModule")),
+            ])
+        )
+
+        let rootProblems = context.problems.filter {
+            $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules" ||
+            $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" ||
+            $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots"
+        }
+        #expect(rootProblems.isEmpty, "Single module should not trigger root-related warnings: \(rootProblems.map(\.diagnostic.summary))")
+    }
+
+    @Test
+    func noWarningForSingleTechnologyRoot() async throws {
+        let context = try await load(catalog:
+            Folder(name: "single-root.docc", content: [
+                TextFile(name: "Root.md", utf8Content: """
+                # My Documentation
+                @Metadata {
+                   @TechnologyRoot
+                }
+                Welcome to the documentation.
+                """),
+            ])
+        )
+
+        let rootProblems = context.problems.filter {
+            $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules" ||
+            $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" ||
+            $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots"
+        }
+        #expect(rootProblems.isEmpty, "Single @TechnologyRoot should not trigger warnings: \(rootProblems.map(\.diagnostic.summary))")
+    }
+}
