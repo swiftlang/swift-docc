@@ -156,16 +156,22 @@ class DocumentationCuratorTests: XCTestCase {
         }
         
         let crawler = DocumentationCurator(in: context)
-        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
-        
+
+        // This test uses @TechnologyRoot with symbols, which now triggers a warning.
+        let technologyRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssertEqual(technologyRootProblems.count, 1, "Expected TechnologyRootWithSymbols warning")
+
+        let otherProblems = context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssert(otherProblems.isEmpty, "Expected no other problems. Found: \(otherProblems.map(\.diagnostic.summary))")
+
         guard let moduleNode = context.documentationCache["SourceLocations"],
               let pathToRoot = context.finitePaths(to: moduleNode.reference).first,
               let root = pathToRoot.first else {
-            
+
             XCTFail("Module doesn't have technology root as a predecessor in its path")
             return
         }
-        
+
         XCTAssertEqual(root.path, "/documentation/Root")
         XCTAssertEqual(crawler.problems.count, 0)
     }
@@ -296,17 +302,22 @@ class DocumentationCuratorTests: XCTestCase {
 
             """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
         }
-        
-        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
-        
+
+        // This test uses @TechnologyRoot with symbols, which now triggers a warning.
+        let technologyRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssertEqual(technologyRootProblems.count, 1, "Expected TechnologyRootWithSymbols warning")
+
+        let otherProblems = context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssert(otherProblems.isEmpty, "Expected no other problems. Found: \(otherProblems.map(\.diagnostic.summary))")
+
         guard let moduleNode = context.documentationCache["SourceLocations"],
               let pathToRoot = context.shortestFinitePath(to: moduleNode.reference),
               let root = pathToRoot.first else {
-            
+
             XCTFail("Module doesn't have technology root as a predecessor in its path")
             return
         }
-        
+
         XCTAssertEqual(root.path, "/documentation/Root")
     }
 
