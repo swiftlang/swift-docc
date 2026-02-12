@@ -19,6 +19,7 @@ import Foundation
 import Testing
 import DocCHTML
 import Markdown
+import DocCCommon
 
 struct MarkdownRendererTests {
     @Test

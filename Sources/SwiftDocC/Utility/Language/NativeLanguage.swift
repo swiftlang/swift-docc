@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A set of functions providing support for constructing human language phrases
 /// for use alongside code documentation.
 protocol LanguageConstructible {

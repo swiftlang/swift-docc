@@ -8,7 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
+private import SymbolKit
+private import DocCCommon
 
 private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted.union(["/"])
 

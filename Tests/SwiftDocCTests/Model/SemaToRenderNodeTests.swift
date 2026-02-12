@@ -13,6 +13,7 @@ import Markdown
 import XCTest
 import SymbolKit
 import DocCTestUtilities
+import DocCCommon
 
 class SemaToRenderNodeTests: XCTestCase {
     func testCompileTutorial() async throws {
@@ -651,8 +652,8 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(firstTutorialReference.abstract.isEmpty)
         XCTAssertEqual(firstTutorialReference.estimatedTime, "20min")
         
-        renderNode.references.compactMap { $0.value as? TopicRenderReference } .forEach {
-            XCTAssertFalse($0.abstract.isEmpty)
+        for case let renderReference as TopicRenderReference in renderNode.references.values {
+            XCTAssertFalse(renderReference.abstract.isEmpty)
         }
         
         XCTAssertEqual(renderNode.metadata.estimatedTime, "1hr 20min")
@@ -907,8 +908,8 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(firstTutorialReference.abstract.isEmpty)
         XCTAssertEqual(firstTutorialReference.estimatedTime, "20min")
         
-        renderNode.references.compactMap { $0.value as? TopicRenderReference } .forEach {
-            XCTAssertFalse($0.abstract.isEmpty)
+        for case let renderReference as TopicRenderReference in renderNode.references.values {
+            XCTAssertFalse(renderReference.abstract.isEmpty)
         }
 
         XCTAssertEqual(renderNode.metadata.estimatedTime, "1hr 20min")

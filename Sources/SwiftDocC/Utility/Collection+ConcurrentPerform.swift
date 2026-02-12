@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 // Until we find a better way to manage memory on Linux we will disable
 // concurrency in the Collection extensions in this file and have tests expect
@@ -163,9 +163,9 @@ extension Collection {
         initialResult: Result,
         combineResults: (inout Result, consuming PartialResult) -> Void
     ) async throws -> Result {
-        try await withThrowingTaskGroup(of: PartialResult.self, returning: Result.self) { taskGroup in
-            try await withoutActuallyEscaping(batchWork) { work in
-                try await withoutActuallyEscaping(combineResults) { combineResults in
+        try await withoutActuallyEscaping(batchWork) { work in
+            try await withoutActuallyEscaping(combineResults) { combineResults in
+                try await withThrowingTaskGroup(of: PartialResult.self, returning: Result.self) { taskGroup in
                     var remaining = self[...]
                     
                     // Don't run more tasks in parallel than there are cores to run them

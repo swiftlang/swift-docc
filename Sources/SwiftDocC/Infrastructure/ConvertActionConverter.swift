@@ -8,11 +8,13 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 #if canImport(os)
 package import os
 #endif
+
+private import DocCHTML
 
 package enum ConvertActionConverter {
 #if canImport(os)

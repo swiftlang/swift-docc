@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import SymbolKit
 
 /// Translates a symbol's response into a render node's response section.
 struct HTTPResponsesSectionTranslator: RenderSectionTranslator {

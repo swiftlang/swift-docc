@@ -12,6 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import SymbolKit
 import DocCTestUtilities
+import DocCCommon
 
 class SnippetResolverTests: XCTestCase {
     
