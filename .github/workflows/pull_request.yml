@@ -14,7 +14,7 @@ concurrency:
 jobs:
   tests:
     name: Test
-    uses: swiftlang/github-workflows/.github/workflows/swift_package_test.yml@0.0.4
+    uses: swiftlang/github-workflows/.github/workflows/swift_package_test.yml@0.0.6
     with:
       linux_host_archs: '["x86_64", "aarch64"]'
       linux_swift_versions: '["nightly-main", "nightly-6.3"]'
@@ -22,6 +22,6 @@ jobs:
       enable_macos_checks: true
   soundness:
     name: Soundness
-    uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.4
+    uses: swiftlang/github-workflows/.github/workflows/soundness.yml@0.0.6
     with:
       license_header_check_project_name: "Swift"
