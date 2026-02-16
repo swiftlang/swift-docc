@@ -5840,10 +5840,15 @@ let expected = """
             // documentation cache, to test if the supported languages are attached prior to registration.
             JSONFile(name: "Foo.symbols.json", content: makeSymbolGraph(moduleName: "Foo")),
         ])
-        
+
         let (bundle, context) = try await loadBundle(catalog: catalog)
-        
-        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+
+        // This test uses @TechnologyRoot with symbols, which now triggers a warning.
+        let technologyRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssertEqual(technologyRootProblems.count, 1, "Expected TechnologyRootWithSymbols warning")
+
+        let otherProblems = context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssert(otherProblems.isEmpty, "Unexpected problems:\n\(otherProblems.map(\.diagnostic.summary).joined(separator: "\n"))")
 
         do {
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .data)
