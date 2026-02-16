@@ -16,7 +16,7 @@ import DocCTestUtilities
 
 struct DiagnosticFileWriterTests {
     @Test
-    func writesFileWhenOnlyWhenFinalized() throws {
+    func writesFileOnlyWhenFinalized() throws {
         let testFileSystem = try TestFileSystem(folders: [
             Folder(name: "path", content: [
                 Folder(name: "to", content: [])
