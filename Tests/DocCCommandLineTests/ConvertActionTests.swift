@@ -1048,7 +1048,7 @@ class ConvertActionTests: XCTestCase {
     @available(*, deprecated)
     func testMetadataIsWrittenToOutputFolder() async throws {
         // Example documentation bundle that contains an image
-        let bundle = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: imageFile, newName: "referenced-article-image.png"),
             CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
             CopyOfFile(original: imageFile, newName: "UNreferenced-image.png"),
@@ -1090,7 +1090,13 @@ class ConvertActionTests: XCTestCase {
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let testDataProvider = try TestFileSystem(folders: [
+            catalog,
+            Folder.emptyHTMLTemplateDirectory,
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [])
+            ])
+        ])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
@@ -1101,8 +1107,9 @@ class ConvertActionTests: XCTestCase {
             return try? JSONDecoder().decode(Result.self, from: data)
         }
 
+        let diagnosticsOutputFile = URL(fileURLWithPath: "/path/to/some-custom-diagnostics-file.json")
         let action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
+            documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
             targetDirectory: targetDirectory,
@@ -1110,7 +1117,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
+            diagnosticFilePath: diagnosticsOutputFile
         )
         let (result, context) = try await action.perform(logHandle: .none)
         
