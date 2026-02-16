@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -625,7 +625,7 @@ class ConvertActionTests: XCTestCase {
     @available(*, deprecated)
     func testMetadataIsWrittenToOutputFolderAPIDocumentation() async throws {
         // Example documentation bundle that contains an image
-        let bundle = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             // An asset
             CopyOfFile(original: imageFile, newName: "image.png"),
             
@@ -684,7 +684,13 @@ class ConvertActionTests: XCTestCase {
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
         
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let testDataProvider = try TestFileSystem(folders: [
+            catalog,
+            Folder.emptyHTMLTemplateDirectory,
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [])
+            ])
+        ])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
@@ -695,8 +701,9 @@ class ConvertActionTests: XCTestCase {
             return try? JSONDecoder().decode(Result.self, from: data)
         }
 
+        let diagnosticsOutputFile = URL(fileURLWithPath: "/path/to/some-custom-diagnostics-file.json")
         let action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
+            documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
             targetDirectory: targetDirectory,
@@ -704,7 +711,9 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
+            diagnosticFilePath: diagnosticsOutputFile
+        )
         let (result, context) = try await action.perform(logHandle: .none)
 
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
@@ -838,6 +847,13 @@ class ConvertActionTests: XCTestCase {
                 return []
             }
         }
+
+        // Verify diagnostics
+        guard let decodedDiagnosticsFile: DiagnosticFile = contentsOfJSONFile(url: diagnosticsOutputFile) else {
+            XCTFail("No diagnostics output file in virtual file system at \(diagnosticsOutputFile.path)")
+            return
+        }
+        XCTAssertTrue(decodedDiagnosticsFile.diagnostics.isEmpty)
         
         // Verify indexing records
         let indexingRecordSort: (IndexingRecord, IndexingRecord) -> Bool = { return $0.title < $1.title }
@@ -1200,12 +1216,12 @@ class ConvertActionTests: XCTestCase {
             }
         }
         
-//        // Verify diagnostics
-//        guard let resultDiagnostics: [Digest.Diagnostic] = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("diagnostics.json")) else {
-//            XCTFail("Can't find diagnostics.json in output")
-//            return
-//        }
-//        XCTAssertTrue(resultDiagnostics.isEmpty)
+        // Verify diagnostics
+        guard let decodedDiagnosticsFile: DiagnosticFile = contentsOfJSONFile(url: diagnosticsOutputFile) else {
+            XCTFail("No diagnostics output file in virtual file system at \(diagnosticsOutputFile.path)")
+            return
+        }
+        XCTAssertTrue(decodedDiagnosticsFile.diagnostics.isEmpty)
         
         // Verify indexing records
         let indexingRecordSort: (IndexingRecord, IndexingRecord) -> Bool = { return $0.title < $1.title }
@@ -2039,7 +2055,7 @@ class ConvertActionTests: XCTestCase {
     }
     
     func testWritesDiagnosticFileWhenThrowingError() async throws {
-        let bundle = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
             TextFile(name: "Article.md", utf8Content: """
@@ -2050,15 +2066,20 @@ class ConvertActionTests: XCTestCase {
             """),
         ])
 
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let testDataProvider = try TestFileSystem(folders: [
+            catalog,
+            Folder.emptyHTMLTemplateDirectory,
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [])
+            ])
+        ])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
-        // TODO: Support TestFileSystem in DiagnosticFileWriter
-        let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
+        let diagnosticOutputFile = URL(fileURLWithPath: "/path/to/some-custom-diagnostics-file.json")
         
         let action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
+            documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: true,
             targetDirectory: targetDirectory,
@@ -2068,13 +2089,12 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
-            diagnosticFilePath: diagnosticFile
+            diagnosticFilePath: diagnosticOutputFile
         )
         
-        // TODO: Support TestFileSystem in DiagnosticFileWriter
-        XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file doesn't exist before")
+        XCTAssertFalse(testDataProvider.fileExists(atPath: diagnosticOutputFile.path), "Diagnostic file doesn't exist before")
         try await action.performAndHandleResult(logHandle: .none)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file exist after")
+        XCTAssertTrue(testDataProvider.fileExists(atPath: diagnosticOutputFile.path), "Diagnostic file exist after")
     }
 
     func testConvertInheritDocsOption() throws {
@@ -2756,7 +2776,7 @@ class ConvertActionTests: XCTestCase {
     }
     
     func testWrittenDiagnosticsAfterConvert() async throws {
-        let bundle = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "Documentation.md", utf8Content: """
             # ``ModuleThatDoesNotExist``
@@ -2764,10 +2784,16 @@ class ConvertActionTests: XCTestCase {
             This will result in two errors from two different phases of the build
             """)
         ])
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let testDataProvider = try TestFileSystem(folders: [
+            catalog,
+            Folder.emptyHTMLTemplateDirectory,
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [])
+            ])
+        ])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
-        let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
-        let fileConsumer = DiagnosticFileWriter(outputPath: diagnosticFile)
+        let diagnosticOutputFile = URL(fileURLWithPath: "/path/to/some-custom-diagnostics-file.json")
+        let fileConsumer = DiagnosticFileWriter(outputPath: diagnosticOutputFile, fileManager: testDataProvider)
         
         let engine = DiagnosticEngine()
         engine.add(fileConsumer)
@@ -2777,7 +2803,7 @@ class ConvertActionTests: XCTestCase {
         engine.add(consoleConsumer)
         
         let action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
+            documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
             targetDirectory: targetDirectory,
@@ -2792,9 +2818,9 @@ class ConvertActionTests: XCTestCase {
         _ = try await action.perform(logHandle: .none)
         XCTAssertEqual(engine.problems.count, 1)
         
-        XCTAssert(FileManager.default.fileExists(atPath: diagnosticFile.path))
+        XCTAssert(testDataProvider.fileExists(atPath: diagnosticOutputFile.path))
         
-        let diagnosticFileContent = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFile))
+        let diagnosticFileContent = try JSONDecoder().decode(DiagnosticFile.self, from: testDataProvider.contents(of: diagnosticOutputFile))
         XCTAssertEqual(diagnosticFileContent.diagnostics.count, 1)
         
         XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
