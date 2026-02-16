@@ -2967,7 +2967,7 @@ class ConvertActionTests: XCTestCase {
     }
     
     // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
-    func testConvertWithNoTechnologyRoot() async throws {
+    func testWarnsWhenTutorialsTableOfContentsPageIsMissing() async throws {
         func problemsFromConverting(_ catalogContent: [any File]) async throws -> [Problem] {
             let catalog = Folder(name: "unit-test.docc", content: catalogContent)
             let testDataProvider = try TestFileSystem(folders: [catalog, Folder.emptyHTMLTemplateDirectory])
@@ -3000,7 +3000,7 @@ class ConvertActionTests: XCTestCase {
             ),
         ])
         XCTAssert(onlyTutorialArticleProblems.contains(where: {
-            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+            $0.diagnostic.identifier == "MissingTableOfContentsPage"
         }))
         
         let tutorialTableOfContentProblem = try await problemsFromConverting([
@@ -3018,7 +3018,7 @@ class ConvertActionTests: XCTestCase {
             ),
         ])
         XCTAssert(tutorialTableOfContentProblem.contains(where: {
-            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+            $0.diagnostic.identifier == "MissingTableOfContentsPage"
         }))
         
         let incompleteTutorialFile = try await problemsFromConverting([
@@ -3038,7 +3038,7 @@ class ConvertActionTests: XCTestCase {
             $0.diagnostic.identifier == "org.swift.docc.missingTopLevelChild"
         }))
         XCTAssertFalse(incompleteTutorialFile.contains(where: {
-            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+            $0.diagnostic.identifier == "MissingTableOfContentsPage"
         }))
     }
     
