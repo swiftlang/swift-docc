@@ -35,10 +35,4 @@ public final class DiagnosticFileWriter: DiagnosticConsumer {
         let encoder = RenderJSONEncoder.makeEncoder(emitVariantOverrides: false)
         try encoder.encode(fileContent).write(to: outputPath, options: .atomic)
     }
-    
-    // This is deprecated but still necessary to implement.
-    @available(*, deprecated, renamed: "flush()")
-    public func finalize() throws {
-        try flush()
-    }
 }

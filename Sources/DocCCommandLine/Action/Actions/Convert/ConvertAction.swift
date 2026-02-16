@@ -352,13 +352,6 @@ public struct ConvertAction: AsyncAction {
                 documentationCoverageOptions: documentationCoverageOptions
             )
             signposter.endInterval("Process", processInterval)
-        } catch {
-            if emitDigest {
-                let problem = Problem(description: (error as? (any DescribedError))?.errorDescription ?? error.localizedDescription, source: nil)
-                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + [problem])
-                try moveOutput(from: temporaryFolder, to: targetDirectory)
-            }
-            throw error
         }
 
         var didEncounterError = context.problems.containsErrors

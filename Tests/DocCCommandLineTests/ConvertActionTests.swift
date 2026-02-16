@@ -548,249 +548,6 @@ class ConvertActionTests: XCTestCase {
             XCTAssertNil(renderNode.metadata.symbolAccessLevel)
         }
     }
-
-    // This test uses ``Digest.Diagnostic`` which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
-    func testOutputFolderContainsDiagnosticJSONWhenThereAreWarnings() async throws {
-        // Documentation bundle that contains an image
-        let bundle = Folder(name: "unit-test.docc", content: [
-            CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
-            TextFile(name: "TechnologyX.tutorial", utf8Content: """
-                @Tutorials(name: "Technology X") {
-                   @Intro(title: "Technology X") {
-                      You'll learn all about Technology X.
-                   }
-                   
-                   @Volume(name: "Volume 1") {
-                      This volume contains Chapter 1.
-
-                      @Image(source: referenced-tutorials-image, alt: "Some alt text")
-
-                      @Chapter(name: "Chapter 1") {
-                         In this chapter, you'll learn about Tutorial 1.
-
-                         @Image(source: referenced-tutorials-image, alt: "Some alt text")
-                      }
-                   }
-                }
-                """
-            ),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-        ])
-
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-
-        let action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: true,
-            currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
-        let result = try await action.perform(logHandle: .none)
-
-        // Verify that the following files and folder exist at the output location
-        let expectedOutput = Folder(name: ".docc-build", content: [
-            Folder(name: "images", content: [
-                Folder(name: "com.test.example", content: [
-                    CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
-                ]),
-            ]),
-            Folder(name: "videos", content: [
-                Folder(name: "com.test.example", content: []),
-            ]),
-            JSONFile(name: "diagnostics.json", content: [
-                Digest.Diagnostic(
-                    start: nil,
-                    source: nil,
-                    severity: .warning,
-                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.3 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
-                    explanation: nil,
-                    notes: []
-                ),
-                
-                Digest.Diagnostic(
-                    start: .init(line: 11, column: 7),
-                    source: URL(string: "TechnologyX.tutorial"),
-                    severity: .warning,
-                    summary: "Missing required 'TutorialReference' child directive",
-                    explanation: "The 'Chapter' directive requires at least one 'TutorialReference' child directive",
-                    notes: []
-                ),
-            ]),
-        ])
-        expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
-    }
-    
-    // This test uses ``Digest.Diagnostic`` which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
-    func testOutputFolderContainsDiagnosticJSONWhenThereAreErrorsAndNoTemplate() async throws {
-        // Documentation bundle that contains an image
-        let bundle = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "TechnologyX.tutorial", utf8Content: """
-                @Article(time: 10) {
-                   @Intro(title: "Technology X") {
-                      You'll learn all about Technology X.
-                   }
-                
-                   @Intro(title: "Technology X") {
-                      You'll learn all about Technology X.
-                   }
-                }
-                """
-            ),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-        ])
-
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-
-        let action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: nil,
-            emitDigest: true,
-            currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-            diagnosticLevel: "hint") // report all errors during the test
-        let result = try await action.perform(logHandle: .none)
-
-        // Verify that the following files and folder exist at the output location
-        let expectedOutput = Folder(name: ".docc-build", content: [
-            JSONFile(name: "diagnostics.json", content: [
-                Digest.Diagnostic(
-                    start: nil,
-                    source: nil,
-                    severity: .warning,
-                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.3 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
-                    explanation: nil,
-                    notes: []
-                ),
-                
-                Digest.Diagnostic(
-                    start: .init(line: 6, column: 4),
-                    source: URL(string: "TechnologyX.tutorial"),
-                    severity: .warning,
-                    summary: "Duplicate 'Intro' child directive",
-                    explanation: "The 'Article' directive must have exactly one 'Intro' child directive",
-                    notes: []
-                ),
-                Digest.Diagnostic(
-                    start: nil,
-                    source: URL(string: "TechnologyX.tutorial"),
-                    severity: .warning,
-                    summary: "The article 'TechnologyX' must be referenced from a Tutorial Table of Contents",
-                    explanation: nil,
-                    notes: []
-                ),
-                Digest.Diagnostic(
-                    start: nil,
-                    source: URL(string: "TechnologyX.tutorial"),
-                    severity: .information,
-                    summary: "You haven't curated 'doc://com.test.example/tutorials/TestBundle/TechnologyX'",
-                    explanation: nil,
-                    notes: []
-                ),
-            ]),
-        ])
-        expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
-    }
-    
-    // This test uses ``Digest.Diagnostic`` which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
-    func testWarningForUncuratedTutorial() async throws {
-        // Documentation bundle that contains an image
-        let bundle = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "TechnologyX.tutorial", utf8Content: """
-                @Tutorial(time: 10) {
-                  @Intro(title: "TechologyX") {}
-
-                  @Section(title: "Section") {
-                    @Steps {}
-                  }
-
-                  @Assessments {
-                    @MultipleChoice {
-                      text
-                      @Choice(isCorrect: true) {
-                        text
-                        @Justification(reaction: "reaction text") {}
-                      }
-
-                      @Choice(isCorrect: false) {
-                        text
-                        @Justification(reaction: "reaction text") {}
-                      }
-                    }
-                  }
-                }
-                """
-            ),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-        ])
-
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-
-        let action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: nil,
-            emitDigest: true,
-            currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-            diagnosticLevel: "hint") // report all errors during the test
-        let result = try await action.perform(logHandle: .none)
-
-        // Verify that the following files and folder exist at the output location
-        let expectedOutput = Folder(name: ".docc-build", content: [
-            JSONFile(name: "diagnostics.json", content: [
-                Digest.Diagnostic(
-                    start: nil,
-                    source: nil,
-                    severity: .warning,
-                    summary: "The 'diagnostics.json' digest file is deprecated and will be removed after 6.3 is released. Pass a `--diagnostics-file <diagnostics-file>` to specify a custom location where DocC will write a diagnostics JSON file with more information.",
-                    explanation: nil,
-                    notes: []
-                ),
-                
-                Digest.Diagnostic(
-                    start: nil,
-                    source: URL(string: "TechnologyX.tutorial"),
-                    severity: .warning,
-                    summary: "The tutorial 'TechnologyX' must be referenced from a Tutorial Table of Contents",
-                    explanation: nil,
-                    notes: []
-                ),
-                Digest.Diagnostic(
-                    start: nil,
-                    source: URL(string: "TechnologyX.tutorial"),
-                    severity: .information,
-                    summary: "You haven't curated 'doc://com.test.example/tutorials/TestBundle/TechnologyX'",
-                    explanation: nil,
-                    notes: []
-                ),
-            ])
-        ])
-        expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
-    }
     
     func testOutputFolderIsNotRemovedWhenThereAreErrors() async throws {
         let tutorialsFile = TextFile(name: "TechnologyX.tutorial", utf8Content: """
@@ -1081,13 +838,6 @@ class ConvertActionTests: XCTestCase {
                 return []
             }
         }
-
-        // Verify diagnostics
-        guard let resultDiagnostics: [Digest.Diagnostic] = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("diagnostics.json")) else {
-            XCTFail("Can't find diagnostics.json in output")
-            return
-        }
-        XCTAssertTrue(resultDiagnostics.isEmpty)
         
         // Verify indexing records
         let indexingRecordSort: (IndexingRecord, IndexingRecord) -> Bool = { return $0.title < $1.title }
@@ -1450,12 +1200,12 @@ class ConvertActionTests: XCTestCase {
             }
         }
         
-        // Verify diagnostics
-        guard let resultDiagnostics: [Digest.Diagnostic] = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("diagnostics.json")) else {
-            XCTFail("Can't find diagnostics.json in output")
-            return
-        }
-        XCTAssertTrue(resultDiagnostics.isEmpty)
+//        // Verify diagnostics
+//        guard let resultDiagnostics: [Digest.Diagnostic] = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("diagnostics.json")) else {
+//            XCTFail("Can't find diagnostics.json in output")
+//            return
+//        }
+//        XCTAssertTrue(resultDiagnostics.isEmpty)
         
         // Verify indexing records
         let indexingRecordSort: (IndexingRecord, IndexingRecord) -> Bool = { return $0.title < $1.title }
@@ -1508,7 +1258,6 @@ class ConvertActionTests: XCTestCase {
             let result = try await action.perform(logHandle: .none)
             
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
-            XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("diagnostics.json").path))
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("indexing-records.json").path))
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("linkable-entities.json").path))
         }
@@ -1533,7 +1282,6 @@ class ConvertActionTests: XCTestCase {
             let result = try await action.perform(logHandle: .none)
             
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
-            XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("diagnostics.json").path))
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("indexing-records.json").path))
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("linkable-entities.json").path))
         }
@@ -2367,41 +2115,6 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         XCTAssertEqual(action.configuration.externalMetadata.inheritDocs, false)
-    }
-    
-    // This test uses ``Digest.Diagnostic`` which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
-    func testEmitsDigest() async throws {
-        let bundle = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
-        ])
-
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
-
-        let digestFileURL = targetDirectory
-            .appendingPathComponent("diagnostics.json")
-        
-        let action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: true,
-            currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
-        )
-        
-        try await action.performAndHandleResult(logHandle: .none)
-        XCTAssert(testDataProvider.fileExists(atPath: digestFileURL.path))
-        
-        let data = try testDataProvider.contentsOfURL(digestFileURL)
-        let diagnostics = try RenderJSONDecoder.makeDecoder().decode([Digest.Diagnostic].self, from: data)
-        XCTAssertEqual(diagnostics.count, 0)
     }
     
     func testRenderIndexJSONGeneration() async throws {

@@ -54,9 +54,6 @@ package enum ConvertActionConverter {
         }
         
         guard !context.problems.containsErrors else {
-            if emitDigest {
-                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
-            }
             return
         }
         
@@ -199,12 +196,6 @@ package enum ConvertActionConverter {
                 if !emitDigest {
                     try outputConsumer.consume(linkableElementSummaries: supplementaryRenderInfo.linkSummaries)
                 }
-            }
-        }
-        
-        if emitDigest {
-            try signposter.withIntervalSignpost("Emit digest", id: signposter.makeSignpostID()) {
-                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
             }
         }
         
