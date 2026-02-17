@@ -48,17 +48,9 @@ extension Docc.ProcessArchive {
 
         mutating func validate() throws {
             if let templateURL = templateOption.templateURL {
-                let indexTemplate = templateURL.appendingPathComponent(HTMLTemplate.templateFileName.rawValue)
-                if !FileManager.default.fileExists(atPath: indexTemplate.path) {
-                    throw TemplateOption.invalidHTMLTemplateError(
-                        path: templateURL.path,
-                        expectedFile: HTMLTemplate.templateFileName.rawValue
-                    )
-                }
+                try TemplateOption.validateRequiredFile(fileName: HTMLTemplate.templateFileName.rawValue, inHTMLTemplateAt: templateURL)
             } else {
-                throw TemplateOption.missingHTMLTemplateError(
-                    path: templateOption.defaultTemplateURL.path
-                )
+                throw TemplateOption.missingHTMLTemplate(at: TemplateOption.defaultTemplateURL)
             }
         }
         
