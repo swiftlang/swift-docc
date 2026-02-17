@@ -1554,6 +1554,7 @@ public class DocumentationContext {
                 )
             }
             guard defaultSymbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self] != nil else {
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                 diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolDeclarationNotFound", summary: "Symbol with identifier '\(symbol.uniqueIdentifier)' has no declaration"), possibleSolutions: []))
                 return
             }
