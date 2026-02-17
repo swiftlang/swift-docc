@@ -1766,7 +1766,13 @@ public class DocumentationContext {
                         ]
                     )
                 )
-                return nil // Don't continue processing this article
+                // In the case of a collision, we drop the article in favour of the symbol.
+                // It also needs to be removed from the list of uncurated articles, so that
+                // it doesn't get pulled in for rendering during link resolution in case
+                // it is referenced by any other page.
+                uncuratedArticles.removeValue(forKey: reference)
+                // Skip processing this article
+                return nil
             } else {
                 documentationCache[reference] = documentation
             }
