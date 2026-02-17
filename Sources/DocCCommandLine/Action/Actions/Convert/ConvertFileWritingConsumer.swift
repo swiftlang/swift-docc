@@ -51,16 +51,6 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer, ExternalNodeConsumer, 
         self.assetPrefixComponent = bundleID?.rawValue.split(separator: "/").joined(separator: "-")
     }
     
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
-    func _deprecated_consume(problems: [Problem]) throws {
-        let diagnostics = problems.map { problem in
-            Digest.Diagnostic(diagnostic: problem.diagnostic, rootURL: bundleRootFolder)
-        }
-        let problemsURL = targetFolder.appendingPathComponent("diagnostics.json", isDirectory: false)
-        let data = try encode(diagnostics)
-        try fileManager.createFile(at: problemsURL, contents: data)
-    }
-    
     func consume(renderNode: RenderNode) throws {
         // Write the render node to disk
         try renderNodeWriter.write(renderNode, encoder: makeEncoder())
@@ -274,37 +264,5 @@ enum Digest {
         let images: [ImageReference]
         let videos: [VideoReference]
         let downloads: [DownloadReference]
-    }
-    
-    @available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
-    struct Diagnostic: Codable {
-        struct Location: Codable {
-            let line: Int
-            let column: Int
-        }
-        let start: Location?
-        let source: URL?
-        let severity: DiagnosticSeverity
-        let summary: String
-        let explanation: String?
-        let notes: [Note]
-        struct Note: Codable {
-            let location: Location
-            let message: String
-        }
-    }
-}
-
-@available(*, deprecated, message: "This deprecated API will be removed after 6.3 is released")
-private extension Digest.Diagnostic {
-    init(diagnostic: Diagnostic, rootURL: URL?) {
-        self.start = (diagnostic.range?.lowerBound).map { Location(line: $0.line, column: $0.column) }
-        self.source = rootURL.flatMap { diagnostic.source?.relative(to: $0) }
-        self.severity = diagnostic.severity
-        self.summary = diagnostic.summary
-        self.explanation = diagnostic.explanation
-        self.notes = diagnostic.notes.map {
-            Note(location: Location(line: $0.range.lowerBound.line, column: $0.range.lowerBound.column), message: $0.message)
-        }
     }
 }

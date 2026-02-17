@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -150,7 +150,7 @@ public struct ConvertAction: AsyncAction {
         engine.diagnosticIDsWithWarningSeverity = diagnosticIDsWithWarningSeverity
         engine.diagnosticIDsWithErrorSeverity   = diagnosticIDsWithErrorSeverity
         if let diagnosticFilePath {
-            engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
+            engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath, fileManager: fileManager))
         }
         
         self.diagnosticEngine = engine
@@ -359,13 +359,6 @@ public struct ConvertAction: AsyncAction {
                 documentationCoverageOptions: documentationCoverageOptions
             )
             signposter.endInterval("Process", processInterval)
-        } catch {
-            if emitDigest {
-                let problem = Problem(description: (error as? (any DescribedError))?.errorDescription ?? error.localizedDescription, source: nil)
-                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + [problem])
-                try moveOutput(from: temporaryFolder, to: targetDirectory)
-            }
-            throw error
         }
 
         var didEncounterError = context.problems.containsErrors
