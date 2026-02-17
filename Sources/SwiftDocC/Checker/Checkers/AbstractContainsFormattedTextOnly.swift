@@ -30,6 +30,8 @@ public struct AbstractContainsFormattedTextOnly: Checker {
         case image, link
         
         var diagnosticIdentifier: String {
+            // Don't use this diagnostic as inspiration for future diagnostics summaries or explanations.
+            // This Checker is no longer used and its diagnostic has not been updated to follow the guidelines and recommendations in <doc:Adding-Diagnostics>.
             switch self {
             case .image: return "org.swift.docc.SummaryContainsImage"
             case .link: return "org.swift.docc.SummaryContainsLink"
@@ -45,6 +47,8 @@ public struct AbstractContainsFormattedTextOnly: Checker {
     }
     
     private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: any Markup) {
+        // Don't use this diagnostic as inspiration for how to phrase future diagnostics summaries or explanations.
+        // This Checker is no longer used and its diagnostic has not been updated to follow the guidelines and recommendations in <doc:Adding-Diagnostics>.
         let explanation = """
             Summary should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
             """
