@@ -745,49 +745,33 @@ extension Docc {
         }
 
         public mutating func validate() throws {
-            if transformForStaticHosting {
-                if let templateURL = templateOption.templateURL {
-                    let neededFileName: String
-
-                    if hostingBasePath != nil {
-                        neededFileName = HTMLTemplate.templateFileName.rawValue
-                    }else {
-                        neededFileName = HTMLTemplate.indexFileName.rawValue
-                    }
-
-                    let indexTemplate = templateURL.appendingPathComponent(neededFileName, isDirectory: false)
-                    if !FileManager.default.fileExists(atPath: indexTemplate.path) {
-                        throw TemplateOption.invalidHTMLTemplateError(
-                            path: templateURL.path,
-                            expectedFile: neededFileName
-                        )
-                    }
-
+            guard transformForStaticHosting else {
+                return
+            }
+                
+            if let templateURL = templateOption.templateURL {
+                let requiredFileName = if hostingBasePath != nil {
+                    HTMLTemplate.templateFileName.rawValue
                 } else {
-                    let invalidOrMissingTemplateDiagnostic = Diagnostic(
-                        severity: .warning,
-                        identifier: "org.swift.docc.MissingHTMLTemplate",
-                        summary: "Invalid or missing HTML template directory",
-                        explanation: """
-                            Invalid or missing HTML template directory, relative to the docc \
-                            executable, at: '\(templateOption.defaultTemplateURL.path)'.
-                            Set the '\(TemplateOption.environmentVariableKey)' environment variable \
-                            to use a custom HTML template.
-                            
-                            Conversion will continue, but the produced DocC archive will not be \
-                            compatible with static hosting environments.
-                            
-                            Pass the '--no-transform-for-static-hosting' flag to silence this warning.
-                            """
-                    )
-                    
-                    print(
-                        DiagnosticConsoleWriter.formattedDescription(for: invalidOrMissingTemplateDiagnostic),
-                        to: &Self._errorLogHandle
-                    )
-                    
-                    transformForStaticHosting = false
+                    HTMLTemplate.indexFileName.rawValue
                 }
+                
+                try TemplateOption.validateRequiredFile(fileName: requiredFileName, inHTMLTemplateAt: templateURL)
+            } else {
+                Convert.warnAboutDiagnostic(Diagnostic(
+                    severity: .warning,
+                    identifier: "MissingHTMLTemplate",
+                    summary: "Missing HTML template directory",
+                    explanation: """
+                        Missing HTML template directory, relative to the docc executable, at: '\(TemplateOption.defaultTemplateURL.path)'.
+                        Conversion will continue, but the output archive will not be compatible with static hosting environments.
+                        
+                        Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
+                        Pass the '--no-transform-for-static-hosting' flag to silence this warning.
+                        """
+                ))
+                
+                transformForStaticHosting = false
             }
         }
 
