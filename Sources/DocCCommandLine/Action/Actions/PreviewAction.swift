@@ -145,7 +145,8 @@ public final class PreviewAction: AsyncAction {
             previewResult = ActionResult(didEncounterError: false)
         } catch {
             let diagnosticEngine = convertAction.diagnosticEngine
-            diagnosticEngine.emit(.init(description: error.localizedDescription, source: nil))
+            // FIXME: Instead of wrapping the error message in a diagnostic, re-throw the original Error after removing the server.
+            diagnosticEngine.emit(.init(diagnostic: Diagnostic(severity: .error, range: nil, identifier: "UnexpectedPreviewFailure", summary: error.localizedDescription)))
             diagnosticEngine.flush()
             
             // Stale server entry, remove it from the list

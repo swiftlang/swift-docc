@@ -34,21 +34,3 @@ public struct ActionResult {
         self.didEncounterError = didEncounterError
     }
 }
-
-extension Problem {
-    /// Creates a new problem with the given description and documentation source location.
-    ///
-    /// Use this to provide a user-friendly description of an error,
-    /// along with a direct reference to the source file and line number where you call this initializer.
-    ///
-    /// - Parameters:
-    ///   - description: A brief description of the problem.
-    ///   - source: The URL for the documentation file that caused this problem, if any.
-    ///   - file: The source file where you call this initializer.
-    public init(description: String, source: URL?, file: String = #file) {
-        let fileName = URL(fileURLWithPath: file).deletingPathExtension().lastPathComponent
-
-        let singleDiagnostic = Diagnostic(source: source, severity: .error, range: nil, identifier: "org.swift.docc.\(fileName)", summary: description)
-        self.init(diagnostic: singleDiagnostic, possibleSolutions: [])
-    }
-}
