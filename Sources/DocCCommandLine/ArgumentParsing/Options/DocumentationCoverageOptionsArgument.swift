@@ -65,8 +65,8 @@ public struct DocumentationCoverageOptionsArgument: ParsableArguments {
     public var symbolKindFilter: [DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation] = []
     
     public mutating func validate() throws {
-        Docc.Convert.warnAboutDeprecatedOptionIfNeeded("level", message: "Use '--coverage-summary-level' instead.")
-        Docc.Convert.warnAboutDeprecatedOptionIfNeeded("kinds", message: "Use '--coverage-symbol-kind-filter' instead.")
+        Docc.Convert.warnAboutDeprecatedOptionIfNeeded("level", message: "use '--coverage-summary-level' instead")
+        Docc.Convert.warnAboutDeprecatedOptionIfNeeded("kinds", message: "use '--coverage-symbol-kind-filter' instead")
     }
 }
 

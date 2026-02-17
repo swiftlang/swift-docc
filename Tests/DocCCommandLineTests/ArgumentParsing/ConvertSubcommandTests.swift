@@ -432,7 +432,8 @@ class ConvertSubcommandTests: XCTestCase {
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: No documentation archive exist at '\(dependencyDir.path)'.
+            warning: Dependency archive '\(dependencyDir.lastPathComponent)' does not exist at '\(dependencyDir.path)'
+            Without the dependency's documentation archive, DocC cannot resolve links to its pages.
             """)
         }
         // The dependency is a file instead of a directory
@@ -445,7 +446,8 @@ class ConvertSubcommandTests: XCTestCase {
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: Dependency at '\(dependencyDir.path)' is not a directory.
+            warning: Dependency archive '\(dependencyDir.lastPathComponent)' is not a directory at '\(dependencyDir.path)'
+            A documentation archive is a directory containing data files for each page and metadata files that aggregate certain specialized information.
             """)
             
             try fileManager.removeItem(at: dependencyDir)
@@ -460,8 +462,10 @@ class ConvertSubcommandTests: XCTestCase {
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'linkable-entities.json' file.
-            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'link-hierarchy.json' file.
+            warning: Missing 'linkable-entities.json' file in dependency archive at '\(dependencyDir.path)'
+            Without the 'linkable-entities.json' data, DocC cannot look up information like titles, abstracts, or deprecation status about pages in the 'SomeDependency.doccarchive' dependency that you link to.
+            warning: Missing 'link-hierarchy.json' file in dependency archive at '\(dependencyDir.path)'
+            Without the 'link-hierarchy.json' data, DocC cannot resolve links to pages (or on-page landmarks) in the 'SomeDependency.doccarchive' dependency.
             """)
         }
         do {
@@ -603,7 +607,8 @@ class ConvertSubcommandFlagParsingTests {
             #expect(conflictingFlagsConvert.transformForStaticHosting)
             
             #expect(logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines) == """
-            warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
+            warning: '--no-transform-for-static-hosting' is ignored when '--experimental-transform-for-static-hosting-with-content' is passed
+            Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. In this case DocC favors the opt-in over the opt-out and ignored the '--no-transform-for-static-hosting' flag.
             """)
         }
     }
