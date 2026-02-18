@@ -45,6 +45,17 @@ public final class DiagnosticEngine {
     /// A list of diagnostic identifiers that are explicitly raised to an "error" severity.
     package var diagnosticIDsWithErrorSeverity: Set<String>
     
+    /// Determines whether or not the diagnostics engine will emit a problem with the given diagnostic ID or diagnostic group ID.
+    package func willEmitProblem(diagnosticID: String, defaultSeverity: DiagnosticSeverity) -> Bool {
+        if diagnosticIDsWithErrorSeverity.contains(diagnosticID) {
+            true
+        } else if diagnosticIDsWithWarningSeverity.contains(diagnosticID) {
+            treatWarningsAsErrors || filterLevel <= .warning
+        } else {
+            filterLevel <= defaultSeverity
+        }
+    }
+    
     /// Determines which problems should be emitted.
     private func shouldEmit(_ problem: Problem) -> Bool {
         problem.diagnostic.severity.rawValue <= filterLevel.rawValue
