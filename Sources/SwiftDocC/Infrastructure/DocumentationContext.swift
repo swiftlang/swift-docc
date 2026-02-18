@@ -2128,7 +2128,7 @@ public class DocumentationContext {
             return node.reference
         }
 
-        emitWarningsForMultipleRootPages(rootPageArticles: rootPageArticles)
+        warnAboutMultipleRootPages(rootPageArticles: rootPageArticles)
 
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
@@ -2599,87 +2599,109 @@ public class DocumentationContext {
             """
         )
         
+        diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)))
+    }
+
+    private func makeRemoveTechnologyRootSolutions(_ technologyRoot: TechnologyRoot) -> [Solution] {
         let replacements = technologyRoot.originalMarkup.range.map { range in
             [Replacement(range: range, replacement: "")]
         } ?? []
         
-        let solutions = [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: replacements)]
-        diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+        return [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: replacements)]
     }
+    
+    private func warnAboutMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
+        let allRootPages = linkResolver.localResolver.rootPages()
+        guard allRootPages.count > 1 else {
+            // Don't perform any more detailed checks unless there's more than one root page.
+            return
+        }
+        
+        let moduleNames: [String] = allRootPages.compactMap { reference in
+            // Filter out any non-symbol technology root pages
+            guard let node = documentationCache[reference], node.kind == .module else {
+                return nil
+            }
+            return node.name.plainText
+        }.sorted()
 
-    /// Emits warnings when the documentation contains multiple root pages.
-    private func emitWarningsForMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
-        // Get module names from the link resolver, which already has properly filtered modules
-        // (excludes snippets and isn't affected by nested symbols with `.module` kind).
-        // Filter to only include symbol-based modules (not @TechnologyRoot articles).
-        let symbolModuleNames: Set<String> = Set(linkResolver.localResolver.modules().compactMap { reference in
-            guard let docNode = documentationCache[reference],
-                  docNode.kind == .module
-            else { return nil }
-            return docNode.name.plainText
-        })
-
-        if symbolModuleNames.count > 1 {
-            let sortedModuleNames = symbolModuleNames.sorted()
+        if moduleNames.count > 1 {
             let diagnostic = Diagnostic(
-                source: nil,
+                source: nil, // There's no meaningful source file to associate this warning with
                 severity: .warning,
-                range: nil,
-                identifier: "org.swift.docc.MultipleMainModules",
-                summary: "The documentation input contains more than one main module: \(sortedModuleNames.map { $0.singleQuoted }.joined(separator: ", "))",
-                explanation: "DocC doesn't support building combined documentation for multiple modules in a single catalog. Each module should be documented separately."
+                identifier: "MultipleModules",
+                groupIdentifier: "MultipleRootPages",
+                summary: "Input files cannot describe more than one main module; got inputs for \(moduleNames.map(\.singleQuoted).list(finalConjunction: .and))",
+                explanation: """
+                A single DocC build covers a single module (for example a framework, library, or executable).
+                To produce a documentation archive that covers \(moduleNames.map(\.singleQuoted).list(finalConjunction: .and)); \
+                first document each module separately and then combine their individual archives into a single combined archive by running:
+                $ docc merge \(moduleNames.map { "/path/to/\($0).doccarchive" }.joined(separator: " "))
+                For more information, see the `docc merge --help` text.
+                """
             )
             diagnosticEngine.emit(Problem(diagnostic: diagnostic))
         }
 
-        if !symbolModuleNames.isEmpty && !rootPageArticles.isEmpty {
-            let sortedModuleNames = symbolModuleNames.sorted()
-            let moduleList = sortedModuleNames.map { $0.singleQuoted }.joined(separator: ", ")
-
-            let problems = rootPageArticles.map { article -> Problem in
-                let diagnostic = Diagnostic(
-                    source: article.source,
-                    severity: .warning,
-                    range: article.value.metadata?.technologyRoot?.originalMarkup.range,
-                    identifier: "org.swift.docc.TechnologyRootWithSymbols",
-                    summary: "The '\(TechnologyRoot.directiveName)' directive creates an additional root page, but the documentation already has a root from its symbols",
-                    explanation: "The symbol input provides \(moduleList) as the module root. The '\(TechnologyRoot.directiveName)' directive creates an additional root page which results in an unexpected documentation structure."
-                )
-
-                guard let range = article.value.metadata?.technologyRoot?.originalMarkup.range else {
-                    return Problem(diagnostic: diagnostic)
-                }
-
-                return Problem(diagnostic: diagnostic, possibleSolutions: [
-                    Solution(summary: "Remove the '\(TechnologyRoot.directiveName)' directive", replacements: [Replacement(range: range, replacement: "")])
-                ])
+        let allNotes = rootPageArticles.compactMap { article in
+            article.value.metadata?.technologyRoot?.originalMarkup.range.map { range in
+                DiagnosticNote(source: article.source, range: range, message: "Root page also defined here")
             }
-
-            diagnosticEngine.emit(problems)
-            return
         }
-
-        if symbolModuleNames.isEmpty && rootPageArticles.count > 1 {
-            let problems = rootPageArticles.map { article -> Problem in
+        
+        if moduleNames.isEmpty {
+            // There's are multiple TechnologyRoot pages
+            for article in rootPageArticles {
+                guard let technologyRoot = article.value.metadata?.technologyRoot else {
+                    assertionFailure("Misclassified '\(article.source.lastPathComponent)' as a custom root page. It doesn't contain a TechnologyRoot directive.")
+                    continue
+                }
+                
                 let diagnostic = Diagnostic(
                     source: article.source,
                     severity: .warning,
-                    range: article.value.metadata?.technologyRoot?.originalMarkup.range,
-                    identifier: "org.swift.docc.MultipleTechnologyRoots",
-                    summary: "The documentation has multiple articles with the '\(TechnologyRoot.directiveName)' directive",
-                    explanation: "Only one article should use the '\(TechnologyRoot.directiveName)' directive to define the documentation's root page. Having multiple root pages results in an unexpected documentation structure."
+                    range: technologyRoot.originalMarkup.range,
+                    identifier: "MultipleTechnologyRoots",
+                    groupIdentifier: "MultipleRootPages",
+                    summary: "Documentation hierarchy cannot have multiple root pages",
+                    explanation: """
+                    A single article-only documentation catalog ('docc' directory) covers a single technology, with a single root page.
+                    This \(TechnologyRoot.directiveName) directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
+                    resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+                    To resolve this issue; remove all \(TechnologyRoot.directiveName) directives except for one to use that as the root of your documentation hierarchy.
+                    """,
+                    notes: allNotes.filter({ $0.source != article.source })
                 )
-
-                guard let range = article.value.metadata?.technologyRoot?.originalMarkup.range else {
-                    return Problem(diagnostic: diagnostic)
-                }
-
-                return Problem(diagnostic: diagnostic, possibleSolutions: [
-                    Solution(summary: "Remove the '\(TechnologyRoot.directiveName)' directive", replacements: [Replacement(range: range, replacement: "")])
-                ])
+                diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)))
             }
-
-            diagnosticEngine.emit(problems)
+        } else {
+            // There's a mix of symbol roots (modules) and authored TechnologyRoot pages
+            let modulesList = moduleNames.map(\.singleQuoted).list(finalConjunction: .or)
+            
+            for article in rootPageArticles {
+                guard let technologyRoot = article.value.metadata?.technologyRoot else {
+                    assertionFailure("Misclassified '\(article.source.lastPathComponent)' as a custom root page. It doesn't contain a TechnologyRoot directive.")
+                    continue
+                }
+                
+                let diagnostic = Diagnostic(
+                    source: article.source,
+                    severity: .warning,
+                    range: technologyRoot.originalMarkup.range,
+                    identifier: "TechnologyRootWithSymbols",
+                    groupIdentifier: "MultipleRootPages",
+                    summary: "Documentation hierarchy cannot have additional root page; already has a symbol root",
+                    explanation: """
+                    A single DocC build covers either a single module (for example a framework, library, or executable) or an article-only technology.
+                    Because DocC is passed symbol inputs; the documentation hierarchy already gets its root page (\(modulesList)) from those symbols.
+                    This \(TechnologyRoot.directiveName) directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
+                    resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+                    To resolve this issue; remove all \(TechnologyRoot.directiveName) directives to use \(modulesList) as the root page.
+                    """,
+                    notes: allNotes.filter({ $0.source != article.source })
+                )
+                diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: makeRemoveTechnologyRootSolutions(technologyRoot)))
+            }
         }
     }
 
