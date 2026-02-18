@@ -22,9 +22,9 @@ struct LiveReloadTests {
     #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
     @Test
     func scriptInjected() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
-        ], pathPrefix: "LiveReloadTests")
+        ])
         defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
@@ -44,9 +44,9 @@ struct LiveReloadTests {
 
     @Test
     func scriptNotInjectedWithoutBodyTag() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             TextFile(name: "index.html", utf8Content: "<html>No body tag here</html>"),
-        ], pathPrefix: "LiveReloadTests")
+        ])
         defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
@@ -59,9 +59,9 @@ struct LiveReloadTests {
     #else
     @Test
     func scriptNotInjectedOnUnsupportedPlatform() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
-        ], pathPrefix: "LiveReloadTests")
+        ])
         defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")

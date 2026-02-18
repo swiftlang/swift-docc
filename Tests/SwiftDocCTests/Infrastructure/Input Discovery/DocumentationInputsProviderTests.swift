@@ -67,7 +67,7 @@ class DocumentationInputsProviderTests: XCTestCase {
         ])
         
         // Prepare the real on-disk file system
-        let tempDirectory = try createTempFolder(content: [folderHierarchy])
+        let tempDirectory = try createTempDirectory(content: [folderHierarchy])
         
         // Prepare the test file system
         let testFileSystem = try TestFileSystem(folders: [])
