@@ -85,8 +85,8 @@ struct PathHierarchy {
             let moduleNode: Node
             
             if !loader.hasPrimaryURL(moduleName: moduleName) {
-                guard let moduleName = SymbolGraphLoader.moduleNameFor(url),
-                      let existingModuleNode = roots[moduleName]
+                let (moduleName, _) = GraphCollector.moduleNameFor(graph, at: url)
+                guard let existingModuleNode = roots[moduleName]
                 else { continue }
                 moduleNode = existingModuleNode
             } else if let existingModuleNode = roots[moduleName] {
