@@ -9,8 +9,9 @@
 */
 
 public import Foundation
-import Markdown
-import SymbolKit
+private import Markdown
+private import SymbolKit
+public import DocCCommon
 
 // Link resolution works in two parts:
 //
@@ -155,11 +156,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// - Note: The subheading fragments do not represent the symbol's full declaration.
     ///   Different overloads may have indistinguishable subheading fragments.
     public let subheadingDeclarationFragments: DeclarationFragments?
-    
-    @available(*, deprecated, renamed: "subheadingDeclarationFragments", message: "Use 'subheadingDeclarationFragments' instead. This deprecated API will be removed after 6.3 is released.")
-    public var declarationFragments: DeclarationFragments? {
-        subheadingDeclarationFragments
-    }
 
     /// The simplified "navigator" declaration fragments for this symbol, or `nil` if the summarized element isn't a symbol.
     ///

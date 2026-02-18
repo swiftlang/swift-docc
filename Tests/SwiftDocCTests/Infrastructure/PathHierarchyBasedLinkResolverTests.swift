@@ -10,6 +10,7 @@
 
 import Testing
 @testable import SwiftDocC
+import SymbolKit
 
 struct PathHierarchyBasedLinkResolverTests {
     @Test

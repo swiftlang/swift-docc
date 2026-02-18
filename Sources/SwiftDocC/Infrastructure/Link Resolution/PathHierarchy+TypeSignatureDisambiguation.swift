@@ -8,8 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import DocCCommon
+private import DocCCommon
 
 extension PathHierarchy.DisambiguationContainer {
     

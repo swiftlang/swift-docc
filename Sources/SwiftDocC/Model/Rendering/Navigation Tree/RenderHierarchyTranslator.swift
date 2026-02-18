@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import DocCCommon
 
 /// A hierarchy translator that converts a part of the topic graph into a hierarchy tree.
 struct RenderHierarchyTranslator {
@@ -223,9 +224,9 @@ struct RenderHierarchyTranslator {
     /// - Returns: The framework hierarchy that describes all paths where the article is curated.
     mutating func visitArticle(_ articleReference: ResolvedTopicReference) -> VariantCollection<RenderHierarchy?> {
         let pathReferences = context.finitePaths(to: articleReference)
-        pathReferences.forEach({
-            collectedTopicReferences.formUnion($0)
-        })
+        for pathReference in pathReferences {
+            collectedTopicReferences.formUnion(pathReference)
+        }
         let paths = pathReferences.map { $0.map { $0.absoluteString } }
         return .init(defaultValue: .reference(RenderReferenceHierarchy(paths: paths)))
     }

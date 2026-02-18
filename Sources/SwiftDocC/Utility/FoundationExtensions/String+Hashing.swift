@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 extension String {
     
     /// Returns an FNV1 hashed value of the string.

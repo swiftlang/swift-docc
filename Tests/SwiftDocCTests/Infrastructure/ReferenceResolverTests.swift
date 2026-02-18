@@ -12,6 +12,7 @@ import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
 import SymbolKit
+import DocCCommon
 
 class ReferenceResolverTests: XCTestCase {
     func testResolvesMediaForIntro() async throws {
@@ -400,7 +401,7 @@ class ReferenceResolverTests: XCTestCase {
         }
             
         for resolvedReferencesOfSection in sectionReferences {
-            zip(resolvedReferencesOfSection, expectedReferences).forEach { resolved, expected in
+            for (resolved, expected) in zip(resolvedReferencesOfSection, expectedReferences) {
                 XCTAssertEqual(resolved.identifier, expected)
             }
         }

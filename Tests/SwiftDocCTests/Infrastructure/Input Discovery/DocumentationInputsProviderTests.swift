@@ -73,7 +73,7 @@ class DocumentationInputsProviderTests: XCTestCase {
         let testFileSystem = try TestFileSystem(folders: [])
         try testFileSystem.addFolder(folderHierarchy, basePath: tempDirectory)
         
-        for fileManager in [FileManager.default as FileManagerProtocol, testFileSystem as FileManagerProtocol] {
+        for fileManager in [FileManager.default as (any FileManagerProtocol), testFileSystem as (any FileManagerProtocol)] {
             let inputsProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
             let options = BundleDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
                 tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")

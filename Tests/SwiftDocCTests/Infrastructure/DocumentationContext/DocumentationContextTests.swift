@@ -13,6 +13,7 @@ import SymbolKit
 @testable @_spi(ExternalLinks) import SwiftDocC
 import Markdown
 import DocCTestUtilities
+import DocCCommon
 
 func diffDescription(lhs: String, rhs: String) -> String {
     let leftLines = lhs.components(separatedBy: .newlines)
@@ -2849,7 +2850,7 @@ let expected = """
         let symbolReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let symbol = try XCTUnwrap((try? context.entity(with: symbolReference))?.semantic as? Symbol)
         let symbolTopics = try XCTUnwrap(symbol.topics)
-        symbolTopics.originalLinkRangesByGroup.forEach { group in
+        for group in symbolTopics.originalLinkRangesByGroup {
             XCTAssertTrue(group.allSatisfy({ $0 != nil }))
         }
         
@@ -2857,7 +2858,7 @@ let expected = """
         let articleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         let article = try XCTUnwrap((try? context.entity(with: articleReference))?.semantic as? Article)
         let articleTopics = try XCTUnwrap(article.topics)
-        articleTopics.originalLinkRangesByGroup.forEach { group in
+        for group in articleTopics.originalLinkRangesByGroup {
             XCTAssertTrue(group.allSatisfy({ $0 != nil }))
         }
     }
@@ -4815,7 +4816,7 @@ let expected = """
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]), // Collision
             ])),
             
-            TextFile(name: "SomeClass.md", utf8Content: """
+            TextFile(name: "SoMeClAsS.md", utf8Content: """
             # Some article
             
             This article has the same reference as the symbol. One will override the other. 
@@ -4836,12 +4837,12 @@ let expected = """
         XCTAssert(node.kind.isSymbol, "Given #593 / rdar://79745455 we should deterministically prioritize the symbol over the article")
         
         XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
-            "Article 'SomeClass.md' (Some article) would override class 'SomeClass'."
+            "Article 'SoMeClAsS.md' (Some article) would override class 'SomeClass'."
         ])
         
         let problem = try XCTUnwrap(context.problems.first)
         let solution = try XCTUnwrap(problem.possibleSolutions.first)
-        XCTAssertEqual(solution.summary, "Rename 'SomeClass.md'")
+        XCTAssertEqual(solution.summary, "Rename 'SoMeClAsS.md'")
     }
     
     func testContextRecognizesOverloads() async throws {
@@ -5839,10 +5840,15 @@ let expected = """
             // documentation cache, to test if the supported languages are attached prior to registration.
             JSONFile(name: "Foo.symbols.json", content: makeSymbolGraph(moduleName: "Foo")),
         ])
-        
+
         let (bundle, context) = try await loadBundle(catalog: catalog)
-        
-        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+
+        // This test uses @TechnologyRoot with symbols, which now triggers a warning.
+        let technologyRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssertEqual(technologyRootProblems.count, 1, "Expected TechnologyRootWithSymbols warning")
+
+        let otherProblems = context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.TechnologyRootWithSymbols" }
+        XCTAssert(otherProblems.isEmpty, "Unexpected problems:\n\(otherProblems.map(\.diagnostic.summary).joined(separator: "\n"))")
 
         do {
             let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .data)

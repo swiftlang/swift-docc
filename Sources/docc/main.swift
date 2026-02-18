@@ -10,6 +10,7 @@
 
 #if os(macOS) || os(Linux) || os(Android) || os(Windows) || os(FreeBSD) || os(OpenBSD)
 import DocCCommandLine
+import ArgumentParser
 
 await Task {
     await Docc.main()

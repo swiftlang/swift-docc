@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import DocCCommon
 
 /// A patch to update a render node value.
 public enum VariantPatchOperation<Value: Codable> {

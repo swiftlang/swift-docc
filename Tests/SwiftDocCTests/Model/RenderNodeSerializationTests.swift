@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 class RenderNodeSerializationTests: XCTestCase {
     func testRoundTrip() throws {

@@ -11,7 +11,7 @@
 public import Foundation
 public import Markdown
 import SymbolKit
-import DocCCommon
+private import DocCCommon
 
 /// A visitor which converts a semantic model into a render node.
 ///
@@ -73,7 +73,46 @@ public struct RenderNodeTranslator: SemanticVisitor {
         )
         return assetReference
     }
-    
+
+    /// Converts `@Available` directives to render availability items, including fallback platforms.
+    ///
+    /// For example, when iOS availability is specified, this also generates iPadOS and Mac Catalyst
+    /// availability items using the same version information.
+    private func renderAvailabilities(
+        from availabilities: [Metadata.Availability],
+        currentPlatforms: [String: PlatformVersion]?
+    ) -> [AvailabilityRenderItem] {
+        let platforms = availabilities.map { PlatformName(metadataPlatform: $0.platform) }
+
+        // Render availabilities for declared platforms
+        let declaredAvailabilities = zip(availabilities, platforms).compactMap { availability, platform -> AvailabilityRenderItem? in
+            let currentVersion = platform.flatMap { currentPlatforms?[$0.displayName] }
+            return .init(availability, current: currentVersion)
+        }
+
+        // Render availabilities for fallback platforms (e.g., iPadOS and Mac Catalyst from iOS)
+        let fallbackAvailabilities = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback -> AvailabilityRenderItem? in
+            // Skip if the platform already has explicit availability,
+            // or if the fallback platform is not available.
+            guard !platforms.contains(platform),
+                  let fallbackIndex = platforms.firstIndex(of: fallback) else {
+                return nil
+            }
+
+            // Clone the fallback platform's availability with the new platform name.
+            // The `availabilities` array is mapped to the `platforms` array,
+            // so the indices of elements across them are guaranteed to be consistent.
+            let fallbackAvailability = Metadata.Availability(from: availabilities[fallbackIndex].originalMarkup, for: context.inputs)!
+            fallbackAvailability.platform = Metadata.Availability.Platform(rawValue: platform.rawValue)!
+            // Use the fallback platform's version to correctly determine beta status
+            let currentVersion = platforms[fallbackIndex].flatMap { currentPlatforms?[$0.displayName] }
+
+            return .init(fallbackAvailability, current: currentVersion)
+        }
+
+        return (declaredAvailabilities + fallbackAvailabilities).sorted(by: AvailabilityRenderOrder.compare)
+    }
+
     private func fileContents(with fileReference: ResourceReference) -> String? {
         // Check if the file is a local asset that can be read directly from the context
         if let fileData = try? context.resource(with: fileReference) {
@@ -839,38 +878,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
 
         if let availabilities = article.metadata?.availability, !availabilities.isEmpty {
-            let platforms = availabilities.map { PlatformName(metadataPlatform: $0.platform) }
-            // Render availabilities for declared platforms
-            let renderAvailabilities = zip(availabilities, platforms).compactMap { availability, platform -> AvailabilityRenderItem? in
-                let currentVersion = platform.flatMap {
-                    context.configuration.externalMetadata.currentPlatforms?[$0.displayName]
-                }
-                return .init(availability, current: currentVersion)
-            }
-            // Render availabilities for fallback platforms
-            let fallbackRenderAvailabilities = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback -> AvailabilityRenderItem? in
-                // Skip if the platform already has explicit availability,
-                // or if the fallback platform is not available.
-                guard !platforms.contains(platform),
-                let fallbackIndex = platforms.firstIndex(of: fallback) else {
-                    return nil
-                }
-
-                // Clone the fallback platform's availability with the new platform name.
-                // The `availabilities` array is mapped to the `platforms` array,
-                // so the indices of elements across them are guaranteed to be consistent.
-                let fallbackAvailability = Metadata.Availability(from: availabilities[fallbackIndex].originalMarkup, for: context.inputs)!
-                fallbackAvailability.platform = Metadata.Availability.Platform(rawValue: platform.rawValue)!
-                // Use the fallback platform's version to correctly determine beta status
-                let currentVersion = platforms[fallbackIndex].flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
-                }
-
-                return .init(fallbackAvailability, current: currentVersion)
-            }
-
-            let allRenderAvailabilities = (renderAvailabilities + fallbackRenderAvailabilities)
-            .sorted(by: AvailabilityRenderOrder.compare)
+            let allRenderAvailabilities = renderAvailabilities(
+                from: availabilities,
+                currentPlatforms: context.configuration.externalMetadata.currentPlatforms
+            )
 
             if !allRenderAvailabilities.isEmpty {
                 node.metadata.platformsVariants = .init(defaultValue: allRenderAvailabilities)
@@ -1298,15 +1309,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: defaultAvailability)
 
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
-            let renderAvailability = availability.compactMap({
-                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
-                }
-                return .init($0, current: currentPlatform)
-            }).sorted(by: AvailabilityRenderOrder.compare)
+            let allRenderAvailabilities = renderAvailabilities(
+                from: availability,
+                currentPlatforms: context.configuration.externalMetadata.currentPlatforms
+            )
 
-            if !renderAvailability.isEmpty {
-                node.metadata.platformsVariants.defaultValue = renderAvailability
+            if !allRenderAvailabilities.isEmpty {
+                node.metadata.platformsVariants.defaultValue = allRenderAvailabilities
             }
         }
         
@@ -1999,7 +2008,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             // Extract the availability information
             if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
-                availabilityItems.forEach { item in
+                for item in availabilityItems {
                     if deprecated == nil && (item.isUnconditionallyDeprecated || item.deprecatedVersion != nil) {
                         deprecated = true
                     }

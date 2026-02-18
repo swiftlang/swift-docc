@@ -13,6 +13,7 @@ import XCTest
 import DocCTestUtilities
 import SymbolKit
 @testable import SwiftDocC
+import DocCCommon
 
 final class MarkdownOutputTests: XCTestCase {
     

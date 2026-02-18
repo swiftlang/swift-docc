@@ -12,6 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 import DocCTestUtilities
+import DocCCommon
 
 class TutorialTests: XCTestCase {
     func testEmpty() async throws {

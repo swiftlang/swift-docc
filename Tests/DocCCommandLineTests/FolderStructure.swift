@@ -50,7 +50,7 @@ extension Folder: AssertableFile {
                   "Folder '\(name)' should exist at '\(location.path)'", file: (file), line: line)
         XCTAssert(isFolder.boolValue,
                   "Folder '\(name)' should be a folder", file: (file), line: line)
-        for fileOrFolder in content as! [AssertableFile] {
+        for fileOrFolder in content as! [any AssertableFile] {
             fileOrFolder.assertExist(at: location.appendingPathComponent(fileOrFolder.name), fileManager: fileManager, file: (file), line: line)
         }
     }

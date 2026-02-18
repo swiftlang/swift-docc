@@ -75,3 +75,5 @@ add_library(DocCCommandLine STATIC
 target_link_libraries(DocCCommandLine PUBLIC
   ArgumentParser
   SwiftDocC)
+set_target_properties(DocCCommandLine PROPERTIES
+  Swift_LANGUAGE_VERSION 5)

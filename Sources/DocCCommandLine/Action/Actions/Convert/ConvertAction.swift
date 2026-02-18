@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,11 @@ package import Foundation
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
 public import SwiftDocC
+private import Markdown
+
+#if canImport(os)
+private import os
+#endif
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: AsyncAction {
@@ -138,7 +143,7 @@ public struct ConvertAction: AsyncAction {
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
         if let diagnosticFilePath {
-            engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
+            engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath, fileManager: fileManager))
         }
         
         self.diagnosticEngine = engine
@@ -336,30 +341,20 @@ public struct ConvertAction: AsyncAction {
             }
         }
         
-        let analysisProblems: [Problem]
-        let conversionProblems: [Problem]
         do {
-            conversionProblems = try signposter.withIntervalSignpost("Process") {
-                try ConvertActionConverter.convert(
-                    context: context,
-                    outputConsumer: outputConsumer,
-                    htmlContentConsumer: htmlConsumer,
-                    sourceRepository: sourceRepository,
-                    emitDigest: emitDigest,
-                    documentationCoverageOptions: documentationCoverageOptions
-                )
-            }
-            analysisProblems = context.problems
-        } catch {
-            if emitDigest {
-                let problem = Problem(description: (error as? (any DescribedError))?.errorDescription ?? error.localizedDescription, source: nil)
-                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + [problem])
-                try moveOutput(from: temporaryFolder, to: targetDirectory)
-            }
-            throw error
+            let processInterval = signposter.beginInterval("Process", id: signposter.makeSignpostID())
+            try await ConvertActionConverter.convert(
+                context: context,
+                outputConsumer: outputConsumer,
+                htmlContentConsumer: htmlConsumer,
+                sourceRepository: sourceRepository,
+                emitDigest: emitDigest,
+                documentationCoverageOptions: documentationCoverageOptions
+            )
+            signposter.endInterval("Process", processInterval)
         }
 
-        var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
+        var didEncounterError = context.problems.containsErrors
         let hasTutorial = context.knownPages.contains(where: {
             guard let kind = try? context.entity(with: $0).kind else { return false }
             return kind == .tutorial || kind == .tutorialArticle
@@ -369,7 +364,7 @@ public struct ConvertAction: AsyncAction {
         if context.tutorialTableOfContentsReferences.isEmpty, hasTutorial {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
-            var replacements = [Replacement]()
+            var replacements = [SwiftDocC.Replacement]()
             if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(inputs.displayName)[tableOfContentsFilename] {
                 replacements.append(
                     Replacement(

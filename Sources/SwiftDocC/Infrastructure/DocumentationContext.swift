@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,8 +9,13 @@
 */
 
 public import Foundation
-import Markdown
+private import Markdown
+public import DocCCommon
 import SymbolKit
+
+#if canImport(os)
+private import os
+#endif
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///
@@ -218,7 +223,7 @@ public class DocumentationContext {
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
         ResolvedTopicReference.enableReferenceCaching(for: inputs.id)
-        try register()
+        try await register()
     }
         
     /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
@@ -970,7 +975,9 @@ public class DocumentationContext {
                 ))
             }
         }
-        results.forEach { addPreparedSymbolToContext($0) }
+        for result in results {
+            addPreparedSymbolToContext(result)
+        }
     }
 
     /// Adds a prepared symbol data including a topic graph node and documentation node to the context.
@@ -1418,7 +1425,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the dictionary keys for each target into their section variants.
-        keysByTarget.forEach { targetIdentifier, keys in
+        for (targetIdentifier, keys) in keysByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let keys = keys.sorted(by: \.name)
@@ -1431,7 +1438,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the parameters for each target into their section variants.
-        parametersByTarget.forEach { targetIdentifier, parameters in
+        for (targetIdentifier, parameters) in parametersByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let parameters = parameters.sorted(by: \.name)
@@ -1444,7 +1451,7 @@ public class DocumentationContext {
         }
         
         // Merge in the body for each target into their section variants.
-        bodyByTarget.forEach { targetIdentifier, body in
+        for (targetIdentifier, body) in bodyByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 // Add any body parameters to existing body record
@@ -1461,7 +1468,7 @@ public class DocumentationContext {
         }
         
         // Merge in all the responses for each target into their section variants.
-        responsesByTarget.forEach { targetIdentifier, responses in
+        for (targetIdentifier, responses) in responsesByTarget {
             let target = documentationCache[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let responses = responses.sorted(by: \.statusCode)
@@ -1579,7 +1586,9 @@ public class DocumentationContext {
         }
 
         // Add any new symbols to the documentation cache.
-        results.forEach { addPreparedSymbolToContext($0) }
+        for result in results {
+            addPreparedSymbolToContext(result)
+        }
     }
     
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
@@ -1712,7 +1721,20 @@ public class DocumentationContext {
     ///   - articles: Articles to register with the documentation cache.
     /// - Returns: The articles that were registered, with their topic graph node updated to what's been added to the topic graph.
     private func registerArticles(_ articles: DocumentationContext.Articles) -> DocumentationContext.Articles {
-        articles.map { article in
+        // Because of rdar://79745455, articles can collide with top-level symbols.
+        // If the file system is case insensitive, this collision also happens for articles that case _in_sensitive match a top-level symbol's reference.
+        // To help detect this; pre-build a lookup of the lowercase paths of all top-level symbols so that we can match the articles against that.
+        let topLevelSymbolsThatCanCollideWithArticles: [String /* lowercased path */: ResolvedTopicReference] = {
+            let topLevelSymbols = linkResolver.localResolver.topLevelSymbols()
+            var result = [String: ResolvedTopicReference]()
+            result.reserveCapacity(topLevelSymbols.count)
+            for reference in topLevelSymbols {
+                result[reference.path.lowercased()] = reference
+            }
+            return result
+        }()
+                    
+        return articles.compactMap { article in
             guard let (documentation, title) = Self.documentationNodeAndTitle(
                 for: article,
                 // By default, articles are available in the languages the module that's being documented
@@ -1726,7 +1748,9 @@ public class DocumentationContext {
             }
             let reference = documentation.reference
             
-            if let existing = documentationCache[reference], existing.kind.isSymbol {
+            if let existingSymbolReference = topLevelSymbolsThatCanCollideWithArticles[reference.path.lowercased()],
+               let existing = documentationCache[existingSymbolReference]
+            {
                 // By the time we get here it's already to late to fix the collision. All we can do is make the author aware of it and handle the collision deterministically.
                 // rdar://79745455 and https://github.com/swiftlang/swift-docc/issues/593 tracks fixing the root cause of this issue, avoiding the collision and allowing the article and symbol to both exist.
                 diagnosticEngine.emit(
@@ -1742,7 +1766,7 @@ public class DocumentationContext {
                         ]
                     )
                 )
-                return article // Don't continue processing this article
+                return nil // Don't continue processing this article
             } else {
                 documentationCache[reference] = documentation
             }
@@ -1950,7 +1974,7 @@ public class DocumentationContext {
     /**
      Register a documentation bundle with this context.
      */
-    private func register() throws {
+    private func register() async throws {
         try shouldContinueRegistration()
 
         let currentFeatureFlags: FeatureFlags?
@@ -1982,111 +2006,61 @@ public class DocumentationContext {
             }
         }
 
-        // Note: Each bundle is registered and processed separately.
-        // Documents and symbols may both reference each other so the bundle is registered in 4 steps
-        
-        // In the bundle discovery phase all tasks run in parallel as they don't depend on each other.
-        let discoveryGroup = DispatchGroup()
-        let discoveryQueue = DispatchQueue(label: "org.swift.docc.Discovery", qos: .unspecified, attributes: .concurrent, autoreleaseFrequency: .workItem)
-        
-        let discoveryError = Synchronized<(any Error)?>(nil)
+        // Documents and symbols may both reference each other so the inputs is registered in 4 steps
 
-        // Load all bundle symbol graphs into the loader.
-        var symbolGraphLoader: SymbolGraphLoader!
-        var hierarchyBasedResolver: PathHierarchyBasedLinkResolver!
-        
-        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            symbolGraphLoader = SymbolGraphLoader(
+        // Load symbol information and construct data structures that only rely on symbol information.
+        async let loadSymbols = { [signposter, inputs, dataProvider, configuration] in
+            var symbolGraphLoader = SymbolGraphLoader(
                 bundle: inputs,
                 dataProvider: dataProvider,
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
             )
             
-            do {
-                try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
+            try signposter.withIntervalSignpost("Load symbols", id: signposter.makeSignpostID()) {
+                try autoreleasepool {
                     try symbolGraphLoader.loadAll()
                 }
-                hierarchyBasedResolver = signposter.withIntervalSignpost("Build PathHierarchy", id: signposter.makeSignpostID()) {
+            }
+            try shouldContinueRegistration()
+            let hierarchyBasedResolver = signposter.withIntervalSignpost("Build PathHierarchy", id: signposter.makeSignpostID()) {
+                autoreleasepool {
                     PathHierarchyBasedLinkResolver(pathHierarchy: PathHierarchy(
                         symbolGraphLoader: symbolGraphLoader,
                         bundleName: urlReadablePath(inputs.displayName),
                         knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
                     ))
                 }
-                
-                self.snippetResolver = SnippetResolver(symbolGraphLoader: symbolGraphLoader)
-            } catch {
-                // Pipe the error out of the dispatch queue.
-                discoveryError.sync({
-                    if $0 == nil { $0 = error }
-                })
             }
-        }
+            
+            let snippetResolver = SnippetResolver(symbolGraphLoader: symbolGraphLoader)
+           
+            return (symbolGraphLoader, hierarchyBasedResolver, snippetResolver)
+        }()
 
-        // First, all the resources are added since they don't reference anything else.
-        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            do {
-                try signposter.withIntervalSignpost("Load resources", id: signposter.makeSignpostID()) {
-                    try self.registerMiscResources()
-                }
-            } catch {
-                // Pipe the error out of the dispatch queue.
-                discoveryError.sync({
-                    if $0 == nil { $0 = error }
-                })
+        // Load resources like images and videos
+        async let loadResources: Void = try signposter.withIntervalSignpost("Load resources", id: signposter.makeSignpostID()) {
+            try autoreleasepool {
+                try self.registerMiscResources()
             }
         }
         
-        // Second, all the documents and symbols are added.
-        //
-        // Note: Documents and symbols may look up resources at this point but shouldn't lookup other documents or
-        //       symbols or attempt to resolve links/references since the topic graph may not contain all documents
-        //       or all symbols yet.
-        var result: (
-            tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
-            tutorials: [SemanticResult<Tutorial>],
-            tutorialArticles: [SemanticResult<TutorialArticle>],
-            articles: [SemanticResult<Article>],
-            documentationExtensions: [SemanticResult<Article>]
-        )!
-        
-        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            do {
-                result = try signposter.withIntervalSignpost("Load documents", id: signposter.makeSignpostID()) {
-                    try self.registerDocuments()
-                }
-            } catch {
-                // Pipe the error out of the dispatch queue.
-                discoveryError.sync({
-                    if $0 == nil { $0 = error }
-                })
+        // Load documents
+        async let loadDocuments = try signposter.withIntervalSignpost("Load documents", id: signposter.makeSignpostID()) {
+            try autoreleasepool {
+                try self.registerDocuments()
             }
         }
         
-        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            do {
-                try signposter.withIntervalSignpost("Load external resolvers", id: signposter.makeSignpostID()) {
-                    try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
-                }
-            } catch {
-                // Pipe the error out of the dispatch queue.
-                discoveryError.sync({
-                    if $0 == nil { $0 = error }
-                })
+        // Load any external resolvers
+        async let loadExternalResolvers: Void = try signposter.withIntervalSignpost("Load external resolvers", id: signposter.makeSignpostID()) {
+            try autoreleasepool {
+                try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
             }
-        }
-        
-        discoveryGroup.wait()
-
-        try shouldContinueRegistration()
-
-        // Re-throw discovery errors
-        if let encounteredError = discoveryError.sync({ $0 }) {
-            throw encounteredError
         }
         
         // All discovery went well, process the inputs.
-        let (tutorialTableOfContentsResults, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
+        let (tutorialTableOfContentsResults, tutorials, tutorialArticles, allArticles, documentationExtensions) = try await loadDocuments
+        try shouldContinueRegistration()
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
         let globalOptions = (allArticles + documentationExtensions).compactMap { article in
@@ -2126,7 +2100,10 @@ public class DocumentationContext {
             options = globalOptions.first
         }
         
+        let (symbolGraphLoader, hierarchyBasedResolver, snippetResolver) = try await loadSymbols
+        try shouldContinueRegistration()
         self.linkResolver.localResolver = hierarchyBasedResolver
+        self.snippetResolver = snippetResolver
         hierarchyBasedResolver.addMappingForRoots(bundle: inputs)
         for tutorial in tutorials {
             hierarchyBasedResolver.addTutorial(tutorial)
@@ -2139,9 +2116,10 @@ public class DocumentationContext {
         }
         
         registerRootPages(from: rootPageArticles)
+        
         try registerSymbols(symbolGraphLoader: symbolGraphLoader, documentationExtensions: documentationExtensions)
         // We don't need to keep the loader in memory after we've registered all symbols.
-        symbolGraphLoader = nil
+        _ = consume symbolGraphLoader
         
         try shouldContinueRegistration()
         
@@ -2160,7 +2138,9 @@ public class DocumentationContext {
             }
             return node.reference
         }
-        
+
+        emitWarningsForMultipleRootPages(rootPageArticles: rootPageArticles)
+
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
         if configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot || rootNodeForAutomaticCuration != nil {
@@ -2168,11 +2148,16 @@ public class DocumentationContext {
             try shouldContinueRegistration()
         }
         
+        _ = try await loadExternalResolvers
+        
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         preResolveExternalLinks(semanticObjects:
             tutorialTableOfContentsResults.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject))
+        
+        // References to resources aren't used until the links are resolved
+        _ = try await loadResources
         
         resolveLinks(
             tutorialTableOfContents: tutorialTableOfContentsResults,
@@ -2580,7 +2565,83 @@ public class DocumentationContext {
             diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: articleResult.source, severity: .information, range: nil, identifier: "org.swift.docc.ArticleUncurated", summary: "You haven't curated \(articleResult.topicGraphNode.reference.description.singleQuoted)"), possibleSolutions: []))
         }
     }
-    
+
+    /// Emits warnings when the documentation contains multiple root pages.
+    private func emitWarningsForMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
+        // Get module names from the link resolver, which already has properly filtered modules
+        // (excludes snippets and isn't affected by nested symbols with `.module` kind).
+        // Filter to only include symbol-based modules (not @TechnologyRoot articles).
+        let symbolModuleNames: Set<String> = Set(linkResolver.localResolver.modules().compactMap { reference in
+            guard let docNode = documentationCache[reference],
+                  docNode.kind == .module
+            else { return nil }
+            return docNode.name.plainText
+        })
+
+        if symbolModuleNames.count > 1 {
+            let sortedModuleNames = symbolModuleNames.sorted()
+            let diagnostic = Diagnostic(
+                source: nil,
+                severity: .warning,
+                range: nil,
+                identifier: "org.swift.docc.MultipleMainModules",
+                summary: "The documentation input contains more than one main module: \(sortedModuleNames.map { $0.singleQuoted }.joined(separator: ", "))",
+                explanation: "DocC doesn't support building combined documentation for multiple modules in a single catalog. Each module should be documented separately."
+            )
+            diagnosticEngine.emit(Problem(diagnostic: diagnostic))
+        }
+
+        if !symbolModuleNames.isEmpty && !rootPageArticles.isEmpty {
+            let sortedModuleNames = symbolModuleNames.sorted()
+            let moduleList = sortedModuleNames.map { $0.singleQuoted }.joined(separator: ", ")
+
+            let problems = rootPageArticles.map { article -> Problem in
+                let diagnostic = Diagnostic(
+                    source: article.source,
+                    severity: .warning,
+                    range: article.value.metadata?.technologyRoot?.originalMarkup.range,
+                    identifier: "org.swift.docc.TechnologyRootWithSymbols",
+                    summary: "The '\(TechnologyRoot.directiveName)' directive creates an additional root page, but the documentation already has a root from its symbols",
+                    explanation: "The symbol input provides \(moduleList) as the module root. The '\(TechnologyRoot.directiveName)' directive creates an additional root page which results in an unexpected documentation structure."
+                )
+
+                guard let range = article.value.metadata?.technologyRoot?.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+
+                return Problem(diagnostic: diagnostic, possibleSolutions: [
+                    Solution(summary: "Remove the '\(TechnologyRoot.directiveName)' directive", replacements: [Replacement(range: range, replacement: "")])
+                ])
+            }
+
+            diagnosticEngine.emit(problems)
+            return
+        }
+
+        if symbolModuleNames.isEmpty && rootPageArticles.count > 1 {
+            let problems = rootPageArticles.map { article -> Problem in
+                let diagnostic = Diagnostic(
+                    source: article.source,
+                    severity: .warning,
+                    range: article.value.metadata?.technologyRoot?.originalMarkup.range,
+                    identifier: "org.swift.docc.MultipleTechnologyRoots",
+                    summary: "The documentation has multiple articles with the '\(TechnologyRoot.directiveName)' directive",
+                    explanation: "Only one article should use the '\(TechnologyRoot.directiveName)' directive to define the documentation's root page. Having multiple root pages results in an unexpected documentation structure."
+                )
+
+                guard let range = article.value.metadata?.technologyRoot?.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+
+                return Problem(diagnostic: diagnostic, possibleSolutions: [
+                    Solution(summary: "Remove the '\(TechnologyRoot.directiveName)' directive", replacements: [Replacement(range: range, replacement: "")])
+                ])
+            }
+
+            diagnosticEngine.emit(problems)
+        }
+    }
+
     /**
      Analysis that runs after all nodes are successfully registered in the context.
      Useful for checks that need the complete node graph.

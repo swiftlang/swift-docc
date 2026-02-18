@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class ResourceReferenceTests: XCTestCase {
     func testPathWithSectionFragment() throws {

@@ -10,6 +10,7 @@
 
 import Foundation
 public import SymbolKit
+private import DocCCommon
 
 /// A model type that encapsulates variants of documentation node data.
 ///
