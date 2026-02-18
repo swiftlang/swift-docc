@@ -20,7 +20,7 @@ import NIOHTTP1
 class PreviewHTTPHandlerTests: XCTestCase {
     /// Tests the three different responses we offer: static file, default, and error.
     func testPreviewHandler() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             TextFile(name: "index.html", utf8Content: "index"),
             Folder(name: "css", content: [
                 TextFile(name: "test.css", utf8Content: "css"),

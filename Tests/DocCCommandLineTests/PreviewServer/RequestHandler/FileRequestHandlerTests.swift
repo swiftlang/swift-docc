@@ -30,7 +30,7 @@ class FileRequestHandlerTests: XCTestCase {
     }
     
     func testFileHandlerAssets() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             Folder(name: "data", content: [
                 TextFile(name: "test.json", utf8Content: "data"),
             ]),
@@ -91,7 +91,7 @@ class FileRequestHandlerTests: XCTestCase {
     }
     
     func testFileHandlerAssetsMissing() throws {
-        let tempFolderURL = try createTempFolder(content: [])
+        let tempFolderURL = try createTempDirectory(content: [])
 
         let request = makeRequestHead(uri: "/css/b00011100.css")
         let factory = FileRequestHandler(rootURL: tempFolderURL)
@@ -101,7 +101,7 @@ class FileRequestHandlerTests: XCTestCase {
     }
 
     func testFileHandlerWithRange() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
@@ -120,7 +120,7 @@ class FileRequestHandlerTests: XCTestCase {
     }
 
     func testFileInUpperDirectory() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
@@ -135,7 +135,7 @@ class FileRequestHandlerTests: XCTestCase {
     }
 
     func testMalformedURI() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])

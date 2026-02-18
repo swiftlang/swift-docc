@@ -20,7 +20,7 @@ import NIOHTTP1
 class DefaultRequestHandlerTests: XCTestCase {
     
     func testDefaultHandler() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             TextFile(name: "index.html", utf8Content: "Hello!"),
         ])
 
@@ -42,7 +42,7 @@ class DefaultRequestHandlerTests: XCTestCase {
     }
     
     func testDefaultHandlerForExistingPath() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             TextFile(name: "index.html", utf8Content: "Hello!"),
             TextFile(name: "existing.html", utf8Content: "Existing!"),
         ])
@@ -51,7 +51,7 @@ class DefaultRequestHandlerTests: XCTestCase {
         let request = makeRequestHead(uri: "/existing.html")
         let factory = DefaultRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
-        
+
         // Expected content
         XCTAssertEqual(response.body, "Hello!")
     }

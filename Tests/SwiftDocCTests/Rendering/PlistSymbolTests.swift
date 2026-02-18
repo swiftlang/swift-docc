@@ -127,7 +127,7 @@ class PlistSymbolTests: XCTestCase {
         let modifiedJSON = try String(contentsOf: plistSymbolURL)
             .replacingOccurrences(of: "\"ideTitle\": \"WiFi access\",", with: "")
         
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             TextFile(name: "missingIdeTitle.json", utf8Content: modifiedJSON),
         ])
         let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempFolderURL.appendingPathComponent("missingIdeTitle.json")))
@@ -153,7 +153,7 @@ class PlistSymbolTests: XCTestCase {
         let modifiedJSON = try String(contentsOf: plistSymbolURL)
             .replacingOccurrences(of: "\"title\": \"Possible Values\",", with: "")
         
-        let tempFolderURL = try createTempFolder(content: [
+        let tempFolderURL = try createTempDirectory(content: [
             TextFile(name: "missingPossibleValuesTitle.json", utf8Content: modifiedJSON),
         ])
         let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempFolderURL.appendingPathComponent("missingPossibleValuesTitle.json")))

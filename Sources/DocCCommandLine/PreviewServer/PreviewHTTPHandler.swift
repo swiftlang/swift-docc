@@ -71,19 +71,40 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
         switch (requestPart, state) {
         case (.head(let head), _):
             let handler: any RequestHandlerFactory
-            if FileRequestHandler.isAssetPath(head.uri) {
+            #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
+            if head.uri == SSERequestHandler.path {
+                // SSE endpoint for live reload
+                handler = SSERequestHandler()
+            } else if FileRequestHandler.isAssetPath(head.uri) {
                 // Serve a static asset file.
                 handler = FileRequestHandler(rootURL: rootURL)
             } else {
                 // Serve the fallback index file.
                 handler = DefaultRequestHandler(rootURL: rootURL)
             }
+            #else
+            if FileRequestHandler.isAssetPath(head.uri) {
+                handler = FileRequestHandler(rootURL: rootURL)
+            } else {
+                handler = DefaultRequestHandler(rootURL: rootURL)
+            }
+            #endif
             state = .requestInProgress(requestHead: head, handler: handler.create(channelHandler: self))
             
         case (.end, .requestInProgress(let head, let handler)):
+            #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
+            let isSSE = head.uri == SSERequestHandler.path
+            #else
+            let isSSE = false
+            #endif
             defer {
-                // Complete the response to the client, reset ``state``
-                completeResponse(context, trailers: nil, promise: nil)
+                if isSSE {
+                    // For SSE: reset state but keep connection open (no .end, no close)
+                    state = .idle
+                } else {
+                    // Complete the response to the client, reset ``state``
+                    completeResponse(context, trailers: nil, promise: nil)
+                }
             }
             
             // Call the pre-defined during the `head` context handler.

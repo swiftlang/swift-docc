@@ -254,18 +254,20 @@ public struct DataFile: File, DataRepresentable {
     }
 }
 
-extension XCTestCase {
-    /// Creates a ``Folder`` and writes its content to a temporary location on disk.
-    ///
-    /// - Parameters:
-    ///   - content: The files and subfolders to write to a temporary location
-    /// - Returns: The temporary location where the temporary folder was written.
-    public func createTempFolder(content: [any File]) throws -> URL {
-        let temporaryDirectory = try createTemporaryDirectory().appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
-        let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
-        try folder.write(to: temporaryDirectory)
-        return temporaryDirectory
-    }
+/// Creates a ``Folder`` and writes its content to a temporary directory on disk.
+///
+/// The caller is responsible for cleaning up the temporary directory when done.
+///
+/// - Parameters:
+///   - content: The files and subdirectories to write to a temporary location
+/// - Returns: The temporary location where the content was written.
+public func createTempDirectory(content: [any File]) throws -> URL {
+    // FIXME: Ideally, tests should not rely on the filesystem. Clean this up in the future.
+    let temporaryDirectory = URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
+        .appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
+    let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
+    try folder.write(to: temporaryDirectory)
+    return temporaryDirectory
 }
 
 // MARK: Dump

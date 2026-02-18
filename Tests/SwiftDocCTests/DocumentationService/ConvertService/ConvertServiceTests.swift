@@ -860,7 +860,7 @@ class ConvertServiceTests: XCTestCase {
         }
         """
         
-        let tempURL = try createTempFolder(content: [
+        let tempURL = try createTempDirectory(content: [
             Folder(name: "TutorialWithCodeTest.docc", content: [
                 TextFile(name: "Something.tutorial", utf8Content: tutorialContent),
                 
@@ -2345,7 +2345,7 @@ class ConvertServiceTests: XCTestCase {
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated)
     func testDoesNotResolveLinksUnlessBundleIDMatches() throws {
-        let tempURL = try createTempFolder(content: [
+        let tempURL = try createTempDirectory(content: [
             Folder(name: "unit-test.docc", content: [
                 TextFile(name: "SomeExtension.md", utf8Content: """
                 # ``/ModuleName/SymbolName``
