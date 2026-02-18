@@ -830,20 +830,6 @@ public class DocumentationContext {
                 // Some links might not resolve in the final documentation hierarchy and we will emit warnings for those later on when we finalize the bundle discovery phase.
                 if isDocumentationExtension {
                     documentationExtensions.append(result)
-                    
-                    // Warn for an incorrect root page metadata directive.
-                    if let technologyRoot = result.value.metadata?.technologyRoot {
-                        let diagnostic = Diagnostic(source: url, severity: .warning, range: article.metadata?.technologyRoot?.originalMarkup.range, identifier: "org.swift.docc.UnexpectedTechnologyRoot", summary: "Documentation extension files can't become technology roots.")
-                        let solutions: [Solution]
-                        if let range = technologyRoot.originalMarkup.range {
-                            solutions = [
-                                Solution(summary: "Remove the TechnologyRoot directive", replacements: [Replacement(range: range, replacement: "")])
-                            ]
-                        } else {
-                            solutions = []
-                        }
-                        diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
-                    }
                 } else {
                     precondition(uncuratedArticles[result.topicGraphNode.reference] == nil, "Article references are unique.")
                     uncuratedArticles[result.topicGraphNode.reference] = result
@@ -1170,9 +1156,7 @@ public class DocumentationContext {
                     continue
                 }
                 
-                // FIXME: Resolve the link relative to the module https://github.com/swiftlang/swift-docc/issues/516
-                let reference = TopicReference.unresolved(.init(topicURL: url))
-                switch resolve(reference, in: inputs.rootReference, fromSymbolLink: true) {
+                switch resolve(.unresolved(.init(topicURL: url)), in: inputs.rootReference, fromSymbolLink: true) {
                 case .success(let resolved):
                     if let existing = uncuratedDocumentationExtensions[resolved] {
                         if symbolsWithMultipleDocumentationExtensionMatches[resolved] == nil {
@@ -1181,6 +1165,10 @@ public class DocumentationContext {
                         symbolsWithMultipleDocumentationExtensionMatches[resolved]!.append(documentationExtension)
                     } else {
                         uncuratedDocumentationExtensions[resolved] = documentationExtension
+                    }
+                    
+                    if let technologyRoot = documentationExtension.value.metadata?.technologyRoot {
+                        warnAboutTechnologyRoot(technologyRoot, inDocumentationExtension: documentationExtension, forSymbol: resolved)
                     }
                 case .failure(_, let errorInfo):
                     guard !configuration.convertServiceConfiguration.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved else {
@@ -2565,6 +2553,58 @@ public class DocumentationContext {
         for articleResult in uncuratedArticles.values {
             diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: articleResult.source, severity: .information, range: nil, identifier: "org.swift.docc.ArticleUncurated", summary: "You haven't curated \(articleResult.topicGraphNode.reference.description.singleQuoted)"), possibleSolutions: []))
         }
+    }
+    
+    private func warnAboutTechnologyRoot(_ technologyRoot: TechnologyRoot, inDocumentationExtension documentationExtension: SemanticResult<Article>, forSymbol reference: ResolvedTopicReference) {
+        // Customize the diagnostic with specific information about the exact symbol.
+        let moduleName: String?
+        let symbolDescription: String?
+        let isExtendingModule: Bool
+        if let knownSymbol = documentationCache[reference] {
+            isExtendingModule = knownSymbol.kind == .module
+            symbolDescription = "the '\(knownSymbol.name.plainText)' \(knownSymbol.kind.name.lowercased())"
+            
+            if isExtendingModule {
+                moduleName = knownSymbol.name.plainText
+            } else {
+                let moduleReference = linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage)?.first
+                moduleName = moduleReference.flatMap { documentationCache[$0]?.name.plainText }
+            }
+        } else {
+            isExtendingModule = false
+            moduleName = nil
+            symbolDescription = nil
+        }
+        
+        let explanationDetails = if isExtendingModule {
+            "\(moduleName.map { "The '\($0)' module" } ?? "This module") is already the root of the documentation hierarchy. Specifying a TechnologyRoot directive has no effect."
+        } else {
+            """
+            If \(symbolDescription ?? "this symbol") became a root page it would move out of \(moduleName.map { "the '\($0)' module" } ?? "its containing module"), \
+            creating a disjoint documentation hierarchy with two possible starting points, \
+            resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+            """
+        }
+        
+        let diagnostic = Diagnostic(
+            source: documentationExtension.source,
+            severity: .warning,
+            range: technologyRoot.originalMarkup.range,
+            identifier: "TechnologyRootInExtensionFile",
+            summary: "\(TechnologyRoot.directiveName) directive cannot modify documentation extension file",
+            explanation: """
+            Symbols inherently belong to a module \(moduleName.map { "(in this case '\($0)') " } ?? "")which is already the root of the documentation hierarchy.
+            A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages\(symbolDescription.map { " (in this case \($0))" } ?? "").
+            \(explanationDetails)
+            """
+        )
+        
+        let replacements = technologyRoot.originalMarkup.range.map { range in
+            [Replacement(range: range, replacement: "")]
+        } ?? []
+        
+        let solutions = [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: replacements)]
+        diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
     }
 
     /// Emits warnings when the documentation contains multiple root pages.
