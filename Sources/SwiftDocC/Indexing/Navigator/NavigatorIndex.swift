@@ -297,9 +297,8 @@ public class NavigatorIndex {
         case container = 254
         case groupMarker = 255 // UInt8.max
                 
-        /// Initialize a page type from a `role` and a `symbolKind` returning the Symbol type.
+        /// Initialize a page type from a `symbolKind` returning the symbol type.
         init(symbolKind: String) {
-            // Prioritize the SymbolKind first
             switch symbolKind.lowercased() {
             case "module": self = .framework
             case "cl", "class": self = .class
@@ -327,7 +326,7 @@ public class NavigatorIndex {
             default: self = .symbol
             }
         }
-        
+        /// Initialize a page type from a `role` returning the document type.
         init(role: String) {
             switch role.lowercased() {
             case "symbol", "containersymbol": self = .symbol
@@ -336,7 +335,7 @@ public class NavigatorIndex {
             case "pseudosymbol": self = .symbol
             case "pseudocollection": self = .framework
             case "collection": self = .framework
-            case "collectiongroup": self = .symbol
+            case "collectiongroup": self = .article
             case "article": self = .article
             case "samplecode": self = .sampleCode
             default: self = .article
