@@ -1744,7 +1744,7 @@ public class DocumentationContext {
                 // rdar://79745455 and https://github.com/swiftlang/swift-docc/issues/593 tracks fixing the root cause of this issue, avoiding the collision and allowing the article and symbol to both exist.
                 diagnosticEngine.emit(
                     Problem(
-                        diagnostic: Diagnostic(source: article.source, severity: .warning, identifier: "org.swift.docc.articleCollisionProblem", summary: """
+                        diagnostic: Diagnostic(source: article.source, severity: .warning, identifier: "ArticleCollideWithSymbol", summary: """
                             Article '\(article.source.lastPathComponent)' (\(title)) would override \(existing.kind.name.lowercased()) '\(existing.name.description)'.
                             """, explanation: """
                             DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
