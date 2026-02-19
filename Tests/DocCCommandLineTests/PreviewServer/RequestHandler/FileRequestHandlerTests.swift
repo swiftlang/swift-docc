@@ -91,7 +91,8 @@ struct FileRequestHandlerTests {
         try verifyAsset(path: "/index/index.json", body: "data", type: "application/json")
     }
     
-    func testFileHandlerAssetsMissing() throws {
+    @Test
+    func respondsWithNotFoundForUnknownAsset() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [])
 
         let request = makeRequestHead(uri: "/css/b00011100.css")
@@ -101,7 +102,8 @@ struct FileRequestHandlerTests {
         #expect(response.requestError?.status == .notFound)
     }
 
-    func testFileHandlerWithRange() throws {
+    @Test
+    func respondsToSpecificRangeOfFiles() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
@@ -120,7 +122,8 @@ struct FileRequestHandlerTests {
         #expect(response.head?.headers["Content-length"] == ["2"])
     }
 
-    func testFileInUpperDirectory() throws {
+    @Test
+    func respondsWithUnauthorizedForPathsOutsideTheServedDirectory() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
@@ -135,7 +138,8 @@ struct FileRequestHandlerTests {
         #expect(response.requestError?.status.code == RequestError.init(status: .unauthorized).status.code)
     }
 
-    func testMalformedURI() throws {
+    @Test
+    func respondsWithBadRequestForMalformedURI() throws {
         let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
