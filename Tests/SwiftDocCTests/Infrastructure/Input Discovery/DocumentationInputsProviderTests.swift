@@ -67,7 +67,11 @@ class DocumentationInputsProviderTests: XCTestCase {
         ])
         
         // Prepare the real on-disk file system
-        let tempDirectory = try createTempDirectory(content: [folderHierarchy])
+        let tempDirectory = URL(fileURLWithPath: Foundation.NSTemporaryDirectory()).appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
+        try Folder(name: tempDirectory.lastPathComponent, content: [folderHierarchy]).write(to: tempDirectory)
+        defer {
+            try? FileManager.default.removeItem(at: tempDirectory)
+        }
         
         // Prepare the test file system
         let testFileSystem = try TestFileSystem(folders: [])
