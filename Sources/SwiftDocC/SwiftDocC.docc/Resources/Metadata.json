@@ -10,16 +10,17 @@
         "schemas": {
             "Metadata": {
                 "type": "object",
+                "description": "maps to Maps to https://github.com/swiftlang/swift-docc/blob/main/Sources/SwiftDocC/Model/BuildMetadata.swift#L14",
                 "required": [
                     "bundleDisplayName",
-                    "bundleIdentifier",
+                    "bundleID",
                     "schemaVersion"
                 ],
                 "properties": {
                     "bundleDisplayName": {
                         "type": "string"
                     },
-                    "bundleIdentifier": {
+                    "bundleID": {
                         "type": "string"
                     },
                     "schemaVersion": {
@@ -28,6 +29,7 @@
                 }
             },
             "SchemaVersion": {
+                "description": "A version that follows the [Semantic Versioning](https://semver.org) specification. Maps to https: https://github.com/swiftlang/swift-docc/blob/main/Sources/SwiftDocC/Model/Rendering/SemanticVersion.swift#L14",
                 "type": "object",
                 "required": [
                     "major",
@@ -43,6 +45,14 @@
                     },
                     "patch": {
                         "type": "integer"
+                    },
+                    "prerelease": {
+                        "type": "string",
+                        "description": "The optional prerelease version component, which may contain non-numeric characters."
+                    },
+                    "buildMetadata": {
+                        "type": "string",
+                        "description": "Optional additional build metadata."
                     }
                 }
             }
