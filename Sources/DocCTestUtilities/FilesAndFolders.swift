@@ -254,22 +254,6 @@ public struct DataFile: File, DataRepresentable {
     }
 }
 
-extension XCTestCase {
-    @available(*, deprecated, message: "Use 'makeTestFileSystemWithFolder' instead.")
-    public func createTempDirectory(content: [any File]) throws -> URL {
-        // FIXME: Ideally, tests should not rely on the filesystem. Clean this up in the future.
-        let temporaryDirectory = URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
-            .appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
-        let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
-        try folder.write(to: temporaryDirectory)
-        
-        addTeardownBlock {
-            try? FileManager.default.removeItem(at: temporaryDirectory)
-        }
-        return temporaryDirectory
-    }
-}
-
 /// Creates a new test file system with a folder that contains the given `content`.
 /// - Parameter files: The content of the new folder.
 /// - Returns: The test file system and the URL to the directory that contains the given files
