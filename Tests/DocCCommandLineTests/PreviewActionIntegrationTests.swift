@@ -95,8 +95,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         let preview = try PreviewAction(
             port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
-            createConvertAction: createConvertAction,
-            fileManager: FileManager.default
+            createConvertAction: createConvertAction
         )
         defer {
             try? preview.stop()
@@ -225,8 +224,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         let preview = try PreviewAction(
             port: bindPort,
-            createConvertAction: createConvertAction,
-            fileManager: FileManager.default
+            createConvertAction: createConvertAction
         )
         defer {
             try? preview.stop()
@@ -285,8 +283,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         let preview = try PreviewAction(
             port: 0, // Use port 0 to pick a random free port number
-            createConvertAction: createConvertAction,
-            fileManager: FileManager.default
+            createConvertAction: createConvertAction
         )
 
         // Build documentation the first time, start the preview server, and start watching the inputs and for changes.
@@ -354,8 +351,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         let preview = try PreviewAction(
             port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
-            createConvertAction: createConvertAction,
-            fileManager: FileManager.default
+            createConvertAction: createConvertAction
         )
 
         defer {

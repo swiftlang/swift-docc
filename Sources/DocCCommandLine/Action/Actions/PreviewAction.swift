@@ -38,7 +38,6 @@ public final class PreviewAction: AsyncAction {
     static var allowConcurrentPreviews = false
 
     private let printHTMLTemplatePath: Bool
-    private let fileManager: any FileManagerProtocol
     
     let port: Int
     
@@ -64,14 +63,12 @@ public final class PreviewAction: AsyncAction {
     ///
     ///     On macOS, this action will be recreated each time the source is modified to rebuild the documentation.
     ///   - printTemplatePath: Whether or not the HTML template used by the convert action should be printed when the action
-    ///   - fileManager: The file manager that the preview server uses to read requested files.
     ///     is performed.
     /// - Throws: If an error is encountered while initializing the documentation context.
-    package init(
+    public init(
         port: Int,
         createConvertAction: @escaping () throws -> ConvertAction,
-        printTemplatePath: Bool = true,
-        fileManager: any FileManagerProtocol
+        printTemplatePath: Bool = true
     ) throws {
         if !Self.allowConcurrentPreviews && !servers.isEmpty {
             assertionFailure("Running multiple preview actions is not allowed.")
@@ -82,7 +79,6 @@ public final class PreviewAction: AsyncAction {
         self.createConvertAction = createConvertAction
         self.convertAction = try createConvertAction()
         self.printHTMLTemplatePath = printTemplatePath
-        self.fileManager = fileManager
     }
     
     /// Converts a documentation bundle and starts a preview server to render the result of that conversion.
@@ -135,7 +131,7 @@ public final class PreviewAction: AsyncAction {
 
             let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
             var logHandleCopy = logHandle.sync { $0 }
-            servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandleCopy, fileManager: fileManager)
+            servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandleCopy, fileManager: FileManager.default)
             
             // When the user stops docc - stop the preview server first before exiting.
             trapSignals()
