@@ -88,9 +88,9 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
             }
             #else
             if FileRequestHandler.isAssetPath(head.uri) {
-                handler = FileRequestHandler(rootURL: rootURL)
+                handler = FileRequestHandler(rootURL: rootURL, fileManager: fileManager)
             } else {
-                handler = DefaultRequestHandler(rootURL: rootURL)
+                handler = DefaultRequestHandler(rootURL: rootURL, fileManager: fileManager)
             }
             #endif
             state = .requestInProgress(requestHead: head, handler: handler.create(channelHandler: self))
