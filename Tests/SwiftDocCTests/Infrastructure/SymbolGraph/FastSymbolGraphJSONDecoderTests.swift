@@ -107,8 +107,6 @@ struct FastSymbolGraphJSONDecoderTests {
         "Snippets",
         "SourceLocations",
         "SymbolsWithSameNameAsModule",
-        "TestBundleWithDupMD",
-        "TestBundleWithDupe",
     ])
     func decodingSymbolGraphsInTestsCatalog(catalogBaseName: String) throws {
         let catalogURL = try #require(Bundle.module.url(forResource: catalogBaseName, withExtension: "docc", subdirectory: "Test Bundles"))

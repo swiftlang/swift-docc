@@ -714,7 +714,7 @@ public class DocumentationContext {
         var articles = [SemanticResult<Article>]()
         var documentationExtensions = [SemanticResult<Article>]()
         
-        var references: [ResolvedTopicReference: URL] = [:]
+        var fileByOutputPath: [String: URL] = [:]
 
         let decodeError = Synchronized<(any Error)?>(nil)
         
@@ -768,28 +768,57 @@ public class DocumentationContext {
             // At this point we consider all articles with an H1 containing link a "documentation extension."
             let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is (any AnyLink)
             
-            if let firstFoundAtURL = references[reference], !isDocumentationExtension {
+            if let firstFoundAtURL = fileByOutputPath[path.lowercased()], !isDocumentationExtension {
+                let thisRelativePath: String
+                let otherRelativePath: String
+                if let indexOfCatalog = url.standardizedFileURL.pathComponents.firstIndex(where: { $0.hasSuffix(".docc") }) {
+                    thisRelativePath  = url.standardizedFileURL.pathComponents.dropFirst(indexOfCatalog + 1).joined(separator: "/")
+                    otherRelativePath = firstFoundAtURL.standardizedFileURL.pathComponents.dropFirst(indexOfCatalog + 1).joined(separator: "/")
+                } else {
+                    let this  = url.standardizedFileURL.path
+                    let other = firstFoundAtURL.standardizedFileURL.path
+                    
+                    let commonPrefixLength = this.commonPrefix(with: other).count
+                    thisRelativePath  = String(this.dropFirst(commonPrefixLength))
+                    otherRelativePath = String(other.dropFirst(commonPrefixLength))
+                }
+                
+                let isArticle = url.pathExtension == "md"
+                let fileDescription = isArticle ? "article" : "tutorial"
+                
+                let webURLPathComponent = urlReadablePath(firstFoundAtURL.deletingPathExtension().lastPathComponent).lowercased()
+                
                 let problem = Problem(
                     diagnostic: Diagnostic(
                         source: url,
                         severity: .warning,
                         range: nil,
-                        identifier: "org.swift.docc.DuplicateReference",
-                        summary: """
-                        Redeclaration of '\(firstFoundAtURL.lastPathComponent)'; this file will be skipped
-                        """,
+                        identifier: "OutputPathCollision",
+                        summary: "Multiple \(fileDescription)s with output path '\(path.lowercased())'; this \(fileDescription) will be skipped",
                         explanation: """
-                        This content was already declared at '\(firstFoundAtURL)'
-                        """
+                        The relative path of \(isArticle ? "an article" : "a tutorial") in the rendered documentation is the name of its markup file, without the '.\(url.pathExtension)' extension, \
+                        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case '\(webURLPathComponent))'.
+                        Because the pages for '\(thisRelativePath)' and '\(otherRelativePath)' would have the same web URL, DocC can only create a web page for one of them; deterministically keeping '\(otherRelativePath)' and dropping '\(thisRelativePath)'.
+                        """,
+                        notes: [
+                            DiagnosticNote(
+                                source: firstFoundAtURL,
+                                range: SourceLocation(line: 1, column: 1, source: nil) ..<  SourceLocation(line: 1, column: 1, source: nil),
+                                message: "Other \(fileDescription) with same filename here"
+                            )
+                        ]
                     ),
-                    possibleSolutions: []
+                    possibleSolutions: [
+                        Solution(summary: "Rename '\(thisRelativePath)'", replacements: []),
+                        Solution(summary: "Rename '\(otherRelativePath)'", replacements: []),
+                    ]
                 )
                 diagnosticEngine.emit(problem)
                 continue
             }
             
             if !isDocumentationExtension {
-                references[reference] = url
+                fileByOutputPath[path.lowercased()] = url
             }
             
             /*
