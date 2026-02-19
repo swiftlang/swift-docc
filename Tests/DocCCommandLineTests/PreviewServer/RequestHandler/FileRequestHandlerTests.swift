@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,27 +10,17 @@
 
 #if canImport(NIOHTTP1)
 import Foundation
-import XCTest
+import Testing
 @testable import DocCCommandLine
 import DocCTestUtilities
 
 import NIO
 import NIOHTTP1
 
-class FileRequestHandlerTests: XCTestCase {
-    private func verifyAsset(root: URL, path: String, body: String, type: String, file: StaticString = #filePath, line: UInt = #line) throws {
-        let request = makeRequestHead(uri: path)
-        let factory = FileRequestHandler(rootURL: root)
-        let response = try responseWithPipeline(request: request, handler: factory)
-        
-        XCTAssertEqual(response.head?.status, .ok, file: (file), line: line)
-        XCTAssertEqual(response.body, body, file: (file), line: line)
-        XCTAssertEqual(response.head?.headers["Content-type"], [type], file: (file), line: line)
-        XCTAssertEqual(response.head?.headers["Content-length"], ["\(body.count)"], file: (file), line: line)
-    }
-    
-    func testFileHandlerAssets() throws {
-        let tempFolderURL = try createTempDirectory(content: [
+struct FileRequestHandlerTests {
+    @Test
+    func fileHandlerServesAssets() throws {
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             Folder(name: "data", content: [
                 TextFile(name: "test.json", utf8Content: "data"),
             ]),
@@ -67,86 +57,97 @@ class FileRequestHandlerTests: XCTestCase {
             ]),
         ])
 
-        try verifyAsset(root: tempFolderURL, path: "/data/test.json", body: "data", type: "application/json")
-        try verifyAsset(root: tempFolderURL, path: "/css/test.css", body: "css", type: "text/css")
-        try verifyAsset(root: tempFolderURL, path: "/js/test.js", body: "js", type: "text/javascript")
-        try verifyAsset(root: tempFolderURL, path: "/fonts/test.otf", body: "font", type: "font/otf")
+        func verifyAsset(path: String, body: String, type: String, sourceLocation: SourceLocation = #_sourceLocation) throws {
+            let request = makeRequestHead(uri: path)
+            let factory = FileRequestHandler(rootURL: folderURL, fileManager: fileSystem)
+            let response = try responseWithPipeline(request: request, handler: factory)
+            
+            #expect(response.head?.status == .ok, sourceLocation: sourceLocation)
+            #expect(response.body == body, sourceLocation: sourceLocation)
+            #expect(response.head?.headers["Content-type"] ==  [type], sourceLocation: sourceLocation)
+            #expect(response.head?.headers["Content-length"] == ["\(body.count)"], sourceLocation: sourceLocation)
+        }
+        
+        try verifyAsset(path: "/data/test.json", body: "data", type: "application/json")
+        try verifyAsset(path: "/css/test.css", body: "css", type: "text/css")
+        try verifyAsset(path: "/js/test.js", body: "js", type: "text/javascript")
+        try verifyAsset(path: "/fonts/test.otf", body: "font", type: "font/otf")
         // default font type
-        try verifyAsset(root: tempFolderURL, path: "/fonts/test.ttf", body: "ttf", type: "application/octet-stream")
-        try verifyAsset(root: tempFolderURL, path: "/images/image.png", body: "png", type: "image/png")
-        try verifyAsset(root: tempFolderURL, path: "/images/image.gif", body: "gif", type: "image/gif")
+        try verifyAsset(path: "/fonts/test.ttf", body: "ttf", type: "application/octet-stream")
+        try verifyAsset(path: "/images/image.png", body: "png", type: "image/png")
+        try verifyAsset(path: "/images/image.gif", body: "gif", type: "image/gif")
         // default image type
-        try verifyAsset(root: tempFolderURL, path: "/images/image.jpg", body: "jpg", type: "image/jpeg")
-        try verifyAsset(root: tempFolderURL, path: "/images/logo.svg", body: "svg", type: "image/svg+xml")
-        try verifyAsset(root: tempFolderURL, path: "/img/image.png", body: "png", type: "image/png")
-        try verifyAsset(root: tempFolderURL, path: "/img/image.gif", body: "gif", type: "image/gif")
+        try verifyAsset(path: "/images/image.jpg", body: "jpg", type: "image/jpeg")
+        try verifyAsset(path: "/images/logo.svg", body: "svg", type: "image/svg+xml")
+        try verifyAsset(path: "/img/image.png", body: "png", type: "image/png")
+        try verifyAsset(path: "/img/image.gif", body: "gif", type: "image/gif")
         // default image type
-        try verifyAsset(root: tempFolderURL, path: "/img/image.jpg", body: "jpg", type: "image/jpeg")
-        try verifyAsset(root: tempFolderURL, path: "/videos/video.mov", body: "mov", type: "video/quicktime")
-        try verifyAsset(root: tempFolderURL, path: "/videos/video.avi", body: "avi", type: "video/x-msvideo")
-        try verifyAsset(root: tempFolderURL, path: "/downloads/project.zip", body: "zip", type: "application/zip")
+        try verifyAsset(path: "/img/image.jpg", body: "jpg", type: "image/jpeg")
+        try verifyAsset(path: "/videos/video.mov", body: "mov", type: "video/quicktime")
+        try verifyAsset(path: "/videos/video.avi", body: "avi", type: "video/x-msvideo")
+        try verifyAsset(path: "/downloads/project.zip", body: "zip", type: "application/zip")
         
         // RenderIndex navigator index json
-        try verifyAsset(root: tempFolderURL, path: "/index/index.json", body: "data", type: "application/json")
+        try verifyAsset(path: "/index/index.json", body: "data", type: "application/json")
     }
     
     func testFileHandlerAssetsMissing() throws {
-        let tempFolderURL = try createTempDirectory(content: [])
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [])
 
         let request = makeRequestHead(uri: "/css/b00011100.css")
-        let factory = FileRequestHandler(rootURL: tempFolderURL)
+        let factory = FileRequestHandler(rootURL: folderURL, fileManager: fileSystem)
         let response = try responseWithPipeline(request: request, handler: factory)
         
-        XCTAssertEqual(response.requestError?.status, .notFound)
+        #expect(response.requestError?.status == .notFound)
     }
 
     func testFileHandlerWithRange() throws {
-        let tempFolderURL = try createTempDirectory(content: [
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
         ])
 
         let request = makeRequestHead(uri: "/videos/video.mov", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempFolderURL)
+        let factory = FileRequestHandler(rootURL: folderURL, fileManager: fileSystem)
         let response = try responseWithPipeline(request: request, handler: factory)
         
-        XCTAssertEqual(response.body, "He")
-        XCTAssertEqual(response.head?.status, .partialContent)
-        XCTAssertEqual(response.head?.headers["Accept-ranges"], ["bytes"])
-        XCTAssertEqual(response.head?.headers["Content-range"], ["bytes 0-1/6"])
+        #expect(response.body == "He")
+        #expect(response.head?.status == .partialContent)
+        #expect(response.head?.headers["Accept-ranges"] == ["bytes"])
+        #expect(response.head?.headers["Content-range"] == ["bytes 0-1/6"])
         // Verify we return the length of the requested range instead of the full length
-        XCTAssertEqual(response.head?.headers["Content-length"], ["2"])
+        #expect(response.head?.headers["Content-length"] == ["2"])
     }
 
     func testFileInUpperDirectory() throws {
-        let tempFolderURL = try createTempDirectory(content: [
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
         ])
 
         let request = makeRequestHead(uri: "/videos/../video.mov", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempFolderURL)
+        let factory = FileRequestHandler(rootURL: folderURL, fileManager: fileSystem)
         let response = try responseWithPipeline(request: request, handler: factory)
         
-        XCTAssertNil(response.body, "He")
-        XCTAssertEqual(response.requestError?.status.code, RequestError.init(status: .unauthorized).status.code)
+        #expect(response.body == nil)
+        #expect(response.requestError?.status.code == RequestError.init(status: .unauthorized).status.code)
     }
 
     func testMalformedURI() throws {
-        let tempFolderURL = try createTempDirectory(content: [
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
         ])
 
         let request = makeRequestHead(uri: "https://invalid host.com", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempFolderURL)
+        let factory = FileRequestHandler(rootURL: folderURL, fileManager: fileSystem)
         let response = try responseWithPipeline(request: request, handler: factory)
         
-        XCTAssertNil(response.body, "He")
-        XCTAssertEqual(response.requestError?.status.code, RequestError.init(status: .badRequest).status.code)
+        #expect(response.body == nil)
+        #expect(response.requestError?.status.code == RequestError.init(status: .badRequest).status.code)
     }
 }
 #endif

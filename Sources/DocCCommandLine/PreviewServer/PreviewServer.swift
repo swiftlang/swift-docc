@@ -68,6 +68,7 @@ final class PreviewServer {
     internal var channel: (any Channel)!
     
     private let contentURL: URL
+    private let fileManager: any FileManagerProtocol
     
     /// A list of server-bind destinations.
     public enum Bind: CustomStringConvertible {
@@ -99,7 +100,8 @@ final class PreviewServer {
     ///   - contentURL: The root URL on disk from which to serve content.
     ///   - bindTo: Bind destination such as a localhost port or a file socket.
     ///   - logHandle: A file handle to write logs to.
-    init(contentURL: URL, bindTo: Bind, logHandle: inout LogHandle) throws {
+    ///   - fileManager: The file manager that the server uses to read the files to respond to page requests.
+    init(contentURL: URL, bindTo: Bind, logHandle: inout LogHandle, fileManager: any FileManagerProtocol) throws {
         var isDirectory = ObjCBool(booleanLiteral: false)
         let contentPathExists = FileManager.default.fileExists(atPath: contentURL.path, isDirectory: &isDirectory)
         guard contentPathExists && isDirectory.boolValue else {
@@ -109,6 +111,7 @@ final class PreviewServer {
         self.contentURL = contentURL
         self.bindTo = bindTo
         self.logHandle = logHandle
+        self.fileManager = fileManager
     }
 
     /// Starts a new preview server and waits until it terminates.
@@ -126,10 +129,10 @@ final class PreviewServer {
             .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
 
             // Configure the channel handler - it handles plain HTTP requests
-            .childChannelInitializer { [contentURL] channel in
+            .childChannelInitializer { [contentURL, fileManager] channel in
                 // HTTP pipeline
                 return channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                    channel.pipeline.addHandler(PreviewHTTPHandler(rootURL: contentURL))
+                    channel.pipeline.addHandler(PreviewHTTPHandler(rootURL: contentURL, fileManager: fileManager))
                 }
             }
             
