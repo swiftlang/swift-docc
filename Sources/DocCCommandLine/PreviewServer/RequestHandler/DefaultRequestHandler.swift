@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,7 @@
 import Foundation
 import NIO
 import NIOHTTP1
+import SwiftDocC
 
 /// A request handler that serves the default app page to clients.
 ///
@@ -23,6 +24,8 @@ struct DefaultRequestHandler: RequestHandlerFactory {
 
     /// The root of the documentation to serve.
     let rootURL: URL
+    /// The file manager that the request handler uses to read the data.
+    let fileManager: any FileManagerProtocol
 
     #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
     /// Script injected before `</body>` to enable live reload via SSE.
@@ -43,7 +46,7 @@ struct DefaultRequestHandler: RequestHandlerFactory {
         where ChannelHandler.OutboundOut == HTTPServerResponsePart {
 
         return { context, head in
-            var response = try Data(contentsOf: self.rootURL.appendingPathComponent("index.html"))
+            var response = try fileManager.contents(of: rootURL.appendingPathComponent("index.html"))
 
             #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
             if let range = response.range(of: Self.bodyEndTag) {

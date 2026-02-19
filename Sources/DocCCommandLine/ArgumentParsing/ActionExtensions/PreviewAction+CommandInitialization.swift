@@ -31,7 +31,8 @@ extension PreviewAction {
                     withFallbackTemplate: fallbackTemplateURL
                 )
             },
-            printTemplatePath: printTemplatePath)
+            printTemplatePath: printTemplatePath
+        )
     }
 }
 #endif

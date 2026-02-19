@@ -131,7 +131,7 @@ public final class PreviewAction: AsyncAction {
 
             let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
             var logHandleCopy = logHandle.sync { $0 }
-            servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandleCopy)
+            servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandleCopy, fileManager: FileManager.default)
             
             // When the user stops docc - stop the preview server first before exiting.
             trapSignals()

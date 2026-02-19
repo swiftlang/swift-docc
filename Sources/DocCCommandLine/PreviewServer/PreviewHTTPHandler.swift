@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,7 @@
 import Foundation
 import NIO
 import NIOHTTP1
+import SwiftDocC
 
 /// An HTTP request handler that serves file assets and the default app page.
 ///
@@ -50,11 +51,14 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
     
     private var keepAlive = false
     private let rootURL: URL
+    private let fileManager: any FileManagerProtocol
 
     /// - Parameters:
     ///   - rootURL: The root of the content directory to serve.
-    init(rootURL: URL) {
+    ///   - fileManager: The file manager that the handler uses to read the files that it serves.
+    init(rootURL: URL, fileManager: any FileManagerProtocol) {
         self.rootURL = rootURL
+        self.fileManager = fileManager
     }
     
     /// Handles incoming data on a channel.
@@ -77,16 +81,16 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
                 handler = SSERequestHandler()
             } else if FileRequestHandler.isAssetPath(head.uri) {
                 // Serve a static asset file.
-                handler = FileRequestHandler(rootURL: rootURL)
+                handler = FileRequestHandler(rootURL: rootURL, fileManager: fileManager)
             } else {
                 // Serve the fallback index file.
-                handler = DefaultRequestHandler(rootURL: rootURL)
+                handler = DefaultRequestHandler(rootURL: rootURL, fileManager: fileManager)
             }
             #else
             if FileRequestHandler.isAssetPath(head.uri) {
-                handler = FileRequestHandler(rootURL: rootURL)
+                handler = FileRequestHandler(rootURL: rootURL, fileManager: fileManager)
             } else {
-                handler = DefaultRequestHandler(rootURL: rootURL)
+                handler = DefaultRequestHandler(rootURL: rootURL, fileManager: fileManager)
             }
             #endif
             state = .requestInProgress(requestHead: head, handler: handler.create(channelHandler: self))

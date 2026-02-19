@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,13 +22,12 @@ struct LiveReloadTests {
     #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
     @Test
     func scriptInjected() throws {
-        let tempFolderURL = try createTempDirectory(content: [
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
         ])
-        defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
-        let factory = DefaultRequestHandler(rootURL: tempFolderURL)
+        let factory = DefaultRequestHandler(rootURL: folderURL, fileManager: fileSystem)
         let response = try responseWithPipeline(request: request, handler: factory)
 
         let body = try #require(response.body)
@@ -44,13 +43,12 @@ struct LiveReloadTests {
 
     @Test
     func scriptNotInjectedWithoutBodyTag() throws {
-        let tempFolderURL = try createTempDirectory(content: [
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             TextFile(name: "index.html", utf8Content: "<html>No body tag here</html>"),
         ])
-        defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
-        let factory = DefaultRequestHandler(rootURL: tempFolderURL)
+        let factory = DefaultRequestHandler(rootURL: folderURL, fileManager: fileSystem)
         let response = try responseWithPipeline(request: request, handler: factory)
 
         #expect(response.body == "<html>No body tag here</html>")
@@ -59,13 +57,12 @@ struct LiveReloadTests {
     #else
     @Test
     func scriptNotInjectedOnUnsupportedPlatform() throws {
-        let tempFolderURL = try createTempDirectory(content: [
+        let (fileSystem, folderURL) = try makeTestFileSystemWithFolder(containing: [
             TextFile(name: "index.html", utf8Content: "<html><body>Hello!</body></html>"),
         ])
-        defer { try? FileManager.default.removeItem(at: tempFolderURL) }
 
         let request = makeRequestHead(uri: "/")
-        let factory = DefaultRequestHandler(rootURL: tempFolderURL)
+        let factory = DefaultRequestHandler(rootURL: folderURL, fileManager: fileSystem)
         let response = try responseWithPipeline(request: request, handler: factory)
 
         #expect(response.body == "<html><body>Hello!</body></html>")

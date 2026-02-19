@@ -9,7 +9,6 @@
 */
 
 public import Foundation
-public import XCTest
 public import SwiftDocC
 import DocCCommon
 
@@ -254,20 +253,19 @@ public struct DataFile: File, DataRepresentable {
     }
 }
 
-/// Creates a ``Folder`` and writes its content to a temporary directory on disk.
-///
-/// The caller is responsible for cleaning up the temporary directory when done.
-///
-/// - Parameters:
-///   - content: The files and subdirectories to write to a temporary location
-/// - Returns: The temporary location where the content was written.
-public func createTempDirectory(content: [any File]) throws -> URL {
-    // FIXME: Ideally, tests should not rely on the filesystem. Clean this up in the future.
-    let temporaryDirectory = URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
-        .appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
-    let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
-    try folder.write(to: temporaryDirectory)
-    return temporaryDirectory
+/// Creates a new test file system with a folder that contains the given `content`.
+/// - Parameter files: The content of the new folder.
+/// - Returns: The test file system and the URL to the directory that contains the given files
+package func makeTestFileSystemWithFolder(containing content: [any File]) throws -> (TestFileSystem, URL) {
+    let testFileSystem = try TestFileSystem(folders: [
+        // Don't add the files top-level to ensure that the caller works with file paths and not file names.
+        Folder(name: "path", content: [
+            Folder(name: "to", content: [
+                Folder(name: "Some folder", content: content)
+            ])
+        ])
+    ])
+    return (testFileSystem, URL(fileURLWithPath: "/path/to/Some folder"))
 }
 
 // MARK: Dump

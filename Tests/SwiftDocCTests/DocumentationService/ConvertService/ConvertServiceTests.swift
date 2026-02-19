@@ -2463,3 +2463,20 @@ class ConvertServiceTests: XCTestCase {
         }
     }
 }
+
+// Do not make this extension visible outside of this type and file.
+private extension ConvertServiceTests {
+    @available(*, deprecated, message: "Use a in-memory test file system instead.")
+    func createTempDirectory(content: [any File]) throws -> URL {
+        // FIXME: Ideally, tests should not rely on the filesystem. Clean this up in the future.
+        let temporaryDirectory = URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
+            .appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
+        let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
+        try folder.write(to: temporaryDirectory)
+        
+        addTeardownBlock {
+            try? FileManager.default.removeItem(at: temporaryDirectory)
+        }
+        return temporaryDirectory
+    }
+}

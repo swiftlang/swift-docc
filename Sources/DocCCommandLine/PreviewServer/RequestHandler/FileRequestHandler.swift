@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,7 @@
 import Foundation
 import NIO
 import NIOHTTP1
+import SwiftDocC
 
 fileprivate extension String {
     var fileExtension: String {
@@ -53,6 +54,7 @@ struct RangeHeader {
 /// A response handler that serves asset files.
 struct FileRequestHandler: RequestHandlerFactory {
     let rootURL: URL
+    let fileManager: any FileManagerProtocol
 
     /// Metadata that pairs file paths with content mime types.
     struct AssetFileMetadata {
@@ -130,7 +132,7 @@ struct FileRequestHandler: RequestHandlerFactory {
     func create<ChannelHandler: ChannelInboundHandler>(channelHandler: ChannelHandler) -> RequestHandler
         where ChannelHandler.OutboundOut == HTTPServerResponsePart {
 
-            return { ctx, head in
+            return { context, head in
                 // Guards for a valid URL request
                 guard let components = URLComponents(string: head.uri) else { throw RequestError(status: .badRequest) }
                 
@@ -155,13 +157,13 @@ struct FileRequestHandler: RequestHandlerFactory {
                 
                 // Read the file contents
                 do {
-                    data = try Data(contentsOf: fileURL, options: .mappedIfSafe)
+                    data = try fileManager.contents(of: fileURL)
                     totalLength = data.count
                 } catch {
                     throw RequestError(status: .notFound)
                 }
 
-                // Add Range header if neccessary
+                // Add Range header if necessary
                 var headers = HTTPHeaders()
                 let range = head.headers["Range"].first.flatMap(RangeHeader.init)
                 if let range {
@@ -171,7 +173,7 @@ struct FileRequestHandler: RequestHandlerFactory {
                 }
                 
                 // Write the response to the output channel
-                var content = ctx.channel.allocator.buffer(capacity: totalLength)
+                var content = context.channel.allocator.buffer(capacity: totalLength)
                 content.writeBytes(data)
 
                 headers.add(name: "Content-Length", value: "\(data.count)")
@@ -183,8 +185,8 @@ struct FileRequestHandler: RequestHandlerFactory {
                 
                 let responseHead = HTTPResponseHead(matchingRequestHead: head, status: range != nil ? .partialContent : .ok, headers: headers)
                 
-                ctx.write(channelHandler.wrapOutboundOut(.head(responseHead)), promise: nil)
-                ctx.write(channelHandler.wrapOutboundOut(.body(.byteBuffer(content))), promise: nil)
+                context.write(channelHandler.wrapOutboundOut(.head(responseHead)), promise: nil)
+                context.write(channelHandler.wrapOutboundOut(.body(.byteBuffer(content))), promise: nil)
             }
     }
 }
