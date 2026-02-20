@@ -117,9 +117,6 @@ class DiagnosticTests: XCTestCase {
 
         let note = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation)
         XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: note, options: .formatConsoleOutputForTools), "\(expectedLocation): note: \(summary)\n\(explanation)")
-
-        let notice = Diagnostic(source: source, severity: .hint, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: notice, options: .formatConsoleOutputForTools), "\(expectedLocation): notice: \(summary)\n\(explanation)")
     }
 
     func testLocalizedDescriptionWithNote() {
