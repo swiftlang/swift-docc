@@ -19,14 +19,14 @@ extension ConvertAction {
     public init(fromConvertCommand convert: Docc.Convert, withFallbackTemplate fallbackTemplateURL: URL? = nil) throws {
         var standardError = LogHandle.standardError
         let outOfProcessResolver: OutOfProcessReferenceResolver?
-        FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled = convert.enableExperimentalCodeBlockAnnotations
-        FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
-        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.enableExperimentalLinkHierarchySerialization
-        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.enableExperimentalOverloadedSymbolPresentation
-        FeatureFlags.current.isMentionedInEnabled = convert.enableMentionedIn
-        FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.enableParametersAndReturnsValidation
-        FeatureFlags.current.isExperimentalMarkdownOutputEnabled = convert.enableExperimentalMarkdownOutput
-        FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled = convert.enableExperimentalMarkdownOutputManifest
+        FeatureFlags.current.isExperimentalCodeBlockAnnotationsEnabled = convert.featureFlags.enableExperimentalCodeBlockAnnotations
+        FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.featureFlags.enableExperimentalDeviceFrameSupport
+        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.featureFlags.enableExperimentalLinkHierarchySerialization
+        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.featureFlags.enableExperimentalOverloadedSymbolPresentation
+        FeatureFlags.current.isMentionedInEnabled = convert.featureFlags.enableMentionedIn
+        FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.featureFlags.enableParametersAndReturnsValidation
+        FeatureFlags.current.isExperimentalMarkdownOutputEnabled = convert.featureFlags.enableExperimentalMarkdownOutput
+        FeatureFlags.current.isExperimentalMarkdownOutputManifestEnabled = convert.featureFlags.enableExperimentalMarkdownOutputManifest
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
@@ -44,7 +44,7 @@ extension ConvertAction {
 
         // Attempt to convert the raw strings representing platform name/version pairs
         // into a dictionary. This will throw with a descriptive error upon failure.
-        let parsedPlatforms = try PlatformArgumentParser.parse(convert.platforms)
+        let parsedPlatforms = try PlatformArgumentParser.parse(convert.availabilityOptions.platforms)
 
         let bundleDiscoveryOptions = convert.bundleDiscoveryOptions
         
@@ -52,52 +52,52 @@ extension ConvertAction {
         // when running `docc preview` and `docc convert` without any of the fallback options.
         let documentationBundleURL: URL?
         if bundleDiscoveryOptions.infoPlistFallbacks.isEmpty {
-            documentationBundleURL = convert.documentationCatalog.urlOrFallback
+            documentationBundleURL = convert.inputsAndOutputs.documentationCatalog.urlOrFallback
         } else {
-            documentationBundleURL = convert.documentationCatalog.url
+            documentationBundleURL = convert.inputsAndOutputs.documentationCatalog.url
         }
 
         // Initialize the ``ConvertAction`` with the options provided by the ``Convert`` command.
         try self.init(
             documentationBundleURL: documentationBundleURL,
             outOfProcessResolver: outOfProcessResolver,
-            analyze: convert.analyze,
+            analyze: convert.diagnosticOptions.analyze,
             targetDirectory: convert.outputURL,
             htmlTemplateDirectory: convert.templateOption.templateURL ?? fallbackTemplateURL,
-            emitDigest: convert.emitDigest,
+            emitDigest: convert.featureFlags.emitDigest,
             currentPlatforms: parsedPlatforms,
-            buildIndex: convert.emitLMDBIndex,
+            buildIndex: convert.featureFlags.emitLMDBIndex,
             temporaryDirectory: FileManager.default.temporaryDirectory,
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions
             ),
             bundleDiscoveryOptions: bundleDiscoveryOptions,
-            diagnosticLevel: convert.diagnosticLevel,
-            diagnosticFilePath: convert.diagnosticsOutputPath,
-            formatConsoleOutputForTools: convert.formatConsoleOutputForTools,
-            inheritDocs: convert.enableInheritedDocs,
-            treatWarningsAsErrors: convert.warningsAsErrors,
-            experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
-            experimentalModifyCatalogWithGeneratedCuration: convert.experimentalModifyCatalogWithGeneratedCuration,
-            transformForStaticHosting: convert.transformForStaticHosting,
-            includeContentInEachHTMLFile: convert.experimentalTransformForStaticHostingWithContent,
-            allowArbitraryCatalogDirectories: convert.allowArbitraryCatalogDirectories,
-            hostingBasePath: convert.hostingBasePath,
+            diagnosticLevel: convert.diagnosticOptions.diagnosticLevel,
+            diagnosticFilePath: convert.diagnosticOptions.diagnosticsOutputPath,
+            formatConsoleOutputForTools: convert.diagnosticOptions.formatConsoleOutputForTools,
+            inheritDocs: convert.featureFlags.enableInheritedDocs,
+            treatWarningsAsErrors: convert.diagnosticOptions.warningsAsErrors,
+            experimentalEnableCustomTemplates: convert.featureFlags.experimentalEnableCustomTemplates,
+            experimentalModifyCatalogWithGeneratedCuration: convert.featureFlags.experimentalModifyCatalogWithGeneratedCuration,
+            transformForStaticHosting: convert.hostingOptions.transformForStaticHosting,
+            includeContentInEachHTMLFile: convert.hostingOptions.experimentalTransformForStaticHostingWithContent,
+            allowArbitraryCatalogDirectories: convert.featureFlags.allowArbitraryCatalogDirectories,
+            hostingBasePath: convert.hostingOptions.hostingBasePath,
             sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
-            dependencies: convert.dependencies
+            dependencies: convert.linkResolutionOptions.dependencies
         )
     }
 }
 
 package extension Docc.Convert {
     var bundleDiscoveryOptions: BundleDiscoveryOptions {
-        let additionalSymbolGraphFiles = symbolGraphFiles(in: additionalSymbolGraphDirectory)
+        let additionalSymbolGraphFiles = symbolGraphFiles(in: inputsAndOutputs.additionalSymbolGraphDirectory)
         
         return BundleDiscoveryOptions(
-            fallbackDisplayName: fallbackBundleDisplayName,
-            fallbackIdentifier: fallbackBundleIdentifier,
-            fallbackDefaultCodeListingLanguage: defaultCodeListingLanguage,
-            fallbackDefaultModuleKind: fallbackDefaultModuleKind,
+            fallbackDisplayName: infoPlistFallbacks.fallbackBundleDisplayName,
+            fallbackIdentifier: infoPlistFallbacks.fallbackBundleIdentifier,
+            fallbackDefaultCodeListingLanguage: infoPlistFallbacks.defaultCodeListingLanguage,
+            fallbackDefaultModuleKind: infoPlistFallbacks.fallbackDefaultModuleKind,
             additionalSymbolGraphFiles: additionalSymbolGraphFiles
         )
     }

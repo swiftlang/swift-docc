@@ -10,7 +10,7 @@
 
 public import ArgumentParser
 public import SwiftDocC
-public import Foundation
+import Foundation
 
 extension Docc {
     /// Merge a list of documentation archives into a combined archive.
@@ -146,33 +146,18 @@ extension Docc {
             var topicStyle: TopicsVisualStyle.Style = .detailedGrid
         }
         
-        public var archives: [URL] {
-            get { inputsAndOutputs.archives }
-            set { inputsAndOutputs.archives = newValue}
-        }
-        public var landingPageCatalog: URL? {
-            get { inputsAndOutputs.landingPageCatalog }
-            set { inputsAndOutputs.landingPageCatalog = newValue}
-        }
-        public var outputURL: URL {
-            inputsAndOutputs.outputURL
-        }
-        public var synthesizedLandingPageName: String {
-            synthesizedLandingPageOptions.name
-        }
-        public var synthesizedLandingPageKind: String {
-            synthesizedLandingPageOptions.kind
-        }
-        public var synthesizedLandingPageTopicsStyle: TopicsVisualStyle.Style {
-            synthesizedLandingPageOptions.topicStyle
-        }
-        
         public func run() async throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
             let convertAction = MergeAction(
-                archives: archives,
-                landingPageInfo: .synthesize(.init(name: synthesizedLandingPageName, kind: synthesizedLandingPageKind, style: synthesizedLandingPageTopicsStyle)),
-                outputURL: outputURL,
+                archives: inputsAndOutputs.archives,
+                landingPageInfo: .synthesize(
+                    .init(
+                        name: synthesizedLandingPageOptions.name,
+                        kind: synthesizedLandingPageOptions.kind,
+                        style: synthesizedLandingPageOptions.topicStyle
+                    )
+                ),
+                outputURL: inputsAndOutputs.outputURL,
                 fileManager: Self._fileManager
             )
             

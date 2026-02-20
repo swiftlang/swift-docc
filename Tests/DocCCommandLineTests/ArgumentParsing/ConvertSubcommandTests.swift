@@ -192,7 +192,7 @@ class ConvertSubcommandTests: XCTestCase {
             testBundleURL.path,
         ])
         
-        XCTAssertFalse(convertOptions.analyze)
+        XCTAssertFalse(convertOptions.diagnosticOptions.analyze)
     }
     
     func testInfoPlistFallbacks() throws {
@@ -202,9 +202,9 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
             ])
             
-            XCTAssertNil(convertOptions.fallbackBundleDisplayName)
-            XCTAssertNil(convertOptions.fallbackBundleIdentifier)
-            XCTAssertNil(convertOptions.defaultCodeListingLanguage)
+            XCTAssertNil(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName)
+            XCTAssertNil(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier)
+            XCTAssertNil(convertOptions.infoPlistFallbacks.defaultCodeListingLanguage)
         }
         
         // Are set when passed (old name, to be removed rdar://72449411)
@@ -216,9 +216,9 @@ class ConvertSubcommandTests: XCTestCase {
                 "--default-code-listing-language", "swift",
             ])
             
-            XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
-            XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
+            XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName, "DisplayName")
+            XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier, "com.example.test")
+            XCTAssertEqual(convertOptions.infoPlistFallbacks.defaultCodeListingLanguage, "swift")
         }
         
         // Are set when passed
@@ -230,9 +230,9 @@ class ConvertSubcommandTests: XCTestCase {
                 "--default-code-listing-language", "swift",
             ])
             
-            XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
-            XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
+            XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName, "DisplayName")
+            XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier, "com.example.test")
+            XCTAssertEqual(convertOptions.infoPlistFallbacks.defaultCodeListingLanguage, "swift")
         }
     }
     
@@ -243,7 +243,7 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
             ])
             
-            XCTAssertEqual(convertOptions.additionalSymbolGraphDirectory, nil)
+            XCTAssertEqual(convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory, nil)
         }
         
         // Is set when passed
@@ -255,7 +255,7 @@ class ConvertSubcommandTests: XCTestCase {
             ])
             
             XCTAssertEqual(
-                convertOptions.additionalSymbolGraphDirectory,
+                convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory,
                 URL(fileURLWithPath: "/path/to/folder-of-symbol-graph-files")
             )
         }
@@ -283,7 +283,7 @@ class ConvertSubcommandTests: XCTestCase {
             "--emit-lmdb-index",
         ])
         
-        XCTAssertTrue(convertOptions.emitLMDBIndex)
+        XCTAssertTrue(convertOptions.featureFlags.emitLMDBIndex)
         
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         
@@ -301,13 +301,13 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Verify the options
         
-        XCTAssertNil(convertOptions.documentationCatalog.url)
+        XCTAssertNil(convertOptions.inputsAndOutputs.documentationCatalog.url)
         
-        XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
-        XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
+        XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleDisplayName, "DisplayName")
+        XCTAssertEqual(convertOptions.infoPlistFallbacks.fallbackBundleIdentifier, "com.example.test")
         
         XCTAssertEqual(
-            convertOptions.additionalSymbolGraphDirectory,
+            convertOptions.inputsAndOutputs.additionalSymbolGraphDirectory,
             testBundleURL
         )
         
@@ -327,7 +327,7 @@ class ConvertSubcommandTests: XCTestCase {
     func testExperimentalEnableCustomTemplatesFlag() throws {
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
         let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
-        XCTAssertFalse(commandWithoutFlag.experimentalEnableCustomTemplates)
+        XCTAssertFalse(commandWithoutFlag.featureFlags.experimentalEnableCustomTemplates)
         XCTAssertFalse(actionWithoutFlag.experimentalEnableCustomTemplates)
 
         let commandWithFlag = try Docc.Convert.parse([
@@ -335,7 +335,7 @@ class ConvertSubcommandTests: XCTestCase {
             testBundleURL.path,
         ])
         let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
-        XCTAssertTrue(commandWithFlag.experimentalEnableCustomTemplates)
+        XCTAssertTrue(commandWithFlag.featureFlags.experimentalEnableCustomTemplates)
         XCTAssertTrue(actionWithFlag.experimentalEnableCustomTemplates)
     }
     
@@ -348,7 +348,7 @@ class ConvertSubcommandTests: XCTestCase {
         
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
         _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
-        XCTAssertFalse(commandWithoutFlag.enableExperimentalDeviceFrameSupport)
+        XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalDeviceFrameSupport)
         XCTAssertFalse(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
 
         let commandWithFlag = try Docc.Convert.parse([
@@ -356,7 +356,7 @@ class ConvertSubcommandTests: XCTestCase {
             testBundleURL.path,
         ])
         _ = try ConvertAction(fromConvertCommand: commandWithFlag)
-        XCTAssertTrue(commandWithFlag.enableExperimentalDeviceFrameSupport)
+        XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalDeviceFrameSupport)
         XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
     }
     
@@ -368,7 +368,7 @@ class ConvertSubcommandTests: XCTestCase {
         
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
         _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
-        XCTAssertFalse(commandWithoutFlag.enableExperimentalLinkHierarchySerialization)
+        XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
         XCTAssertFalse(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
 
         let commandWithFlag = try Docc.Convert.parse([
@@ -376,7 +376,7 @@ class ConvertSubcommandTests: XCTestCase {
             testBundleURL.path,
         ])
         _ = try ConvertAction(fromConvertCommand: commandWithFlag)
-        XCTAssertTrue(commandWithFlag.enableExperimentalLinkHierarchySerialization)
+        XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
         XCTAssertTrue(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
     }
     
@@ -388,7 +388,7 @@ class ConvertSubcommandTests: XCTestCase {
         
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
         _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
-        XCTAssertFalse(commandWithoutFlag.enableExperimentalOverloadedSymbolPresentation)
+        XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalOverloadedSymbolPresentation)
         XCTAssertFalse(FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
 
         let commandWithFlag = try Docc.Convert.parse([
@@ -396,7 +396,7 @@ class ConvertSubcommandTests: XCTestCase {
             testBundleURL.path,
         ])
         _ = try ConvertAction(fromConvertCommand: commandWithFlag)
-        XCTAssertTrue(commandWithFlag.enableExperimentalOverloadedSymbolPresentation)
+        XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalOverloadedSymbolPresentation)
         XCTAssertTrue(FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
     }
     
@@ -488,7 +488,7 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
             ])
             
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
+            XCTAssertFalse(convertOptions.hostingOptions.transformForStaticHosting)
         }
         
         do {
@@ -497,7 +497,7 @@ class ConvertSubcommandTests: XCTestCase {
                 "--transform-for-static-hosting",
             ])
             
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
+            XCTAssertFalse(convertOptions.hostingOptions.transformForStaticHosting)
         }
         
         do {
@@ -506,7 +506,7 @@ class ConvertSubcommandTests: XCTestCase {
                 "--no-transform-for-static-hosting",
             ])
             
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
+            XCTAssertFalse(convertOptions.hostingOptions.transformForStaticHosting)
         }
     }
     
@@ -520,7 +520,7 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
             ])
             
-            XCTAssertTrue(convertOptions.transformForStaticHosting)
+            XCTAssertTrue(convertOptions.hostingOptions.transformForStaticHosting)
         }
         
         do {
@@ -529,7 +529,7 @@ class ConvertSubcommandTests: XCTestCase {
                 "--transform-for-static-hosting",
             ])
             
-            XCTAssertTrue(convertOptions.transformForStaticHosting)
+            XCTAssertTrue(convertOptions.hostingOptions.transformForStaticHosting)
         }
         
         do {
@@ -538,7 +538,7 @@ class ConvertSubcommandTests: XCTestCase {
                 "--no-transform-for-static-hosting",
             ])
             
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
+            XCTAssertFalse(convertOptions.hostingOptions.transformForStaticHosting)
         }
     }
     
@@ -569,42 +569,42 @@ class ConvertSubcommandTests: XCTestCase {
     func testParameterValidationFeatureFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
-        XCTAssertEqual(noFlagConvert.enableParametersAndReturnsValidation, true)
+        XCTAssertEqual(noFlagConvert.featureFlags.enableParametersAndReturnsValidation, true)
         
         // It's allowed to pass the redundant "--enable-..." flag.
         let enabledFlagConvert = try Docc.Convert.parse(["--enable-parameters-and-returns-validation"])
-        XCTAssertEqual(enabledFlagConvert.enableParametersAndReturnsValidation, true)
+        XCTAssertEqual(enabledFlagConvert.featureFlags.enableParametersAndReturnsValidation, true)
         
         // Passing the "--disable-..." flag turns of the feature.
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-parameters-and-returns-validation"])
-        XCTAssertEqual(disabledFlagConvert.enableParametersAndReturnsValidation, false)
+        XCTAssertEqual(disabledFlagConvert.featureFlags.enableParametersAndReturnsValidation, false)
     }
     
     func testMentionedFeatureFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
-        XCTAssertEqual(noFlagConvert.enableMentionedIn, true)
+        XCTAssertEqual(noFlagConvert.featureFlags.enableMentionedIn, true)
         
         // It's allowed to pass the previous "--enable-experimental-..." flag.
         let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-mentioned-in"])
-        XCTAssertEqual(oldFlagConvert.enableMentionedIn, true)
+        XCTAssertEqual(oldFlagConvert.featureFlags.enableMentionedIn, true)
         
         // It's allowed to pass the redundant "--enable-..." flag.
         let enabledFlagConvert = try Docc.Convert.parse(["--enable-mentioned-in"])
-        XCTAssertEqual(enabledFlagConvert.enableMentionedIn, true)
+        XCTAssertEqual(enabledFlagConvert.featureFlags.enableMentionedIn, true)
         
         // Passing the "--disable-..." flag turns of the feature.
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-mentioned-in"])
-        XCTAssertEqual(disabledFlagConvert.enableMentionedIn, false)
+        XCTAssertEqual(disabledFlagConvert.featureFlags.enableMentionedIn, false)
     }
     
     func testStaticHostingWithContentFlag() throws {
         // The feature is disabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
-        XCTAssertEqual(noFlagConvert.experimentalTransformForStaticHostingWithContent, false)
+        XCTAssertEqual(noFlagConvert.hostingOptions.experimentalTransformForStaticHostingWithContent, false)
         
         let enabledFlagConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content"])
-        XCTAssertEqual(enabledFlagConvert.experimentalTransformForStaticHostingWithContent, true)
+        XCTAssertEqual(enabledFlagConvert.hostingOptions.experimentalTransformForStaticHostingWithContent, true)
         
         // The '...-transform...-with-content' flag also implies the base '--transform-...' flag.
         do {
@@ -620,8 +620,8 @@ class ConvertSubcommandTests: XCTestCase {
             Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
             
             let conflictingFlagsConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content", "--no-transform-for-static-hosting"])
-            XCTAssertEqual(conflictingFlagsConvert.experimentalTransformForStaticHostingWithContent, true)
-            XCTAssertEqual(conflictingFlagsConvert.transformForStaticHosting, true)
+            XCTAssertEqual(conflictingFlagsConvert.hostingOptions.experimentalTransformForStaticHostingWithContent, true)
+            XCTAssertEqual(conflictingFlagsConvert.hostingOptions.transformForStaticHosting, true)
             
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines), """
             warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
