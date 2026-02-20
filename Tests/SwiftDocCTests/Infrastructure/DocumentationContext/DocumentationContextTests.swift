@@ -606,30 +606,101 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(downloadsAfter.first?.variants.values.first?.lastPathComponent, "intro.png")
     }
 
-    func testDetectsReferenceCollision() async throws {
-        let (_, context) = try await testBundleAndContext(named: "TestBundleWithDupe")
+    func testWarnsAboutTutorialFileNameCollision() async throws {
+        let minimumTutorialContent = """
+        @Tutorial {
+           @Intro(title: "Some intro title") {}
+           @Section(title: "Some section title") {
+              @Steps {}
+           }
+        }
+        """
+        
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            TextFile(name: "TableOfContents.tutorial", utf8Content: """
+            @Tutorials(name: "Something") {
+               @Intro(title: "Some intro title") {}
+               @Chapter(name: "Some chapter name") {
+                  @Image(source: chapter-1, alt: "Some description of this image")
 
-        let problemWithDuplicate = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+                  @TutorialReference(tutorial: "doc:Something")
+               }
+            }
+            """),
+            DataFile(name: "chapter-1.png", data: Data()),
+            
+            Folder(name: "First", content: [
+                TextFile(name: "Something.tutorial", utf8Content: minimumTutorialContent),
+            ]),
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    Folder(name: "Second", content: [
+                        TextFile(name: "something.tutorial", utf8Content: minimumTutorialContent),
+                    ])
+                ])
+            ])
+        ]))
 
-        XCTAssertEqual(problemWithDuplicate.count, 1)
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        
+        XCTAssertEqual(problem.diagnostic.source?.path, "/unit-test.docc/path/to/Second/something.tutorial",
+                       "Deterministically warn about the file whose path sorts last")
+        XCTAssertEqual(problem.diagnostic.summary, "Multiple tutorials with output path '/tutorials/unit-test/something'; this tutorial will be skipped")
+        XCTAssertEqual(problem.diagnostic.explanation, """
+        The relative path of a tutorial in the rendered documentation is the name of its markup file, without the '.tutorial' extension, \
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'something)'.
+        Because the pages for 'path/to/Second/something.tutorial' and 'First/Something.tutorial' would have the same web URL, \
+        DocC can only create a web page for one of them; deterministically keeping 'First/Something.tutorial' and dropping 'path/to/Second/something.tutorial'.
+        """)
+        
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), [
+            "Rename 'path/to/Second/something.tutorial'", // The file that the warning is about; which DocC deterministically skips
+            "Rename 'First/Something.tutorial'"           // The other file; which DocC deterministically keeps
+        ])
 
-        let localizedSummary = try XCTUnwrap(problemWithDuplicate.first?.diagnostic.summary)
-        XCTAssertEqual(localizedSummary, "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped")
-
+        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other tutorial with same filename here"])
+        XCTAssertEqual(problem.diagnostic.notes.map(\.source.path), ["/unit-test.docc/First/Something.tutorial"],
+                       "The single note should refer to the other file with the same output path")
     }
     
-    func testDetectsMultipleMarkdownFilesWithSameName() async throws {
-        let (_, context) = try await testBundleAndContext(named: "TestBundleWithDupMD")
+    func testWarnsAboutMarkdownFileCollision() async throws {
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            Folder(name: "First", content: [
+                TextFile(name: "Something.md", utf8Content: "# First"),
+            ]),
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    Folder(name: "Second", content: [
+                        TextFile(name: "Something.md", utf8Content: "# Second"),
+                    ])
+                ])
+            ])
+        ]))
 
-        let problemWithDuplicateReference = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        
+        XCTAssertEqual(problem.diagnostic.source?.path, "/unit-test.docc/path/to/Second/Something.md",
+                       "Deterministically warn about the file whose path sorts last")
+        XCTAssertEqual(problem.diagnostic.summary, "Multiple articles with output path '/documentation/unit-test/something'; this article will be skipped")
+        XCTAssertEqual(problem.diagnostic.explanation!, """
+        The relative path of an article in the rendered documentation is the name of its markup file, without the '.md' extension, \
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'something)'.
+        Because the pages for 'path/to/Second/Something.md' and 'First/Something.md' would have the same web URL, \
+        DocC can only create a web page for one of them; deterministically keeping 'First/Something.md' and dropping 'path/to/Second/Something.md'.
+        """)
+        
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), [
+            "Rename 'path/to/Second/Something.md'", // The file that the warning is about; which DocC deterministically skips
+            "Rename 'First/Something.md'"           // The other file; which DocC deterministically keeps
+        ])
 
-        XCTAssertEqual(problemWithDuplicateReference.count, 2)
-
-        let localizedSummary = try XCTUnwrap(problemWithDuplicateReference.first?.diagnostic.summary)
-        XCTAssertEqual(localizedSummary, "Redeclaration of \'overview.md\'; this file will be skipped")
-
-        let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.summary)
-        XCTAssertEqual(localizedSummarySecond, "Redeclaration of \'overview.md\'; this file will be skipped")
+        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other article with same filename here"])
+        XCTAssertEqual(problem.diagnostic.notes.map(\.source.path), ["/unit-test.docc/First/Something.md"],
+                       "The single note should refer to the other file with the same output path")
     }
     
     func testUsesMultipleDocExtensionFilesWithSameName() async throws {
@@ -1827,7 +1898,14 @@ let expected = """
         
         let (_, context) = try await loadBundle(catalog: catalog)
 
-        XCTAssertEqual(context.problems.map(\.diagnostic.summary), ["Redeclaration of 'Hello world.md'; this file will be skipped"])
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        XCTAssertEqual(problem.diagnostic.summary, "Multiple articles with output path '/documentation/unit-test/hello-world'; this article will be skipped")
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), [
+            "Rename 'Hello-world.md'",
+            "Rename 'Hello world.md'",
+        ])
         
         XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
             "doc://unit-test/documentation/unit-test",

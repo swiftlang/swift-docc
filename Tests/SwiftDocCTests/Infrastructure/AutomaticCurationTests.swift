@@ -1317,7 +1317,7 @@ class AutomaticCurationTests: XCTestCase {
             # C Article
             """),
 
-            TextFile(name: "c-article.md", utf8Content: """
+            TextFile(name: "c-article-2.md", utf8Content: """
             # c Article2
             """),
 
@@ -1325,7 +1325,7 @@ class AutomaticCurationTests: XCTestCase {
             # A Article
             """),
 
-            TextFile(name: "a-article.md", utf8Content: """
+            TextFile(name: "a-article-2.md", utf8Content: """
             # a Article2
             """),
 
@@ -1333,7 +1333,7 @@ class AutomaticCurationTests: XCTestCase {
             # B Article
             """),
 
-            TextFile(name: "b-article.md", utf8Content: """
+            TextFile(name: "b-article-2.md", utf8Content: """
             # b Article2
             """),
 
@@ -1341,7 +1341,6 @@ class AutomaticCurationTests: XCTestCase {
             # k Article
             """),
             
-
             TextFile(name: "random-article.md", utf8Content: """
             # Z Article
             """),
