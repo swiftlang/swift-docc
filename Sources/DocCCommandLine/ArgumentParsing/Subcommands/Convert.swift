@@ -70,7 +70,7 @@ extension Docc {
             var providedOutputURL: URL?
             
             func validate() throws {
-                warnAboutDeprecatedOptionIfNeeded("additional-symbol-graph-files", message: "Use '--additional-symbol-graph-dir' instead.")
+                warnAboutDeprecatedOptionIfNeeded("additional-symbol-graph-files", message: "use '--additional-symbol-graph-dir' instead")
                 
                 if let outputParent = providedOutputURL?.deletingLastPathComponent() {
                     // Verify that the intermediate directories exist for the output location.
@@ -192,8 +192,9 @@ extension Docc {
                 if experimentalTransformForStaticHostingWithContent, !transformForStaticHosting {
                     warnAboutDiagnostic(.init(
                         severity: .warning,
-                        identifier: "org.swift.docc.IgnoredNoTransformForStaticHosting",
-                        summary: "Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect."
+                        identifier: "IgnoredNoTransformForStaticHostingFlag",
+                        summary: "'--no-transform-for-static-hosting' is ignored when '--experimental-transform-for-static-hosting-with-content' is passed",
+                        explanation: "Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. In this case DocC favors the opt-in over the opt-out and ignored the '--no-transform-for-static-hosting' flag."
                     ))
                     transformForStaticHosting = true
                 }
@@ -258,27 +259,84 @@ extension Docc {
                 help: "Format output to the console intended for an IDE or other tool to parse.")
             var formatConsoleOutputForTools = false
             
-            @Flag(help: "Treat warnings as errors")
+            @Flag(help: "Treat all warnings as errors")
             var warningsAsErrors = false
+            
+            @Option(
+                name: [
+                    .customLong("Werror"), // This matches Swift's spellings
+                    .customLong("Werror", withSingleDash: true), // This matches Clang's spellings
+                ],
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp("Treat this diagnostic group as an error", valueName: "diagnostic-id")
+            )
+            var warningGroupsWithErrorSeverity: [String] = []
+            
+            @Option(
+                name: [
+                    .customLong("Wwarning"), // This matches Swift's spellings
+                    .customLong("Wwarning", withSingleDash: true), // This matches Clang's spellings
+                ],
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp(
+                    "Treat this diagnostic group as a warning",
+                    discussion: """
+                    If you pass '--warnings-as-errors' you can use this flag to lower one or more specific groups of diagnostics to a warnings severity.
+                    """,
+                    valueName: "diagnostic-id"
+                )
+            )
+            var warningGroupsWithWarningSeverity: [String] = []
 
-            func validate() throws {
+            mutating func validate() throws {
                 if analyze && diagnosticLevel != nil {
                     warnAboutDiagnostic(.init(
                         severity: .information,
-                        identifier: "org.swift.docc.IgnoredDiagnosticsFilter",
-                        summary: "'--diagnostic-filter' is ignored when '--analyze' is set."
+                        identifier: "IgnoredDiagnosticsFilterFlag",
+                        summary: "'--diagnostic-filter' is ignored when '--analyze' is passed",
+                        explanation: "Passing '--analyze' implies '--diagnostic-filter information'. "
                     ))
                 }
         
-                if let level = diagnosticLevel, DiagnosticSeverity(level) == nil {
-                    warnAboutDiagnostic(.init(
-                        severity: .information,
-                        identifier: "org.swift.docc.UnknownDiagnosticLevel",
-                        summary: """
-                            "\(level)" is not a valid diagnostic severity.
-                            \(Self.supportedDiagnosticLevelsMessage)
-                            """
-                    ))
+                if let providedLevel = diagnosticLevel, DiagnosticSeverity(providedLevel) == nil {
+                    let nearMisses = NearMiss.bestMatches(for: DiagnosticSeverity.supportedStringValues, against: providedLevel)
+                    
+                    var summary = "'\(providedLevel)' is not a valid diagnostic severity"
+                    if nearMisses.count == 1 {
+                        summary += "; did you mean '\(nearMisses[0])'?"
+                    }
+                    
+                    warnAboutProblem(.init(
+                        diagnostic: .init(
+                            severity: .information,
+                            identifier: "UnrecognizedDiagnosticLevel",
+                            summary: summary,
+                            explanation: Self.supportedDiagnosticLevelsMessage
+                        ),
+                        possibleSolutions: nearMisses.map { suggestedLevel in
+                            Solution(summary: "Specify '\(suggestedLevel)' instead", replacements: [] /* can't make replacements for the command line invocation */)
+                        })
+                    )
+                }
+                
+                if !warningGroupsWithErrorSeverity.isEmpty,
+                   !warningGroupsWithWarningSeverity.isEmpty
+                {
+                    // Check if there's overlap between the two diagnostic levels
+                    let diagnosticIDsWithConflictingSeverities = Set(warningGroupsWithErrorSeverity).intersection(warningGroupsWithWarningSeverity)
+                    if !diagnosticIDsWithConflictingSeverities.isEmpty {
+                        for diagnosticID in diagnosticIDsWithConflictingSeverities.sorted() {
+                            warnAboutDiagnostic(.init(
+                                severity: .information,
+                                identifier: "ConflictingDiagnosticSeverity",
+                                summary: "Conflicting severity (both '--Wwarning' and '--Werror') for diagnostic group '\(diagnosticID)'"
+                            ))
+                        }
+                        
+                        // Because we don't know which severity was specified last, remove the diagnostic ID from both groups
+                        warningGroupsWithErrorSeverity.removeAll(where: { diagnosticIDsWithConflictingSeverities.contains($0) })
+                        warningGroupsWithWarningSeverity.removeAll(where: { diagnosticIDsWithConflictingSeverities.contains($0) })
+                    }
                 }
             }
         
@@ -296,7 +354,19 @@ extension Docc {
             get { diagnosticOptions.warningsAsErrors }
             set { diagnosticOptions.warningsAsErrors = newValue }
         }
-
+        
+        /// A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
+        public var diagnosticIDsWithWarningSeverity: [String] {
+            get { diagnosticOptions.warningGroupsWithWarningSeverity }
+            set { diagnosticOptions.warningGroupsWithWarningSeverity = newValue }
+        }
+        
+        /// A list of diagnostic identifiers that are explicitly raised to an "error" severity.
+        public var diagnosticIDsWithErrorSeverity: [String] {
+            get { diagnosticOptions.warningGroupsWithErrorSeverity }
+            set { diagnosticOptions.warningGroupsWithErrorSeverity = newValue }
+        }
+        
         /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
         public var formatConsoleOutputForTools: Bool {
             get { diagnosticOptions.formatConsoleOutputForTools }
@@ -370,7 +440,7 @@ extension Docc {
             
             func validate() throws {
                 for deprecatedOptionName in ["display-name", "bundle-identifier", "bundle-version"] {
-                    warnAboutDeprecatedOptionIfNeeded(deprecatedOptionName, message: "Use '--fallback-\(deprecatedOptionName)' instead.")
+                    warnAboutDeprecatedOptionIfNeeded(deprecatedOptionName, message: "use '--fallback-\(deprecatedOptionName)' instead")
                 }
             }
         }
@@ -441,16 +511,18 @@ extension Docc {
                     guard fileManager.fileExists(atPath: dependency.path, isDirectory: &isDirectory) else {
                         Convert.warnAboutDiagnostic(.init(
                             severity: .warning,
-                            identifier: "org.swift.docc.Dependency.NotFound",
-                            summary: "No documentation archive exist at '\(dependency.path)'."
+                            identifier: "DependencyNotFound",
+                            summary: "Dependency archive '\(dependency.lastPathComponent)' does not exist at '\(dependency.path)'",
+                            explanation: "Without the dependency's documentation archive, DocC cannot resolve links to its pages."
                         ))
                         continue
                     }
                     guard isDirectory.boolValue else {
                         Convert.warnAboutDiagnostic(.init(
                             severity: .warning,
-                            identifier: "org.swift.docc.Dependency.IsNotDirectory",
-                            summary: "Dependency at '\(dependency.path)' is not a directory."
+                            identifier: "DependencyIsNotDirectory",
+                            summary: "Dependency archive '\(dependency.lastPathComponent)' is not a directory at '\(dependency.path)'",
+                            explanation: "A documentation archive is a directory containing data files for each page and metadata files that aggregate certain specialized information."
                         ))
                         continue
                     }
@@ -460,8 +532,9 @@ extension Docc {
                     if !hasLinkableEntitiesFile {
                         Convert.warnAboutDiagnostic(.init(
                             severity: .warning,
-                            identifier: "org.swift.docc.Dependency.MissingLinkableEntities",
-                            summary: "Dependency at '\(dependency.path)' doesn't contain a is not a '\(linkableEntitiesFile.lastPathComponent)' file."
+                            identifier: "DependencyMissingLinkableEntities",
+                            summary: "Missing '\(ConvertFileWritingConsumer.linkableEntitiesFileName)' file in dependency archive at '\(dependency.path)'",
+                            explanation: "Without the '\(ConvertFileWritingConsumer.linkableEntitiesFileName)' data, DocC cannot look up information like titles, abstracts, or deprecation status about pages in the '\(dependency.lastPathComponent)' dependency that you link to."
                         ))
                     }
                     let linkableHierarchyFile = dependency.appendingPathComponent(ConvertFileWritingConsumer.linkHierarchyFileName, isDirectory: false)
@@ -469,8 +542,9 @@ extension Docc {
                     if !hasLinkableHierarchyFile {
                         Convert.warnAboutDiagnostic(.init(
                             severity: .warning,
-                            identifier: "org.swift.docc.Dependency.MissingLinkHierarchy",
-                            summary: "Dependency at '\(dependency.path)' doesn't contain a is not a '\(linkableHierarchyFile.lastPathComponent)' file."
+                            identifier: "DependencyMissingLinkHierarchy",
+                            summary: "Missing '\(ConvertFileWritingConsumer.linkHierarchyFileName)' file in dependency archive at '\(dependency.path)'",
+                            explanation: "Without the '\(ConvertFileWritingConsumer.linkHierarchyFileName)' data, DocC cannot resolve links to pages (or on-page landmarks) in the '\(dependency.lastPathComponent)' dependency."
                         ))
                     }
                     if hasLinkableEntitiesFile && hasLinkableHierarchyFile {
@@ -571,12 +645,12 @@ extension Docc {
         
             @available(*, deprecated) // This deprecation silences the access of the deprecated `index` flag.
             mutating func validate() throws {
-                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-objective-c-support", message: "This flag has no effect. Objective-C support is enabled by default.")
-                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-json-index", message: "This flag has no effect. The JSON render is emitted by default.")
-                Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "This flag has no effect. Doxygen support is enabled by default.")
-                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-parameters-and-returns-validation", message: "This flag has no effect. Parameter and return value validation is enabled by default.")
-                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-mentioned-in", message: "This flag has no effect. Automatic mentioned in sections is enabled by default.")
-                Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "Use '--emit-lmdb-index' indead.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-objective-c-support", message: "Objective-C support is enabled by default")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-json-index", message: "JSON index is emitted by default")
+                Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "Doxygen support is enabled by default")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-parameters-and-returns-validation", message: "parameter and return value validation is enabled by default")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-mentioned-in", message: "automatic mentioned in sections is enabled by default")
+                Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "use '--emit-lmdb-index' instead")
                 emitLMDBIndex = emitLMDBIndex
             }
         }
@@ -687,49 +761,33 @@ extension Docc {
         }
 
         public mutating func validate() throws {
-            if transformForStaticHosting {
-                if let templateURL = templateOption.templateURL {
-                    let neededFileName: String
-
-                    if hostingBasePath != nil {
-                        neededFileName = HTMLTemplate.templateFileName.rawValue
-                    }else {
-                        neededFileName = HTMLTemplate.indexFileName.rawValue
-                    }
-
-                    let indexTemplate = templateURL.appendingPathComponent(neededFileName, isDirectory: false)
-                    if !FileManager.default.fileExists(atPath: indexTemplate.path) {
-                        throw TemplateOption.invalidHTMLTemplateError(
-                            path: templateURL.path,
-                            expectedFile: neededFileName
-                        )
-                    }
-
+            guard transformForStaticHosting else {
+                return
+            }
+                
+            if let templateURL = templateOption.templateURL {
+                let requiredFileName = if hostingBasePath != nil {
+                    HTMLTemplate.templateFileName.rawValue
                 } else {
-                    let invalidOrMissingTemplateDiagnostic = Diagnostic(
-                        severity: .warning,
-                        identifier: "org.swift.docc.MissingHTMLTemplate",
-                        summary: "Invalid or missing HTML template directory",
-                        explanation: """
-                            Invalid or missing HTML template directory, relative to the docc \
-                            executable, at: '\(templateOption.defaultTemplateURL.path)'.
-                            Set the '\(TemplateOption.environmentVariableKey)' environment variable \
-                            to use a custom HTML template.
-                            
-                            Conversion will continue, but the produced DocC archive will not be \
-                            compatible with static hosting environments.
-                            
-                            Pass the '--no-transform-for-static-hosting' flag to silence this warning.
-                            """
-                    )
-                    
-                    print(
-                        DiagnosticConsoleWriter.formattedDescription(for: invalidOrMissingTemplateDiagnostic),
-                        to: &Self._errorLogHandle
-                    )
-                    
-                    transformForStaticHosting = false
+                    HTMLTemplate.indexFileName.rawValue
                 }
+                
+                try TemplateOption.validateRequiredFile(fileName: requiredFileName, inHTMLTemplateAt: templateURL)
+            } else {
+                Convert.warnAboutDiagnostic(Diagnostic(
+                    severity: .warning,
+                    identifier: "MissingHTMLTemplate",
+                    summary: "Missing HTML template directory",
+                    explanation: """
+                        Missing HTML template directory, relative to the docc executable, at: '\(TemplateOption.defaultTemplateURL.path)'.
+                        Conversion will continue, but the output archive will not be compatible with static hosting environments.
+                        
+                        Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
+                        Pass the '--no-transform-for-static-hosting' flag to silence this warning.
+                        """
+                ))
+                
+                transformForStaticHosting = false
             }
         }
 
@@ -746,14 +804,21 @@ extension Docc {
             }
             warnAboutDiagnostic(.init(
                 severity: .warning,
-                identifier: "org.swift.docc.DeprecatedOption",
-                summary: "'--\(deprecatedOption)' is deprecated. \(message)"
+                identifier: "DeprecatedCommandLineOption",
+                summary: "'--\(deprecatedOption)' is  \(message)"
             ))
         }
         
         private static func warnAboutDiagnostic(_ diagnostic: Diagnostic) {
             print(
                 DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: _diagnosticFormattingOptions),
+                to: &_errorLogHandle
+            )
+        }
+        
+        private static func warnAboutProblem(_ problem: Problem) {
+            print(
+                DiagnosticConsoleWriter.formattedDescription(for: problem, options: _diagnosticFormattingOptions),
                 to: &_errorLogHandle
             )
         }

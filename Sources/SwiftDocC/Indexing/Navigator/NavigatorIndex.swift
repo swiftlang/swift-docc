@@ -593,6 +593,7 @@ extension NavigatorIndex {
                 
                 navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, bundleIdentifier: bundleIdentifier)
             } catch {
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                 problems.append(error.problem(source: outputURL,
                                               severity: .error,
                                               summaryPrefix: "The folder couldn't be processed correctly."))
@@ -1031,6 +1032,7 @@ extension NavigatorIndex {
                     let renderIndexData = try jsonEncoder.encode(renderIndex)
                     try renderIndexData.write(to: jsonNavigatorIndexURL)
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     self.problems.append(
                         error.problem(
                             source: nil,
@@ -1058,6 +1060,7 @@ extension NavigatorIndex {
                     )
                     navigatorIndex.environment = environment
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     problems.append(
                         error.problem(
                             source: nil,
@@ -1080,6 +1083,7 @@ extension NavigatorIndex {
                     database = try environment.openDatabase(named: "index", flags: [.create])
                     navigatorIndex.database = database
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     problems.append(
                         error.problem(
                             source: nil,
@@ -1100,6 +1104,7 @@ extension NavigatorIndex {
                     information = try environment.openDatabase(named: "information", flags: [.create])
                     navigatorIndex.information = information
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     problems.append(
                         error.problem(
                             source: nil,
@@ -1120,6 +1125,7 @@ extension NavigatorIndex {
                     availability = try environment.openDatabase(named: "availability", flags: [.create])
                     navigatorIndex.availability = availability
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     problems.append(
                         error.problem(
                             source: nil,
@@ -1137,6 +1143,7 @@ extension NavigatorIndex {
                     try availability.put(key: newID, value: entryIDs)
                 }
             } catch {
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                 problems.append(
                     error.problem(
                         source: nil,
@@ -1183,10 +1190,12 @@ extension NavigatorIndex {
                 // `put(records:)` throws only `LMDB.Database.NodeError.errorForPath`
                 catch LMDB.Database.NodeError.errorForPath(let path, let error) {
                     if (error as? LMDB.Error) == LMDB.Error.keyExists {
+                        // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                         self.problems.append(error.problem(source: self.outputURL,
                                                            severity: .information,
                                                            summaryPrefix: "Duplicated path found for \(path)"))
                     } else {
+                        // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                         self.problems.append(error.problem(source: self.outputURL,
                                                            severity: .warning,
                                                            summaryPrefix: "The navigator index failed to map the data: \(error.localizedDescription)"))
@@ -1194,6 +1203,7 @@ extension NavigatorIndex {
                 }
 
             } catch {
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                 problems.append(error.problem(source: outputURL,
                                               severity: .warning,
                                               summaryPrefix: "Couldn't write the navigator tree to the disk"))
@@ -1205,6 +1215,7 @@ extension NavigatorIndex {
                 let encoded = try plistEncoder.encode(navigatorIndex.availabilityIndex)
                 try encoded.write(to: outputURL.appendingPathComponent("availability.index"))
             } catch {
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                 problems.append(error.problem(source: outputURL,
                                               severity: .warning,
                                               summaryPrefix: "Couldn't write the availability index to the disk"))
@@ -1219,11 +1230,13 @@ extension NavigatorIndex {
                 try txn.put(key: NavigatorIndex.itemsIndexKey, value: counter, in: information)
                 try txn.commit()
             } catch {
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                 problems.append(error.problem(source: outputURL,
                                               severity: .error,
                                               summaryPrefix: "LMDB failed to store the content"))
             }
                         
+            // FIXME: These aren't about issues with the developer's documentation. We should either remove these or find a different means to pass this information.
             var diagnostic = Diagnostic(source: outputURL,
                                              severity: .information,
                                              range: nil,
@@ -1241,6 +1254,7 @@ extension NavigatorIndex {
             problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
             problems.append(problem)
             
+            // FIXME: This could be somewhat slow to compute and won't be displayed with the default diagnostic level.
             let treeString = root.dumpTree()
             diagnostic = Diagnostic(source: outputURL,
                                          severity: .information,
@@ -1284,6 +1298,7 @@ extension NavigatorIndex {
                     let renderNode = try RenderNode.decode(fromJSON: data)
                     try index(renderNode: renderNode)
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     problems.append(error.problem(source: file,
                                                   severity: .warning,
                                                   summaryPrefix: "RenderNode indexing process failed"))

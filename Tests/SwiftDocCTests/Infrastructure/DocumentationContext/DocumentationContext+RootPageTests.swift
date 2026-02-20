@@ -1,93 +1,132 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
 import DocCCommon
 import Markdown
 
-class DocumentationContext_RootPageTests: XCTestCase {
-    func testArticleOnlyCatalogWithExplicitTechnologyRoot() async throws {
-        let (_, context) = try await loadBundle(catalog:
-            Folder(name: "no-sgf-test.docc", content: [
-                // Root page for the collection
-                TextFile(name: "ReleaseNotes.md", utf8Content: """
-                # Release Notes
+struct DocumentationContext_RootPageTests {
+    @Test
+    func explicitTechnologyRootBecomesRootInArticleOnlyDocumentation() async throws {
+        let context = try await load(catalog:
+            Folder(name: "some-article-only-catalog.docc", content: [
+                TextFile(name: "Something.md", utf8Content: """
+                # Some title
                 @Metadata {
                    @TechnologyRoot
                 }
-                Learn about recent changes.
+                This article is explicitly defined as the root of the documentation hierarchy
+                
                 ## Topics
-                ### Release Notes
-                 - <doc:documentation/TechnologyX/ReleaseNotes-1.2>
                 """),
-                // A curated article
-                TextFile(name: "ReleaseNotes 1.2.md", utf8Content: """
-                # Release Notes for version 1.2
-                Learn about changes in version 1.2
-                ## See Also
-                 - <doc:documentation/TechnologyX/ReleaseNotes>
+                
+                TextFile(name: "SomethingElse.md", utf8Content: """
+                # Some other title
                 """),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
         )
         
-        // Verify all articles were loaded in the context
-        XCTAssertEqual(context.knownIdentifiers.count, 2)
+        #expect(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        // Verify /documentation/ReleaseNotes is a root node
-        XCTAssertEqual(context.rootModules.map({ $0.url.path }), ["/documentation/ReleaseNotes"])
+        #expect(context.knownIdentifiers.count == 2)
         
-        // Verify the root was crawled
-        XCTAssertEqual(context.topicGraph.edges[ResolvedTopicReference(bundleID: "com.test.example", path: "/documentation/ReleaseNotes", sourceLanguage: .swift)]?.map({ $0.url.path }),
-                       ["/documentation/TestBundle/ReleaseNotes-1.2"])
+        let rootReference = try #require(context.soleRootModuleReference)
+        #expect(rootReference.path == "/documentation/Something")
+        
+        #expect(context.topicGraph.edges[rootReference]?.map(\.url.path) == ["/documentation/some-article-only-catalog/SomethingElse"])
     }
 
-    func testWarnsAboutExtensionFileTechnologyRoot() async throws {
-        let (_, context) = try await loadBundle(catalog:
-            Folder(name: "no-sgf-test.docc", content: [
-                // Root page for the collection
-                TextFile(name: "ReleaseNotes.md", utf8Content: """
-                # Release Notes
+    @Test
+    func warnsAboutTechnologyRootInExtensionFile() async throws {
+        let context = try await load(catalog:
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                    makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
+                ])),
+                
+                // One incorrect technology root for the module
+                TextFile(name: "Root.md", utf8Content: """
+                # ``SomeModule``
                 @Metadata {
                    @TechnologyRoot
                 }
-                Learn about recent changes.
-                ## Topics
-                ### Release Notes
-                 - <doc:documentation/TechnologyX/ReleaseNotes-1.2>
+                Documentation extension files don't support TechnologyRoot directives
                 """),
-                // A documentation extension file
-                TextFile(name: "MyClass.md", utf8Content: """
-                # ``ReleaseNotes/MyClass``
+                
+                // Another technology root for the symbol
+                TextFile(name: "SomeClass.md", utf8Content: """
+                # ``SomeModule/SomeClass``
                 @Metadata {
                    @TechnologyRoot
                 }
+                Documentation extension files don't support TechnologyRoot directives
                 """),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ])
         )
         
-        // Verify that we emit a warning when trying to make a symbol a root page
-        let technologyRootProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.UnexpectedTechnologyRoot" }))
-        XCTAssertEqual(technologyRootProblem.diagnostic.source, URL(fileURLWithPath: "/no-sgf-test.docc/MyClass.md"))
-        XCTAssertEqual(technologyRootProblem.diagnostic.range?.lowerBound.line, 3)
-        let solution = try XCTUnwrap(technologyRootProblem.possibleSolutions.first)
-        XCTAssertEqual(solution.replacements.first?.range.lowerBound.line, 3)
-        XCTAssertEqual(solution.replacements.first?.range.upperBound.line, 3)
+        // Ensure a stable order of the diagnostics by sorting on their file names
+        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
+        #expect(problems.map(\.diagnostic.identifier) == ["TechnologyRootInExtensionFile", "TechnologyRootInExtensionFile"],
+                "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        // Verify the problem about the module extension file
+        do {
+            let problem = try #require(problems.first)
+            #expect(problem.diagnostic.summary == "TechnologyRoot directive cannot modify documentation extension file")
+            #expect(problem.diagnostic.explanation == """
+                Symbols inherently belong to a module (in this case 'SomeModule') which is already the root of the documentation hierarchy.
+                A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages (in this case the 'SomeModule' module).
+                The 'SomeModule' module is already the root of the documentation hierarchy. Specifying a TechnologyRoot directive has no effect.
+                """)
+            #expect(problem.diagnostic.source?.lastPathComponent == "Root.md")
+            let modulePage = try #require(context.soleRootModuleReference.flatMap { context.documentationCache[$0] })
+            #expect(problem.diagnostic.range == modulePage.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
+            
+            #expect(problem.possibleSolutions.count == 1)
+            let solution = try #require(problem.possibleSolutions.first)
+            #expect(solution.summary == "Remove TechnologyRoot directive")
+            #expect(solution.replacements.count == 1)
+            #expect(solution.replacements.first?.range == modulePage.metadata?.technologyRoot?.originalMarkup.range)
+            #expect(solution.replacements.first?.replacement == "", "Should suggest to remove the TechnologyRoot directive")
+        }
+        
+        // Verify the problem about the class extension file
+        do {
+            let problem = try #require(problems.last)
+            #expect(problem.diagnostic.summary == "TechnologyRoot directive cannot modify documentation extension file")
+            #expect(problem.diagnostic.explanation == """
+                Symbols inherently belong to a module (in this case 'SomeModule') which is already the root of the documentation hierarchy.
+                A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages (in this case the 'SomeClass' class).
+                If the 'SomeClass' class became a root page it would move out of the 'SomeModule' module, creating a disjoint documentation hierarchy with two possible starting points, \
+                resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+                """)
+            #expect(problem.diagnostic.source?.lastPathComponent == "SomeClass.md")
+            let classPage = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeClass" }).flatMap { context.documentationCache[$0] })
+            #expect(problem.diagnostic.range == classPage.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
+            
+            #expect(problem.possibleSolutions.count == 1)
+            let solution = try #require(problem.possibleSolutions.first)
+            #expect(solution.summary == "Remove TechnologyRoot directive")
+            #expect(solution.replacements.count == 1)
+            #expect(solution.replacements.first?.range == classPage.metadata?.technologyRoot?.originalMarkup.range)
+            #expect(solution.replacements.first?.replacement == "", "Should suggest to remove the TechnologyRoot directive")
+        }
     }
     
-    func testSingleArticleWithoutTechnologyRootDirective() async throws {
-        let (_, context) = try await loadBundle(catalog:
+    @Test
+    func loneArticleBecomesRootPageWithoutTechnologyRootDirective() async throws {
+        let context = try await load(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "Article.md", utf8Content: """
                 # My article
@@ -97,14 +136,15 @@ class DocumentationContext_RootPageTests: XCTestCase {
             ])
         )
         
-        XCTAssertEqual(context.knownPages.map(\.absoluteString), ["doc://Something/documentation/Article"])
-        XCTAssertEqual(context.rootModules.map(\.absoluteString), ["doc://Something/documentation/Article"])
+        #expect(context.knownPages.map(\.absoluteString) == ["doc://Something/documentation/Article"])
+        #expect(context.rootModules.map(\.absoluteString) == ["doc://Something/documentation/Article"])
         
-        XCTAssertEqual(context.problems.count, 0)
+        #expect(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
     }
     
-    func testMultipleArticlesWithoutTechnologyRootDirective() async throws {
-        let (_, context) = try await loadBundle(catalog:
+    @Test
+    func synthesizedRootPageForMultipleArticlesWithoutTechnologyRootDirective() async throws {
+        let context = try await load(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "First.md", utf8Content: """
                 # My first article
@@ -126,19 +166,20 @@ class DocumentationContext_RootPageTests: XCTestCase {
             ])
         )
         
-        XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
+        #expect(context.knownPages.map(\.absoluteString).sorted() == [
             "doc://Something/documentation/Something", // A synthesized root
             "doc://Something/documentation/Something/First",
             "doc://Something/documentation/Something/Second",
             "doc://Something/documentation/Something/Third",
         ])
-        XCTAssertEqual(context.rootModules.map(\.absoluteString), ["doc://Something/documentation/Something"], "If no single article is a clear root, the root page is synthesized")
+        #expect(context.rootModules.map(\.absoluteString) == ["doc://Something/documentation/Something"], "If no single article is a clear root, the root page is synthesized")
         
-        XCTAssertEqual(context.problems.count, 0)
+        #expect(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
     }
     
-    func testMultipleArticlesWithoutTechnologyRootDirectiveWithOneMatchingTheCatalogName() async throws {
-        let (_, context) = try await loadBundle(catalog:
+    @Test
+    func promotesArticleMatchingTheCatalogNameToRootPage() async throws {
+        let context = try await load(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "Something.md", utf8Content: """
                 # Some article
@@ -162,22 +203,15 @@ class DocumentationContext_RootPageTests: XCTestCase {
             ])
         )
         
-        XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
+        #expect(context.knownPages.map(\.absoluteString).sorted() == [
             "doc://Something/documentation/Something", // This article became the root
             "doc://Something/documentation/Something/Second",
             "doc://Something/documentation/Something/Third",
         ])
-        XCTAssertEqual(context.rootModules.map(\.absoluteString), ["doc://Something/documentation/Something"])
+        #expect(context.rootModules.map(\.absoluteString) == ["doc://Something/documentation/Something"])
         
-        XCTAssertEqual(context.problems.count, 0)
+        #expect(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
     }
-}
-
-// MARK: - Multiple Root Page Warnings (Swift Testing)
-
-import Testing
-
-struct DocumentationContext_MultipleRootPageTests {
 
     @Test
     func warnsAboutMultipleTechnologyRootDirectives() async throws {
@@ -188,7 +222,6 @@ struct DocumentationContext_MultipleRootPageTests {
                 @Metadata {
                    @TechnologyRoot
                 }
-                This is the first root page.
                 """),
 
                 TextFile(name: "SecondRoot.md", utf8Content: """
@@ -196,7 +229,6 @@ struct DocumentationContext_MultipleRootPageTests {
                 @Metadata {
                    @TechnologyRoot
                 }
-                This is the second root page.
                 """),
 
                 TextFile(name: "ThirdRoot.md", utf8Content: """
@@ -204,60 +236,96 @@ struct DocumentationContext_MultipleRootPageTests {
                 @Metadata {
                    @TechnologyRoot
                 }
-                This is the third root page.
                 """),
             ])
         )
+        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
+        #expect(problems.map(\.diagnostic.identifier) == ["MultipleTechnologyRoots", "MultipleTechnologyRoots", "MultipleTechnologyRoots"],
+                "Unexpected problems: \(problems.map(\.diagnostic.summary))")
 
-        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots" }
-        #expect(multipleRootsProblems.count == 3, "Expected warnings for all three TechnologyRoot directives, got: \(multipleRootsProblems.count)")
-
-        let problemSources = multipleRootsProblems.compactMap { $0.diagnostic.source?.lastPathComponent }.sorted()
-        #expect(problemSources == ["FirstRoot.md", "SecondRoot.md", "ThirdRoot.md"])
-
-        for problem in multipleRootsProblems {
-            let solution = try #require(problem.possibleSolutions.first, "Expected a solution for removing the directive")
-            #expect(solution.summary == "Remove the 'TechnologyRoot' directive")
+        let rootPageNames = ["FirstRoot", "SecondRoot", "ThirdRoot"]
+        for (thisName, problem) in zip(rootPageNames, problems) {
+            let otherNames = rootPageNames.filter { $0 != thisName }
+            
+            #expect(problem.diagnostic.summary == "Documentation hierarchy cannot have multiple root pages")
+            #expect(problem.diagnostic.explanation == """
+                A single article-only documentation catalog ('docc' directory) covers a single technology, with a single root page.
+                This TechnologyRoot directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
+                resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+                To resolve this issue; remove all TechnologyRoot directives except for one to use that as the root of your documentation hierarchy.
+                """)
+            
+            #expect(problem.diagnostic.source?.lastPathComponent == "\(thisName).md")
+            let page = try #require(context.knownPages.first(where: { $0.lastPathComponent == thisName }).flatMap { context.documentationCache[$0] })
+            #expect(problem.diagnostic.range == page.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
+            
+            #expect(problem.diagnostic.notes.map(\.message) == ["Root page also defined here", "Root page also defined here"])
+            #expect(problem.diagnostic.notes.map(\.source.lastPathComponent) == otherNames.map { "\($0).md" })
+            
+            #expect(problem.possibleSolutions.count == 1)
+            let solution = try #require(problem.possibleSolutions.first)
+            #expect(solution.summary == "Remove TechnologyRoot directive")
             #expect(solution.replacements.count == 1)
+            #expect(solution.replacements.first?.range == page.metadata?.technologyRoot?.originalMarkup.range)
+            #expect(solution.replacements.first?.replacement == "", "Should suggest to remove the TechnologyRoot directive")
         }
-
-        // Verify mutually exclusive: no other root-related warnings
-        let otherRootProblems = context.problems.filter {
-            $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" ||
-            $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules"
-        }
-        #expect(otherRootProblems.isEmpty, "Unexpected root-related warnings: \(otherRootProblems.map(\.diagnostic.summary))")
     }
 
     @Test
-    func warnsAboutTechnologyRootWithSymbols() async throws {
+    func warnsAboutTechnologyRootsWhenThereAreSymbols() async throws {
         let context = try await load(catalog:
-            Folder(name: "symbols-with-root.docc", content: [
-                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(moduleName: "MyModule")),
+            Folder(name: "symbols-with-multiple-technology-roots.docc", content: [
+                JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule")),
 
-                TextFile(name: "GettingStarted.md", utf8Content: """
-                # Getting Started
+                TextFile(name: "FirstRoot.md", utf8Content: """
+                # First Root
                 @Metadata {
                    @TechnologyRoot
                 }
-                Learn how to use MyModule.
+                """),
+
+                TextFile(name: "SecondRoot.md", utf8Content: """
+                # Second Root
+                @Metadata {
+                   @TechnologyRoot
+                }
                 """),
             ])
         )
 
-        let symbolsWithRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
-        #expect(symbolsWithRootProblems.count == 1, "Expected one warning for @TechnologyRoot with symbols")
-
-        let problem = try #require(symbolsWithRootProblems.first)
-        #expect(problem.diagnostic.source?.lastPathComponent == "GettingStarted.md")
-        #expect(problem.diagnostic.severity == .warning)
-
-        let solution = try #require(problem.possibleSolutions.first)
-        #expect(solution.summary == "Remove the 'TechnologyRoot' directive")
-
-        // Verify mutually exclusive: no MultipleTechnologyRoots warning
-        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots" }
-        #expect(multipleRootsProblems.isEmpty, "Should not emit MultipleTechnologyRoots when symbols provide the root")
+        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
+        // When there are _both_ multiple technology roots and also symbol roots,
+        // we should _only_ warn about there being technology roots when there's symbols, not about there being _multiple_ technology roots.
+        #expect(problems.map(\.diagnostic.identifier) == ["TechnologyRootWithSymbols", "TechnologyRootWithSymbols"],
+                "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+        
+        let rootPageNames = ["FirstRoot", "SecondRoot"]
+        for (thisName, problem) in zip(rootPageNames, problems) {
+            let otherNames = rootPageNames.filter { $0 != thisName }
+            
+            #expect(problem.diagnostic.summary == "Documentation hierarchy cannot have additional root page; already has a symbol root")
+            #expect(problem.diagnostic.explanation == """
+                A single DocC build covers either a single module (for example a framework, library, or executable) or an article-only technology.
+                Because DocC is passed symbol inputs; the documentation hierarchy already gets its root page ('SomeModule') from those symbols.
+                This TechnologyRoot directive defines an additional root page, creating a disjoint documentation hierarchy with multiple possible starting points, \
+                resulting in undefined behavior for core DocC features that rely on a consistent and well defined documentation hierarchy.
+                To resolve this issue; remove all TechnologyRoot directives to use 'SomeModule' as the root page.
+                """)
+            
+            #expect(problem.diagnostic.source?.lastPathComponent == "\(thisName).md")
+            let page = try #require(context.knownPages.first(where: { $0.lastPathComponent == thisName }).flatMap { context.documentationCache[$0] })
+            #expect(problem.diagnostic.range == page.metadata?.technologyRoot?.originalMarkup.range, "Should highlight the TechnologyRoot directive")
+            
+            #expect(problem.diagnostic.notes.map(\.message) == ["Root page also defined here"])
+            #expect(problem.diagnostic.notes.map(\.source.lastPathComponent) == otherNames.map { "\($0).md" })
+            
+            #expect(problem.possibleSolutions.count == 1)
+            let solution = try #require(problem.possibleSolutions.first)
+            #expect(solution.summary == "Remove TechnologyRoot directive")
+            #expect(solution.replacements.count == 1)
+            #expect(solution.replacements.first?.range == page.metadata?.technologyRoot?.originalMarkup.range)
+            #expect(solution.replacements.first?.replacement == "", "Should suggest to remove the TechnologyRoot directive")
+        }
     }
 
     @Test
@@ -267,14 +335,13 @@ struct DocumentationContext_MultipleRootPageTests {
         // This tests the mutually exclusive warning logic.
         let context = try await load(catalog:
             Folder(name: "symbols-with-multiple-roots.docc", content: [
-                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(moduleName: "MyModule")),
+                JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule")),
 
                 TextFile(name: "FirstRoot.md", utf8Content: """
                 # First Root
                 @Metadata {
                    @TechnologyRoot
                 }
-                First root page.
                 """),
 
                 TextFile(name: "SecondRoot.md", utf8Content: """
@@ -282,19 +349,18 @@ struct DocumentationContext_MultipleRootPageTests {
                 @Metadata {
                    @TechnologyRoot
                 }
-                Second root page.
                 """),
             ])
         )
 
-        let symbolsWithRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
+        let symbolsWithRootProblems = context.problems.filter { $0.diagnostic.identifier == "TechnologyRootWithSymbols" }
         #expect(symbolsWithRootProblems.count == 2, "Expected TechnologyRootWithSymbols for each @TechnologyRoot directive")
 
         let problemSources = symbolsWithRootProblems.compactMap { $0.diagnostic.source?.lastPathComponent }.sorted()
         #expect(problemSources == ["FirstRoot.md", "SecondRoot.md"])
 
         // Mutually exclusive: no MultipleTechnologyRoots warnings
-        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots" }
+        let multipleRootsProblems = context.problems.filter { $0.diagnostic.identifier == "MultipleTechnologyRoots" }
         #expect(multipleRootsProblems.isEmpty, "MultipleTechnologyRoots should not be emitted when symbols provide a root")
     }
 
@@ -307,50 +373,19 @@ struct DocumentationContext_MultipleRootPageTests {
             ])
         )
 
-        let multipleModulesProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules" }
-        #expect(multipleModulesProblems.count == 1, "Expected one warning about multiple main modules")
-
-        let problem = try #require(multipleModulesProblems.first)
-        #expect(problem.diagnostic.severity == .warning)
-        #expect(problem.diagnostic.summary.contains("ModuleA"), "Summary should list ModuleA")
-        #expect(problem.diagnostic.summary.contains("ModuleB"), "Summary should list ModuleB")
-    }
-
-    @Test
-    func noWarningForSingleModule() async throws {
-        let context = try await load(catalog:
-            Folder(name: "single-module.docc", content: [
-                JSONFile(name: "MyModule.symbols.json", content: makeSymbolGraph(moduleName: "MyModule")),
-            ])
-        )
-
-        let rootProblems = context.problems.filter {
-            $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules" ||
-            $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" ||
-            $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots"
-        }
-        #expect(rootProblems.isEmpty, "Single module should not trigger root-related warnings: \(rootProblems.map(\.diagnostic.summary))")
-    }
-
-    @Test
-    func noWarningForSingleTechnologyRoot() async throws {
-        let context = try await load(catalog:
-            Folder(name: "single-root.docc", content: [
-                TextFile(name: "Root.md", utf8Content: """
-                # My Documentation
-                @Metadata {
-                   @TechnologyRoot
-                }
-                Welcome to the documentation.
-                """),
-            ])
-        )
-
-        let rootProblems = context.problems.filter {
-            $0.diagnostic.identifier == "org.swift.docc.MultipleMainModules" ||
-            $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" ||
-            $0.diagnostic.identifier == "org.swift.docc.MultipleTechnologyRoots"
-        }
-        #expect(rootProblems.isEmpty, "Single @TechnologyRoot should not trigger warnings: \(rootProblems.map(\.diagnostic.summary))")
+        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
+        #expect(problems.map(\.diagnostic.identifier) == ["MultipleModules"],
+                "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+        
+        let problem = try #require(problems.first)
+        
+        #expect(problem.diagnostic.summary == "Input files cannot describe more than one main module; got inputs for 'ModuleA' and 'ModuleB'")
+        #expect(problem.diagnostic.explanation == """
+            A single DocC build covers a single module (for example a framework, library, or executable).
+            To produce a documentation archive that covers 'ModuleA' and 'ModuleB'; \
+            first document each module separately and then combine their individual archives into a single combined archive by running:
+            $ docc merge /path/to/ModuleA.doccarchive /path/to/ModuleB.doccarchive
+            For more information, see the `docc merge --help` text.
+            """)
     }
 }

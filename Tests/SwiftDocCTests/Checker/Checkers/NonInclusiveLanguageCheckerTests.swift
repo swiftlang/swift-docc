@@ -209,6 +209,6 @@ func aBlackListedFunc() {
         let context = try await load(catalog: catalog, diagnosticFilterLevel: configuredDiagnosticFilterLevel, configuration: configuration)
         
         // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
-        #expect(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }) == expectsToIncludeNonInclusiveDiagnostics)
+        #expect(context.problems.contains(where: { $0.diagnostic.identifier == "NonInclusiveLanguage" }) == expectsToIncludeNonInclusiveDiagnostics)
     }
 }

@@ -28,7 +28,7 @@ class DiagnosticEngineTests: XCTestCase {
         let diagnostic = Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.test", summary: "Test diagnostic")
         let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
         let engine = DiagnosticEngine()
-        let exp = expectation(description: "Recieved diagnostic")
+        let exp = expectation(description: "Received diagnostic")
         let consumer = TestConsumer(exp)
 
         XCTAssertEqual(engine.problems.count, 0)
@@ -52,7 +52,7 @@ class DiagnosticEngineTests: XCTestCase {
         let diagnostic = Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.test", summary: "Test diagnostic")
         let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
         let engine = DiagnosticEngine()
-        let exp = expectation(description: "Recieved diagnostic")
+        let exp = expectation(description: "Received diagnostic")
         exp.expectedFulfillmentCount = 2
         let consumerA = TestConsumer(exp)
         let consumerB = TestConsumer(exp)
@@ -163,5 +163,109 @@ class DiagnosticEngineTests: XCTestCase {
             error: Test error
             error: Test warning
             """)
+    }
+    
+    func testRaiseSeverityOfSpecificDiagnostics() {
+        let warnings = ["One", "Two", "Three"].map { id in
+            Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: id, summary: "Test diagnostic \(id.lowercased())"), possibleSolutions: [])
+        }
+        
+        let defaultEngine = DiagnosticEngine()
+        defaultEngine.emit(warnings)
+        
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: defaultEngine.problems, options: .formatConsoleOutputForTools), """
+        warning: Test diagnostic one
+        warning: Test diagnostic two
+        warning: Test diagnostic three
+        """)
+        
+        let engineWithSpecificDiagnosticsRaised = DiagnosticEngine(diagnosticIDsWithErrorSeverity: ["Two", "Unknown"])
+        engineWithSpecificDiagnosticsRaised.emit(warnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithSpecificDiagnosticsRaised.problems, options: .formatConsoleOutputForTools), """
+        warning: Test diagnostic one
+        error: Test diagnostic two
+        warning: Test diagnostic three
+        """)
+        
+        let engineWithFilterAndSpecificDiagnosticsRaised = DiagnosticEngine(filterLevel: .error, diagnosticIDsWithErrorSeverity: ["Two", "Unknown"])
+        engineWithFilterAndSpecificDiagnosticsRaised.emit(warnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithFilterAndSpecificDiagnosticsRaised.problems, options: .formatConsoleOutputForTools), """
+        error: Test diagnostic two
+        """)
+    }
+    
+    func testLowerSeverityOfSpecificDiagnostics() {
+        let warnings = ["One", "Two", "Three"].map { id in
+            Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: id, summary: "Test diagnostic \(id.lowercased())"), possibleSolutions: [])
+        }
+        
+        let engineWithRaisedSeverity = DiagnosticEngine(treatWarningsAsErrors: true)
+        engineWithRaisedSeverity.emit(warnings)
+        
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithRaisedSeverity.problems, options: .formatConsoleOutputForTools), """
+        error: Test diagnostic one
+        error: Test diagnostic two
+        error: Test diagnostic three
+        """)
+        
+        let engineWithSpecificDiagnosticsLowered = DiagnosticEngine(treatWarningsAsErrors: true, diagnosticIDsWithWarningSeverity: ["Two", "Unknown"])
+        engineWithSpecificDiagnosticsLowered.emit(warnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithSpecificDiagnosticsLowered.problems, options: .formatConsoleOutputForTools), """
+        error: Test diagnostic one
+        warning: Test diagnostic two
+        error: Test diagnostic three
+        """)
+        
+        let engineWithFilterAndSpecificDiagnosticsLowered = DiagnosticEngine(filterLevel: .error, treatWarningsAsErrors: true, diagnosticIDsWithWarningSeverity: ["Two", "Unknown"])
+        engineWithFilterAndSpecificDiagnosticsLowered.emit(warnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithFilterAndSpecificDiagnosticsLowered.problems, options: .formatConsoleOutputForTools), """
+        error: Test diagnostic one
+        error: Test diagnostic three
+        """)
+    }
+    
+    func testRaiseSeverityOfDiagnosticGroups() {
+        let letterWarnings = ["A", "B", "C"].map { id in
+            Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: id, groupIdentifier: "Letter", summary: "Test diagnostic \(id)"), possibleSolutions: [])
+        }
+        let numberWarnings = ["1", "2", "3"].map { id in
+            Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: id, groupIdentifier: "Number", summary: "Test diagnostic \(id)"), possibleSolutions: [])
+        }
+        
+        let engineWithRaisedLetterSeverity = DiagnosticEngine(diagnosticIDsWithErrorSeverity: ["Letter"])
+        engineWithRaisedLetterSeverity.emit(letterWarnings)
+        engineWithRaisedLetterSeverity.emit(numberWarnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithRaisedLetterSeverity.problems, options: .formatConsoleOutputForTools), """
+        error: Test diagnostic A
+        error: Test diagnostic B
+        error: Test diagnostic C
+        warning: Test diagnostic 1
+        warning: Test diagnostic 2
+        warning: Test diagnostic 3
+        """)
+        
+        let engineWithRaisedNumberSeverity = DiagnosticEngine(diagnosticIDsWithErrorSeverity: ["Number"])
+        engineWithRaisedNumberSeverity.emit(letterWarnings)
+        engineWithRaisedNumberSeverity.emit(numberWarnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithRaisedNumberSeverity.problems, options: .formatConsoleOutputForTools), """
+        warning: Test diagnostic A
+        warning: Test diagnostic B
+        warning: Test diagnostic C
+        error: Test diagnostic 1
+        error: Test diagnostic 2
+        error: Test diagnostic 3
+        """)
+        
+        let engineWithRaisedNumberSeverityAndOneLetter = DiagnosticEngine(diagnosticIDsWithErrorSeverity: ["Number", "B"])
+        engineWithRaisedNumberSeverityAndOneLetter.emit(letterWarnings)
+        engineWithRaisedNumberSeverityAndOneLetter.emit(numberWarnings)
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engineWithRaisedNumberSeverityAndOneLetter.problems, options: .formatConsoleOutputForTools), """
+        warning: Test diagnostic A
+        error: Test diagnostic B
+        warning: Test diagnostic C
+        error: Test diagnostic 1
+        error: Test diagnostic 2
+        error: Test diagnostic 3
+        """)
     }
 }

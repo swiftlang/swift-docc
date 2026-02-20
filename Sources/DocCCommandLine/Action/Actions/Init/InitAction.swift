@@ -132,7 +132,7 @@ public struct InitAction: AsyncAction {
                 try fileManager.createFile(at: fileURL, contents: Data(content.utf8))
                 directoryURLsList.append(fileURL.relative(to: catalogOutputURL)!)
             }
-            // Write additional directiories defined in the catalog.
+            // Write additional directories defined in the catalog.
             // Ex. `Resources`
             for relativePath in catalogTemplate.additionalDirectories {
                 let directoryURL = catalogOutputURL.appendingPathComponent(relativePath)
@@ -165,6 +165,7 @@ public struct InitAction: AsyncAction {
             if fileManager.fileExists(atPath: catalogOutputURL.path) {
                 try fileManager.removeItem(at: catalogOutputURL)
             }
+            // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
             diagnosticEngine.emit(
                 Problem(
                     diagnostic: Diagnostic(

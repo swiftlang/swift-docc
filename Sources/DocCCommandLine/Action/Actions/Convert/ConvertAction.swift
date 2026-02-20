@@ -67,6 +67,8 @@ public struct ConvertAction: AsyncAction {
     ///   - formatConsoleOutputForTools: `true` if the convert action should write diagnostics to the console in a format suitable for parsing by an IDE or other tool, otherwise `false`.
     ///   - inheritDocs: `true` if the convert action should retain the original documentation content for inherited symbols, otherwise `false`.
     ///   - treatWarningsAsErrors: `true` if the convert action should treat warnings as errors, otherwise `false`.
+    ///   - diagnosticIDsWithWarningSeverity: A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
+    ///   - diagnosticIDsWithErrorSeverity: A list of diagnostic identifiers that are explicitly raised to an "error" severity.
     ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
     ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
     ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
@@ -95,6 +97,8 @@ public struct ConvertAction: AsyncAction {
         formatConsoleOutputForTools: Bool = false,
         inheritDocs: Bool = false,
         treatWarningsAsErrors: Bool = false,
+        diagnosticIDsWithWarningSeverity: Set<String> = [],
+        diagnosticIDsWithErrorSeverity: Set<String> = [],
         experimentalEnableCustomTemplates: Bool = false,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool = false,
@@ -141,7 +145,10 @@ public struct ConvertAction: AsyncAction {
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
+        // Set these properties even if the caller passed a base diagnostic engine
         engine.filterLevel = filterLevel
+        engine.diagnosticIDsWithWarningSeverity = diagnosticIDsWithWarningSeverity
+        engine.diagnosticIDsWithErrorSeverity   = diagnosticIDsWithErrorSeverity
         if let diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath, fileManager: fileManager))
         }
@@ -378,13 +385,13 @@ public struct ConvertAction: AsyncAction {
                     diagnostic: Diagnostic(
                         source: source,
                         severity: .warning,
-                        identifier: "org.swift.docc.MissingTableOfContents",
-                        summary: "Missing tutorial table of contents page.",
-                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the documentation hierarchy."
+                        identifier: "MissingTableOfContentsPage",
+                        summary: "Missing tutorial table of contents (`@Tutorials`) page",
+                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define your documentation's hierarchy and recommended reading order."
                     ),
                     possibleSolutions: [
                         Solution(
-                            summary: "Create a `@Tutorials` table of content page.",
+                            summary: "Create a `@Tutorials` table of content page",
                             replacements: replacements
                         )
                     ]

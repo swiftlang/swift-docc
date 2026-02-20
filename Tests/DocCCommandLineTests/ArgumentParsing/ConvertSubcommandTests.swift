@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,6 +9,7 @@
 */
 
 import XCTest
+import Testing
 @testable import DocCCommandLine
 @testable import SwiftDocC
 import DocCTestUtilities
@@ -431,7 +432,8 @@ class ConvertSubcommandTests: XCTestCase {
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: No documentation archive exist at '\(dependencyDir.path)'.
+            warning: Dependency archive '\(dependencyDir.lastPathComponent)' does not exist at '\(dependencyDir.path)'
+            Without the dependency's documentation archive, DocC cannot resolve links to its pages.
             """)
         }
         // The dependency is a file instead of a directory
@@ -444,7 +446,8 @@ class ConvertSubcommandTests: XCTestCase {
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: Dependency at '\(dependencyDir.path)' is not a directory.
+            warning: Dependency archive '\(dependencyDir.lastPathComponent)' is not a directory at '\(dependencyDir.path)'
+            A documentation archive is a directory containing data files for each page and metadata files that aggregate certain specialized information.
             """)
             
             try fileManager.removeItem(at: dependencyDir)
@@ -459,8 +462,10 @@ class ConvertSubcommandTests: XCTestCase {
             let command = try Docc.Convert.parse(argumentsToParse)
             XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
-            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'linkable-entities.json' file.
-            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'link-hierarchy.json' file.
+            warning: Missing 'linkable-entities.json' file in dependency archive at '\(dependencyDir.path)'
+            Without the 'linkable-entities.json' data, DocC cannot look up information like titles, abstracts, or deprecation status about pages in the 'SomeDependency.doccarchive' dependency that you link to.
+            warning: Missing 'link-hierarchy.json' file in dependency archive at '\(dependencyDir.path)'
+            Without the 'link-hierarchy.json' data, DocC cannot resolve links to pages (or on-page landmarks) in the 'SomeDependency.doccarchive' dependency.
             """)
         }
         do {
@@ -475,168 +480,176 @@ class ConvertSubcommandTests: XCTestCase {
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), "")
         }
     }
+}
+
+@Suite(.serialized) // These tests all modify global state on the Convert action and can only be run one at a time.
+class ConvertSubcommandFlagParsingTests {
+    private let originalTemplatePath: String?
+    private let originalLogHandle: LogHandle
     
-    func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
+    init() throws {
+        // By default, send all warnings to `.none` instead of filling the
+        // test console output with unrelated messages.
+        originalLogHandle = Docc.Convert._errorLogHandle
+        Docc.Convert._errorLogHandle = .none
+        
+        // Set the documentation template to a well-defined default so that options parsing isn't
+        // affected by other tests' changing it.
+        originalTemplatePath = ProcessInfo.processInfo.environment[TemplateOption.environmentVariableKey]
+        let testTemplate = try #require(Bundle.module.url(forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources"))
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplate.path)
+    }
+    
+    deinit {
+        // Reset the log handle
+        Docc.Convert._errorLogHandle = originalLogHandle
+        
+        // Reset the template
+        if let originalTemplatePath {
+            SetEnvironmentVariable(TemplateOption.environmentVariableKey, originalTemplatePath)
+        } else {
+            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
+        }
+    }
+    
+    @Test
+    func parsingTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
         UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
 
-        // Since there's no custom template set (and relative HTML template lookup isn't
-        // supported in the test harness), we expect `transformForStaticHosting` to
-        // be false in every possible scenario of the flag, even when explicitly requested.
+        // Since there's no custom template set (and relative HTML template lookup isn't supported in the test harness),
+        // we expect `transformForStaticHosting` to be false in every possible scenario of the flag, even when explicitly requested.
         
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-            ])
-            
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
-        }
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.transformForStaticHosting == false)
         
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--transform-for-static-hosting",
-            ])
-            
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
-        }
+        let enableFlagConvert = try Docc.Convert.parse(["--transform-for-static-hosting"])
+        #expect(enableFlagConvert.transformForStaticHosting == false)
         
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--no-transform-for-static-hosting",
-            ])
-            
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
-        }
+        let disableFlagConvert = try Docc.Convert.parse(["--no-transform-for-static-hosting"])
+        #expect(disableFlagConvert.transformForStaticHosting == false)
     }
     
-    func testTransformForStaticHostingFlagWithHTMLTemplate() throws {
-        // Since we've provided an HTML template, we expect `transformForStaticHosting`
-        // to be true by default, and when explicitly requested. It should only be false
-        // when `--no-transform-for-static-hosting` is passed.
+    @Test
+    func parsingTransformForStaticHostingFlagWithHTMLTemplate() throws {
+        // Since we've provided an HTML template, we expect `transformForStaticHosting` to be true by default, and when explicitly requested.
+        // It should only be false when `--no-transform-for-static-hosting` is passed.
         
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-            ])
-            
-            XCTAssertTrue(convertOptions.transformForStaticHosting)
-        }
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.transformForStaticHosting)
         
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--transform-for-static-hosting",
-            ])
-            
-            XCTAssertTrue(convertOptions.transformForStaticHosting)
-        }
-        
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--no-transform-for-static-hosting",
-            ])
-            
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
-        }
+        let enableFlagConvert = try Docc.Convert.parse(["--transform-for-static-hosting"])
+        #expect(enableFlagConvert.transformForStaticHosting)
+       
+        let disableFlagConvert = try Docc.Convert.parse(["--no-transform-for-static-hosting"])
+        #expect(disableFlagConvert.transformForStaticHosting == false)
     }
     
-    func testTreatWarningAsError() throws {
-        do {
-            // Passing no argument should default to the current working directory.
-            let convert = try Docc.Convert.parse([
-                testBundleURL.path
-            ])
-            let convertAction = try ConvertAction(fromConvertCommand: convert)
-            XCTAssertEqual(convertAction.treatWarningsAsErrors, false)
-        } catch {
-            XCTFail("Failed to run docc convert with minimal arguments.")
-        }
-        do {
-            // Passing no argument should default to the current working directory.
-            let convert = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--warnings-as-errors"
-            ])
-            let convertAction = try ConvertAction(fromConvertCommand: convert)
-            XCTAssertEqual(convertAction.treatWarningsAsErrors, true)
-        } catch {
-            XCTFail("Failed to run docc convert with minimal arguments.")
-        }
+    @Test
+    func parsingTreatWarningAsErrorsFlag() throws {
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.warningsAsErrors == false)
+    
+        let warningsAsErrorsConvert = try Docc.Convert.parse(["--warnings-as-errors"])
+        #expect(warningsAsErrorsConvert.warningsAsErrors)
     }
     
-    func testParameterValidationFeatureFlag() throws {
+    @Test
+    func parsingParameterValidationFeatureFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
-        XCTAssertEqual(noFlagConvert.enableParametersAndReturnsValidation, true)
+        #expect(noFlagConvert.enableParametersAndReturnsValidation)
         
         // It's allowed to pass the redundant "--enable-..." flag.
         let enabledFlagConvert = try Docc.Convert.parse(["--enable-parameters-and-returns-validation"])
-        XCTAssertEqual(enabledFlagConvert.enableParametersAndReturnsValidation, true)
+        #expect(enabledFlagConvert.enableParametersAndReturnsValidation)
         
         // Passing the "--disable-..." flag turns of the feature.
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-parameters-and-returns-validation"])
-        XCTAssertEqual(disabledFlagConvert.enableParametersAndReturnsValidation, false)
+        #expect(disabledFlagConvert.enableParametersAndReturnsValidation == false)
     }
     
-    func testMentionedFeatureFlag() throws {
+    @Test
+    func parsingMentionedInFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
-        XCTAssertEqual(noFlagConvert.enableMentionedIn, true)
+        #expect(noFlagConvert.enableMentionedIn)
         
         // It's allowed to pass the previous "--enable-experimental-..." flag.
         let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-mentioned-in"])
-        XCTAssertEqual(oldFlagConvert.enableMentionedIn, true)
+        #expect(oldFlagConvert.enableMentionedIn)
         
         // It's allowed to pass the redundant "--enable-..." flag.
         let enabledFlagConvert = try Docc.Convert.parse(["--enable-mentioned-in"])
-        XCTAssertEqual(enabledFlagConvert.enableMentionedIn, true)
+        #expect(enabledFlagConvert.enableMentionedIn)
         
         // Passing the "--disable-..." flag turns of the feature.
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-mentioned-in"])
-        XCTAssertEqual(disabledFlagConvert.enableMentionedIn, false)
+        #expect(disabledFlagConvert.enableMentionedIn == false)
     }
     
-    func testStaticHostingWithContentFlag() throws {
+    @Test
+    func parsingStaticHostingWithContentFlag() throws {
         // The feature is disabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
-        XCTAssertEqual(noFlagConvert.experimentalTransformForStaticHostingWithContent, false)
+        #expect(noFlagConvert.experimentalTransformForStaticHostingWithContent == false)
         
         let enabledFlagConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content"])
-        XCTAssertEqual(enabledFlagConvert.experimentalTransformForStaticHostingWithContent, true)
+        #expect(enabledFlagConvert.experimentalTransformForStaticHostingWithContent)
         
         // The '...-transform...-with-content' flag also implies the base '--transform-...' flag.
         do {
-            let originalErrorLogHandle = Docc.Convert._errorLogHandle
-            let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
-            defer {
-                Docc.Convert._errorLogHandle = originalErrorLogHandle
-                Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
-            }
-            
             let logStorage = LogHandle.LogStorage()
             Docc.Convert._errorLogHandle = .memory(logStorage)
             Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
             
             let conflictingFlagsConvert = try Docc.Convert.parse(["--experimental-transform-for-static-hosting-with-content", "--no-transform-for-static-hosting"])
-            XCTAssertEqual(conflictingFlagsConvert.experimentalTransformForStaticHostingWithContent, true)
-            XCTAssertEqual(conflictingFlagsConvert.transformForStaticHosting, true)
+            #expect(conflictingFlagsConvert.experimentalTransformForStaticHostingWithContent)
+            #expect(conflictingFlagsConvert.transformForStaticHosting)
             
-            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines), """
-            warning: Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. Passing '--no-transform-for-static-hosting' has no effect.
+            #expect(logStorage.text.trimmingCharacters(in: .whitespacesAndNewlines) == """
+            warning: '--no-transform-for-static-hosting' is ignored when '--experimental-transform-for-static-hosting-with-content' is passed
+            Passing '--experimental-transform-for-static-hosting-with-content' also implies '--transform-for-static-hosting'. In this case DocC favors the opt-in over the opt-out and ignored the '--no-transform-for-static-hosting' flag.
             """)
         }
     }
-
+    
+    @Test
+    func parsingExplicitDiagnosticSeverities() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.diagnosticIDsWithErrorSeverity == [])
+        #expect(noFlagConvert.diagnosticIDsWithWarningSeverity == [])
+        
+        // The flags can be used to specify explicit diagnostic severities
+        let explicitlySetSeverities = try Docc.Convert.parse(["--Wwarning", "First", "--Wwarning", "Second", "--Werror", "Third"])
+        #expect(explicitlySetSeverities.diagnosticIDsWithErrorSeverity == ["Third"])
+        #expect(explicitlySetSeverities.diagnosticIDsWithWarningSeverity == ["First", "Second"])
+        
+        // The flags can be used to specify explicit diagnostic severities
+        let explicitlySetSeveritiesWithSingleDash = try Docc.Convert.parse(["--Wwarning", "First", "--Wwarning", "Second", "--Werror", "Third"])
+        #expect(explicitlySetSeveritiesWithSingleDash.diagnosticIDsWithErrorSeverity == ["Third"])
+        #expect(explicitlySetSeveritiesWithSingleDash.diagnosticIDsWithWarningSeverity == ["First", "Second"])
+        
+        // It's allowed (but redundant) to repeat the same configuration
+        let repeatedSeverity = try Docc.Convert.parse(["--Wwarning", "Something", "--Wwarning", "Something"])
+        #expect(repeatedSeverity.diagnosticIDsWithErrorSeverity == [])
+        #expect(repeatedSeverity.diagnosticIDsWithWarningSeverity == ["Something", "Something"], "The duplication doesn't matter. Later stages turn this into a Set")
+        
+        // Specifying both an explicit warning severity and error severity for the same diagnostic raises a warning.
+        let conflictingSeverity = try Docc.Convert.parse(["--Wwarning", "First", "--Werror", "First", "--Werror", "Second"])
+        #expect(conflictingSeverity.diagnosticIDsWithErrorSeverity == ["Second"], "'First' is excluded from both lists")
+        #expect(conflictingSeverity.diagnosticIDsWithWarningSeverity == [],       "'First' is excluded from both lists")
+    }
+    
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated) // We'll probably keep this deprecated property for a long time for backwards compatibility.
-    func testVersionFlag() throws {
+    @Test
+    func parsingDeprecatedVersionFlag() throws {
         let noFlagConvert = try Docc.Convert.parse([])
-        XCTAssertEqual(noFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility, nil)
+        #expect(noFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility == nil)
 
         let enabledFlagConvert = try Docc.Convert.parse(["--fallback-bundle-version", "1.2.3"])
-        XCTAssertEqual(enabledFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility, "1.2.3")
+        #expect(enabledFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility == "1.2.3")
     }
 }

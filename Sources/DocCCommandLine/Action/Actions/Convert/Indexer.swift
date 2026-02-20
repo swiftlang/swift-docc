@@ -55,6 +55,7 @@ extension ConvertAction {
                     try $0.index(renderNode: renderNode)
                     nodeCount += 1
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     self.problems.append(error.problem(source: renderNode.identifier.url,
                                                   severity: .warning,
                                                   summaryPrefix: "RenderNode indexing process failed"))
@@ -71,6 +72,7 @@ extension ConvertAction {
                     try $0.index(renderNode: renderNode)
                     nodeCount += 1
                 } catch {
+                    // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     self.problems.append(error.problem(source: renderNode.identifier.url,
                                                   severity: .warning,
                                                   summaryPrefix: "External render node indexing process failed"))

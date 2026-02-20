@@ -79,4 +79,14 @@ extension DiagnosticSeverity {
             return nil
         }
     }
+    
+    /// A list of strings that can be converted into a diagnostic severity using.
+    ///
+    /// This list is intended for diagnostics and error messages.
+    package static let supportedStringValues = [
+         "error",
+         "warning",
+         "information", "info", "note",
+         "hint", "notice",
+    ]
 }
