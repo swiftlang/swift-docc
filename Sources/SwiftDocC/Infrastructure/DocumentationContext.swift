@@ -2123,6 +2123,9 @@ public class DocumentationContext {
         
         registerRootPages(from: rootPageArticles)
         
+        // `registerSymbols(...)`, just below, calls `resolveExternalSymbols()` internally so we need to have finished loading the external symbol data before calling it.
+        _ = try await loadExternalResolvers
+        
         try registerSymbols(symbolGraphLoader: symbolGraphLoader, documentationExtensions: documentationExtensions)
         // We don't need to keep the loader in memory after we've registered all symbols.
         _ = consume symbolGraphLoader
@@ -2153,8 +2156,6 @@ public class DocumentationContext {
             otherArticles = registerArticles(otherArticles)
             try shouldContinueRegistration()
         }
-        
-        _ = try await loadExternalResolvers
         
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         preResolveExternalLinks(semanticObjects:
