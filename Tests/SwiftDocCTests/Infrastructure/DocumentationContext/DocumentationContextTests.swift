@@ -5841,22 +5841,14 @@ let expected = """
             JSONFile(name: "Foo.symbols.json", content: makeSymbolGraph(moduleName: "Foo")),
         ])
 
-        let (bundle, context) = try await loadBundle(catalog: catalog)
+        let (_, context) = try await loadBundle(catalog: catalog)
 
-        // This test uses @TechnologyRoot with symbols, which now triggers a warning.
-        let technologyRootProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.TechnologyRootWithSymbols" }
-        XCTAssertEqual(technologyRootProblems.count, 1, "Expected TechnologyRootWithSymbols warning")
+        // This test has both a TechnologyRoot and symbol graph files, which is an unsupported setup that DocC warns about.
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["TechnologyRootWithSymbols"],
+                       "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
 
-        let otherProblems = context.problems.filter { $0.diagnostic.identifier != "org.swift.docc.TechnologyRootWithSymbols" }
-        XCTAssert(otherProblems.isEmpty, "Unexpected problems:\n\(otherProblems.map(\.diagnostic.summary).joined(separator: "\n"))")
-
-        do {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .data)
-            // Find the topic graph node for the article
-            let node = context.topicGraph.nodes.first { $0.key == reference }?.value
-            // Ensure that the reference within the topic graph node contains the supported languages
-            XCTAssertEqual(node?.reference.sourceLanguages, [.objectiveC, .data])
-        }
+        let reference = context.knownPages.first(where: { $0.lastPathComponent == "Article" })
+        XCTAssertEqual(reference?.sourceLanguages, [.objectiveC, .data])
     }
 }
 
