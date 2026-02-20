@@ -37,6 +37,7 @@ extension Docc.ProcessCatalog {
         @OptionGroup(title: "Inputs & outputs")
         var inputsAndOutputs: InputAndOutputOptions
         struct InputAndOutputOptions: ParsableArguments {
+            /// The path to an archive to be used by DocC.
             @Argument(
                 help: ArgumentHelp(
                     "Path to the documentation catalog ('.docc') directory.",
@@ -45,6 +46,7 @@ extension Docc.ProcessCatalog {
                 transform: URL.init(fileURLWithPath:))
             var documentationCatalog: URL?
             
+            /// A user-provided path to a directory of additional symbol graph files that the convert action will process.
             @Option(
                 name: [.customLong("additional-symbol-graph-dir")],
                 help: ArgumentHelp(
@@ -55,6 +57,7 @@ extension Docc.ProcessCatalog {
             )
             var additionalSymbolGraphDirectory: URL?
             
+            /// A user-provided location where the command will write the updated catalog output.
             @Option(
                 name: [.customLong("output-path")],
                 help: ArgumentHelp(
@@ -83,29 +86,12 @@ extension Docc.ProcessCatalog {
             }
         }
         
-        /// The path to an archive to be used by DocC.
-        var documentationCatalog: URL? {
-            get { inputsAndOutputs.documentationCatalog }
-            set { inputsAndOutputs.documentationCatalog = newValue }
-        }
-        
-        /// A user-provided path to a directory of additional symbol graph files that the convert action will process.
-        var additionalSymbolGraphDirectory: URL? {
-            get { inputsAndOutputs.additionalSymbolGraphDirectory }
-            set { inputsAndOutputs.additionalSymbolGraphDirectory = newValue }
-        }
-        
-        /// A user-provided location where the command will write the updated catalog output.
-        var outputURL: URL? {
-            get { inputsAndOutputs.outputURL }
-            set { inputsAndOutputs.outputURL = newValue }
-        }
-        
         // MARK: Generation options
         
         @OptionGroup(title: "Generation options")
         var generationOptions: GenerationOptions
         struct GenerationOptions: ParsableArguments {
+            /// A link to a symbol to start generating documentation extension files from.
             @Option(
                 name: .customLong("from-symbol"),
                 help: ArgumentHelp(
@@ -116,6 +102,7 @@ extension Docc.ProcessCatalog {
             )
             var startingPointSymbolLink: String?
             
+            /// A depth limit for which pages to generate documentation extension files for.
             @Option(
                 name: .customLong("depth"),
                 help: ArgumentHelp(
@@ -145,19 +132,14 @@ extension Docc.ProcessCatalog {
             }
         }
         
-        /// A depth limit for which pages to generate documentation extension files for.
-        var depthLimit: Int? {
-            get { generationOptions.depthLimit }
-            set { generationOptions.depthLimit = newValue }
-        }
-        /// A link to a symbol to start generating documentation extension files from.
-        var startingPointSymbolLink: String? {
-            get { generationOptions.startingPointSymbolLink }
-            set { generationOptions.startingPointSymbolLink = newValue }
-        }
-        
         func run() async throws {
-            let action = try EmitGeneratedCurationAction(fromCommand: self)
+            let action = try EmitGeneratedCurationAction(
+                documentationCatalog: inputsAndOutputs.documentationCatalog,
+                additionalSymbolGraphDirectory: inputsAndOutputs.additionalSymbolGraphDirectory,
+                outputURL: inputsAndOutputs.outputURL,
+                depthLimit: generationOptions.depthLimit,
+                startingPointSymbolLink: generationOptions.startingPointSymbolLink
+            )
             try await action.performAndHandleResult()
         }
     }

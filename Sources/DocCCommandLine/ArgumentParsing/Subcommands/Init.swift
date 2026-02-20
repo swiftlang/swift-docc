@@ -24,7 +24,11 @@ extension Docc {
         public var initOptions: InitOptions
         
         public func run() async throws {
-            let initAction = try InitAction(fromInitOptions: initOptions)
+            let initAction = try InitAction(
+                catalogOutputDirectory: initOptions.providedCatalogOutputDirURL,
+                documentationTitle: initOptions.name,
+                catalogTemplate: initOptions.catalogTemplate
+            )
             try await initAction.performAndHandleResult()
         }
     }
