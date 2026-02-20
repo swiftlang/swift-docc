@@ -64,21 +64,6 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         do {
             let logger = Logger()
             let consumer = DiagnosticConsoleWriter(logger, highlight: true)
-            let diagnostic = Diagnostic(source: source, severity: .hint, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            consumer.receive([problem])
-            try? consumer.flush()
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;39mnotice: \(summary)\u{001B}[0;0m
-            \(explanation)
-            \(expectedPath)
-            
-            """)
-        }
-
-        do {
-            let logger = Logger()
-            let consumer = DiagnosticConsoleWriter(logger, highlight: true)
             let diagnostic = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation)
             let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
             consumer.receive([problem])

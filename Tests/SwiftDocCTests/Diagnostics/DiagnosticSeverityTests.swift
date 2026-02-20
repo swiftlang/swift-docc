@@ -18,16 +18,15 @@ class DiagnosticSeverityTests: XCTestCase {
         XCTAssertEqual(DiagnosticSeverity("information"), .information)
         XCTAssertEqual(DiagnosticSeverity("info"), .information)
         XCTAssertEqual(DiagnosticSeverity("note"), .information)
-        XCTAssertEqual(DiagnosticSeverity("hint"), .hint)
-        XCTAssertEqual(DiagnosticSeverity("notice"), .hint)
+        XCTAssertEqual(DiagnosticSeverity("hint"), .information)
+        XCTAssertEqual(DiagnosticSeverity("notice"), .information)
         XCTAssertNil(DiagnosticSeverity(""))
         XCTAssertNil(DiagnosticSeverity(nil))
     }
     
     func testDiagnosticOrder() {
-        // Verify that: error < warning < information < hint
+        // Verify that: error < warning < information
         XCTAssertLessThan(DiagnosticSeverity.error, .warning)
         XCTAssertLessThan(DiagnosticSeverity.warning, .information)
-        XCTAssertLessThan(DiagnosticSeverity.information, .hint)
     }
 }
