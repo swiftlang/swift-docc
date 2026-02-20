@@ -37,9 +37,7 @@ extension Docc {
             // The default template wasn't validated by the Convert command.
             // If a template was configured as an environmental variable, that would have already been validated in TemplateOption.
             if previewOptions.convertCommand.templateOption.templateURL == nil {
-                throw TemplateOption.missingHTMLTemplateError(
-                    path: previewOptions.convertCommand.templateOption.defaultTemplateURL.path
-                )
+                throw TemplateOption.missingHTMLTemplate(at: TemplateOption.defaultTemplateURL)
             }
         }
 
