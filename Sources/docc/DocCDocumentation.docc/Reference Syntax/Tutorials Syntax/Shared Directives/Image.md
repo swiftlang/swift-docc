@@ -21,7 +21,7 @@ Displays an image in a tutorial.
 The `Image` directive displays an image in your tutorial. Provide the name of an image and alternative text that describes the image in sufficient detail so screen readers can read that text aloud for people who are blind or have low-vision.
 
 ```
-@Image(source: overview-hero, alt: "An illustration of a sleeping sloth, hanging from a tree branch.”)
+@Image(source: overview-hero, alt: "An illustration of a sleeping sloth, dangling from a tree branch.”)
 ````
 
 Images can exist anywhere in your documentation catalog ('.docc' directory). but it's good practice to use subdirectories to organize the content and assets in your documentation.

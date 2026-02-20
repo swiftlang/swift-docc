@@ -17,7 +17,7 @@ struct NonInclusiveLanguageCheckerTests {
     @Test
     func matchesTermsInTitle() throws {
         let source = """
-# A Whitelisted title
+# A Allowlisted title
 """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
@@ -71,7 +71,7 @@ struct NonInclusiveLanguageCheckerTests {
         let source = """
 # Title
 
-The blacklist is in the abstract.
+The denylist is in the abstract.
 """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
@@ -96,7 +96,7 @@ The abstract.
 ## Overview
 
 The
-master branch is the default.
+main branch is the default.
 """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
@@ -176,7 +176,7 @@ func aBlackListedFunc() {
     private let nonInclusiveContent = """
     # Some root page
     
-    Some custom root page. And here is a ~~whitelist~~:
+    Some custom root page. And here is a ~~allowlist~~:
     
      - item one
      - item two

@@ -170,13 +170,13 @@ fileprivate let builtinExcludedTerms: [NonInclusiveLanguageChecker.Term] = [
         replacement: "deny list"
     ),
     NonInclusiveLanguageChecker.Term(
-        expression: #"master\w{0,2}"#,
-        message: #"Don't use "master" to describe the relationship between two devices, processes, or other things. Use an alternative that's appropriate to the context, such as "main" and "secondary" or "host" and "client"."#,
+        expression: #"master\w{0,2}"#, // ignore-unacceptable-language
+        message: #"Don't use "master" to describe the relationship between two devices, processes, or other things. Use an alternative that's appropriate to the context, such as "main" and "secondary" or "host" and "client"."#, // ignore-unacceptable-language
         replacement: "primary"
     ),
     NonInclusiveLanguageChecker.Term(
-        expression: #"slave\w{0,2}"#,
-        message: #"Don't use "slave" to describe the relationship between two devices, processes, or other things. Use an alternative that's appropriate to the context, such as "main" and "secondary" or "host" and "client"."#,
+        expression: #"slave\w{0,2}"#, // ignore-unacceptable-language
+        message: #"Don't use "slave" to describe the relationship between two devices, processes, or other things. Use an alternative that's appropriate to the context, such as "main" and "secondary" or "host" and "client"."#, // ignore-unacceptable-language
         replacement: "secondary"
     ),
     NonInclusiveLanguageChecker.Term(
