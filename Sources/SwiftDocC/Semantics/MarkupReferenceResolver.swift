@@ -71,14 +71,19 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return resolved
             
         case .failure(let unresolved, let error):
-            if let callback = problemForUnresolvedReference,
-               let problem = callback(unresolved, range, fromSymbolLink, error.message) {
+            if let problem = problemForUnresolvedReference?(unresolved, range, fromSymbolLink, error.message) {
                 problems.append(problem)
                 return nil
             }
             
-            let uncuratedArticleMatch = context.uncuratedArticles[context.inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: fromSymbolLink))
+            if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.articlesDocumentationRootReference.appendingPathOfReference(unresolved)] {
+                let rootPageNames = context.linkResolver.localResolver.rootPages().map { reference in
+                    context.documentationCache[reference]?.name.plainText ?? reference.lastPathComponent
+                }.sorted()
+                problems.append(makeUnfindableArticleProblem(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: rootPageNames))
+            } else {
+                problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: fromSymbolLink))
+            }
             return nil
         }
     }
