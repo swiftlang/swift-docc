@@ -1243,6 +1243,8 @@ class PathHierarchyTests: XCTestCase {
         
         let articleNode = try tree.findNode(path: "/MixedLanguageFramework/Bar", onlyFindSymbols: false)
         XCTAssertNotNil(articleNode.symbol, "This should be an article but can't be because of rdar://79745455")
+        // Ensure that the article is dropped from the list of uncurated articles
+        XCTAssertTrue(context.uncuratedArticles.isEmpty)
         // FIXME: Verify that article matches are preferred for general (non-symbol) links once  https://github.com/swiftlang/swift-docc/issues/593 is fixed
 //        XCTAssertNil(articleNode.symbol, "General documentation link find the article")
     }

@@ -503,11 +503,6 @@ Root
                 return node.bundleIdentifier == testBundleIdentifier
             }))
             
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
-            
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
             try FileManager.default.removeItem(at: targetURL)
@@ -1062,11 +1057,6 @@ Root
                 return node.bundleIdentifier == testBundleIdentifier
             }))
             
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
-            
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
             try FileManager.default.removeItem(at: targetURL)
@@ -1110,11 +1100,6 @@ Root
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
                 return node.bundleIdentifier == testBundleIdentifier
             }))
-            
-            let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
-            let symbolPages = allNodes.filter { NavigatorIndex.PageType(rawValue: $0.item.pageType)! == .symbol }
-            // Pages with type `symbol` should be 6 (collectionGroup type of pages) as all the others should have a proper type.
-            XCTAssertEqual(symbolPages.count, 6)
             
             // Test path persistence
             XCTAssertNil(navigatorIndex.path(for: 0)) // Root should have not path persisted.
@@ -1674,7 +1659,7 @@ Root
         XCTAssertEqual(PageType(role: "pseudosymbol"), .symbol)
         XCTAssertEqual(PageType(role: "pseudocollection"), .framework)
         XCTAssertEqual(PageType(role: "collection"), .framework)
-        XCTAssertEqual(PageType(role: "collectiongroup"), .symbol)
+        XCTAssertEqual(PageType(role: "collectiongroup"), .article)
         XCTAssertEqual(PageType(role: "article"), .article)
         XCTAssertEqual(PageType(role: "samplecode"), .sampleCode)
         

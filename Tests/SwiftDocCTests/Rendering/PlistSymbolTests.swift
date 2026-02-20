@@ -124,24 +124,10 @@ class PlistSymbolTests: XCTestCase {
     }
     
     func testDecodeDetailsSectionNoIdeTitle() throws {
-        let modifiedJSON = try String(contentsOf: plistSymbolURL)
-            .replacingOccurrences(of: "\"ideTitle\": \"WiFi access\",", with: "")
-        
-        let tempFolderURL = try createTempFolder(content: [
-            TextFile(name: "missingIdeTitle.json", utf8Content: modifiedJSON),
-        ])
-        let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempFolderURL.appendingPathComponent("missingIdeTitle.json")))
-        
-        //
-        // Plist Details
-        //
-        
-        guard let section = symbol.primaryContentSections.first(where: { section -> Bool in
-            return section.kind == .plistDetails
-        }) as? PropertyListDetailsRenderSection else {
-            XCTFail("Plist details section not decoded")
-            return
-        }
+        let modifiedJSON = try String(contentsOf: plistSymbolURL).replacingOccurrences(of: "\"ideTitle\": \"WiFi access\",", with: "")
+        let symbol = try RenderNode.decode(fromJSON: Data(modifiedJSON.utf8))
+
+        let section = try XCTUnwrap(symbol.primaryContentSections.first(where: { $0.kind == .plistDetails }) as? PropertyListDetailsRenderSection)
         
         XCTAssertEqual(section.details.rawKey, "com.apple.developer.networking.wifi")
         XCTAssertNil(section.details.displayName)
@@ -150,24 +136,10 @@ class PlistSymbolTests: XCTestCase {
     }
         
     func testDecodePossibleValuesNoTitle() throws {
-        let modifiedJSON = try String(contentsOf: plistSymbolURL)
-            .replacingOccurrences(of: "\"title\": \"Possible Values\",", with: "")
-        
-        let tempFolderURL = try createTempFolder(content: [
-            TextFile(name: "missingPossibleValuesTitle.json", utf8Content: modifiedJSON),
-        ])
-        let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempFolderURL.appendingPathComponent("missingPossibleValuesTitle.json")))
-        
-        //
-        // Plist Details
-        //
-        
-        guard let section = symbol.primaryContentSections.first(where: { section -> Bool in
-            return section.kind == .possibleValues
-        }) as? PossibleValuesRenderSection else {
-            XCTFail("Plist details section not decoded")
-            return
-        }
+        let modifiedJSON = try String(contentsOf: plistSymbolURL).replacingOccurrences(of: "\"title\": \"Possible Values\",", with: "")
+        let symbol = try RenderNode.decode(fromJSON: Data(modifiedJSON.utf8))
+
+        let section = try XCTUnwrap(symbol.primaryContentSections.first(where: { $0.kind == .possibleValues }) as? PossibleValuesRenderSection)
         
         XCTAssertEqual(section.values.count, 3)
         XCTAssertNil(section.title)

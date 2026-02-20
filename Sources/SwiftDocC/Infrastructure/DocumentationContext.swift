@@ -1766,7 +1766,13 @@ public class DocumentationContext {
                         ]
                     )
                 )
-                return nil // Don't continue processing this article
+                // In the case of a collision, we drop the article in favour of the symbol.
+                // It also needs to be removed from the list of uncurated articles, so that
+                // it doesn't get pulled in for rendering during link resolution in case
+                // it is referenced by any other page.
+                uncuratedArticles.removeValue(forKey: reference)
+                // Skip processing this article
+                return nil
             } else {
                 documentationCache[reference] = documentation
             }
@@ -2117,6 +2123,9 @@ public class DocumentationContext {
         
         registerRootPages(from: rootPageArticles)
         
+        // `registerSymbols(...)`, just below, calls `resolveExternalSymbols()` internally so we need to have finished loading the external symbol data before calling it.
+        _ = try await loadExternalResolvers
+        
         try registerSymbols(symbolGraphLoader: symbolGraphLoader, documentationExtensions: documentationExtensions)
         // We don't need to keep the loader in memory after we've registered all symbols.
         _ = consume symbolGraphLoader
@@ -2147,8 +2156,6 @@ public class DocumentationContext {
             otherArticles = registerArticles(otherArticles)
             try shouldContinueRegistration()
         }
-        
-        _ = try await loadExternalResolvers
         
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         preResolveExternalLinks(semanticObjects:

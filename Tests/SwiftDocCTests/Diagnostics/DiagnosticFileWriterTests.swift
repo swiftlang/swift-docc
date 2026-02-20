@@ -1,25 +1,32 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 import Markdown
 @testable import SwiftDocC
 import DocCTestUtilities
 
-class DiagnosticFileWriterTests: XCTestCase {
-    
-    func testWritesDiagnosticsWhenFinalized() throws {
-        let diagnosticFileURL = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
-        let writer = DiagnosticFileWriter(outputPath: diagnosticFileURL)
+struct DiagnosticFileWriterTests {
+    @Test
+    func writesFileOnlyWhenFinalized() throws {
+        let testFileSystem = try TestFileSystem(folders: [
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [])
+            ])
+        ])
         
-        let source = URL(string: "/path/to/file.md")!
+        let diagnosticFileURL = URL(fileURLWithPath: "/path/to/some-custom-diagnostics-file.json")
+        let writer = DiagnosticFileWriter(outputPath: diagnosticFileURL, fileManager: testFileSystem)
+        
+        let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
         let identifier = "org.swift.docc.test-identifier"
         let summary = "Test diagnostic summary"
@@ -35,7 +42,7 @@ class DiagnosticFileWriterTests: XCTestCase {
             let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             
             writer.receive([problem])
-            XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFileURL.pathExtension))
+            #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         
         do {
@@ -48,7 +55,7 @@ class DiagnosticFileWriterTests: XCTestCase {
             let problem = Problem(diagnostic: diagnostic, possibleSolutions: [firstSolution, secondSolution])
             
             writer.receive([problem])
-            XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFileURL.pathExtension))
+            #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         
         let firstInsertRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 8, source: source)
@@ -63,128 +70,129 @@ class DiagnosticFileWriterTests: XCTestCase {
             let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             
             writer.receive([problem])
-            XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFileURL.pathExtension))
+            #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path) == false)
         }
         
         try writer.flush()
-        XCTAssert(FileManager.default.fileExists(atPath: diagnosticFileURL.path))
+        #expect(testFileSystem.fileExists(atPath: diagnosticFileURL.path))
         
-        let diagnosticFile = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFileURL))
+        let diagnosticFile = try JSONDecoder().decode(DiagnosticFile.self, from: testFileSystem.contents(of: diagnosticFileURL))
         
-        XCTAssertEqual(diagnosticFile.version, DiagnosticFile.currentVersion)
-        XCTAssertEqual(diagnosticFile.diagnostics.count, 3)
+        #expect(diagnosticFile.version == DiagnosticFile.currentVersion)
+        #expect(diagnosticFile.diagnostics.count == 3)
         
         do {
-            let diagnostic = try XCTUnwrap(diagnosticFile.diagnostics.first)
-            XCTAssertEqual(diagnostic.source, source)
-            XCTAssertEqual(diagnostic.range?.start.line, 1)
-            XCTAssertEqual(diagnostic.range?.start.column, 8)
-            XCTAssertEqual(diagnostic.range?.end.line, 10)
-            XCTAssertEqual(diagnostic.range?.end.column, 21)
-            XCTAssertEqual(diagnostic.severity, .warning)
-            XCTAssertEqual(diagnostic.summary, summary)
-            XCTAssertEqual(diagnostic.explanation, explanation)
-            XCTAssertEqual(diagnostic.solutions.count, 1, "Found unexpected solutions: \(diagnostic.solutions)")
-            let solution = try XCTUnwrap(diagnostic.solutions.first)
-            XCTAssertEqual(solution.summary, solutionSummary)
-            XCTAssertEqual(solution.replacements.count, 1, "Found unexpected replacements: \(solution.replacements)")
-            let replacement = try XCTUnwrap(solution.replacements.first)
-            XCTAssertEqual(replacement.text, "Replacement text")
-            XCTAssertEqual(replacement.range.start.line, replacementRange.lowerBound.line)
-            XCTAssertEqual(replacement.range.start.column, replacementRange.lowerBound.column)
-            XCTAssertEqual(replacement.range.end.line, replacementRange.upperBound.line)
-            XCTAssertEqual(replacement.range.end.column, replacementRange.upperBound.column)
-            XCTAssertEqual(diagnostic.notes.count, 0, "Found unexpected notes: \(diagnostic.notes)")
+            let diagnostic = try #require(diagnosticFile.diagnostics.first)
+            #expect(diagnostic.source == source)
+            #expect(diagnostic.range?.start.line == 1)
+            #expect(diagnostic.range?.start.column == 8)
+            #expect(diagnostic.range?.end.line == 10)
+            #expect(diagnostic.range?.end.column == 21)
+            #expect(diagnostic.severity == .warning)
+            #expect(diagnostic.summary == summary)
+            #expect(diagnostic.explanation == explanation)
+            #expect(diagnostic.solutions.count == 1, "Found unexpected solutions: \(diagnostic.solutions)")
+            let solution = try #require(diagnostic.solutions.first)
+            #expect(solution.summary == solutionSummary)
+            #expect(solution.replacements.count == 1, "Found unexpected replacements: \(solution.replacements)")
+            let replacement = try #require(solution.replacements.first)
+            #expect(replacement.text == "Replacement text")
+            #expect(replacement.range.start.line == replacementRange.lowerBound.line)
+            #expect(replacement.range.start.column == replacementRange.lowerBound.column)
+            #expect(replacement.range.end.line == replacementRange.upperBound.line)
+            #expect(replacement.range.end.column == replacementRange.upperBound.column)
+            #expect(diagnostic.notes.count == 0, "Found unexpected notes: \(diagnostic.notes)")
         }
         
         do {
-            let diagnostic = try XCTUnwrap(diagnosticFile.diagnostics.dropFirst().first)
-            XCTAssertEqual(diagnostic.source, source)
-            XCTAssertEqual(diagnostic.range?.start.line, 1)
-            XCTAssertEqual(diagnostic.range?.start.column, 8)
-            XCTAssertEqual(diagnostic.range?.end.line, 10)
-            XCTAssertEqual(diagnostic.range?.end.column, 21)
-            XCTAssertEqual(diagnostic.severity, .note)
-            XCTAssertEqual(diagnostic.summary, summary)
-            XCTAssertEqual(diagnostic.explanation, explanation)
-            XCTAssertEqual(diagnostic.solutions.count, 2, "Found unexpected solutions: \(diagnostic.solutions)")
+            let diagnostic = try #require(diagnosticFile.diagnostics.dropFirst().first)
+            #expect(diagnostic.source == source)
+            #expect(diagnostic.range?.start.line == 1)
+            #expect(diagnostic.range?.start.column == 8)
+            #expect(diagnostic.range?.end.line == 10)
+            #expect(diagnostic.range?.end.column == 21)
+            #expect(diagnostic.severity == .note)
+            #expect(diagnostic.summary == summary)
+            #expect(diagnostic.explanation == explanation)
+            #expect(diagnostic.solutions.count == 2, "Found unexpected solutions: \(diagnostic.solutions)")
             do {
-                let solution = try XCTUnwrap(diagnostic.solutions.first)
-                XCTAssertEqual(solution.summary, "Test first solution summary!")
-                XCTAssertEqual(solution.replacements.count, 1, "Found unexpected replacements: \(solution.replacements)")
-                let replacement = try XCTUnwrap(solution.replacements.first)
-                XCTAssertEqual(replacement.text, "Replacement text")
-                XCTAssertEqual(replacement.range.start.line, replacementRange.lowerBound.line)
-                XCTAssertEqual(replacement.range.start.column, replacementRange.lowerBound.column)
-                XCTAssertEqual(replacement.range.end.line, replacementRange.upperBound.line)
-                XCTAssertEqual(replacement.range.end.column, replacementRange.upperBound.column)
+                let solution = try #require(diagnostic.solutions.first)
+                #expect(solution.summary == "Test first solution summary!")
+                #expect(solution.replacements.count == 1, "Found unexpected replacements: \(solution.replacements)")
+                let replacement = try #require(solution.replacements.first)
+                #expect(replacement.text == "Replacement text")
+                #expect(replacement.range.start.line == replacementRange.lowerBound.line)
+                #expect(replacement.range.start.column == replacementRange.lowerBound.column)
+                #expect(replacement.range.end.line == replacementRange.upperBound.line)
+                #expect(replacement.range.end.column == replacementRange.upperBound.column)
             }
             do {
-                let solution = try XCTUnwrap(diagnostic.solutions.dropFirst().first)
-                XCTAssertEqual(solution.summary, "Test second solution summary")
-                XCTAssertEqual(solution.replacements.count, 0, "Found unexpected replacements: \(solution.replacements)")
+                let solution = try #require(diagnostic.solutions.dropFirst().first)
+                #expect(solution.summary == "Test second solution summary")
+                #expect(solution.replacements.count == 0, "Found unexpected replacements: \(solution.replacements)")
             }
-            XCTAssertEqual(diagnostic.notes.count, 0, "Found unexpected notes: \(diagnostic.notes)")
+            #expect(diagnostic.notes.count == 0, "Found unexpected notes: \(diagnostic.notes)")
         }
         
         do {
-            let diagnostic = try XCTUnwrap(diagnosticFile.diagnostics.dropFirst(2).first)
-            XCTAssertEqual(diagnostic.source, source)
-            XCTAssertEqual(diagnostic.range?.start.line, 1)
-            XCTAssertEqual(diagnostic.range?.start.column, 8)
-            XCTAssertEqual(diagnostic.range?.end.line, 10)
-            XCTAssertEqual(diagnostic.range?.end.column, 21)
-            XCTAssertEqual(diagnostic.severity, .error)
-            XCTAssertEqual(diagnostic.summary, summary)
-            XCTAssertEqual(diagnostic.explanation, explanation)
-            XCTAssertEqual(diagnostic.solutions.count, 1, "Found unexpected solutions: \(diagnostic.solutions)")
-            let solution = try XCTUnwrap(diagnostic.solutions.first)
-            XCTAssertEqual(solution.summary, solutionSummary)
-            XCTAssertEqual(solution.replacements.count, 2, "Found unexpected replacements: \(solution.replacements)")
+            let diagnostic = try #require(diagnosticFile.diagnostics.dropFirst(2).first)
+            #expect(diagnostic.source == source)
+            #expect(diagnostic.range?.start.line == 1)
+            #expect(diagnostic.range?.start.column == 8)
+            #expect(diagnostic.range?.end.line == 10)
+            #expect(diagnostic.range?.end.column == 21)
+            #expect(diagnostic.severity == .error)
+            #expect(diagnostic.summary == summary)
+            #expect(diagnostic.explanation == explanation)
+            #expect(diagnostic.solutions.count == 1, "Found unexpected solutions: \(diagnostic.solutions)")
+            let solution = try #require(diagnostic.solutions.first)
+            #expect(solution.summary == solutionSummary)
+            #expect(solution.replacements.count == 2, "Found unexpected replacements: \(solution.replacements)")
             do {
-                let replacement = try XCTUnwrap(solution.replacements.first)
-                XCTAssertEqual(replacement.text, "ABC")
-                XCTAssertEqual(replacement.range.start.line, firstInsertRange.lowerBound.line)
-                XCTAssertEqual(replacement.range.start.column, firstInsertRange.lowerBound.column)
-                XCTAssertEqual(replacement.range.end.line, firstInsertRange.upperBound.line)
-                XCTAssertEqual(replacement.range.end.column, firstInsertRange.upperBound.column)
+                let replacement = try #require(solution.replacements.first)
+                #expect(replacement.text == "ABC")
+                #expect(replacement.range.start.line == firstInsertRange.lowerBound.line)
+                #expect(replacement.range.start.column == firstInsertRange.lowerBound.column)
+                #expect(replacement.range.end.line == firstInsertRange.upperBound.line)
+                #expect(replacement.range.end.column == firstInsertRange.upperBound.column)
             }
             do {
-                let replacement = try XCTUnwrap(solution.replacements.dropFirst().first)
-                XCTAssertEqual(replacement.text, "abc")
-                XCTAssertEqual(replacement.range.start.line, secondInsertRange.lowerBound.line)
-                XCTAssertEqual(replacement.range.start.column, secondInsertRange.lowerBound.column)
-                XCTAssertEqual(replacement.range.end.line, secondInsertRange.upperBound.line)
-                XCTAssertEqual(replacement.range.end.column, secondInsertRange.upperBound.column)
+                let replacement = try #require(solution.replacements.dropFirst().first)
+                #expect(replacement.text == "abc")
+                #expect(replacement.range.start.line == secondInsertRange.lowerBound.line)
+                #expect(replacement.range.start.column == secondInsertRange.lowerBound.column)
+                #expect(replacement.range.end.line == secondInsertRange.upperBound.line)
+                #expect(replacement.range.end.column == secondInsertRange.upperBound.column)
             }
-            XCTAssertEqual(diagnostic.notes.count, 0, "Found unexpected notes: \(diagnostic.notes)")
+            #expect(diagnostic.notes.count == 0, "Found unexpected notes: \(diagnostic.notes)")
         }
     }
     
-    func testVerifyVersionIsValidForDecoding() throws {
+    @Test
+    func throwsErrorAboutUnsupportedVersionForDecoding() throws {
         let version1_0_0 = SemanticVersion(major: 1, minor: 0, patch: 0)
         let version1_0_1 = SemanticVersion(major: 1, minor: 0, patch: 1)
         let version1_2_3 = SemanticVersion(major: 1, minor: 2, patch: 3)
         let version2_0_0 = SemanticVersion(major: 2, minor: 0, patch: 0)
         
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_0_0))
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_0_1))
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_2_3))
-        XCTAssertThrowsError(try DiagnosticFile.verifyIsSupported(version1_0_0, current: version2_0_0))
+        try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_0_0)
+        try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_0_1)
+        try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_2_3)
+        #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version1_0_0, current: version2_0_0) }
         
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_0_0))
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_0_1))
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_2_3))
-        XCTAssertThrowsError(try DiagnosticFile.verifyIsSupported(version1_0_1, current: version2_0_0))
+        try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_0_0)
+        try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_0_1)
+        try DiagnosticFile.verifyIsSupported(version1_0_1, current: version1_2_3)
+        #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version1_0_1, current: version2_0_0) }
         
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_0_0))
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_0_1))
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_2_3))
-        XCTAssertThrowsError(try DiagnosticFile.verifyIsSupported(version1_2_3, current: version2_0_0))
+        try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_0_0)
+        try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_0_1)
+        try DiagnosticFile.verifyIsSupported(version1_2_3, current: version1_2_3)
+        #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version1_2_3, current: version2_0_0) }
         
-        XCTAssertThrowsError(try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_0_0))
-        XCTAssertThrowsError(try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_0_1))
-        XCTAssertThrowsError(try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_2_3))
-        XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version2_0_0, current: version2_0_0))
+        #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_0_0) }
+        #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_0_1) }
+        #expect(throws: DiagnosticFile.Error.self) { try DiagnosticFile.verifyIsSupported(version2_0_0, current: version1_2_3) }
+        try DiagnosticFile.verifyIsSupported(version2_0_0, current: version2_0_0)
     }
 }
