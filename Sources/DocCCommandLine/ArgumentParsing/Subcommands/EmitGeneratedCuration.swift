@@ -157,7 +157,13 @@ extension Docc.ProcessCatalog {
         }
         
         func run() async throws {
-            let action = try EmitGeneratedCurationAction(fromCommand: self)
+            let action = try EmitGeneratedCurationAction(
+                documentationCatalog: documentationCatalog,
+                additionalSymbolGraphDirectory: additionalSymbolGraphDirectory,
+                outputURL: outputURL,
+                depthLimit: depthLimit,
+                startingPointSymbolLink: startingPointSymbolLink
+            )
             try await action.performAndHandleResult()
         }
     }
