@@ -47,7 +47,7 @@ extension Docc.ProcessArchive {
         var templateOption: TemplateOption
 
         func run() async throws {
-            // If we did this validation in `validate()` we'd still have to force unwrap the `templateURL` here.
+            // We perform validation here instead of in  `validate()` to avoid having to force unwrap the `templateURL` here.
             guard let templateURL = templateOption.templateURL else {
                 throw TemplateOption.missingHTMLTemplateError(path: templateOption.defaultTemplateURL.path)
             }

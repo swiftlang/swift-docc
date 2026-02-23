@@ -209,7 +209,7 @@ extension Docc {
             )
             var diagnosticsOutputPath: URL?
             
-            /// The diagnostic severity level to filter
+            /// The diagnostic severity level to filter.
             @Option(
                 name: [.customLong("diagnostic-filter"), .long],
                 help: ArgumentHelp("Filter diagnostics with a lower severity than this level.", discussion:
