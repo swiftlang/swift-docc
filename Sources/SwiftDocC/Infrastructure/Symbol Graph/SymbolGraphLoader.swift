@@ -76,8 +76,6 @@ struct SymbolGraphLoader {
 
                 var symbolGraph: SymbolGraph = try FastSymbolGraphJSONDecoder.decode(SymbolGraph.self, from: data)
                 
-                Self.applyWorkaroundFor139305015(to: &symbolGraph)
-                
                 symbolGraphTransformer?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
@@ -352,62 +350,6 @@ struct SymbolGraphLoader {
             moduleName = SymbolGraphLoader.moduleNameFor(url)!
         }
         return (moduleName, isMainSymbolGraph)
-    }
-    
-    private static func applyWorkaroundFor139305015(to symbolGraph: inout SymbolGraph) {
-        guard symbolGraph.symbols.values.mapFirst(where: { SourceLanguage(id: $0.identifier.interfaceLanguage) }) == .objectiveC else {
-            return
-        }
-        
-        // Clang emits anonymous structs and unions differently than anonymous enums (rdar://139305015).
-        //
-        // The anonymous structs, with empty names, causes issues in a few different places for DocC:
-        // - The IndexingRecords (one of the `--emit-digest` files) throws an error about the empty name.
-        // - The NavigatorIndex.Builder may throw an error about the empty name.
-        // - Their pages can't be navigated to because their URL path end with a leading slash.
-        //   The corresponding static hosting 'index.html' copy also overrides the container's index.html file because
-        //   its file path has two slashes, for example "/documentation/ModuleName/ContainerName//index.html".
-        //
-        // To avoid all those issues without handling empty names throughout the code,
-        // we fill in titles and navigator titles for these symbols using the same format as Clang uses for anonymous enums.
-        
-        let relationshipsByTarget = [String: [SymbolGraph.Relationship]](grouping: symbolGraph.relationships, by: \.target)
-        
-        for (usr, symbol) in symbolGraph.symbols {
-            guard symbol.names.title.isEmpty,
-                  symbol.names.navigator?.map(\.spelling).joined().isEmpty == true,
-                  symbol.pathComponents.last?.isEmpty == true
-            else {
-                continue
-            }
-            
-            // This symbol has an empty title and an empty navigator title.
-            var modified = symbol
-            let fallbackTitle = "\(symbol.kind.identifier.identifier) (unnamed)"
-            modified.names.title = fallbackTitle
-            // Clang uses a single `identifier` fragment for anonymous enums.
-            modified.names.navigator = [.init(kind: .identifier, spelling: fallbackTitle, preciseIdentifier: nil)]
-            // Don't update `modified.names.subHeading`. Clang _doesn't_ use "enum (unnamed)" for the `Symbol/Names/subHeading` so we don't add it here either.
-            
-            // Clang uses the "enum (unnamed)" in the path components of anonymous enums so we follow that format for anonymous structs.
-            modified.pathComponents[modified.pathComponents.count - 1] = fallbackTitle
-            symbolGraph.symbols[usr] = modified
-            
-            // Also update all the members whose path components start with the container's path components so that they're consistent.
-            if let relationships = relationshipsByTarget[usr] {
-                let containerPathComponents = modified.pathComponents
-                
-                for memberRelationship in relationships where memberRelationship.kind == .memberOf {
-                    guard var modifiedMember = symbolGraph.symbols.removeValue(forKey: memberRelationship.source) else { continue }
-                    // Only update the member's path components if it starts with the original container's components.
-                    guard modifiedMember.pathComponents.starts(with: symbol.pathComponents) else { continue }
-                    
-                    modifiedMember.pathComponents.replaceSubrange(containerPathComponents.indices, with: containerPathComponents)
-                    
-                    symbolGraph.symbols[memberRelationship.source] = modifiedMember
-                }
-            }
-        }
     }
 }
 
