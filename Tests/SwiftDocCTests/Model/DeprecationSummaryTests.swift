@@ -75,7 +75,7 @@ struct DeprecationSummaryTests {
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        // Verify that DocC still displays the deprecation text, despite the symbol being available.
+        // Verify that DocC displays the deprecation text.
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(node)
@@ -195,8 +195,14 @@ struct DeprecationSummaryTests {
         #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
     }
     
-    @Test(.disabled("Available directive doesn't prevent this warning"), arguments: DirectiveLocation.allCases)
-    func doesNotWarnAboutDeprecationSummaryIfVersionInfoIsProvidedInAvailabilityDirective(_ directiveLocation: DirectiveLocation) async throws {
+    @Test(arguments: DirectiveLocation.allCases, [
+        [], // No in-source availability attributes
+        [Self.makeInSourceAvailabilityInfo(domain: "iOS", deprecated: nil)]
+    ])
+    func doesNotWarnAboutDeprecationSummaryIfVersionInfoIsProvidedInAvailabilityDirective(
+        _ directiveLocation: DirectiveLocation,
+        availability: [SymbolGraph.Symbol.Availability.AvailabilityItem]
+    ) async throws {
         let directives = """
         \(Self.deprecationSummaryDirective)
         @Metadata {
@@ -210,9 +216,7 @@ struct DeprecationSummaryTests {
                     Some in-source documentation with a deprecation summary for this protocol.
                     
                     \(directiveLocation == .inSourceComment ? directives : "")
-                    """, availability: [
-                        Self.makeInSourceAvailabilityInfo(domain: "iOS", deprecated: nil),
-                    ])
+                    """, availability: availability)
             ])),
             
             TextFile(name: "SomeProtocol.md", utf8Content: """
@@ -228,7 +232,7 @@ struct DeprecationSummaryTests {
         #expect(context.problems.map(\.diagnostic.identifier) == [],
                 "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        // Verify that DocC still displays the deprecation text, despite the symbol being available.
+        // Verify that DocC displays the deprecation text.
         let node = try #require(context.documentationCache["some-symbol-id"])
         let converter = DocumentationNodeConverter(context: context)
         let renderNode = converter.convert(node)
