@@ -29,11 +29,6 @@ add_library(DocCCommandLine STATIC
   Action/Actions/TransformForStaticHostingAction.swift
   ArgumentParsing/ActionExtensions/Action+performAndHandleResult.swift
   ArgumentParsing/ActionExtensions/ConvertAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/EmitGeneratedCurationAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/IndexAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/InitAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/PreviewAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/TransformForStaticHostingAction+CommandInitialization.swift
   ArgumentParsing/ArgumentValidation/URLArgumentValidator.swift
   ArgumentParsing/Options/DirectoryPathOption.swift
   ArgumentParsing/Options/DocumentationArchiveOption.swift
