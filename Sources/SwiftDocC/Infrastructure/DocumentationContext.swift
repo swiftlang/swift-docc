@@ -903,20 +903,6 @@ public class DocumentationContext {
             bundle: inputs
         )
 
-        // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
-        if let foundDocumentationExtension,
-            foundDocumentationExtension.value.deprecationSummary != nil,
-            (updatedNode.semantic as? Symbol)?.isDeprecated == false,
-            let articleMarkup = foundDocumentationExtension.value.markup,
-            let symbol = updatedNode.unifiedSymbol?.documentedSymbol
-        {
-            let directive = articleMarkup.children.mapFirst { child -> BlockDirective? in
-                guard let directive = child as? BlockDirective, directive.name == DeprecationSummary.directiveName else { return nil }
-                return directive
-            }
-            diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: foundDocumentationExtension.source, severity: .warning, range: directive?.range, identifier: "org.swift.docc.DeprecationSummaryForAvailableSymbol", summary: "\(symbol.absolutePath.singleQuoted) isn't unconditionally deprecated"), possibleSolutions: []))
-        }
-
         return updatedNode
     }
     

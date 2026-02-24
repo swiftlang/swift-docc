@@ -120,8 +120,7 @@ struct DeprecationSummaryTests {
         #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
     }
     
-    // FIXME: This warning isn't raised for in-source directives
-    @Test(arguments: [DirectiveLocation.extensionFile])
+    @Test(arguments: DirectiveLocation.allCases)
     func warnsAboutDeprecationSummaryIfSymbolIsNotDeprecated(_ directiveLocation: DirectiveLocation) async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
@@ -157,8 +156,7 @@ struct DeprecationSummaryTests {
         #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
     }
     
-    // FIXME: This warning isn't raised for in-source directives
-    @Test(arguments: [DirectiveLocation.extensionFile])
+    @Test(arguments: DirectiveLocation.allCases)
     func warnsAboutDeprecationSummaryIfSymbolIsOnlyPartiallyDeprecated(_ directiveLocation: DirectiveLocation) async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
@@ -197,8 +195,7 @@ struct DeprecationSummaryTests {
         #expect(renderNode.deprecationSummary?.firstParagraph == [.text("Some description, from the directive, of why this protocol is deprecated.")])
     }
     
-    // FIXME: This warning isn't raised for in-source directives
-    @Test(.disabled("Available directive doesn't prevent this warning"), arguments: [DirectiveLocation.extensionFile])
+    @Test(.disabled("Available directive doesn't prevent this warning"), arguments: DirectiveLocation.allCases)
     func doesNotWarnAboutDeprecationSummaryIfVersionInfoIsProvidedInAvailabilityDirective(_ directiveLocation: DirectiveLocation) async throws {
         let directives = """
         \(Self.deprecationSummaryDirective)

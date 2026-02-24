@@ -483,6 +483,23 @@ public struct DocumentationNode {
             engine.emit(problem)
         }
         
+        let deprecationSummaryDirective = markup.children.mapFirst { markup in
+            (markup as? BlockDirective).flatMap { directive in
+                directive.name == DeprecationSummary.directiveName ? directive : nil
+            }
+        }
+        
+        // Warn about deprecation summary for non-deprecated symbols.
+        if !semantic.isDeprecated,
+           let deprecationSummaryDirective,
+           let symbol = unifiedSymbol?.documentedSymbol
+        {
+            let range = deprecationSummaryDirective.range
+            
+            engine.emit(Problem(diagnostic: Diagnostic(source: range?.source, severity: .warning, range: range, identifier: "org.swift.docc.DeprecationSummaryForAvailableSymbol", summary: "\(symbol.absolutePath.singleQuoted) isn't unconditionally deprecated"), possibleSolutions: []))
+        }
+
+        
         self.metadata = documentationExtension?.metadata ?? metadataFromDocumentationComment
         
         updateAnchorSections()
