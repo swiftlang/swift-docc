@@ -1344,7 +1344,7 @@ class SymbolTests: XCTestCase {
             extensionFileContent: nil
         )
         
-        XCTAssertEqual(problems.map(\.diagnostic.identifier), ["org.swift.docc.DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(problems.map(\.diagnostic.summary))")
+        XCTAssertEqual(problems.map(\.diagnostic.identifier), ["DeprecationSummaryForAvailableSymbol"], "Unexpected problems: \(problems.map(\.diagnostic.summary))")
         
         XCTAssertEqual(
             (node.semantic as? Symbol)?
