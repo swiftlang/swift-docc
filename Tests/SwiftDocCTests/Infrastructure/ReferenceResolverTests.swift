@@ -339,7 +339,7 @@ class ReferenceResolverTests: XCTestCase {
             XCTAssertEqual(diagnostic.source?.lastPathComponent, "FirstModule.md")
             XCTAssertEqual(diagnostic.summary, "Article is not findable in invalid documentation hierarchy with 2 roots")
             XCTAssertEqual(diagnostic.explanation, """
-                Documentation with 2 roots (FirstModuleName and SecondModuleName has a disjoint and unsupported documentation hierarchy.
+                Documentation with 2 roots ('FirstModuleName' and 'SecondModuleName') has a disjoint and unsupported documentation hierarchy.
                 Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
                 As a consequence, the 'Unregistered and Uncurated Article' article (UncuratedArticle.md) is not findable and has no page in the output.
                 """)
