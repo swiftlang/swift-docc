@@ -660,7 +660,7 @@ class DocumentationContextTests: XCTestCase {
             "Rename 'First/Something.tutorial'"           // The other file; which DocC deterministically keeps
         ])
 
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other tutorial with same filename here"])
+        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other tutorial with same output path here"])
         XCTAssertEqual(problem.diagnostic.notes.map(\.source.path), ["/unit-test.docc/First/Something.tutorial"],
                        "The single note should refer to the other file with the same output path")
     }
@@ -698,7 +698,7 @@ class DocumentationContextTests: XCTestCase {
             "Rename 'First/Something.md'"           // The other file; which DocC deterministically keeps
         ])
 
-        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other article with same filename here"])
+        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other article with same output path here"])
         XCTAssertEqual(problem.diagnostic.notes.map(\.source.path), ["/unit-test.docc/First/Something.md"],
                        "The single note should refer to the other file with the same output path")
     }

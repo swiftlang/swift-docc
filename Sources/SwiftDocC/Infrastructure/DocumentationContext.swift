@@ -805,7 +805,7 @@ public class DocumentationContext {
                             DiagnosticNote(
                                 source: firstFoundAtURL,
                                 range: SourceLocation(line: 1, column: 1, source: nil) ..<  SourceLocation(line: 1, column: 1, source: nil),
-                                message: "Other \(fileDescription) with same filename here"
+                                message: "Other \(fileDescription) with same output path here"
                             )
                         ]
                     ),
