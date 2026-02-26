@@ -786,7 +786,8 @@ public class DocumentationContext {
                 let isArticle = url.pathExtension == "md"
                 let fileDescription = isArticle ? "article" : "tutorial"
                 
-                let webURLPathComponent = urlReadablePath(firstFoundAtURL.deletingPathExtension().lastPathComponent).lowercased()
+                let webURLPathComponent = urlReadablePath(url.deletingPathExtension().lastPathComponent).lowercased()
+                assert(webURLPathComponent == urlReadablePath(firstFoundAtURL.deletingPathExtension().lastPathComponent).lowercased(), "The two files didn't collide")
                 
                 let problem = Problem(
                     diagnostic: Diagnostic(
