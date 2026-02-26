@@ -37,7 +37,11 @@ extension Docc {
         }
 
         public func run() async throws {
-            let indexAction = IndexAction(fromIndexCommand: self)
+            let indexAction = IndexAction(
+                archiveURL: documentationArchive.urlOrFallback,
+                outputURL: outputURL,
+                bundleIdentifier: bundleIdentifier
+            )
             try await indexAction.performAndHandleResult()
         }
     }
