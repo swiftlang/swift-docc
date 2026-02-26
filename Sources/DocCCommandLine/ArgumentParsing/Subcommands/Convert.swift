@@ -52,9 +52,11 @@ extension Docc {
         @OptionGroup(title: "Inputs & outputs")
         var inputsAndOutputs: InputAndOutputOptions
         struct InputAndOutputOptions: ParsableArguments {
+            /// The user-provided path to a `.docc` documentation catalog.
             @OptionGroup()
             var documentationCatalog: DocumentationCatalogOption
             
+            /// A user-provided path to a directory of additional symbol graph files that the convert action will process.
             @Option(
                 name: [.customLong("additional-symbol-graph-dir")],
                 help: "A path to a directory of additional symbol graph files.",
@@ -62,6 +64,7 @@ extension Docc {
             )
             var additionalSymbolGraphDirectory: URL?
             
+            /// A user-provided location where the convert action writes the built documentation.
             @Option(
                 name: [.customLong("output-path"), .customLong("output-dir"), .customShort("o")], // Remove "output-dir" when other tools no longer pass that option. (rdar://72449411)
                 help: "The location where the documentation compiler writes the built documentation.",
@@ -82,32 +85,14 @@ extension Docc {
             }
         }
         
-        /// The user-provided path to a `.docc` documentation catalog.
-        public var documentationCatalog: DocumentationCatalogOption {
-            get { inputsAndOutputs.documentationCatalog }
-            set { inputsAndOutputs.documentationCatalog = newValue }
-        }
-        
-        /// A user-provided path to a directory of additional symbol graph files that the convert action will process.
-        public var additionalSymbolGraphDirectory: URL? {
-            get { inputsAndOutputs.additionalSymbolGraphDirectory }
-            set { inputsAndOutputs.additionalSymbolGraphDirectory = newValue }
-        }
-        
-        /// A user-provided location where the convert action writes the built documentation.
-        public var providedOutputURL: URL? {
-            get { inputsAndOutputs.providedOutputURL }
-            set { inputsAndOutputs.providedOutputURL = newValue }
-        }
-        
         /// The path to the directory that all build output should be placed in.
         public var outputURL: URL {
             // If an output location was passed as an argument, use it as-is.
-            if let providedOutputURL {
+            if let providedOutputURL = inputsAndOutputs.providedOutputURL {
                 return providedOutputURL
             }
             
-            var outputURL = documentationCatalog.urlOrFallback
+            var outputURL = inputsAndOutputs.documentationCatalog.urlOrFallback
             
             // Check that the output is written in a build directory sub-folder
             if outputURL.lastPathComponent != Convert.buildDirectory {
@@ -122,6 +107,20 @@ extension Docc {
         @OptionGroup(title: "Availability options")
         var availabilityOptions: AvailabilityOptions
         struct AvailabilityOptions: ParsableArguments {
+            /// User-provided platform name/version pairs.
+            ///
+            /// Used to set the current release version of a platform. Contains an array of strings in the following format:
+            /// ```
+            /// name={platform name},version={semantic version}
+            /// ```
+            ///
+            /// Optionally, the platform name/version pair can include a `beta={true|false}` component. If no beta information is provided the platform is considered not in beta.
+            ///
+            /// # Example
+            /// ```
+            /// "name=macOS,version=10.1.2"
+            /// "name=macOS,version=10.1.2,beta=true"
+            /// ```
             @Option(
                 name: .customLong("platform"),
                 parsing: ArrayParsingStrategy.singleValue,
@@ -132,25 +131,6 @@ extension Docc {
                 """)
             )
             var platforms: [String] = []
-        }
-
-        /// User-provided platform name/version pairs.
-        ///
-        /// Used to set the current release version of a platform. Contains an array of strings in the following format:
-        /// ```
-        /// name={platform name},version={semantic version}
-        /// ```
-        ///
-        /// Optionally, the platform name/version pair can include a `beta={true|false}` component. If no beta information is provided the platform is considered not in beta.
-        ///
-        /// # Example
-        /// ```
-        /// "name=macOS,version=10.1.2"
-        /// "name=macOS,version=10.1.2,beta=true"
-        /// ```
-        public var platforms: [String] {
-            get { availabilityOptions.platforms }
-            set { availabilityOptions.platforms = newValue }
         }
 
         /// The user-provided path to an executable that can be used to resolve links.
@@ -170,6 +150,7 @@ extension Docc {
         @OptionGroup(title: "Hosting options")
         var hostingOptions: HostingOptions
         struct HostingOptions: ParsableArguments {
+            /// A user-provided relative path to be used in the archived output
             @Option(
                 name: [.customLong("hosting-base-path")],
                 help: ArgumentHelp("The base path your documentation website will be hosted at.", discussion: """
@@ -178,6 +159,9 @@ extension Docc {
             )
             var hostingBasePath: String?
 
+            /// A Boolean value that is true if the DocC archive produced by this conversion will support static hosting environments.
+            ///
+            /// This value defaults to true but can be explicitly disabled with the `--no-transform-for-static-hosting` flag.
             @Flag(
                 inversion: .prefixedNo,
                 exclusivity: .exclusive,
@@ -185,6 +169,7 @@ extension Docc {
             )
             var transformForStaticHosting = true
             
+            /// A Boolean value that is true if the DocC archive produced by this conversion will support browsing without JavaScript enabled.
             @Flag(help: "Include documentation content in each HTML file for static hosting environments.")
             var experimentalTransformForStaticHostingWithContent = false
             
@@ -200,25 +185,6 @@ extension Docc {
             }
         }
         
-        /// A Boolean value that is true if the DocC archive produced by this conversion will support static hosting environments.
-        ///
-        /// This value defaults to true but can be explicitly disabled with the `--no-transform-for-static-hosting` flag.
-        public var transformForStaticHosting: Bool {
-            get { hostingOptions.transformForStaticHosting }
-            set { hostingOptions.transformForStaticHosting = newValue }
-        }
-        
-        /// A Boolean value that is true if the DocC archive produced by this conversion will support browsing without JavaScript enabled.
-        public var experimentalTransformForStaticHostingWithContent: Bool {
-            get { hostingOptions.experimentalTransformForStaticHostingWithContent }
-            set { hostingOptions.experimentalTransformForStaticHostingWithContent = newValue }
-        }
-        
-        /// A user-provided relative path to be used in the archived output
-        var hostingBasePath: String? {
-            hostingOptions.hostingBasePath
-        }
-        
         /// The user-provided path to an HTML documentation template.
         @OptionGroup()
         public var templateOption: TemplateOption
@@ -228,9 +194,11 @@ extension Docc {
         @OptionGroup(title: "Diagnostic options")
         var diagnosticOptions: DiagnosticOptions
         struct DiagnosticOptions: ParsableArguments {
+            /// A user-provided value that is true if additional analyzer style warnings should be outputted to the terminal.
             @Flag(help: "Include 'note'/'information' level diagnostics in addition to warnings and errors.")
             var analyze = false
             
+            /// A user-provided location where the convert action writes the diagnostics file.
             @Option(
                 name: [.customLong("diagnostics-file"), .customLong("diagnostics-output-path")],
                 help: ArgumentHelp(
@@ -241,6 +209,7 @@ extension Docc {
             )
             var diagnosticsOutputPath: URL?
             
+            /// The diagnostic severity level to filter.
             @Option(
                 name: [.customLong("diagnostic-filter"), .long],
                 help: ArgumentHelp("Filter diagnostics with a lower severity than this level.", discussion:
@@ -253,11 +222,13 @@ extension Docc {
             )
             var diagnosticLevel: String?
             
+            /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
             @Flag(
                 name: [.customLong("ide-console-output"), .customLong("emit-fixits")],
                 help: "Format output to the console intended for an IDE or other tool to parse.")
             var formatConsoleOutputForTools = false
             
+            /// Treat warning as errors.
             @Flag(help: "Treat warnings as errors")
             var warningsAsErrors = false
 
@@ -290,50 +261,24 @@ extension Docc {
                  - hint, notice
                 """
         }
-        
-        /// Treat warning as errors.
-        public var warningsAsErrors: Bool {
-            get { diagnosticOptions.warningsAsErrors }
-            set { diagnosticOptions.warningsAsErrors = newValue }
-        }
-
-        /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
-        public var formatConsoleOutputForTools: Bool {
-            get { diagnosticOptions.formatConsoleOutputForTools }
-            set { diagnosticOptions.formatConsoleOutputForTools = newValue }
-        }
-        
-        /// A user-provided location where the convert action writes the diagnostics file.
-        public var diagnosticsOutputPath: URL? {
-            get { diagnosticOptions.diagnosticsOutputPath }
-            set { diagnosticOptions.diagnosticsOutputPath = newValue }
-        }
-        
-        /// The diagnostic severity level to filter
-        public var diagnosticLevel: String? {
-            get { diagnosticOptions.diagnosticLevel }
-            set { diagnosticOptions.diagnosticLevel = newValue }
-        }
-
-        /// A user-provided value that is true if additional analyzer style warnings should be outputted to the terminal.
-        ///
-        /// Defaults to false.
-        public var analyze: Bool {
-            get { diagnosticOptions.analyze }
-            set { diagnosticOptions.analyze = newValue }
-        }
 
         // MARK: - Info.plist fallback options
 
         @OptionGroup(title: "Info.plist fallbacks")
         var infoPlistFallbacks: InfoPlistFallbackOptions
         struct InfoPlistFallbackOptions: ParsableArguments {
+            /// A user-provided default language for code listings.
+            ///
+            /// If the documentation catalogs's Info.plist file contains a default code listing language, the documentation catalog ignores this fallback language.
             @Option(
                 name: [.customLong("default-code-listing-language")],
                 help: "A fallback default language for code listings if no value is provided in the documentation catalogs's Info.plist file."
             )
             var defaultCodeListingLanguage: String?
         
+            /// A user-provided fallback display name for the documentation bundle.
+            ///
+            /// If the documentation catalogs's Info.plist file contains a bundle display name, the documentation catalog ignores this fallback name.
             @Option(
                 name: [.customLong("fallback-display-name"), .customLong("display-name")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: ArgumentHelp("A fallback display name if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
@@ -344,6 +289,9 @@ extension Docc {
             )
             var fallbackBundleDisplayName: String?
         
+            /// A user-provided fallback identifier for the documentation bundle.
+            ///
+            /// If the documentation catalogs's Info.plist file contains a bundle identifier, the documentation catalog ignores this fallback identifier.
             @Option(
                 name: [.customLong("fallback-bundle-identifier"), .customLong("bundle-identifier")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: ArgumentHelp("A fallback bundle identifier if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
@@ -353,6 +301,9 @@ extension Docc {
             )
             var fallbackBundleIdentifier: String?
             
+            /// A user-provided default kind description for the module.
+            ///
+            /// If the documentation catalogs's Info.plist file contains a default module kind, the documentation catalog ignores this fallback module kind.
             @Option(
                 help: ArgumentHelp("A fallback default module kind if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
                 If no module kind is provided in the catalogs's Info.plist file or via the '--fallback-default-module-kind' option, \
@@ -375,38 +326,6 @@ extension Docc {
             }
         }
         
-        /// A user-provided fallback display name for the documentation bundle.
-        ///
-        /// If the documentation catalogs's Info.plist file contains a bundle display name, the documentation catalog ignores this fallback name.
-        public var fallbackBundleDisplayName: String? {
-            get { infoPlistFallbacks.fallbackBundleDisplayName }
-            set { infoPlistFallbacks.fallbackBundleDisplayName = newValue }
-        }
-        
-        /// A user-provided fallback identifier for the documentation bundle.
-        ///
-        /// If the documentation catalogs's Info.plist file contains a bundle identifier, the documentation catalog ignores this fallback identifier.
-        public var fallbackBundleIdentifier: String? {
-            get { infoPlistFallbacks.fallbackBundleIdentifier }
-            set { infoPlistFallbacks.fallbackBundleIdentifier = newValue }
-        }
-        
-        /// A user-provided default language for code listings.
-        ///
-        /// If the documentation catalogs's Info.plist file contains a default code listing language, the documentation catalog ignores this fallback language.
-        public var defaultCodeListingLanguage: String? {
-            get { infoPlistFallbacks.defaultCodeListingLanguage }
-            set { infoPlistFallbacks.defaultCodeListingLanguage = newValue }
-        }
-        
-        /// A user-provided default kind description for the module.
-        ///
-        /// If the documentation catalogs's Info.plist file contains a default module kind, the documentation catalog ignores this fallback module kind.
-        public var fallbackDefaultModuleKind: String? {
-            get { infoPlistFallbacks.fallbackDefaultModuleKind }
-            set { infoPlistFallbacks.fallbackDefaultModuleKind = newValue }
-        }
-        
         // MARK: - Documentation coverage options
         
         /// A user-provided value that is true if the user wants to opt in to Experimental documentation coverage generation.
@@ -421,6 +340,7 @@ extension Docc {
         var linkResolutionOptions: LinkResolutionOptions
         
         struct LinkResolutionOptions: ParsableArguments {
+            /// A list of URLs to documentation archives that the local documentation depends on.
             @Option(
                 name: [.customLong("dependency")],
                 parsing: ArrayParsingStrategy.singleValue,
@@ -481,36 +401,36 @@ extension Docc {
             }
         }
         
-        /// A list of URLs to documentation archives that the local documentation depends on.
-        public var dependencies: [URL] {
-            get { linkResolutionOptions.dependencies }
-            set { linkResolutionOptions.dependencies = newValue }
-        }
-        
         // MARK: - Feature flag options
         
         @OptionGroup(title: "Feature flags")
         var featureFlags: FeatureFlagOptions
         
         struct FeatureFlagOptions: ParsableArguments {
+            /// A user-provided value that is true if the user wants to provide a custom template for rendered output.
             @Flag(help: "Allows for custom templates, like `header.html`.")
             var experimentalEnableCustomTemplates = false
 
+            /// A user-provided value that is true if the user enables experimental support for code block annotation.
             @Flag(
                 name: .customLong("enable-experimental-code-block-annotations"),
                 help: "Support annotations for code blocks."
             )
             var enableExperimentalCodeBlockAnnotations = false
 
+            /// A user-provided value that is true if the user enables experimental support for device frames.
             @Flag(help: .hidden)
             var enableExperimentalDeviceFrameSupport = false
             
+            /// A user-provided value that is true if experimental documentation inheritance is to be enabled.
             @Flag(help: "Inherit documentation for inherited symbols")
             var enableInheritedDocs = false
 
+            /// A user-provided value that is true if additional metadata files should be produced.
             @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
             var allowArbitraryCatalogDirectories = false
             
+            /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
             @Flag(
                 name: .customLong("enable-experimental-external-link-support"),
                 help: ArgumentHelp("Support external links to this documentation output.", discussion: """
@@ -519,15 +439,20 @@ extension Docc {
             )
             var enableExperimentalLinkHierarchySerialization = false
 
+            /// A user-provided value that is true if the user wants to in-place modify the provided documentation catalog to write generated curation to documentation extension files.
+            ///
+            /// - Important: This will write new and updated files to the provided documentation catalog directory.
             @Flag(help: .hidden)
             var experimentalModifyCatalogWithGeneratedCuration = false
 
+            /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
             @Flag(
                 name: .customLong("enable-experimental-overloaded-symbol-presentation"),
                 help: ArgumentHelp("Collects all the symbols that are overloads of each other onto a new merged-symbol page.")
             )
             var enableExperimentalOverloadedSymbolPresentation = false
             
+            /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in" links on symbols.
             @Flag(
                 name: .customLong("mentioned-in"),
                 inversion: .prefixedEnableDisable,
@@ -543,12 +468,15 @@ extension Docc {
             @available(*, deprecated, message: "This flag is unused and only exist for backwards compatibility")
             var _unusedExperimentalMentionedInFlagForBackwardsCompatibility = false
 
+            /// A user-provided value that is true if the user enables experimental markdown output
             @Flag(help: "Experimental: Create markdown versions of documents")
             var enableExperimentalMarkdownOutput = false
             
+            /// A user-provided value that is true if the user enables experimental markdown output
             @Flag(help: "Experimental: Create manifest file of markdown outputs. Ignored if --enable-experimental-markdown-output is not set.")
             var enableExperimentalMarkdownOutputManifest = false
             
+            /// A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.
             @Flag(
                 name: .customLong("parameters-and-returns-validation"),
                 inversion: .prefixedEnableDisable,
@@ -557,10 +485,12 @@ extension Docc {
                 """)
             )
             var enableParametersAndReturnsValidation = true
-            
+        
+            /// A user-provided value that is true if additional metadata files should be produced.
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
         
+            /// A user-provided value that is true if the LMDB representation of the navigator index should be produced.
             @Flag(
                 help: ArgumentHelp(
                     "Writes an LMDB representation of the navigator index to the output directory.",
@@ -581,117 +511,12 @@ extension Docc {
             }
         }
 
-        /// A user-provided value that is true if the user wants to provide a custom template for rendered output.
-        ///
-        /// Defaults to false
-        public var experimentalEnableCustomTemplates: Bool {
-            get { featureFlags.experimentalEnableCustomTemplates }
-            set { featureFlags.experimentalEnableCustomTemplates = newValue }
-            
-        }
-
-        /// A user-provided value that is true if the user enables experimental support for code block annotation.
-        ///
-        /// Defaults to false.
-        public var enableExperimentalCodeBlockAnnotations: Bool {
-            get { featureFlags.enableExperimentalCodeBlockAnnotations }
-            set { featureFlags.enableExperimentalCodeBlockAnnotations = newValue}
-        }
-
-        /// A user-provided value that is true if the user enables experimental support for device frames.
-        ///
-        /// Defaults to false.
-        public var enableExperimentalDeviceFrameSupport: Bool {
-            get { featureFlags.enableExperimentalDeviceFrameSupport }
-            set { featureFlags.enableExperimentalDeviceFrameSupport = newValue }
-        }
-        
-        /// A user-provided value that is true if experimental documentation inheritance is to be enabled.
-        ///
-        /// Defaults to false.
-        public var enableInheritedDocs: Bool {
-            get { featureFlags.enableInheritedDocs }
-            set { featureFlags.enableInheritedDocs = newValue }
-        }
-        
-        /// A user-provided value that is true if additional metadata files should be produced.
-        ///
-        /// Defaults to false.
-        public var allowArbitraryCatalogDirectories: Bool {
-            get { featureFlags.allowArbitraryCatalogDirectories }
-            set { featureFlags.allowArbitraryCatalogDirectories = newValue }
-        }
-        
-        /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
-        public var enableExperimentalLinkHierarchySerialization: Bool {
-            get { featureFlags.enableExperimentalLinkHierarchySerialization }
-            set { featureFlags.enableExperimentalLinkHierarchySerialization = newValue }
-        }
-
-        /// A user-provided value that is true if the user wants to in-place modify the provided documentation catalog to write generated curation to documentation extension files.
-        ///
-        /// Defaults to false
-        ///
-        /// > Important: This will write new and updated files to the provided documentation catalog directory.
-        public var experimentalModifyCatalogWithGeneratedCuration: Bool {
-            get { featureFlags.experimentalModifyCatalogWithGeneratedCuration }
-            set { featureFlags.experimentalModifyCatalogWithGeneratedCuration = newValue }
-        }
-
-        /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
-        public var enableExperimentalOverloadedSymbolPresentation: Bool {
-            get { featureFlags.enableExperimentalOverloadedSymbolPresentation }
-            set { featureFlags.enableExperimentalOverloadedSymbolPresentation = newValue }
-        }
-        
-        /// A user-provided value that is true if the user enables experimental markdown output
-        public var enableExperimentalMarkdownOutput: Bool {
-            get { featureFlags.enableExperimentalMarkdownOutput }
-            set { featureFlags.enableExperimentalMarkdownOutput = newValue }
-        }
-        
-        /// A user-provided value that is true if the user enables experimental markdown output
-        public var enableExperimentalMarkdownOutputManifest: Bool {
-            get { featureFlags.enableExperimentalMarkdownOutputManifest }
-            set { featureFlags.enableExperimentalMarkdownOutputManifest = newValue }
-        }
-
-        /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in"
-        /// links on symbols.
-        public var enableMentionedIn: Bool {
-            get { featureFlags.enableMentionedIn }
-            set { featureFlags.enableMentionedIn = newValue }
-        }
-        
-        /// A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.
-        public var enableParametersAndReturnsValidation: Bool {
-            get { featureFlags.enableParametersAndReturnsValidation }
-            set { featureFlags.enableParametersAndReturnsValidation = newValue }
-        }
-        
-        /// A user-provided value that is true if additional metadata files should be produced.
-        ///
-        /// Defaults to false.
-        public var emitDigest: Bool {
-            get { featureFlags.emitDigest }
-            set { featureFlags.emitDigest = newValue }
-        }
-
-        /// A user-provided value that is true if the LMDB representation of the navigator index should be produced.
-        ///
-        /// Defaults to false.
-        public var emitLMDBIndex: Bool {
-            get { featureFlags.emitLMDBIndex }
-            set { featureFlags.emitLMDBIndex = newValue }
-            
-        }
-
         public mutating func validate() throws {
-            if transformForStaticHosting {
+            if hostingOptions.transformForStaticHosting {
                 if let templateURL = templateOption.templateURL {
                     let neededFileName: String
 
-                    if hostingBasePath != nil {
+                    if hostingOptions.hostingBasePath != nil {
                         neededFileName = HTMLTemplate.templateFileName.rawValue
                     }else {
                         neededFileName = HTMLTemplate.indexFileName.rawValue
@@ -728,7 +553,7 @@ extension Docc {
                         to: &Self._errorLogHandle
                     )
                     
-                    transformForStaticHosting = false
+                    hostingOptions.transformForStaticHosting = false
                 }
             }
         }
