@@ -703,6 +703,47 @@ class DocumentationContextTests: XCTestCase {
                        "The single note should refer to the other file with the same output path")
     }
     
+    func testWarningAboutMarkdownFileCollisionListsRelativePathsWhenDiscoveredThroughArbitraryDirectory() async throws {
+        let (fileSystem, startURL) = try makeTestFileSystemWithFolder(containing: [
+            Folder(name: "Arbitrary directory name", content: [
+                Folder(name: "Something", content: [
+                    TextFile(name: "FileName.md", utf8Content: "# First"),
+                ]),
+                Folder(name: "Something Else", content: [
+                    Folder(name: "Subdirectory", content: [
+                        TextFile(name: "FileName.md", utf8Content: "# Second"),
+                    ])
+                ])
+            ])
+        ])
+        let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            .inputsAndDataProvider(startingPoint: startURL.appendingPathComponent("Arbitrary directory name"), allowArbitraryCatalogDirectories: true, options: .init())
+        let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider)
+        
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        
+        XCTAssertEqual(problem.diagnostic.source?.path, "/path/to/Some folder/Arbitrary directory name/Something Else/Subdirectory/FileName.md",
+                       "Deterministically warn about the file whose path sorts last")
+        XCTAssertEqual(problem.diagnostic.summary, "Multiple articles with output path '/documentation/arbitrary-directory-name/filename'; this article will be skipped")
+        XCTAssertEqual(problem.diagnostic.explanation!, """
+        The relative path of an article in the rendered documentation is the name of its markup file, without the '.md' extension, \
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'filename)'.
+        Because the pages for 'Something Else/Subdirectory/FileName.md' and 'Something/FileName.md' would have the same web URL, \
+        DocC can only create a web page for one of them; deterministically keeping 'Something/FileName.md' and dropping 'Something Else/Subdirectory/FileName.md'.
+        """)
+        
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), [
+            "Rename 'Something Else/Subdirectory/FileName.md'", // The file that the warning is about; which DocC deterministically skips
+            "Rename 'Something/FileName.md'",                   // The other file; which DocC deterministically keeps (in this case because it has a shallower path)
+        ])
+
+        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other article with same output path here"])
+        XCTAssertEqual(problem.diagnostic.notes.map(\.source.path), ["/path/to/Some folder/Arbitrary directory name/Something/FileName.md"],
+                       "The single note should refer to the other file with the same output path")
+    }
+    
     func testUsesMultipleDocExtensionFilesWithSameName() async throws {
         
         // Generate 2 different symbols with the same name.

@@ -754,8 +754,16 @@ public class DocumentationContext {
             throw error
         }
         
-        // to preserve the order of documents by url
-        let analyzedDocumentsSorted = analyzedDocuments.sorted(by: \.0.absoluteString)
+        // Order the documents by depth and then alphabetically. This both ensures a deterministic behavior and prefers shallower paths when two files have the same output path.
+        let analyzedDocumentsSorted = analyzedDocuments.sorted(by: { lhs, rhs in
+            let lhsDepth = lhs.0.pathComponents.count
+            let rhsDepth = rhs.0.pathComponents.count
+            
+            guard lhsDepth == rhsDepth else {
+                return lhsDepth < rhsDepth
+            }
+            return lhs.0.absoluteString < rhs.0.absoluteString
+        })
 
         for analyzedDocument in analyzedDocumentsSorted {
             // Store the references we encounter to ensure they're unique. The file name is currently the only part of the URL considered for the topic reference, so collisions may occur.
@@ -775,12 +783,12 @@ public class DocumentationContext {
                     thisRelativePath  = url.standardizedFileURL.pathComponents.dropFirst(indexOfCatalog + 1).joined(separator: "/")
                     otherRelativePath = firstFoundAtURL.standardizedFileURL.pathComponents.dropFirst(indexOfCatalog + 1).joined(separator: "/")
                 } else {
-                    let this  = url.standardizedFileURL.path
-                    let other = firstFoundAtURL.standardizedFileURL.path
+                    let this  = url.standardizedFileURL.pathComponents
+                    let other = firstFoundAtURL.standardizedFileURL.pathComponents
                     
-                    let commonPrefixLength = this.commonPrefix(with: other).count
-                    thisRelativePath  = String(this.dropFirst(commonPrefixLength))
-                    otherRelativePath = String(other.dropFirst(commonPrefixLength))
+                    let commonPrefixLength = zip(this, other).prefix(while: { $0 == $1 }).count
+                    thisRelativePath  = this.dropFirst(commonPrefixLength).joined(separator: "/")
+                    otherRelativePath = other.dropFirst(commonPrefixLength).joined(separator: "/")
                 }
                 
                 let isArticle = url.pathExtension == "md"
