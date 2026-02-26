@@ -806,7 +806,7 @@ public class DocumentationContext {
                         summary: "Multiple \(fileDescription)s with output path '\(path.lowercased())'; this \(fileDescription) will be skipped",
                         explanation: """
                         The relative path of \(isArticle ? "an article" : "a tutorial") in the rendered documentation is the name of its markup file, without the '.\(url.pathExtension)' extension, \
-                        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case '\(webURLPathComponent))'.
+                        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case '\(webURLPathComponent)'.
                         Because the pages for '\(thisRelativePath)' and '\(otherRelativePath)' would have the same web URL, DocC can only create a web page for one of them; deterministically keeping '\(otherRelativePath)' and dropping '\(thisRelativePath)'.
                         """,
                         notes: [

@@ -650,7 +650,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(problem.diagnostic.summary, "Multiple tutorials with output path '/tutorials/unit-test/something'; this tutorial will be skipped")
         XCTAssertEqual(problem.diagnostic.explanation, """
         The relative path of a tutorial in the rendered documentation is the name of its markup file, without the '.tutorial' extension, \
-        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'something)'.
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'something'.
         Because the pages for 'path/to/Second/something.tutorial' and 'First/Something.tutorial' would have the same web URL, \
         DocC can only create a web page for one of them; deterministically keeping 'First/Something.tutorial' and dropping 'path/to/Second/something.tutorial'.
         """)
@@ -688,7 +688,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(problem.diagnostic.summary, "Multiple articles with output path '/documentation/unit-test/something'; this article will be skipped")
         XCTAssertEqual(problem.diagnostic.explanation!, """
         The relative path of an article in the rendered documentation is the name of its markup file, without the '.md' extension, \
-        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'something)'.
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'something'.
         Because the pages for 'path/to/Second/Something.md' and 'First/Something.md' would have the same web URL, \
         DocC can only create a web page for one of them; deterministically keeping 'First/Something.md' and dropping 'path/to/Second/Something.md'.
         """)
@@ -729,7 +729,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(problem.diagnostic.summary, "Multiple articles with output path '/documentation/arbitrary-directory-name/filename'; this article will be skipped")
         XCTAssertEqual(problem.diagnostic.explanation!, """
         The relative path of an article in the rendered documentation is the name of its markup file, without the '.md' extension, \
-        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'filename)'.
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'filename'.
         Because the pages for 'Something Else/Subdirectory/FileName.md' and 'Something/FileName.md' would have the same web URL, \
         DocC can only create a web page for one of them; deterministically keeping 'Something/FileName.md' and dropping 'Something Else/Subdirectory/FileName.md'.
         """)
