@@ -9,11 +9,50 @@
 */
 
 import XCTest
+import Testing
 import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
 import Markdown
 import DocCCommon
+
+struct PathHierarchyTests_new {
+    @Test
+    func resolvesLinksToHeadings() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            TextFile(name: "First.md", utf8Content: """
+            # Some article
+            
+            ## Some heading
+            """),
+            
+            TextFile(name: "Second.md", utf8Content: """
+            # Second article
+            
+            A second article so that the only article isn't elevated to become the root
+            """),
+        ])
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        let firstArticle = try tree.find(path: "/Something/First", onlyFindSymbols: false)
+        let heading      = try tree.find(path: "/Something/First#Some-heading", onlyFindSymbols: false)
+
+        // Relative to same page
+        try #expect(heading == tree.find(path: "#Some-heading", parent: firstArticle, onlyFindSymbols: false))
+        try #expect(heading == tree.find(path:  "Some-heading", parent: firstArticle, onlyFindSymbols: false), "Can omit for links to headings on the same page")
+        
+        // Relative to other page
+        let secondArticle = try tree.find(path: "/Something/Second", onlyFindSymbols: false)
+        try #expect(heading == tree.find(path: "First#Some-heading", parent: secondArticle, onlyFindSymbols: false))
+        try #expect(heading == tree.find(path: "First/Some-heading", parent: secondArticle, onlyFindSymbols: false), "This works but shouldn't")
+        
+        // Absolute link
+        try #expect(heading == tree.find(path: "/Something/First#Some-heading", onlyFindSymbols: false))
+        try #expect(heading == tree.find(path: "/Something/First/Some-heading", onlyFindSymbols: false), "This works but shouldn't")
+    }
+}
 
 class PathHierarchyTests: XCTestCase {
     
@@ -1249,28 +1288,6 @@ class PathHierarchyTests: XCTestCase {
 //        XCTAssertNil(articleNode.symbol, "General documentation link find the article")
     }
     
-    func testArticleSelfAnchorLinks() async throws {
-        let (_, _, context) = try await testBundleAndContext(copying: "MixedLanguageFramework") { url in
-            try """
-            # ArticleWithHeading
-
-            ## TestTargetHeading
-
-            This article has the same path as a symbol. See also:
-            - <doc:TestTargetHeading>
-            - <doc:#TestTargetHeading>
-
-            """.write(to: url.appendingPathComponent("ArticleWithHeading.md"), atomically: true, encoding: .utf8)
-        }
-
-        let tree = context.linkResolver.localResolver.pathHierarchy
-        let articleNode = try tree.findNode(path: "/MixedLanguageFramework/ArticleWithHeading", onlyFindSymbols: false)
-
-        let linkNode = try tree.find(path: "TestTargetHeading", parent: articleNode.identifier, onlyFindSymbols: false)
-        let anchorLinkNode = try tree.find(path: "#TestTargetHeading", parent: articleNode.identifier, onlyFindSymbols: false)
-        XCTAssertNotNil(linkNode)
-        XCTAssertNotNil(anchorLinkNode)
-    }
 
     func testOverloadedSymbols() async throws {
         let (_, context) = try await testBundleAndContext(named: "OverloadedSymbols")
