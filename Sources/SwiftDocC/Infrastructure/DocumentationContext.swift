@@ -2572,9 +2572,7 @@ public class DocumentationContext {
             return
         }
         
-        let rootPageDescriptions: [String] = linkResolver.localResolver.rootPages().map { reference in
-            documentationCache[reference]?.name.plainText ?? reference.lastPathComponent
-        }.sorted()
+        let rootPageNames = sortedRootPageNames()
         
         for article in uncuratedArticles.values {
             diagnosticEngine.emit(Problem(
@@ -2582,16 +2580,22 @@ public class DocumentationContext {
                     source: article.source,
                     severity: .information,
                     identifier: diagnosticID,
-                    summary: "Article '\(article.source.lastPathComponent)' has no default location in invalid documentation hierarchy with \(rootPageDescriptions.count) roots",
+                    summary: "Article '\(article.source.lastPathComponent)' has no default location in invalid documentation hierarchy with \(rootPageNames.count) roots",
                     explanation: """
                     A single DocC build covers either a single module (for example a framework, library, or executable) or a single article-only technology.
-                    Documentation with \(rootPageDescriptions.count) roots (\(rootPageDescriptions.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
+                    Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
                     Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
                     As a consequence, DocC cannot create a page for the '\(article.topicGraphNode.title)' article (\(article.source.lastPathComponent)).
                     """
                 )
             ))
         }
+    }
+    
+    func sortedRootPageNames() -> [String] {
+        linkResolver.localResolver.rootPages().map { reference in
+            documentationCache[reference]?.name.plainText ?? reference.lastPathComponent
+        }.sorted()
     }
 
     /// Emits warnings when the documentation contains multiple root pages.

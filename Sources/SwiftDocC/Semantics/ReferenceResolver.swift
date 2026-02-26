@@ -114,10 +114,7 @@ struct ReferenceResolver: SemanticVisitor {
             
         case let .failure(unresolved, error):
             if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.documentationRootReference.appendingPathOfReference(unresolved)] {
-                let rootPageNames = context.linkResolver.localResolver.rootPages().map { reference in
-                    context.documentationCache[reference]?.name.plainText ?? reference.lastPathComponent
-                }.sorted()
-                problems.append(makeUnfindableArticleProblem(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: rootPageNames))
+                problems.append(makeUnfindableArticleProblem(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
             } else {
                 problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: false))
             }
