@@ -2580,12 +2580,11 @@ public class DocumentationContext {
             guard let link = firstExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                 fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(firstExtension.source.absoluteString.singleQuoted)")
             }
-            let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
             let notes: [DiagnosticNote] = documentationExtensions.dropFirst().map { documentationExtension in
                 guard let link = documentationExtension.value.title?.child(at: 0) as? (any AnyLink) else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
-                return DiagnosticNote(source: documentationExtension.source, range: link.range ?? zeroRange, message: "\(symbolPath.singleQuoted) is also documented here.")
+                return DiagnosticNote(source: documentationExtension.source, range: link.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil), message: "\(symbolPath.singleQuoted) is also documented here.")
             }
             
             diagnosticEngine.emit(

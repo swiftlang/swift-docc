@@ -110,7 +110,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
     public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
-            let range = markup.child(at: 0)?.range ?? SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
+            let range = markup.child(at: 0)?.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil)
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title")
 
             let replacementText: String
