@@ -58,16 +58,16 @@ class MergeSubcommandTests: XCTestCase {
         
         do {
             let command = try Docc.Merge.parse(["/path/to/First.doccarchive", "/path/to/Second.doccarchive"])
-            XCTAssertEqual(command.archives, [
+            XCTAssertEqual(command.inputsAndOutputs.archives, [
                 URL(fileURLWithPath: "/path/to/First.doccarchive"),
                 URL(fileURLWithPath: "/path/to/Second.doccarchive"),
             ])
             
-            XCTAssertNil(command.landingPageCatalog)
-            XCTAssertEqual(command.outputURL, URL(fileURLWithPath: fileSystem.currentDirectoryPath).appendingPathComponent("Combined.doccarchive", isDirectory: true))
+            XCTAssertNil(command.inputsAndOutputs.landingPageCatalog)
+            XCTAssertEqual(command.inputsAndOutputs.outputURL, URL(fileURLWithPath: fileSystem.currentDirectoryPath).appendingPathComponent("Combined.doccarchive", isDirectory: true))
             
-            XCTAssertEqual(command.synthesizedLandingPageName, "Documentation")
-            XCTAssertEqual(command.synthesizedLandingPageKind, "Package")
+            XCTAssertEqual(command.synthesizedLandingPageOptions.name, "Documentation")
+            XCTAssertEqual(command.synthesizedLandingPageOptions.kind, "Package")
         }
         
         // Input catalog with unexpected path extension
@@ -104,13 +104,13 @@ class MergeSubcommandTests: XCTestCase {
                 "/path/to/Second.doccarchive",
                 "--landing-page-catalog", "/path/to/LandingPage.docc"
             ])
-            XCTAssertEqual(command.archives, [
+            XCTAssertEqual(command.inputsAndOutputs.archives, [
                 URL(fileURLWithPath: "/path/to/First.doccarchive"),
                 URL(fileURLWithPath: "/path/to/Second.doccarchive"),
             ])
             
-            XCTAssertEqual(command.landingPageCatalog, URL(fileURLWithPath: "/path/to/LandingPage.docc"))
-            XCTAssertEqual(command.outputURL, URL(fileURLWithPath: fileSystem.currentDirectoryPath).appendingPathComponent("Combined.doccarchive", isDirectory: true))
+            XCTAssertEqual(command.inputsAndOutputs.landingPageCatalog, URL(fileURLWithPath: "/path/to/LandingPage.docc"))
+            XCTAssertEqual(command.inputsAndOutputs.outputURL, URL(fileURLWithPath: fileSystem.currentDirectoryPath).appendingPathComponent("Combined.doccarchive", isDirectory: true))
         }
         
         // Synthesized landing page info
@@ -123,8 +123,8 @@ class MergeSubcommandTests: XCTestCase {
                 "--synthesized-landing-page-name", "Test Landing Page Name",
                 "--synthesized-landing-page-kind", "Test Landing Page Kind"
             ])
-            XCTAssertEqual(command.synthesizedLandingPageName, "Test Landing Page Name")
-            XCTAssertEqual(command.synthesizedLandingPageKind, "Test Landing Page Kind")
+            XCTAssertEqual(command.synthesizedLandingPageOptions.name, "Test Landing Page Name")
+            XCTAssertEqual(command.synthesizedLandingPageOptions.kind, "Test Landing Page Kind")
         }
         
         // Incomplete output argument
@@ -165,13 +165,13 @@ class MergeSubcommandTests: XCTestCase {
                 "--landing-page-catalog", "/path/to/LandingPage.docc",
                 "--output-path", "/other/path/to/output-dir"
             ])
-            XCTAssertEqual(command.archives, [
+            XCTAssertEqual(command.inputsAndOutputs.archives, [
                 URL(fileURLWithPath: "/path/to/First.doccarchive"),
                 URL(fileURLWithPath: "/path/to/Second.doccarchive"),
             ])
             
-            XCTAssertEqual(command.landingPageCatalog, URL(fileURLWithPath: "/path/to/LandingPage.docc"))
-            XCTAssertEqual(command.outputURL, URL(fileURLWithPath: "/other/path/to/output-dir"))
+            XCTAssertEqual(command.inputsAndOutputs.landingPageCatalog, URL(fileURLWithPath: "/path/to/LandingPage.docc"))
+            XCTAssertEqual(command.inputsAndOutputs.outputURL, URL(fileURLWithPath: "/other/path/to/output-dir"))
         }
     }
 }

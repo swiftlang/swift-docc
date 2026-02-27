@@ -195,7 +195,6 @@ func aBlackListedFunc() {
     }
 
     @Test(arguments: [
-        DiagnosticSeverity.hint:        true,
         DiagnosticSeverity.information: true,
         DiagnosticSeverity.warning:     false,
         DiagnosticSeverity.error:       false,
