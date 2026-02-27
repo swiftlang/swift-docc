@@ -77,7 +77,7 @@ public struct TemplateOption: ParsableArguments {
         } else {
             ValidationError("""
                 Missing HTML template directory, relative to the docc executable, at: '\(expectedTemplateLocation.path)'.
-                Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template."
+                Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
                 """)
         }
     }

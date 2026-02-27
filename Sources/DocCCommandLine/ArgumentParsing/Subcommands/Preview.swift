@@ -42,7 +42,12 @@ extension Docc {
         }
 
         public func run() async throws {
-            let previewAction = try PreviewAction(fromPreviewOptions: previewOptions)
+            let previewAction = try PreviewAction(
+                port: previewOptions.port,
+                createConvertAction: {
+                    try ConvertAction(fromConvertCommand: previewOptions.convertCommand)
+                }
+            )
             try await previewAction.performAndHandleResult()
         }
     }
