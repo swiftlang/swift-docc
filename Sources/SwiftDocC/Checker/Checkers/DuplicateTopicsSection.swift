@@ -11,11 +11,10 @@
 public import Foundation
 public import Markdown
 
-/// A checked that warns about multiple "Topics" sections.
+/// A checker that warns about multiple "Topics" sections.
 public struct DuplicateTopicsSections: Checker {
     /// The list of second-level headings named "Topics" that the checker encountered while walking the the document.
     public var foundTopicsHeadings = [Heading]()
-    /// A
     private var sourceFile: URL?
     
     /// Creates a new checker that warns about multiple "Topics" sections.
