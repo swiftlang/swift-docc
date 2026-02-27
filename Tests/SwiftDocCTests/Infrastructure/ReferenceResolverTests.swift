@@ -317,7 +317,7 @@ class ReferenceResolverTests: XCTestCase {
             TextFile(name: "FirstModule.md", utf8Content:"""
             # ``FirstModuleName``
             
-            Referencing an article no in the documentation hierarchy raises a warning: <doc:UncuratedArticle>
+            Referencing an article not in the documentation hierarchy raises a warning: <doc:UncuratedArticle>
             """),
             
             TextFile(name: "UncuratedArticle.md", utf8Content:"""

@@ -257,8 +257,7 @@ extension Docc {
                 The supported diagnostic filter levels are:
                  - error
                  - warning
-                 - note, info, information
-                 - hint, notice
+                 - note, info, information, hint, notice
                 """
         }
 

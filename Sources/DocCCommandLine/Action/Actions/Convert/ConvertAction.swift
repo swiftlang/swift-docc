@@ -378,13 +378,13 @@ public struct ConvertAction: AsyncAction {
                     diagnostic: Diagnostic(
                         source: source,
                         severity: .warning,
-                        identifier: "org.swift.docc.MissingTableOfContents",
-                        summary: "Missing tutorial table of contents page.",
-                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the documentation hierarchy."
+                        identifier: "MissingTableOfContentsPage",
+                        summary: "Missing tutorial table of contents (`@Tutorials`) page",
+                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define your documentation's hierarchy and recommended reading order."
                     ),
                     possibleSolutions: [
                         Solution(
-                            summary: "Create a `@Tutorials` table of content page.",
+                            summary: "Create a `@Tutorials` table of contents page",
                             replacements: replacements
                         )
                     ]

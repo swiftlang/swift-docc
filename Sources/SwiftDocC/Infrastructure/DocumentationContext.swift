@@ -766,7 +766,7 @@ public class DocumentationContext {
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
-            let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is (any AnyLink)
+            let isDocumentationExtension = (analyzed as? Article)?.title?.startsWithAnyLink == true
             
             if let firstFoundAtURL = references[reference], !isDocumentationExtension {
                 let problem = Problem(

@@ -572,6 +572,6 @@ func makeUnfindableArticleProblem(
             Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
             Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
             As a consequence, the '\(articleNotInHierarchy.topicGraphNode.title)' article (\(articleNotInHierarchy.source.lastPathComponent)) is not findable and has no page in the output.
-            """,
+            """
     ))
 }
