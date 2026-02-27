@@ -31,13 +31,13 @@ public enum DiagnosticSeverity: Int, Codable, CustomStringConvertible {
     /**
      Information.
 
-     Information needn't be immediately actionable but should be useful to the user. Recommendations should be saved for the `hint` diagnostic severity.
+     Information needn't be immediately actionable but should be useful to the user.
 
      > Note: this maps to `analyzer` style information.
      */
     case information = 3
 
-    @available(*, deprecated, message: "Use either 'DiagnosticNote' or `Solution` instead. This deprecated API will be removed after 6.5 is released.")
+    @available(*, deprecated, message: "Use either 'DiagnosticNote' or 'Solution' instead. This deprecated API will be removed after 6.5 is released.")
     case hint = 4
 
     public var description: String {
