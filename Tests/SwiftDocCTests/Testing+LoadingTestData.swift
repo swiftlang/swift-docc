@@ -80,7 +80,7 @@ func loadFromDisk(
     externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
     externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
     fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
-    diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
+    diagnosticEngine: DiagnosticEngine = .init(filterLevel: .information),
     configuration: DocumentationContext.Configuration = .init()
 ) async throws -> DocumentationContext {
     var configuration = configuration

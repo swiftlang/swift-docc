@@ -12,11 +12,7 @@ import Foundation
 import Markdown
 private import SymbolKit
 
-func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
-    var notes = uncuratedArticleMatch.map {
-        [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: $0)..<SourceLocation(line: 1, column: 1, source: $0), message: "This article was found but is not available for linking because it's uncurated")]
-    } ?? []
-    
+func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
     let referenceSourceRange: SourceRange? = range.map { range in
         // FIXME: Finding the range for the link's destination is better suited for Swift-Markdown
         // https://github.com/apple/swift-markdown/issues/109
@@ -34,6 +30,7 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
     }
     
     var solutions: [Solution] = []
+    var notes: [DiagnosticNote] = []
     if let referenceSourceRange {
         if let note = errorInfo.note, let source {
             notes.append(DiagnosticNote(source: source, range: referenceSourceRange, message: note))
@@ -116,8 +113,11 @@ struct ReferenceResolver: SemanticVisitor {
             return .success(resolved)
             
         case let .failure(unresolved, error):
-            let uncuratedArticleMatch = context.uncuratedArticles[context.inputs.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
+            if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.documentationRootReference.appendingPathOfReference(unresolved)] {
+                problems.append(makeUnfindableArticleProblem(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
+            } else {
+                problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: false))
+            }
             return .failure(unresolved, error)
         }
     }
@@ -551,4 +551,27 @@ extension Image {
             return ResourceReference(bundleID: bundle.id, path: source)
         }
     }
+}
+
+// MARK: Diagnostics
+
+func makeUnfindableArticleProblem(
+    source: URL?,
+    severity: DiagnosticSeverity,
+    range: SourceRange?,
+    articleNotInHierarchy: DocumentationContext.SemanticResult<Article>,
+    rootPageNames: [String]
+) -> Problem {
+    Problem(diagnostic: Diagnostic(
+        source: source,
+        severity: severity,
+        range: range,
+        identifier: "UnfindableArticle",
+        summary: "Article is not findable in invalid documentation hierarchy with \(rootPageNames.count) roots",
+        explanation: """
+            Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
+            Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
+            As a consequence, the '\(articleNotInHierarchy.topicGraphNode.title)' article (\(articleNotInHierarchy.source.lastPathComponent)) is not findable and has no page in the output.
+            """
+    ))
 }

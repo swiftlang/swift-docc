@@ -40,6 +40,12 @@ public final class DiagnosticEngine {
     
     /// Determines whether warnings will be treated as errors.
     private let treatWarningsAsErrors: Bool
+    
+    /// Determines whether or not the diagnostics engine will emit a problem with the given diagnostic ID or diagnostic group ID.
+    package func willEmitProblem(diagnosticID _: String, defaultSeverity: DiagnosticSeverity) -> Bool {
+        // TODO: Check if the developer changed the severity of the specific ID in https://github.com/swiftlang/swift-docc/pull/1347
+        filterLevel <= defaultSeverity || (treatWarningsAsErrors && filterLevel == .warning)
+    }
 
     /// Determines which problems should be emitted.
     private func shouldEmit(_ problem: Problem) -> Bool {

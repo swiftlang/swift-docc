@@ -13,6 +13,7 @@ import XCTest
 import Markdown
 import SymbolKit
 import DocCCommon
+import DocCTestUtilities
 
 class ReferenceResolverTests: XCTestCase {
     func testResolvesMediaForIntro() async throws {
@@ -307,43 +308,54 @@ class ReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testRegisteredButUncuratedArticles() async throws {
-        var referencingArticleURL: URL!
-        var uncuratedArticleFile: URL!
-        
-        let source = """
-        # Article
-        
-        The abstract
-
-        ## Overview
-        
-        Referencing an uncurated article will raise a warning: <doc:RegisteredArticle>
-        """
-        
-        // TestBundle has more than one module, so automatic registration and curation won't happen
-        let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
-            referencingArticleURL = root.appendingPathComponent("article.md")
-            try source.write(to: referencingArticleURL, atomically: true, encoding: .utf8)
+    func testWarningsAboutArticleNotInDocumentationHierarchy() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            // This setup is not supported and only happens if the developer manually mixes symbol inputs from different builds.
+            JSONFile(name: "FirstModuleName.symbols.json", content: makeSymbolGraph(moduleName: "FirstModuleName")),
+            JSONFile(name: "SecondModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SecondModuleName")),
             
-            uncuratedArticleFile = root.appendingPathComponent("UncuratedArticle.md")
-            try """
+            TextFile(name: "FirstModule.md", utf8Content:"""
+            # ``FirstModuleName``
+            
+            Referencing an article not in the documentation hierarchy raises a warning: <doc:UncuratedArticle>
+            """),
+            
+            TextFile(name: "UncuratedArticle.md", utf8Content:"""
             # Unregistered and Uncurated Article
             
-            This article isn't automatically curated or registerd in the topic graph.
+            This article isn't automatically curated or registered in the topic graph.
             
-            ## Overview
-            
-            Its references aren't resolved, so this won't raise a warning: <doc:InvalidReferenceThatWillNotWarn>
-            """.write(to: uncuratedArticleFile, atomically: true, encoding: .utf8)
+            Its references aren't resolved, so this won't raise a warning: <doc:NotFoundThatWillNotWarn>
+            """),
+        ])
+        let (_, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
+        
+        let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
+        XCTAssertEqual(problems.map(\.diagnostic.identifier), ["org.swift.docc.MultipleMainModules", "UnfindableArticle", "ArticleNotInDocumentationHierarchy"],
+                       "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        do {
+            let diagnostic = try XCTUnwrap(problems.dropFirst().first?.diagnostic)
+            XCTAssertEqual(diagnostic.source?.lastPathComponent, "FirstModule.md")
+            XCTAssertEqual(diagnostic.summary, "Article is not findable in invalid documentation hierarchy with 2 roots")
+            XCTAssertEqual(diagnostic.explanation, """
+                Documentation with 2 roots ('FirstModuleName' and 'SecondModuleName') has a disjoint and unsupported documentation hierarchy.
+                Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
+                As a consequence, the 'Unregistered and Uncurated Article' article (UncuratedArticle.md) is not findable and has no page in the output.
+                """)
         }
         
-        let diagnostics = context.problems.filter({ $0.diagnostic.source?.standardizedFileURL == uncuratedArticleFile.standardizedFileURL }).map(\.diagnostic)
-        let diagnostic = try XCTUnwrap(diagnostics.first(where: { $0.identifier == "org.swift.docc.ArticleUncurated" }))
-        XCTAssertEqual(diagnostic.summary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
-        
-        let referencingFileDiagnostics = context.problems.map(\.diagnostic).filter({ $0.source?.standardizedFileURL == referencingArticleURL.standardizedFileURL })
-        XCTAssertEqual(referencingFileDiagnostics.filter({ $0.identifier == "org.swift.docc.unresolvedTopicReference" }).count, 1)
+        do {
+            let diagnostic = try XCTUnwrap(problems.last?.diagnostic)
+            XCTAssertEqual(diagnostic.source?.lastPathComponent, "UncuratedArticle.md")
+            XCTAssertEqual(diagnostic.summary, "Article 'UncuratedArticle.md' has no default location in invalid documentation hierarchy with 2 roots")
+            XCTAssertEqual(diagnostic.explanation, """
+                A single DocC build covers either a single module (for example a framework, library, or executable) or a single article-only technology.
+                Documentation with 2 roots ('FirstModuleName' and 'SecondModuleName') has a disjoint and unsupported documentation hierarchy.
+                Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
+                As a consequence, DocC cannot create a page for the 'Unregistered and Uncurated Article' article (UncuratedArticle.md).
+                """)
+        }
     }
     
     func testRelativeReferencesToExtensionSymbols() async throws {

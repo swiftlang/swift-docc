@@ -209,7 +209,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         
         let relevantCategorizedOptions = allCategorizedOptions.compactMapValues(\.first)
         
-        let isDocumentationExtension = title.child(at: 0) is (any AnyLink)
+        let isDocumentationExtension = title.startsWithAnyLink
         if !isDocumentationExtension, let metadata = optionalMetadata, let displayName = metadata.displayName {
             let diagnosticSummary = """
             A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.

@@ -457,6 +457,7 @@ add_library(SwiftDocC
   Utility/MarkupExtensions/AnyLink.swift
   Utility/MarkupExtensions/BlockDirectiveExtensions.swift
   Utility/MarkupExtensions/DocumentExtensions.swift
+  Utility/MarkupExtensions/Heading+StartsWithAnyLink.swift
   Utility/MarkupExtensions/ImageExtensions.swift
   Utility/MarkupExtensions/ListItemExtractor.swift
   Utility/MarkupExtensions/MarkupChildrenExtensions.swift
