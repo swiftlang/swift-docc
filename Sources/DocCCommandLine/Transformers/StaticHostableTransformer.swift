@@ -110,7 +110,7 @@ extension StaticHostableTransformer {
         guard let indexHTMLData = try? fileManager.contents(of: indexHTMLFile),
               var indexHTML = String(data: indexHTMLData, encoding: .utf8)
         else {
-            throw TemplateOption.missingRequiredFile(fileName: indexHTMLFileName, inHTMLTemplateAt: indexHTMLFile)
+            throw TemplateOption.missingRequiredFile(fileName: indexHTMLFileName, inHTMLTemplateAt: htmlTemplateDirectory)
         }
         
         if customHostingBasePathProvided, var replacementString = hostingBasePath {
