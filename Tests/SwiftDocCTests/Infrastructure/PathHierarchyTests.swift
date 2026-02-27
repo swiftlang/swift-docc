@@ -46,11 +46,81 @@ struct PathHierarchyTests_new {
         // Relative to other page
         let secondArticle = try tree.find(path: "/Something/Second", onlyFindSymbols: false)
         try #expect(heading == tree.find(path: "First#Some-heading", parent: secondArticle, onlyFindSymbols: false))
-        try #expect(heading == tree.find(path: "First/Some-heading", parent: secondArticle, onlyFindSymbols: false), "This works but shouldn't")
+        // Verify error when using "/" instead of "#" to separate the heading name from the path
+        do {
+            let unexpectedFound = try tree.find(path: "First/Some-heading", parent: secondArticle, onlyFindSymbols: false)
+            Issue.record("Should't be able to find a heading separated by `/` instead of `#`; found \(unexpectedFound)")
+        } catch {
+            let info = error.makeTopicReferenceResolutionErrorInfo(fullNameOfNode: { $0.name })
+            #expect(info.message == "'Some-heading' doesn't exist at '/Something/First'")
+        }
         
         // Absolute link
         try #expect(heading == tree.find(path: "/Something/First#Some-heading", onlyFindSymbols: false))
-        try #expect(heading == tree.find(path: "/Something/First/Some-heading", onlyFindSymbols: false), "This works but shouldn't")
+        // Verify error when using "/" instead of "#" to separate the heading name from the path
+        do {
+            let unexpectedFound = try tree.find(path: "/Something/First/Some-heading", onlyFindSymbols: false)
+            Issue.record("Should't be able to find a heading separated by `/` instead of `#`; found \(unexpectedFound)")
+        } catch {
+            let info = error.makeTopicReferenceResolutionErrorInfo(fullNameOfNode: { $0.name })
+            #expect(info.message == "'Some-heading' doesn't exist at '/Something/First'")
+        }
+    }
+    
+    @Test
+    func prefersSymbolMatchOverHeadingMatch() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"], docComment: """
+                The heading below has the same name as the second symbol.
+                
+                ## Second
+                """),
+                
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]),
+            ])),
+        ])
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        let firstSymbol  = try tree.find(path: "/ModuleName/First", onlyFindSymbols: false)
+        let secondSymbol = try tree.find(path: "/ModuleName/Second", onlyFindSymbols: false)
+        let heading      = try tree.find(path: "/ModuleName/First#Second", onlyFindSymbols: false)
+
+        // Relative to same page
+        try #expect(heading      == tree.find(path: "#Second", parent: firstSymbol, onlyFindSymbols: false), "Should find the heading with an explicit # prefix")
+        try #expect(secondSymbol == tree.find(path:  "Second", parent: firstSymbol, onlyFindSymbols: false), "Should find the symbol without a # prefix ")
+    }
+    
+    @Test
+    func prefersArticleMatchOverHeadingMatch() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            TextFile(name: "First.md", utf8Content: """
+            # Some article
+            
+            The heading below has the same name as the second article.
+            
+            ## Second
+            """),
+            
+            TextFile(name: "Second.md", utf8Content: """
+            # Second article
+            
+            This article has the same name as the heading in the first article.
+            """),
+        ])
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        let firstArticle  = try tree.find(path: "/Something/First", onlyFindSymbols: false)
+        let secondArticle = try tree.find(path: "/Something/Second", onlyFindSymbols: false)
+        let heading       = try tree.find(path: "/Something/First#Second", onlyFindSymbols: false)
+
+        // Relative to same page
+        try #expect(heading       == tree.find(path: "#Second", parent: firstArticle, onlyFindSymbols: false), "Should find the heading with an explicit # prefix")
+        try #expect(secondArticle == tree.find(path:  "Second", parent: firstArticle, onlyFindSymbols: false), "Should find the article without an # prefix ")
     }
 }
 
@@ -1191,7 +1261,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertNil(tree.lookup[discussionID]!.symbol)
         XCTAssertEqual(tree.lookup[discussionID]!.name, "Discussion")
         
-        let protocolImplementationsID = try tree.find(path: "/SideKit/SideClass/Element/Protocol-Implementations", onlyFindSymbols: false)
+        let protocolImplementationsID = try tree.find(path: "/SideKit/SideClass/Element#Protocol-Implementations", onlyFindSymbols: false)
         XCTAssertNil(tree.lookup[protocolImplementationsID]!.symbol)
         XCTAssertEqual(tree.lookup[protocolImplementationsID]!.name, "Protocol-Implementations")
         
@@ -2377,13 +2447,17 @@ class PathHierarchyTests: XCTestCase {
         
         let articleID = try tree.find(path: "/CatalogName/Some-Article", onlyFindSymbols: false)
         
-        XCTAssertEqual(try tree.findNode(path: "SomeClass", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, nil,
-                       "A general documentation link will find the heading because its closer than the symbol.")
+        XCTAssertEqual(try tree.findNode(path: "SomeClass", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, "some-class-id",
+                       "A general documentation link will pages rather than headings.")
         XCTAssertEqual(try tree.findNode(path: "SomeClass", onlyFindSymbols: true, parent: articleID).symbol?.identifier.precise, "some-class-id",
                        "A symbol link will skip the heading and continue searching until it finds the symbol.")
+        XCTAssertEqual(try tree.findNode(path: "#SomeClass", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, nil,
+                       "An explicit #-prefix will find the heading instead of the symbol.")
         
         XCTAssertEqual(try tree.findNode(path: "OtherHeading", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, nil,
-                       "A general documentation link will find the other heading.")
+                       "A general documentation link will find the other heading without the #-prefix.")
+        XCTAssertEqual(try tree.findNode(path: "#OtherHeading", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, nil,
+                       "A general documentation link will find the other heading with the #-prefix.")
         XCTAssertThrowsError(
             try tree.findNode(path: "OtherHeading", onlyFindSymbols: true, parent: articleID),
             "A symbol link that find the header but doesn't find a symbol will raise the error about the heading not being a symbol"
@@ -4444,9 +4518,9 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("/first/second/third", [("first", nil), ("second", nil), ("third", nil)])
         assertParsedPathComponents("first/", [("first", nil)])
         assertParsedPathComponents("first//second", [("first", nil), ("/second", nil)])
-        assertParsedPathComponents("first/second#third", [("first", nil), ("second", nil), ("third", nil)])
-        assertParsedPathComponents("#first", [("first", nil)])
 
+        assertParsedPathComponents("first/second#third", [("first", nil), ("second", nil)], anchor: "third")
+        assertParsedPathComponents("#first", [], anchor: "first")
         // Check disambiguation
         assertParsedPathComponents("path-hash", [("path", .kindAndHash(kind: nil, hash: "hash"))])
         assertParsedPathComponents("path-struct", [("path", .kindAndHash(kind: "struct", hash: nil))])
@@ -4574,9 +4648,9 @@ class PathHierarchyTests: XCTestCase {
             assertParsedPathComponents("\(operatorName)-(_,ParameterType)", [(operatorName, .typeSignature(parameterTypes: ["_","ParameterType"], returnTypes: nil))])
             
             // With a trailing anchor component
-            assertParsedPathComponents("\(operatorName)#SomeAnchor", [(operatorName, nil), ("SomeAnchor", nil)])
-            assertParsedPathComponents("\(operatorName)-hash#SomeAnchor", [(operatorName, .kindAndHash(kind: nil, hash: "hash")), ("SomeAnchor", nil)])
-            assertParsedPathComponents("\(operatorName)-func.op#SomeAnchor", [(operatorName, .kindAndHash(kind: "func.op", hash: nil)), ("SomeAnchor", nil)])
+            assertParsedPathComponents("\(operatorName)#SomeAnchor", [(operatorName, nil)], anchor: "SomeAnchor")
+            assertParsedPathComponents("\(operatorName)-hash#SomeAnchor", [(operatorName, .kindAndHash(kind: nil, hash: "hash"))], anchor: "SomeAnchor")
+            assertParsedPathComponents("\(operatorName)-func.op#SomeAnchor", [(operatorName, .kindAndHash(kind: "func.op", hash: nil))], anchor: "SomeAnchor")
         }
         
         assertParsedPathComponents("operator[]-(std::string&)->std::string&", [("operator[]", .typeSignature(parameterTypes: ["std::string&"], returnTypes: ["std::string&"]))])
@@ -4700,9 +4774,10 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], file: StaticString = #filePath, line: UInt = #line) {
-        let (actual, _) = PathHierarchy.PathParser.parse(path: path)
+    private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], anchor expectedAnchor: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
+        let (actual, _, anchor) = PathHierarchy.PathParser.parse(path: path)
         XCTAssertEqual(actual.count, expected.count, "Incorrect number of path components for \(path.singleQuoted)", file: file, line: line)
+        XCTAssertEqual(anchor.map { String($0) }, expectedAnchor, "Incorrect anchor for \(path.singleQuoted)", file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
             XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component for \(path.singleQuoted)", file: file, line: line)
             switch (actualComponents.disambiguation, expectedComponents.1) {

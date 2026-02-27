@@ -140,7 +140,7 @@ final class PathHierarchyBasedLinkResolver {
         resolvedReferenceMap[tutorialID] = reference
         
         for landmark in landmarks {
-            let landmarkID = pathHierarchy.addNonSymbolChild(parent: tutorialID, name: urlReadableFragment(landmark.title), kind: "landmark")
+            let landmarkID = pathHierarchy.addAnchor(parent: tutorialID, name: urlReadableFragment(landmark.title))
             resolvedReferenceMap[landmarkID] = reference.withFragment(landmark.title)
         }
     }
@@ -155,14 +155,14 @@ final class PathHierarchyBasedLinkResolver {
         var anonymousVolumeID: ResolvedIdentifier?
         for volume in tutorialTableOfContents.value.volumes {
             if anonymousVolumeID == nil, volume.name == nil {
-                anonymousVolumeID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: "$volume", kind: "volume")
+                anonymousVolumeID = pathHierarchy.addAnchor(parent: tutorialTableOfContentsID, name: "$volume")
                 resolvedReferenceMap[anonymousVolumeID!] = reference.appendingPath("$volume")
             }
             
             let chapterParentID: ResolvedIdentifier
             let chapterParentReference: ResolvedTopicReference
             if let name = volume.name {
-                chapterParentID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: name, kind: "volume")
+                chapterParentID = pathHierarchy.addAnchor(parent: tutorialTableOfContentsID, name: name)
                 chapterParentReference = reference.appendingPath(name)
                 resolvedReferenceMap[chapterParentID] = chapterParentReference
             } else {
@@ -171,7 +171,7 @@ final class PathHierarchyBasedLinkResolver {
             }
             
             for chapter in volume.chapters {
-                let chapterID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: chapter.name, kind: "volume")
+                let chapterID = pathHierarchy.addAnchor(parent: tutorialTableOfContentsID, name: chapter.name)
                 resolvedReferenceMap[chapterID] = chapterParentReference.appendingPath(chapter.name)
             }
         }
@@ -207,7 +207,7 @@ final class PathHierarchyBasedLinkResolver {
     
     private func addAnchors(_ anchorSections: [AnchorSection], to parent: ResolvedIdentifier) {
         for anchor in anchorSections {
-            let identifier = pathHierarchy.addNonSymbolChild(parent: parent, name: anchor.reference.fragment!, kind: "anchor")
+            let identifier = pathHierarchy.addAnchor(parent: parent, name: anchor.reference.fragment!)
             resolvedReferenceMap[identifier] = anchor.reference
         }
     }
@@ -215,7 +215,7 @@ final class PathHierarchyBasedLinkResolver {
     /// Adds a task group on a given page to the documentation hierarchy.
     func addTaskGroup(named name: String, reference: ResolvedTopicReference, to parent: ResolvedTopicReference) {
         let parentID = resolvedReferenceMap[parent]!
-        let taskGroupID = pathHierarchy.addNonSymbolChild(parent: parentID, name: urlReadableFragment(name), kind: "taskGroup")
+        let taskGroupID = pathHierarchy.addAnchor(parent: parentID, name: urlReadableFragment(name))
         resolvedReferenceMap[taskGroupID] = reference
     }
     

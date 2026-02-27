@@ -64,6 +64,14 @@ extension PathHierarchy {
         /// - A list of the names for the children of the partial result.
         case unknownName(partialResult: PartialResult, remaining: [PathComponent], availableChildren: Set<String>)
         
+        /// Encountered an unknown anchor at the end of the the path.
+        ///
+        /// Includes information about:
+        /// - The partial result for as much of the path that could be found.
+        /// - The name of the unknown anchor.
+        /// - A list of the names for the anchors of the partial result.
+        case unknownAnchor(partialResult: PartialResult, anchor: String, availableAnchors: Set<String>)
+        
         /// Multiple matches are found partway through the path.
         ///
         /// Includes information about:
@@ -218,6 +226,24 @@ extension PathHierarchy.Error {
                 """,
                 solutions: solutions,
                 rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.full.count)
+            )
+            
+        case .unknownAnchor(partialResult: let partialResult, anchor: let anchor, availableAnchors: let availableAnchors):
+            let nearMisses = NearMiss.bestMatches(for: availableAnchors, against: anchor)
+            
+            let pathPrefix = partialResult.pathPrefix
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: anchor.count)
+            let solutions = nearMisses.map { candidate in
+                Solution(summary: "\(Self.replacementOperationDescription(from: anchor, to: candidate))", replacements: [
+                    Replacement(range: replacementRange, replacement: candidate)
+                ])
+            }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                \(anchor.singleQuoted) is not an anchor of \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
+                """,
+                solutions: solutions,
+                rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: anchor.count)
             )
             
         case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):

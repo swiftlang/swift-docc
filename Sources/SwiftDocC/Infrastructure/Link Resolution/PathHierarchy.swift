@@ -38,15 +38,20 @@ struct ResolvedIdentifier: Equatable, Hashable {
 /// After a path hierarchy has been fully created---with both symbols and non-symbols---it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
 struct PathHierarchy {
     /// The list of module nodes.
+    @usableFromInline
     private(set) var modules: [Node]
     /// The container of top-level articles in the documentation hierarchy.
+    @usableFromInline
     let articlesContainer: Node
     /// The container of tutorials in the documentation hierarchy.
+    @usableFromInline
     let tutorialContainer: Node
     /// The container of tutorial overview pages in the documentation hierarchy.
+    @usableFromInline
     let tutorialOverviewContainer: Node
     
     /// A map of known documentation nodes based on their unique identifiers.
+    @usableFromInline
     private(set) var lookup: [ResolvedIdentifier: Node]
     
     // MARK: Creating a path hierarchy
@@ -445,6 +450,7 @@ struct PathHierarchy {
     /// Adds an article to the path hierarchy.
     /// - Parameter name: The path component name of the article (the file name without the file extension).
     /// - Returns: The new unique identifier that represent this article.
+    @inlinable
     mutating func addArticle(name: String) -> ResolvedIdentifier {
         return addNonSymbolChild(parent: articlesContainer.identifier, name: name, kind: "article")
     }
@@ -452,6 +458,7 @@ struct PathHierarchy {
     /// Adds a tutorial to the path hierarchy.
     /// - Parameter name: The path component name of the tutorial (the file name without the file extension).
     /// - Returns: The new unique identifier that represent this tutorial.
+    @inlinable
     mutating func addTutorial(name: String) -> ResolvedIdentifier {
         return addNonSymbolChild(parent: tutorialContainer.identifier, name: name, kind: "tutorial")
     }
@@ -459,6 +466,7 @@ struct PathHierarchy {
     /// Adds a tutorial overview page to the path hierarchy.
     /// - Parameter name: The path component name of the tutorial overview (the file name without the file extension).
     /// - Returns: The new unique identifier that represent this tutorial overview.
+    @inlinable
     mutating func addTutorialOverview(name: String) -> ResolvedIdentifier {
         return addNonSymbolChild(parent: tutorialOverviewContainer.identifier, name: name, kind: "tutorial-toc")
     }
@@ -467,9 +475,9 @@ struct PathHierarchy {
     /// - Parameters:
     ///   - parent: The unique identifier of the existing element to add the new child element to.
     ///   - name: The path component name of the new element.
-    ///   - kind: The kind of the new element
+    ///   - kind: The kind of the new element.
     /// - Returns: The new unique identifier that represent this element.
-    mutating func addNonSymbolChild(parent: ResolvedIdentifier, name: String, kind: String) -> ResolvedIdentifier {
+    private mutating func addNonSymbolChild(parent: ResolvedIdentifier, name: String, kind: String) -> ResolvedIdentifier {
         let parent = lookup[parent]!
         
         let newReference = ResolvedIdentifier()
@@ -481,10 +489,33 @@ struct PathHierarchy {
         return newReference
     }
     
+    /// Adds an anchor to an existing element in the path hierarchy.
+    /// - Parameters:
+    ///   - parent: The unique identifier of the existing element to add the new child element to.
+    ///   - name: The name of the new anchor.
+    /// - Returns: The new unique identifier that represent this element.
+    @inlinable
+    mutating func addAnchor(parent: ResolvedIdentifier, name: String) -> ResolvedIdentifier {
+        let parent = lookup[parent]!
+        // Its rather easy to author the same heading more than once. Only add the anchor once.
+        if let existing = parent.anchors[name] {
+            return existing.identifier
+        }
+        
+        let newReference = ResolvedIdentifier()
+        let newNode = Node(name: name)
+        newNode.identifier = newReference
+        self.lookup[newReference] = newNode
+        parent.anchors[name] = newNode
+        
+        return newReference
+    }
+    
     /// Adds a non-symbol technology root.
     /// - Parameters:
     ///   - name: The path component name of the technology root.
     /// - Returns: The new unique identifier that represent the root.
+    @inlinable
     mutating func addTechnologyRoot(name: String) -> ResolvedIdentifier {
         let newReference = ResolvedIdentifier()
         let newNode = Node(name: name)
@@ -503,56 +534,78 @@ extension PathHierarchy {
     /// A node in the path hierarchy.
     final class Node {
         /// The unique identifier for this node.
+        @usableFromInline
         fileprivate(set) var identifier: ResolvedIdentifier!
         
         // Everything else is file-private or private.
         
         /// The name of this path component in the hierarchy.
+        @usableFromInline
         private(set) var name: String
         
         /// The descendants of this node in the hierarchy.
-        /// Each name maps to a disambiguation tree that handles
+        ///
+        /// Each name maps to a disambiguation tree that handles disambiguating matches and identifying collisions
+        @usableFromInline
         private(set) var children: [String: DisambiguationContainer]
         
+        /// The anchors of this node.
+        ///
+        /// An an anchor represents a heading or on-page landmark and is always a leaf node in the hierarchy.
+        @usableFromInline
+        fileprivate(set) var anchors: [String: Node] // ???: Should this be just the ID?
+        
+        @usableFromInline
         fileprivate(set) unowned var parent: Node?
-        /// The symbol, if a node has one.
+        /// The symbol, if the node has one.
+        @usableFromInline
         fileprivate(set) var symbol: SymbolGraph.Symbol?
         /// The languages where this node's symbol is represented.
+        @usableFromInline
         fileprivate(set) var languages = SmallSourceLanguageSet()
         /// The other language representation of this symbol.
         ///
-        /// > Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
+        /// - Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
+        @usableFromInline
         fileprivate(set) unowned var counterpart: Node?
         
         /// A set of non-standard behaviors that apply to this node.
+        @usableFromInline
         fileprivate(set) var specialBehaviors: SpecialBehaviors
         
         /// Options that specify non-standard behaviors of a node.
         struct SpecialBehaviors: OptionSet {
+            @usableFromInline
             let rawValue: Int
             
             /// This node is disfavored in the the case of a link collision.
             ///
             /// If a favored node collides with a disfavored node the link will resolve to the favored node without requiring any disambiguation.
             /// Referencing the disfavored node requires disambiguation unless it's the only match for that link.
+            @usableFromInline
             static let disfavorInLinkCollision = Self(rawValue: 1 << 0)
             
             /// This node is excluded from automatic curation.
+            @usableFromInline
             static let excludeFromAutomaticCuration = Self(rawValue: 1 << 1)
             
             /// This node is excluded from advanced link disambiguation, for example type-signature disambiguation.
+            @usableFromInline
             static let excludeFromAdvancedLinkDisambiguation = Self(rawValue: 1 << 2)
         }
         
         /// A Boolean value indicating whether this node is disfavored in link collisions.
+        @inlinable
         var isDisfavoredInLinkCollisions: Bool {
             specialBehaviors.contains(.disfavorInLinkCollision)
         }
         /// A Boolean value indicating whether this node is excluded from automatic curation.
+        @inlinable
         var isExcludedFromAutomaticCuration: Bool {
             specialBehaviors.contains(.excludeFromAutomaticCuration)
         }
         /// A Boolean value indicating whether this node is excluded from advanced link disambiguation, for example type-signature disambiguation.
+        @inlinable
         var isExcludedFromAdvancedLinkDisambiguation: Bool {
             specialBehaviors.contains(.excludeFromAdvancedLinkDisambiguation)
         }
@@ -562,6 +615,7 @@ extension PathHierarchy {
             self.symbol = symbol
             self.name = name
             self.children = [:]
+            self.anchors = [:]
             self.specialBehaviors = []
             self.languages = [SourceLanguage(id: symbol.identifier.interfaceLanguage)]
         }
@@ -571,6 +625,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
+            self.anchors = [:]
             self.specialBehaviors = []
         }
         
@@ -667,7 +722,7 @@ extension PathHierarchy {
         
         /// Adds a descendant of this node.
         fileprivate func add(child: Node, kind: String?, hash: String?, parameterTypes: [String]? = nil, returnTypes: [String]? = nil) {
-            guard child.parent !== self else { 
+            guard child.parent !== self else {
                 assert(
                     children.keys.contains(child.name) &&
                     (try? children[child.name]?.find(.kindAndHash(kind: kind?[...], hash: hash?[...]))) === child,
@@ -685,6 +740,7 @@ extension PathHierarchy {
         }
         
         /// Combines this node with another node.
+        @inlinable
         func merge(with other: Node) {
             assert(self.parent?.symbol?.identifier.precise == other.parent?.symbol?.identifier.precise)
             self.children = self.children.merging(other.children, uniquingKeysWith: { $0.merge(with: $1) })
