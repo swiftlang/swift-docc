@@ -2659,7 +2659,7 @@ public class DocumentationContext {
             severity: .warning,
             range: technologyRoot.originalMarkup.range,
             identifier: "TechnologyRootInExtensionFile",
-            summary: "\(TechnologyRoot.directiveName) directive cannot modify documentation extension file",
+            summary: "\(TechnologyRoot.directiveName) directive has no effect in documentation extension",
             explanation: """
             Symbols inherently belong to a module \(moduleName.map { "(in this case '\($0)') " } ?? "")which is already the root of the documentation hierarchy.
             A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages\(symbolDescription.map { " (in this case \($0))" } ?? "").

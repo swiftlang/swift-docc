@@ -83,7 +83,7 @@ struct DocumentationContext_RootPageTests {
         // Verify the problem about the module extension file
         do {
             let problem = try #require(problems.first)
-            #expect(problem.diagnostic.summary == "TechnologyRoot directive cannot modify documentation extension file")
+            #expect(problem.diagnostic.summary == "TechnologyRoot directive has no effect in documentation extension")
             #expect(problem.diagnostic.explanation == """
                 Symbols inherently belong to a module (in this case 'SomeModule') which is already the root of the documentation hierarchy.
                 A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages (in this case the 'SomeModule' module).
@@ -104,7 +104,7 @@ struct DocumentationContext_RootPageTests {
         // Verify the problem about the class extension file
         do {
             let problem = try #require(problems.last)
-            #expect(problem.diagnostic.summary == "TechnologyRoot directive cannot modify documentation extension file")
+            #expect(problem.diagnostic.summary == "TechnologyRoot directive has no effect in documentation extension")
             #expect(problem.diagnostic.explanation == """
                 Symbols inherently belong to a module (in this case 'SomeModule') which is already the root of the documentation hierarchy.
                 A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages (in this case the 'SomeClass' class).
