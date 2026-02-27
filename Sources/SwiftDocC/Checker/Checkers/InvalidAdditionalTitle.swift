@@ -54,7 +54,7 @@ public struct InvalidAdditionalTitle: Checker {
                 identifier: "MultipleSymbolExtensionAssociations",
                 summary: "Documentation extension file can only extend one symbol",
                 explanation: "A first-level heading with a symbol link is reserved for defining which symbol a documentation extension file is associated with.",
-                notes: makeNote(message: "Previously extending '\(documentTitle.title.trimmingCharacters(in: [UnicodeScalar(UInt8(ascii: "`"))]))' here")
+                notes: makeNote(message: "Previously extending '\(documentTitle.title.trimmingCharacters(in: CharacterSet(charactersIn: "`")))' here")
             )
         } else {
             Diagnostic(
