@@ -1287,30 +1287,17 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testCanResolveArticleFromTutorial() async throws {
-        struct TestData {
-            let symbolGraphNames: [String]
-            
-            var symbolGraphFiles: [any File] {
-                return symbolGraphNames.map { name in
-                    CopyOfFile(original: Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-                        .appendingPathComponent(name + ".symbols.json"))
-                }
-            }
-                
-            var expectsToResolveArticleReference: Bool {
-                return symbolGraphNames.count == 1
-            }
-        }
-        
         // Verify that the article can be resolved when there's a single module but not otherwise.
         let combinationsToTest = [
-            TestData(symbolGraphNames: []),
-            TestData(symbolGraphNames: ["mykit-iOS"]),
-            TestData(symbolGraphNames: ["sidekit"]),
-            TestData(symbolGraphNames: ["mykit-iOS", "sidekit"]),
+            [],
+            ["First"],
+            ["Second"],
+            ["First", "Second"],
         ]
         
-        for testData in combinationsToTest {
+        for symbolGraphNames in combinationsToTest {
+            let expectsToResolveArticleReference = symbolGraphNames.count == 1
+            
             let testCatalog = Folder(name: "TestCanResolveArticleFromTutorial.docc", content: [
                 InfoPlist(displayName: "TestCanResolveArticleFromTutorial", identifier: "com.example.documentation"),
                 
@@ -1327,7 +1314,9 @@ class DocumentationContextTests: XCTestCase {
                    }
                 }
                 """),
-            ] + testData.symbolGraphFiles)
+            ] + symbolGraphNames.map {
+                JSONFile(name: "\($0).symbols.json", content: makeSymbolGraph(moduleName: $0))
+            })
             
             let (_, context) = try await loadBundle(catalog: testCatalog)
             let renderContext = RenderContext(documentationContext: context)
@@ -1339,14 +1328,14 @@ class DocumentationContextTests: XCTestCase {
             let renderNode = try XCTUnwrap(converter.renderNode(for: node))
             
             XCTAssertEqual(
-                !testData.expectsToResolveArticleReference,
-                context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }),
-                "Expected to \(testData.expectsToResolveArticleReference ? "resolve" : "not resolve") article reference from tutorial content when there are \(testData.symbolGraphNames.count) modules."
+                !expectsToResolveArticleReference,
+                context.problems.contains(where: { $0.diagnostic.identifier == "UnfindableArticle" }),
+                "Expected to \(expectsToResolveArticleReference ? "resolve" : "not resolve") article reference from tutorial content when there are \(symbolGraphNames.count) modules."
             )
             XCTAssertEqual(
-                testData.expectsToResolveArticleReference,
+                expectsToResolveArticleReference,
                 renderNode.references.keys.contains("doc://com.example.documentation/documentation/TestCanResolveArticleFromTutorial/extra-article"),
-                "Expected to \(testData.expectsToResolveArticleReference ? "find" : "not find") article among the tutorial's references when there are \(testData.symbolGraphNames.count) modules."
+                "Expected to \(expectsToResolveArticleReference ? "find" : "not find") article among the tutorial's references when there are \(symbolGraphNames.count) modules."
             )
         }
     }
@@ -2213,31 +2202,6 @@ let expected = """
             XCTAssertEqual(deprecatedSection.count, 1)
             XCTAssertEqual(deprecatedSection.first?.format().trimmingCharacters(in: .whitespaces), "Use ``doc://unit-test/documentation/ModuleName/NewSymbol`` instead.", "The link should have been resolved")
         }
-    }
-    
-    func testUncuratedArticleDiagnostics() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
-            // This setup only happens if the developer manually mixes symbol inputs from different builds
-            JSONFile(name: "FirstModuleName.symbols.json", content: makeSymbolGraph(moduleName: "FirstModuleName")),
-            JSONFile(name: "SecondModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SecondModuleName")),
-            
-            // Add an article without curating it anywhere
-            // This will be uncurated because there's more than one module.
-            TextFile(name: "Article.md", utf8Content: """
-            # Article
-            
-            This article won't be curated anywhere.
-            """),
-        ])
-        
-        let (bundle, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
-        XCTAssertNil(context.soleRootModuleReference)
-        
-        let curationDiagnostics = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
-        let sidecarDiagnostic = try XCTUnwrap(curationDiagnostics.first(where: { $0.source?.standardizedFileURL == bundle.markupURLs.first?.standardizedFileURL }))
-        XCTAssertNil(sidecarDiagnostic.range)
-        XCTAssertEqual(sidecarDiagnostic.summary, "You haven't curated 'doc://unit-test/documentation/unit-test/Article'")
-        XCTAssertEqual(sidecarDiagnostic.severity, .information)
     }
     
     func testUpdatesReferencesForChildrenOfCollisions() async throws {

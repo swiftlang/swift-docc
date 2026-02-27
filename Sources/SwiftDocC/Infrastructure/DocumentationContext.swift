@@ -1216,7 +1216,7 @@ public class DocumentationContext {
                     }
                     
                     // Present a diagnostic specific to documentation extension files but get the solutions and notes from the general unresolved link problem.
-                    let unresolvedLinkProblem = unresolvedReferenceProblem(source: documentationExtension.source, range: link.range, severity: .warning, uncuratedArticleMatch: nil, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
+                    let unresolvedLinkProblem = unresolvedReferenceProblem(source: documentationExtension.source, range: link.range, severity: .warning, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
                     
                     diagnosticEngine.emit(
                         Problem(
@@ -1755,7 +1755,7 @@ public class DocumentationContext {
                 // rdar://79745455 and https://github.com/swiftlang/swift-docc/issues/593 tracks fixing the root cause of this issue, avoiding the collision and allowing the article and symbol to both exist.
                 diagnosticEngine.emit(
                     Problem(
-                        diagnostic: Diagnostic(source: article.source, severity: .warning, identifier: "org.swift.docc.articleCollisionProblem", summary: """
+                        diagnostic: Diagnostic(source: article.source, severity: .warning, identifier: "ArticleCollideWithSymbol", summary: """
                             Article '\(article.source.lastPathComponent)' (\(title)) would override \(existing.kind.name.lowercased()) '\(existing.name.description)'.
                             """, explanation: """
                             DocC computes unique URLs for symbols, even if they have the same name, but doesn't account for article filenames that collide with symbols because of a bug. 
@@ -2216,7 +2216,7 @@ public class DocumentationContext {
         }
 
         // Emit warnings for any remaining uncurated files.
-        emitWarningsForUncuratedTopics()
+        warnAboutArticlesOutsideTheDocumentationHierarchy()
         
         linkResolver.localResolver.addAnchorForSymbols(localCache: documentationCache)
         
@@ -2565,12 +2565,37 @@ public class DocumentationContext {
         }
     }
     
-    /// Emits information diagnostics for uncurated articles.
-    private func emitWarningsForUncuratedTopics() {
-        // Check that all articles are curated
-        for articleResult in uncuratedArticles.values {
-            diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: articleResult.source, severity: .information, range: nil, identifier: "org.swift.docc.ArticleUncurated", summary: "You haven't curated \(articleResult.topicGraphNode.reference.description.singleQuoted)"), possibleSolutions: []))
+    private func warnAboutArticlesOutsideTheDocumentationHierarchy() {
+        let diagnosticID = "ArticleNotInDocumentationHierarchy"
+        guard diagnosticEngine.willEmitProblem(diagnosticID: diagnosticID, defaultSeverity: .information) else {
+            // Don't create a collection of problems that the engine won't report to the developer.
+            return
         }
+        
+        let rootPageNames = sortedRootPageNames()
+        
+        for article in uncuratedArticles.values {
+            diagnosticEngine.emit(Problem(
+                diagnostic: Diagnostic(
+                    source: article.source,
+                    severity: .information,
+                    identifier: diagnosticID,
+                    summary: "Article '\(article.source.lastPathComponent)' has no default location in invalid documentation hierarchy with \(rootPageNames.count) roots",
+                    explanation: """
+                    A single DocC build covers either a single module (for example a framework, library, or executable) or a single article-only technology.
+                    Documentation with \(rootPageNames.count) roots (\(rootPageNames.map(\.singleQuoted).list(finalConjunction: .and))) has a disjoint and unsupported documentation hierarchy.
+                    Because there are multiple roots in the hierarchy, it's undefined behavior where in hierarchy this article would belong.
+                    As a consequence, DocC cannot create a page for the '\(article.topicGraphNode.title)' article (\(article.source.lastPathComponent)).
+                    """
+                )
+            ))
+        }
+    }
+    
+    func sortedRootPageNames() -> [String] {
+        linkResolver.localResolver.rootPages().map { reference in
+            documentationCache[reference]?.name.plainText ?? reference.lastPathComponent
+        }.sorted()
     }
 
     /// Emits warnings when the documentation contains multiple root pages.
@@ -2578,7 +2603,7 @@ public class DocumentationContext {
         // Get module names from the link resolver, which already has properly filtered modules
         // (excludes snippets and isn't affected by nested symbols with `.module` kind).
         // Filter to only include symbol-based modules (not @TechnologyRoot articles).
-        let symbolModuleNames: Set<String> = Set(linkResolver.localResolver.modules().compactMap { reference in
+        let symbolModuleNames: Set<String> = Set(linkResolver.localResolver.rootPages().compactMap { reference in
             guard let docNode = documentationCache[reference],
                   docNode.kind == .module
             else { return nil }

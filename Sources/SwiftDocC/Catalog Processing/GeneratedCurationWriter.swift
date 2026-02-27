@@ -117,7 +117,7 @@ public struct GeneratedCurationWriter {
         // Used in documentation extension page titles to reference symbols that don't already have a documentation extension file.
         let allAbsoluteLinks = linkResolver.pathHierarchy.disambiguatedAbsoluteLinks()
         
-        guard var curationCrawlRoot = linkResolver.modules().first else {
+        guard var curationCrawlRoot = linkResolver.rootPages().first else {
             return [:]
         }
         
