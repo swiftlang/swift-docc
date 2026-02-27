@@ -48,7 +48,7 @@ struct InvalidAdditionalTitleTests {
         let firstHeading  = try #require(document.child(at: 0) as? Heading)
         let secondHeading = try #require(document.child(at: 2) as? Heading)
         
-        let isDocumentationExtensionFile = firstHeading.containsAnyLink
+        let isDocumentationExtensionFile = firstHeading.startsWithAnyLink
         let problem = try #require(problems.first)
         let diagnostic = problem.diagnostic
         

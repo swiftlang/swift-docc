@@ -37,7 +37,7 @@ public struct InvalidAdditionalTitle: Checker {
         }
         
         // We've found a level-one heading which isn't the title of the document.
-        let isExtensionFile = documentTitle.containsAnyLink
+        let isExtensionFile = documentTitle.startsWithAnyLink
         
         func makeNote(message: @autoclosure () -> String) -> [DiagnosticNote] {
             guard let range = documentTitle.range, let source = sourceFile ?? range.source else {

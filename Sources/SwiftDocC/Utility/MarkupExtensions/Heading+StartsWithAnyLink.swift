@@ -14,7 +14,7 @@ extension Heading {
     /// A Boolean value that indicates if this heading contains any link as its first element.
     ///
     /// A first level heading with a link is used to associate a documentation extension file with a symbol.
-    var containsAnyLink: Bool {
+    var startsWithAnyLink: Bool {
         child(at: 0) is (any AnyLink)
     }
 }
