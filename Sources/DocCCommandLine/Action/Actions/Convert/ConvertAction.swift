@@ -384,7 +384,7 @@ public struct ConvertAction: AsyncAction {
                     ),
                     possibleSolutions: [
                         Solution(
-                            summary: "Create a `@Tutorials` table of content page",
+                            summary: "Create a `@Tutorials` table of contents page",
                             replacements: replacements
                         )
                     ]
