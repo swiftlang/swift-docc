@@ -23,7 +23,7 @@ extension XCTestCase {
         externalResolvers: [DocumentationBundle.Identifier: any ExternalDocumentationSource] = [:],
         externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
         fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
-        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
+        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .information),
         configuration: DocumentationContext.Configuration = .init()
     ) async throws -> (URL, DocumentationBundle, DocumentationContext) {
         let context = try await loadFromDisk(
@@ -76,7 +76,7 @@ extension XCTestCase {
         externalResolvers: [DocumentationBundle.Identifier : any ExternalDocumentationSource] = [:],
         externalSymbolResolver: (any GlobalExternalSymbolResolver)? = nil,
         fallbackResolver: (any ConvertServiceFallbackResolver)? = nil,
-        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
+        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .information),
         configuration: DocumentationContext.Configuration = .init(),
         configureBundle: ((URL) throws -> Void)? = nil
     ) async throws -> (URL, DocumentationBundle, DocumentationContext) {
