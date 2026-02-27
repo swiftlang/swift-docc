@@ -49,11 +49,9 @@ extension Docc.ProcessArchive {
         func run() async throws {
             // We perform validation here instead of in  `validate()` to avoid having to force unwrap the `templateURL` here.
             guard let templateURL = templateOption.templateURL else {
-                throw TemplateOption.missingHTMLTemplateError(path: templateOption.defaultTemplateURL.path)
+                throw TemplateOption.missingHTMLTemplate(at: TemplateOption.defaultTemplateURL)
             }
-            guard FileManager.default.fileExists(atPath: templateURL.appendingPathComponent(HTMLTemplate.templateFileName.rawValue).path) else {
-                throw TemplateOption.invalidHTMLTemplateError(path: templateURL.path, expectedFile: HTMLTemplate.templateFileName.rawValue)
-            }
+            try TemplateOption.validateRequiredFile(fileName: HTMLTemplate.templateFileName.rawValue, inHTMLTemplateAt: templateURL)
             
             let action = try TransformForStaticHostingAction(
                 documentationBundleURL: documentationArchive.urlOrFallback,
