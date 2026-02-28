@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -350,6 +350,33 @@ struct SymbolGraphLoader {
             moduleName = SymbolGraphLoader.moduleNameFor(url)!
         }
         return (moduleName, isMainSymbolGraph)
+    }
+
+    /// Returns the loaded symbol graphs along with their source languages, sorted by the following priority:
+    ///
+    /// - Main symbol graph files ahead of extension files
+    /// - Platforms as per ``PlatformName.sortedPlatforms``.
+    /// - Languages by the comparator implemented by ``SourceLanguage``.
+    func sortedSymbolGraphsWithLanguages() -> [(URL, SymbolGraph, SourceLanguage?)] {
+        return self.symbolGraphs
+        .map { url, graph in
+            // Only compute the source language for each symbol graph once.
+            (url: url, graph: graph, language: graph.symbols.values.mapFirst(where: { SourceLanguage(id: $0.identifier.interfaceLanguage) }))
+        }
+        .sorted(by: { a, b in
+                    let aIsMain = !a.url.lastPathComponent.contains("@")
+                    let bIsMain = !b.url.lastPathComponent.contains("@")
+                    if aIsMain != bIsMain { return aIsMain }
+                    let aName = a.graph.module.platform.name
+                    let bName = b.graph.module.platform.name
+                    if aName != bName {
+                        return PlatformName.isInOrder(aName ?? "", bName ?? "")
+                    }
+
+                    guard let aLang = a.language else { return false }
+                    guard let bLang = b.language else { return true }
+                    return aLang < bLang
+                })
     }
 }
 

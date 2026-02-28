@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1780,6 +1780,58 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+    }
+
+    func testSymbolGraphsOrdering() async throws {
+        // The symbol graph loader loads symbol graphs in parallel and returns a dictionary
+        // whose ordering is not guaranteed. To ensure consistency, the dictionary is collected
+        // into an array and sorted before processing. The sorting uses the following priority:
+        //
+        // - iOS > macOS > tvOS > watchOS > visionOS
+        // - Swift > ObjC
+        let expectedSymbolGraphsOrder: [(SymbolGraph.OperatingSystem, SourceLanguage)] = [
+            (SymbolGraph.OperatingSystem(name: "ios"), .swift),
+            (SymbolGraph.OperatingSystem(name: "ios"), .objectiveC),
+            (SymbolGraph.OperatingSystem(name: "macos"), .swift),
+            (SymbolGraph.OperatingSystem(name: "macos"), .objectiveC),
+            (SymbolGraph.OperatingSystem(name: "tvos"), .swift),
+            (SymbolGraph.OperatingSystem(name: "tvos"), .objectiveC),
+            (SymbolGraph.OperatingSystem(name: "watchos"), .swift),
+            (SymbolGraph.OperatingSystem(name: "watchos"), .objectiveC),
+            (SymbolGraph.OperatingSystem(name: "xros"), .swift),
+            (SymbolGraph.OperatingSystem(name: "xros"), .objectiveC),
+        ]
+
+        // Use the above list to create the symbol graphs for the test bundle.
+        // Using the expected order while creating the symbol graph files does not
+        // affect the correctness of the test as the loader loads the files in parallel.
+        let catalog = Folder(name: "unit-test.docc", content: expectedSymbolGraphsOrder.map { (platform, language) in
+            JSONFile(name: "symbol-graph-\(platform)-\(language)-UnitTest.symbols.json", content: makeSymbolGraph(
+                moduleName: "UnitTest",
+                platform: .init(operatingSystem: platform),
+                symbols: [makeSymbol(
+                    id: "test",
+                    language: language,
+                    kind: .func,
+                    pathComponents: ["foo"]
+                )])
+            )
+        })
+
+        let tempURL = try createTemporaryDirectory()
+        let bundleURL = try catalog.write(inside: tempURL)
+        let (_, bundle, _) = try await loadBundle(from: bundleURL)
+
+        var loader = try makeSymbolGraphLoader(symbolGraphURLs: bundle.symbolGraphURLs)
+        try loader.loadAll()
+
+        let symbolGraphs = loader.sortedSymbolGraphsWithLanguages().map { (_, graph, language) in
+            (graph.module.platform.operatingSystem, language)
+        }
+        for ((platform, lang), (expectedPlatform, expectedLang)) in zip(symbolGraphs, expectedSymbolGraphsOrder) {
+            XCTAssertEqual(platform, expectedPlatform)
+            XCTAssertEqual(lang, expectedLang)
+        }
     }
     
     // MARK: - Helpers
