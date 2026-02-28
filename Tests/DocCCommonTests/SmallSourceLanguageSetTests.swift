@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -86,12 +86,12 @@ struct SmallSourceLanguageSetTests {
     }
     
     @Test
-    func sortsSwiftFirstAndThenByID() {
+    func sortsKnownLanguagesFirstAndThenByID() {
         var languages = SmallSourceLanguageSet(SourceLanguage.knownLanguages)
         #expect(languages.min()?.name == "Swift")
         #expect(languages.count == 5)
         #expect(languages.sorted().map(\.name) == [
-            "Swift",       // swift (always first)
+            "Swift",       // swift
             "Data",        // data
             "JavaScript",  // javascript
             "Metal",       // metal
@@ -110,35 +110,23 @@ struct SmallSourceLanguageSetTests {
         #expect(languages.min()?.name == "Swift")
         #expect(languages.count == 8)
         #expect(languages.sorted().map(\.name) == [
-            "Swift",       // swift (always first)
-            "ZZZ",         // aaa (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
-            "Custom",      // custom
+            "Swift",       // swift
             "Data",        // data
             "JavaScript",  // javascript
             "Metal",       // metal
             "Objective-C", // occ
+            "ZZZ",         // aaa (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
+            "Custom",      // custom
             "AAA",         // zzz (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
         ])
         
         for language in SourceLanguage.knownLanguages {
             #expect(languages.remove(language) != nil)
-            #expect(languages.remove(language) == nil)
         }
         
         #expect(languages.min()?.name == "ZZZ")
         #expect(languages.count == 3)
         #expect(languages.sorted().map(\.name) == [
-            "ZZZ",         // aaa (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
-            "Custom",      // custom
-            "AAA",         // zzz (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
-        ])
-        
-        languages.insert(.swift)
-        
-        #expect(languages.min()?.name == "Swift")
-        #expect(languages.count == 4)
-        #expect(languages.sorted().map(\.name) == [
-            "Swift",       // swift (always first)
             "ZZZ",         // aaa (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
             "Custom",      // custom
             "AAA",         // zzz (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)

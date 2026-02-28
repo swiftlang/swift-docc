@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -358,20 +358,18 @@ public extension SourceLanguage {
 
 public extension SourceLanguage {
     static func < (lhs: SourceLanguage, rhs: SourceLanguage) -> Bool {
-        if lhs._isKnownLanguage, rhs._isKnownLanguage {
-            // If both languages are known, their `_id` is also their sort order
-            lhs._id < rhs._id
+        let lhsIsKnown = lhs._isKnownLanguage
+        let rhsIsKnown = rhs._isKnownLanguage
+        // If both languages are known, their `_id` is also their sort order.
+        if lhsIsKnown, rhsIsKnown {
+            return lhs._id < rhs._id
         }
-        
-        // Sort Swift before other languages.
-        else if lhs == .swift {
-            true
-        } else if rhs == .swift {
-            false
-        } else {
-            // Otherwise, sort by ID (a string) for a stable order.
-            lhs.id < rhs.id
+        // If either of the languages is known, it is sorted before the other.
+        if lhsIsKnown != rhsIsKnown {
+            return lhs._isKnownLanguage
         }
+        // Otherwise, they are sorted by the string identifier for a stable order.
+        return lhs.id < rhs.id
     }
 }
 
