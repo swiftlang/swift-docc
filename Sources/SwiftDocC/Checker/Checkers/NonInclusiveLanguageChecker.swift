@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -46,92 +46,73 @@ public struct NonInclusiveLanguageChecker: Checker {
         self.terms = terms ?? builtinExcludedTerms
     }
 
-    public mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> () {
+    public mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
+        // Need to offset the lines by +1 to take into account the start of the code block (``` or ~~~)
+        let offset = SourceLocation(line: 1, column: 0, source: nil)
+        let offsetRange = offset ..< offset
+        
         for term in terms {
-            let termRanges = ranges(for: term, in: codeBlock.code, of: codeBlock)
-            for range in termRanges {
-                // Need to offset the lines by +1 to take into account the start
-                // of the code fence
-                let start = SourceLocation(
-                    line: range.lowerBound.line + 1,
-                    column: range.lowerBound.column,
-                    source: sourceFile
-                )
-                let end = SourceLocation(
-                    line: range.upperBound.line + 1,
-                    column: range.upperBound.column,
-                    source: sourceFile
-                )
-                let offseted = start..<end
-                matched(term, at: offseted)
+            for var range in matchingRanges(for: term, in: codeBlock.code, of: codeBlock) {
+                range.offsetWithRange(offsetRange)
+                addDiagnosticAboutMatch(term, at: range)
             }
         }
     }
 
-    public mutating func visitInlineCode(_ inlineCode: InlineCode) -> () {
+    public mutating func visitInlineCode(_ inlineCode: InlineCode) {
+        // Need to offset the columns by +1 to account for the inline code start delimiter (`)
+        let offset = SourceLocation(line: 0, column: 1, source: nil)
+        let offsetRange = offset ..< offset
+        
         for term in terms {
-            let termRanges = ranges(for: term, in: inlineCode.code, of: inlineCode)
-            for range in termRanges {
-                // Need to offset the columns by +1 to account for the `
-                let start = SourceLocation(
-                    line: range.lowerBound.line,
-                    column: range.lowerBound.column + 1,
-                    source: sourceFile
-                )
-                let end = SourceLocation(
-                    line: range.upperBound.line,
-                    column: range.upperBound.column + 1,
-                    source: sourceFile
-                )
-                let offseted = start..<end
-                matched(term, at: offseted)
+            for var range in matchingRanges(for: term, in: inlineCode.code, of: inlineCode) {
+                range.offsetWithRange(offsetRange)
+                addDiagnosticAboutMatch(term, at: range)
             }
         }
     }
 
     public mutating func visitText(_ text: Text) {
         for term in terms {
-            for range in ranges(for: term, in: text.string, of: text) {
-                matched(term, at: range)
+            for range in matchingRanges(for: term, in: text.string, of: text) {
+                addDiagnosticAboutMatch(term, at: range)
             }
         }
     }
 
-    /// Creates a new diagnostic describing where a term was found.
-    /// - Note: This method has the side-effect of appending the new diagnostic to `self.problems`.
+    /// Adds a new diagnostic describing where a term was found to `self.problems`.
     /// - Parameters:
     ///   - term: The term that was found.
     ///   - range: The range at which the term was found in the current file.
-    mutating func matched(_ term: Term, at range: SourceRange?) {
+    private mutating func addDiagnosticAboutMatch(_ term: Term, at range: SourceRange) {
         let diagnostic = Diagnostic(
             source: sourceFile,
             severity: Self.severity,
             range: range,
-            identifier: "org.swift.docc.NonInclusiveLanguage",
-            summary: "Non-inclusive language.",
+            identifier: "NonInclusiveLanguage",
+            summary: "Documentation should use inclusive language",
             explanation: term.message
         )
-        var solutions: [Solution] = []
-        if let range {
-            let replacement = Replacement(range: range, replacement: term.replacement)
-            let solution = Solution(summary: "Replace with \(term.replacement.singleQuoted)", replacements: [replacement])
-            solutions.append(solution)
-        }
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: solutions)
+        
+        let solution = Solution(summary: "Replace with \(term.replacement.singleQuoted)", replacements: [
+            Replacement(range: range, replacement: term.replacement)
+        ])
+        
+        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
         problems.append(problem)
     }
 
-    /// Checks for a term in text.
+    /// Checks for a non-inclusive term in the given text and returns the matching ranges.
     ///
     /// The regular expression created from the provided term is evaluated with the case insensitive flag.
     ///
     /// - Parameters:
     ///   - term: The term to look for.
-    ///   - text: The text to check.
+    ///   - text: The text to check for the term in.
     ///   - markup: The markup element that contains the text.
     /// - Returns: An array of ranges at which the term was found.
-    /// > Warning: Crashes if the term expression pattern is not valid.
-    func ranges(for term: Term, in text: String, of markup: any Markup) -> [SourceRange] {
+    /// - Warning: Crashes if the term expression pattern is not valid.
+    private func matchingRanges(for term: Term, in text: String, of markup: any Markup) -> [SourceRange] {
         var ranges = [SourceRange]()
 
         let regex = try! defaultRegularExpressions[term.expression]
@@ -142,7 +123,8 @@ public struct NonInclusiveLanguageChecker: Checker {
         for match in matches {
             if let startCursor = PrintCursor(offset: match.range.location, in: text),
                let endCursor = PrintCursor(offset: NSMaxRange(match.range), in: text),
-               let markupRange = markup.range {
+               let markupRange = markup.range
+            {
                 let start = SourceLocation(
                     line: markupRange.lowerBound.line + startCursor.line - 1,
                     column: startCursor.column + markupRange.lowerBound.column - 1,
@@ -153,8 +135,7 @@ public struct NonInclusiveLanguageChecker: Checker {
                     column: start.column + match.range.length,
                     source: sourceFile
                 )
-                let range = start..<end
-                ranges.append(range)
+                ranges.append(start ..< end)
             }
         }
 
@@ -163,10 +144,10 @@ public struct NonInclusiveLanguageChecker: Checker {
 }
 
 /// The default list of terms to look for in documentation.
-fileprivate let builtinExcludedTerms: [NonInclusiveLanguageChecker.Term] = [
+private let builtinExcludedTerms: [NonInclusiveLanguageChecker.Term] = [
     NonInclusiveLanguageChecker.Term(
         expression: #"black\W*list\w{0,2}"#,
-        message: "Choose a more inclusive alternative that’s appropriate to the context, such as deny list/allow list or unapproved list/approved list.",
+        message: "Choose a more inclusive alternative that's appropriate to the context, such as deny list/allow list or unapproved list/approved list.",
         replacement: "deny list"
     ),
     NonInclusiveLanguageChecker.Term(
@@ -181,13 +162,13 @@ fileprivate let builtinExcludedTerms: [NonInclusiveLanguageChecker.Term] = [
     ),
     NonInclusiveLanguageChecker.Term(
         expression: #"white\W*list\w{0,2}"#,
-        message: "Choose a more inclusive alternative that’s appropriate to the context, such as deny list/allow list or unapproved list/approved list.",
+        message: "Choose a more inclusive alternative that's appropriate to the context, such as deny list/allow list or unapproved list/approved list.",
         replacement: "allow list"
     )
 ]
 
 /// The regular expressions for the default term list.
-fileprivate let defaultRegularExpressions: [String: NSRegularExpression] = builtinExcludedTerms.reduce(into: [:]) { result, term in
+private let defaultRegularExpressions: [String: NSRegularExpression] = builtinExcludedTerms.reduce(into: [:]) { result, term in
     if let regex = try? NSRegularExpression(pattern: term.expression, options: .caseInsensitive) {
         result[term.expression] = regex
     }

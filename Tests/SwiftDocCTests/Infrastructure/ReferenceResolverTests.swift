@@ -331,7 +331,7 @@ class ReferenceResolverTests: XCTestCase {
         let (_, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
         
         let problems = context.problems.sorted(by: { $0.diagnostic.source?.lastPathComponent ?? "" < $1.diagnostic.source?.lastPathComponent ?? "" })
-        XCTAssertEqual(problems.map(\.diagnostic.identifier), ["org.swift.docc.MultipleMainModules", "UnfindableArticle", "ArticleNotInDocumentationHierarchy"],
+        XCTAssertEqual(problems.map(\.diagnostic.identifier), ["MultipleModules", "UnfindableArticle", "ArticleNotInDocumentationHierarchy"],
                        "Encountered unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         do {
