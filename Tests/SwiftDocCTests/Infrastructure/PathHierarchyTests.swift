@@ -40,12 +40,15 @@ struct PathHierarchyTests_new {
         let heading      = try tree.find(path: "/Something/First#Some-heading", onlyFindSymbols: false)
 
         // Relative to same page
-        try #expect(heading == tree.find(path: "#Some-heading", parent: firstArticle, onlyFindSymbols: false))
-        try #expect(heading == tree.find(path:  "Some-heading", parent: firstArticle, onlyFindSymbols: false), "Can omit for links to headings on the same page")
+        let foundWithAnchor    = try tree.find(path: "#Some-heading", parent: firstArticle, onlyFindSymbols: false)
+        let foundWithoutAnchor = try tree.find(path:  "Some-heading", parent: firstArticle, onlyFindSymbols: false)
+        #expect(foundWithAnchor    == heading)
+        #expect(foundWithoutAnchor == heading)
         
         // Relative to other page
-        let secondArticle = try tree.find(path: "/Something/Second", onlyFindSymbols: false)
-        try #expect(heading == tree.find(path: "First#Some-heading", parent: secondArticle, onlyFindSymbols: false))
+        let secondArticle     = try tree.find(path: "/Something/Second", onlyFindSymbols: false)
+        let foundWithPagePath = try tree.find(path: "First#Some-heading", parent: secondArticle, onlyFindSymbols: false)
+        #expect(foundWithPagePath == heading)
         // Verify error when using "/" instead of "#" to separate the heading name from the path
         do {
             let unexpectedFound = try tree.find(path: "First/Some-heading", parent: secondArticle, onlyFindSymbols: false)
@@ -56,7 +59,8 @@ struct PathHierarchyTests_new {
         }
         
         // Absolute link
-        try #expect(heading == tree.find(path: "/Something/First#Some-heading", onlyFindSymbols: false))
+        let foundWithAbsoluteLink = try tree.find(path: "/Something/First#Some-heading", parent: secondArticle, onlyFindSymbols: false)
+        #expect(foundWithAbsoluteLink == heading)
         // Verify error when using "/" instead of "#" to separate the heading name from the path
         do {
             let unexpectedFound = try tree.find(path: "/Something/First/Some-heading", onlyFindSymbols: false)
@@ -89,8 +93,10 @@ struct PathHierarchyTests_new {
         let heading      = try tree.find(path: "/ModuleName/First#Second", onlyFindSymbols: false)
 
         // Relative to same page
-        try #expect(heading      == tree.find(path: "#Second", parent: firstSymbol, onlyFindSymbols: false), "Should find the heading with an explicit # prefix")
-        try #expect(secondSymbol == tree.find(path:  "Second", parent: firstSymbol, onlyFindSymbols: false), "Should find the symbol without a # prefix ")
+        let foundWithAnchor    = try tree.find(path: "#Second", parent: firstSymbol, onlyFindSymbols: false)
+        let foundWithoutAnchor = try tree.find(path:  "Second", parent: firstSymbol, onlyFindSymbols: false)
+        #expect(foundWithAnchor    == heading, "Should find the heading when the link has a '#' prefix")
+        #expect(foundWithoutAnchor == secondSymbol, "Should find the symbol before considering heading matches")
     }
     
     @Test
@@ -119,8 +125,10 @@ struct PathHierarchyTests_new {
         let heading       = try tree.find(path: "/Something/First#Second", onlyFindSymbols: false)
 
         // Relative to same page
-        try #expect(heading       == tree.find(path: "#Second", parent: firstArticle, onlyFindSymbols: false), "Should find the heading with an explicit # prefix")
-        try #expect(secondArticle == tree.find(path:  "Second", parent: firstArticle, onlyFindSymbols: false), "Should find the article without an # prefix ")
+        let foundWithAnchor    = try tree.find(path: "#Second", parent: firstArticle, onlyFindSymbols: false)
+        let foundWithoutAnchor = try tree.find(path:  "Second", parent: firstArticle, onlyFindSymbols: false)
+        #expect(foundWithAnchor    == heading, "Should find the heading when the link has a '#' prefix")
+        #expect(foundWithoutAnchor == secondArticle, "Should find the article before considering heading matches")
     }
 }
 
