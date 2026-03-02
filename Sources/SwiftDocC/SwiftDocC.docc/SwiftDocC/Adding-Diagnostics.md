@@ -8,7 +8,7 @@ Swift-DocC uses its ``Problem`` type---which wraps a ``Diagnostic`` and a ``Solu
 
 Before you add a new diagnostic to DocC, imagine yourself receiving the diagnostic you're about to add and think about what information you would find useful.
 Think about what information you'd need to _both_ understand what's wrong and how to fix it.
-Having though about the information you'd like to receive, strive to make the new diagnostic close to that imagined ideal. 
+Having thought about the information you'd like to receive, strive to make the new diagnostic close to that imagined ideal. 
 
 The code that checks for and identifies a given issue may run multiple times per page and need to take performance into consideration. 
 For the majority of projects, the majority of elements won't suffer from the given issue and a lightweight check that can move on quickly is optimal.
@@ -75,8 +75,7 @@ Following these recommendations help your new diagnostic fit in with both DocC's
   ```
 
 - Lead with the information that's most specific about the issue and follow with information that provide context.
-  IDEs and other environments sometimes present DocC diagnostics in space constrained elements, where summaries above a certain length become truncated. 
-  Additionally, even if the 
+  IDEs and other environments sometimes present DocC diagnostics in space-constrained elements, where summaries above a certain length become truncated.
   For example:
   ```diff
   - Missing documentation for parameter 'NAME'
