@@ -67,6 +67,18 @@ package class TestFileSystem: FileManagerProtocol {
             try addFolder(folder, basePath: URL(fileURLWithPath: "/"))
         }
     }
+    
+    package convenience init(@FolderBuilder _ folders: () -> [Folder]) throws {
+        self.init()
+        
+        // Default system paths
+        files["/"] = Self.folderFixtureData
+        files["/tmp"] = Self.folderFixtureData
+ 
+        for folder in folders() {
+            try addFolder(folder, basePath: URL(fileURLWithPath: "/"))
+        }
+    }
 
     package func contentsOfURL(_ url: URL) throws -> Data {
         filesLock.lock()
@@ -365,4 +377,3 @@ package class TestFileSystem: FileManagerProtocol {
         return CocoaError(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: url.path])
     }
 }
-

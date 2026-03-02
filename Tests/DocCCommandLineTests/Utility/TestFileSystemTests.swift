@@ -1,52 +1,49 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 import SwiftDocC
 @testable import DocCTestUtilities
 
-class TestFileSystemTests: XCTestCase {
-    
-    func testEmpty() throws {
-        let fs = try TestFileSystem(folders: [])
-        XCTAssertEqual(fs.currentDirectoryPath, "/")
-        var isDirectory = ObjCBool(false)
-        XCTAssertTrue(fs.fileExists(atPath: "/", isDirectory: &isDirectory))
-        XCTAssertEqual(fs.files.keys.sorted(), ["/", "/tmp"], "The root (/) should be the only existing path.")
-        XCTAssertTrue(isDirectory.boolValue)
-        XCTAssertFalse(fs.disableWriting)
+struct TestFileSystemTests {
+    @Test
+    func noContent() throws {
+        let fileSystem = try TestFileSystem(folders: [])
+        #expect(fileSystem.currentDirectoryPath == "/")
+        #expect(fileSystem.directoryExists(atPath: "/"))
+        
+        #expect(fileSystem.files.keys.sorted() == ["/", "/tmp"], "The root (/) should be the only existing path.")
+        #expect(!fileSystem.disableWriting)
     }
     
-    func testInitialContentMultipleFolders() throws {
-        let folder1 = Folder(name: "main", content: [
-            Folder(name: "nested", content: [
-                TextFile(name: "myfile.txt", utf8Content: "text"),
-            ]),
-        ])
-        let folder2 = Folder(name: "additional", content: [])
+    @Test
+    func initialContent() throws {
+        let fileSystem = try TestFileSystem {
+            Folder(name: "main") {
+                Folder(name: "nested") {
+                    TextFile(name: "myfile.txt") { "text" }
+                }
+            }
+            Folder(name: "additional") { /* empty */}
+        }
         
-        let fs = try TestFileSystem(folders: [folder1, folder2])
-        
-        // Verify correct folders & files
-        var isDirectory = ObjCBool(false)
-        XCTAssertTrue(fs.fileExists(atPath: "/additional", isDirectory: &isDirectory))
-        XCTAssertTrue(isDirectory.boolValue)
-        XCTAssertTrue(fs.fileExists(atPath: "/main", isDirectory: &isDirectory))
-        XCTAssertTrue(isDirectory.boolValue)
-        XCTAssertTrue(fs.fileExists(atPath: "/main/nested/myfile.txt", isDirectory: &isDirectory))
-        XCTAssertFalse(isDirectory.boolValue)
-        XCTAssertFalse(fs.fileExists(atPath: "/main/nested/myfile-non-existing.txt", isDirectory: &isDirectory))
-        XCTAssertFalse(isDirectory.boolValue)
+        // Verify that all the files and folders exist
+        #expect(fileSystem.directoryExists(atPath: "/additional"))
+        #expect(fileSystem.directoryExists(atPath: "/main"))
+        #expect(fileSystem.fileExists(atPath: "/main/nested/myfile.txt"))
+        #expect(!fileSystem.directoryExists(atPath: "/main/nested/myfile.txt"), "Files are not directories")
+        #expect(!fileSystem.directoryExists(atPath: "/main/nested/myfile-non-existing.txt"))
 
         // Verify correct file tree
-        XCTAssertEqual(fs.dump(), """
+        #expect(fileSystem.dump() == """
         /
         ├─ additional/
         ├─ main/
@@ -55,32 +52,69 @@ class TestFileSystemTests: XCTestCase {
         ╰─ tmp/
         """)
     }
-
-    private func makeTestFS() throws -> TestFileSystem {
-        let folder = Folder(name: "main", content: [
-            Folder(name: "nested", content: [
-                TextFile(name: "myfile1.txt", utf8Content: "text"),
-                TextFile(name: "myfile2.txt", utf8Content: "text"),
-            ])
-        ])
+    
+    @Test(arguments: [1, 2, 11])
+    func resultBuilderCapabilities(seed: Int) throws {
+        let fileSystem = try TestFileSystem {
+            Folder(name: "Always Included") {
+                for number in 1...3 {
+                    TextFile(name: "File\(number)", { number })
+                }
+            }
+            
+            if seed < 10 {
+                Folder(name: "Small number") { }
+            }
+            
+            if seed.isMultiple(of: 2) {
+                Folder(name: "Even number") { }
+            } else {
+                Folder(name: "Odd number") { }
+            }
+            
+            switch seed {
+            case 2:
+                Folder(name: "Exactly 2") { }
+            default:
+                Folder(name: "Number \(seed)") { }
+            }
+        }
         
-        let fs = try TestFileSystem(folders: [folder])
-        
-        XCTAssertEqual(fs.dump(), """
+        var expectedDump = """
         /
-        ├─ main/
-        │  ╰─ nested/
-        │     ├─ myfile1.txt
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
-        """)
+        ├─ Always Included/
+        │  ├─ File1
+        │  ├─ File2
+        │  ╰─ File3
+        """
+        
+        var otherTopLevelFolders = seed < 10 ? ["Small number"] : []
+        if seed == 2 {
+            otherTopLevelFolders.append(contentsOf: ["Even number", "Exactly 2"])
+        } else {
+            otherTopLevelFolders.append(contentsOf: ["Odd number", "Number \(seed)"])
+        }
+        expectedDump.append(otherTopLevelFolders.sorted().map{ "\n├─ \($0)/" }.joined())
+        expectedDump.append("\n╰─ tmp/")
+        #expect(fileSystem.dump() == expectedDump)
+    }
 
-        return fs
+    private func makeTestFileSystemWithExampleStructure() throws -> TestFileSystem {
+        try TestFileSystem {
+            Folder(name: "main") {
+                Folder(name: "nested") {
+                    for number in 1...2 {
+                        TextFile(name: "myfile\(number).txt") { "text" }
+                    }
+                }
+            }
+        }
     }
     
-    func testDumpSubpath() throws {
-        let fs = try makeTestFS()
-        XCTAssertEqual(fs.dump(), """
+    @Test
+    func dumpSubpath() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         │  ╰─ nested/
@@ -89,25 +123,26 @@ class TestFileSystemTests: XCTestCase {
         ╰─ tmp/
         """)
         
-        XCTAssertEqual(fs.dump(subHierarchyFrom: "/main"), """
+        #expect(fileSystem.dump(subHierarchyFrom: "/main") == """
         main/
         ╰─ nested/
            ├─ myfile1.txt
            ╰─ myfile2.txt
         """)
         
-        XCTAssertEqual(fs.dump(subHierarchyFrom: "/main/nested"), """
+        #expect(fileSystem.dump(subHierarchyFrom: "/main/nested") == """
         nested/
         ├─ myfile1.txt
         ╰─ myfile2.txt
         """)
     }
     
-    func testCopyFiles() throws {
-        let fs = try makeTestFS()
+    @Test
+    func copyFiles() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
         
-        try fs._copyItem(at: URL(string: "/main/nested/myfile1.txt")!, to: URL(string: "/main/myfile1.txt")!)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem._copyItem(at: URL(fileURLWithPath: "/main/nested/myfile1.txt"), to: URL(fileURLWithPath: "/main/myfile1.txt"))
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         │  ├─ myfile1.txt
@@ -118,11 +153,12 @@ class TestFileSystemTests: XCTestCase {
         """)
     }
 
-    func testCopyFolders() throws {
-        let fs = try makeTestFS()
+    @Test
+    func copyFolders() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
         
-        try fs._copyItem(at: URL(string: "/main/nested")!, to: URL(string: "/copy")!)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem._copyItem(at: URL(fileURLWithPath: "/main/nested"), to: URL(fileURLWithPath: "/copy"))
+        #expect(fileSystem.dump() == """
         /
         ├─ copy/
         │  ├─ myfile1.txt
@@ -134,25 +170,25 @@ class TestFileSystemTests: XCTestCase {
         ╰─ tmp/
         """)
         
-        let filesIterator = fs.recursiveFiles(startingPoint: URL(fileURLWithPath: "/"))
-        XCTAssertEqual(filesIterator.prefix(2).map(\.path).sorted(), [
+        let filesIterator = fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/"))
+        #expect(filesIterator.prefix(2).map(\.path).sorted() == [
             // Shallow files first
             "/copy/myfile1.txt",
             "/copy/myfile2.txt",
         ])
-        XCTAssertEqual(filesIterator.dropFirst(2).map(\.path).sorted(), [
+        #expect(filesIterator.dropFirst(2).map(\.path).sorted() == [
             // Deeper files after
             "/main/nested/myfile1.txt",
             "/main/nested/myfile2.txt",
         ])
     }
 
-    
-    func testMoveFiles() throws {
-        let fs = try makeTestFS()
+    @Test
+    func moveFiles() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
         
-        try fs.moveItem(at: URL(string: "/main/nested/myfile1.txt")!, to: URL(string: "/main/myfile1.txt")!)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem.moveItem(at: URL(fileURLWithPath: "/main/nested/myfile1.txt"), to: URL(fileURLWithPath: "/main/myfile1.txt"))
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         │  ├─ myfile1.txt
@@ -161,12 +197,13 @@ class TestFileSystemTests: XCTestCase {
         ╰─ tmp/
         """)
     }
-
-    func testMoveFolders() throws {
-        let fs = try makeTestFS()
+    
+    @Test
+    func moveFolders() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
         
-        try fs.moveItem(at: URL(string: "/main/nested")!, to: URL(string: "/main/new")!)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem.moveItem(at: URL(fileURLWithPath: "/main/nested"), to: URL(fileURLWithPath: "/main/new"))
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         │  ╰─ new/
@@ -176,11 +213,12 @@ class TestFileSystemTests: XCTestCase {
         """)
     }
     
-    func testRemoveFiles() throws {
-        let fs = try makeTestFS()
+    @Test
+    func removeFiles() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
         
-        try fs.removeItem(at: URL(string: "/main/nested/myfile1.txt")!)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem.removeItem(at: URL(fileURLWithPath: "/main/nested/myfile1.txt"))
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         │  ╰─ nested/
@@ -188,35 +226,38 @@ class TestFileSystemTests: XCTestCase {
         ╰─ tmp/
         """)
         
-        XCTAssertEqual(fs.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent), [
+        #expect(fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent) == [
             "myfile2.txt",
         ])
     }
-
-    func testRemoveFolders() throws {
-        let fs = try makeTestFS()
+    
+    @Test
+    func removeFolders() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
         
-        try fs.removeItem(at: URL(string: "/main/nested")!)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem.removeItem(at: URL(fileURLWithPath: "/main/nested"))
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         ╰─ tmp/
         """)
     }
 
-    func testCreateFiles() throws {
-        let fs = try makeTestFS()
+    @Test
+    func createFiles() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
 
         // Test creating a non-empty file
-        XCTAssertNoThrow(try fs.createFile(at: URL(string:"/test.txt")!, contents: "12345".data(using: .utf8)!))
-        XCTAssertEqual(fs.contents(atPath: "/test.txt")?.count, 5)
+        try fileSystem.createFile(at: URL(fileURLWithPath:"/test.txt"), contents: "12345".data(using: .utf8)!)
+        #expect(fileSystem.contents(atPath: "/test.txt")?.count == 5)
     }
     
-    func testCreateFolders() throws {
-        let fs = try makeTestFS()
+    @Test
+    func createFolders() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
         
-        try fs.createDirectory(at: URL(string: "/main/nested/inner")!, withIntermediateDirectories: false)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem.createDirectory(at: URL(fileURLWithPath: "/main/nested/inner"), withIntermediateDirectories: false)
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         │  ╰─ nested/
@@ -226,8 +267,8 @@ class TestFileSystemTests: XCTestCase {
         ╰─ tmp/
         """)
 
-        try fs.createDirectory(at: URL(string: "/main/nested/inner2")!, withIntermediateDirectories: true)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem.createDirectory(at: URL(fileURLWithPath: "/main/nested/inner2"), withIntermediateDirectories: true)
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         │  ╰─ nested/
@@ -239,11 +280,16 @@ class TestFileSystemTests: XCTestCase {
         """)
 
         // Test it throws when parent folder is missing
-        XCTAssertThrowsError(try fs.createDirectory(at: URL(string: "/main/nested/missing/inner4")!, withIntermediateDirectories: false))
+        do {
+            try fileSystem.createDirectory(at: URL(fileURLWithPath: "/main/nested/missing/inner4"), withIntermediateDirectories: false)
+            Issue.record("Did not raise error ")
+        } catch {
+            //
+        }
         
         // Test it creates missing parent folders
-        try fs.createDirectory(at: URL(string: "/main/nested/missing/inner4")!, withIntermediateDirectories: true)
-        XCTAssertEqual(fs.dump(), """
+        try fileSystem.createDirectory(at: URL(fileURLWithPath: "/main/nested/missing/inner4"), withIntermediateDirectories: true)
+        #expect(fileSystem.dump() == """
         /
         ├─ main/
         │  ╰─ nested/
@@ -256,18 +302,19 @@ class TestFileSystemTests: XCTestCase {
         ╰─ tmp/
         """)
         
-        XCTAssertEqual(fs.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent).sorted(), [
+        #expect(fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent).sorted() == [
             "myfile1.txt", "myfile2.txt",
         ])
     }
     
-    func testCreateDeeplyNestedDirectory() throws {
-        let fs = try TestFileSystem(folders: [])
+    @Test
+    func createDeeplyNestedDirectory() throws {
+        let fileSystem = try TestFileSystem(folders: [])
 
         // Test if creates deeply nested directory structure
-        try fs.createDirectory(at: URL(string: "/one/two/three/four/five/six")!, withIntermediateDirectories: true)
+        try fileSystem.createDirectory(at: URL(fileURLWithPath: "/one/two/three/four/five/six"), withIntermediateDirectories: true)
         
-        XCTAssertEqual(fs.dump(), """
+        #expect(fileSystem.dump() == """
         /
         ├─ one/
         │  ╰─ two/
@@ -278,95 +325,97 @@ class TestFileSystemTests: XCTestCase {
         ╰─ tmp/
         """)
         
-        XCTAssertEqual(fs.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent), [], "Only directories. No files.")
+        #expect(fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent) == [], "Only directories. No files.")
     }
     
-    func testFileExists() throws {
-        let fs = try makeTestFS()
+    @Test
+    func fileExists() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
         
-        XCTAssertTrue(fs.fileExists(atPath: "/"))
-        XCTAssertTrue(fs.fileExists(atPath: "/main"))
-        XCTAssertTrue(fs.fileExists(atPath: "/main/nested/myfile1.txt"))
+        #expect(fileSystem.fileExists(atPath: "/"))
+        #expect(fileSystem.fileExists(atPath: "/main"))
+        #expect(fileSystem.fileExists(atPath: "/main/nested/myfile1.txt"))
         
-        XCTAssertFalse(fs.fileExists(atPath: "/missing"))
-        XCTAssertFalse(fs.fileExists(atPath: "/main/nested/myfile3.txt"))
+        #expect(fileSystem.directoryExists(atPath: "/main"))
+        #expect(fileSystem.directoryExists(atPath: "/main/nested"))
+        
+        #expect(!fileSystem.fileExists(atPath: "/missing"))
+        #expect(!fileSystem.fileExists(atPath: "/main/nested/myfile3.txt"))
     }
     
-    func testFileContents() throws {
-        let fs = try makeTestFS()
+    @Test
+    func readingFileContents() throws {
+        let fileSystem = try makeTestFileSystemWithExampleStructure()
 
         // Test it fails to write to incorrect paths
-        XCTAssertThrowsError(try fs.createFile(at: URL(string:"/main/missing/test.txt")!, contents: Data(base64Encoded: "TEST")!))
+        do {
+            try fileSystem.createFile(at: URL(string:"/main/missing/test.txt")!, contents: Data(base64Encoded: "TEST")!)
+            Issue.record("Did not raise error ")
+        } catch {
+            //
+        }
 
         // Test it returns `nil` for not existing file paths
-        XCTAssertNil(fs.contents(atPath: "/\\//asdsj//fm--"))
-        XCTAssertNil(fs.contents(atPath: "/main/missing/test.txt"))
-        XCTAssertNil(fs.contents(atPath: "/main/missingFile.txt"))
+        #expect(fileSystem.contents(atPath: "/\\//asdsj//fm--")       == nil)
+        #expect(fileSystem.contents(atPath: "/main/missing/test.txt") == nil)
+        #expect(fileSystem.contents(atPath: "/main/missingFile.txt")  == nil)
         
         // Test it writes a file and reads it back
-        XCTAssertNoThrow(try fs.createFile(at: URL(string:"/main/test.txt")!, contents: Data(base64Encoded: "TEST")!))
-        XCTAssertEqual(fs.contents(atPath: "/main/test.txt"), Data(base64Encoded: "TEST"))
+        try fileSystem.createFile(at: URL(string:"/main/test.txt")!, contents: Data(base64Encoded: "TEST")!)
+        #expect(fileSystem.contents(atPath: "/main/test.txt") == Data(base64Encoded: "TEST"))
         
         // Copy a file and test the contents are identical with original
-        try fs._copyItem(at: URL(string: "/main/test.txt")!, to: URL(string: "/main/clone.txt")!)
-        XCTAssertTrue(fs.contentsEqual(atPath: "/main/test.txt", andPath: "/main/clone.txt"))
+        try fileSystem._copyItem(at: URL(string: "/main/test.txt")!, to: URL(string: "/main/clone.txt")!)
+        #expect(fileSystem.contentsEqual(atPath: "/main/test.txt", andPath: "/main/clone.txt"))
         
-        _ = try fs.createFile(at: URL(string:"/main/notclone.txt")!, contents: Data(base64Encoded: "TESTTEST")!)
-        XCTAssertFalse(fs.contentsEqual(atPath: "/main/test.txt", andPath: "/main/notclone.txt"))
-        XCTAssertFalse(fs.contentsEqual(atPath: "/main/test.txt", andPath: "/main/missing.txt"))
+        _ = try fileSystem.createFile(at: URL(string:"/main/notclone.txt")!, contents: Data(base64Encoded: "TESTTEST")!)
+        #expect(!fileSystem.contentsEqual(atPath: "/main/test.txt", andPath: "/main/notclone.txt"))
+        #expect(!fileSystem.contentsEqual(atPath: "/main/test.txt", andPath: "/main/missing.txt"))
     }
     
+    @Test
     func testBundleUsesFileURLs() throws {
-        let emptySymbolGraphData = try JSONEncoder().encode(makeSymbolGraph(moduleName: "Something"))
+        let fileSystem = try TestFileSystem {
+            // A docc catalog with an article, a resource, an Info.plist file, and a symbol graph file
+            Folder(name: "something.docc") {
+                TextFile(name: "article.md", utf8Content: "")
+                DataFile(name: "image.png", data: Data())
+                InfoPlist(displayName: "unit-test", identifier: "com.example")
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something"))
+            }
+        }
         
-        // A docc catalog with an article, a resource, an Info.plist file, and a symbol graph file
-        let folders = Folder(name: "something.docc", content: [
-            TextFile(name: "article.md", utf8Content: ""),
-            DataFile(name: "image.png", data: Data()),
-            InfoPlist(displayName: "unit-test", identifier: "com.example"),
-            DataFile(name: "Something.symbols.json", data: emptySymbolGraphData)
-        ])
-        let fs = try TestFileSystem(folders: [folders])
-        
-        let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+        let (inputs, _) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
             .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
         
-        XCTAssertFalse(bundle.markupURLs.isEmpty)
-        XCTAssertFalse(bundle.miscResourceURLs.isEmpty)
-        XCTAssertFalse(bundle.symbolGraphURLs.isEmpty)
+        #expect(inputs.markupURLs.map(\.lastPathComponent).sorted()       == ["article.md"])
+        #expect(inputs.miscResourceURLs.map(\.lastPathComponent).sorted() == ["Info.plist", "image.png"])
+        #expect(inputs.symbolGraphURLs.map(\.lastPathComponent).sorted()  == ["Something.symbols.json"])
         
-        XCTAssert(bundle.markupURLs.allSatisfy(\.isFileURL))
-        XCTAssert(bundle.miscResourceURLs.allSatisfy(\.isFileURL))
-        XCTAssert(bundle.symbolGraphURLs.allSatisfy(\.isFileURL))
+        #expect(inputs.markupURLs.allSatisfy { $0.isFileURL })
+        #expect(inputs.miscResourceURLs.allSatisfy { $0.isFileURL })
+        #expect(inputs.symbolGraphURLs.allSatisfy { $0.isFileURL })
     }
     
-    func testBundleDiscovery() throws {
-        let somethingSymbolGraphData = try JSONEncoder().encode(makeSymbolGraph(moduleName: "Something"))
-        
-        do {
-            let fs = try TestFileSystem(folders: [
-                Folder(name: "CatalogName.docc", content: [
-                    InfoPlist(displayName: "DisplayName", identifier: "com.example"),
-                    DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
-                ])
-            ])
-            let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
-                .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
-            XCTAssertEqual(bundle.displayName, "DisplayName", "Display name is read from Info.plist")
-            XCTAssertEqual(bundle.id, "com.example", "Identifier is read from Info.plist")
+    @Test(arguments: [true, false])
+    func discoverInputs(withInfoPlistInCatalog: Bool) throws {
+        let fileSystem = try TestFileSystem {
+            Folder(name: "CatalogName.docc") {
+                if withInfoPlistInCatalog {
+                    InfoPlist(displayName: "DisplayName", identifier: "com.example")
+                }
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "Something"))
+            }
         }
-         
-        do {
-            let fs = try TestFileSystem(folders: [
-                Folder(name: "CatalogName.docc", content: [
-                    // No Info.plist
-                    DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
-                ])
-            ])
-            let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
-                .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
-            XCTAssertEqual(bundle.displayName, "CatalogName", "Display name is derived from catalog name")
-            XCTAssertEqual(bundle.displayName, "CatalogName", "Identifier is derived the display name")
+        let (inputs, _) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
+        
+        if withInfoPlistInCatalog {
+            #expect(inputs.displayName == "DisplayName", "Display name is read from Info.plist")
+            #expect(inputs.id == "com.example", "Identifier is read from Info.plist")
+        } else {
+            #expect(inputs.displayName == "CatalogName", "Display name is derived from catalog name")
+            #expect(inputs.id == "CatalogName", "Identifier is derived the display name")
         }
     }
 }
