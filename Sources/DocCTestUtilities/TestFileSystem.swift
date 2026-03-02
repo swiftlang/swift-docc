@@ -46,22 +46,28 @@ package class TestFileSystem: FileManagerProtocol {
     /// Thread safe access to the file system.
     private var filesLock = NSRecursiveLock()
 
+    private enum Contents: Equatable {
+        case file(Data)
+        case folder
+    }
+    
     /// A plain index of paths and their contents.
-    var files = [String: Data]()
+    private var files = [String: Contents]()
+    
+    func _allFilePaths() -> some Collection<String> {
+        files.keys
+    }
     
     /// Set to `true` to disable write operations for folders and files.
     /// For example use this for large conversions when the output is not of interest.
     var disableWriting = false
     
-    /// A data fixture to use in the `files` index to mark folders.
-    static let folderFixtureData = "Folder".data(using: .utf8)!
-    
     package convenience init(folders: [Folder]) throws {
         self.init()
         
         // Default system paths
-        files["/"] = Self.folderFixtureData
-        files["/tmp"] = Self.folderFixtureData
+        files["/"] = .folder
+        files["/tmp"] = .folder
  
         for folder in folders {
             try addFolder(folder, basePath: URL(fileURLWithPath: "/"))
@@ -72,8 +78,8 @@ package class TestFileSystem: FileManagerProtocol {
         self.init()
         
         // Default system paths
-        files["/"] = Self.folderFixtureData
-        files["/tmp"] = Self.folderFixtureData
+        files["/"] = .folder
+        files["/tmp"] = .folder
  
         for folder in folders() {
             try addFolder(folder, basePath: URL(fileURLWithPath: "/"))
@@ -84,31 +90,31 @@ package class TestFileSystem: FileManagerProtocol {
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        guard let file = files[url.path] else {
+        guard case .file(let data) = files[url.path] else {
             throw makeFileNotFoundError(url)
         }
-        return file
+        return data
     }
     
     package func contents(of url: URL) throws -> Data {
         try contentsOfURL(url)
     }
     
-    func filesIn(folder: Folder, at: URL) throws -> [String: Data] {
+    private func filesIn(folder: Folder, at: URL) throws -> [String: Contents] {
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        var result = [String: Data]()
+        var result = [String: Contents]()
         for file in folder.content {
             switch file {
                 case let folder as Folder:
-                    result[at.appendingPathComponent(folder.name).path] = Self.folderFixtureData
-                    result.merge(try filesIn(folder: folder, at: at.appendingPathComponent(folder.name)), uniquingKeysWith: +)
+                    result[at.appendingPathComponent(folder.name).path] = .folder
+                    result.merge(try filesIn(folder: folder, at: at.appendingPathComponent(folder.name)), uniquingKeysWith: { _, new in new })
                 
                 case let file as any (File & DataRepresentable):
-                    result[at.appendingPathComponent(file.name).path] = try file.data()
+                    result[at.appendingPathComponent(file.name).path] = .file(try file.data())
                     if let copy = file as? CopyOfFile {
-                        result[copy.original.path] = try file.data()
+                        result[copy.original.path] = .file(try file.data())
                     }
                 
                 case let folder as CopyOfFolder:
@@ -116,20 +122,20 @@ package class TestFileSystem: FileManagerProtocol {
                     let enumerator = FileManager.default.enumerator(at: folder.original, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles)!
                     
                     let contentBase = at.appendingPathComponent(folder.name)
-                    result[contentBase.path] = Self.folderFixtureData
+                    result[contentBase.path] = .folder
                     
                     let at = at.appendingPathComponent(folder.name)
                 
                     let basePathString = folder.original.standardizedFileURL.path
                     for case let url as URL in enumerator where folder.shouldCopyFile(url) {
-                        let data = try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
-                            ? Self.folderFixtureData
-                            : try Data(contentsOf: url)
+                        let contents: Contents = try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
+                            ? .folder
+                            : .file(try Data(contentsOf: url))
                     
                         assert(url.standardizedFileURL.path.hasPrefix(basePathString))
                         let relativePath = String(url.standardizedFileURL.path.dropFirst(basePathString.count))
                            
-                        result[at.appendingPathComponent(relativePath).path] = data
+                        result[at.appendingPathComponent(relativePath).path] = contents
                     }
                 
                 default: break
@@ -146,9 +152,9 @@ package class TestFileSystem: FileManagerProtocol {
         defer { filesLock.unlock() }
 
         let rootURL = basePath.appendingPathComponent(folder.name)
-        files[rootURL.path] = Self.folderFixtureData
+        files[rootURL.path] = .folder
         let fileList = try filesIn(folder: folder, at: rootURL)
-        files.merge(fileList, uniquingKeysWith: +)
+        files.merge(fileList, uniquingKeysWith: { _, new in new })
         return Array(fileList.keys)
     }
     
@@ -156,13 +162,10 @@ package class TestFileSystem: FileManagerProtocol {
         filesLock.lock()
         defer { filesLock.unlock() }
         
-        guard let data = files[path] else {
-            isDirectory?.initialize(to: ObjCBool(false))
-            return false
-        }
+        let contents = files[path]
+        isDirectory?.initialize(to: ObjCBool(contents == .folder))
         
-        isDirectory?.initialize(to: data == Self.folderFixtureData ? ObjCBool(true) : ObjCBool(false))
-        return true
+        return contents != nil
     }
     
     package func fileExists(atPath path: String) -> Bool {
@@ -223,7 +226,7 @@ package class TestFileSystem: FileManagerProtocol {
             }
         }
         
-        files[path] = Self.folderFixtureData
+        files[path] = .folder
     }
     
     package func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
@@ -261,7 +264,7 @@ package class TestFileSystem: FileManagerProtocol {
         try ensureParentDirectoryExists(for: url)
         
         if !disableWriting {
-            files[url.path] = contents
+            files[url.path] = .file(contents)
         }
     }
     
@@ -269,11 +272,14 @@ package class TestFileSystem: FileManagerProtocol {
         try createFile(at: url, contents: contents)
     }
     
-    package func contents(atPath: String) -> Data? {
+    package func contents(atPath path: String) -> Data? {
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        return files[atPath]
+        guard case .file(let data) = files[path] else {
+            return nil
+        }
+        return data
     }
     
     package func contentsOfDirectory(atPath path: String) throws -> [String] {
@@ -317,7 +323,7 @@ package class TestFileSystem: FileManagerProtocol {
         var allContents = try contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: mask)
 
         let partitionIndex = allContents.partition {
-            self.files[$0.path] == Self.folderFixtureData
+            self.files[$0.path] == .folder
         }
         return (
             files:       Array( allContents[..<partitionIndex] ),
@@ -349,7 +355,7 @@ package class TestFileSystem: FileManagerProtocol {
         }
         return Folder.makeStructure(
             filePaths: relevantFilePaths,
-            isEmptyDirectoryCheck: { files[$0] == Self.folderFixtureData }
+            isEmptyDirectoryCheck: { files[$0] == .folder }
         )
         .map { $0.dump() }
         .joined(separator: "\n")

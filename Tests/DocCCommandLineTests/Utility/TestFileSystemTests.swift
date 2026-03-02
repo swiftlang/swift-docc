@@ -20,7 +20,7 @@ struct TestFileSystemTests {
         #expect(fileSystem.currentDirectoryPath == "/")
         #expect(fileSystem.directoryExists(atPath: "/"))
         
-        #expect(fileSystem.files.keys.sorted() == ["/", "/tmp"], "The root (/) should be the only existing path.")
+        #expect(fileSystem._allFilePaths().sorted() == ["/", "/tmp"], "The root (/) should be the only existing path.")
         #expect(!fileSystem.disableWriting)
     }
     
