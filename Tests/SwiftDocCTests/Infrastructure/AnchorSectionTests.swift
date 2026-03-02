@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,194 +9,252 @@
 */
 
 import Foundation
-import XCTest
+import Testing
 import Markdown
 @testable import SymbolKit
 @testable import SwiftDocC
 import DocCCommon
+import DocCTestUtilities
 
-class AnchorSectionTests: XCTestCase {
+struct AnchorSectionTests {
+    @Test
+    func resolvesLinksToArticleSubsections() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            TextFile(name: "First.md", utf8Content: """
+            # Some article
+            
+            ## Some heading
+            
+            ### Some sub heading
+            """),
+            
+            TextFile(name: "Second.md", utf8Content: """
+            # Second article
+            
+            A second article that links to headings from the first article:
+            
+            - <doc:First#Some-heading>
+            - <doc:First#Some-sub-heading>
+            """),
+        ])
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-    func testResolvingArticleSubsections() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let firstArticleReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let headingReference      = firstArticleReference.withFragment("Some-heading")
+        let subHeadingReference   = firstArticleReference.withFragment("Some-sub-heading")
         
-        // Verify the sub-sections of the article have been collected in the context
-        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift)
-        ))
-        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift)
-        ))
+        #expect(context.nodeAnchorSections[headingReference]?.title    == "Some heading")
+        #expect(context.nodeAnchorSections[subHeadingReference]?.title == "Some sub heading")
         
-        // Load the module page
-        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", sourceLanguage: .swift)
-        let entity = try context.entity(with: reference)
-        
-        // Extract the links from the discussion
-        let discussion = try XCTUnwrap((entity.semantic as? Symbol)?.discussion)
-        let linkList = try XCTUnwrap(discussion.content.mapFirst { markup -> UnorderedList? in
-            return markup as? UnorderedList
-        })
-        let listItems = linkList.children.compactMap { markup -> ListItem? in
-            return markup as? ListItem
-        }
-        let links = listItems.compactMap { item -> Link? in
-            return item.children
-                .mapFirst { markup -> Paragraph? in
-                    return markup as? Paragraph
-                }
-                .flatMap { paragraph -> Link? in
-                    return paragraph.children.mapFirst { markup -> Link? in
-                        return markup as? Link
-                    }
-                }
-        }
-        
-        guard links.count == 12 else {
-            XCTFail("Did not resolve all links")
-            return
+        let secondArticleReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "Second" }))
+        let secondArticleNode = try context.entity(with: secondArticleReference)
+        let links: [String] = try #require(
+            (secondArticleNode.semantic as? Article)?.discussion?.content.mapFirst(where: { $0 as? UnorderedList })
+        ).listItems.compactMap { listItem in
+            listItem.children.mapFirst(where: { $0 as? Paragraph })?.children.mapFirst(where: { $0 as? Link })?.destination
         }
         
-        // Verify the links have been resolved
-        for link in links[0...2] {
-            XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/TechnologyX/Article#Article-Sub-Section")
-        }
-        for link in links[3...5] {
-            XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/TechnologyX/Article#Article-Sub-Sub-Section")
-        }
-
-        // Verify collecting section render references
+        #expect(links == [
+            "doc://Something/documentation/Something/First#Some-heading",
+            "doc://Something/documentation/Something/First#Some-sub-heading",
+        ], "Both links should be resolved")
+        
         let converter = DocumentationNodeConverter(context: context)
-        let renderNode = converter.convert(entity)
-
-        let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/TechnologyX/Article#Article-Sub-Section"] as? TopicRenderReference)
-        XCTAssertEqual(sectionReference.title, "Article Sub-Section")
-        XCTAssertEqual(sectionReference.url, "/documentation/technologyx/article#Article-Sub-Section")
-    }
-
-    func testResolvingSymbolSubsections() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let renderNode = converter.convert(secondArticleNode)
         
-        // Verify the sub-sections of the article have been collected in the context
-        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Section", sourceLanguage: .swift)
-        ))
-        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift)
-        ))
-        
-        // Load the module page
-        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", sourceLanguage: .swift)
-        let entity = try context.entity(with: reference)
-        
-        // Extract the links from the discussion
-        let discussion = try XCTUnwrap((entity.semantic as? Symbol)?.discussion)
-        let linkList = try XCTUnwrap(discussion.content.mapFirst { markup -> UnorderedList? in
-            return markup as? UnorderedList
-        })
-        let listItems = linkList.children.compactMap { markup -> ListItem? in
-            return markup as? ListItem
-        }
-        let links = listItems.compactMap { item -> Link? in
-            return item.children
-                .mapFirst { markup -> Paragraph? in
-                    return markup as? Paragraph
-                }
-                .flatMap { paragraph -> Link? in
-                    return paragraph.children.mapFirst { markup -> Link? in
-                        return markup as? Link
-                    }
-                }
+        let renderedLinks: [String] = try #require(
+            (renderNode.primaryContentSections.first as? ContentRenderSection)?.content.mapFirst(where: {
+                if case .unorderedList(let list) = $0 { return list } else { return nil }
+            })
+        ).items.compactMap { listItem in
+            let paragraph = listItem.content.mapFirst(where: {
+                if case .paragraph(let paragraph) = $0 { paragraph } else { nil }
+            })
+            return paragraph?.inlineContent.mapFirst(where: {
+                if case .reference(let reference, _, _, _) = $0 { return reference } else { return nil }
+            })?.identifier
         }
         
-        guard links.count == 12 else {
-            XCTFail("Did not resolve all links")
-            return
-        }
-        
-        // Verify the links have been resolved
-        for link in links[6...8] {
-            XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/CoolFramework/CoolClass#Symbol-Sub-Section")
-        }
-        for link in links[9...11] {
-            XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/CoolFramework/CoolClass#Symbol-Sub-Sub-Section")
-        }
-
-        // Verify collecting section render references
-        let converter = DocumentationNodeConverter(context: context)
-        let renderNode = converter.convert(entity)
-
-        let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/CoolFramework/CoolClass#Symbol-Sub-Section"] as? TopicRenderReference)
-        XCTAssertEqual(sectionReference.title, "Symbol Sub-Section")
-        XCTAssertEqual(sectionReference.url, "/documentation/coolframework/coolclass#Symbol-Sub-Section")
-    }
-
-    func testResolvingRootPageSubsections() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
-        
-        // Verify the sub-sections of the article have been collected in the context
-        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", fragment: "Module-Sub-Section", sourceLanguage: .swift)
-        ))
-        XCTAssertTrue(context.nodeAnchorSections.keys.contains(
-            ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift)
-        ))
-        
-        // Load the article page
-        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/TechnologyX/Article", sourceLanguage: .swift)
-        let entity = try context.entity(with: reference)
-        
-        // Extract the links from the discussion
-        let discussion = try XCTUnwrap((entity.semantic as? Article)?.discussion)
-        let linkList = try XCTUnwrap(discussion.content.mapFirst { markup -> UnorderedList? in
-            return markup as? UnorderedList
-        })
-        let listItems = linkList.children.compactMap { markup -> ListItem? in
-            return markup as? ListItem
-        }
-        let links = listItems.compactMap { item -> Link? in
-            return item.children
-                .mapFirst { markup -> Paragraph? in
-                    return markup as? Paragraph
-                }
-                .flatMap { paragraph -> Link? in
-                    return paragraph.children.mapFirst { markup -> Link? in
-                        return markup as? Link
-                    }
-                }
-        }
-        
-        guard links.count == 6 else {
-            XCTFail("Did not resolve all links")
-            return
-        }
-        
-        // Verify the links have been resolved
-        for link in links[0...2] {
-            XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/CoolFramework#Module-Sub-Section")
-        }
-        for link in links[3...5] {
-            XCTAssertEqual(link.destination, "doc://org.swift.docc.example/documentation/CoolFramework#Module-Sub-Sub-Section")
-        }
-
-        // Verify collecting section render references
-        let converter = DocumentationNodeConverter(context: context)
-        let renderNode = converter.convert(entity)
-
-        let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/CoolFramework#Module-Sub-Section"] as? TopicRenderReference)
-        XCTAssertEqual(sectionReference.title, "Module Sub-Section")
-        XCTAssertEqual(sectionReference.url, "/documentation/coolframework#Module-Sub-Section")
+        #expect(renderedLinks == [
+            "doc://Something/documentation/Something/First#Some-heading",
+            "doc://Something/documentation/Something/First#Some-sub-heading",
+        ], "Both links should be resolved")
     }
     
-    func testWarnsWhenCuratingSections() async throws {
-        let (_, context) = try await testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+    @Test
+    func resolvesLinksToSymbolSubsections() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["First"], docComment: """
+                ## Some heading
+                ### Some sub heading
+                """),
+                
+                makeSymbol(id: "second-symbol-id", kind: .struct, pathComponents: ["Second"], docComment: """
+                A second symbol that links to headings from the first symbol:
+                
+                - <doc:First#Some-heading>
+                - <doc:First#Some-sub-heading>
+                """)
+            ])),
+        ])
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        // The module page has 3 section links in a Topics group,
-        // the context should contain the three warnings about those links
-        XCTAssertEqual(3,
-            context.problems.filter({
-                $0.diagnostic.identifier == "org.swift.docc.SectionCuration"
-            }).count
-        )
+        let firstSymbolReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let headingReference      = firstSymbolReference.withFragment("Some-heading")
+        let subHeadingReference   = firstSymbolReference.withFragment("Some-sub-heading")
+        
+        #expect(context.nodeAnchorSections[headingReference]?.title    == "Some heading")
+        #expect(context.nodeAnchorSections[subHeadingReference]?.title == "Some sub heading")
+        
+        let secondSymbolReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "Second" }))
+        let secondSymbolNode = try context.entity(with: secondSymbolReference)
+        let links: [String]  = try #require(
+            (secondSymbolNode.semantic as? Symbol)?.discussion?.content.mapFirst(where: { $0 as? UnorderedList })
+        ).listItems.compactMap { listItem in
+            listItem.children.mapFirst(where: { $0 as? Paragraph })?.children.mapFirst(where: { $0 as? Link })?.destination
+        }
+        
+        #expect(links == [
+            "doc://Something/documentation/ModuleName/First#Some-heading",
+            "doc://Something/documentation/ModuleName/First#Some-sub-heading",
+        ], "Both links should be resolved")
+        
+        let converter = DocumentationNodeConverter(context: context)
+        let renderNode = converter.convert(secondSymbolNode)
+        
+        let renderedLinks: [String] = try #require(
+            (renderNode.primaryContentSections.first as? ContentRenderSection)?.content.mapFirst(where: {
+                if case .unorderedList(let list) = $0 { return list } else { return nil }
+            })
+        ).items.compactMap { listItem in
+            let paragraph = listItem.content.mapFirst(where: {
+                if case .paragraph(let paragraph) = $0 { paragraph } else { nil }
+            })
+            return paragraph?.inlineContent.mapFirst(where: {
+                if case .reference(let reference, _, _, _) = $0 { return reference } else { return nil }
+            })?.identifier
+        }
+        
+        #expect(renderedLinks == [
+            "doc://Something/documentation/ModuleName/First#Some-heading",
+            "doc://Something/documentation/ModuleName/First#Some-sub-heading",
+        ], "Both links should be resolved")
+    }
+    
+    @Test
+    func resolvesLinksToModulePageSubsections() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .struct, pathComponents: ["SymbolName"], docComment: """
+                A symbol that links to headings from the module's extension file:
+                
+                - <doc:ModuleName#Some-heading>
+                - <doc:ModuleName#Some-sub-heading>
+                """)
+            ])),
+            
+            TextFile(name: "ModuleName.md", utf8Content: """
+            # ``ModuleName``
+            ## Some heading
+            ### Some sub heading
+            """),
+        ])
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let rootReference = try #require(context.soleRootModuleReference)
+        let headingReference    = rootReference.withFragment("Some-heading")
+        let subHeadingReference = rootReference.withFragment("Some-sub-heading")
+        
+        #expect(context.nodeAnchorSections[headingReference]?.title    == "Some heading")
+        #expect(context.nodeAnchorSections[subHeadingReference]?.title == "Some sub heading")
+        
+        let symbolReference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SymbolName" }))
+        let symbolNode = try context.entity(with: symbolReference)
+        let links: [String]  = try #require(
+            (symbolNode.semantic as? Symbol)?.discussion?.content.mapFirst(where: { $0 as? UnorderedList })
+        ).listItems.compactMap { listItem in
+            listItem.children.mapFirst(where: { $0 as? Paragraph })?.children.mapFirst(where: { $0 as? Link })?.destination
+        }
+        
+        #expect(links == [
+            "doc://Something/documentation/ModuleName#Some-heading",
+            "doc://Something/documentation/ModuleName#Some-sub-heading",
+        ], "Both links should be resolved")
+        
+        let converter = DocumentationNodeConverter(context: context)
+        let renderNode = converter.convert(symbolNode)
+        
+        let renderedLinks: [String] = try #require(
+            (renderNode.primaryContentSections.first as? ContentRenderSection)?.content.mapFirst(where: {
+                if case .unorderedList(let list) = $0 { return list } else { return nil }
+            })
+        ).items.compactMap { listItem in
+            let paragraph = listItem.content.mapFirst(where: {
+                if case .paragraph(let paragraph) = $0 { paragraph } else { nil }
+            })
+            return paragraph?.inlineContent.mapFirst(where: {
+                if case .reference(let reference, _, _, _) = $0 { return reference } else { return nil }
+            })?.identifier
+        }
+        
+        #expect(renderedLinks == [
+            "doc://Something/documentation/ModuleName#Some-heading",
+            "doc://Something/documentation/ModuleName#Some-sub-heading",
+        ], "Both links should be resolved")
+    }
+    
+    @Test
+    func warnsAboutCuratingSections() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["First"], docComment: """
+                ## Some symbol heading
+                """),
+                
+                makeSymbol(id: "second-symbol-id", kind: .struct, pathComponents: ["Second"], docComment: """
+                A second symbol that curates headings from the first symbol:
+                
+                ## Topics
+                - <doc:First#Some-symbol-heading>
+                - <doc:OtherArticle#Some-article-heading>
+                """)
+            ])),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Some article
+            
+            An article that curates headings from the first symbol:
+            
+            ## Topics
+            - <doc:First#Some-symbol-heading>
+            - <doc:OtherArticle#Some-article-heading>
+            """),
+            
+            TextFile(name: "OtherArticle.md", utf8Content: """
+            # Some other article
+            
+            ## Some article heading
+            """),
+        ])
+        let context = try await load(catalog: catalog)
+        
+        #expect(context.problems.map(\.diagnostic.summary) == [
+            "The content section link 'doc:First#Some-symbol-heading' isn\'t allowed in a Topics link group",
+            "The content section link 'doc:OtherArticle#Some-article-heading' isn\'t allowed in a Topics link group",
+            
+            "The content section link 'doc:First#Some-symbol-heading' isn\'t allowed in a Topics link group",
+            "The content section link 'doc:OtherArticle#Some-article-heading' isn\'t allowed in a Topics link group",
+        ])
+        
+        #expect(context.problems.map(\.diagnostic.identifier) == [
+            "org.swift.docc.SectionCuration",
+            "org.swift.docc.SectionCuration",
+            "org.swift.docc.SectionCuration",
+            "org.swift.docc.SectionCuration",
+        ], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
     }
 }

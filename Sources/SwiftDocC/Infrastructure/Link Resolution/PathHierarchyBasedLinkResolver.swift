@@ -88,8 +88,14 @@ final class PathHierarchyBasedLinkResolver {
     }
 
     /// Returns a list of all the top level symbols.
-    func topLevelSymbols() -> [ResolvedTopicReference] {
-        return pathHierarchy.topLevelSymbols().map { resolvedReferenceMap[$0]! }
+    func topLevelSymbols() -> Set<ResolvedTopicReference> {
+        let inner = pathHierarchy.topLevelSymbols()
+        var result = Set<ResolvedTopicReference>()
+        result.reserveCapacity(inner.count)
+        for id in inner {
+            result.insert(resolvedReferenceMap[id]!)
+        }
+        return result
     }
     
     /// Returns a list of all root pages (both modules and technology roots).

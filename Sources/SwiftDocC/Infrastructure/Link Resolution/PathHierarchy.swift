@@ -762,17 +762,18 @@ extension PathHierarchy {
 
 extension PathHierarchy {
     /// Returns the list of top level symbols
-    func topLevelSymbols() -> [ResolvedIdentifier] {
+    func topLevelSymbols() -> Set<ResolvedIdentifier> {
         var result: Set<ResolvedIdentifier> = []
         // Roots represent modules and only have direct symbol descendants.
         for root in modules {
+            result.insert(root.identifier)
             for (_, tree) in root.children {
                 for element in tree.storage where element.node.symbol != nil {
                     result.insert(element.node.identifier)
                 }
             }
         }
-        return Array(result) + modules.map { $0.identifier }
+        return result
     }
 }
 
