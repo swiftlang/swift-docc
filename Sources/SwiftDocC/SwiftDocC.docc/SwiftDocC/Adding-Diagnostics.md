@@ -18,7 +18,6 @@ However, once an issue has been identified; even if a bit of information is comp
 ### Pick a suitable diagnostic severity
 
 Issues in DocC are classified as either ``DiagnosticSeverity/error``, ``DiagnosticSeverity/warning``, or ``DiagnosticSeverity/information``.
-There's a fourth (lower) severity but it is never used and often either a ``Solution`` or a ``DiagnosticNote`` is a better fit instead.
 
 When deciding how severe an issue is, the first question to ask is: is it possible and is it meaningful for DocC to continue processing the rest of the documentation?
 If the answer is "no"---meaning that this issue is considered "build breaking"---then you can classify this issue as an ``DiagnosticSeverity/error``.
