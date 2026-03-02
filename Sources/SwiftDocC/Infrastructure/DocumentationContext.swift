@@ -868,20 +868,6 @@ public class DocumentationContext {
                 // Some links might not resolve in the final documentation hierarchy and we will emit warnings for those later on when we finalize the bundle discovery phase.
                 if isDocumentationExtension {
                     documentationExtensions.append(result)
-                    
-                    // Warn for an incorrect root page metadata directive.
-                    if let technologyRoot = result.value.metadata?.technologyRoot {
-                        let diagnostic = Diagnostic(source: url, severity: .warning, range: article.metadata?.technologyRoot?.originalMarkup.range, identifier: "org.swift.docc.UnexpectedTechnologyRoot", summary: "Documentation extension files can't become technology roots.")
-                        let solutions: [Solution]
-                        if let range = technologyRoot.originalMarkup.range {
-                            solutions = [
-                                Solution(summary: "Remove the TechnologyRoot directive", replacements: [Replacement(range: range, replacement: "")])
-                            ]
-                        } else {
-                            solutions = []
-                        }
-                        diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
-                    }
                 } else {
                     precondition(uncuratedArticles[result.topicGraphNode.reference] == nil, "Article references are unique.")
                     uncuratedArticles[result.topicGraphNode.reference] = result
@@ -1208,9 +1194,7 @@ public class DocumentationContext {
                     continue
                 }
                 
-                // FIXME: Resolve the link relative to the module https://github.com/swiftlang/swift-docc/issues/516
-                let reference = TopicReference.unresolved(.init(topicURL: url))
-                switch resolve(reference, in: inputs.rootReference, fromSymbolLink: true) {
+                switch resolve(.unresolved(.init(topicURL: url)), in: inputs.rootReference, fromSymbolLink: true) {
                 case .success(let resolved):
                     if let existing = uncuratedDocumentationExtensions[resolved] {
                         if symbolsWithMultipleDocumentationExtensionMatches[resolved] == nil {
@@ -1219,6 +1203,10 @@ public class DocumentationContext {
                         symbolsWithMultipleDocumentationExtensionMatches[resolved]!.append(documentationExtension)
                     } else {
                         uncuratedDocumentationExtensions[resolved] = documentationExtension
+                    }
+                    
+                    if let technologyRoot = documentationExtension.value.metadata?.technologyRoot {
+                        warnAboutTechnologyRoot(technologyRoot, inDocumentationExtension: documentationExtension, forSymbol: resolved)
                     }
                 case .failure(_, let errorInfo):
                     guard !configuration.convertServiceConfiguration.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved else {
@@ -2629,6 +2617,12 @@ public class DocumentationContext {
         }
     }
     
+    func sortedRootPageNames() -> [String] {
+        linkResolver.localResolver.rootPages().map { reference in
+            documentationCache[reference]?.name.plainText ?? reference.lastPathComponent
+        }.sorted()
+    }
+    
     private func warnAboutTechnologyRoot(_ technologyRoot: TechnologyRoot, inDocumentationExtension documentationExtension: SemanticResult<Article>, forSymbol reference: ResolvedTopicReference) {
         // Customize the diagnostic with specific information about the exact symbol.
         let moduleName: String?
@@ -2665,7 +2659,7 @@ public class DocumentationContext {
             severity: .warning,
             range: technologyRoot.originalMarkup.range,
             identifier: "TechnologyRootInExtensionFile",
-            summary: "\(TechnologyRoot.directiveName) directive cannot modify documentation extension file",
+            summary: "\(TechnologyRoot.directiveName) directive has no effect in documentation extension",
             explanation: """
             Symbols inherently belong to a module \(moduleName.map { "(in this case '\($0)') " } ?? "")which is already the root of the documentation hierarchy.
             A documentation extension file doesn't define its own page but instead associates additional content with one of the symbol pages\(symbolDescription.map { " (in this case \($0))" } ?? "").
@@ -2682,12 +2676,6 @@ public class DocumentationContext {
         } ?? []
         
         return [Solution(summary: "Remove \(TechnologyRoot.directiveName) directive", replacements: replacements)]
-    }
-    
-    func sortedRootPageNames() -> [String] {
-        linkResolver.localResolver.rootPages().map { reference in
-            documentationCache[reference]?.name.plainText ?? reference.lastPathComponent
-        }.sorted()
     }
     
     private func warnAboutMultipleRootPages(rootPageArticles: [SemanticResult<Article>]) {
@@ -2730,7 +2718,7 @@ public class DocumentationContext {
         }
         
         if moduleNames.isEmpty {
-            // There's are multiple TechnologyRoot pages
+            // There are multiple TechnologyRoot pages
             for article in rootPageArticles {
                 guard let technologyRoot = article.value.metadata?.technologyRoot else {
                     assertionFailure("Misclassified '\(article.source.lastPathComponent)' as a custom root page. It doesn't contain a TechnologyRoot directive.")
