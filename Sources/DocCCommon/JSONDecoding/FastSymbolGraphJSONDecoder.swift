@@ -695,7 +695,76 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         var length = 0
         let count = pointer.distance(to: endOfData)
         
-        while count >= length {
+        // Strings come in a wide variety of lengths.
+        // Some strings are short, like a platform name, but other strings can be rather long, like a line of human written documentation about a symbol.
+        //
+        // When trying to scan a string, we need to find the closing string delimiter.
+        // It's easy to go about doing that one byte at a time but that can be slow for longer strings.
+        // To find the closing string delimiter faster, especially for long strings,
+        // we can check 8 bytes at a time by loading a 64-bit value and use a mask to see if any of the bytes are a double quote character (").
+        // This isn't any faster for short strings, but it becomes increasingly faster---compared to a one-byte-at-a-time check---the longer the string is.
+        //
+        // One downside of reading 8 bytes at a time is that we might read up to 7 bytes past the end of the buffer if the string ends very close to the end of the JSON data.
+        // This can for example happen if the JSON data ends with a top-level object with a string-value field being encoded last in the JSON data.
+        //
+        // It's worth noting that it is _safe_ to read these few extra out-of-bounds bytes because:
+        // - if the quote character is found in the in-bounds bytes, then we return a completely in-bounds range (buffer pointer) of the string.
+        // - if the quote character is found in the random garbage out-of-bounds bytes, we check the bounds before returning---raising an `.unexpectedEndOfFile` error.
+        // - if no quote character is found in any of the 8 bytes, we exit the while loop and do a bounds check---raising an `.unexpectedEndOfFile` error.
+        //
+        // However, to an address sanitizer this understandably looks like an unsafe mistake.
+        // Because address sanitizers are useful for finding other real memory issues and other bugs, we want DocC to build without address sanitizer issues.
+        // To this end, the code below only does the 8-bytes-at-a-time loop as long as there are 8 bytes left in the buffer. After that it changes to the 1-byte-at-a-time loop.
+        // Doing both loops one after another makes the code a little bit more complicated, but after extracting the common processing logic, the code remains fairly readable.
+        
+        // This inner function exist so that both the 8-bytes-at-a-time loop and the 1-byte-at-a-time loop can verify that they've found the closing string delimiter.
+        func checkIfQuoteAtCurrentLocationIsEscaped() -> Bool {
+            assert(
+                pointer.load(fromByteOffset: length, as: UInt8.self) == .init(ascii: "\""),
+                "The current character isn't a quote; is '\(Character(UnicodeScalar(pointer.load(fromByteOffset: length, as: UInt8.self))))' instead."
+            )
+            
+            if isTrivialStringConvertible {
+                // If we haven't encountered any slashes since the start of this string, the quote cannot be escaped.
+                return false
+            }
+            
+            // To determine if the quote at current location is escaped or not, we counting the number of slashes before it (because slashes also escape other slashes).
+            var numberOfSlashesBefore = 0
+            while pointer.load(fromByteOffset: length - 1 - numberOfSlashesBefore, as: UInt8.self) == .init(ascii: "\\") {
+                numberOfSlashesBefore &+= 1
+            }
+            if numberOfSlashesBefore.isMultiple(of: 2) {
+                // An even number of slashes means that it's the _slashes_ that are escaped, not the quotation mark.
+                // For example, consider a string that ends in 4 slashes. The 1st slash escapes the 2nd and the 3rd escapes the 4th, leaving the quotation mark unescaped:
+                //
+                //     "ABC\\\\"
+                //         ├╯├╯╰─╴string delimiter
+                //         │ ╰───╴escaped slash
+                //         ╰─────╴escaped slash
+                return false
+            } else {
+                // An odd number of slashes means that the last slash escapes the quote, so this byte is part of the string's content.
+                // For example, consider a string that ends in 3 slashes. The 1st slash escapes the 2nd leaving 3rd slash to escape the quotation mark:
+                //
+                //     "ABC\\\"
+                //         ├╯├╯
+                //         │ ╰───╴escaped quote
+                //         ╰─────╴escaped slash
+                return true
+            }
+        }
+        
+        // This inner function exist so that both the 8-bytes-at-a-time loop and the 1-byte-at-a-time loop do the same bounds check before returning the buffer.
+        func boundsCheckAndMakeReturnValue() throws(ScanningError) -> (buffer: UnsafeRawBufferPointer, isTrivialStringConvertible: Bool) {
+            pointer.removeFirst(length + 1)
+            try _boundsCheck()
+            
+            return (.init(start: startOfString, count: length), isTrivialStringConvertible)
+        }
+        
+        // As long as there are 8 full bytes remaining, look for the string delimiter in 8-byte chunks.
+        while count &- 8 >= length {
             let bytes = pointer.loadUnaligned(fromByteOffset: length, as: UInt64.self)
             
             let isQuote = ByteMatches(bytes, ByteMatches.quoteSearchPattern)
@@ -715,7 +784,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
                 continue
             }
             
-            // We've found the end of this string.
+            // We've found a _possible_ closing string delimiter.
             length &+= isQuote.numberOfLeadingNonMatches
             // The string remains trivially convertible as longer as the first quote is before the first slash.
             isTrivialStringConvertible = isTrivialStringConvertible && isQuote.isBefore(isSlash)
@@ -725,42 +794,27 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
                 "Unexpectedly miscategorized '\(String(decoding: UnsafeRawBufferPointer(start: pointer, count: length), as: UTF8.self))' as \(isTrivialStringConvertible ? "" : "NOT") trivially string convertible"
             )
             
-            if isTrivialStringConvertible {
-                break
-            }
-            
-            // Determine if the quote we found is escaped or not by counting the number of slashes before it.
-            var numberOfSlashesBefore = 0
-            while pointer.load(fromByteOffset: length - 1 - numberOfSlashesBefore, as: UInt8.self) == .init(ascii: "\\") {
-                numberOfSlashesBefore &+= 1
-            }
-            if numberOfSlashesBefore.isMultiple(of: 2) {
-                // An even number of slashes means that it's the _slashes_ that are escaped, not the quotation mark.
-                // For example, consider a string that ends in 4 slashes. The 1st slash escapes the 2nd and the 3rd escapes the 4th, leaving the quotation mark unescaped:
-                //
-                //     "ABC\\\\"
-                //         ├╯├╯╰─╴string delimiter
-                //         │ ╰───╴escaped slash
-                //         ╰─────╴escaped slash
-                break
+            if checkIfQuoteAtCurrentLocationIsEscaped() {
+                // This quote was escaped, so it isn't the closing delimiter for this string.
+                length &+= 1
+                continue
             } else {
-                // An odd number of slashes means that the last slash escapes the quote, so this byte is part of the string's content.
-                // For example, consider a string that ends in 3 slashes. The 1st slash escapes the 2nd leaving 3rd slash to escape the quotation mark:
-                //
-                //     "ABC\\\"
-                //         ├╯├╯
-                //         │ ╰───╴escaped quote
-                //         ╰─────╴escaped slash
+                // We've found the closing string delimiter.
+                // Explicitly return here rather than just breaking the loop. This avoids checking the known found byte, and if it's escaped or not, again for 1-byte-at-a-time loop.
+                // All scanned strings except the last 7 bytes of the JSON data take the 8-bytes-at-a-time code path and there are quite a lot of string-value fields in a symbol graph.
+                // Because of this high frequency, rechecking the byte that's known to be the closing string delimiter has a measurable impact in full symbol graph decoding benchmarks.
+                return try boundsCheckAndMakeReturnValue()
+            }
+        }
+        // When there's less than 8 bytes remaining, do a simple 1-byte-at-a-time check. It's slower but the loop won't run more than 7 times.
+        while count >= length {
+            guard pointer.load(fromByteOffset: length, as: UInt8.self) == .init(ascii: "\""), !checkIfQuoteAtCurrentLocationIsEscaped() else {
                 length &+= 1
                 continue
             }
+            break
         }
-        
-        // We've found the closing string delimiter.
-        pointer.removeFirst(length + 1)
-        try _boundsCheck()
-        
-        return (.init(start: startOfString, count: length), isTrivialStringConvertible)
+        return try boundsCheckAndMakeReturnValue()
     }
     
     /// Advance the decoder's state to just past the "begin array" structural character (`[`).
