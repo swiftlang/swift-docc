@@ -2134,6 +2134,57 @@ Root
         XCTAssert(nonBetaNodes.allSatisfy { $0.isBeta == false }) // Sanity check
     }
     
+    func testNavigatorUsesCustomDisplayName() async throws {
+        let catalog = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                // There's special logic for common Swift symbols, so use another kind of symbol here.
+                makeSymbol(id: "some-symbol-id", language: .data, kind: .dictionary, pathComponents: ["SomeDictionary"])
+            ])),
+            TextFile(name: "SomeDictionary.md", utf8Content: """
+            # ``SomeDictionary``    
+            
+            Customize the display name of this dictionary (for some reason)
+            
+            @Metadata {
+              @DisplayName("Some custom name")
+            }
+            """)
+        ])
+        let (_, context) = try await loadBundle(catalog: catalog)
+        
+        // Navigator Index / Builder can only use real file systems
+        let targetURL = try createTemporaryDirectory()
+        
+        let renderContext = RenderContext(documentationContext: context)
+        let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
+        builder.setup()
+        for identifier in context.knownPages {
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
+            try builder.index(renderNode: renderNode)
+            
+            if identifier.lastPathComponent == "SomeDictionary" {
+                XCTAssertEqual(renderNode.metadata.title, "Some custom name")
+                XCTAssertEqual(renderNode.metadata.navigatorTitle?.map(\.text).joined(), "Some custom name")
+            }
+        }
+        builder.finalize()
+        
+        XCTAssertEqual(builder.navigatorIndex?.navigatorTree.root.dumpTree(), """
+        [Root]
+        ┗╸ModuleName
+          ┣╸Dictionaries
+          ┗╸Some custom name
+        """)
+        
+        let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+        XCTAssertEqual(renderIndex.interfaceLanguages["data"]?.map(\.title), [
+            "Dictionaries",
+            "Some custom name",
+        ])
+    }
+    
     private func findNodesWithBetaStatus(in nodes: [RenderIndex.Node], isBeta: Bool) -> [RenderIndex.Node] {
         var betaNodes: [RenderIndex.Node] = []
         
