@@ -69,14 +69,14 @@ struct LinkDestinationSummaryTests {
             #expect(variant.abstract == nil, "Same abstract as the summarized element")
             #expect(variant.usr      == nil, "Same USR as the summarized element")
             #expect(variant.plainTextDeclaration == "typedef struct TLACircle;")
-//            #expect(variant.subheadingDeclarationFragments == [
-//                .init(text: "typedef",   kind: .keyword),
-//                .init(text: " ",         kind: .text),
-//                .init(text: "struct",    kind: .keyword),
-//                .init(text: " ",         kind: .text),
-//                .init(text: "TLACircle", kind: .identifier),
-//                .init(text: ";",         kind: .text),
-//            ])
+            #expect(variant.subheadingDeclarationFragments == [
+                .init(text: "typedef",   kind: .keyword),
+                .init(text: " ",         kind: .text),
+                .init(text: "struct",    kind: .keyword),
+                .init(text: " ",         kind: .text),
+                .init(text: "TLACircle", kind: .identifier),
+                .init(text: ";",         kind: .text),
+            ])
             #expect(variant.navigatorDeclarationFragments == [
                 .init(text: "TLACircle", kind: .identifier),
             ])
@@ -110,7 +110,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: ": ",     kind: .text),
                 .init(text: "Circle", kind: .typeIdentifier, preciseIdentifier: "c:@SA@TLACircle"),
             ])
-//            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -127,9 +127,9 @@ struct LinkDestinationSummaryTests {
             #expect(variant.subheadingDeclarationFragments == [
                 .init(text: "TLACircleZero", kind: .identifier),
             ])
-//            #expect(variant.navigatorDeclarationFragments == [
-//                .init(text: "TLACircleZero", kind: .identifier),
-//            ])
+            #expect(variant.navigatorDeclarationFragments == [
+                .init(text: "TLACircleZero", kind: .identifier),
+            ])
             
             try assertRoundTripCoding(summary)
         }
@@ -160,7 +160,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: ") -> ",      kind: .text),
                 .init(text: "Bool",       kind: .typeIdentifier, preciseIdentifier: "s:Sb"),
             ])
-//            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -177,9 +177,9 @@ struct LinkDestinationSummaryTests {
             #expect(variant.subheadingDeclarationFragments == [
                 .init(text: "TLACircleIntersects", kind: .identifier),
             ])
-//            #expect(variant.navigatorDeclarationFragments == [
-//                .init(text: "TLACircleIntersects", kind: .identifier),
-//            ])
+            #expect(variant.navigatorDeclarationFragments == [
+                .init(text: "TLACircleIntersects", kind: .identifier),
+            ])
             
             try assertRoundTripCoding(summary)
         }
@@ -231,18 +231,18 @@ struct LinkDestinationSummaryTests {
             #expect(summary.platforms == nil)
             #expect(summary.usr       == "s:So9TLACirclea6center6radiusABSo7CGPointV_14CoreFoundation7CGFloatVtcfc")
             #expect(summary.plainTextDeclaration == "init(center: CGPoint, radius: CGFloat)")
-//            #expect(summary.subheadingDeclarationFragments == [
-//                .init(text: "init",    kind: .keyword),
-//                .init(text: "(",       kind: .text),
-//                .init(text: "center",  kind: .externalParam),
-//                .init(text: ": ",      kind: .text),
-//                .init(text: "CGPoint", kind: .typeIdentifier, preciseIdentifier: "c:@S@CGPoint"),
-//                .init(text: ", ",      kind: .text),
-//                .init(text: "radius",  kind: .externalParam),
-//                .init(text: ": ",      kind: .text),
-//                .init(text: "CGFloat", kind: .typeIdentifier, preciseIdentifier: "s:14CoreFoundation7CGFloatV"),
-//                .init(text: ")",       kind: .text),
-//            ])
+            #expect(summary.subheadingDeclarationFragments == [
+                .init(text: "init",    kind: .keyword),
+                .init(text: "(",       kind: .text),
+                .init(text: "center",  kind: .externalParam),
+                .init(text: ": ",      kind: .text),
+                .init(text: "CGPoint", kind: .typeIdentifier, preciseIdentifier: "c:@S@CGPoint"),
+                .init(text: ", ",      kind: .text),
+                .init(text: "radius",  kind: .externalParam),
+                .init(text: ": ",      kind: .text),
+                .init(text: "CGFloat", kind: .typeIdentifier, preciseIdentifier: "s:14CoreFoundation7CGFloatV"),
+                .init(text: ")",       kind: .text),
+            ])
             #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
