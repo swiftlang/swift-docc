@@ -689,7 +689,7 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         try _skipExpectedByte(.init(ascii: "\""))
         let startOfString = pointer
 
-        // Unless the bytes contains a slash (`0x5C`), they can trivially be decoded as a string.
+        // Unless the bytes contains a backslash (`0x5C`), they can trivially be decoded as a string.
         var isTrivialStringConvertible = true
         
         var length = 0
@@ -725,32 +725,32 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
             )
             
             if isTrivialStringConvertible {
-                // If we haven't encountered any slashes since the start of this string, the quote cannot be escaped.
+                // If we haven't encountered any backslashes since the start of this string, the quote cannot be escaped.
                 return false
             }
             
-            // To determine if the quote at current location is escaped or not, we counting the number of slashes before it (because slashes also escape other slashes).
-            var numberOfSlashesBefore = 0
-            while pointer.load(fromByteOffset: length - 1 - numberOfSlashesBefore, as: UInt8.self) == .init(ascii: "\\") {
-                numberOfSlashesBefore &+= 1
+            // To determine if the quote at current location is escaped or not, we counting the number of backslashes before it (because backslashes also escape other backslashes).
+            var numberOfBackslashesBefore = 0
+            while pointer.load(fromByteOffset: length - 1 - numberOfBackslashesBefore, as: UInt8.self) == .init(ascii: "\\") {
+                numberOfBackslashesBefore &+= 1
             }
-            if numberOfSlashesBefore.isMultiple(of: 2) {
-                // An even number of slashes means that it's the _slashes_ that are escaped, not the quotation mark.
-                // For example, consider a string that ends in 4 slashes. The 1st slash escapes the 2nd and the 3rd escapes the 4th, leaving the quotation mark unescaped:
+            if numberOfBackslashesBefore.isMultiple(of: 2) {
+                // An even number of backslashes means that it's the _slashes_ that are escaped, not the quotation mark.
+                // For example, consider a string that ends in 4 backslashes. The 1st backslash escapes the 2nd and the 3rd escapes the 4th, leaving the quotation mark unescaped:
                 //
                 //     "ABC\\\\"
                 //         ├╯├╯╰─╴string delimiter
-                //         │ ╰───╴escaped slash
-                //         ╰─────╴escaped slash
+                //         │ ╰───╴escaped backslash
+                //         ╰─────╴escaped backslash
                 return false
             } else {
-                // An odd number of slashes means that the last slash escapes the quote, so this byte is part of the string's content.
-                // For example, consider a string that ends in 3 slashes. The 1st slash escapes the 2nd leaving 3rd slash to escape the quotation mark:
+                // An odd number of backslashes means that the last backslash escapes the quote, so this byte is part of the string's content.
+                // For example, consider a string that ends in 3 backslashes. The 1st backslash escapes the 2nd leaving 3rd backslash to escape the quotation mark:
                 //
                 //     "ABC\\\"
                 //         ├╯├╯
                 //         │ ╰───╴escaped quote
-                //         ╰─────╴escaped slash
+                //         ╰─────╴escaped backslash
                 return true
             }
         }
@@ -767,14 +767,14 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
         while count &- 8 >= length {
             let bytes = pointer.loadUnaligned(fromByteOffset: length, as: UInt64.self)
             
-            let isQuote = ByteMatches(bytes, ByteMatches.quoteSearchPattern)
-            let isSlash = ByteMatches(bytes, ByteMatches.slashSearchPattern)
+            let isQuote     = ByteMatches(bytes, ByteMatches.quoteSearchPattern)
+            let isBackslash = ByteMatches(bytes, ByteMatches.backslashSearchPattern)
             
             guard isQuote.hasMatches else {
                 // There's no string delimiter in any of these 8 bytes.
                 length &+= 8
-                // The string remains trivially convertible as longer as there aren't any slashes in these 8 bytes.
-                isTrivialStringConvertible = isTrivialStringConvertible && !isSlash.hasMatches
+                // The string remains trivially convertible as longer as there aren't any backslashes in these 8 bytes.
+                isTrivialStringConvertible = isTrivialStringConvertible && !isBackslash.hasMatches
                 
                 assert(
                     isTrivialStringConvertible != UnsafeRawBufferPointer(start: pointer, count: length).contains(where: { $0 == .init(ascii: "\\") }),
@@ -786,8 +786,8 @@ package struct FastSymbolGraphJSONDecoder: ~Copyable {
             
             // We've found a _possible_ closing string delimiter.
             length &+= isQuote.numberOfLeadingNonMatches
-            // The string remains trivially convertible as longer as the first quote is before the first slash.
-            isTrivialStringConvertible = isTrivialStringConvertible && isQuote.isBefore(isSlash)
+            // The string remains trivially convertible as longer as the first quote is before the first backslash.
+            isTrivialStringConvertible = isTrivialStringConvertible && isQuote.isBefore(isBackslash)
             
             assert(
                 isTrivialStringConvertible != UnsafeRawBufferPointer(start: pointer, count: length).contains(where: { $0 == .init(ascii: "\\") }),
@@ -1202,9 +1202,9 @@ private struct ByteMatches: ~Copyable {
     /// A search pattern for finding the "quote" character (`0x22`) in a sequence of 8 bytes.
     @usableFromInline
     static let quoteSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: "\"") )
-    /// A search pattern for finding the "slash" character (`0x5C`) in a sequence of 8 bytes.
+    /// A search pattern for finding the "backslash" character (`0x5C`) in a sequence of 8 bytes.
     @usableFromInline
-    static let slashSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: "\\") )
+    static let backslashSearchPattern = Self.lowBitInEachByte &* UInt64( UInt8(ascii: "\\") )
     
     /// A 64-bit value that repeats a byte with only the _low_ bit set (`0b00000001`) 8 times.
     private static let lowBitInEachByte  : UInt64 = 0x01_01_01_01_01_01_01_01
