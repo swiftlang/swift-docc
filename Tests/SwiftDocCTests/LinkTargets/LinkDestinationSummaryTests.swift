@@ -308,8 +308,11 @@ struct LinkDestinationSummaryTests {
         do {
             let imageReference = try #require(summary.references?.first as? ImageReference)
             #expect(imageReference.identifier.identifier == "card.png")
-//            #expect(imageReference.altText == "Card image alt text") // rdar://155347778
+            #expect(imageReference.altText == "Card image alt text")
             #expect(imageReference.asset.context == .display)
+            
+            #expect((renderNode.references[imageReference.identifier.identifier] as? ImageReference)?.altText == "Card image alt text",
+                    "The reference in the page itself also has the altText")
             
             #expect(Set(imageReference.asset.variants.keys) == [
                 DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard),
@@ -330,8 +333,11 @@ struct LinkDestinationSummaryTests {
         do {
             let imageReference = try #require(summary.references?.last as? ImageReference)
             #expect(imageReference.identifier.identifier == "icon.png")
-//            #expect(imageReference.altText == "Icon image alt text") // rdar://155347778
+            #expect(imageReference.altText == "Icon image alt text")
             #expect(imageReference.asset.context == .display)
+            
+            #expect((renderNode.references[imageReference.identifier.identifier] as? ImageReference)?.altText == "Icon image alt text",
+                    "The reference in the page itself also has the altText")
             
             #expect(Set(imageReference.asset.variants.keys) == [
                 DataTraitCollection(userInterfaceStyle: .light, displayScale: .double),
