@@ -10,7 +10,23 @@
 
 import Foundation
 import XCTest
+import Testing
 
+func assertRoundTripCoding<Value: Equatable & Codable>(_ value: Value, sourceLocation: SourceLocation = #_sourceLocation) throws {
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+
+    let encoded = try encoder.encode(value)
+    let decoded = try decoder.decode(Value.self, from: encoded)
+    #expect(value == decoded, sourceLocation: sourceLocation)
+    
+    // Decode a second time to ensure no data is lost during the round-trip
+    let reEncoded = try encoder.encode(decoded)
+    let reDecoded = try decoder.decode(Value.self, from: reEncoded)
+    #expect(decoded == reDecoded, sourceLocation: sourceLocation)
+}
+
+extension XCTestCase {
 /// Asserts that the implementation of the `Codable` for the given value is correct, by encoding and decoding the values, and checking whether
 /// the original and decoded `Data` are equal.
 /// - Parameter value: The value to test.
@@ -26,12 +42,12 @@ func assertRoundTripCoding<Value: Equatable>(
     // Decode one time
     let encoded = try encoder.encode(value)
     let decoded = try decoder.decode(Value.self, from: encoded)
-    XCTAssertEqual(value, decoded, file: (file), line: line)
+    XCTAssertEqual(value, decoded, file: file, line: line)
     
     // Decode a second time to ensure no data is lost during the round-trip
     let reEncoded = try encoder.encode(decoded)
     let reDecoded = try decoder.decode(Value.self, from: reEncoded)
-    XCTAssertEqual(decoded, reDecoded, file: (file), line: line)
+    XCTAssertEqual(decoded, reDecoded, file: file, line: line)
 }
 
 /// Asserts that the given value and its JSON representation are equal, by decoding the given JSON into the value's type.
@@ -80,4 +96,5 @@ func assertJSONEncoding<Value: Encodable & Equatable>(
         return
     }
     XCTAssertEqual(json, jsonSortedKeysNoWhitespace, file: file, line: line)
+}
 }
