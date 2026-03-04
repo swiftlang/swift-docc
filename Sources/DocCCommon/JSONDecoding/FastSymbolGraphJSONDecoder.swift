@@ -88,13 +88,13 @@ package protocol FastJSONDecodable {
 ///
 /// ### Decoding individual values
 ///
-/// - ``decode()->Bool``
-/// - ``decode()->Int``
-/// - ``decode()->String``
-/// - ``decode()->Value``
-/// - ``decode()->Value?``
-/// - ``decode()->[Value]``
-/// - ``decode()->[String:Value]``
+/// - ``decode(_:)->Bool``
+/// - ``decode(_:)->Int``
+/// - ``decode(_:)->String``
+/// - ``decode(_:)->Value``
+/// - ``decode(_:)->Value?``
+/// - ``decode(_:)->[Value]``
+/// - ``decode(_:)->[String:Value]``
 ///
 /// ### Errors
 ///
