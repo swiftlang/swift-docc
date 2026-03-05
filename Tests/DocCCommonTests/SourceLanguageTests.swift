@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -111,11 +111,11 @@ struct SourceLanguageTests {
     }
     
     @Test
-    func sortsSwiftFirstAndThenByID() throws {
+    func sortsKnownLanguagesFirstAndThenByID() throws {
         var languages = SourceLanguage.knownLanguages
         #expect(languages.min()?.name == "Swift")
         #expect(languages.sorted().map(\.name) == [
-            "Swift",       // swift (always first)
+            "Swift",       // swift
             "Data",        // data
             "JavaScript",  // javascript
             "Metal",       // metal
@@ -129,13 +129,13 @@ struct SourceLanguageTests {
         ])
         #expect(languages.min()?.name == "Swift")
         #expect(languages.sorted().map(\.name) == [
-            "Swift",       // swift (always first)
-            "ZZZ",         // aaa (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
-            "Custom",      // custom
+            "Swift",       // swift
             "Data",        // data
             "JavaScript",  // javascript
             "Metal",       // metal
             "Objective-C", // occ
+            "ZZZ",         // aaa (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
+            "Custom",      // custom
             "AAA",         // zzz (the AAA/zzz and ZZZ/aaa languages have their names and ids flipped to verify that sorting happens by id)
         ])
     }

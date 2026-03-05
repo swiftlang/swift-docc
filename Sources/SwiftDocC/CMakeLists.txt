@@ -230,7 +230,6 @@ add_library(SwiftDocC
   Model/Rendering/SemanticVersion.swift
   Model/Rendering/Symbol/AttributesRenderSection.swift
   Model/Rendering/Symbol/AvailabilityRenderMetadataItem.swift
-  Model/Rendering/Symbol/AvailabilitySortOrder.swift
   Model/Rendering/Symbol/ConformanceSection.swift
   Model/Rendering/Symbol/ContentRenderSection.swift
   Model/Rendering/Symbol/DeclarationRenderSection+SymbolGraph.swift

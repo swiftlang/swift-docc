@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -67,20 +67,11 @@ struct PathHierarchy {
         var roots: [String: Node] = [:]
         var allNodes: [String: [Node]] = [:]
         
-        let symbolGraphs = loader.symbolGraphs
-            .map { url, graph in
-                // Only compute the source language for each symbol graph once.
-                (url: url, graph: graph, language: graph.symbols.values.mapFirst(where: { SourceLanguage(id: $0.identifier.interfaceLanguage) }))
-            }
-            .sorted(by: { lhs, rhs in
-                return !lhs.url.lastPathComponent.contains("@")
-            })
-                
         // To try to handle certain invalid symbol graph files gracefully, we track symbols that don't have a place in the hierarchy so that we can look for a place for those symbols.
         // Because this is a last resort, we only want to do this processing after all the symbol graphs have already been processed.
         var symbolNodesOutsideOfHierarchyByModule: [String: [Node]] = [:]
 
-        for (url, graph, language) in symbolGraphs {
+        for (url, graph, language) in loader.sortedSymbolGraphsWithLanguages() {
             let moduleName = graph.module.name
             let moduleNode: Node
             

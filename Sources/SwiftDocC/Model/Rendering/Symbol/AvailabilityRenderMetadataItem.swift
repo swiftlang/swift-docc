@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -161,5 +161,13 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         self.name = name
         self.introduced = introduced
         self.isBeta = isBeta
+    }
+
+    /// Sort two availability render items based on their platform name.
+    static func isInPlatformOrder(lhs: AvailabilityRenderItem, rhs: AvailabilityRenderItem) -> Bool {
+        guard let lhsName = lhs.name, let rhsName = rhs.name else {
+            return lhs.name != nil
+        }
+        return PlatformName.isInOrder(lhsName, rhsName)
     }
 }

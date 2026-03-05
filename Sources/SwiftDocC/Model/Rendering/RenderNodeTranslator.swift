@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -110,7 +110,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return .init(fallbackAvailability, current: currentVersion)
         }
 
-        return (declaredAvailabilities + fallbackAvailabilities).sorted(by: AvailabilityRenderOrder.compare)
+        return (declaredAvailabilities + fallbackAvailabilities).sorted(by: AvailabilityRenderItem.isInPlatformOrder)
     }
 
     private func fileContents(with fileReference: ResourceReference) -> String? {
@@ -1280,7 +1280,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let defaultAvailability = defaultAvailability(moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
             .filter { $0.unconditionallyUnavailable != true }
-            .sorted(by: AvailabilityRenderOrder.compare)
+            .sorted(by: AvailabilityRenderItem.isInPlatformOrder)
         
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
             guard !availability.availability.isEmpty else {
@@ -1305,7 +1305,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return AvailabilityRenderItem(availability, current: currentPlatform)
                 }
                 .filter { $0.unconditionallyUnavailable != true }
-                .sorted(by: AvailabilityRenderOrder.compare)
+                .sorted(by: AvailabilityRenderItem.isInPlatformOrder)
         } ?? .init(defaultValue: defaultAvailability)
 
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
