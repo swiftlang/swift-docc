@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -78,9 +78,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
     ///
     /// For example, when iOS availability is specified, this also generates iPadOS and Mac Catalyst
     /// availability items using the same version information.
+    /// Any fallback platforms marked as unconditionally unavailable will not be included.
     private func renderAvailabilities(
         from availabilities: [Metadata.Availability],
-        currentPlatforms: [String: PlatformVersion]?
+        currentPlatforms: [String: PlatformVersion]?,
+        unconditionallyUnavailablePlatforms: [PlatformName]
     ) -> [AvailabilityRenderItem] {
         let platforms = availabilities.map { PlatformName(metadataPlatform: $0.platform) }
 
@@ -93,8 +95,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Render availabilities for fallback platforms (e.g., iPadOS and Mac Catalyst from iOS)
         let fallbackAvailabilities = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback -> AvailabilityRenderItem? in
             // Skip if the platform already has explicit availability,
+            // the platform is explicitly marked unavailable in the module's default availability,
             // or if the fallback platform is not available.
             guard !platforms.contains(platform),
+                  !unconditionallyUnavailablePlatforms.contains(platform),
                   let fallbackIndex = platforms.firstIndex(of: fallback) else {
                 return nil
             }
@@ -878,9 +882,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
 
         if let availabilities = article.metadata?.availability, !availabilities.isEmpty {
+            let unconditionallyUnavailablePlatforms = moduleNames.flatMap { name in
+                context.inputs.info.defaultAvailability?.modules[name]?
+                    .filter { $0.versionInformation == .unavailable }
+                    .map { $0.platformName }
+                ?? []
+            }
             let allRenderAvailabilities = renderAvailabilities(
                 from: availabilities,
-                currentPlatforms: context.configuration.externalMetadata.currentPlatforms
+                currentPlatforms: context.configuration.externalMetadata.currentPlatforms,
+                unconditionallyUnavailablePlatforms: unconditionallyUnavailablePlatforms
             )
 
             if !allRenderAvailabilities.isEmpty {
@@ -1309,9 +1320,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: defaultAvailability)
 
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
+            let unconditionallyUnavailablePlatforms = context.inputs.info.defaultAvailability?.modules[moduleName.symbolName]?
+                .filter { $0.versionInformation == .unavailable }
+                .map { $0.platformName }
+            ?? []
             let allRenderAvailabilities = renderAvailabilities(
                 from: availability,
-                currentPlatforms: context.configuration.externalMetadata.currentPlatforms
+                currentPlatforms: context.configuration.externalMetadata.currentPlatforms,
+                unconditionallyUnavailablePlatforms: unconditionallyUnavailablePlatforms
             )
 
             if !allRenderAvailabilities.isEmpty {

@@ -277,8 +277,7 @@ class PlatformAvailabilityTests: XCTestCase {
 struct PlatformAvailabilityTestSuite {
     /// Ensure that adding `@Available` directives in an article causes the final RenderNode to contain the appropriate availability data.
     /// Unavailability information should be taken into account when deriving whether fallback platform availability should be added.
-    @Test(.disabled("This test is currently failing and will be re-enabled in a subsequent commit."))
-    func testPlatformAvailabilityFromArticleRespectsDefaultAvailability() async throws {
+    @Test func testPlatformAvailabilityFromArticleRespectsDefaultAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [])),
             TextFile(name: "ModuleName.md", utf8Content: """
@@ -336,8 +335,7 @@ struct PlatformAvailabilityTestSuite {
 
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
     /// This should add any missing fallback platforms while respecting the module's default unconditional unavailability.
-    @Test(.disabled("This test is currently failing and will be re-enabled in a subsequent commit."))
-    func testPlatformAvailabilityFromExtensionRespectsDefaultAvailability() async throws {
+    @Test func testPlatformAvailabilityFromExtensionRespectsDefaultAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
