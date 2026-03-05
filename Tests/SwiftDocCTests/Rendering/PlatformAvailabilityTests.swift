@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,9 @@
 
 import Foundation
 import XCTest
+import Testing
 @testable import SwiftDocC
+@testable import DocCTestUtilities
 import DocCCommon
 
 class PlatformAvailabilityTests: XCTestCase {
@@ -269,5 +271,114 @@ class PlatformAvailabilityTests: XCTestCase {
         let (_, bundle, context) = try await loadBundle(from: bundleURL, configuration: configuration)
         return (bundle, context)
     }
+}
 
+@Suite
+struct PlatformAvailabilityTestSuite {
+    /// Ensure that adding `@Available` directives in an article causes the final RenderNode to contain the appropriate availability data.
+    /// Unavailability information should be taken into account when deriving whether fallback platform availability should be added.
+    @Test(.disabled("This test is currently failing and will be re-enabled in a subsequent commit."))
+    func testPlatformAvailabilityFromArticleRespectsDefaultAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [])),
+            TextFile(name: "ModuleName.md", utf8Content: """
+                # ``ModuleName``
+
+                @Metadata {
+                    @Available(iOS, introduced: "16.0")
+                }
+
+                Sample abstract.
+
+                ## Topics
+
+                - <doc:AvailableArticle>
+                """
+            ),
+            TextFile(name: "AvailableArticle.md", utf8Content: """
+                # Available Article
+
+                @Metadata {
+                    @Available(iOS, introduced: 16.0)
+                }
+
+                Sample abstract.
+                """
+            ),
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(unavailablePlatformName: .iPadOS),
+                .init(unavailablePlatformName: .catalyst),
+            ]])
+        ])
+        let context = try await load(catalog: catalog)
+        let reference = ResolvedTopicReference(
+            bundleID: context.inputs.id,
+            path: "/documentation/unit-test/AvailableArticle",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let availabilities = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms
+        // but they have been explicitly marked as unavailable
+        XCTAssertEqual(availabilities.count, 1)
+        XCTAssertEqual(availabilities.compactMap { $0.name }, ["iOS"])
+        let iosAvailability = try XCTUnwrap(availabilities.first)
+        XCTAssertEqual(iosAvailability.introduced, "16.0")
+        XCTAssert(iosAvailability.isBeta != true)
+        // Ensure that the fallback platforms have the same version and beta status as iOS
+        for availability in availabilities.dropFirst() {
+            XCTAssertEqual(availability.introduced, iosAvailability.introduced)
+            XCTAssertEqual(availability.isBeta, iosAvailability.isBeta)
+        }
+    }
+
+    /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
+    /// This should add any missing fallback platforms while respecting the module's default unconditional unavailability.
+    @Test(.disabled("This test is currently failing and will be re-enabled in a subsequent commit."))
+    func testPlatformAvailabilityFromExtensionRespectsDefaultAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                @Metadata {
+                   @Available(iOS, introduced: 16.0)
+                }
+                """, availability: [
+                    .init(domain: .init(rawValue: "macOS"),       introducedVersion: .init(major: 10, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
+                    .init(domain: .init(rawValue: "watchOS"),     introducedVersion: .init(major: 10, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
+                    .init(domain: .init(rawValue: "tvOS"),        introducedVersion: nil,                                  deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true,  willEventuallyBeDeprecated: false),
+                    .init(domain: .init(rawValue: "iOS"),         introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
+                    .init(domain: .init(rawValue: "macCatalyst"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
+                ])
+            ])),
+
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(unavailablePlatformName: .iPadOS),
+                .init(unavailablePlatformName: .catalyst),
+            ]])
+        ])
+        let context = try await load(catalog: catalog)
+        let reference = ResolvedTopicReference(
+            bundleID: context.inputs.id,
+            path: "/documentation/ModuleName/SomeClass",
+            sourceLanguage: .swift
+        )
+        let symbol = try #require(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(context: context, identifier: reference)
+        let renderNode = try #require(translator.visitSymbol(symbol) as? RenderNode)
+        let availabilities = try #require(renderNode.metadata.platformsVariants.defaultValue)
+        // iOS introduces iPadOS and Mac Catalyst as fallback platforms,
+        // but they have been explicitly marked as unavailable
+        #expect(availabilities.count == 1)
+        #expect(availabilities.compactMap(\.name) == ["iOS"])
+        let iosAvailability = try XCTUnwrap(availabilities.first)
+        #expect(iosAvailability.introduced == "16.0")
+        #expect(iosAvailability.isBeta != true)
+        // Ensure that the fallback platforms have the same version and beta status as iOS
+        for availability in availabilities.dropFirst() {
+            #expect(availability.introduced == iosAvailability.introduced)
+            #expect(availability.isBeta == iosAvailability.isBeta)
+        }
+    }
 }
