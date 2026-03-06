@@ -2456,7 +2456,7 @@ class PathHierarchyTests: XCTestCase {
         let articleID = try tree.find(path: "/CatalogName/Some-Article", onlyFindSymbols: false)
         
         XCTAssertEqual(try tree.findNode(path: "SomeClass", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, "some-class-id",
-                       "A general documentation link will pages rather than headings.")
+                       "A general documentation link will find pages rather than headings.")
         XCTAssertEqual(try tree.findNode(path: "SomeClass", onlyFindSymbols: true, parent: articleID).symbol?.identifier.precise, "some-class-id",
                        "A symbol link will skip the heading and continue searching until it finds the symbol.")
         XCTAssertEqual(try tree.findNode(path: "#SomeClass", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, nil,

@@ -78,7 +78,7 @@ extension PathHierarchy.PathParser {
     ///
     /// - Parameters:
     ///   - path: The documentation link string, containing a path and an optional fragment.
-    /// - Returns: The the parsed components, a flag that indicate if the documentation link is absolute or not, and the parsed trailing anchor (if any).
+    /// - Returns: The parsed components, a flag that indicate if the documentation link is absolute or not, and the parsed trailing anchor (if any).
     @inlinable
     static func parse(path: String) -> (components: [PathComponent], isAbsolute: Bool, anchor: Substring?) {
         guard !path.isEmpty else { return ([], true, nil) }

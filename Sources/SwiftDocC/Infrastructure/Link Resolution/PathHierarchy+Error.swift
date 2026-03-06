@@ -64,7 +64,7 @@ extension PathHierarchy {
         /// - A list of the names for the children of the partial result.
         case unknownName(partialResult: PartialResult, remaining: [PathComponent], availableChildren: Set<String>)
         
-        /// Encountered an unknown anchor at the end of the the path.
+        /// Encountered an unknown anchor at the end of the path.
         ///
         /// Includes information about:
         /// - The partial result for as much of the path that could be found.

@@ -497,7 +497,7 @@ struct PathHierarchy {
     @inlinable
     mutating func addAnchor(parent: ResolvedIdentifier, name: String) -> ResolvedIdentifier {
         let parent = lookup[parent]!
-        // Its rather easy to author the same heading more than once. Only add the anchor once.
+        // It's rather easy to author the same heading more than once. Only add the anchor once.
         if let existing = parent.anchors[name] {
             return existing.identifier
         }
@@ -551,7 +551,7 @@ extension PathHierarchy {
         
         /// The anchors of this node.
         ///
-        /// An an anchor represents a heading or on-page landmark and is always a leaf node in the hierarchy.
+        /// An anchor represents a heading or on-page landmark and is always a leaf node in the hierarchy.
         @usableFromInline
         fileprivate(set) var anchors: [String: Node] // ???: Should this be just the ID?
         
@@ -578,7 +578,7 @@ extension PathHierarchy {
             @usableFromInline
             let rawValue: Int
             
-            /// This node is disfavored in the the case of a link collision.
+            /// This node is disfavored in the case of a link collision.
             ///
             /// If a favored node collides with a disfavored node the link will resolve to the favored node without requiring any disambiguation.
             /// Referencing the disfavored node requires disambiguation unless it's the only match for that link.
