@@ -75,7 +75,7 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
         
         // Verify that the copied image has the same capitalization as the original
-        let copiedImageOutput = testDataProvider.files.keys
+        let copiedImageOutput = testDataProvider._allFilePaths()
             .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("images/com.test.example").path + "/") })
             .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("images/com.test.example").path + "/", with: "") })
         
@@ -123,7 +123,7 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
         
         // Verify that the copied video has the same capitalization as the original
-        let copiedVideoOutput = testDataProvider.files.keys
+        let copiedVideoOutput = testDataProvider._allFilePaths()
             .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("videos/com.test.example").path + "/") })
             .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("videos/com.test.example").path + "/", with: "") })
         
@@ -279,9 +279,9 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(result.problems.count, 0)
         XCTAssertEqual(result.outputs, [outputLocation.absoluteURL])
         
-        let outputData = testDataProvider.files.filter { $0.key.hasPrefix("/output/data/documentation/") }
+        let outputFiles = testDataProvider._allFilePaths().filter { $0.hasPrefix("/output/data/documentation/") }
         
-        XCTAssertEqual(outputData.keys.sorted(), [
+        XCTAssertEqual(outputFiles.sorted(), [
             "/output/data/documentation/mykit",
             "/output/data/documentation/mykit.json",
             "/output/data/documentation/mykit/myclass",
@@ -293,7 +293,7 @@ class ConvertActionTests: XCTestCase {
             "/output/data/documentation/mykit/globalfunction(_:considering:).json",
         ].sorted())
         
-        let myKitNodeData = try XCTUnwrap(outputData["/output/data/documentation/mykit.json"])
+        let myKitNodeData = try XCTUnwrap(testDataProvider.contents(atPath: "/output/data/documentation/mykit.json"))
         let myKitNode = try JSONDecoder().decode(RenderNode.self, from: myKitNodeData)
         
         // Verify that framework page doesn't get automatic abstract
@@ -302,7 +302,7 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(myKitNode.topicSections.count, 3) // Automatic curation of the symbols in the symbol graph file
         
         // Verify that non-framework symbols also do not get automatic abstracts.
-        let myProtocolNodeData = try XCTUnwrap(outputData["/output/data/documentation/mykit/myprotocol.json"])
+        let myProtocolNodeData = try XCTUnwrap(testDataProvider.contents(atPath: "/output/data/documentation/mykit/myprotocol.json"))
         let myProtocolNode = try JSONDecoder().decode(RenderNode.self, from: myProtocolNodeData)
         XCTAssertNil(myProtocolNode.abstract)
     }
@@ -1601,8 +1601,8 @@ class ConvertActionTests: XCTestCase {
                 return
             }
             
-            let serialContent = testDataProvider.files.keys.filter({ $0.hasPrefix(serialOutput.path) })
-            let parallelContent = testDataProvider.files.keys.filter({ $0.hasPrefix(parallelOutput.path) })
+            let serialContent   = testDataProvider._allFilePaths().filter{ $0.hasPrefix(serialOutput.path) }
+            let parallelContent = testDataProvider._allFilePaths().filter{ $0.hasPrefix(parallelOutput.path) }
 
             XCTAssertFalse(serialContent.isEmpty)
             XCTAssertEqual(serialContent.count, parallelContent.count)
@@ -1673,32 +1673,26 @@ class ConvertActionTests: XCTestCase {
             
             // Extract and sort the RenderJSON output of each conversion
             
-            let firstConversionFiles = testFileSystem.files.lazy.filter { key, _ in
-                key.hasPrefix("/1/data/")
-            }.map { (key, value) in
-                return (String(key.dropFirst("/1".count)), value)
-            }.sorted(by: \.0)
+            let firstConversionFiles = testFileSystem._allFilePaths()
+                .filter { $0.hasPrefix("/1/data/") }
+                .map { String($0.dropFirst("/1".count)) }
+                .sorted()
             
-            let secondConversionFiles = testFileSystem.files.lazy.filter { key, _ in
-                key.hasPrefix("/2/data/")
-            }.map { (key, value) in
-                return (String(key.dropFirst("/2".count)), value)
-            }.sorted(by: \.0)
+            let secondConversionFiles = testFileSystem._allFilePaths()
+                .filter { $0.hasPrefix("/2/data/") }
+                .map { String($0.dropFirst("/2".count)) }
+                .sorted()
             
             // Zip the two sets of sorted files and loop through them, ensuring that
             // each conversion produced the same RenderJSON output.
             
-            XCTAssertEqual(
-                firstConversionFiles.map(\.0),
-                secondConversionFiles.map(\.0),
-                "The produced file paths are nondeterministic."
-            )
+            XCTAssertEqual(firstConversionFiles, secondConversionFiles, "The produced file paths are nondeterministic.")
             
             for (first, second) in zip(firstConversionFiles, secondConversionFiles) {
-                let firstString = String(data: first.1, encoding: .utf8)
-                let secondString = String(data: second.1, encoding: .utf8)
+                let firstString  = testFileSystem.contents(atPath: first).map {  String(data: $0, encoding: .utf8) }
+                let secondString = testFileSystem.contents(atPath: second).map { String(data: $0, encoding: .utf8) }
                 
-                XCTAssertEqual(firstString, secondString, "The contents of '\(first.0)' is nondeterministic.")
+                XCTAssertEqual(firstString, secondString, "The contents of '\(first)' is nondeterministic.")
             }
         }
     }
