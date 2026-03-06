@@ -603,8 +603,9 @@ extension LinkDestinationSummary {
         let language = documentationNode.sourceLanguage
         // If no abbreviated declaration fragments are available, use the full declaration fragments instead.
         // In this case, they are assumed to be the same.
-        let subheadingDeclarationFragments = renderNode.metadata.fragmentsVariants.value(for: language) ?? (symbol.declarationVariants[summaryTrait] ?? symbol.declaration).renderDeclarationTokens()
-        let navigatorDeclarationFragments = renderNode.metadata.navigatorTitleVariants.value(for: language)
+        let subheadingDeclarationFragments = symbol.subHeadingVariants[summaryTrait]?.renderDeclarationTokens()
+                                          ?? symbol.declarationVariants[summaryTrait]?.renderDeclarationTokens()
+        let navigatorDeclarationFragments  = symbol.navigatorVariants[summaryTrait]?.renderDeclarationTokens()
 
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
             // Skip the variant for the summarized elements source language.
@@ -628,8 +629,9 @@ extension LinkDestinationSummary {
             //
             // However if no abbreviated declaration fragments are available, use the full declaration fragments instead.
             // In this case, they are assumed to be the same.
-            let subheadingDeclarationFragmentsVariant = renderNode.metadata.fragmentsVariants.value(for: variantTraits) ?? symbol.declarationVariants[trait]?.renderDeclarationTokens()
-            let navigatorDeclarationFragmentsVariant = renderNode.metadata.navigatorTitleVariants.value(for: variantTraits)
+            let subheadingDeclarationFragmentsVariant = symbol.subHeadingVariants[trait]?.renderDeclarationTokens()
+                                                     ?? symbol.declarationVariants[trait]?.renderDeclarationTokens()
+            let navigatorDeclarationFragmentsVariant  = symbol.navigatorVariants[trait]?.renderDeclarationTokens()
             return Variant(
                 traits: variantTraits,
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
@@ -671,20 +673,20 @@ extension LinkDestinationSummary {
 
 private extension [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
     func mainRenderFragments() -> SymbolGraph.Symbol.DeclarationFragments? {
-        guard count > 1 else {
-            return first?.value
-        }
-        
-        return self.min(by: { lhs, rhs in
+        self.min(by: { lhs, rhs in
             // Join all the platform IDs and use that to get a stable value
             lhs.key.compactMap(\.?.rawValue).joined() < lhs.key.compactMap(\.?.rawValue).joined()
         })?.value
     }
     
     func renderDeclarationTokens() -> [DeclarationRenderSection.Token]? {
-        return mainRenderFragments()?.declarationFragments.map {
-            DeclarationRenderSection.Token(fragment: $0, identifier: nil)
-        }
+        mainRenderFragments()?.declarationFragments.renderDeclarationTokens()
+    }
+}
+
+private extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+    func renderDeclarationTokens() -> [DeclarationRenderSection.Token] {
+        map { .init(fragment: $0, identifier: nil) }
     }
 }
 
