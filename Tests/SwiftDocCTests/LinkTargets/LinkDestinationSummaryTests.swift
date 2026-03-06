@@ -255,7 +255,7 @@ struct LinkDestinationSummaryTests {
     
     @Test
     func summarizeArticleWithTopicImages() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
+        let catalog = Folder(name: "Something.docc") {
             TextFile(name: "First.md", utf8Content: """
             # Some article
             
@@ -265,18 +265,18 @@ struct LinkDestinationSummaryTests {
               @PageImage(purpose: card, source: card.png, alt: "Card image alt text")
               @PageImage(purpose: icon, source: icon.png, alt: "Icon image alt text")
             }
-            """),
+            """)
             
-            DataFile(name: "card.png",      data: Data()),
-            DataFile(name: "card~dark.png", data: Data()),
+            DataFile(name: "card.png",      data: Data())
+            DataFile(name: "card~dark.png", data: Data())
             
-            DataFile(name: "icon@2x.png",   data: Data()),
+            DataFile(name: "icon@2x.png",   data: Data())
             
             TextFile(name: "Second.md", utf8Content: """
             # Another article
             This second article exist so that the first article isn't elevated to be the root page.
             """)
-        ])
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
@@ -492,18 +492,18 @@ struct LinkDestinationSummaryTests {
     
     @Test
     func apiCollectionIsCategorizedAsCollectionGroupKind() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "APICollection.md", utf8Content: """
             # Some API Collection
             This is an API Collection because it curates symbols.
 
             ## Topics
             - ``ModuleName/SomeClass``
-            """),
+            """)
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])]
             ))
-        ])
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -523,7 +523,7 @@ struct LinkDestinationSummaryTests {
 
     @Test
     func explicitPageKindOverridesDefaultAPICollectionKind() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "ExplicitArticle.md", utf8Content: """
             # Explicit Article
 
@@ -535,11 +535,11 @@ struct LinkDestinationSummaryTests {
 
             ## Topics
             - ``ModuleName/SomeClass``
-            """),
+            """)
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])]
             ))
-        ])
+        }
 
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
@@ -560,7 +560,7 @@ struct LinkDestinationSummaryTests {
     
     @Test
     func summarizeTutorialPage() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "TableOfContents.tutorial", utf8Content: """
             @Tutorials(name: "Something") {
                @Intro(title: "Some introductory title") {
@@ -581,7 +581,7 @@ struct LinkDestinationSummaryTests {
                   }
                }
             }
-            """),
+            """)
             
             TextFile(name: "SomeTutorial.tutorial", utf8Content: """
             @Tutorial {
@@ -602,15 +602,15 @@ struct LinkDestinationSummaryTests {
                   @Steps {}
                }
             }
-            """),
+            """)
             
-            DataFile(name: "background.png", data: Data()),
-            DataFile(name: "volume-1.png",   data: Data()),
-            DataFile(name: "chapter-1.png",  data: Data()),
-            DataFile(name: "section-1.png",  data: Data()),
+            DataFile(name: "background.png", data: Data())
+            DataFile(name: "volume-1.png",   data: Data())
+            DataFile(name: "chapter-1.png",  data: Data())
+            DataFile(name: "section-1.png",  data: Data())
             
-            InfoPlist(displayName: "Custom Display Name", identifier: "com.test.custom-identifier"),
-        ])
+            InfoPlist(displayName: "Custom Display Name", identifier: "com.test.custom-identifier")
+        }
 
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")

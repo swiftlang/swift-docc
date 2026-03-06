@@ -630,7 +630,7 @@ extension LinkDestinationSummary {
             // However if no abbreviated declaration fragments are available, use the full declaration fragments instead.
             // In this case, they are assumed to be the same.
             let subheadingDeclarationFragmentsVariant = symbol.subHeadingVariants[trait]?.renderDeclarationTokens()
-                                              ?? symbol.declarationVariants[trait]?.renderDeclarationTokens()
+                                                     ?? symbol.declarationVariants[trait]?.renderDeclarationTokens()
             let navigatorDeclarationFragmentsVariant  = symbol.navigatorVariants[trait]?.renderDeclarationTokens()
             return Variant(
                 traits: variantTraits,
@@ -685,7 +685,7 @@ private extension [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
 }
 
 private extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
-    func renderDeclarationTokens() -> [DeclarationRenderSection.Token]? {
+    func renderDeclarationTokens() -> [DeclarationRenderSection.Token] {
         map { .init(fragment: $0, identifier: nil) }
     }
 }
