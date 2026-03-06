@@ -377,6 +377,7 @@ public extension SourceLanguage {
 
 // MARK: SourceLanguage Set
 
+/// A small fixed-size set of source languages.
 package struct SmallSourceLanguageSet: Sendable, Hashable, SetAlgebra, ExpressibleByArrayLiteral, Sequence, Collection {
     // There are a few different valid ways that we could implement this, each with their own tradeoffs.
     //
