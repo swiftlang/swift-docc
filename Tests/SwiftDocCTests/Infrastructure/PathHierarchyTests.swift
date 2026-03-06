@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,19 +19,19 @@ import DocCCommon
 struct PathHierarchyTests_new {
     @Test
     func resolvesLinksToHeadings() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
+        let catalog = Folder(name: "Something.docc") {
             TextFile(name: "First.md", utf8Content: """
             # Some article
             
             ## Some heading
-            """),
+            """)
             
             TextFile(name: "Second.md", utf8Content: """
             # Second article
             
             A second article so that the only article isn't elevated to become the root
-            """),
-        ])
+            """)
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
 
@@ -73,8 +73,8 @@ struct PathHierarchyTests_new {
     
     @Test
     func prefersSymbolMatchOverHeadingMatch() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+        let catalog = Folder(name: "Something.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"], docComment: """
                 The heading below has the same name as the second symbol.
                 
@@ -82,8 +82,8 @@ struct PathHierarchyTests_new {
                 """),
                 
                 makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]),
-            ])),
-        ])
+            ]))
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
 
@@ -101,21 +101,21 @@ struct PathHierarchyTests_new {
     
     @Test
     func prefersArticleMatchOverHeadingMatch() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
+        let catalog = Folder(name: "Something.docc") {
             TextFile(name: "First.md", utf8Content: """
             # Some article
             
             The heading below has the same name as the second article.
             
             ## Second
-            """),
+            """)
             
             TextFile(name: "Second.md", utf8Content: """
             # Second article
             
             This article has the same name as the heading in the first article.
-            """),
-        ])
+            """)
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
 

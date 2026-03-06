@@ -67,60 +67,62 @@ extension UnsafeRawPointer {
                 It's unnecessarily to check for a 3-byte prefix because it either requires 2 loads, or a load with a mask or shift operation. \
                 For identifying JSON keys; append the trailing string delimiter as a suffix so that the prefix fully fills up a 4-byte value.
                 """)
-                // To avoid doing two separate reads we load 4 bytes and mask away 1 of them before comparing to the 3 bytes of static string data.
-                // This technically risks reading beyond the bounds of `self`, but because we mask away the extra out-of-bounds byte, it doesn't matter.
-                let bytesToCompareTo = UInt64(buffer[0])
-                                     | UInt64(buffer[1]) &<<  8
-                                     | UInt64(buffer[2]) &<< 16
-                return loadUnaligned(fromByteOffset: byteOffset, as: UInt32.self) & 0x00_FF_FF_FF == bytesToCompareTo
+                // It would be safe and avoid a 2nd read if we loaded 4 bytes and masked away the last byte before comparing to the 3 bytes of static string data.
+                // However, to an address sanitizer this understandably looks like an unsafe mistake and we want DocC to build without address sanitizer issues to help find real memory issues.
+                let bytesToCompareTo: UInt16 = UInt16(buffer[0])
+                                             | UInt16(buffer[1]) &<<  8
+                return loadUnaligned(fromByteOffset: byteOffset,     as: UInt16.self) == bytesToCompareTo
+                    && loadUnaligned(fromByteOffset: byteOffset + 2, as: UInt8.self)  == buffer[2]
                 
             case 4:
                 // Load and compare a 4 bytes
                 return loadUnaligned(fromByteOffset: byteOffset, as: UInt32.self) == load4Bytes(from: buffer)
                 
             case 5:
-                // If the JSON key is 5 bytes, then we can't fill a full 8 byte value even if we include the leading and trailing string delimiters.
-                // We just have to accept that this requires a bitwise and instruction before we can make the comparison.
-                
-                // To avoid doing two separate reads we load 8 bytes and mask away 3 of them before comparing to the 5 bytes of static string data.
-                // This technically risks reading beyond the bounds of `self`, but because we mask away the extra out-of-bounds byte, it doesn't matter.
-                let bytesToCompareTo = UInt64(buffer[0])
-                                     | UInt64(buffer[1]) &<<  8
-                                     | UInt64(buffer[2]) &<< 16
-                                     | UInt64(buffer[3]) &<< 24
-                                     | UInt64(buffer[4]) &<< 32
-                return loadUnaligned(fromByteOffset: byteOffset, as: UInt64.self) & 0x00_00_00_FF_FF_FF_FF_FF == bytesToCompareTo
+                // It would be safe and avoid a 2nd read if we loaded 8 bytes and masked away the last 3 bytes before comparing to the 5 bytes of static string data.
+                // However, to an address sanitizer this understandably looks like an unsafe mistake and we want DocC to build without address sanitizer issues to help find real memory issues.
+                let bytesToCompareTo: UInt32 = UInt32(buffer[0])
+                                             | UInt32(buffer[1]) &<<  8
+                                             | UInt32(buffer[2]) &<< 16
+                                             | UInt32(buffer[3]) &<< 24
+                return loadUnaligned(fromByteOffset: byteOffset,     as: UInt32.self) == bytesToCompareTo
+                    && loadUnaligned(fromByteOffset: byteOffset + 4, as: UInt8.self)  == buffer[4]
                 
             case 6:
                 assertionFailure("""
                 It's unnecessarily to check for a 6-byte prefix, because it either requires 2 loads, or a load with a mask or shift operation. \
                 For identifying JSON keys; append the leading _and_ trailing string delimiters as a prefix and suffix so that the prefix fully fills up a 8-byte value.
                 """)
-                // To avoid doing two separate reads we load 8 bytes and mask away 2 of them before comparing to the 5 bytes of static string data.
-                // This technically risks reading beyond the bounds of `self`, but because we mask away the extra out-of-bounds byte, it doesn't matter.
-                let bytesToCompareTo = UInt64(buffer[0])
-                                     | UInt64(buffer[1]) &<<  8
-                                     | UInt64(buffer[2]) &<< 16
-                                     | UInt64(buffer[3]) &<< 24
-                                     | UInt64(buffer[4]) &<< 32
-                                     | UInt64(buffer[5]) &<< 40
-                return loadUnaligned(fromByteOffset: byteOffset, as: UInt64.self) & 0x00_00_FF_FF_FF_FF_FF_FF == bytesToCompareTo
+                // It would be safe and avoid a 2nd read if we loaded 8 bytes and masked away the last 2 bytes before comparing to the 6 bytes of static string data.
+                // However, to an address sanitizer this understandably looks like an unsafe mistake and we want DocC to build without address sanitizer issues to help find real memory issues.
+                let prefixBytesToCompareTo: UInt32 = UInt32(buffer[0])
+                                                   | UInt32(buffer[1]) &<<  8
+                                                   | UInt32(buffer[2]) &<< 16
+                                                   | UInt32(buffer[3]) &<< 24
+                let suffixBytesToCompareTo: UInt16 = UInt16(buffer[4])
+                                                   | UInt16(buffer[5]) &<<  8
+                return loadUnaligned(fromByteOffset: byteOffset,     as: UInt32.self) == prefixBytesToCompareTo
+                    && loadUnaligned(fromByteOffset: byteOffset + 4, as: UInt16.self) == suffixBytesToCompareTo
                 
             case 7:
                 assertionFailure("""
                 It's unnecessarily to check for a 7-byte prefix, because it either requires 2 loads, or a load with a mask or shift operation. \
                 For identifying JSON keys; append the trailing string delimiter as a suffix so that the prefix fully fills up a 8-byte value.
                 """)
-                // To avoid doing two separate reads we load 8 bytes and mask away 1 of them before comparing to the 5 bytes of static string data.
-                // This technically risks reading beyond the bounds of `self`, but because we mask away the extra out-of-bounds byte, it doesn't matter.
-                let bytesToCompareTo = UInt64(buffer[0])
-                                     | UInt64(buffer[1]) &<<  8
-                                     | UInt64(buffer[2]) &<< 16
-                                     | UInt64(buffer[3]) &<< 24
-                                     | UInt64(buffer[4]) &<< 32
-                                     | UInt64(buffer[5]) &<< 40
-                                     | UInt64(buffer[6]) &<< 48
-                return loadUnaligned(fromByteOffset: byteOffset, as: UInt64.self) & 0x00_FF_FF_FF_FF_FF_FF_FF == bytesToCompareTo
+                // It would be safe and avoid a 2nd read if we loaded 8 bytes and masked away the last byte before comparing to the 7 bytes of static string data.
+                // However, to an address sanitizer this understandably looks like an unsafe mistake and we want DocC to build without address sanitizer issues to help find real memory issues.
+                
+                // We make two 4-byte comparisons that overlap at the 4th byte. This avoids needing to do a third read from memory.
+                let prefixBytesToCompareTo: UInt32 = UInt32(buffer[0])
+                                                   | UInt32(buffer[1]) &<<  8
+                                                   | UInt32(buffer[2]) &<< 16
+                                                   | UInt32(buffer[3]) &<< 24 // The last byte in the first comparison
+                let suffixBytesToCompareTo: UInt32 = UInt32(buffer[3])        // is also the first byte of the second comparison
+                                                   | UInt32(buffer[4]) &<<  8
+                                                   | UInt32(buffer[5]) &<< 16
+                                                   | UInt32(buffer[6]) &<< 24
+                return loadUnaligned(fromByteOffset: byteOffset,     as: UInt32.self) == prefixBytesToCompareTo
+                    && loadUnaligned(fromByteOffset: byteOffset + 3, as: UInt32.self) == suffixBytesToCompareTo
                 
             case 8:
                 // Load and compare a 8 bytes

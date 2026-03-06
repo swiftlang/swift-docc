@@ -19,14 +19,14 @@ import DocCTestUtilities
 struct AnchorSectionTests {
     @Test
     func resolvesLinksToArticleSubsections() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
+        let catalog = Folder(name: "Something.docc") {
             TextFile(name: "First.md", utf8Content: """
             # Some article
             
             ## Some heading
             
             ### Some sub heading
-            """),
+            """)
             
             TextFile(name: "Second.md", utf8Content: """
             # Second article
@@ -35,8 +35,8 @@ struct AnchorSectionTests {
             
             - <doc:First#Some-heading>
             - <doc:First#Some-sub-heading>
-            """),
-        ])
+            """)
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -68,8 +68,8 @@ struct AnchorSectionTests {
     
     @Test
     func resolvesLinksToSymbolSubsections() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+        let catalog = Folder(name: "Something.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["First"], docComment: """
                 ## Some heading
                 ### Some sub heading
@@ -80,9 +80,9 @@ struct AnchorSectionTests {
                 
                 - <doc:First#Some-heading>
                 - <doc:First#Some-sub-heading>
-                """)
-            ])),
-        ])
+                """),
+            ]))
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -113,22 +113,22 @@ struct AnchorSectionTests {
     
     @Test
     func resolvesLinksToModulePageSubsections() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+        let catalog = Folder(name: "Something.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .struct, pathComponents: ["SymbolName"], docComment: """
                 A symbol that links to headings from the module's extension file:
                 
                 - <doc:ModuleName#Some-heading>
                 - <doc:ModuleName#Some-sub-heading>
-                """)
-            ])),
+                """),
+            ]))
             
             TextFile(name: "ModuleName.md", utf8Content: """
             # ``ModuleName``
             ## Some heading
             ### Some sub heading
-            """),
-        ])
+            """)
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -159,8 +159,8 @@ struct AnchorSectionTests {
     
     @Test
     func warnsAboutCuratingSections() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+        let catalog = Folder(name: "Something.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["First"], docComment: """
                 ## Some symbol heading
                 """),
@@ -171,8 +171,8 @@ struct AnchorSectionTests {
                 ## Topics
                 - <doc:First#Some-symbol-heading>
                 - <doc:OtherArticle#Some-article-heading>
-                """)
-            ])),
+                """),
+            ]))
             
             TextFile(name: "Article.md", utf8Content: """
             # Some article
@@ -182,14 +182,14 @@ struct AnchorSectionTests {
             ## Topics
             - <doc:First#Some-symbol-heading>
             - <doc:OtherArticle#Some-article-heading>
-            """),
+            """)
             
             TextFile(name: "OtherArticle.md", utf8Content: """
             # Some other article
             
             ## Some article heading
-            """),
-        ])
+            """)
+        }
         let context = try await load(catalog: catalog)
         
         #expect(context.problems.map(\.diagnostic.summary) == [
@@ -210,8 +210,8 @@ struct AnchorSectionTests {
     
     @Test
     func prefersSymbolMatchOverHeadingMatch() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+        let catalog = Folder(name: "Something.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"], docComment: """
                 The heading below has the same name as the second symbol.
                 
@@ -223,8 +223,8 @@ struct AnchorSectionTests {
                 """),
                 
                 makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]),
-            ])),
-        ])
+            ]))
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
 
@@ -249,7 +249,7 @@ struct AnchorSectionTests {
     
     @Test
     func prefersArticleMatchOverHeadingMatch() async throws {
-        let catalog = Folder(name: "Something.docc", content: [
+        let catalog = Folder(name: "Something.docc") {
             TextFile(name: "First.md", utf8Content: """
             # Some article
             
@@ -260,14 +260,14 @@ struct AnchorSectionTests {
             These links, with and without a '#' prefix, resolve to different things:
             - <doc:#Second>
             - <doc:Second>
-            """),
+            """)
             
             TextFile(name: "Second.md", utf8Content: """
             # Second article
             
             This article has the same name as the heading in the first article.
-            """),
-        ])
+            """)
+        }
         let context = try await load(catalog: catalog)
         #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
 
