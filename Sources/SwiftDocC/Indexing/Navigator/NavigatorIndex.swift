@@ -321,7 +321,7 @@ public class NavigatorIndex {
             case "enumsub", "structsub", "instsub", "intfsub", "subscript": self = .subscript
             case "enumcm", "structcm", "clm", "intfcm", "type.method": self = .typeMethod
             case "httpget", "httpput", "httppost", "httppatch", "httpdelete": self = .httpRequest
-            case "dict": self = .dictionarySymbol
+            case "dict", "dictionary": self = .dictionarySymbol
             case "namespace": self = .namespace
             default: self = .symbol
             }

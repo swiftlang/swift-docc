@@ -55,7 +55,10 @@ package class TestFileSystem: FileManagerProtocol {
     private var files = [String: Contents]()
     
     func _allFilePaths() -> some Collection<String> {
-        files.keys
+        filesLock.lock()
+        defer { filesLock.unlock() }
+        
+        return files.keys
     }
     
     /// Set to `true` to disable write operations for folders and files.

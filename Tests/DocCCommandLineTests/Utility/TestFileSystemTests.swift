@@ -349,10 +349,12 @@ struct TestFileSystemTests {
 
         // Test it fails to write to incorrect paths
         do {
-            try fileSystem.createFile(at: URL(string:"/main/missing/test.txt")!, contents: Data(base64Encoded: "TEST")!)
-            Issue.record("Did not raise error ")
-        } catch {
-            //
+            try fileSystem.createFile(at: URL(fileURLWithPath: "/main/missing/test.txt"), contents: Data(base64Encoded: "TEST")!)
+            Issue.record("Did not raise error for writing to a path where the intermediate directories don't exist")
+        } catch let error as CocoaError {
+            #expect(error.isFileError)
+            #expect(error.filePath == "/main/missing", "This intermediate directory doesn't exist")
+            #expect(error.code == .fileReadNoSuchFile || error.code == .fileNoSuchFile)
         }
 
         // Test it returns `nil` for not existing file paths
@@ -361,20 +363,20 @@ struct TestFileSystemTests {
         #expect(fileSystem.contents(atPath: "/main/missingFile.txt")  == nil)
         
         // Test it writes a file and reads it back
-        try fileSystem.createFile(at: URL(string:"/main/test.txt")!, contents: Data(base64Encoded: "TEST")!)
+        try fileSystem.createFile(at: URL(fileURLWithPath: "/main/test.txt"), contents: Data(base64Encoded: "TEST")!)
         #expect(fileSystem.contents(atPath: "/main/test.txt") == Data(base64Encoded: "TEST"))
         
         // Copy a file and test the contents are identical with original
-        try fileSystem._copyItem(at: URL(string: "/main/test.txt")!, to: URL(string: "/main/clone.txt")!)
+        try fileSystem._copyItem(at: URL(fileURLWithPath: "/main/test.txt"), to: URL(fileURLWithPath: "/main/clone.txt"))
         #expect(fileSystem.contentsEqual(atPath: "/main/test.txt", andPath: "/main/clone.txt"))
         
-        _ = try fileSystem.createFile(at: URL(string:"/main/notclone.txt")!, contents: Data(base64Encoded: "TESTTEST")!)
+        _ = try fileSystem.createFile(at: URL(fileURLWithPath: "/main/notclone.txt"), contents: Data(base64Encoded: "TESTTEST")!)
         #expect(!fileSystem.contentsEqual(atPath: "/main/test.txt", andPath: "/main/notclone.txt"))
         #expect(!fileSystem.contentsEqual(atPath: "/main/test.txt", andPath: "/main/missing.txt"))
     }
     
     @Test
-    func testBundleUsesFileURLs() throws {
+    func catalogUsesFileURLs() throws {
         let fileSystem = try TestFileSystem {
             // A docc catalog with an article, a resource, an Info.plist file, and a symbol graph file
             Folder(name: "something.docc") {
