@@ -20,7 +20,6 @@ extension PathHierarchy {
     ///   - onlyFindSymbols: Whether or not only symbol matches should be found.
     /// - Returns: Returns the unique identifier for the found match or raises an error if no match can be found.
     /// - Throws: Raises a ``PathHierarchy/Error`` if no match can be found.
-    @inlinable
     func find(path rawPath: String, parent: ResolvedIdentifier? = nil, onlyFindSymbols: Bool) throws(Error) -> ResolvedIdentifier {
         return try findNode(path: rawPath, parentID: parent, onlyFindSymbols: onlyFindSymbols).identifier
     }
