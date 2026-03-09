@@ -9,7 +9,7 @@
 */
 
 public import Foundation
-import Markdown
+private import Markdown
 
 /// Writes diagnostic messages to a text output stream.
 ///
@@ -324,9 +324,9 @@ extension DefaultDiagnosticConsoleFormatter {
             // 0 + Addition file and
             // 1 + multiline file content.
             var addition = ""
-            solutions.forEach { solution in
+            for solution in solutions {
                 addition.append("\n" + solution.summary)
-                solution.replacements.forEach { replacement in
+                for replacement in solution.replacements {
                     let solutionFragments = replacement.replacement.split(separator: "\n")
                     addition += "\nsuggestion:\n" + solutionFragments.enumerated().map {
                         "\($0.offset) + \($0.element)"

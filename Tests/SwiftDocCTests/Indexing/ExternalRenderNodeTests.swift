@@ -11,7 +11,9 @@
 import Foundation
 import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import SymbolKit
+import DocCCommon
 
 class ExternalRenderNodeTests: XCTestCase {
     private func generateExternalResolver() -> TestMultiResultExternalReferenceResolver {
@@ -560,14 +562,14 @@ class ExternalRenderNodeTests: XCTestCase {
         indexBuilder.setup()
         let outputConsumer = TestExternalRenderNodeOutputConsumer(indexBuilder: indexBuilder)
 
-        let problems = try ConvertActionConverter.convert(
+        try await ConvertActionConverter.convert(
             context: context,
             outputConsumer: outputConsumer,
+            htmlContentConsumer: nil,
             sourceRepository: nil,
             emitDigest: false,
             documentationCoverageOptions: .noCoverage
         )
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         indexBuilder.finalize(emitJSONRepresentation: true, emitLMDBRepresentation: false)
 
         XCTAssertEqual(
@@ -608,7 +610,7 @@ class ExternalRenderNodeTests: XCTestCase {
                             ],
                             "path": "/documentation/unit-test/article",
                             "title": "Article",
-                            "type": "symbol"
+                            "type": "article"
                           }
                         ],
                         "path": "/documentation/testbundle",

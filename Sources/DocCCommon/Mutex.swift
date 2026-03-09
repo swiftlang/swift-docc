@@ -9,7 +9,7 @@
 */
 
 #if os(macOS) || os(iOS)
-import Darwin
+private import Darwin
 
 // This type is designed to have the same API surface as 'Synchronization.Mutex'.
 // It's different from 'SwiftDocC.Synchronized' which requires that the wrapped value is `Copyable`.

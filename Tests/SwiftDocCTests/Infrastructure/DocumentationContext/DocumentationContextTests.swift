@@ -12,7 +12,8 @@ import XCTest
 import SymbolKit
 @testable @_spi(ExternalLinks) import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 func diffDescription(lhs: String, rhs: String) -> String {
     let leftLines = lhs.components(separatedBy: .newlines)
@@ -605,30 +606,142 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(downloadsAfter.first?.variants.values.first?.lastPathComponent, "intro.png")
     }
 
-    func testDetectsReferenceCollision() async throws {
-        let (_, context) = try await testBundleAndContext(named: "TestBundleWithDupe")
+    func testWarnsAboutTutorialFileNameCollision() async throws {
+        let minimumTutorialContent = """
+        @Tutorial {
+           @Intro(title: "Some intro title") {}
+           @Section(title: "Some section title") {
+              @Steps {}
+           }
+        }
+        """
+        
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            TextFile(name: "TableOfContents.tutorial", utf8Content: """
+            @Tutorials(name: "Something") {
+               @Intro(title: "Some intro title") {}
+               @Chapter(name: "Some chapter name") {
+                  @Image(source: chapter-1, alt: "Some description of this image")
 
-        let problemWithDuplicate = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+                  @TutorialReference(tutorial: "doc:Something")
+               }
+            }
+            """),
+            DataFile(name: "chapter-1.png", data: Data()),
+            
+            Folder(name: "First", content: [
+                TextFile(name: "Something.tutorial", utf8Content: minimumTutorialContent),
+            ]),
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    Folder(name: "Second", content: [
+                        TextFile(name: "something.tutorial", utf8Content: minimumTutorialContent),
+                    ])
+                ])
+            ])
+        ]))
 
-        XCTAssertEqual(problemWithDuplicate.count, 1)
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        
+        XCTAssertEqual(problem.diagnostic.source?.path, "/unit-test.docc/path/to/Second/something.tutorial",
+                       "Deterministically warn about the file whose path sorts last")
+        XCTAssertEqual(problem.diagnostic.summary, "Multiple tutorials with output path '/tutorials/unit-test/something'; this tutorial will be skipped")
+        XCTAssertEqual(problem.diagnostic.explanation, """
+        The relative path of a tutorial in the rendered documentation is the name of its markup file, without the '.tutorial' extension, \
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'something'.
+        Because the pages for 'path/to/Second/something.tutorial' and 'First/Something.tutorial' would have the same web URL, \
+        DocC can only create a web page for one of them; deterministically keeping 'First/Something.tutorial' and dropping 'path/to/Second/something.tutorial'.
+        """)
+        
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), [
+            "Rename 'path/to/Second/something.tutorial'", // The file that the warning is about; which DocC deterministically skips
+            "Rename 'First/Something.tutorial'"           // The other file; which DocC deterministically keeps
+        ])
 
-        let localizedSummary = try XCTUnwrap(problemWithDuplicate.first?.diagnostic.summary)
-        XCTAssertEqual(localizedSummary, "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped")
-
+        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other tutorial with same output path here"])
+        XCTAssertEqual(problem.diagnostic.notes.map(\.source.path), ["/unit-test.docc/First/Something.tutorial"],
+                       "The single note should refer to the other file with the same output path")
     }
     
-    func testDetectsMultipleMarkdownFilesWithSameName() async throws {
-        let (_, context) = try await testBundleAndContext(named: "TestBundleWithDupMD")
+    func testWarnsAboutMarkdownFileCollision() async throws {
+        let (_, context) = try await loadBundle(catalog: Folder(name: "unit-test.docc", content: [
+            Folder(name: "First", content: [
+                TextFile(name: "Something.md", utf8Content: "# First"),
+            ]),
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    Folder(name: "Second", content: [
+                        TextFile(name: "Something.md", utf8Content: "# Second"),
+                    ])
+                ])
+            ])
+        ]))
 
-        let problemWithDuplicateReference = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        
+        XCTAssertEqual(problem.diagnostic.source?.path, "/unit-test.docc/path/to/Second/Something.md",
+                       "Deterministically warn about the file whose path sorts last")
+        XCTAssertEqual(problem.diagnostic.summary, "Multiple articles with output path '/documentation/unit-test/something'; this article will be skipped")
+        XCTAssertEqual(problem.diagnostic.explanation!, """
+        The relative path of an article in the rendered documentation is the name of its markup file, without the '.md' extension, \
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'something'.
+        Because the pages for 'path/to/Second/Something.md' and 'First/Something.md' would have the same web URL, \
+        DocC can only create a web page for one of them; deterministically keeping 'First/Something.md' and dropping 'path/to/Second/Something.md'.
+        """)
+        
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), [
+            "Rename 'path/to/Second/Something.md'", // The file that the warning is about; which DocC deterministically skips
+            "Rename 'First/Something.md'"           // The other file; which DocC deterministically keeps
+        ])
 
-        XCTAssertEqual(problemWithDuplicateReference.count, 2)
+        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other article with same output path here"])
+        XCTAssertEqual(problem.diagnostic.notes.map(\.source.path), ["/unit-test.docc/First/Something.md"],
+                       "The single note should refer to the other file with the same output path")
+    }
+    
+    func testWarningAboutMarkdownFileCollisionListsRelativePathsWhenDiscoveredThroughArbitraryDirectory() async throws {
+        let (fileSystem, startURL) = try makeTestFileSystemWithFolder(containing: [
+            Folder(name: "Arbitrary directory name", content: [
+                Folder(name: "Something", content: [
+                    TextFile(name: "FileName.md", utf8Content: "# First"),
+                ]),
+                Folder(name: "Something Else", content: [
+                    Folder(name: "Subdirectory", content: [
+                        TextFile(name: "FileName.md", utf8Content: "# Second"),
+                    ])
+                ])
+            ])
+        ])
+        let (inputs, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            .inputsAndDataProvider(startingPoint: startURL.appendingPathComponent("Arbitrary directory name"), allowArbitraryCatalogDirectories: true, options: .init())
+        let context = try await DocumentationContext(bundle: inputs, dataProvider: dataProvider)
+        
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        
+        XCTAssertEqual(problem.diagnostic.source?.path, "/path/to/Some folder/Arbitrary directory name/Something Else/Subdirectory/FileName.md",
+                       "Deterministically warn about the file whose path sorts last")
+        XCTAssertEqual(problem.diagnostic.summary, "Multiple articles with output path '/documentation/arbitrary-directory-name/filename'; this article will be skipped")
+        XCTAssertEqual(problem.diagnostic.explanation!, """
+        The relative path of an article in the rendered documentation is the name of its markup file, without the '.md' extension, \
+        replacing consecutive sequences of whitespace and punctuation with a hyphen, in this case 'filename'.
+        Because the pages for 'Something Else/Subdirectory/FileName.md' and 'Something/FileName.md' would have the same web URL, \
+        DocC can only create a web page for one of them; deterministically keeping 'Something/FileName.md' and dropping 'Something Else/Subdirectory/FileName.md'.
+        """)
+        
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), [
+            "Rename 'Something Else/Subdirectory/FileName.md'", // The file that the warning is about; which DocC deterministically skips
+            "Rename 'Something/FileName.md'",                   // The other file; which DocC deterministically keeps (in this case because it has a shallower path)
+        ])
 
-        let localizedSummary = try XCTUnwrap(problemWithDuplicateReference.first?.diagnostic.summary)
-        XCTAssertEqual(localizedSummary, "Redeclaration of \'overview.md\'; this file will be skipped")
-
-        let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.summary)
-        XCTAssertEqual(localizedSummarySecond, "Redeclaration of \'overview.md\'; this file will be skipped")
+        XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Other article with same output path here"])
+        XCTAssertEqual(problem.diagnostic.notes.map(\.source.path), ["/path/to/Some folder/Arbitrary directory name/Something/FileName.md"],
+                       "The single note should refer to the other file with the same output path")
     }
     
     func testUsesMultipleDocExtensionFilesWithSameName() async throws {
@@ -1286,30 +1399,17 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testCanResolveArticleFromTutorial() async throws {
-        struct TestData {
-            let symbolGraphNames: [String]
-            
-            var symbolGraphFiles: [any File] {
-                return symbolGraphNames.map { name in
-                    CopyOfFile(original: Bundle.module.url(forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-                        .appendingPathComponent(name + ".symbols.json"))
-                }
-            }
-                
-            var expectsToResolveArticleReference: Bool {
-                return symbolGraphNames.count == 1
-            }
-        }
-        
         // Verify that the article can be resolved when there's a single module but not otherwise.
         let combinationsToTest = [
-            TestData(symbolGraphNames: []),
-            TestData(symbolGraphNames: ["mykit-iOS"]),
-            TestData(symbolGraphNames: ["sidekit"]),
-            TestData(symbolGraphNames: ["mykit-iOS", "sidekit"]),
+            [],
+            ["First"],
+            ["Second"],
+            ["First", "Second"],
         ]
         
-        for testData in combinationsToTest {
+        for symbolGraphNames in combinationsToTest {
+            let expectsToResolveArticleReference = symbolGraphNames.count == 1
+            
             let testCatalog = Folder(name: "TestCanResolveArticleFromTutorial.docc", content: [
                 InfoPlist(displayName: "TestCanResolveArticleFromTutorial", identifier: "com.example.documentation"),
                 
@@ -1326,7 +1426,9 @@ class DocumentationContextTests: XCTestCase {
                    }
                 }
                 """),
-            ] + testData.symbolGraphFiles)
+            ] + symbolGraphNames.map {
+                JSONFile(name: "\($0).symbols.json", content: makeSymbolGraph(moduleName: $0))
+            })
             
             let (_, context) = try await loadBundle(catalog: testCatalog)
             let renderContext = RenderContext(documentationContext: context)
@@ -1338,14 +1440,14 @@ class DocumentationContextTests: XCTestCase {
             let renderNode = try XCTUnwrap(converter.renderNode(for: node))
             
             XCTAssertEqual(
-                !testData.expectsToResolveArticleReference,
-                context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }),
-                "Expected to \(testData.expectsToResolveArticleReference ? "resolve" : "not resolve") article reference from tutorial content when there are \(testData.symbolGraphNames.count) modules."
+                !expectsToResolveArticleReference,
+                context.problems.contains(where: { $0.diagnostic.identifier == "UnfindableArticle" }),
+                "Expected to \(expectsToResolveArticleReference ? "resolve" : "not resolve") article reference from tutorial content when there are \(symbolGraphNames.count) modules."
             )
             XCTAssertEqual(
-                testData.expectsToResolveArticleReference,
+                expectsToResolveArticleReference,
                 renderNode.references.keys.contains("doc://com.example.documentation/documentation/TestCanResolveArticleFromTutorial/extra-article"),
-                "Expected to \(testData.expectsToResolveArticleReference ? "find" : "not find") article among the tutorial's references when there are \(testData.symbolGraphNames.count) modules."
+                "Expected to \(expectsToResolveArticleReference ? "find" : "not find") article among the tutorial's references when there are \(symbolGraphNames.count) modules."
             )
         }
     }
@@ -1826,7 +1928,14 @@ let expected = """
         
         let (_, context) = try await loadBundle(catalog: catalog)
 
-        XCTAssertEqual(context.problems.map(\.diagnostic.summary), ["Redeclaration of 'Hello world.md'; this file will be skipped"])
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["OutputPathCollision"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let problem = try XCTUnwrap(context.problems.first)
+        XCTAssertEqual(problem.diagnostic.summary, "Multiple articles with output path '/documentation/unit-test/hello-world'; this article will be skipped")
+        XCTAssertEqual(problem.possibleSolutions.map(\.summary), [
+            "Rename 'Hello-world.md'",
+            "Rename 'Hello world.md'",
+        ])
         
         XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
             "doc://unit-test/documentation/unit-test",
@@ -2212,31 +2321,6 @@ let expected = """
             XCTAssertEqual(deprecatedSection.count, 1)
             XCTAssertEqual(deprecatedSection.first?.format().trimmingCharacters(in: .whitespaces), "Use ``doc://unit-test/documentation/ModuleName/NewSymbol`` instead.", "The link should have been resolved")
         }
-    }
-    
-    func testUncuratedArticleDiagnostics() async throws {
-        let catalog = Folder(name: "unit-test.docc", content: [
-            // This setup only happens if the developer manually mixes symbol inputs from different builds
-            JSONFile(name: "FirstModuleName.symbols.json", content: makeSymbolGraph(moduleName: "FirstModuleName")),
-            JSONFile(name: "SecondModuleName.symbols.json", content: makeSymbolGraph(moduleName: "SecondModuleName")),
-            
-            // Add an article without curating it anywhere
-            // This will be uncurated because there's more than one module.
-            TextFile(name: "Article.md", utf8Content: """
-            # Article
-            
-            This article won't be curated anywhere.
-            """),
-        ])
-        
-        let (bundle, context) = try await loadBundle(catalog: catalog, diagnosticFilterLevel: .information)
-        XCTAssertNil(context.soleRootModuleReference)
-        
-        let curationDiagnostics = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
-        let sidecarDiagnostic = try XCTUnwrap(curationDiagnostics.first(where: { $0.source?.standardizedFileURL == bundle.markupURLs.first?.standardizedFileURL }))
-        XCTAssertNil(sidecarDiagnostic.range)
-        XCTAssertEqual(sidecarDiagnostic.summary, "You haven't curated 'doc://unit-test/documentation/unit-test/Article'")
-        XCTAssertEqual(sidecarDiagnostic.severity, .information)
     }
     
     func testUpdatesReferencesForChildrenOfCollisions() async throws {
@@ -2849,7 +2933,7 @@ let expected = """
         let symbolReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let symbol = try XCTUnwrap((try? context.entity(with: symbolReference))?.semantic as? Symbol)
         let symbolTopics = try XCTUnwrap(symbol.topics)
-        symbolTopics.originalLinkRangesByGroup.forEach { group in
+        for group in symbolTopics.originalLinkRangesByGroup {
             XCTAssertTrue(group.allSatisfy({ $0 != nil }))
         }
         
@@ -2857,7 +2941,7 @@ let expected = """
         let articleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         let article = try XCTUnwrap((try? context.entity(with: articleReference))?.semantic as? Article)
         let articleTopics = try XCTUnwrap(article.topics)
-        articleTopics.originalLinkRangesByGroup.forEach { group in
+        for group in articleTopics.originalLinkRangesByGroup {
             XCTAssertTrue(group.allSatisfy({ $0 != nil }))
         }
     }
@@ -2995,7 +3079,7 @@ let expected = """
                 XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
                     "'NotFoundSymbol' doesn't exist at '/Root'",
                     "'NotFoundArticle' doesn't exist at '/Root'",
-                    "'NotFoundHeading' doesn't exist at '/Root'",
+                    "'NotFoundHeading' is not an anchor of '/Root'",
                 ], withExplicitTechnologyRoot ? "with @TechnologyRoot" : "with synthesized root")
                 
                 let rootReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -3040,7 +3124,7 @@ let expected = """
                 XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
                     "'NotFoundSymbol' doesn't exist at '/CatalogName'",
                     "'NotFoundArticle' doesn't exist at '/CatalogName'",
-                    "'NotFoundHeading' doesn't exist at '/CatalogName'",
+                    "'NotFoundHeading' is not an anchor of '/CatalogName'",
                 ], withExplicitTechnologyRoot ? "with @TechnologyRoot" : "with synthesized root")
                 
                 let rootReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -3084,7 +3168,7 @@ let expected = """
         
         XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
             "'NotFoundArticle' doesn't exist at '/CatalogName/Second'",
-            "'NotFoundHeading' doesn't exist at '/CatalogName/First'",
+            "'NotFoundHeading' is not an anchor of '/CatalogName/First'",
             "'NotFoundSymbol' doesn't exist at '/CatalogName/First'",
         ])
         
@@ -4066,11 +4150,11 @@ let expected = """
             # ``SideKit/SideClass``
             Abstract.
             ## Discussion
-            This is a link to <doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations>.
+            This is a link to <doc:/documentation/SideKit/SideClass/Element#Protocol-Implementations>.
             ## Topics
             ### Basics
-             - <doc:documentation/SideKit/SideClass/Element/Protocol-Implementations>
-             - <doc:Element/Protocol-Implementations>
+             - <doc:documentation/SideKit/SideClass/Element#Protocol-Implementations>
+             - <doc:Element#Protocol-Implementations>
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 
@@ -4815,7 +4899,7 @@ let expected = """
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]), // Collision
             ])),
             
-            TextFile(name: "SomeClass.md", utf8Content: """
+            TextFile(name: "SoMeClAsS.md", utf8Content: """
             # Some article
             
             This article has the same reference as the symbol. One will override the other. 
@@ -4836,12 +4920,12 @@ let expected = """
         XCTAssert(node.kind.isSymbol, "Given #593 / rdar://79745455 we should deterministically prioritize the symbol over the article")
         
         XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
-            "Article 'SomeClass.md' (Some article) would override class 'SomeClass'."
+            "Article 'SoMeClAsS.md' (Some article) would override class 'SomeClass'."
         ])
         
         let problem = try XCTUnwrap(context.problems.first)
         let solution = try XCTUnwrap(problem.possibleSolutions.first)
-        XCTAssertEqual(solution.summary, "Rename 'SomeClass.md'")
+        XCTAssertEqual(solution.summary, "Rename 'SoMeClAsS.md'")
     }
     
     func testContextRecognizesOverloads() async throws {
@@ -5534,7 +5618,7 @@ let expected = """
                 let entity = try context.entity(with: reference)
                 let renderNode = try XCTUnwrap(converter.convert(entity))
                 
-                return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+                return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
             }
             let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: context.inputs.id)
             
@@ -5839,18 +5923,15 @@ let expected = """
             // documentation cache, to test if the supported languages are attached prior to registration.
             JSONFile(name: "Foo.symbols.json", content: makeSymbolGraph(moduleName: "Foo")),
         ])
-        
-        let (bundle, context) = try await loadBundle(catalog: catalog)
-        
-        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
 
-        do {
-            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .data)
-            // Find the topic graph node for the article
-            let node = context.topicGraph.nodes.first { $0.key == reference }?.value
-            // Ensure that the reference within the topic graph node contains the supported languages
-            XCTAssertEqual(node?.reference.sourceLanguages, [.objectiveC, .data])
-        }
+        let (_, context) = try await loadBundle(catalog: catalog)
+
+        // This test has both a TechnologyRoot and symbol graph files, which is an unsupported setup that DocC warns about.
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["TechnologyRootWithSymbols"],
+                       "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+
+        let reference = context.knownPages.first(where: { $0.lastPathComponent == "Article" })
+        XCTAssertEqual(reference?.sourceLanguages, [.objectiveC, .data])
     }
 }
 

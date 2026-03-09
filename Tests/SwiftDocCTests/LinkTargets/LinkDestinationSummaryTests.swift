@@ -1,612 +1,377 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
-class LinkDestinationSummaryTests: XCTestCase {
-    
-    func testSummaryOfTutorialPage() async throws {
-        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "TechnologyX.tutorial", utf8Content: """
-                @Tutorials(name: "TechnologyX") {
-                   @Intro(title: "Technology X") {
-
-                      You'll learn all about Technology X.
-
-                      @Image(source: arkit.png, alt: arkit)
-                   }
-
-                   @Redirected(from: "old/path/to/this/page")
-                   @Redirected(from: "even/older/path/to/this/page")
-
-                   @Volume(name: "Volume 1") {
-                      This volume contains Chapter 1.
-
-                      @Chapter(name: "Chapter 1") {
-                         In this chapter, you'll follow Tutorial 1.
-                         @TutorialReference(tutorial: Tutorial)
-                         @Image(source: blah, alt: blah)
-                      }
-                   }
-                }
-                """),
-            TextFile(name: "Tutorial.tutorial", utf8Content: """
-                @Tutorial(time: 20, projectFiles: project.zip) {
-                   @XcodeRequirement(title: "Xcode 10.2 Beta 3", destination: "https://www.example.com/download")
-                   @Intro(title: "Basic Augmented Reality App 💻", background: image.jpg) {
-                      @Video(source: video.mov)
-                   }
-                   
-                   @Section(title: "Create a New AR Project 💻") {
-                      @ContentAndMedia(layout: vertical) {
-                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                         ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
-
-                         Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-
-                         @Image(source: arkit.png)
-                      }
-
-                      @Redirected(from: "old/path/to/this/landmark")
-                      
-                      @Steps {
-                                                 
-                         Let's get started building the Augmented Reality app.
-                      
-                         @Step {
-                            Lorem ipsum dolor sit amet, consectetur.
-                        
-                            @Image(source: Sierra.jpg)
-                         }
-                      }
-                   }
-                   @Assessments {
-                      @MultipleChoice {
-                         Lorem ipsum dolor sit amet?
-
-                         Phasellus faucibus scelerisque eleifend donec pretium.
-                                                      
-                         @Choice(isCorrect: true) {
-                            `anchor.hitTest(view)`
-                            
-                            @Justification {
-                               This is correct because it is.
-                            }
-                         }
-                      }
-                   }
-                }
-                """),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
-        ])
-
-        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+struct LinkDestinationSummaryTests {
+    @Test
+    func summarizeSymbolPagesWithDifferentLanguageRepresentations() async throws {
+        let context = try await loadFromDisk(catalogName: "GeometricalShapes")
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let moduleReference = try #require(context.soleRootModuleReference)
         
-        let converter = DocumentationNodeConverter(context: context)
+        func summary(for reference: ResolvedTopicReference, sourceLocation: SourceLocation = #_sourceLocation) throws -> LinkDestinationSummary {
+            let node = try context.entity(with: reference)
+            let renderNode = DocumentationNodeConverter(context: context).convert(node)
+            return try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first, sourceLocation: sourceLocation)
+        }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
-        let renderNode = converter.convert(node)
-        
-        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-        let pageSummary = summaries[0]
-        XCTAssertEqual(pageSummary.title, "Basic Augmented Reality App 💻")
-        XCTAssertEqual(pageSummary.relativePresentationURL.absoluteString, "/tutorials/testbundle/tutorial")
-        XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial")
-        XCTAssertEqual(pageSummary.language, .swift)
-        XCTAssertEqual(pageSummary.kind, .tutorial)
-        XCTAssertEqual(pageSummary.taskGroups, [
-            .init(title: nil,
-                  identifiers: ["doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project-%F0%9F%92%BB"]
-            ),
-        ])
-        XCTAssertEqual(pageSummary.availableLanguages, [.swift])
-        XCTAssertEqual(pageSummary.platforms, renderNode.metadata.platforms)
-        XCTAssertEqual(pageSummary.redirects, nil)
-        XCTAssertNil(pageSummary.usr, "Only symbols have USRs")
-        XCTAssertNil(pageSummary.plainTextDeclaration, "Only symbols have a plain text declaration")
-        XCTAssertNil(pageSummary.subheadingDeclarationFragments, "Only symbols have subheading declaration fragments")
-        XCTAssertNil(pageSummary.navigatorDeclarationFragments, "Only symbols have navigator titles")
-        XCTAssertNil(pageSummary.abstract, "There is no text to use as an abstract for the tutorial page")
-        XCTAssertNil(pageSummary.topicImages, "The tutorial page doesn't have any topic images")
-        XCTAssertNil(pageSummary.references, "Since the tutorial page doesn't have any topic images it also doesn't have any references")
-        
-        let sectionSummary = summaries[1]
-        XCTAssertEqual(sectionSummary.title, "Create a New AR Project 💻")
-        XCTAssertEqual(sectionSummary.relativePresentationURL.absoluteString, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
-        XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
-        XCTAssertEqual(sectionSummary.language, .swift)
-        XCTAssertEqual(sectionSummary.kind, .onPageLandmark)
-        XCTAssertEqual(sectionSummary.taskGroups, [])
-        XCTAssertEqual(sectionSummary.availableLanguages, [.swift])
-        XCTAssertEqual(sectionSummary.platforms, nil)
-        XCTAssertEqual(sectionSummary.redirects, [
-            URL(string: "old/path/to/this/landmark")!,
-        ])
-        XCTAssertNil(sectionSummary.usr, "Only symbols have USRs")
-        XCTAssertNil(sectionSummary.plainTextDeclaration, "Only symbols have a plain text declaration")
-        XCTAssertNil(sectionSummary.subheadingDeclarationFragments, "Only symbols have subheading declaration fragments")
-        XCTAssertNil(sectionSummary.navigatorDeclarationFragments, "Only symbols have navigator titles")
-        XCTAssertEqual(sectionSummary.abstract, [
-            .text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"),
-            .text(" "),
-            .text("ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium."),
-        ])
-        XCTAssertNil(sectionSummary.topicImages, "Sections don't have any topic images")
-        XCTAssertNil(sectionSummary.references, "Since sections don't have any topic images it also doesn't have any references")
-        
-        // Test that the summaries can be decoded from the encoded data
-        let encoded = try JSONEncoder().encode(summaries)
-        let decoded = try JSONDecoder().decode([LinkDestinationSummary].self, from: encoded)
-        XCTAssertEqual(summaries, decoded)
-    }
-
-    func testSymbolSummaries() async throws {
-        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
-        let converter = DocumentationNodeConverter(context: context)
+        // typedef struct {
+        //     CGPoint center;
+        //     CGFloat radius;
+        // } TLACircle NS_SWIFT_NAME(Circle);
         do {
-            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
-            let node = try context.entity(with: symbolReference)
-            let renderNode = converter.convert(node)
-            let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
+            let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/Circle" }))
+            #expect(reference.sourceLanguages.count == 2, "Symbol has 2 language representations")
             
-            XCTAssertEqual(summary.title, "MyClass")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/myclass")
-            XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass")
-            XCTAssertEqual(summary.language, .swift)
-            XCTAssertEqual(summary.kind, .class)
-            XCTAssertEqual(summary.abstract, [.text("MyClass abstract.")])
-            XCTAssertEqual(summary.taskGroups?.map { $0.title }, [
-                "MyClass members (relative)",
-                "MyClass members (module level)",
-                "MyClass members (absolute)",
-                "MyClass members (topic relative)",
-                "MyClass members (topic module level)",
-                "MyClass members (topic absolute)",
-            ])
-            for group in summary.taskGroups ?? [] {
-                // All 6 topic sections curate the same 3 symbols using different syntax and different specificity
-                XCTAssertEqual(group.identifiers, [
-                    summary.referenceURL.appendingPathComponent("init()-33vaw").absoluteString,
-                    summary.referenceURL.appendingPathComponent("init()-3743d").absoluteString,
-                    summary.referenceURL.appendingPathComponent("myFunction()").absoluteString,
-                ])
-            }
-            XCTAssertEqual(summary.availableLanguages, [.swift])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC")
-            XCTAssertEqual(summary.plainTextDeclaration, "class MyClass")
-            XCTAssertEqual(summary.subheadingDeclarationFragments, [
-                .init(text: "class", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "MyClass", kind: .identifier, identifier: nil),
-            ])
-            XCTAssertEqual(summary.navigatorDeclarationFragments, [
-                .init(text: "MyClassNavigator", kind: .identifier, identifier: nil),
-            ])
-            XCTAssertNil(summary.topicImages)
-            XCTAssertNil(summary.references)
+            let summary = try summary(for: reference)
             
-            let encoded = try JSONEncoder().encode(summary)
-            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
-            XCTAssertEqual(decoded, summary)
+            #expect(summary.title == "Circle")
+            #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle")
+            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle")
+            #expect(summary.language == .swift)
+            #expect(summary.kind     == .structure)
+            #expect(summary.abstract == [.text("A circle.")])
+            #expect(summary.availableLanguages == [.swift, .objectiveC])
+            #expect(summary.platforms == nil)
+            #expect(summary.usr       == "c:@SA@TLACircle")
+            #expect(summary.plainTextDeclaration == "struct Circle")
+            #expect(summary.subheadingDeclarationFragments == [
+                .init(text: "struct", kind: .keyword),
+                .init(text: " ",      kind: .text),
+                .init(text: "Circle", kind: .identifier),
+            ])
+            #expect(summary.navigatorDeclarationFragments == [
+                .init(text: "Circle", kind: .identifier),
+            ])
+            #expect(summary.topicImages == nil)
+            #expect(summary.references  == nil)
+            
+            #expect(summary.variants.count == 1)
+            let variant = try #require(summary.variants.first)
+            
+            #expect(variant.title == "TLACircle")
+            #expect(variant.relativePresentationURL?.absoluteString == nil, "Same presentation URL as the summarized element")
+            #expect(variant.language == .objectiveC)
+            #expect(variant.kind     == nil, "Same kind as the summarized element")
+            #expect(variant.abstract == nil, "Same abstract as the summarized element")
+            #expect(variant.usr      == nil, "Same USR as the summarized element")
+            #expect(variant.plainTextDeclaration == "typedef struct TLACircle;")
+            #expect(variant.subheadingDeclarationFragments == [
+                .init(text: "typedef",   kind: .keyword),
+                .init(text: " ",         kind: .text),
+                .init(text: "struct",    kind: .keyword),
+                .init(text: " ",         kind: .text),
+                .init(text: "TLACircle", kind: .identifier),
+                .init(text: ";",         kind: .text),
+            ])
+            #expect(variant.navigatorDeclarationFragments == [
+                .init(text: "TLACircle", kind: .identifier),
+            ])
+            
+            try assertRoundTripCoding(summary)
+        }
+        
+        // extern const TLACircle TLACircleZero NS_SWIFT_NAME(Circle.zero);
+        do {
+            let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/Circle/zero" }))
+            #expect(reference.sourceLanguages.count == 2, "Symbol has 2 language representations")
+            
+            let summary = try summary(for: reference)
+            
+            #expect(summary.title == "zero")
+            #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/zero")
+            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero")
+            #expect(summary.language == .swift)
+            #expect(summary.kind     == .typeProperty)
+            #expect(summary.abstract == [.text("The empty circle.")])
+            #expect(summary.availableLanguages == [.swift, .objectiveC])
+            #expect(summary.platforms == nil)
+            #expect(summary.usr       == "c:@TLACircleZero")
+            #expect(summary.plainTextDeclaration == "static let zero: Circle")
+            #expect(summary.subheadingDeclarationFragments == [
+                .init(text: "static", kind: .keyword),
+                .init(text: " ",      kind: .text),
+                .init(text: "let",    kind: .keyword),
+                .init(text: " ",      kind: .text),
+                .init(text: "zero",   kind: .identifier),
+                .init(text: ": ",     kind: .text),
+                .init(text: "Circle", kind: .typeIdentifier, preciseIdentifier: "c:@SA@TLACircle"),
+            ])
+            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.topicImages == nil)
+            #expect(summary.references  == nil)
+            
+            #expect(summary.variants.count == 1)
+            let variant = try #require(summary.variants.first)
+            
+            #expect(variant.title == "TLACircleZero")
+            #expect(variant.relativePresentationURL?.absoluteString == nil, "Same presentation URL as the summarized element")
+            #expect(variant.language == .objectiveC)
+            #expect(variant.kind     == .globalVariable)
+            #expect(variant.abstract == nil, "Same abstract as the summarized element")
+            #expect(variant.usr      == nil, "Same USR as the summarized element")
+            #expect(variant.plainTextDeclaration == "extern const TLACircle TLACircleZero;")
+            #expect(variant.subheadingDeclarationFragments == [
+                .init(text: "TLACircleZero", kind: .identifier),
+            ])
+            #expect(variant.navigatorDeclarationFragments == [
+                .init(text: "TLACircleZero", kind: .identifier),
+            ])
+            
+            try assertRoundTripCoding(summary)
+        }
+        
+        // BOOL TLACircleIntersects(TLACircle circle, TLACircle otherCircle) NS_SWIFT_NAME(Circle.intersects(self:_:));
+        do {
+            let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/Circle/intersects(_:)" }))
+            #expect(reference.sourceLanguages.count == 2, "Symbol has 2 language representations")
+            
+            let summary = try summary(for: reference)
+            
+            #expect(summary.title == "intersects(_:)")
+            #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/intersects(_:)")
+            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)")
+            #expect(summary.language == .swift)
+            #expect(summary.kind     == .instanceMethod)
+            #expect(summary.abstract == [.text("Returns whether two circles intersect.")])
+            #expect(summary.availableLanguages == [.swift, .objectiveC])
+            #expect(summary.platforms == nil)
+            #expect(summary.usr       == "c:@F@TLACircleIntersects")
+            #expect(summary.plainTextDeclaration == "func intersects(_ otherCircle: Circle) -> Bool")
+            #expect(summary.subheadingDeclarationFragments == [
+                .init(text: "func",       kind: .keyword),
+                .init(text: " ",          kind: .text),
+                .init(text: "intersects", kind: .identifier),
+                .init(text: "(",          kind: .text),
+                .init(text: "Circle",     kind: .typeIdentifier, preciseIdentifier: "c:@SA@TLACircle"),
+                .init(text: ") -> ",      kind: .text),
+                .init(text: "Bool",       kind: .typeIdentifier, preciseIdentifier: "s:Sb"),
+            ])
+            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.topicImages == nil)
+            #expect(summary.references  == nil)
+            
+            #expect(summary.variants.count == 1)
+            let variant = try #require(summary.variants.first)
+            
+            #expect(variant.title == "TLACircleIntersects")
+            #expect(variant.relativePresentationURL?.absoluteString == nil, "Same presentation URL as the summarized element")
+            #expect(variant.language == .objectiveC)
+            #expect(variant.kind     == .function)
+            #expect(variant.abstract == nil, "Same abstract as the summarized element")
+            #expect(variant.usr      == nil, "Same USR as the summarized element")
+            #expect(variant.plainTextDeclaration == "BOOL TLACircleIntersects(TLACircle circle, TLACircle otherCircle);")
+            #expect(variant.subheadingDeclarationFragments == [
+                .init(text: "TLACircleIntersects", kind: .identifier),
+            ])
+            #expect(variant.navigatorDeclarationFragments == [
+                .init(text: "TLACircleIntersects", kind: .identifier),
+            ])
+            
+            try assertRoundTripCoding(summary)
+        }
+
+        // TLACircle TLACircleMake(CGPoint center, CGFloat radius) NS_SWIFT_UNAVAILABLE("Use 'Circle.init(center:radius:)' instead.");
+        do {
+            let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/TLACircleMake" }))
+            #expect(reference.sourceLanguages.count == 1, "Symbol only has one language representation")
+            
+            let summary = try summary(for: reference)
+            
+            #expect(summary.title == "TLACircleMake")
+            #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/tlacirclemake")
+            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake")
+            #expect(summary.language == .objectiveC)
+            #expect(summary.kind     == .function)
+            #expect(summary.abstract == [.text("Creates a circle with the specified center location and radius.")])
+            #expect(summary.availableLanguages == [.objectiveC])
+            #expect(summary.platforms == nil)
+            #expect(summary.usr       == "c:@F@TLACircleMake")
+            #expect(summary.plainTextDeclaration == "TLACircle TLACircleMake(CGPoint center, CGFloat radius);")
+            #expect(summary.subheadingDeclarationFragments == [
+                .init(text: "TLACircleMake", kind: .identifier),
+            ])
+            #expect(summary.navigatorDeclarationFragments == [
+                .init(text: "TLACircleMake", kind: .identifier),
+            ])
+            #expect(summary.topicImages == nil)
+            #expect(summary.references  == nil)
+            
+            #expect(summary.variants.isEmpty)
+            
+            try assertRoundTripCoding(summary)
         }
         
         do {
-            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
-            let node = try context.entity(with: symbolReference)
-            let renderNode = converter.convert(node)
-            let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
+            let reference = try #require(context.knownPages.first(where: { $0.path == "\(moduleReference.path)/Circle/init(center:radius:)" }))
+            #expect(reference.sourceLanguages.count == 1, "Symbol only has one language representation")
             
-            XCTAssertEqual(summary.title, "MyProtocol")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/myprotocol")
-            XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyProtocol")
-            XCTAssertEqual(summary.language, .swift)
-            XCTAssertEqual(summary.kind, .protocol)
-            XCTAssertEqual(summary.abstract, [.text("An abstract of a protocol using a "), .codeVoice(code: "String"), .text(" id value.")])
-            XCTAssertEqual(summary.taskGroups, [
-                .init(
-                    title: "Task Group Exercising Symbol Links",
-                    identifiers: [
-                        // MyClass is curated 3 times using different syntax.
-                        summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
-                        summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
-                        summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
-                    ]
-                ),
-            ])
-            XCTAssertEqual(summary.availableLanguages, [.swift])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "s:5MyKit0A5ProtocolP")
-            XCTAssertEqual(summary.plainTextDeclaration, "protocol MyProtocol : Hashable")
-            XCTAssertEqual(summary.subheadingDeclarationFragments, [
-                .init(text: "protocol", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "MyProtocol", kind: .identifier, identifier: nil),
-                .init(text: " : ", kind: .text, identifier: nil),
-                .init(text: "Hashable", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "p:hPP"),
-            ])
-            XCTAssertEqual(summary.navigatorDeclarationFragments, [
-                .init(text: "MyProtocol", kind: .identifier, identifier: nil),
-            ])
-            XCTAssertNil(summary.topicImages)
-            XCTAssertNil(summary.references)
+            let summary = try summary(for: reference)
             
-            let encoded = try JSONEncoder().encode(summary)
-            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
-            XCTAssertEqual(decoded, summary)
-        }
-        
-        do {
-            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
-            let node = try context.entity(with: symbolReference)
-            let renderNode = converter.convert(node)
-            let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
-            
-            XCTAssertEqual(summary.title, "myFunction()")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/myclass/myfunction()")
-            XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()")
-            XCTAssertEqual(summary.language, .swift)
-            XCTAssertEqual(summary.kind, .instanceMethod)
-            XCTAssertEqual(summary.abstract, [.text("A cool API to call.")])
-            XCTAssertEqual(summary.taskGroups, [])
-            XCTAssertEqual(summary.availableLanguages, [.swift])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
-            XCTAssertEqual(summary.plainTextDeclaration, "func myFunction(for name...)")
-            XCTAssertEqual(summary.subheadingDeclarationFragments, [
-                .init(text: "func", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "myFunction", kind: .identifier, identifier: nil),
-                .init(text: "(", kind: .text, identifier: nil),
-                .init(text: "for", kind: .externalParam, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "name", kind: .internalParam, identifier: nil),
-                .init(text: "...", kind: .text, identifier: nil),
-                .init(text: ")", kind: .text, identifier: nil)
+            #expect(summary.title == "init(center:radius:)")
+            #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/init(center:radius:)")
+            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)")
+            #expect(summary.language == .swift)
+            #expect(summary.kind     == .initializer)
+            #expect(summary.abstract == nil, "This symbol doesn't have a documentation comment")
+            #expect(summary.availableLanguages == [.swift])
+            #expect(summary.platforms == nil)
+            #expect(summary.usr       == "s:So9TLACirclea6center6radiusABSo7CGPointV_14CoreFoundation7CGFloatVtcfc")
+            #expect(summary.plainTextDeclaration == "init(center: CGPoint, radius: CGFloat)")
+            #expect(summary.subheadingDeclarationFragments == [
+                .init(text: "init",    kind: .keyword),
+                .init(text: "(",       kind: .text),
+                .init(text: "center",  kind: .externalParam),
+                .init(text: ": ",      kind: .text),
+                .init(text: "CGPoint", kind: .typeIdentifier, preciseIdentifier: "c:@S@CGPoint"),
+                .init(text: ", ",      kind: .text),
+                .init(text: "radius",  kind: .externalParam),
+                .init(text: ": ",      kind: .text),
+                .init(text: "CGFloat", kind: .typeIdentifier, preciseIdentifier: "s:14CoreFoundation7CGFloatV"),
+                .init(text: ")",       kind: .text),
             ])
-            XCTAssertNil(summary.navigatorDeclarationFragments, "This symbol doesn't have a navigator title")
-            XCTAssertNil(summary.topicImages)
-            XCTAssertNil(summary.references)
+            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.topicImages == nil)
+            #expect(summary.references  == nil)
             
-            let encoded = try JSONEncoder().encode(summary)
-            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
-            XCTAssertEqual(decoded, summary)
-        }
-        
-        do {
-            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
-            let node = try context.entity(with: symbolReference)
-            let renderNode = converter.convert(node)
-            let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
+            #expect(summary.variants.isEmpty)
             
-            XCTAssertEqual(summary.title, "globalFunction(_:considering:)")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/globalfunction(_:considering:)")
-            XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)")
-            XCTAssertEqual(summary.language, .swift)
-            XCTAssertEqual(summary.kind, .function)
-            XCTAssertEqual(summary.abstract, nil)
-            XCTAssertEqual(summary.taskGroups, [])
-            XCTAssertEqual(summary.availableLanguages, [.swift])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
-            XCTAssertEqual(summary.plainTextDeclaration, "func globalFunction(_: Data, considering: Int)")
-            XCTAssertEqual(summary.subheadingDeclarationFragments, [
-                .init(text: "func", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "globalFunction", kind: .identifier, identifier: nil),
-                .init(text: "(", kind: .text, identifier: nil),
-                .init(text: "Data", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:10Foundation4DataV"),
-                .init(text: ", ", kind: .text, identifier: nil),
-                .init(text: "considering", kind: .identifier, identifier: nil),
-                .init(text: ": ", kind: .text, identifier: nil),
-                .init(text: "Int", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:Si"),
-                .init(text: ")", kind: .text, identifier: nil)
-            ])
-            XCTAssertEqual(summary.navigatorDeclarationFragments, [
-                .init(text: "func", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "globalFunction", kind: .identifier, identifier: nil),
-                .init(text: "(", kind: .text, identifier: nil),
-                .init(text: "Data", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:10Foundation4DataV"),
-                .init(text: ", ", kind: .text, identifier: nil),
-                .init(text: "considering", kind: .identifier, identifier: nil),
-                .init(text: ": ", kind: .text, identifier: nil),
-                .init(text: "Int", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:Si"),
-                .init(text: ")", kind: .text, identifier: nil)
-            ])
-            XCTAssertNil(summary.topicImages)
-            XCTAssertNil(summary.references)
-            
-            let encoded = try JSONEncoder().encode(summary)
-            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
-            XCTAssertEqual(decoded, summary)
+            try assertRoundTripCoding(summary)
         }
     }
     
-    func testTopicImageReferences() async throws {
-        let (url, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
-            let extensionFile = """
-            # ``MyKit/MyClass/myFunction()``
-
-            myFunction abstract
+    @Test
+    func summarizeArticleWithTopicImages() async throws {
+        let catalog = Folder(name: "Something.docc") {
+            TextFile(name: "First.md", utf8Content: """
+            # Some article
+            
+            This article has two page images.
             
             @Metadata {
-              @PageImage(purpose: card, source: figure1.png, alt: "Card image alt text")
-            
-              @PageImage(purpose: icon, source: something, alt: "Icon image alt text")
+              @PageImage(purpose: card, source: card.png, alt: "Card image alt text")
+              @PageImage(purpose: icon, source: icon.png, alt: "Icon image alt text")
             }
-            """
-            let fileURL = url.appendingPathComponent("documentation").appendingPathComponent("myFunction.md")
-            try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
+            """)
+            
+            DataFile(name: "card.png",      data: Data())
+            DataFile(name: "card~dark.png", data: Data())
+            
+            DataFile(name: "icon@2x.png",   data: Data())
+            
+            TextFile(name: "Second.md", utf8Content: """
+            # Another article
+            This second article exist so that the first article isn't elevated to be the root page.
+            """)
         }
-        let converter = DocumentationNodeConverter(context: context)
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        var summary = try #require(node.externallyLinkableElementSummaries(context: context, renderNode: renderNode).first)
+        
+        #expect(summary.title == "Some article")
+        #expect(summary.relativePresentationURL.absoluteString == "/documentation/something/first")
+        #expect(summary.referenceURL.absoluteString == "doc://Something/documentation/Something/First")
+        #expect(summary.language == .swift)
+        #expect(summary.kind     == .article)
+        #expect(summary.abstract == [.text("This article has two page images.")])
+        #expect(summary.availableLanguages == [.swift])
+        #expect(summary.platforms == nil)
+        #expect(summary.usr                            == nil, "Only symbols have USRs.")
+        #expect(summary.plainTextDeclaration           == nil, "Only symbols have USRs.")
+        #expect(summary.subheadingDeclarationFragments == nil, "Only symbols have USRs.")
+        #expect(summary.navigatorDeclarationFragments  == nil, "Only symbols have USRs.")
+        
+        #expect(summary.topicImages == [
+            TopicImage(type: .card, identifier: RenderReferenceIdentifier("card.png")),
+            TopicImage(type: .icon, identifier: RenderReferenceIdentifier("icon.png")),
+        ])
+        
+        #expect(summary.references?.count == 2)
+        
+        // The order of the references is expected to be stable.
+        do {
+            let imageReference = try #require(summary.references?.first as? ImageReference)
+            #expect(imageReference.identifier.identifier == "card.png")
+            #expect(imageReference.altText == "Card image alt text")
+            #expect(imageReference.asset.context == .display)
+            
+            #expect((renderNode.references[imageReference.identifier.identifier] as? ImageReference)?.altText == "Card image alt text",
+                    "The reference in the page itself also has the altText")
+            
+            #expect(Set(imageReference.asset.variants.keys) == [
+                DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard),
+                DataTraitCollection(userInterfaceStyle:  .dark, displayScale: .standard),
+            ])
+            let lightImageURL = try #require(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)])
+            let darkImageURL  = try #require(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle:  .dark, displayScale: .standard)])
+            #expect(lightImageURL.path == "/Something.docc/card.png")
+            #expect(darkImageURL.path  == "/Something.docc/card~dark.png")
+            
+            #expect(Set(imageReference.asset.metadata.keys) == [lightImageURL, darkImageURL])
+            let lightImageMetadata = try #require(imageReference.asset.metadata[lightImageURL])
+            #expect(lightImageMetadata.svgID == nil)
+            let darkImageMetadata = try #require(imageReference.asset.metadata[darkImageURL])
+            #expect(darkImageMetadata.svgID == nil)
+        }
         
         do {
-            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
-            let node = try context.entity(with: symbolReference)
-            let renderNode = converter.convert(node)
-            var summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
+            let imageReference = try #require(summary.references?.last as? ImageReference)
+            #expect(imageReference.identifier.identifier == "icon.png")
+            #expect(imageReference.altText == "Icon image alt text")
+            #expect(imageReference.asset.context == .display)
             
-            XCTAssertEqual(summary.title, "myFunction()")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/myclass/myfunction()")
-            XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()")
-            XCTAssertEqual(summary.language, .swift)
-            XCTAssertEqual(summary.kind, .instanceMethod)
-            XCTAssertEqual(summary.abstract, [.text("A cool API to call.")])
-            XCTAssertEqual(summary.taskGroups, [])
-            XCTAssertEqual(summary.availableLanguages, [.swift])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
-            XCTAssertEqual(summary.plainTextDeclaration, "func myFunction(for name...)")
-            XCTAssertEqual(summary.subheadingDeclarationFragments, [
-                .init(text: "func", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "myFunction", kind: .identifier, identifier: nil),
-                .init(text: "(", kind: .text, identifier: nil),
-                .init(text: "for", kind: .externalParam, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "name", kind: .internalParam, identifier: nil),
-                .init(text: "...", kind: .text, identifier: nil),
-                .init(text: ")", kind: .text, identifier: nil)
+            #expect((renderNode.references[imageReference.identifier.identifier] as? ImageReference)?.altText == "Icon image alt text",
+                    "The reference in the page itself also has the altText")
+            
+            #expect(Set(imageReference.asset.variants.keys) == [
+                DataTraitCollection(userInterfaceStyle: .light, displayScale: .double),
             ])
-            XCTAssertNil(summary.navigatorDeclarationFragments, "This symbol doesn't have a navigator title")
-
-            XCTAssertEqual(summary.topicImages, [
-                TopicImage(
-                    type: .card,
-                    identifier: RenderReferenceIdentifier("figure1.png")
-                ),
-                TopicImage(
-                    type: .icon,
-                    identifier: RenderReferenceIdentifier("something.png")
-                ),
-            ])
+            let lightImageURL = try #require(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .light, displayScale: .double)])
+            #expect(lightImageURL.path == "/Something.docc/icon@2x.png")
             
-            XCTAssertEqual(summary.references?.count, 2)
-            
-            // The order of the references is expected to be stable.
-            do {
-                let imageReference = try XCTUnwrap(summary.references?.first as? ImageReference)
-                XCTAssertEqual(imageReference.identifier.identifier, "figure1.png")
-                XCTAssertEqual(imageReference.altText, "Card image alt text")
-                XCTAssertEqual(imageReference.asset.context, .display)
-                
-                XCTAssertEqual(Set(imageReference.asset.variants.keys), [
-                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard),
-                    DataTraitCollection(userInterfaceStyle: .dark, displayScale: .standard),
-                ])
-                let lightImageURL = try XCTUnwrap(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)])
-                XCTAssertEqual(lightImageURL, url.appendingPathComponent("figure1.png"))
-                let darkImageURL = try XCTUnwrap(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .dark, displayScale: .standard)])
-                XCTAssertEqual(darkImageURL, url.appendingPathComponent("figure1~dark.png"))
-                
-                XCTAssertEqual(Set(imageReference.asset.metadata.keys), [lightImageURL, darkImageURL])
-                let lightImageMetadata = try XCTUnwrap(imageReference.asset.metadata[lightImageURL])
-                XCTAssertEqual(lightImageMetadata.svgID, nil)
-                let darkImageMetadata = try XCTUnwrap(imageReference.asset.metadata[darkImageURL])
-                XCTAssertEqual(darkImageMetadata.svgID, nil)
-            }
-            
-            do {
-                let imageReference = try XCTUnwrap(summary.references?.last as? ImageReference)
-                XCTAssertEqual(imageReference.identifier.identifier, "something.png")
-                XCTAssertEqual(imageReference.altText, "Icon image alt text")
-                XCTAssertEqual(imageReference.asset.context, .display)
-                
-                XCTAssertEqual(Set(imageReference.asset.variants.keys), [
-                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double),
-                ])
-                let lightImageURL = try XCTUnwrap(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .light, displayScale: .double)])
-                XCTAssertEqual(lightImageURL, url.appendingPathComponent("something@2x.png"))
-                
-                XCTAssertEqual(Set(imageReference.asset.metadata.keys), [lightImageURL])
-                let lightImageMetadata = try XCTUnwrap(imageReference.asset.metadata[lightImageURL])
-                XCTAssertEqual(lightImageMetadata.svgID, nil)
-            }
-            
-            // TODO: DataAsset doesn't round-trip encode/decode
-            summary.references = summary.references?.compactMap { (original: RenderReference) -> (any RenderReference)? in
-                guard var imageRef = original as? ImageReference else { return nil }
-                imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
-                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: context.inputs.id.rawValue)
-                }
-                imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
-                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: context.inputs.id.rawValue), value)
-                })
-                return imageRef as (any RenderReference)
-            }
-            
-            
-            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: context.inputs.id.rawValue).encode(summary)
-            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
-            XCTAssertEqual(decoded, summary)
+            #expect(Set(imageReference.asset.metadata.keys) == [lightImageURL])
+            let lightImageMetadata = try #require(imageReference.asset.metadata[lightImageURL])
+            #expect(lightImageMetadata.svgID == nil)
         }
+        
+        // TODO: DataAsset doesn't round-trip encode/decode
+        summary.references = summary.references?.compactMap { (original: RenderReference) -> (any RenderReference)? in
+            guard var imageRef = original as? ImageReference else { return nil }
+            imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
+                return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: context.inputs.id.rawValue)
+            }
+            imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
+                return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: context.inputs.id.rawValue), value)
+            })
+            return imageRef as (any RenderReference)
+        }
+        
+        try assertRoundTripCoding(summary)
+        
+        // Also verify that round trip coding preserves asset prefixes
+        let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: context.inputs.id.rawValue).encode(summary)
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+        #expect(decoded == summary)
     }
     
-    func testVariantSummaries() async throws {
-        let (_, context) = try await testBundleAndContext(named: "MixedLanguageFramework")
-        let converter = DocumentationNodeConverter(context: context)
-        
-        // Check a symbol that's represented as a class in both Swift and Objective-C
-        do {
-            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift)
-            let node = try context.entity(with: symbolReference)
-            let renderNode = converter.convert(node)
-            let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
-            
-            XCTAssertEqual(summary.title, "Bar")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mixedlanguageframework/bar")
-            XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar")
-            XCTAssertEqual(summary.language, .swift)
-            XCTAssertEqual(summary.kind, .class)
-            XCTAssertEqual(summary.abstract, [.text("A bar.")])
-            XCTAssertEqual(summary.taskGroups, [
-                .init(
-                    title: "Type Methods",
-                    identifiers: [
-                        summary.referenceURL.appendingPathComponent("myStringFunction(_:)").absoluteString,
-                    ]
-                ),
-            ])
-            XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "c:objc(cs)Bar")
-            XCTAssertEqual(summary.plainTextDeclaration, "class Bar")
-            XCTAssertEqual(summary.subheadingDeclarationFragments, [
-                .init(text: "class", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "Bar", kind: .identifier, identifier: nil)
-            ])
-            XCTAssertEqual(summary.navigatorDeclarationFragments, [
-                .init(text: "Bar", kind: .identifier, identifier: nil)
-            ])
-            XCTAssertNil(summary.topicImages)
-            XCTAssertNil(summary.references)
-            
-            XCTAssertEqual(summary.variants.count, 1)
-            let variant = try XCTUnwrap(summary.variants.first)
-            
-            // Check variant content that is different
-            XCTAssertEqual(variant.language, .objectiveC)
-            XCTAssertEqual(variant.plainTextDeclaration, "@interface Bar : NSObject")
-            XCTAssertEqual(variant.subheadingDeclarationFragments, [
-                .init(text: "@interface", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "Bar", kind: .identifier, identifier: nil),
-                .init(text: " : ", kind: .text, identifier: nil),
-                .init(text: "NSObject", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "c:objc(cs)NSObject"),
-            ])
-            XCTAssertEqual(variant.navigatorDeclarationFragments, [
-                .init(text: "Bar (objective c)", kind: .identifier, identifier: nil),
-            ])
-
-            // Check variant content that is the same as the summarized element
-            XCTAssertEqual(variant.title, nil)
-            XCTAssertEqual(variant.abstract, nil)
-            XCTAssertEqual(variant.usr, nil)
-            XCTAssertEqual(variant.kind, nil)
-            XCTAssertEqual(variant.taskGroups, nil)
-            
-            let encoded = try JSONEncoder().encode(summary)
-            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
-            XCTAssertEqual(decoded, summary)
-        }
-        
-        // Check the Swift version of a symbol that's represented differently in different languages
-        do {
-            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)", sourceLanguage: .swift)
-            let node = try context.entity(with: symbolReference)
-            let renderNode = converter.convert(node)
-            let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
-            
-            XCTAssertEqual(summary.title, "myStringFunction(_:)")
-            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mixedlanguageframework/bar/mystringfunction(_:)")
-            XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)")
-            XCTAssertEqual(summary.language, .swift)
-            XCTAssertEqual(summary.kind, .typeMethod)
-            
-            XCTAssertEqual(summary.abstract, [.text("Does a string function.")])
-            XCTAssertEqual(
-                summary.taskGroups,
-                [],
-                """
-                Expected no task groups for the Swift documentation because the symbol \
-                it curates (``Foo-c.typealias``) is available in Objective-C only.
-                """
-            )
-            
-            XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "c:objc(cs)Bar(cm)myStringFunction:error:")
-            XCTAssertEqual(summary.plainTextDeclaration, "class func myStringFunction(_ string: String) throws -> String")
-            XCTAssertEqual(summary.subheadingDeclarationFragments, [
-                .init(text: "class", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "func", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "myStringFunction", kind: .identifier, identifier: nil),
-                .init(text: "(", kind: .text, identifier: nil),
-                .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:SS"),
-                .init(text: ") ", kind: .text, identifier: nil),
-                .init(text: "throws", kind: .keyword, identifier: nil),
-                .init(text: " -> ", kind: .text, identifier: nil),
-                .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:SS")
-            ])
-            XCTAssertEqual(summary.navigatorDeclarationFragments, [
-                .init(text: "myStringFunction:error: (navigator title)", kind: .identifier, identifier: nil),
-            ])
-            XCTAssertNil(summary.topicImages)
-            XCTAssertNil(summary.references)
-            
-            XCTAssertEqual(summary.variants.count, 1)
-            let variant = try XCTUnwrap(summary.variants.first)
-            
-            // Check variant content that is different
-            XCTAssertEqual(variant.language, .objectiveC)
-            XCTAssertEqual(variant.title, "myStringFunction:error:")
-            XCTAssertEqual(variant.plainTextDeclaration, "+ (NSString *) myStringFunction: (NSString *)string error: (NSError **)error;")
-            XCTAssertEqual(variant.subheadingDeclarationFragments, [
-                .init(text: "+ ", kind: .text, identifier: nil),
-                .init(text: "myStringFunction:error:", kind: .identifier, identifier: nil)
-            ])
-            XCTAssertEqual(variant.navigatorDeclarationFragments, .none, "Navigator title is the same across variants")
-
-            // Check variant content that is the same as the summarized element
-            XCTAssertEqual(variant.abstract, nil)
-            XCTAssertEqual(variant.usr, nil)
-            XCTAssertEqual(variant.kind, nil)
-            XCTAssertEqual(
-                variant.taskGroups,
-                [
-                    .init(
-                        title: "Custom",
-                        identifiers: [
-                            summary.referenceURL
-                                .deletingLastPathComponent() // myStringFunction:error:
-                                .deletingLastPathComponent() // Bar
-                                .appendingPathComponent("Foo-c.typealias").absoluteString,
-                        ]
-                    )
-                ]
-            )
-            
-            let encoded = try JSONEncoder().encode(summary)
-            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
-            XCTAssertEqual(decoded, summary)
-        }
-    }
-    
-    func testDecodingUnknownKindAndLanguage() throws {
+    @Test
+    func decodingUnknownKindAndLanguage() throws {
         let json = """
         {
           "kind" : {
@@ -649,9 +414,9 @@ class LinkDestinationSummaryTests: XCTestCase {
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(json.utf8))
         try assertRoundTripCoding(decoded)
         
-        XCTAssertEqual(decoded.kind, DocumentationNode.Kind(name: "Kind name", id: "kind-id", isSymbol: false))
-        XCTAssertEqual(decoded.language, SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]))
-        XCTAssertEqual(decoded.availableLanguages, [
+        #expect(decoded.kind == DocumentationNode.Kind(name: "Kind name", id: "kind-id", isSymbol: false))
+        #expect(decoded.language == SourceLanguage(name: "Language name", id: "language-id", idAliases: ["language-alias-id"]))
+        #expect(decoded.availableLanguages == [
             // Known languages
             .swift,
             .objectiveC,
@@ -663,7 +428,8 @@ class LinkDestinationSummaryTests: XCTestCase {
         ])
     }
     
-    func testDecodingLegacyData() throws {
+    @Test
+    func decodingLegacyData() throws {
         let legacyData = """
         {
           "title": "ClassName",
@@ -701,222 +467,202 @@ class LinkDestinationSummaryTests: XCTestCase {
             }
           ]
         }
-        """.data(using: .utf8)!
+        """
         
-        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: legacyData)
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
         
-        XCTAssertEqual(decoded.referenceURL, ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
-        XCTAssertEqual(decoded.platforms?.count, 1)
-        XCTAssertEqual(decoded.platforms?.first?.name, "PlatformName")
-        XCTAssertEqual(decoded.platforms?.first?.introduced, "1.0")
-        XCTAssertEqual(decoded.kind, .class)
-        XCTAssertEqual(decoded.title, "ClassName")
-        XCTAssertEqual(decoded.abstract?.plainText, "A brief explanation of my class.")
-        XCTAssertEqual(decoded.relativePresentationURL.absoluteString, "documentation/MyKit/ClassName")
-        XCTAssertEqual(decoded.subheadingDeclarationFragments, [
+        #expect(decoded.referenceURL == ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
+        #expect(decoded.platforms?.count == 1)
+        #expect(decoded.platforms?.first?.name == "PlatformName")
+        #expect(decoded.platforms?.first?.introduced == "1.0")
+        #expect(decoded.kind  == .class)
+        #expect(decoded.title == "ClassName")
+        #expect(decoded.abstract?.plainText == "A brief explanation of my class.")
+        #expect(decoded.relativePresentationURL.absoluteString == "documentation/MyKit/ClassName")
+        #expect(decoded.subheadingDeclarationFragments == [
             .init(text: "class", kind: .keyword, identifier: nil),
             .init(text: " ", kind: .text, identifier: nil),
             .init(text: "ClassName", kind: .identifier, identifier: nil),
         ])
-        XCTAssertNil(decoded.topicImages)
-        XCTAssertNil(decoded.references)
+        #expect(decoded.topicImages == nil)
+        #expect(decoded.references  == nil)
         
-        XCTAssert(decoded.variants.isEmpty)
+        #expect(decoded.variants.isEmpty)
     }
+    
+    @Test
+    func apiCollectionIsCategorizedAsCollectionGroupKind() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "APICollection.md", utf8Content: """
+            # Some API Collection
+            This is an API Collection because it curates symbols.
 
-    /// Ensure that the task group link summary for overload group pages doesn't overwrite any manual curation.
-    func testOverloadSymbolsWithManualCuration() async throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
-        let symbolGraph = SymbolGraph.init(
-            metadata: .init(formatVersion: .init(string: "1.0.0")!, generator: "unit-test"),
-            module: .init(name: "MyModule", platform: .init()),
-            symbols: [
-                .init(
-                    identifier: .init(precise: "s:MyClass", interfaceLanguage: "swift"),
-                    names: .init(title: "MyClass", navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: ["MyClass"],
-                    docComment: nil,
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: .class, displayName: "Class"),
-                    mixins: [:]
-                ),
-                .init(
-                    identifier: .init(precise: "s:MyClass:myFunc-1", interfaceLanguage: "swift"),
-                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: ["MyClass", "myFunc()"],
-                    docComment: .init([
-                        .init(
-                            text: """
-                            A wonderful overloaded function.
-
-                            ## Topics
-
-                            ### Other Cool Symbols
-
-                            - ``MyStruct``
-                            """,
-                            range: nil)
-                    ]),
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
-                    mixins: [:]
-                ),
-                .init(
-                    identifier: .init(precise: "s:MyClass:myFunc-2", interfaceLanguage: "swift"),
-                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: ["MyClass", "myFunc()"],
-                    docComment: nil,
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
-                    mixins: [:]
-                ),
-                .init(
-                    identifier: .init(precise: "s:MyStruct", interfaceLanguage: "swift"),
-                    names: .init(title: "MyStruct", navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: ["MyStruct"],
-                    docComment: nil,
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: .struct, displayName: "Structure"),
-                    mixins: [:]
-                ),
-            ],
-            relationships: [
-                .init(
-                    source: "s:MyClass:myFunc-1",
-                    target: "s:MyClass",
-                    kind: .memberOf,
-                    targetFallback: nil
-                ),
-                .init(
-                    source: "s:MyClass:myFunc-2",
-                    target: "s:MyClass",
-                    kind: .memberOf,
-                    targetFallback: nil
-                ),
-            ]
-        )
-
-        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "MyModule.symbols.json", content: symbolGraph),
-            InfoPlist(displayName: "MyModule", identifier: "com.example.mymodule")
-        ])
-        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
+            ## Topics
+            - ``ModuleName/SomeClass``
+            """)
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])]
+            ))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
-        let converter = DocumentationNodeConverter(context: context)
-
-        let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
-        let renderNode = converter.convert(node)
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "APICollection" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
 
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-        let pageSummary = summaries[0]
+        let summary = try #require(summaries.first)
 
-        let taskGroups = try XCTUnwrap(pageSummary.taskGroups)
+        #expect(summary.kind  == .collectionGroup, "API Collections (articles with Topics sections) should be classified as a `.collectionGroup` kind")
+        #expect(summary.title == "Some API Collection")
+        #expect(summary.abstract == [.text("This is an API Collection because it curates symbols.")])
 
-        guard taskGroups.count == 2 else {
-            XCTFail("Expected 2 task groups, found \(taskGroups.count): \(taskGroups.map(\.title))")
-            return
+        try assertRoundTripCoding(summary)
+    }
+
+    @Test
+    func explicitPageKindOverridesDefaultAPICollectionKind() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "ExplicitArticle.md", utf8Content: """
+            # Explicit Article
+
+            This would be classifies as an API Collection because it curates a symbol but it is explicitly marked as an "article" which overrides the default kind.
+
+            @Metadata {
+                @PageKind(article)
+            }
+
+            ## Topics
+            - ``ModuleName/SomeClass``
+            """)
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])]
+            ))
         }
 
-        XCTAssertEqual(taskGroups[0].title, "Other Cool Symbols")
-        XCTAssertEqual(taskGroups[0].identifiers, [
-            "doc://com.example.mymodule/documentation/MyModule/MyStruct"
-        ])
-
-        XCTAssertEqual(taskGroups[1].title, "Overloads")
-        XCTAssertEqual(Set(taskGroups[1].identifiers), [
-            "doc://com.example.mymodule/documentation/MyModule/MyClass/myFunc()-9a7pr",
-            "doc://com.example.mymodule/documentation/MyModule/MyClass/myFunc()-9a7po",
-        ])
-    }
-
-    /// Tests that API Collections (articles with Topics sections) are correctly identified as `.collectionGroup`
-    /// kind in linkable entities, ensuring cross-framework references display the correct icon.
-    func testAPICollectionKindForLinkDestinationSummary() async throws {
-        let symbolGraph = makeSymbolGraph(
-            moduleName: "TestModule",
-            symbols: [makeSymbol(id: "test-class", kind: .class, pathComponents: ["TestClass"])]
-        )
-
-        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "APICollection.md", utf8Content: """
-                # API Collection
-
-                This is an API Collection that curates symbols.
-
-                ## Topics
-
-                - ``TestModule/TestClass``
-                """),
-            JSONFile(name: "TestModule.symbols.json", content: symbolGraph)
-        ])
-
-        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
-        let converter = DocumentationNodeConverter(context: context)
-
-        let apiCollectionReference = ResolvedTopicReference(
-            bundleID: context.inputs.id,
-            path: "/documentation/unit-test/APICollection",
-            sourceLanguage: .swift
-        )
-        let node = try context.entity(with: apiCollectionReference)
-        let renderNode = converter.convert(node)
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "ExplicitArticle" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
 
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-        let pageSummary = try XCTUnwrap(summaries.first)
-
-        XCTAssertEqual(pageSummary.kind, .collectionGroup)
-        XCTAssertEqual(pageSummary.title, "API Collection")
-        XCTAssertEqual(pageSummary.abstract, [.text("This is an API Collection that curates symbols.")])
-
-        // Verify round-trip encoding preserves the correct kind
-        try assertRoundTripCoding(pageSummary)
-    }
-
-    /// Tests that explicit `@PageKind(article)` metadata overrides API Collection detection,
-    /// ensuring that explicit page kind directives take precedence over automatic detection.
-    func testExplicitPageKindOverridesAPICollectionDetection() async throws {
-        let symbolGraph = makeSymbolGraph(
-            moduleName: "TestModule",
-            symbols: [makeSymbol(id: "test-class", kind: .class, pathComponents: ["TestClass"])]
-        )
-
-        let catalogHierarchy = Folder(name: "unit-test.docc", content: [
-            TextFile(name: "ExplicitArticle.md", utf8Content: """
-                # Explicit Article
-
-                This looks like an API Collection but is explicitly marked as an article.
-
-                @Metadata {
-                    @PageKind(article)
-                }
-
-                ## Topics
-
-                - ``TestModule/TestClass``
-                """),
-            JSONFile(name: "TestModule.symbols.json", content: symbolGraph)
-        ])
-
-        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
-        let converter = DocumentationNodeConverter(context: context)
-
-        let explicitArticleReference = ResolvedTopicReference(
-            bundleID: context.inputs.id,
-            path: "/documentation/unit-test/ExplicitArticle",
-            sourceLanguage: .swift
-        )
-        let node = try context.entity(with: explicitArticleReference)
-        let renderNode = converter.convert(node)
-
-        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
-        let pageSummary = try XCTUnwrap(summaries.first)
+        let summary = try #require(summaries.first)
 
         // Should be .article because of explicit @PageKind(article), not .collectionGroup
-        XCTAssertEqual(pageSummary.kind, .article)
-        XCTAssertEqual(pageSummary.title, "Explicit Article")
+        #expect(summary.kind  == .article)
+        #expect(summary.title == "Explicit Article")
 
-        // Verify round-trip encoding preserves the correct kind
-        try assertRoundTripCoding(pageSummary)
+        try assertRoundTripCoding(summary)
+    }
+    
+    @Test
+    func summarizeTutorialPage() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "TableOfContents.tutorial", utf8Content: """
+            @Tutorials(name: "Something") {
+               @Intro(title: "Some introductory title") {
+                  Some description of what this collection of tutorials teaches.
+
+                  @Image(source: background.png)
+               }
+
+               @Volume(name: "Volume 1") {
+                  Some description of what this volume teaches.
+                  @Image(source: volume-1.png)
+
+                  @Chapter(name: "Chapter 1") {
+                     Some description of what this chapter teaches.
+                     @Image(source: chapter-1.png)
+            
+                     @TutorialReference(tutorial: SomeTutorial)
+                  }
+               }
+            }
+            """)
+            
+            TextFile(name: "SomeTutorial.tutorial", utf8Content: """
+            @Tutorial {
+               @Intro(title: "Some tutorial title with emoji 💻") {
+                  Some introductory description of what this tutorial teaches. 
+               }
+               
+               @Redirected(from: "old/path/to/this/page")
+               @Redirected(from: "even/older/path/to/this/page")
+
+               @Section(title: "Some section title with emoji 💻") {
+                  @ContentAndMedia {
+                     Some description of what this section teaches.
+                     @Image(source: section-1.png)
+                  }
+                  @Redirected(from: "old/path/to/this/landmark")
+            
+                  @Steps {}
+               }
+            }
+            """)
+            
+            DataFile(name: "background.png", data: Data())
+            DataFile(name: "volume-1.png",   data: Data())
+            DataFile(name: "chapter-1.png",  data: Data())
+            DataFile(name: "section-1.png",  data: Data())
+            
+            InfoPlist(displayName: "Custom Display Name", identifier: "com.test.custom-identifier")
+        }
+
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeTutorial" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let pageSummary = try #require(summaries.first)
+        #expect(pageSummary.title == "Some tutorial title with emoji 💻")
+        #expect(pageSummary.relativePresentationURL.absoluteString == "/tutorials/custom-display-name/sometutorial")
+        #expect(pageSummary.referenceURL.absoluteString == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial")
+        #expect(pageSummary.language == .swift)
+        #expect(pageSummary.kind     == .tutorial)
+        #expect(pageSummary.availableLanguages == [.swift])
+        #expect(pageSummary.platforms == nil)
+        #expect(pageSummary.redirects?.map(\.absoluteString) == [
+            "old/path/to/this/page",
+            "even/older/path/to/this/page",
+        ])
+        #expect(pageSummary.usr                            == nil, "Only symbols have USRs")
+        #expect(pageSummary.plainTextDeclaration           == nil, "Only symbols have a plain text declaration")
+        #expect(pageSummary.subheadingDeclarationFragments == nil, "Only symbols have subheading declaration fragments")
+        #expect(pageSummary.navigatorDeclarationFragments  == nil, "Only symbols have navigator titles")
+        #expect(pageSummary.abstract == [
+            .text("Some introductory description of what this tutorial teaches.")
+        ])
+        #expect(pageSummary.topicImages == nil, "The tutorial page doesn't have any topic images")
+        #expect(pageSummary.references  == nil, "Because the tutorial page doesn't have any topic images it also doesn't have any references")
+        
+        let sectionSummary = try #require(summaries.dropFirst().first)
+        #expect(sectionSummary.title == "Some section title with emoji 💻")
+        #expect(sectionSummary.relativePresentationURL.absoluteString == "/tutorials/custom-display-name/sometutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
+        #expect(sectionSummary.referenceURL.absoluteString == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
+        #expect(sectionSummary.language == .swift)
+        #expect(sectionSummary.kind     == .onPageLandmark)
+        #expect(sectionSummary.availableLanguages == [.swift])
+        #expect(sectionSummary.platforms == nil)
+        #expect(sectionSummary.redirects == [
+            URL(string: "old/path/to/this/landmark")!,
+        ])
+        #expect(sectionSummary.usr == nil, "Only symbols have USRs")
+        #expect(sectionSummary.plainTextDeclaration == nil, "Only symbols have a plain text declaration")
+        #expect(sectionSummary.subheadingDeclarationFragments == nil, "Only symbols have subheading declaration fragments")
+        #expect(sectionSummary.navigatorDeclarationFragments == nil, "Only symbols have navigator titles")
+        #expect(sectionSummary.abstract == [
+            .text("Some description of what this section teaches."),
+        ])
+        #expect(sectionSummary.topicImages == nil, "Sections don't have any topic images")
+        #expect(sectionSummary.references  == nil, "Because sections don't have any topic images it also doesn't have any references")
+        
+        try assertRoundTripCoding(summaries)
     }
 }

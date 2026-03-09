@@ -14,7 +14,7 @@ import Foundation
 
 struct SmallSourceLanguageSetTests {
     @Test
-    func testBehavesSameAsSet() {
+    func behavesSameAsSet() {
         var tiny = SmallSourceLanguageSet()
         var real = Set<SourceLanguage>()
         
@@ -86,7 +86,7 @@ struct SmallSourceLanguageSetTests {
     }
     
     @Test
-    func testSortsSwiftFirstAndThenByID() {
+    func sortsSwiftFirstAndThenByID() {
         var languages = SmallSourceLanguageSet(SourceLanguage.knownLanguages)
         #expect(languages.min()?.name == "Swift")
         #expect(languages.count == 5)
@@ -146,7 +146,7 @@ struct SmallSourceLanguageSetTests {
     }
     
     @Test
-    func testIsSameSizeAsUInt64() {
+    func isSameSizeAsUInt64() {
         #expect(MemoryLayout<SmallSourceLanguageSet>.size      == MemoryLayout<UInt64>.size)
         #expect(MemoryLayout<SmallSourceLanguageSet>.stride    == MemoryLayout<UInt64>.stride)
         #expect(MemoryLayout<SmallSourceLanguageSet>.alignment == MemoryLayout<UInt64>.alignment)

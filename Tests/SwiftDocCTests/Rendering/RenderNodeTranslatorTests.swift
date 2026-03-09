@@ -11,9 +11,10 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 import Markdown
 import SymbolKit
+import DocCCommon
 
 class RenderNodeTranslatorTests: XCTestCase {
     private func findDiscussion(forSymbolPath: String, configureBundle: ((URL) throws -> Void)? = nil) async throws -> ContentRenderSection? {
@@ -1184,6 +1185,7 @@ class RenderNodeTranslatorTests: XCTestCase {
              roundTrippedArticle.references["figure1.png"] as? ImageReference,
              ImageReference(
                  identifier: RenderReferenceIdentifier("figure1.png"),
+                 altText: "An example figure.",
                  imageAsset: DataAsset(
                      variants: [
                          DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)
@@ -1204,6 +1206,7 @@ class RenderNodeTranslatorTests: XCTestCase {
              roundTrippedArticle.references["plus.svg"] as? ImageReference,
              ImageReference(
                  identifier: RenderReferenceIdentifier("plus.svg"),
+                 altText: "A plus icon.",
                  imageAsset: DataAsset(
                      variants: [
                          DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)

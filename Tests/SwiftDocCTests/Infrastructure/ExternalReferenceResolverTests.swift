@@ -12,7 +12,8 @@ import XCTest
 @_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
 import SymbolKit
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class ExternalReferenceResolverTests: XCTestCase {
     class TestExternalReferenceResolver: ExternalDocumentationSource {

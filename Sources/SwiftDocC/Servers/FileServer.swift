@@ -9,15 +9,15 @@
 */
 
 public import Foundation
-import SymbolKit
+private import SymbolKit
 #if canImport(FoundationNetworking)
 public import FoundationNetworking
 #endif
 #if canImport(UniformTypeIdentifiers)
-import UniformTypeIdentifiers
+private import UniformTypeIdentifiers
 #endif
 #if os(Windows)
-import WinSDK
+private import WinSDK
 #endif
 
 #if canImport(os)

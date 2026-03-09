@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A description of the intent of a communication-bridge message.
 ///
 /// Clients can use the type of the message to determine which handler to invoke.

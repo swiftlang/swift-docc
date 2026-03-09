@@ -11,6 +11,7 @@
 import Foundation
 public import Markdown
 public import SymbolKit
+public import DocCCommon
 
 /// A documentation node holds all the information about a documentation entity's content.
 ///
@@ -484,6 +485,8 @@ public struct DocumentationNode {
         
         self.metadata = documentationExtension?.metadata ?? metadataFromDocumentationComment
         
+        warnAboutDeprecationSummaryForAvailableSymbol(semantic: semantic, engine: engine)
+        
         updateAnchorSections()
     }
     
@@ -882,6 +885,159 @@ public struct DocumentationNode {
     ///
     /// These tags contain information about the symbol's return values, potential errors, and parameters.
     public var tags: Tags = (returns: [], throws: [], parameters: [])
+    
+    private func warnAboutDeprecationSummaryForAvailableSymbol(semantic: Symbol, engine: DiagnosticEngine) {
+        guard !semantic.isDeprecated else {
+            return
+        }
+        
+        let deprecationSummaryDirective = markup.children.mapFirst { markup in
+            (markup as? BlockDirective).flatMap { directive in
+                directive.name == DeprecationSummary.directiveName ? directive : nil
+            }
+        }
+        guard let deprecationSummaryDirective, let symbol = unifiedSymbol?.documentedSymbol else {
+            // Nothing to warn about unless there is a DeprecationSummary directive in the markup
+            return
+        }
+        
+        // Check the information from both the source attributes and the Available directive before raising a warning.
+        let availabilityFromSource = {
+            var availability = symbol.availability ?? []
+            let isDeprecatedPartitionIndex = availability.partition(by: { $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil })
+            return (
+                available:  availability[..<isDeprecatedPartitionIndex],
+                deprecated: availability[isDeprecatedPartitionIndex...]
+            )
+        }()
+        let availabilityFromDirectives = {
+            var availability = metadata?.availability ?? []
+            let isDeprecatedPartitionIndex = availability.partition(by: { $0.deprecated != nil })
+            return (
+                available:  availability[..<isDeprecatedPartitionIndex],
+                deprecated: availability[isDeprecatedPartitionIndex...]
+            )
+        }()
+        let isUnconditionallyAvailable = availabilityFromSource.available.contains(where: { $0.domain == nil })
+        
+        let deprecatedDomainNames = Set(availabilityFromSource.deprecated.compactMap(\.domain?.rawValue))
+            .union(availabilityFromDirectives.deprecated.map(\.platform.rawValue))
+        
+        let availableDomainNames = Set(availabilityFromSource.available.compactMap(\.domain?.rawValue))
+            .union(availabilityFromDirectives.available.map(\.platform.rawValue))
+            .subtracting(deprecatedDomainNames)
+        
+        guard isUnconditionallyAvailable || !availableDomainNames.isEmpty || deprecatedDomainNames.isEmpty else {
+            return
+        }
+        
+        // We've verified that the symbol is still available, at least partially.
+        // Now, provide as much contextual information as possible to describe why the symbol is considered available to help developer resolve this issue.
+            
+        func makeExplanation(availabilityDescription: String) -> String {
+            "This \(symbol.kind.displayName.lowercased()) has \(availableDomainNames.count == 1 ? "an attribute" : "attributes") that mark it as available for \(availabilityDescription)."
+        }
+        
+        let shortAvailabilityDescription: String
+        let explanation: String
+        if availableDomainNames.isEmpty && deprecatedDomainNames.isEmpty {
+            // Having no availability information (this branch) and having an explicit wildcard ("*") availability (the next branch) both mean that the symbol is available for all platforms.
+            // The only difference is that without any attributes (this branch) there's no specific "introduced" version, so the symbol is available for _all_ versions of the module.
+            // We separate these two cases to be able to provide a more specialized explanation, which hopefully makes the diagnostic easier to understand.
+            shortAvailabilityDescription = "unconditionally available"
+            explanation = "A symbol without any availability annotations is considered available for all versions of the module (\(semantic.moduleReference.lastPathComponent)) for all platforms."
+        } else if isUnconditionallyAvailable {
+            // Like above, this symbol is available for all versions of the platform, only with some "introduced" version.
+            // However, because there is an explicit attribute that we can refer to, we customize the two explanations to help the developer understand _why_ this symbol is available.
+            var description = "all platforms"
+            if !deprecatedDomainNames.isEmpty {
+                // Because the issue is with the platforms that are available, we only list the named of the deprecated platforms.
+                description.append(", except \(deprecatedDomainNames.sorted().list(finalConjunction: .and))")
+            }
+            
+            shortAvailabilityDescription = "available for \(description)"
+            explanation = makeExplanation(availabilityDescription: description)
+        } else {
+            shortAvailabilityDescription = "available for \(availableDomainNames.sorted().list(finalConjunction: .and))"
+            
+            // Because the issue is with the platforms that are available, we list both names and version information for the platforms that are _not_ deprecated.
+            let availableDomainsAndVersions: [(name: String, introduced: String?)] = availableDomainNames.map { name in
+                // Available directives override the in-source attributes, so check them first.
+                if let fromDirective = availabilityFromDirectives.available.first(where: { $0.platform.rawValue == name }) {
+                    (name, fromDirective.introduced.description)
+                } else if let fromSource = availabilityFromSource.available.first(where: { $0.domain?.rawValue == name }) {
+                    (name, fromSource.introducedVersion?.description)
+                } else {
+                    (name, nil)
+                }
+            }
+            let longAvailabilityDescription = availableDomainsAndVersions
+                .sorted(by: \.name)
+                .map { name, introduced in
+                    if let introduced {
+                        "'\(name)' \(introduced) onwards"
+                    } else {
+                        "all versions of '\(name)'"
+                    }
+                }
+                .list(finalConjunction: .and)
+            explanation = makeExplanation(availabilityDescription: longAvailabilityDescription)
+        }
+        
+        let notes: [DiagnosticNote] = metadata?.availability.compactMap { availability -> DiagnosticNote? in
+            guard availability.deprecated == nil, let range = availability.originalMarkup.range, let source = range.source else {
+                return nil
+            }
+            return DiagnosticNote(source: source, range: range, message: "Marked available for '\(availability.platform.rawValue)' here")
+        } ?? []
+        
+        
+        // It's preferred to specify availability using source attributes because that's also reflected when _calling_ the API.
+        let inSourceAttributeDescription: String? = switch SourceLanguage(id: symbol.identifier.interfaceLanguage) {
+            case .swift:      "'@available()' attribute"
+            case .objectiveC: "'API_AVAILABLE' macro"
+            default:          nil
+        }
+        var solutions: [Solution] = []
+        if isUnconditionallyAvailable {
+            if let inSourceAttributeDescription {
+                solutions.append(Solution(
+                    summary: "Update wildcard \(inSourceAttributeDescription) with a deprecated version or unconditional deprecation",
+                    replacements: [/* Can't safely make replacements outside the range of the documentation comment*/]
+                ))
+            } else {
+                // Not sure what solution we can offer for unconditional available symbols in languages other than Swift and C-family languages.
+            }
+        } else {
+            let platformNamesDescription = availableDomainNames.sorted().map(\.singleQuoted).list(finalConjunction: .and)
+            if let inSourceAttributeDescription {
+                solutions.append(Solution(
+                    summary: "Add \(inSourceAttributeDescription)\(availableDomainNames.count > 1 ? "s" : "") marking \(platformNamesDescription) as deprecated API",
+                    replacements: [/* Can't safely make replacements outside the range of the documentation comment*/]
+                ))
+            }
+            solutions.append(Solution(
+                summary: "Add Available directive\(availableDomainNames.count > 1 ? "s" : "") marking \(platformNamesDescription) as deprecated only in documentation",
+                replacements: []
+            ))
+        }
+        
+        let range = deprecationSummaryDirective.range
+        engine.emit(
+            Problem(
+                diagnostic: Diagnostic(
+                    source: range?.source,
+                    severity: .warning,
+                    range: range,
+                    identifier: "DeprecationSummaryForAvailableSymbol",
+                    summary: "\(symbol.kind.displayName.lowercased().capitalizingFirstWord()) '\(symbol.names.title)' is \(shortAvailabilityDescription)",
+                    explanation: explanation,
+                    notes: notes
+                ),
+                possibleSolutions: solutions
+            )
+        )
+    }
 }
 
 private let directivesSupportedInDocumentationComments = [

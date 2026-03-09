@@ -166,6 +166,9 @@ follow in order to override an icon:
 > You can find all the possible identifier values for every valid icon kind in
 > the Open API [specification][1] for `theme-settings.json`.
 
+You can also specify a custom favicon for your documentation website by adding
+an optional `favicon.ico` file to the root of your documentation catalog.
+
 **Example**
 
 As a simple example, here is how you could update the icon used for articles in

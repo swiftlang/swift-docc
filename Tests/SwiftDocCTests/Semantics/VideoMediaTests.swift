@@ -11,7 +11,8 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class VideoMediaTests: XCTestCase {
     func testEmpty() async throws {

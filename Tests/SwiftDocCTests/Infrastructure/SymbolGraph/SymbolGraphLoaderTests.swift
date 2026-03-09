@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class SymbolGraphLoaderTests: XCTestCase {
     
@@ -347,7 +347,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                 "EBF"
             ],
             "names": {
-                "title": "EBF",
+                "title": "EBF"
             },
             "swiftExtension": {
                 "extendedModule": "A",
@@ -397,7 +397,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                 "Foo"
             ],
             "names": {
-                "title": "Foo",
+                "title": "Foo"
             },
             "accessLevel": "public",
             "availability" : [
@@ -547,7 +547,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                 "Foo"
             ],
             "names": {
-                "title": "Foo",
+                "title": "Foo"
             },
             "accessLevel": "public",
             "availability" : [
@@ -613,7 +613,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [
@@ -655,7 +655,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [
@@ -720,7 +720,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [
@@ -760,7 +760,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [
@@ -854,7 +854,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                 "Foo"
             ],
             "names": {
-                "title": "Foo",
+                "title": "Foo"
             },
             "accessLevel": "public",
             "availability" : [
@@ -953,7 +953,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [{
@@ -991,7 +991,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [{
@@ -1104,7 +1104,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [{
@@ -1143,7 +1143,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [{
@@ -1167,7 +1167,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Bar"
                 ],
                 "names": {
-                    "title": "Bar",
+                    "title": "Bar"
                 },
                 "accessLevel": "public",
                 "availability" : [{
@@ -1282,7 +1282,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public"
             }
@@ -1474,7 +1474,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [
@@ -1516,7 +1516,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : [
@@ -1593,7 +1593,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "Foo"
                 ],
                 "names": {
-                    "title": "Foo",
+                    "title": "Foo"
                 },
                 "accessLevel": "public",
                 "availability" : []
@@ -1669,7 +1669,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                 "Foo"
             ],
             "names": {
-                "title": "Foo",
+                "title": "Foo"
             },
             "accessLevel": "public"
         }
@@ -1688,7 +1688,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                 "Foo"
             ],
             "names": {
-                "title": "Foo",
+                "title": "Foo"
             },
             "accessLevel": "public"
         },
@@ -1699,13 +1699,13 @@ class SymbolGraphLoaderTests: XCTestCase {
             },
             "identifier": {
                 "precise": "c:@F@Bar",
-                 "interfaceLanguage" : "objective-c",
+                 "interfaceLanguage" : "objective-c"
             },
             "pathComponents": [
                 "Bar"
             ],
             "names": {
-                "title": "Bar",
+                "title": "Bar"
             },
             "accessLevel": "public"
         }

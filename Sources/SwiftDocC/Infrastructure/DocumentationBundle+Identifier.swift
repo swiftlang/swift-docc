@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 extension DocumentationBundle {
     /// A stable and locally unique identifier for a collection of documentation inputs.

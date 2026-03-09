@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import Markdown
+private import Markdown
 
 /// Section of a document that can be linked to.
 public struct AnchorSection {

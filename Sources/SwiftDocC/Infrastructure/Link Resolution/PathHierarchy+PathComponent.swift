@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
+private import SymbolKit
+private import DocCCommon
 
 /// All known symbol kind identifiers.
 ///
@@ -78,12 +78,12 @@ extension PathHierarchy.PathParser {
     ///
     /// - Parameters:
     ///   - path: The documentation link string, containing a path and an optional fragment.
-    /// - Returns: A pair of the parsed path components and a flag that indicate if the documentation link is absolute or not.
-    static func parse(path: String) -> (components: [PathComponent], isAbsolute: Bool) {
-        guard !path.isEmpty else { return ([], true) }
+    /// - Returns: The parsed components, a flag that indicate if the documentation link is absolute or not, and the parsed trailing anchor (if any).
+    static func parse(path: String) -> (components: [PathComponent], isAbsolute: Bool, anchor: Substring?) {
+        guard !path.isEmpty else { return ([], true, nil) }
         
-        let (components, isAbsolute) = self.split(path)
-        return (components.map(Self.parse(pathComponent:)), isAbsolute)
+        let (components, isAbsolute, anchor) = self.split(path)
+        return (components.map(Self.parse(pathComponent:)), isAbsolute, anchor)
     }
     
     /// Parses a single path component string into a structured format.
@@ -155,8 +155,8 @@ extension PathHierarchy.PathParser {
     ///   isAbsolute: true
     /// )
     /// ```
-    static func split(_ path: String) -> (componentSubstrings: [Substring], isAbsolute: Bool) {
-        var components: [Substring] = self.split(path)
+    static func split(_ path: String) -> (componentSubstrings: [Substring], isAbsolute: Bool, anchor: Substring?) {
+        var (components, anchor) = split(path)
         
         // As an implementation detail, the way that the path parser identifies that "/ModuleName/SymbolName" is an absolute link, but that "/=(_:_:)" _isn't_
         // an absolute link is by inspecting the first component substring. In both these cases, that substring starts with a "/".
@@ -167,7 +167,7 @@ extension PathHierarchy.PathParser {
         let isAbsolute: Bool
         if path.first == PathComponentScanner.separator {
             guard let maybeModuleName = components.first?.dropFirst(), !maybeModuleName.isEmpty else {
-                return ([], true)
+                return ([], true, nil)
             }
             isAbsolute = maybeModuleName.isValidModuleName()
             assert(NodeURLGenerator.Path.documentationFolderName.isValidModuleName())
@@ -181,27 +181,23 @@ extension PathHierarchy.PathParser {
                       || name == NodeURLGenerator.Path.tutorialsFolderName
         }
         
-        return (components, isAbsolute)
+        return (components, isAbsolute, anchor)
     }
     
-    private static func split(_ path: String) -> [Substring] {
-        var result = [Substring]()
+    private static func split(_ path: String) -> (componentSubstrings: [Substring], anchor: Substring?) {
+        var components = [Substring]()
         var scanner = PathComponentScanner(path[...])
         
-        let anchorResult = scanner.scanAnchorComponentAtEnd()
+        let anchor = scanner.scanAnchorComponentAtEnd()
         
         while !scanner.isEmpty {
             let component = scanner.scanPathComponent()
             if !component.isEmpty {
-                result.append(component)
+                components.append(component)
             }
         }
-        
-        if let anchorResult{
-            result.append(anchorResult)
-        }
 
-        return result
+        return (components, anchor)
     }
     
     static func parseOperatorName(_ component: Substring) -> Substring? {

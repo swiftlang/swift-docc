@@ -559,7 +559,7 @@
           {
             "path" : "\/documentation\/test-bundle\/article2",
             "title" : "Article 2",
-            "type" : "symbol"
+            "type" : "article"
           },
           {
             "path" : "\/documentation\/test-bundle\/article3",
@@ -587,7 +587,7 @@
           {
             "path" : "\/documentation\/test-bundle\/article2",
             "title" : "Article 2",
-            "type" : "symbol"
+            "type" : "article"
           },
           {
             "title" : "Duplicated",
@@ -596,17 +596,17 @@
           {
             "path" : "\/documentation\/test-bundle\/article2",
             "title" : "Article 2",
-            "type" : "symbol"
+            "type" : "article"
           }
         ],
         "path" : "\/documentation\/test-bundle\/article",
         "title" : "My Cool Article",
-        "type" : "symbol"
+        "type" : "article"
       },
       {
         "path" : "\/documentation\/test-bundle\/article2",
         "title" : "Article 2",
-        "type" : "symbol"
+        "type" : "article"
       },
       {
         "path" : "\/documentation\/test-bundle\/default-code-listing-syntax",
@@ -702,7 +702,7 @@
                 ],
                 "path" : "\/documentation\/sidekit\/sideclass\/element\/protocol-implementations",
                 "title" : "Protocol Implementations",
-                "type" : "symbol"
+                "type" : "article"
               }
             ],
             "path" : "\/documentation\/sidekit\/sideclass\/element",
@@ -723,15 +723,13 @@
           {
             "children" : [
               {
-                "children" : [
-                  {
-                    "path" : "\/documentation\/sidekit\/sideprotocol\/func()-2dxqn",
-                    "title" : "func1()",
-                    "type" : "method"
-                  }
-                ],
                 "title" : "SideProtocol Implementations",
                 "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/sidekit\/sideprotocol\/func()-2dxqn",
+                "title" : "func1()",
+                "type" : "method"
               }
             ],
             "path" : "\/documentation\/sidekit\/sideprotocol\/func()",

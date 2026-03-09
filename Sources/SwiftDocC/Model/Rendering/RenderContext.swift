@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SymbolKit
+private import SymbolKit
 
 /// A context object that pre-renders commonly used pieces of content.
 ///
@@ -61,7 +61,7 @@ public struct RenderContext {
             )
         }
         
-        #if os(macOS) || os(iOS) || os(Android) || os(Windows) || os(FreeBSD)
+        #if os(macOS) || os(iOS) || os(Android) || os(Windows) || os(FreeBSD) || os(OpenBSD)
         // Concurrently render content on macOS/iOS, Windows & Android
         let results: [(reference: ResolvedTopicReference, content: RenderReferenceStore.TopicContent)] = references.concurrentPerform { reference, results in
             results.append((reference, renderContentFor(reference)))
@@ -72,8 +72,8 @@ public struct RenderContext {
         
         #elseif os(Linux)
         // Serially render on Linux
-        references.forEach {
-            topics[$0] = renderContentFor($0)
+        for reference in references {
+            topics[reference] = renderContentFor(reference)
         }
         #else
         #error("Unexpected platform.")

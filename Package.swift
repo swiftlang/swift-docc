@@ -2,7 +2,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,15 +12,29 @@
 import PackageDescription
 import class Foundation.ProcessInfo
 
-let swiftSettings: [SwiftSetting] = [
-    .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
+func swiftSettings(_ languageMode: SwiftLanguageMode) -> [SwiftSetting] {
+    var settings: [SwiftSetting] = [
+        .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
+        
+        .swiftLanguageMode(languageMode),
+        
+        .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
+        .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
+    ]
     
-    .swiftLanguageMode(.v5),
+    // Some upcoming language features are enabled by default in the Swift 6 language mode and warn if they're redundantly explicitly enabled.
     
-    .enableUpcomingFeature("ConciseMagicFile"), // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
-    .enableUpcomingFeature("ExistentialAny"), // SE-0335: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0335-existential-any.md
-    .enableUpcomingFeature("InternalImportsByDefault"), // SE-0409: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0409-access-level-on-imports.md
-]
+    switch languageMode {
+    case .v4, .v4_2, .v5:
+        settings.append(
+            .enableUpcomingFeature("ConciseMagicFile") // SE-0274: https://github.com/swiftlang/swift-evolution/blob/main/proposals/0274-magic-file.md
+        )
+    default:
+        break
+    }
+    
+    return settings
+}
 
 let package = Package(
     name: "SwiftDocC",
@@ -44,20 +58,21 @@ let package = Package(
             name: "SwiftDocC",
             dependencies: [
                 .target(name: "DocCCommon"),
+                .target(name: "DocCHTML"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
                 .product(name: "Crypto", package: "swift-crypto"),
             ],
             exclude: ["CMakeLists.txt"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
         .testTarget(
             name: "SwiftDocCTests",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
@@ -65,11 +80,11 @@ let package = Package(
                 .copy("Converter/Converter Fixtures"),
                 .copy("Rendering/Rendering Fixtures"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
         // Command-line tool library
         .target(
-            name: "SwiftDocCUtilities",
+            name: "DocCCommandLine",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
@@ -77,71 +92,94 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
             exclude: ["CMakeLists.txt"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
         .testTarget(
-            name: "SwiftDocCUtilitiesTests",
+            name: "DocCCommandLineTests",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
             resources: [
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
-        
+
         // Test utility library
         .target(
-            name: "SwiftDocCTestUtilities",
+            name: "DocCTestUtilities",
             dependencies: [
                 .target(name: "SwiftDocC"),
                 .target(name: "DocCCommon"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
 
         // Command-line tool
         .executableTarget(
             name: "docc",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             exclude: ["CMakeLists.txt"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
-        
+
         // A few common types and core functionality that's useable by all other targets.
         .target(
             name: "DocCCommon",
             dependencies: [
                 // This target shouldn't have any local dependencies so that all other targets can depend on it.
-                // We can add dependencies on SymbolKit and Markdown here but they're not needed yet.
+                // Dependencies on SymbolKit and Markdown are find to add if they're needed for any functionality.
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
-            swiftSettings: [.swiftLanguageMode(.v6)]
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v6)
         ),
-        
+
         .testTarget(
             name: "DocCCommonTests",
             dependencies: [
                 .target(name: "DocCCommon"),
-                .target(name: "SwiftDocCTestUtilities"),
+                .target(name: "DocCTestUtilities"),
             ],
-            swiftSettings: [.swiftLanguageMode(.v6)]
+            swiftSettings: swiftSettings(.v6)
         ),
 
-        // Test app for SwiftDocCUtilities
+        .target(
+            name: "DocCHTML",
+            dependencies: [
+                .target(name: "DocCCommon"),
+                .product(name: "Markdown", package: "swift-markdown"),
+                .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v6)
+        ),
+        .testTarget(
+            name: "DocCHTMLTests",
+            dependencies: [
+                .target(name: "DocCHTML"),
+                .target(name: "SwiftDocC"),
+                .product(name: "Markdown", package: "swift-markdown"),
+                .target(name: "DocCTestUtilities"),
+            ],
+            swiftSettings: swiftSettings(.v6)
+        ),
+
+        // Test app for DocCCommandLine
         .executableTarget(
             name: "signal-test-app",
             dependencies: [
-                .target(name: "SwiftDocCUtilities"),
+                .target(name: "DocCCommandLine"),
             ],
             path: "Tests/signal-test-app",
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
 
         .executableTarget(
@@ -150,7 +188,7 @@ let package = Package(
                 .target(name: "SwiftDocC"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings(.v5)
         ),
     ]
 )
@@ -161,7 +199,7 @@ let package = Package(
 if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
     // Building standalone, so fetch all dependencies remotely.
     package.dependencies += [
-        .package(url: "https://github.com/apple/swift-nio.git", from: "2.53.0"),
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.92.2"),
         .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
         .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),

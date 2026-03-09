@@ -13,6 +13,8 @@ import Markdown
 @testable import SwiftDocC
 import SymbolKit
 import XCTest
+import DocCTestUtilities
+import DocCCommon
 
 class DocumentationNodeTests: XCTestCase {
     func testH4AndUpAnchorSections() throws {

@@ -9,7 +9,8 @@
 */
 
 public import Foundation
-import Crypto
+private import Crypto
+import DocCCommon
 
 /**
  A `NavigatorIndex` contains all the necessary information to display the data inside a navigator.
@@ -296,9 +297,8 @@ public class NavigatorIndex {
         case container = 254
         case groupMarker = 255 // UInt8.max
                 
-        /// Initialize a page type from a `role` and a `symbolKind` returning the Symbol type.
+        /// Initialize a page type from a `symbolKind` returning the symbol type.
         init(symbolKind: String) {
-            // Prioritize the SymbolKind first
             switch symbolKind.lowercased() {
             case "module": self = .framework
             case "cl", "class": self = .class
@@ -321,12 +321,12 @@ public class NavigatorIndex {
             case "enumsub", "structsub", "instsub", "intfsub", "subscript": self = .subscript
             case "enumcm", "structcm", "clm", "intfcm", "type.method": self = .typeMethod
             case "httpget", "httpput", "httppost", "httppatch", "httpdelete": self = .httpRequest
-            case "dict": self = .dictionarySymbol
+            case "dict", "dictionary": self = .dictionarySymbol
             case "namespace": self = .namespace
             default: self = .symbol
             }
         }
-        
+        /// Initialize a page type from a `role` returning the document type.
         init(role: String) {
             switch role.lowercased() {
             case "symbol", "containersymbol": self = .symbol
@@ -335,7 +335,7 @@ public class NavigatorIndex {
             case "pseudosymbol": self = .symbol
             case "pseudocollection": self = .framework
             case "collection": self = .framework
-            case "collectiongroup": self = .symbol
+            case "collectiongroup": self = .article
             case "article": self = .article
             case "samplecode": self = .sampleCode
             default: self = .article
@@ -797,8 +797,6 @@ extension NavigatorIndex {
             // Process the children
             var children = [Identifier]()
             for (index, child) in renderNode.navigatorChildren(for: traits).enumerated() {
-                let groupIdentifier: Identifier?
-                
                 if let title = child.name {
                     let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
                     
@@ -824,10 +822,6 @@ extension NavigatorIndex {
                     
                     identifierToNode[identifier] = navigatorGroup
                     children.append(identifier)
-                    
-                    groupIdentifier = identifier
-                } else {
-                    groupIdentifier = nil
                 }
                 
                 let identifiers = child.references.map { reference in
@@ -838,14 +832,8 @@ extension NavigatorIndex {
                     )
                 }
                 
-                var nestedChildren = [Identifier]()
                 for identifier in identifiers {
-                    if child.referencesAreNested {
-                        nestedChildren.append(identifier)
-                    } else {
-                        children.append(identifier)
-                    }
-                    
+                    children.append(identifier)
                     // If a topic has been already curated and has a valid node processed, flag it as multi-curated.
                     if curatedIdentifiers.contains(identifier) && pendingUncuratedReferences.contains(identifier) {
                         multiCurated[identifier] = identifierToNode[identifier]
@@ -854,10 +842,6 @@ extension NavigatorIndex {
                     } else { // Otherwise keep track for later.
                         curatedIdentifiers.insert(identifier)
                     }
-                }
-                
-                if let groupIdentifier, !nestedChildren.isEmpty {
-                    identifierToChildren[groupIdentifier] = nestedChildren
                 }
             }
             
@@ -1005,7 +989,7 @@ extension NavigatorIndex {
             if sortRootChildrenByName {
                 root.children.sort(by: \.item.title)
                 if groupByLanguage {
-                    root.children.forEach { (languageGroup) in
+                    for languageGroup in root.children {
                         languageGroup.children.sort(by: \.item.title)
                     }
                 }
@@ -1023,9 +1007,11 @@ extension NavigatorIndex {
                                                                            path: ""),
                                                                            bundleIdentifier: bundleIdentifier)
                     languageMaskToNode[InterfaceLanguage.any.mask] = otherNode
-                    fallouts.forEach { (node) in
-                        root.children.removeAll(where: { $0 == node})
-                        node.children.forEach { otherNode.add(child: $0) }
+                    for node in fallouts {
+                        root.children.removeAll(where: { $0 == node })
+                        for child in node.children {
+                            otherNode.add(child: child)
+                        }
                     }
                     root.add(child: otherNode)
                 }
@@ -1346,7 +1332,7 @@ extension LMDB.Database {
     */
     func put(records: [NavigatorIndex.Builder.Record], flags: WriteFlags = []) throws {
         try LMDB.Transaction(environment: environment).run { database in
-            try records.forEach { record in
+            for record in records {
                 do {
                     try database.put(key: record.nodeMapping.0, value: record.nodeMapping.1, in: self, flags: flags)
                     try database.put(key: record.curationMapping.0, value: record.curationMapping.1, in: self, flags: flags)

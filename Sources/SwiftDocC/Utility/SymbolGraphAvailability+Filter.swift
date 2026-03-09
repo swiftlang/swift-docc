@@ -8,7 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
 import SymbolKit
 
 extension SymbolGraph.Symbol.Availability {
