@@ -10,7 +10,7 @@
         "schemas": {
             "Metadata": {
                 "type": "object",
-                "description": "maps to Maps to https://github.com/swiftlang/swift-docc/blob/main/Sources/SwiftDocC/Model/BuildMetadata.swift#L14",
+                "description": "Maps to https://github.com/swiftlang/swift-docc/blob/80386fa7cb3edd4c13c7a973a4969f2f2411ecd4/Sources/SwiftDocC/Model/BuildMetadata.swift#L14",
                 "required": [
                     "bundleDisplayName",
                     "bundleID",
