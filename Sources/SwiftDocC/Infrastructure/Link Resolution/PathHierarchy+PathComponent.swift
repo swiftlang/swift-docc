@@ -209,7 +209,6 @@ extension PathHierarchy.PathParser {
 private struct PathComponentScanner: ~Copyable {
     private var remaining: Substring
     
-    @usableFromInline 
     static let separator: Character = "/"
     private static let anchorSeparator: Character = "#"
     
