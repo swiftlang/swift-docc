@@ -316,7 +316,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Set the Intro's background image to the video's poster image.
         section.backgroundImage = intro.video?.poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
-            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source) }
+            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source, altText: $0.altText) }
         
         return section
     }
@@ -800,7 +800,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
        
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
-                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
                 return renderReference.map {
                     TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
                 }
@@ -1342,7 +1342,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
-                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
                 return renderReference.map {
                     TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
                 }

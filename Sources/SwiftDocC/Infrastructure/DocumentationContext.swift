@@ -927,20 +927,6 @@ public class DocumentationContext {
             bundle: inputs
         )
 
-        // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
-        if let foundDocumentationExtension,
-            foundDocumentationExtension.value.deprecationSummary != nil,
-            (updatedNode.semantic as? Symbol)?.isDeprecated == false,
-            let articleMarkup = foundDocumentationExtension.value.markup,
-            let symbol = updatedNode.unifiedSymbol?.documentedSymbol
-        {
-            let directive = articleMarkup.children.mapFirst { child -> BlockDirective? in
-                guard let directive = child as? BlockDirective, directive.name == DeprecationSummary.directiveName else { return nil }
-                return directive
-            }
-            diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: foundDocumentationExtension.source, severity: .warning, range: directive?.range, identifier: "org.swift.docc.DeprecationSummaryForAvailableSymbol", summary: "\(symbol.absolutePath.singleQuoted) isn't unconditionally deprecated"), possibleSolutions: []))
-        }
-
         return updatedNode
     }
     
@@ -2207,8 +2193,11 @@ public class DocumentationContext {
             referenceIndex[reference.absoluteString] = reference
         }
         
+        linkResolver.localResolver.addAnchorForSymbols(localCache: documentationCache)
+        
         try shouldContinueRegistration()
-        var allCuratedReferences = try crawlSymbolCuration(in: linkResolver.localResolver.topLevelSymbols())
+        let topLevelSymbols = linkResolver.localResolver.topLevelSymbols()
+        var allCuratedReferences = try crawlSymbolCuration(in: topLevelSymbols)
         
         // Store the list of manually curated references if doc coverage is on.
         if configuration.experimentalCoverageConfiguration.shouldStoreManuallyCuratedReferences {
@@ -2223,7 +2212,7 @@ public class DocumentationContext {
         }
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
-        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), initial: allCuratedReferences)
+        allCuratedReferences = try crawlSymbolCuration(in: Set(automaticallyCurated.map(\.symbol)).subtracting(topLevelSymbols), initial: allCuratedReferences)
         
         // Automatically curate articles that haven't been manually curated
         // Article curation is only done automatically if there is only one root module
@@ -2243,8 +2232,6 @@ public class DocumentationContext {
 
         // Emit warnings for any remaining uncurated files.
         warnAboutArticlesOutsideTheDocumentationHierarchy()
-        
-        linkResolver.localResolver.addAnchorForSymbols(localCache: documentationCache)
         
         // Fifth, resolve links in nodes that are added solely via curation
         preResolveExternalLinks(references: Array(allCuratedReferences))
@@ -2455,7 +2442,7 @@ public class DocumentationContext {
     ///   - initial: A list of references to skip when crawling.
     /// - Returns: The references of all the symbols that were curated.
     @discardableResult
-    func crawlSymbolCuration(in references: [ResolvedTopicReference], initial: Set<ResolvedTopicReference> = []) throws -> Set<ResolvedTopicReference> {
+    func crawlSymbolCuration(in references: some Collection<ResolvedTopicReference>, initial: Set<ResolvedTopicReference> = []) throws -> Set<ResolvedTopicReference> {
         let signpostHandle = signposter.beginInterval("Curate symbols", id: signposter.makeSignpostID())
         defer {
             signposter.endInterval("Curate symbols", signpostHandle)

@@ -3079,7 +3079,7 @@ let expected = """
                 XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
                     "'NotFoundSymbol' doesn't exist at '/Root'",
                     "'NotFoundArticle' doesn't exist at '/Root'",
-                    "'NotFoundHeading' doesn't exist at '/Root'",
+                    "'NotFoundHeading' is not an anchor of '/Root'",
                 ], withExplicitTechnologyRoot ? "with @TechnologyRoot" : "with synthesized root")
                 
                 let rootReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -3124,7 +3124,7 @@ let expected = """
                 XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
                     "'NotFoundSymbol' doesn't exist at '/CatalogName'",
                     "'NotFoundArticle' doesn't exist at '/CatalogName'",
-                    "'NotFoundHeading' doesn't exist at '/CatalogName'",
+                    "'NotFoundHeading' is not an anchor of '/CatalogName'",
                 ], withExplicitTechnologyRoot ? "with @TechnologyRoot" : "with synthesized root")
                 
                 let rootReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -3168,7 +3168,7 @@ let expected = """
         
         XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
             "'NotFoundArticle' doesn't exist at '/CatalogName/Second'",
-            "'NotFoundHeading' doesn't exist at '/CatalogName/First'",
+            "'NotFoundHeading' is not an anchor of '/CatalogName/First'",
             "'NotFoundSymbol' doesn't exist at '/CatalogName/First'",
         ])
         
@@ -4150,11 +4150,11 @@ let expected = """
             # ``SideKit/SideClass``
             Abstract.
             ## Discussion
-            This is a link to <doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations>.
+            This is a link to <doc:/documentation/SideKit/SideClass/Element#Protocol-Implementations>.
             ## Topics
             ### Basics
-             - <doc:documentation/SideKit/SideClass/Element/Protocol-Implementations>
-             - <doc:Element/Protocol-Implementations>
+             - <doc:documentation/SideKit/SideClass/Element#Protocol-Implementations>
+             - <doc:Element#Protocol-Implementations>
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 

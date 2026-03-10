@@ -91,6 +91,11 @@ public class DocumentationContentRenderer {
             return .init(defaultValue: nil)
         }
         
+        if let customDisplayName = node.metadata?.displayName?.name {
+            // Prefer the custom display name if there is one for this symbol.
+            return .init(defaultValue: [.init(text: customDisplayName, kind: .text)])
+        }
+        
         return VariantCollection<[DeclarationRenderSection.Token]?>(
             from: symbol.navigatorVariants,
             symbol.titleVariants

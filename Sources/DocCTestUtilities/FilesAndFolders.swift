@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,6 +10,7 @@
 
 public import Foundation
 public import SwiftDocC
+public import SymbolKit
 import DocCCommon
 
 /*
@@ -57,6 +58,11 @@ public struct Folder: File {
         self.content = content
     }
     
+    public init(name: String, @FileBuilder content: () -> [any File]) {
+        self.name = name
+        self.content = content()
+    }
+    
     public let name: String
 
     /// The files and sub folders that this folder contains.
@@ -73,6 +79,51 @@ public struct Folder: File {
         }
     }
 }
+
+@resultBuilder
+public struct FileBuilder {
+    public static func buildBlock(_ components: [any File]...) -> [any File] {
+        components.flatMap { $0 }
+    }
+    public static func buildExpression(_ expression: any File) -> [any File] {
+        [expression]
+    }
+    
+    /// Support `if` statements without an `else` statement.
+    public static func buildOptional(_ component: [any File]?) -> [any File] { component ?? [] }
+    
+    /// Support `if-else` and `switch` statements.
+    public static func buildEither(first  component: [any File]) -> [any File] { component }
+    public static func buildEither(second component: [any File]) -> [any File] { component }
+    
+    /// Support `for-in` loops
+    public static func buildArray(_ components: [[any File]]) -> [any File] {
+        components.flatMap { $0 }
+    }
+}
+
+@resultBuilder
+package struct FolderBuilder {
+    public static func buildBlock(_ components: [Folder]...) -> [Folder] {
+        components.flatMap { $0 }
+    }
+    public static func buildExpression(_ expression: Folder) -> [Folder] {
+        [expression]
+    }
+    
+    /// Support `if` statements without an `else` statement.
+    public static func buildOptional(_ component: [Folder]?) -> [Folder] { component ?? [] }
+    
+    /// Support `if-else` and `switch` statements.
+    public static func buildEither(first  component: [Folder]) -> [Folder] { component }
+    public static func buildEither(second component: [Folder]) -> [Folder] { component }
+    
+    /// Support `for-in` loops
+    public static func buildArray(_ components: [[Folder]]) -> [Folder] {
+        components.flatMap { $0 }
+    }
+}
+
 
 extension Folder {
     /// Returns a flat list of a folder's recursive listing for testing purposes.
@@ -153,13 +204,41 @@ public struct TextFile: File, DataRepresentable {
         self.utf8Content = utf8Content
     }
     
+    public init(name: String, @TextFileBuilder _ utf8Content: () -> String) {
+        self.name = name
+        self.utf8Content = utf8Content()
+    }
+    
     public let name: String
 
     /// The UTF8 content of the file.
     public let utf8Content: String
 
     public func data() throws -> Data {
-        return utf8Content.data(using: .utf8)!
+        return Data(utf8Content.utf8)
+    }
+}
+
+@resultBuilder
+public struct TextFileBuilder {
+    public static func buildBlock(_ components: String...) -> String {
+        components.joined(separator: "\n")
+    }
+    /// Support building files from integers and other values
+    public static func buildExpression(_ expression: any CustomStringConvertible) -> String {
+        expression.description
+    }
+    
+    /// Support `if` statements without an `else` statement.
+    public static func buildOptional(_ component: String?) -> String { component ?? "" }
+    
+    /// Support `if-else` and `switch` statements.
+    public static func buildEither(first  component: String) -> String { component }
+    public static func buildEither(second component: String) -> String { component }
+    
+    /// Support `for-in` loops
+    public static func buildArray(_ components: [String]) -> String {
+        components.joined(separator: "\n")
     }
 }
 
@@ -168,6 +247,11 @@ public struct JSONFile<Content: Codable>: File, DataRepresentable {
     public init(name: String, content: Content) {
         self.name = name
         self.content = content
+    }
+    
+    public init(name: String? = nil, symbolGraph: SymbolGraph) where Content == SymbolGraph {
+        self.name = name ?? "\(symbolGraph.module.name).symbols.json"
+        self.content = symbolGraph
     }
     
     public let name: String

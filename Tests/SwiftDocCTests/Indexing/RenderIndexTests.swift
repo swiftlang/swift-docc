@@ -707,7 +707,7 @@ final class RenderIndexTests: XCTestCase {
                   },
                   "references" : {
                     "plus.svg" : {
-                      "alt" : null,
+                      "alt" : "A plus icon.",
                       "type" : "image",
                       "identifier" : "plus.svg",
                       "variants" : [
