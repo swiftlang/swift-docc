@@ -35,7 +35,7 @@ A ``Diagnostic`` has two places for textual information: a shorter ``Diagnostic/
 
 > Important: 
 > Not all contexts that display DocC diagnostics include the `Diagnostic/explanation`. 
-> If you only include some critical information in the `explanation` it's possible that the some developers won't see that information.
+> If you only include some critical information in the `explanation` it's possible that some developers won't see that information.
 
 DocC bases its recommendation for how to phrase diagnostic summaries on [Swift's contributor documentation about diagnostics](https://github.com/swiftlang/swift/blob/main/docs/Diagnostics.md).
 Following these recommendations help your new diagnostic fit in with both DocC's other diagnostic and with the Swift compiler's diagnostics. 
@@ -48,7 +48,7 @@ Following these recommendations help your new diagnostic fit in with both DocC's
   - "Organizing 'NAME' under itself forms a cycle"
 
 - Include information that shows that DocC understands the documentation. 
-  For example, referring to "level-2 heading 'Some Heading'" or "instance method 'someMethod()'" is usually unnecessary but the extra specificity can both help the developer pinpoint and reason about the issue and can increase implicit trust in the correctness of diagnostic.
+  For example, referring to "level-2 heading 'Some Heading'" or "instance method 'someMethod()'" is usually unnecessary but the extra specificity can both help the developer pinpoint and reason about the issue and can increase implicit trust in the correctness of the diagnostic.
   If there is a single plausible fix or likely intended meaning, include that in the summary using a "did you mean...?" phrase, even if there's a solution for it.
   For example:
   ```diff
@@ -98,7 +98,7 @@ and there aren't any specific patterns or common phrasings to follow.
 When writing the explanation for your diagnostic, it can be good to imagine yourself receiving the diagnostic and think about what questions you have and try to preemptively answer those.
 For example, consider the five questions below. Their answers make for very good explanations to their respective diagnostics. 
 
-> Question: Why do I need a `@Tutorials` page when after I add a tutorial? 
+> Question: Why do I need a `@Tutorials` page after I add a tutorial? 
 > 
 > **Answer** \
 > `@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the hierarchy and recommended reading order of your documentation.
@@ -119,7 +119,7 @@ For example, consider the five questions below. Their answers make for very good
 > Links in a 'Topics' section organize your documentation into hierarchy. Pages can appear in more than one place but the hierarchy should remain a tree. 
 > If this link contributed to the documentation hierarchy it would introduce this cycle: `<ASCII_DIAGRAM>`
 
-> Question: Why can't I specify `@TechologyRoot` for this symbol?  
+> Question: Why can't I specify `@TechnologyRoot` for this symbol?  
 >
 > **Answer** \
 > Symbols inherently belong to a module (in this case 'MODULE_NAME') which is already the root of the documentation hierarchy. 
@@ -133,7 +133,7 @@ then it's possible that this diagnostic doesn't need an `explanation` and that i
 ### Provide solutions
 
 If you can identify one or more possible actions that would address the issue, 
-it can save the developer a lot of time if they can pick and chose from a list of suggested solutions rather than come up with and apply the fix by hand themselves.
+it can save the developer a lot of time if they can pick and choose from a list of suggested solutions rather than come up with and apply the fix by hand themselves.
 That said, don't overwhelm the developer with far fetched or irrelevant solutions. 
 
 If the developer specified an unsupported value but DocC knows the list of all possible values (for example, the names of all image assets in the catalog or the names of all top-level symbols). 
@@ -178,7 +178,7 @@ but a developer may see them as a collection of snippet parameter issues.
 In this case you can specify a common ``Diagnostic/groupIdentifier`` for all these different diagnostics.
 This allows the developer to configure the severity of all these related diagnostics together.
 
-If you are refining an broad or less specific diagnostic into a collection of more specific diagnostics, 
+If you are refining a broad or less specific diagnostic into a collection of more specific diagnostics, 
 it _can_ make sense to use the old diagnostic identifier as the group identifier.
 This way, developers' custom severity configurations for the previous diagnostic identifier continues to apply to the collection of more specific diagnostics.
 
@@ -192,14 +192,14 @@ The more specific you can be with the diagnostic's `range`, the easier it will b
 For example:
 - A diagnostic about an unrecognized or misspelled directive should specify a `range` that's only the name portion of the directive markup, rather than the directive's full range which could span many lines.
 - A diagnostic about an unsupported value for a known directive parameter should specify a `range` that's only the markup for that value, rather than the full range of directive parameters which would span many lines.
-- A diagnostic about a long symbol link where some link components resolve but not the full link should specify a `range` that's the first link component that DocC can't resolve, rather than the full range the link. 
-- A diagnostic about a symbol link with unrecognized disambiguation should specify a `range` that's only the unrecognized disambiguation, rather than the range that link component.
+- A diagnostic about a long symbol link where some link components resolve but not the full link should specify a `range` that's the first link component that DocC can't resolve, rather than the full range of the link. 
+- A diagnostic about a symbol link with unrecognized disambiguation should specify a `range` that's only the unrecognized disambiguation, rather than the range of that link component.
 
 
-Diagnostics about duplicate or conflicting information (for example: a parameter being documented twice, duplicate directives or directive parameters, or multiple documentation extension for the same symbol) also have _another_ location to specify.
+Diagnostics about duplicate or conflicting information (for example: a parameter being documented twice, duplicate directives or directive parameters, or multiple documentation extensions for the same symbol) also have _another_ location to specify.
 In these cases; add a ``DiagnosticNote``---which refers to the other markup---to the diagnostic.
 
-If there's an inherit order between the duplicate information---primarily if one appears before the other in the same file---use a "... previously ... here" phrasing for the note.
+If there's an inherent order to the duplicate information---primarily if one appears before the other in the same file---use a "... previously ... here" phrasing for the note.
 If there's no order between the duplicate or conflicting information---for example if the information comes from different files---use a "... also ... here" phrasing instead for the note.
 In a few exceptions there may be other "... here" phrases that read better. Use your best judgement.
 For example:
