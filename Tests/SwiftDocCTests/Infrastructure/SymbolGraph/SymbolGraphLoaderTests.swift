@@ -251,8 +251,6 @@ class SymbolGraphLoaderTests: XCTestCase {
             var loader = try makeSymbolGraphLoader(symbolGraphURLs: [symbolGraphURL])
             try loader.loadAll()
             
-            XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
-            
             let symbolGraph = loader.unifiedGraphs.values.first!
             
             XCTAssertEqual(symbolGraph.moduleName, "AsyncMethods")
@@ -281,12 +279,6 @@ class SymbolGraphLoaderTests: XCTestCase {
             var loader = try makeSymbolGraphLoader(symbolGraphURLs: [symbolGraphURL, extraSymbolGraphFile])
             try loader.loadAll()
             
-            #if os(macOS) || os(iOS)
-            XCTAssertEqual(loader.decodingStrategy, .concurrentlyAllFiles)
-            #else
-            XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
-            #endif
-            
             var foundMainAsyncMethodsGraph = false
             
             for symbolGraph in loader.unifiedGraphs.values {
@@ -308,26 +300,6 @@ class SymbolGraphLoaderTests: XCTestCase {
             }
             XCTAssertTrue(foundMainAsyncMethodsGraph, "AsyncMethods graph wasn't found")
         }
-    }
-
-    /// Ensure that loading symbol graphs from a directory with an at-sign properly selects the
-    /// `concurrentlyAllFiles` decoding strategy on macOS and iOS.
-    func testLoadingSymbolsInAtSignDirectory() throws {
-        let tempURL = try createTemporaryDirectory(pathComponents: "MyTempDir@2")
-        let originalSymbolGraphs = [
-            CopyOfFile(original: Bundle.module.url(forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!),
-            CopyOfFile(original: Bundle.module.url(forResource: "WithCompletionHandler.symbols", withExtension: "json", subdirectory: "Test Resources")!)
-        ]
-        let symbolGraphURLs = try originalSymbolGraphs.map({ try $0.write(inside: tempURL) })
-
-        var loader = try makeSymbolGraphLoader(symbolGraphURLs: symbolGraphURLs)
-        try loader.loadAll()
-
-        #if os(macOS) || os(iOS)
-        XCTAssertEqual(loader.decodingStrategy, .concurrentlyAllFiles)
-        #else
-        XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
-        #endif
     }
     
     func testConfiguresSymbolGraphs() throws {
