@@ -1774,7 +1774,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             XCTFail("Did not find availability for symbol 'c:@F@Bar'")
             return
         }
-        // Verify we dont add platforms to symbols that are not in that platform SGF. Even if the
+        // Verify we don't add platforms to symbols that are not in that platform SGF. Even if the
         // platform is part of the default availability.
         XCTAssertEqual(availability.count, 3)
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
