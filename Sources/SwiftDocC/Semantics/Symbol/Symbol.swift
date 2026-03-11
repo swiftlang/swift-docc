@@ -235,7 +235,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     }
     
     /// Whether the symbol is deprecated, in each language variant the symbol is available in.
-    public var isDeprecatedVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
+    public var isDeprecatedVariants = DocumentationDataVariants<Bool>()
     
     /// Whether the symbol is declared as an SPI, in each language variant the symbol is available in.
     public var isSPIVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
@@ -706,7 +706,7 @@ extension Symbol {
     
     /// Whether the first variant of the symbol is deprecated.
     public var isDeprecated: Bool {
-        get { isDeprecatedVariants.firstValue! }
+        get { isDeprecatedVariants.firstValue ?? false }
         set { isDeprecatedVariants.firstValue = newValue }
     }
     
