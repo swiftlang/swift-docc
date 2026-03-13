@@ -194,6 +194,31 @@ package func makeSymbolKind(_ kindID: SymbolGraph.Symbol.KindIdentifier) -> Symb
     return SymbolGraph.Symbol.Kind(parsedIdentifier: kindID, displayName: documentationNodeKind.name)
 }
 
+package extension SymbolGraph.Symbol.Availability.AvailabilityItem {
+    init(
+        domainName: String,
+        introduced: SymbolGraph.SemanticVersion?,
+        deprecated: SymbolGraph.SemanticVersion?,
+        obsoleted: SymbolGraph.SemanticVersion? = nil,
+        message: String? = nil,
+        renamed: String? = nil,
+        isUnconditionallyDeprecated:  Bool = false,
+        isUnconditionallyUnavailable: Bool = false,
+        willEventuallyBeDeprecated:   Bool = false
+    ) {
+        self.init(
+            domain: .init(rawValue: domainName),
+            introducedVersion: introduced,
+            deprecatedVersion: deprecated,
+            obsoletedVersion: obsoleted,
+            message: message,
+            renamed: renamed,
+            isUnconditionallyDeprecated: isUnconditionallyDeprecated,
+            isUnconditionallyUnavailable: isUnconditionallyUnavailable,
+            willEventuallyBeDeprecated: willEventuallyBeDeprecated
+        )
+    }
+}
     
 // MARK: Constants
 
