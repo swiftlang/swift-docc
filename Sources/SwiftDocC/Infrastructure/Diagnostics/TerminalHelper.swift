@@ -9,13 +9,13 @@
 */
 
 #if canImport(Darwin)
-import Darwin.C
+private import Darwin.C
 #elseif canImport(Glibc)
-import Glibc
+private import Glibc
 #elseif canImport(Musl)
-import Musl
+private import Musl
 #elseif os(Windows)
-import CRT
+private import CRT
 #endif
 
 enum TerminalHelper {

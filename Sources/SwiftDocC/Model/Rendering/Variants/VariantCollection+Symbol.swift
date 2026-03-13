@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 // Initializers for creating variant collections from symbol values.
 
 public extension VariantCollection {

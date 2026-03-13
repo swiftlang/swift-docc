@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A semantic version-number triplet with major, minor, and patch components.
 public struct VersionTriplet: Equatable, Comparable {
     /// Returns a Boolean value that indicates whether the first version is less than the second version.

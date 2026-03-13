@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A convenience structure to represent an external identifier of a symbol.
 public enum ExternalIdentifier {
     

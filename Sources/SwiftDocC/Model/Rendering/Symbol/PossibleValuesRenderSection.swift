@@ -29,9 +29,9 @@ public struct PossibleValuesRenderSection: RenderSection, Equatable {
     
     public var kind: RenderSectionKind = .possibleValues
     /// The title for the section, `nil` by default.
-    public let title: String?
+    public var title: String?
     /// The list of named values.
-    public let values: [NamedValue]
+    public var values: [NamedValue]
     
     /// Creates a new possible values section.
     /// - Parameter title: The section title.

@@ -12,8 +12,10 @@ import Foundation
 
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 @testable import SymbolKit
+import Markdown
+import DocCCommon
 
 class DoxygenTests: XCTestCase {
     func testDoxygenDiscussionAndNote() async throws {
@@ -96,7 +98,7 @@ class DoxygenTests: XCTestCase {
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
 
         XCTAssertEqual(symbol.abstract?.format(), "This is an abstract.")
-        XCTAssertEqual(symbol.discussion?.content.map { $0.format() }, [
+        XCTAssertEqual(symbol.discussion?.content.map { $0.format().trimmingCharacters(in: .whitespacesAndNewlines) }, [
             #"\abstract This is description with abstract."#,
             #"\discussion This is a discussion linking to ``doc://unit-test/documentation/ModuleName/AnotherClass`` and ``doc://unit-test/documentation/ModuleName/AnotherClass/prop``."#,
             #"\note This is a note linking to ``doc://unit-test/documentation/ModuleName/Class3`` and ``Class3/prop2``."#

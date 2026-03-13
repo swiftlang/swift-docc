@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import DocCCommon
 
 class MentionsRenderSectionTests: XCTestCase {
     /// Verify that the Mentioned In section is present when a symbol is mentioned,

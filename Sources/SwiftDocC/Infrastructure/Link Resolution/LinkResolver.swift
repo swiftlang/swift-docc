@@ -151,7 +151,7 @@ private final class FallbackResolverBasedLinkResolver {
             bundleID: referenceBundleID,
             path: unresolvedReference.path.prependingLeadingSlash,
             fragment: unresolvedReference.topicURL.components.fragment,
-            sourceLanguages: parent.sourceLanguages
+            sourceLanguages: parent._sourceLanguages
         )
         allCandidateURLs.append(alreadyResolved.url)
         

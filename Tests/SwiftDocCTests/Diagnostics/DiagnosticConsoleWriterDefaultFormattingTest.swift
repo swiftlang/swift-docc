@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import XCTest
 import Markdown
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
 
 class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
@@ -55,21 +55,6 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             try? consumer.flush()
             XCTAssertEqual(logger.output, """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
-            \(explanation)
-            \(expectedPath)
-            
-            """)
-        }
-
-        do {
-            let logger = Logger()
-            let consumer = DiagnosticConsoleWriter(logger, highlight: true)
-            let diagnostic = Diagnostic(source: source, severity: .hint, range: range, identifier: identifier, summary: summary, explanation: explanation)
-            let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-            consumer.receive([problem])
-            try? consumer.flush()
-            XCTAssertEqual(logger.output, """
-            \u{001B}[1;39mnotice: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
             

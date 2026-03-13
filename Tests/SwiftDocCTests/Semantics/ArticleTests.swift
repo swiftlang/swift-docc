@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import DocCCommon
 
 class ArticleTests: XCTestCase {
     func testValid() async throws {

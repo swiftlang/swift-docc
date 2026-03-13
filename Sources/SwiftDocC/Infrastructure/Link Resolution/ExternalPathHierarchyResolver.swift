@@ -9,8 +9,9 @@
 */
 
 import Foundation
-import SymbolKit
-import Markdown
+private import SymbolKit
+private import Markdown
+private import DocCCommon
 
 /// A class that resolves links to an already built documentation archives.
 final class ExternalPathHierarchyResolver {
@@ -192,7 +193,7 @@ extension LinkDestinationSummary {
             identifier: .init(referenceURL.absoluteString),
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
-            url: relativePresentationURL.absoluteString,
+            url: absolutePresentationURL?.absoluteString ?? relativePresentationURL.absoluteString,
             kind: kind,
             required: false,
             role: role,

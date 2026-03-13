@@ -10,6 +10,7 @@
 
 public import Foundation
 private import Markdown
+private import SymbolKit
 
 /// A reference resolver that launches and interactively communicates with another process or service to resolve links.
 ///
@@ -411,7 +412,10 @@ extension OutOfProcessReferenceResolver {
                 return .success( makeReference(for: cachedSummary) )
             }
             
-            let linkString = unresolvedReference.topicURL.url.withoutHostAndPortAndScheme().standardized.absoluteString
+            let linkString = String(
+                unresolvedReferenceString.dropFirst(6) // "doc://"
+                    .drop(while: { $0 != "/" })        // the known identifier (host component)
+            )
             let response: ResponseV2 = try longRunningProcess.sendAndWait(request: RequestV2.link(linkString))
             
             switch response {
@@ -514,7 +518,7 @@ private class LongRunningService: ExternalLinkResolving {
 /// This private class is only used by the ``OutOfProcessReferenceResolver`` and shouldn't be used for general communication with other processes.
 private class LongRunningProcess: ExternalLinkResolving {
     
-    #if os(macOS) || os(Linux) || os(Android) || os(FreeBSD)
+    #if os(macOS) || os(Linux) || os(Android) || os(FreeBSD) || os(OpenBSD)
     private let process: Process
     
     init(location: URL, errorOutputHandler: @escaping (String) -> Void) throws {

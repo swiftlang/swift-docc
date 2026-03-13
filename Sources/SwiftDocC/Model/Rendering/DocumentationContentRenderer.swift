@@ -10,7 +10,7 @@
 
 import Foundation
 import SymbolKit
-import Markdown
+private import Markdown
 
 public struct RenderReferenceDependencies {
     public var topicReferences = [ResolvedTopicReference]()
@@ -89,6 +89,11 @@ public class DocumentationContentRenderer {
     func navigatorFragments(for node: DocumentationNode) -> VariantCollection<[DeclarationRenderSection.Token]?> {
         guard let symbol = (node.semantic as? Symbol) else {
             return .init(defaultValue: nil)
+        }
+        
+        if let customDisplayName = node.metadata?.displayName?.name {
+            // Prefer the custom display name if there is one for this symbol.
+            return .init(defaultValue: [.init(text: customDisplayName, kind: .text)])
         }
         
         return VariantCollection<[DeclarationRenderSection.Token]?>(
@@ -337,7 +342,7 @@ public class DocumentationContentRenderer {
             let containerReference = ResolvedTopicReference(
                 bundleID: reference.bundleID,
                 path: reference.path,
-                sourceLanguages: reference.sourceLanguages
+                sourceLanguages: reference._sourceLanguages
             )
             abstractedNode = try? context.entity(with: containerReference)
         }

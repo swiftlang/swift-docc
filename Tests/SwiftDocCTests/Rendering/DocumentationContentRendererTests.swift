@@ -12,6 +12,7 @@ import XCTest
 import SymbolKit
 import Markdown
 @testable import SwiftDocC
+import DocCCommon
 
 class DocumentationContentRendererTests: XCTestCase {
     func testReplacesTypeIdentifierSubHeadingFragmentWithIdentifierForSwift() async throws {
@@ -155,7 +156,7 @@ private extension DocumentationContentRendererTests {
             sourceLanguage: .swift,
             availableSourceLanguages: [
                 .swift,
-                .init(id: DocumentationDataVariantsTrait.otherLanguage.interfaceLanguage!)
+                DocumentationDataVariantsTrait.otherLanguage.sourceLanguage!
             ],
             name: .symbol(name: ""),
             markup: Document(parsing: ""),

@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 extension Benchmark {
     /// An anchor sections hash metric produced off the given documentation context.

@@ -11,6 +11,7 @@
 import XCTest
 import Foundation
 @testable import SwiftDocC
+import DocCCommon
 
 class PresentationURLGeneratorTests: XCTestCase {
     func testInternalURLs() async throws {

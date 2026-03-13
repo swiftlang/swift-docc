@@ -11,6 +11,7 @@
 public import Foundation
 public import Markdown
 import SymbolKit
+private import DocCCommon
 
 /// A visitor which converts a semantic model into a render node.
 ///
@@ -72,7 +73,46 @@ public struct RenderNodeTranslator: SemanticVisitor {
         )
         return assetReference
     }
-    
+
+    /// Converts `@Available` directives to render availability items, including fallback platforms.
+    ///
+    /// For example, when iOS availability is specified, this also generates iPadOS and Mac Catalyst
+    /// availability items using the same version information.
+    private func renderAvailabilities(
+        from availabilities: [Metadata.Availability],
+        currentPlatforms: [String: PlatformVersion]?
+    ) -> [AvailabilityRenderItem] {
+        let platforms = availabilities.map { PlatformName(metadataPlatform: $0.platform) }
+
+        // Render availabilities for declared platforms
+        let declaredAvailabilities = zip(availabilities, platforms).compactMap { availability, platform -> AvailabilityRenderItem? in
+            let currentVersion = platform.flatMap { currentPlatforms?[$0.displayName] }
+            return .init(availability, current: currentVersion)
+        }
+
+        // Render availabilities for fallback platforms (e.g., iPadOS and Mac Catalyst from iOS)
+        let fallbackAvailabilities = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback -> AvailabilityRenderItem? in
+            // Skip if the platform already has explicit availability,
+            // or if the fallback platform is not available.
+            guard !platforms.contains(platform),
+                  let fallbackIndex = platforms.firstIndex(of: fallback) else {
+                return nil
+            }
+
+            // Clone the fallback platform's availability with the new platform name.
+            // The `availabilities` array is mapped to the `platforms` array,
+            // so the indices of elements across them are guaranteed to be consistent.
+            let fallbackAvailability = Metadata.Availability(from: availabilities[fallbackIndex].originalMarkup, for: context.inputs)!
+            fallbackAvailability.platform = Metadata.Availability.Platform(rawValue: platform.rawValue)!
+            // Use the fallback platform's version to correctly determine beta status
+            let currentVersion = platforms[fallbackIndex].flatMap { currentPlatforms?[$0.displayName] }
+
+            return .init(fallbackAvailability, current: currentVersion)
+        }
+
+        return (declaredAvailabilities + fallbackAvailabilities).sorted(by: AvailabilityRenderOrder.compare)
+    }
+
     private func fileContents(with fileReference: ResourceReference) -> String? {
         // Check if the file is a local asset that can be read directly from the context
         if let fileData = try? context.resource(with: fileReference) {
@@ -276,7 +316,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Set the Intro's background image to the video's poster image.
         section.backgroundImage = intro.video?.poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
-            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source) }
+            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source, altText: $0.altText) }
         
         return section
     }
@@ -632,9 +672,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
         // advertising the page as "Swift", which is the language DocC assigns to pages in article only catalogs.
         // (github.com/swiftlang/swift-docc/issues/240).
-        if let topLevelModule = context.soleRootModuleReference,
-           try! context.entity(with: topLevelModule).kind.isSymbol
-        {
+        let isArticleOnlyCatalog = context.rootModules.allSatisfy { !context.isSymbol(reference: $0) }
+        if !isArticleOnlyCatalog {
             node.variants = variants(for: documentationNode)
         }
         
@@ -761,7 +800,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
        
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
-                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
                 return renderReference.map {
                     TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
                 }
@@ -838,16 +877,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
-        if let availability = article.metadata?.availability, !availability.isEmpty {
-            let renderAvailability = availability.compactMap({
-                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
-                }
-                return .init($0, current: currentPlatform)
-            }).sorted(by: AvailabilityRenderOrder.compare)
+        if let availabilities = article.metadata?.availability, !availabilities.isEmpty {
+            let allRenderAvailabilities = renderAvailabilities(
+                from: availabilities,
+                currentPlatforms: context.configuration.externalMetadata.currentPlatforms
+            )
 
-            if !renderAvailability.isEmpty {
-                node.metadata.platformsVariants = .init(defaultValue: renderAvailability)
+            if !allRenderAvailabilities.isEmpty {
+                node.metadata.platformsVariants = .init(defaultValue: allRenderAvailabilities)
             }
         }
         
@@ -1063,10 +1100,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                let referenceSourceLanguageIDs = Set(context.sourceLanguages(for: reference).map(\.id))
+                let referenceSourceLanguages = SmallSourceLanguageSet(context.sourceLanguages(for: reference))
                 
-                let availableSourceLanguageTraits = Set(availableTraits.compactMap(\.interfaceLanguage))
-                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguageIDs) {
+                let availableSourceLanguageTraits = SmallSourceLanguageSet(availableTraits.compactMap(\.sourceLanguage))
+                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguages) {
                     // The set of available source language traits has no members in common with the
                     // set of source languages the given reference is available in.
                     //
@@ -1075,10 +1112,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                return referenceSourceLanguageIDs.contains { sourceLanguageID in
-                    allowedTraits.contains { trait in
-                        trait.interfaceLanguage == sourceLanguageID
-                    }
+                return allowedTraits.contains { trait in
+                    trait.sourceLanguage.map { referenceSourceLanguages.contains($0) } ?? false
                 }
             }
             
@@ -1274,15 +1309,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: defaultAvailability)
 
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
-            let renderAvailability = availability.compactMap({
-                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
-                }
-                return .init($0, current: currentPlatform)
-            }).sorted(by: AvailabilityRenderOrder.compare)
+            let allRenderAvailabilities = renderAvailabilities(
+                from: availability,
+                currentPlatforms: context.configuration.externalMetadata.currentPlatforms
+            )
 
-            if !renderAvailability.isEmpty {
-                node.metadata.platformsVariants.defaultValue = renderAvailability
+            if !allRenderAvailabilities.isEmpty {
+                node.metadata.platformsVariants.defaultValue = allRenderAvailabilities
             }
         }
         
@@ -1309,7 +1342,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
-                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
                 return renderReference.map {
                     TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
                 }
@@ -1870,7 +1903,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Symbols can only specify custom alternate language representations for languages that the documented symbol doesn't already have a representation for.
                 // If the current symbol and its custom alternate representation share language representations, the custom language representation is ignored.
                 allVariants.merge(
-                    alternateRepresentationReference.sourceLanguages.map { ($0, alternateRepresentationReference) }
+                    alternateRepresentationReference._sourceLanguages.map { ($0, alternateRepresentationReference) }
                 ) { existing, _ in existing }
             }
         }
@@ -1975,7 +2008,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             // Extract the availability information
             if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
-                availabilityItems.forEach { item in
+                for item in availabilityItems {
                     if deprecated == nil && (item.isUnconditionallyDeprecated || item.deprecatedVersion != nil) {
                         deprecated = true
                     }
@@ -2054,13 +2087,8 @@ extension ContentRenderSection: RenderTree {}
 
 private extension Sequence<SourceLanguage> {
     func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
-        traits.contains(where: {
-            guard let languageID = $0.interfaceLanguage,
-                  let traitLanguage = SourceLanguage(knownLanguageIdentifier: languageID)
-            else {
-                return false
-            }
-            return self.contains(traitLanguage)
+        traits.contains(where: { trait in
+            trait.sourceLanguage.map { self.contains($0) } ?? false
         })
     }
 }

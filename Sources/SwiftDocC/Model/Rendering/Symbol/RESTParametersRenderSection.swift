@@ -29,9 +29,9 @@ public enum RESTParameterSource: String, Codable {
 public struct RESTParametersRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restParameters
     /// The title for the section.
-    public let title: String
+    public var title: String
     /// The list of REST parameters.
-    public let parameters: [RenderProperty]
+    public var parameters: [RenderProperty]
     /// The kind of listed parameters.
     public let source: RESTParameterSource
 

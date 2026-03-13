@@ -11,7 +11,8 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+import DocCTestUtilities
+import DocCCommon
 
 class AutomaticSeeAlsoTests: XCTestCase {
     

@@ -23,11 +23,7 @@ public struct Diagnostic {
     /// The diagnostic's source range if the diagnostic originated at a source document, else `nil`.
     public var range: SourceRange?
 
-    /// A unique reverse-DNS-style string identifier used for looking up explanations for diagnostics.
-    ///
-    /// ## Example
-    ///
-    /// `org.swift.docc.SummaryContainsLink`
+    /// An opaque identifier that diagnostic consumers and tools can use to identify specific types of diagnostics.
     public var identifier: String
 
     /// A brief summary that describe the problem or issue.
