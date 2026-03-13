@@ -67,11 +67,11 @@ package extension MarkdownRenderer {
         return selfReferencingSection(named: "Parameters", content: items)
     }
     
-    private func _singleLanguageParameters(_ parameterInfo: [ParameterInfo]) -> XMLElement {
+    func _singleLanguageParameters(_ parameterInfo: [ParameterInfo]) -> XMLElement {
         .element(named: "dl", children: _singleLanguageParameterItems(parameterInfo))
     }
     
-    private func _singleLanguageParameterItems(_ parameterInfo: [ParameterInfo]) -> [XMLElement] {
+    func _singleLanguageParameterItems(_ parameterInfo: [ParameterInfo]) -> [XMLElement] {
         // When there's only a single language representation, create a list of `<dt>` and `<dd>` HTML elements ("terms" and "definitions" in a "description list" (`<dl> HTML element`)
         var items: [XMLElement] = []
         items.reserveCapacity(parameterInfo.count * 2)
@@ -89,7 +89,7 @@ package extension MarkdownRenderer {
         return items
     }
     
-    private func _dualLanguageParameters(
+    func _dualLanguageParameters(
         primary:   (key: SourceLanguage, value: [ParameterInfo]),
         secondary: (key: SourceLanguage, value: [ParameterInfo])
     ) -> XMLElement {
