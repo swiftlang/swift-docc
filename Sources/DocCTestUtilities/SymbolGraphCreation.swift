@@ -224,34 +224,3 @@ package extension SymbolGraph.Symbol.Availability.AvailabilityItem {
 
 private let defaultSymbolPosition = SymbolGraph.LineList.SourceRange.Position(line: 11, character: 17) // an arbitrary non-zero start position
 private let defaultSymbolURL = URL(fileURLWithPath: "/Users/username/path/to/SomeFile.swift")
-
-// MARK: - JSON strings
-
-package import XCTest
-
-extension XCTestCase {
-    package func makeSymbolGraphString(moduleName: String, symbols: String = "", relationships: String = "", platform: String = "") -> String {
-        return """
-        {
-          "metadata": {
-              "formatVersion": {
-                  "major": 0,
-                  "minor": 6,
-                  "patch": 0
-              },
-              "generator": "unit-test"
-          },
-          "module": {
-              "name": "\(moduleName)",
-              "platform": { \(platform) }
-          },
-          "relationships" : [
-            \(relationships)
-          ],
-          "symbols" : [
-            \(symbols)
-          ]
-        }
-        """
-    }
-}
