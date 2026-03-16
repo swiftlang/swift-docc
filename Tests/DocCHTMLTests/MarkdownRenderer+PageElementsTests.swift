@@ -310,6 +310,46 @@ struct MarkdownRenderer_PageElementsTests {
     }
 
     @Test(arguments: RenderGoal.allCases)
+    func renderingOutlineReturnSectionsLikeParameters(goal: RenderGoal) {
+        let returns = makeRenderer(goal: goal).returns([
+            .swift: parseMarkup(string: """
+            - quotient: The quotient of this value divided by `rhs`.
+            - remainder: The remainder of this value divided by `rhs` with the same sign as the original value.
+            """)
+        ])
+
+        let commonHTML = """
+        <dl>
+          <dt>quotient</dt>
+          <dd>
+            <p>The quotient of this value divided by <code>rhs</code>.</p>
+          </dd>
+          <dt>remainder</dt>
+          <dd>
+            <p>The remainder of this value divided by <code>rhs</code> with the same sign as the original value.</p>
+          </dd>
+        </dl>
+        """
+
+        switch goal {
+        case .richness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <section id="Return-Value">
+            <h2>
+              <a href="#Return-Value">Return Value</a>
+            </h2>
+            \(commonHTML)
+            </section>
+            """)
+        case .conciseness:
+            returns.assertMatches(prettyFormatted: true, expectedXMLString: """
+            <h2>Return Value</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+
+    @Test(arguments: RenderGoal.allCases)
     func renderingSwiftDeclaration(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
