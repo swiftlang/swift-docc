@@ -28,7 +28,7 @@ DocC supports two syntax alternatives for asides; one using Markdown's list synt
 
 For short single-line asides, these syntax alternatives differ only by their first character
 ---either a hyphen (`-`), asterisk (`*`), or plus sign (`+`) for the list syntax or a greater-than sign (`>`) for the quote syntax---
-followed by a space, the type of tag (case insensitive), a colon, and the formatted content of the aside. 
+followed by a space, the type of aside (case insensitive), a colon, and the formatted content of the aside.
 These examples below are all equivalent:
 
 ```md
@@ -44,7 +44,7 @@ The text of an aside can use the same style attributes as other text, and includ
 
 If you want to include more than one paragraph of content in the aside---or includes lists, code blocks, or images---then two syntax alternatives differ in how they extend to cover those paragraphs list, code blocks, or images: 
 
-- For the list item syntax (with a `-`, `*`, or `+` prefix), you need to indent additional paragraphs, and other types of content, as far as the start of the containing list item.
+- For the list item syntax (with a `-`, `*`, or `+` prefix), you need to indent additional paragraphs, and other types of content, as far as the start of the containing list item so that the first character of that content lines up with the first letter of the type of aside.
 - For the block quote syntax (with a `-`, `*`, or `+` prefix), you need to start each line---*including* blank lines between paragraphs, and other types of content---with a greater-than sign (`>`).
 
 If you prefer, both these multi-element syntaxes can sometimes be more clear when the first paragraph, after the type of tag and colon, is also on a new line:
