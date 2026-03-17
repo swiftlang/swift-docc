@@ -2049,6 +2049,27 @@ class PathHierarchyTests: XCTestCase {
                 returns: [])
             )
             XCTAssertEqual(complicatedNonCopyableAndNonEscapableType?.parameterTypeNames, ["((~Copyable&~Escapable).Type)?"])
+            
+            // func doSomething<T, E, Result>(someName: (borrowing T) throws(E) -> Result")
+            let typedThrows = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": (", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "borrowing", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "T", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "throws", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "E", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Result", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(typedThrows?.parameterTypeNames, ["(T)->Result"])
         }
     }
     

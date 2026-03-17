@@ -99,7 +99,8 @@ extension PathHierarchy {
         // Track the current [], (), and <> scopes to identify when ":" is a part of the type name.
         var swiftBracketsStack = SwiftBracketsStack()
         
-        for fragment in fragments {
+        var remaining = fragments[...]
+        while let fragment = remaining.popFirst() {
             let preciseIdentifier = fragment.preciseIdentifier
             if isSwift {
                 // Check if this fragment is a spelled out Swift array, optional, or dictionary.
@@ -131,6 +132,27 @@ extension PathHierarchy {
                     
                 case .keyword where fragment.spelling == "Any":
                     accumulated.append(contentsOf: fragment.spelling.utf8)
+                    
+                case .keyword where fragment.spelling == "throws":
+                    // We don't want to include typed throws in the disambiguation because it looks like another set of parameters.
+                    // For example, "(Value) throws(Error) -> Result" would look like "(Value)(Error)->Result" if we skipped the `throws` keyword without skipping the error type.
+                    //
+                    // This information is spread across (at least) 4 different fragments:
+                    //  Kind           | Spelling
+                    //  ---------------|----------
+                    //  keyword        | "throws"
+                    //  text           | "("
+                    //  typeIdentifier | "Error"
+                    //  text           | ")"
+                    if let next = remaining.first, next.kind == .text, next.spelling == "(",
+                       let endIndex = remaining.firstIndex(where: { $0.kind == .text && $0.spelling.starts(with: ")") })
+                    {
+                        remaining = remaining[endIndex...]
+                        // We can't drop the closing text fragment because it could contain other characters that we want to include in the disambiguation.
+                        // Instead, we modify it in-place to only remove the ")" prefix.
+                        remaining[endIndex].spelling.removeFirst()
+                    }
+                    continue
                     
                 case .text: // In Swift, we're only want some `text` tokens characters in the type disambiguation.
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
