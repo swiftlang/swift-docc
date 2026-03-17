@@ -136,12 +136,10 @@ extension PathHierarchy {
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
                     let utf8Spelling = fragment.spelling.utf8
-                    guard !utf8Spelling.elementsEqual(".Type".utf8) else {
-                        // Once exception to that is "Name.Type" which is different from just "Name" (and we don't want a trailing ".")
-                        accumulated.append(contentsOf: utf8Spelling)
-                        continue
-                    }
-                    for index in utf8Spelling.indices {
+                    var index = utf8Spelling.startIndex
+                    while index < utf8Spelling.endIndex {
+                        defer { utf8Spelling.formIndex(after: &index) }
+                        
                         let char = utf8Spelling[index]
                         switch char {
                         case openAngle:
@@ -160,8 +158,14 @@ extension PathHierarchy {
                             assert(!swiftBracketsStack.isEmpty, "Unexpectedly found more closing brackets than open brackets in \(fragments.map(\.spelling).joined())")
                             swiftBracketsStack.pop()
                             
+                        case fullStop where utf8Spelling[index...].prefix(5).elementsEqual(".Type".utf8):
+                            // "Name.Type" is different from just "Name" (and we don't want a trailing ".")
+                            accumulated.append(contentsOf: ".Type".utf8)
+                            utf8Spelling.formIndex(&index, offsetBy: 4) // The 5th increment happens in the defer-statement above
+                            continue // Continue
+                            
                         case colon where swiftBracketsStack.isCurrentScopeSquareBracket,
-                             comma, fullStop, question, hyphen:
+                             comma, fullStop, question, hyphen, ampersand, tilde:
                             break // Include this character
                             
                         default:
@@ -281,6 +285,8 @@ private let fullStop    = UTF8.CodeUnit(ascii: ".")
 private let question    = UTF8.CodeUnit(ascii: "?")
 private let colon       = UTF8.CodeUnit(ascii: ":")
 private let hyphen      = UTF8.CodeUnit(ascii: "-")
+private let ampersand   = UTF8.CodeUnit(ascii: "&")
+private let tilde       = UTF8.CodeUnit(ascii: "~")
 
 /// A guesstimate of the "shape" of a Swift type based on its spelling.
 private enum ShapeOfSwiftTypeSpelling {

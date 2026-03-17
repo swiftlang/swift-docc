@@ -2029,6 +2029,26 @@ class PathHierarchyTests: XCTestCase {
                 returns: [])
             )
             XCTAssertEqual(complicatedClosureArgument?.parameterTypeNames, ["(Int?,Double,(String,Value))->((Int)->Value)"])
+            
+            // func doSomething(someName: borrowing (any (~Copyable & ~Escapable).Type)?)
+            let complicatedNonCopyableAndNonEscapableType = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "borrowing", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " (", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "any", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " (~", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Copyable", preciseIdentifier: "s:s8CopyableP"),
+                        .init(kind: .text, spelling: " & ~", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Escapable", preciseIdentifier: "s:s9EscapableP"),
+                        .init(kind: .text, spelling: ").Type)?", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(complicatedNonCopyableAndNonEscapableType?.parameterTypeNames, ["((~Copyable&~Escapable).Type)?"])
         }
     }
     
