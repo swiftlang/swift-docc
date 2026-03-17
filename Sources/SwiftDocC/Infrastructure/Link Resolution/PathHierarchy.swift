@@ -132,8 +132,7 @@ struct PathHierarchy {
 
                     let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
-                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
-                    if symbol.identifier.precise.contains("::SYNTHESIZED::") {
+                    if symbol.identifier.isSynthesized {
                         node.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
                     }
                     nodes[id] = node
@@ -986,4 +985,29 @@ private func assertAllNodes(
         file: file,
         line: line
     )
+}
+
+private extension SymbolGraph.Symbol.Identifier {
+    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
+    var isSynthesized: Bool {
+        return precise.withCString {
+            let pointer = UnsafeRawPointer($0)
+            let lengthToCheck = precise.utf8.count &- 16 // Stop if the remainder of the string is too short to fix the "::SYNTHESIZED::" separator (and 1 character after it)
+            guard pointer.hasASCIIPrefix("s:") else {
+                return false // Only Swift types use the "::SYNTHESIZED::" separator.
+            }
+            
+            var offset = 2
+            while offset < lengthToCheck {
+                defer { offset += 8 }
+                // The next 8 bytes won't read out-of-bounds because we're stop looping when there's less than 16 bytes left in the string.
+                let match = ByteMatches(pointer.loadUnaligned(fromByteOffset: offset, as: UInt64.self), ByteMatches.colonSearchPattern)
+                if match.hasMatches, pointer.hasASCIIPrefix("::SYNTHESIZED::", byteOffset: offset + match.numberOfLeadingNonMatches) {
+                    return true
+                }
+            }
+            assert(!precise.contains("::SYNTHESIZED::"), "The custom implementation didn't produce the same result as a 'String.contains(_:)' check.")
+            return false
+        }
+    }
 }
