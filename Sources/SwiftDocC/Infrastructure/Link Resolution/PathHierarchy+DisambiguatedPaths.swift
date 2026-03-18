@@ -318,51 +318,57 @@ extension PathHierarchy.DisambiguationContainer {
         includeLanguage: Bool,
         allowAdvancedDisambiguation: Bool
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
-        typealias DisambiguationPair = (String, String)
-        
-        var uniqueSymbolIDs = [String: [Element]]()
-        var nonSymbols = [Element]()
-        for element in storage {
-            guard let symbol = element.node.symbol else {
-                nonSymbols.append(element)
-                continue
+        // This implementation uses partitioning and sorting to avoid tracking non-symbol, unique symbols, and duplicate symbols in
+        var storage = storage
+        let articlePivot = storage.partition(by: { $0.node.symbol != nil })
+        storage[articlePivot...].sort(by: { lhs, rhs in
+            let lhsID = lhs.node.symbol!.identifier
+            let rhsID = rhs.node.symbol!.identifier
+            guard lhsID.precise == rhsID.precise else {
+                return lhsID.precise < rhsID.precise
             }
-            if symbol.identifier.interfaceLanguage == "swift" {
-                uniqueSymbolIDs[symbol.identifier.precise, default: []].insert(element, at: 0)
-            } else {
-                uniqueSymbolIDs[symbol.identifier.precise, default: []].append(element)
-            }
-        }
-        
-        var duplicateSymbols = [String: ArraySlice<Element>]()
-        
+            
+            // Order Swift before other language representations of the same symbol
+            return lhsID.interfaceLanguage == "swift"
+        })
+       
+        // Use a new disambiguation container (with the collapsed symbols) to compute the minimal necessary disambiguation
         var new = PathHierarchy.DisambiguationContainer()
-        for element in nonSymbols {
+        for element in storage[..<articlePivot] {
+            assert(element.node.symbol == nil, "Miscategorized '\(element.node.symbol!.names.title)' as non-symbol")
             new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
         }
-        for (id, symbolDisambiguations) in uniqueSymbolIDs {
-            let element = symbolDisambiguations.first!
-            new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
+        
+        // Try to avoid a temporary head allocation if possible. The compiler _may_ use stack memory for this.
+        var symbols = storage[articlePivot...]
+        return withUnsafeTemporaryAllocation(of: Element.self, capacity: symbols.count /* There can never be more duplicates than the storage itself */) { duplicatesBuffer in
+            var duplicatesCount = 0
             
-            if symbolDisambiguations.count > 1 {
-                duplicateSymbols[id] = symbolDisambiguations.dropFirst()
+            while let element = symbols.popFirst() {
+                assert(element.node.symbol != nil, "Miscategorized '\(element.node.name)' as a symbol")
+                // The first symbol is already sorted based on the interface language
+                new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
+                
+                // Track any duplicates for the next step below.
+                while symbols.first?.hash == element.hash {
+                    duplicatesBuffer.initializeElement(at: duplicatesCount, to: symbols.removeFirst())
+                    duplicatesCount &+= 1
+                }
             }
-        }
-        
-        var disambiguated = new.disambiguatedValues(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
-        guard !duplicateSymbols.isEmpty else {
-            return disambiguated
-        }
-        
-        for (id, disambiguations) in duplicateSymbols {
-            let primaryDisambiguation = disambiguated.first(where: { $0.value.symbol?.identifier.precise == id })!.disambiguation
             
-            for element in disambiguations {
+            // Disambiguate the elements with the unique symbols collapsed (duplicate symbols with the same USR are not in `new`).
+            var disambiguated = new.disambiguatedValues(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
+            
+            // Add values for the duplicate symbols (without updating the _amount_ of necessary disambiguation)
+            for index in 0 ..< duplicatesCount {
+                let element = duplicatesBuffer[index]
+                let primaryDisambiguation = disambiguated.first(where: { $0.value.symbol?.identifier.precise == element.node.symbol?.identifier.precise })!.disambiguation
+            
                 disambiguated.append((element.node, primaryDisambiguation.updated(kind: element.kind, hash: element.hash)))
             }
+            
+            return disambiguated
         }
-        
-        return disambiguated
     }
     
     /// The computed disambiguation for a given path hierarchy node.
