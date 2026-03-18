@@ -12,12 +12,6 @@ private import Foundation
 private import SymbolKit
 private import DocCCommon
 
-private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted.union(["/"])
-
-private func symbolFileName(_ symbolName: String) -> String {
-    return symbolName.components(separatedBy: nonAllowedPathCharacters).joined(separator: "_")
-}
-
 extension PathHierarchy {
     /// Determines the least disambiguated paths for all symbols in the path hierarchy.
     ///
@@ -103,15 +97,15 @@ extension PathHierarchy {
         includeLanguage: Bool,
         allowAdvancedDisambiguation: Bool
     ) -> [String: String] {
-        let nameTransform: (String) -> String
-        if transformToFileNames {
-            nameTransform = symbolFileName(_:)
+        let nameTransform: (String) -> String = if transformToFileNames {
+            symbolFileName(_:)
         } else {
-            nameTransform = { $0 }
+            { $0 }
         }
         
-        func descend(_ node: Node, accumulatedPath: String) -> [String: String] {
-            var innerPathsByUSR: [String: String] = [:]
+        var pathsByUSR: [String: String] = [:]
+        
+        func descend(_ node: borrowing Node, accumulatedPath: consuming String, updating pathsByUSR: inout [String: String]) {
             let children = [String: DisambiguationContainer](node.children.map {
                 var name = $0.key
                 if !caseSensitive {
@@ -125,49 +119,39 @@ extension PathHierarchy {
                 let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation != .none && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
                 
                 for (node, disambiguation) in disambiguatedChildren {
-                    var path: String
+                    var path = "\(accumulatedPath)/\(nameTransform(node.name))"
                     if node.identifier == nil && disambiguatedChildren.count == 1 {
+                        let element = container.storage.first!
                         // When descending through placeholder nodes, we trust that the known disambiguation
                         // that they were created with is necessary.
-                        var knownDisambiguation = ""
-                        let element = container.storage.first!
                         if let kind = element.kind {
-                            knownDisambiguation += "-\(kind)"
+                            path.append("-\(kind)")
                         }
                         if let hash = element.hash {
-                            knownDisambiguation += "-\(hash)"
+                            path.append("-\(hash)")
                         }
-                        path = accumulatedPath + "/" + nameTransform(node.name) + knownDisambiguation
-                    } else {
-                        path = accumulatedPath + "/" + nameTransform(node.name)
                     }
                     if let symbol = node.symbol,
                        // If a symbol node exist in multiple languages, prioritize the Swift variant.
                        node.counterpart == nil || symbol.identifier.interfaceLanguage == "swift"
                     {
-                        innerPathsByUSR[symbol.identifier.precise] = path + disambiguation.makeSuffix()
+                        let newPath = path.appending(disambiguation.makeSuffix())
+                        if let oldPath = pathsByUSR.updateValue(newPath, forKey: symbol.identifier.precise) {
+                            assertionFailure("Should only have gathered one path per symbol ID. Found \(oldPath) and \(newPath) for the same USR.")
+                        }
                     }
                     if includeDisambiguationForUnambiguousChildren || uniqueNodesWithChildren.count > 1 {
                         path += disambiguation.makeSuffix()
                     }
-                    innerPathsByUSR.merge(descend(node, accumulatedPath: path), uniquingKeysWith: { currentPath, newPath in
-                        assertionFailure("Should only have gathered one path per symbol ID. Found \(currentPath) and \(newPath) for the same USR.")
-                        return currentPath
-                    })
+                    descend(node, accumulatedPath: path, updating: &pathsByUSR)
                 }
             }
-            return innerPathsByUSR
         }
         
-        var pathsByUSR: [String: String] = [:]
-        
         for node in modules {
-            let modulePath = "/" + node.name
+            let modulePath = "/\(nameTransform(node.name))"
             pathsByUSR[node.name] = modulePath
-            pathsByUSR.merge(descend(node, accumulatedPath: modulePath), uniquingKeysWith: { currentPath, newPath in
-                assertionFailure("Should only have gathered one path per symbol ID. Found \(currentPath) and \(newPath) for the same USR.")
-                return currentPath
-            })
+            descend(node, accumulatedPath: modulePath, updating: &pathsByUSR)
         }
         
         assert(
@@ -490,5 +474,78 @@ private extension Collection {
         }
         
         return matchingIndex
+    }
+}
+
+/// Transforms a symbol name to make it safe to use as a file name.
+///
+/// This process replaces any character that's not allowed in a path with "\_".
+/// It also replaces a forward slash with "\_" to avoid the file name being considered two (or more) path components.
+private func symbolFileName(_ symbolName: String) -> String {
+    let utf8SymbolName = symbolName.utf8
+    
+    return String(unsafeUninitializedCapacity: utf8SymbolName.count) { buffer in
+        var length = 0
+        
+        // Most symbol names consist of only ASCII characters; for example "SomeClass" and "+=(_:_:)".
+        // In this common case, we can use a fast path.
+        for byte in utf8SymbolName {
+            if byte.isAllowedInSymbolFileName {
+                buffer[length] = byte
+                length &+= 1
+                continue
+            }
+            // Replace disallowed characters with "_"
+            buffer[length] = .init(ascii: "_")
+            length &+= 1
+            if byte.isSingleByteCharacter {
+                // If the disallowed character was still a single-byte character we continue the fast path
+                continue
+            }
+            
+            // If we encounter _any_ variable-length unicode scalars we switch away from the fast path and process full `Character` values instead.
+            // This ensures that visual characters that are represented by multiple unicode scalars are transformed into a single "_".
+            for character in symbolName.dropFirst(length) {
+                buffer[length] = if character.utf8.count == 1, let byte = character.utf8.first, byte.isAllowedInSymbolFileName {
+                    byte
+                } else {
+                    .init(ascii: "_")
+                }
+                length &+= 1
+            }
+            // Return here so that the fast path loop doesn't continue processing what was already processed as full `Character` values.
+            return length
+        }
+        
+        return length
+    }
+}
+
+private extension UTF8.CodeUnit {
+    /// A Boolean value indicating if the UTF8 code unit is a character that's allowed in the "path" of a URL (except for "/" which is allowed in a path but not permitted in the file name).
+    var isAllowedInSymbolFileName: Bool {
+        switch self {
+        case
+            // ! & & ' ( ) * + , - .
+            0x21, 0x24, 0x26...0x2E,
+            // 0–9,
+            0x30...0x39,
+            // : ; = @
+            0x3A, 0x3B, 0x3D, 0x40,
+            // A-Z
+            0x41...0x5A,
+            // _
+            0x5F,
+            // a–z
+            0x61...0x7A,
+            // ~
+            0x7E: true
+        default:  false
+        }
+    }
+    
+    /// A Boolean value indicating if the UTF8 code unit represents a single-byte character or if it is the start of a variable-length unicode scalar.
+    var isSingleByteCharacter: Bool {
+        self < 0b1000_000
     }
 }
