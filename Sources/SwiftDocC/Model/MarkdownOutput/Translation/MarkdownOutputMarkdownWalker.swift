@@ -352,6 +352,22 @@ extension MarkdownOutputMarkupWalker {
         }
         
     }
+    
+    mutating func visitHTMLBlock(_ html: HTMLBlock) -> () {
+        guard html.rawHTML.contains("<!--") else {
+            return defaultVisit(html)
+        }
+        var rawHTML = html.rawHTML
+        let regex = #/<!--[\s\S]*?-->/#
+        let matches = html.rawHTML.matches(of: regex)
+        for match in matches.reversed() {
+            rawHTML.removeSubrange(match.range)
+        }
+        var updated = html
+        updated.rawHTML = rawHTML
+        defaultVisit(updated)
+    }
+
 }
 
 // Semantic handling
