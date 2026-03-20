@@ -40,9 +40,9 @@ These examples below are all equivalent:
 
 The text of an aside can use the same style attributes as other text, and include links to other content, including symbols. 
 
-> Tip: DocC will automatically capitalize the first word of the aside's content unless that word already includes a capitalized letter. 
+> Tip: DocC automatically capitalizes the first word of the aside's content unless that word already includes a capitalized letter. 
 
-If you want to include more than one paragraph of content in the aside---or includes lists, code blocks, or images---then two syntax alternatives differ in how they extend to cover those paragraphs list, code blocks, or images: 
+If you want to include more than one paragraph of content in the aside---or include lists, code blocks, or images---then the two syntax alternatives differ in how they extend to cover those paragraphs, lists, code blocks, or images: 
 
 - For the list item syntax (with a `-`, `*`, or `+` prefix), you need to indent additional paragraphs, and other types of content, as far as the start of the containing list item so that the first character of that content lines up with the first letter of the type of aside.
 - For the block quote syntax (with a `-`, `*`, or `+` prefix), you need to start each line---*including* blank lines between paragraphs, and other types of content---with a greater-than sign (`>`).
