@@ -202,7 +202,7 @@ extension LinkDestinationSummary {
             estimatedTime: nil,
             conformance: nil,
             isBeta: isBeta,
-            isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true }) ?? false,
+            isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true || $0.deprecated != nil }) ?? false,
             defaultImplementationCount: nil,
             propertyListKeyNames: nil,
             tags: nil,
