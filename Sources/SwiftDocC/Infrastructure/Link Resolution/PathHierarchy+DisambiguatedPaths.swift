@@ -351,6 +351,7 @@ extension PathHierarchy.DisambiguationContainer {
                 disambiguated.append((element.node, primaryDisambiguation.updated(kind: element.kind, hash: element.hash)))
             }
             
+            duplicatesBuffer.deinitialize() // The closure is responsible for both initializing and deinitializing (but not deallocating) the temporary buffer.
             return disambiguated
         }
     }
@@ -546,6 +547,8 @@ private extension UTF8.CodeUnit {
     
     /// A Boolean value indicating if the UTF8 code unit represents a single-byte character or if it is the start of a variable-length unicode scalar.
     var isSingleByteCharacter: Bool {
-        self < 0b1000_000
+        // The first bit in the first byte of a valid UTF8 code unit indicates if the variable-length encoding uses one or multiple bytes to represent that scalar.
+        // Other bit patterns (with the first bit set) gives the exact length of how many bytes (2, 3, or 4) are used to represent that scalar.
+        self < 0b1000_0000
     }
 }
