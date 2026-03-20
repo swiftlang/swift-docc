@@ -351,7 +351,8 @@ extension PathHierarchy.DisambiguationContainer {
                 disambiguated.append((element.node, primaryDisambiguation.updated(kind: element.kind, hash: element.hash)))
             }
             
-            duplicatesBuffer.deinitialize() // The closure is responsible for both initializing and deinitializing (but not deallocating) the temporary buffer.
+            // The closure is responsible for both deinitializing any memory that it initializes. However, the buffer will trap if deinitializing memory that it never initialized.
+            duplicatesBuffer[0..<duplicatesCount].deinitialize()
             return disambiguated
         }
     }
