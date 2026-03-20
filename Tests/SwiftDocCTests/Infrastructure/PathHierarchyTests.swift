@@ -2029,6 +2029,47 @@ class PathHierarchyTests: XCTestCase {
                 returns: [])
             )
             XCTAssertEqual(complicatedClosureArgument?.parameterTypeNames, ["(Int?,Double,(String,Value))->((Int)->Value)"])
+            
+            // func doSomething(someName: borrowing (any (~Copyable & ~Escapable).Type)?)
+            let complicatedNonCopyableAndNonEscapableType = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "borrowing", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " (", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "any", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " (~", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Copyable", preciseIdentifier: "s:s8CopyableP"),
+                        .init(kind: .text, spelling: " & ~", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Escapable", preciseIdentifier: "s:s9EscapableP"),
+                        .init(kind: .text, spelling: ").Type)?", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(complicatedNonCopyableAndNonEscapableType?.parameterTypeNames, ["((~Copyable&~Escapable).Type)?"])
+            
+            // func doSomething<T, E, Result>(someName: (borrowing T) throws(E) -> Result")
+            let typedThrows = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": (", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "borrowing", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "T", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "throws", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "E", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Result", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(typedThrows?.parameterTypeNames, ["(T)->Result"])
         }
     }
     
@@ -4556,6 +4597,8 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("+/-(_:_:)/+/-(_:_:)/+/-(_:_:)/+/-(_:_:)", [("+/-(_:_:)", nil), ("+/-(_:_:)", nil), ("+/-(_:_:)", nil), ("+/-(_:_:)", nil)])
         assertParsedPathComponents("+/-(_:_:)-hash/+/-(_:_:)-func.op/+/-(_:_:)-func.op-hash/+/-(_:_:)", [("+/-(_:_:)", .kindAndHash(kind: nil, hash: "hash")), ("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: nil)), ("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: "hash")), ("+/-(_:_:)", nil)])
 
+        assertParsedPathComponents("&-(_:_:)-(Self.Scalar,_)", [("&-(_:_:)", .typeSignature(parameterTypes: ["Self.Scalar", "_"], returnTypes: nil))])
+        
         assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil), ("/=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil), ("///=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil), ("+/-(_:_:)", nil)])
