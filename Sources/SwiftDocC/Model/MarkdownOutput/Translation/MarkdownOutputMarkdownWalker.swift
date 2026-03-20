@@ -353,19 +353,14 @@ extension MarkdownOutputMarkupWalker {
         
     }
     
+    // HTML is not included in render JSON output, so is omitted here
     mutating func visitHTMLBlock(_ html: HTMLBlock) -> () {
-        guard html.rawHTML.contains("<!--") else {
-            return defaultVisit(html)
-        }
-        var rawHTML = html.rawHTML
-        let regex = #/<!--[\s\S]*?-->/#
-        let matches = html.rawHTML.matches(of: regex)
-        for match in matches.reversed() {
-            rawHTML.removeSubrange(match.range)
-        }
-        var updated = html
-        updated.rawHTML = rawHTML
-        defaultVisit(updated)
+        return
+    }
+    
+    // HTML is not included in render JSON output, so is omitted here
+    mutating func visitInlineHTML(_ inlineHTML: InlineHTML) -> () {
+        return
     }
 
 }

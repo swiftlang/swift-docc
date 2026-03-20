@@ -580,7 +580,7 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssertEqual(node.markdown, content)
     }
     
-    func testCommentRemoval() async throws {
+    func testHTMLRemoval() async throws {
         let catalog = catalog(files: [
             TextFile(name: "Comments.md", utf8Content: """
                 # Comments
@@ -600,25 +600,24 @@ final class MarkdownOutputTests: XCTestCase {
                 Comments in code blocks should be kept
                 
                 ```
-                <h1>Text</h1>
+                <h1>Text in a code block HTML</h1>
                 <!-- COMMENT CONTENT 3 -->
                 ```
                 
-                Raw HTML in the body should be kept
+                Raw HTML in the body should not be kept
                                 
                 <h1>More Complex example</h1>
 
                   <!-- COMMENT CONTENT 4 -->
 
-                  <p>This paragraph is visible.</p>
+                  <p>This paragraph is invisible.</p>
 
                   <!--
                     COMMENT CONTENT 5
                     COMMENT CONTENT 6
-                    COMMENT CONTENT 7
                   -->
 
-                  <p>This paragraph is also visible. <!-- COMMENT CONTENT 8 --></p>
+                  <p>This paragraph is also invisible. <!-- COMMENT CONTENT 7 --></p>
 
                 """)
         ])
@@ -632,10 +631,11 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssertFalse(markdown.contains("COMMENT CONTENT 6"))
         XCTAssertFalse(markdown.contains("COMMENT CONTENT 7"))
         XCTAssertFalse(markdown.contains("COMMENT CONTENT 8"))
+        XCTAssertFalse(markdown.contains("More Complex example"))
+        XCTAssertFalse(markdown.contains("This paragraph is also invisible"))
         
         XCTAssert(markdown.contains("COMMENT CONTENT 3"))
-        XCTAssert(markdown.contains("This paragraph is visible"))
-        XCTAssert(markdown.contains("This paragraph is also visible"))
+        XCTAssert(markdown.contains("Text in a code block HTML"))
     }
     
     
