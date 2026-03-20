@@ -901,6 +901,8 @@ public struct DocumentationNode {
             return
         }
         
+        // FIXME: Share this logic for computing the availability with the rendering code (rdar://172280267)
+        
         // Check the information from both the source attributes and the Available directive before raising a warning.
         let availabilityFromSource = {
             var availability = symbol.availability ?? []
