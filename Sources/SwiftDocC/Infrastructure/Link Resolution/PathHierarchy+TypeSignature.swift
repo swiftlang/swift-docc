@@ -99,7 +99,8 @@ extension PathHierarchy {
         // Track the current [], (), and <> scopes to identify when ":" is a part of the type name.
         var swiftBracketsStack = SwiftBracketsStack()
         
-        for fragment in fragments {
+        var remaining = fragments[...]
+        while let fragment = remaining.popFirst() {
             let preciseIdentifier = fragment.preciseIdentifier
             if isSwift {
                 // Check if this fragment is a spelled out Swift array, optional, or dictionary.
@@ -132,16 +133,35 @@ extension PathHierarchy {
                 case .keyword where fragment.spelling == "Any":
                     accumulated.append(contentsOf: fragment.spelling.utf8)
                     
+                case .keyword where fragment.spelling == "throws":
+                    // We don't want to include typed throws in the disambiguation because it looks like another set of parameters.
+                    // For example, "(Value) throws(Error) -> Result" would look like "(Value)(Error)->Result" if we skipped the `throws` keyword without skipping the error type.
+                    //
+                    // This information is spread across (at least) 4 different fragments:
+                    //  Kind           | Spelling
+                    //  ---------------|----------
+                    //  keyword        | "throws"
+                    //  text           | "("
+                    //  typeIdentifier | "Error"
+                    //  text           | ")"
+                    if let next = remaining.first, next.kind == .text, next.spelling == "(",
+                       let endIndex = remaining.firstIndex(where: { $0.kind == .text && $0.spelling.starts(with: ")") })
+                    {
+                        remaining = remaining[endIndex...]
+                        // We can't drop the closing text fragment because it could contain other characters that we want to include in the disambiguation.
+                        // Instead, we modify it in-place to only remove the ")" prefix.
+                        remaining[endIndex].spelling.removeFirst()
+                    }
+                    continue
+                    
                 case .text: // In Swift, we're only want some `text` tokens characters in the type disambiguation.
                     // For example: "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
                     // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
                     let utf8Spelling = fragment.spelling.utf8
-                    guard !utf8Spelling.elementsEqual(".Type".utf8) else {
-                        // Once exception to that is "Name.Type" which is different from just "Name" (and we don't want a trailing ".")
-                        accumulated.append(contentsOf: utf8Spelling)
-                        continue
-                    }
-                    for index in utf8Spelling.indices {
+                    var index = utf8Spelling.startIndex
+                    while index < utf8Spelling.endIndex {
+                        defer { utf8Spelling.formIndex(after: &index) }
+                        
                         let char = utf8Spelling[index]
                         switch char {
                         case openAngle:
@@ -160,8 +180,14 @@ extension PathHierarchy {
                             assert(!swiftBracketsStack.isEmpty, "Unexpectedly found more closing brackets than open brackets in \(fragments.map(\.spelling).joined())")
                             swiftBracketsStack.pop()
                             
+                        case fullStop where utf8Spelling[index...].prefix(5).elementsEqual(".Type".utf8):
+                            // "Name.Type" is different from just "Name" (and we don't want a trailing ".")
+                            accumulated.append(contentsOf: ".Type".utf8)
+                            utf8Spelling.formIndex(&index, offsetBy: 4) // The 5th increment happens in the defer-statement above
+                            continue // Continue
+                            
                         case colon where swiftBracketsStack.isCurrentScopeSquareBracket,
-                             comma, fullStop, question, hyphen:
+                             comma, fullStop, question, hyphen, ampersand, tilde:
                             break // Include this character
                             
                         default:
@@ -281,6 +307,8 @@ private let fullStop    = UTF8.CodeUnit(ascii: ".")
 private let question    = UTF8.CodeUnit(ascii: "?")
 private let colon       = UTF8.CodeUnit(ascii: ":")
 private let hyphen      = UTF8.CodeUnit(ascii: "-")
+private let ampersand   = UTF8.CodeUnit(ascii: "&")
+private let tilde       = UTF8.CodeUnit(ascii: "~")
 
 /// A guesstimate of the "shape" of a Swift type based on its spelling.
 private enum ShapeOfSwiftTypeSpelling {
