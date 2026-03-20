@@ -83,10 +83,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         result.reserveCapacity(availabilities.count)
         
         for availability in availabilities {
-            let current = currentPlatforms.flatMap { platforms in
-                PlatformName(metadataPlatform: availability.platform).flatMap { name in
-                    platforms[name.displayName]
-                }
+            let current: PlatformVersion? = if let currentPlatforms, let name = PlatformName(metadataPlatform: availability.platform) {
+                currentPlatforms[name.displayName]
+            } else {
+                nil
             }
             let renderItem = AvailabilityRenderItem(availability, current: current)
             if let name = renderItem.name {
