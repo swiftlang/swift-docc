@@ -467,9 +467,9 @@ struct PathHierarchy {
     /// - Parameters:
     ///   - parent: The unique identifier of the existing element to add the new child element to.
     ///   - name: The path component name of the new element.
-    ///   - kind: The kind of the new element
+    ///   - kind: The kind of the new element.
     /// - Returns: The new unique identifier that represent this element.
-    mutating func addNonSymbolChild(parent: ResolvedIdentifier, name: String, kind: String) -> ResolvedIdentifier {
+    private mutating func addNonSymbolChild(parent: ResolvedIdentifier, name: String, kind: String) -> ResolvedIdentifier {
         let parent = lookup[parent]!
         
         let newReference = ResolvedIdentifier()
@@ -477,6 +477,27 @@ struct PathHierarchy {
         newNode.identifier = newReference
         self.lookup[newReference] = newNode
         parent.add(child: newNode, kind: kind, hash: nil)
+        
+        return newReference
+    }
+    
+    /// Adds an anchor to an existing element in the path hierarchy.
+    /// - Parameters:
+    ///   - parent: The unique identifier of the existing element to add the new child element to.
+    ///   - name: The name of the new anchor.
+    /// - Returns: The new unique identifier that represent this element.
+    mutating func addAnchor(parent: ResolvedIdentifier, name: String) -> ResolvedIdentifier {
+        let parent = lookup[parent]!
+        // It's rather easy to author the same heading more than once. Only add the anchor once.
+        if let existing = parent.anchors[name] {
+            return existing.identifier
+        }
+        
+        let newReference = ResolvedIdentifier()
+        let newNode = Node(name: name)
+        newNode.identifier = newReference
+        self.lookup[newReference] = newNode
+        parent.anchors[name] = newNode
         
         return newReference
     }
@@ -511,17 +532,22 @@ extension PathHierarchy {
         private(set) var name: String
         
         /// The descendants of this node in the hierarchy.
-        /// Each name maps to a disambiguation tree that handles
+        ///
+        /// Each name maps to a disambiguation tree that handles disambiguating matches and identifying collisions
         private(set) var children: [String: DisambiguationContainer]
         
+        /// The anchors of this node.
+        ///
+        /// An anchor represents a heading or on-page landmark and is always a leaf node in the hierarchy.
+        fileprivate(set) var anchors: [String: Node] // ???: Should this be just the ID?
         fileprivate(set) unowned var parent: Node?
-        /// The symbol, if a node has one.
+        /// The symbol, if the node has one.
         fileprivate(set) var symbol: SymbolGraph.Symbol?
         /// The languages where this node's symbol is represented.
         fileprivate(set) var languages = SmallSourceLanguageSet()
         /// The other language representation of this symbol.
         ///
-        /// > Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
+        /// - Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
         fileprivate(set) unowned var counterpart: Node?
         
         /// A set of non-standard behaviors that apply to this node.
@@ -531,7 +557,7 @@ extension PathHierarchy {
         struct SpecialBehaviors: OptionSet {
             let rawValue: Int
             
-            /// This node is disfavored in the the case of a link collision.
+            /// This node is disfavored in the case of a link collision.
             ///
             /// If a favored node collides with a disfavored node the link will resolve to the favored node without requiring any disambiguation.
             /// Referencing the disfavored node requires disambiguation unless it's the only match for that link.
@@ -562,6 +588,7 @@ extension PathHierarchy {
             self.symbol = symbol
             self.name = name
             self.children = [:]
+            self.anchors = [:]
             self.specialBehaviors = []
             self.languages = [SourceLanguage(id: symbol.identifier.interfaceLanguage)]
         }
@@ -571,6 +598,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
+            self.anchors = [:]
             self.specialBehaviors = []
         }
         
@@ -667,7 +695,7 @@ extension PathHierarchy {
         
         /// Adds a descendant of this node.
         fileprivate func add(child: Node, kind: String?, hash: String?, parameterTypes: [String]? = nil, returnTypes: [String]? = nil) {
-            guard child.parent !== self else { 
+            guard child.parent !== self else {
                 assert(
                     children.keys.contains(child.name) &&
                     (try? children[child.name]?.find(.kindAndHash(kind: kind?[...], hash: hash?[...]))) === child,
@@ -706,17 +734,18 @@ extension PathHierarchy {
 
 extension PathHierarchy {
     /// Returns the list of top level symbols
-    func topLevelSymbols() -> [ResolvedIdentifier] {
+    func topLevelSymbols() -> Set<ResolvedIdentifier> {
         var result: Set<ResolvedIdentifier> = []
         // Roots represent modules and only have direct symbol descendants.
         for root in modules {
+            result.insert(root.identifier)
             for (_, tree) in root.children {
                 for element in tree.storage where element.node.symbol != nil {
                     result.insert(element.node.identifier)
                 }
             }
         }
-        return Array(result) + modules.map { $0.identifier }
+        return result
     }
 }
 
