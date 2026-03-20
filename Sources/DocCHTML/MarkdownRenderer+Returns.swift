@@ -66,25 +66,7 @@ package extension MarkdownRenderer {
     
     /// Renders named return values as a definition list (same layout as Parameters), with section title "Return Value".
     private func _returnValuesAsList(_ info: [SourceLanguage: [ParameterInfo]]) -> [XMLNode] {
-        let info = RenderHelpers.sortedLanguageSpecificValues(info)
-        guard info.contains(where: { _, parameters in !parameters.isEmpty }) else {
-            return []
-        }
-        let items: [XMLElement] = switch info.count {
-        case 1:
-            [_singleLanguageParameters(info.first!.value)]
-        case 2:
-            [_dualLanguageParameters(primary: info.first!, secondary: info.last!)]
-        default:
-            info.map { language, paramInfo in
-                .element(
-                    named: "dl",
-                    children: _singleLanguageParameterItems(paramInfo),
-                    attributes: ["class": "\(language.id)-only"]
-                )
-            }
-        }
-        return selfReferencingSection(named: "Return Value", content: items)
+        _definitionListSection(named: "Return Value", info)
     }
     
     /// Parses return section content when it is in outline form: a single `UnorderedList` with items like `- name: description`.
