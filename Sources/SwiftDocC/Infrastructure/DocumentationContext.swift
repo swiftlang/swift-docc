@@ -240,7 +240,7 @@ public class DocumentationContext {
     ///   - problems: A mutable collection of problems to update with any problem encountered during the semantic analysis.
     /// - Returns: The result of the semantic analysis.
     private func analyze(_ document: Document, at source: URL, engine: DiagnosticEngine) -> Semantic? {
-        var analyzer = SemanticAnalyzer(source: source, bundle: inputs)
+        var analyzer = SemanticAnalyzer(source: source, bundle: inputs, featureFlags: configuration.featureFlags)
         let result = analyzer.visit(document)
         engine.emit(analyzer.problems)
         return result
@@ -1846,7 +1846,7 @@ public class DocumentationContext {
             }
             let article = Article(
                 markup: articleResult.value.markup,
-                metadata: Metadata(from: metadataMarkup, for: inputs),
+                metadata: Metadata(from: metadataMarkup, for: inputs, featureFlags: configuration.featureFlags),
                 redirects: articleResult.value.redirects,
                 options: articleResult.value.options
             )
@@ -1879,7 +1879,7 @@ public class DocumentationContext {
                 Heading(level: 1, Text(title)),
                 metadataDirectiveMarkup
             )
-            let metadata = Metadata(from: metadataDirectiveMarkup, for: inputs)
+            let metadata = Metadata(from: metadataDirectiveMarkup, for: inputs, featureFlags: configuration.featureFlags)
             let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
             let documentationNode = DocumentationNode(
                 reference: reference,

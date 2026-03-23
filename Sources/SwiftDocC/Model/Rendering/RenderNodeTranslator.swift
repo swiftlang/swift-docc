@@ -1073,7 +1073,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
             let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
-                SupportedLanguage(from: $0, source: nil, for: context.inputs)?.language
+                SupportedLanguage(from: $0, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags)?.language
             }
             
             // If the task group has a set of supported languages, see if it should render for the allowed traits.

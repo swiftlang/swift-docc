@@ -111,10 +111,10 @@ class SemanticAnalyzerTests: XCTestCase {
     }
     
     func testDoesNotWarnOnEmptyTutorials() async throws {
-        let (bundle, _) = try await loadBundle(catalog: catalogHierarchy)
+        let (_, context) = try await loadBundle(catalog: catalogHierarchy)
         
         let document = Document(parsing: "", options: .parseBlockDirectives)
-        var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), bundle: context.inputs, featureFlags: context.configuration.featureFlags)
         let semantic = analyzer.visitDocument(document)
         XCTAssertNil(semantic)
         XCTAssert(analyzer.problems.isEmpty)

@@ -16,7 +16,7 @@ public import Markdown
 /// An article is written using markdown headers and paragraphs. There is an implicit meaning to the structure of an article that's parsed from its markup
 /// when the article is instantiated. For example, the leading level 1 heading is considered the article's title, the first paragraph of text is considered the
 /// article's abstract, and following paragraphs up to the next heading is considered the article's discussion.
-public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected, AutomaticTaskGroupsProviding {
+public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroupsProviding {
     /// The markup that makes up this article's content.
     let markup: (any Markup)?
     /// An optional container for metadata that's unrelated to the article's content.
@@ -108,7 +108,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     ///   - source: The location of the file that this article's content comes from.
     ///   - bundle: The documentation bundle that the source file belongs to.
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
-    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
             let range = markup.child(at: 0)?.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil)
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title")
@@ -130,6 +130,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
 
             return nil
         }
+        let featureFlags = FeatureFlags()
         
         var remainder: [any Markup]
         var redirects: [Redirect]
@@ -137,7 +138,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, problems: &problems)
+            return Redirect(from: childDirective, source: source, for: bundle, featureFlags: featureFlags, problems: &problems)
         }
         
         var optionalMetadata = DirectiveParser()
@@ -147,6 +148,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 parentType: Article.self,
                 source: source,
                 bundle: bundle,
+                featureFlags: featureFlags,
                 problems: &problems
             )
 
@@ -165,6 +167,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
                 from: childDirective,
                 source: source,
                 for: bundle,
+                featureFlags: featureFlags,
                 problems: &problems
             )
         }
@@ -250,3 +253,9 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.5 is released.")
+extension Article: MarkupConvertible {
+    public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, problems: inout [Problem]) {
+        self.init(from: markup, source: source, for: bundle, featureFlags: FeatureFlags(), problems: &problems)
+    }
+}

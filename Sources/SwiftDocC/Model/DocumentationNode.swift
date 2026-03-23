@@ -338,6 +338,7 @@ public struct DocumentationNode {
             documentedSymbol: unifiedSymbol?.documentedSymbol,
             documentationExtension: documentationExtension,
             bundle: bundle,
+            featureFlags: featureFlags,
             engine: engine
         )
         
@@ -501,6 +502,7 @@ public struct DocumentationNode {
         documentedSymbol: SymbolGraph.Symbol?,
         documentationExtension: Article?,
         bundle: DocumentationBundle? = nil,
+        featureFlags: FeatureFlags,
         engine: DiagnosticEngine
     ) -> (
         markup: any Markup,
@@ -551,6 +553,7 @@ public struct DocumentationNode {
                         parentType: Symbol.self,
                         source: docCommentLocation?.url,
                         bundle: bundle,
+                        featureFlags: featureFlags,
                         problems: &problems
                     )
                 
@@ -742,8 +745,9 @@ public struct DocumentationNode {
     ///   - platformName: The names of the platform that the symbol is available for.
     ///   - moduleReference: A reference to the module that the symbol belongs to.
     ///   - article: The documentation extension content for this symbol.
+    ///   - featureFlags: A collection of feature flags.
     ///   - engine:The engine that collects any problems encountered during initialization.
-    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, engine: DiagnosticEngine) {
+    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, featureFlags: FeatureFlags = .init(), engine: DiagnosticEngine) {
         self.reference = reference
         
         guard reference.sourceLanguage == .swift else {
@@ -770,7 +774,7 @@ public struct DocumentationNode {
         // Prefer content sections coming from an article (documentation extension file)
         var deprecated: DeprecatedSection?
         
-        let (markup, docChunks, _) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, engine: engine)
+        let (markup, docChunks, _) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, featureFlags: FeatureFlags(), engine: engine)
         self.markup = markup
         self.docChunks = docChunks
         

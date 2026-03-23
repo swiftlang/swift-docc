@@ -19,9 +19,9 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(image)
         XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -38,9 +38,9 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(image)
         XCTAssertTrue(problems.isEmpty)
         image.map { image in
@@ -57,9 +57,9 @@ class ImageMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, _) = try await testBundleAndContext()
+            let context = try await makeEmptyContext()
             var problems = [Problem]()
-            let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
+            let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             XCTAssertNotNil(image)
             XCTAssertTrue(problems.isEmpty)
             image.map { image in
@@ -75,9 +75,9 @@ class ImageMediaTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(image)
         XCTAssertEqual(3, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -171,7 +171,7 @@ class ImageMediaTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
-        let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"]) {
+        let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"], configuration: configuration) {
             """
             @Image(source: "figure1", deviceFrame: phone)
             """
@@ -193,7 +193,7 @@ class ImageMediaTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
-        let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"]) {
+        let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"], configuration: configuration) {
             """
             @Image(source: "figure1", deviceFrame: laptop) {
                 This is my caption.

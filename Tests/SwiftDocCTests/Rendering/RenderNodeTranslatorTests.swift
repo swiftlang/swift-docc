@@ -224,7 +224,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
             
     func testArticleRoles() async throws {
-        let (bundle, _) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         
         // Verify article's role
@@ -237,7 +237,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let article = try XCTUnwrap(
-                Article(from: document.root, source: nil, for: bundle, problems: &problems)
+                Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.article, DocumentationContentRenderer.roleForArticle(article, nodeKind: .article))
         }
@@ -257,7 +257,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify a collection group
             let article1 = try XCTUnwrap(
-                Article(from: document.root, source: nil, for: bundle, problems: &problems)
+                Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.collectionGroup, DocumentationContentRenderer.roleForArticle(article1, nodeKind: .article))
             
@@ -273,7 +273,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify a collection
             let article2 = try XCTUnwrap(
-                Article(from: metadataDocument.root, source: nil, for: bundle, problems: &problems)
+                Article(from: metadataDocument.root, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
             )
             XCTAssertEqual(RenderMetadata.Role.collection, DocumentationContentRenderer.roleForArticle(article2, nodeKind: .article))
         }
@@ -304,7 +304,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
 
     func testEmptyTaskGroupsNotRendered() async throws {
-        let (bundle, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
+        let (_, context) = try await testBundleAndContext(named: "LegacyBundle_DoNotUseInNewTests")
         var problems = [Problem]()
         
         let source = """
@@ -340,7 +340,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let article = try XCTUnwrap(
-            Article(from: document.root, source: nil, for: bundle, problems: &problems)
+            Article(from: document, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         )
         let reference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/taskgroups", fragment: nil, sourceLanguage: .swift)
         context.documentationCache[reference] = try DocumentationNode(reference: reference, article: article)

@@ -102,7 +102,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
         self.originalMarkup = originalMarkup
     }
     
-    func validate(source: URL?, problems: inout [Problem]) -> Bool {
+    func validate(source: URL?, problems: inout [Problem], featureFlags _: FeatureFlags) -> Bool {
         var seenSectionTitles = [String: SourceRange]()
         sections = sections.filter { section -> Bool in
             let arguments = section.originalMarkup.arguments()

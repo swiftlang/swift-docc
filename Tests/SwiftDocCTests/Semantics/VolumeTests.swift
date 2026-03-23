@@ -21,9 +21,9 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var problems = [Problem]()
-        let volume = Volume(from: directive, source: nil, for: bundle, problems: &problems)
+        let volume = Volume(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNil(volume)
         XCTAssertEqual(4, problems.count)
         XCTAssertEqual([
@@ -52,9 +52,9 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, _) = try await testBundleAndContext()
+        let context = try await makeEmptyContext()
         var problems = [Problem]()
-        let volume = Volume(from: directive, source: nil, for: bundle, problems: &problems)
+        let volume = Volume(from: directive, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, problems: &problems)
         XCTAssertNotNil(volume)
         XCTAssertTrue(problems.isEmpty)
         volume.map { volume in
