@@ -44,17 +44,6 @@ struct SymbolGraphLoader {
         self.symbolGraphTransformer = symbolGraphTransformer
     }
 
-    /// A strategy to decode symbol graphs.
-    enum DecodingConcurrencyStrategy {
-        /// Decode all symbol graph files on separate threads concurrently.
-        case concurrentlyAllFiles
-        /// Decode all symbol graph files sequentially, each one split into batches that are decoded concurrently.
-        case concurrentlyEachFileInBatches
-    }
-    
-    /// The symbol graph decoding strategy to use.
-    private(set) var decodingStrategy: DecodingConcurrencyStrategy = .concurrentlyEachFileInBatches
-
     /// Loads all symbol graphs in the given bundle.
     ///
     /// - Throws: If loading and decoding any of the symbol graph files throws, this method re-throws one of the encountered errors.
@@ -111,28 +100,9 @@ struct SymbolGraphLoader {
             }
         }
         
-        // If we have symbol graph files for multiple platforms
-        // load and decode each one on a separate thread.
-        // This strategy benchmarks better when we have multiple
-        // "larger" symbol graphs.
-        #if os(macOS) || os(iOS)
-        if bundle.symbolGraphURLs.filter({ !$0.lastPathComponent.contains("@") }).count > 1 {
-            // There are multiple main symbol graphs, better parallelize all files decoding.
-            decodingStrategy = .concurrentlyAllFiles
-        }
-        #endif
-        
         let numberOfSymbolGraphs = bundle.symbolGraphURLs.count
         let decodeSignpostHandle = signposter.beginInterval("Decode symbol graphs", id: signposter.makeSignpostID(), "Decode \(numberOfSymbolGraphs) symbol graphs")
-        switch decodingStrategy {
-        case .concurrentlyAllFiles:
-            // Concurrently load and decode all symbol graphs
-            bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
-            
-        case .concurrentlyEachFileInBatches:
-            // Serially load and decode all symbol graphs, each one in concurrent batches.
-            bundle.symbolGraphURLs.forEach(loadGraphAtURL)
-        }
+        bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
         signposter.endInterval("Decode symbol graphs", decodeSignpostHandle)
         
         // define an appropriate merging strategy based on the graph formats
