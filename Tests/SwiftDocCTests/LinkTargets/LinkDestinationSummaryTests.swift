@@ -729,6 +729,78 @@ struct LinkDestinationSummaryTests {
     // FIXME: Add tests that verify the behaviors of mixing in-source availability attributes and Available directives (rdar://171807245)
     
     @Test
+    func includesTopicReferencesFromSymbolAbstract() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["First"], docComment: """
+                This first symbol links to the ``Second`` symbol.    
+                """),
+                
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let summary = try #require(summaries.first)
+        
+        let renderReferenceID = RenderReferenceIdentifier("doc://unit-test/documentation/ModuleName/Second")
+        #expect(summary.abstract == [
+            .text("This first symbol links to the "),
+            .reference(identifier: renderReferenceID, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .text(" symbol."),
+        ])
+        
+        #expect(summary.references?.count == 1)
+        let renderReference = try #require(summary.references?.first as? TopicRenderReference)
+        #expect(renderReference.title == "Second")
+        #expect(renderReference.kind  == .symbol)
+        #expect(renderReference.url   == "/documentation/modulename/second")
+    }
+    
+    @Test
+    func includesTopicReferencesFromArticleAbstract() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "First.md", utf8Content: """
+            # First
+            
+            This first article links to the <doc:Second> article.
+            """)
+            
+            TextFile(name: "Second.md", utf8Content: """
+            # Second
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let node = try context.entity(with: reference)
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let summary = try #require(summaries.first)
+        
+        let renderReferenceID = RenderReferenceIdentifier("doc://unit-test/documentation/unit-test/Second")
+        #expect(summary.abstract == [
+            .text("This first article links to the "),
+            .reference(identifier: renderReferenceID, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .text(" article."),
+        ])
+        
+        #expect(summary.references?.count == 1)
+        let renderReference = try #require(summary.references?.first as? TopicRenderReference)
+        #expect(renderReference.title == "Second")
+        #expect(renderReference.kind  == .article)
+        #expect(renderReference.url   == "/documentation/unit-test/second")
+    }
+    
+    @Test
     func summarizeTutorialPage() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "TableOfContents.tutorial", utf8Content: """
