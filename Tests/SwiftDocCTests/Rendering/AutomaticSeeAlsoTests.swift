@@ -253,38 +253,41 @@ class AutomaticSeeAlsoTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Article) as! RenderNode
             
-            // Verify there is an automacially created See Also
+            // Verify there is an automatically created See Also
             XCTAssertTrue(renderNode.seeAlsoSections.isEmpty)
         }
     }
 
     func testSeeAlsoWithSymbolAndTutorial() async throws {
-        let exampleDocumentation = Folder(name: "MyKit.docc", content: [
-           CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!),
+        let catalog = Folder(name: "MyKit.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "MyKit", symbols: [
+                makeSymbol(id: "some-class-id", kind: .case, pathComponents: ["MyClass"]),
+                makeSymbol(id: "some-method-id", kind: .case, pathComponents: ["MyClass", "myFunction()"]),
+            ], relationships: [
+                .init(source: "some-method-id", target: "some-class-id", kind: .memberOf, targetFallback: nil),
+            ]))
             
-           // The tutorial has the same file name (excluding the file extension) as the module and as the bundle.
-           TextFile(name: "MyKit.tutorial", utf8Content: """
-           @Tutorials(name: "My Tutorials") {
-               @Intro(title: "My Intro") {
-               }
-           }
-           """),
-           
+            // The tutorial has the same file name (excluding the file extension) as the module and as the bundle.
+            TextFile(name: "MyKit.tutorial", utf8Content: """
+            @Tutorials(name: "My Tutorials") {
+                @Intro(title: "My Intro") {
+                }
+            }
+            """)
+            
             TextFile(name: "MyKit.md", utf8Content: """
             # ``MyKit``
-
+            
             Curate a symbol and a tutorial together so that the symbol's generated See Also section includes the tutorial.
-
+            
             ## Topics
-
+            
             - ``MyKit/MyClass/myFunction()``
             - <doc:/tutorials/MyKit>
-            """),
-        ])
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
-
-        let (_, _, context) = try await loadBundle(from: bundleURL)
+            """)
+        }
+        let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleID: "MyKit", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))

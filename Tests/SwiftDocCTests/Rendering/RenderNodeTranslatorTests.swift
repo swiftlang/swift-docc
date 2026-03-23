@@ -682,30 +682,27 @@ class RenderNodeTranslatorTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
         
-        let testBundle = try Folder(
-            name: "unit-test.docc",
-            content: [
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-                CopyOfFile(original: inheritedDefaultImplementationsFromExternalModuleSGF),
-            ]
-        ).write(inside: createTemporaryDirectory())
+        let catalog = Folder(name: "unit-test.docc") {
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            CopyOfFile(original: inheritedDefaultImplementationsFromExternalModuleSGF)
+        }
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/SecondTarget/FancyProtocolConformer", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/SecondTarget/FancyProtocolConformer", catalog: catalog),
             [
                 "FancyProtocol Implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/SecondTarget/OtherFancyProtocolConformer", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/SecondTarget/OtherFancyProtocolConformer", catalog: catalog),
             [
                 "OtherFancyProtocol Implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/SecondTarget/FooConformer", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/SecondTarget/FooConformer", catalog: catalog),
             [
                 "Foo Implementations",
             ]
@@ -724,24 +721,21 @@ class RenderNodeTranslatorTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
         
-        let testBundle = try Folder(
-            name: "unit-test.docc",
-            content: [
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-                CopyOfFile(original: inheritedDefaultImplementationsSGF),
-                CopyOfFile(original: inheritedDefaultImplementationsAtSwiftSGF),
-            ]
-        ).write(inside: createTemporaryDirectory())
+        let catalog = Folder(name: "unit-test.docc") {
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            CopyOfFile(original: inheritedDefaultImplementationsSGF)
+            CopyOfFile(original: inheritedDefaultImplementationsAtSwiftSGF)
+        }
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", catalog: catalog),
             [
                 "Foo Implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", catalog: catalog),
             [
                 "Comparable Implementations",
                 "Equatable Implementations",
@@ -749,7 +743,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         )
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", catalog: catalog),
             [
                 "Comparable Implementations",
                 "Equatable Implementations",
@@ -766,9 +760,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
         
-        let symbolGraphWithModifiedPlatform = try String(
-            contentsOf: inheritedDefaultImplementationsSGF
-        )
+        let symbolGraphWithModifiedPlatform = try String(contentsOf: inheritedDefaultImplementationsSGF)
         .replacingOccurrences(
             of: """
                 "architecture": "x86_64",
@@ -786,37 +778,26 @@ class RenderNodeTranslatorTests: XCTestCase {
                 """
         )
         
-        let testBundle = try Folder(
-            name: "unit-test.docc",
-            content: [
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-                Folder(
-                    name: "x86_64-apple-macos",
-                    content: [
-                        CopyOfFile(original: inheritedDefaultImplementationsSGF),
-                    ]
-                ),
-                Folder(
-                    name: "arm64-apple-ios",
-                    content: [
-                        DataFile(
-                            name: inheritedDefaultImplementationsSGF.lastPathComponent,
-                            data: Data(symbolGraphWithModifiedPlatform.utf8)
-                        ),
-                    ]
-                ),
-            ]
-        ).write(inside: createTemporaryDirectory())
+        let catalog = Folder(name: "unit-test.docc") {
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            
+            Folder(name: "x86_64-apple-macos") {
+                CopyOfFile(original: inheritedDefaultImplementationsSGF)
+            }
+            Folder(name: "arm64-apple-ios") {
+                TextFile(name: inheritedDefaultImplementationsSGF.lastPathComponent, utf8Content: symbolGraphWithModifiedPlatform)
+            }
+        }
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", catalog: catalog),
             [
                 "Foo Implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", catalog: catalog),
             [
                 "Comparable Implementations",
                 "Equatable Implementations",
@@ -824,7 +805,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         )
         
         try await assertDefaultImplementationCollectionTitles(
-            in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", in: testBundle),
+            in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", catalog: catalog),
             [
                 "Comparable Implementations",
                 "Equatable Implementations",
@@ -854,10 +835,10 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(references.map(\.title), expectedTitles, file: file, line: line)
     }
     
-    func loadRenderNode(at path: String, in bundleURL: URL) async throws -> RenderNode {
-        let (_, bundle, context) = try await loadBundle(from: bundleURL)
+    private func loadRenderNode(at path: String, catalog: Folder) async throws -> RenderNode {
+        let (_, context) = try await loadBundle(catalog: catalog)
 
-        let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, identifier: reference)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
