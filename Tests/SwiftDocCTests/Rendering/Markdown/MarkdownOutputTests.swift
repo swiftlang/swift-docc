@@ -608,17 +608,18 @@ final class MarkdownOutputTests: XCTestCase {
                                 
                 <h1>More Complex example</h1>
 
-                  <!-- COMMENT CONTENT 4 -->
+                <!-- COMMENT CONTENT 4 -->
 
-                  <p>This paragraph is invisible.</p>
+                <p>This paragraph is invisible.</p>
 
-                  <!--
-                    COMMENT CONTENT 5
-                    COMMENT CONTENT 6
-                  -->
+                <!--
+                  COMMENT CONTENT 5
+                  COMMENT CONTENT 6
+                -->
 
-                  <p>This paragraph is also invisible. <!-- COMMENT CONTENT 7 --></p>
-
+                <p>This paragraph is also invisible. <!-- COMMENT CONTENT 7 --></p>
+                
+                Inline HTML is <em>EMPHASISED</em> stripped of tags
                 """)
         ])
         
@@ -630,12 +631,12 @@ final class MarkdownOutputTests: XCTestCase {
         XCTAssertFalse(markdown.contains("COMMENT CONTENT 5"))
         XCTAssertFalse(markdown.contains("COMMENT CONTENT 6"))
         XCTAssertFalse(markdown.contains("COMMENT CONTENT 7"))
-        XCTAssertFalse(markdown.contains("COMMENT CONTENT 8"))
         XCTAssertFalse(markdown.contains("More Complex example"))
+        XCTAssertFalse(markdown.contains("This paragraph is invisible"))
         XCTAssertFalse(markdown.contains("This paragraph is also invisible"))
-        
         XCTAssert(markdown.contains("COMMENT CONTENT 3"))
         XCTAssert(markdown.contains("Text in a code block HTML"))
+        XCTAssert(markdown.contains("Inline HTML is EMPHASISED stripped of tags"))
     }
     
     
