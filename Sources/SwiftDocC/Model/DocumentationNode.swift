@@ -329,7 +329,8 @@ public struct DocumentationNode {
     mutating func initializeSymbolContent(
         documentationExtension: Article?,
         engine: DiagnosticEngine,
-        bundle: DocumentationBundle
+        bundle: DocumentationBundle,
+        featureFlags: FeatureFlags
     ) {
         precondition(unifiedSymbol != nil && symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
         
@@ -390,7 +391,7 @@ public struct DocumentationNode {
         )
         semantic.redirects = documentationExtension?.redirects
         
-        let filter = ParametersAndReturnValidator(diagnosticEngine: engine, docChunkSources: docChunks.map(\.source))
+        let filter = ParametersAndReturnValidator(diagnosticEngine: engine, docChunkSources: docChunks.map(\.source), isValidationEnabled: featureFlags.isParametersAndReturnsValidationEnabled)
         let (parametersSectionVariants, returnsSectionVariants) = filter.makeParametersAndReturnsSections(
             markupModel.discussionTags?.parameters,
             markupModel.discussionTags?.returns,

@@ -241,7 +241,8 @@ class VideoMediaTests: XCTestCase {
     }
     
     func testRenderVideoDirectiveWithDeviceFrame() async throws {
-        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
         let (renderedContent, problems, video, _) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """
@@ -265,7 +266,8 @@ class VideoMediaTests: XCTestCase {
     }
     
     func testRenderVideoDirectiveWithCaptionAndDeviceFrame() async throws {
-        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
         let (renderedContent, problems, video, references) = try await parseDirective(VideoMedia.self, catalog: catalog) {
             """

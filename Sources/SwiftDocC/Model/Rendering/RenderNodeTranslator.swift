@@ -1480,7 +1480,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     DictionaryKeysSectionTranslator(),
                     AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),
-                    MentionsSectionTranslator(referencingSymbol: identifier),
+                    MentionsSectionTranslator(referencingSymbol: identifier, isEnabled: context.configuration.featureFlags.isMentionedInEnabled),
                     DiscussionSectionTranslator(),
                 ]
             )

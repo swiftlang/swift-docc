@@ -168,7 +168,8 @@ class ImageMediaTests: XCTestCase {
     }
     
     func testRenderImageDirectiveWithDeviceFrame() async throws {
-        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
         let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"]) {
             """
@@ -189,7 +190,8 @@ class ImageMediaTests: XCTestCase {
     }
     
     func testRenderImageDirectiveWithDeviceFrameAndCaption() async throws {
-        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        var configuration = DocumentationContext.Configuration()
+        configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled = true
         
         let (renderedContent, problems, image) = try await parseDirective(ImageMedia.self, withAvailableAssetNames: ["figure1.jpg"]) {
             """

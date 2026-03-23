@@ -219,7 +219,13 @@ public class DocumentationContext {
         self.inputs = inputs
         self.dataProvider = dataProvider
         self.diagnosticEngine = diagnosticEngine
+        
+        var configuration = configuration
+        if let bundleFlags = inputs.info.featureFlags {
+            configuration.featureFlags.loadFlagsFromBundle(bundleFlags)
+        }
         self.configuration = configuration
+        
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
         ResolvedTopicReference.enableReferenceCaching(for: inputs.id)
@@ -506,7 +512,7 @@ public class DocumentationContext {
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
 
-            if FeatureFlags.current.isMentionedInEnabled {
+            if configuration.featureFlags.isMentionedInEnabled {
                 // Record symbol links as symbol "mentions" for automatic cross references
                 // on rendered symbol documentation.
                 if let article = result.node.semantic as? Article,
@@ -924,7 +930,8 @@ public class DocumentationContext {
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
             engine: diagnosticEngine,
-            bundle: inputs
+            bundle: inputs,
+            featureFlags: configuration.featureFlags
         )
 
         return updatedNode
@@ -1995,11 +2002,7 @@ public class DocumentationContext {
     private func register() async throws {
         try shouldContinueRegistration()
 
-        let currentFeatureFlags: FeatureFlags?
         if let bundleFlags = inputs.info.featureFlags {
-            currentFeatureFlags = FeatureFlags.current
-            FeatureFlags.current.loadFlagsFromBundle(bundleFlags)
-
             for unknownFeatureFlag in bundleFlags.unknownFeatureFlags {
                 let suggestions = NearMiss.bestMatches(
                     for: DocumentationBundle.Info.BundleFeatureFlags.CodingKeys.allCases.map({ $0.stringValue }),
@@ -2015,13 +2018,6 @@ public class DocumentationContext {
                             summary: summary
                         )))
             }
-        } else {
-            currentFeatureFlags = nil
-        }
-        defer {
-            if let currentFeatureFlags = currentFeatureFlags {
-                FeatureFlags.current = currentFeatureFlags
-            }
         }
 
         // Documents and symbols may both reference each other so the inputs is registered in 4 steps
@@ -2031,6 +2027,7 @@ public class DocumentationContext {
             var symbolGraphLoader = SymbolGraphLoader(
                 bundle: inputs,
                 dataProvider: dataProvider,
+                shouldCreateOverloadGroups: configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled,
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
             )
             
@@ -2045,7 +2042,8 @@ public class DocumentationContext {
                     PathHierarchyBasedLinkResolver(pathHierarchy: PathHierarchy(
                         symbolGraphLoader: symbolGraphLoader,
                         bundleName: urlReadablePath(inputs.displayName),
-                        knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents
+                        knownDisambiguatedPathComponents: configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents,
+                        isModuleNotFoundErrorsEnabled: configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled
                     ))
                 }
             }
@@ -2360,7 +2358,7 @@ public class DocumentationContext {
     }
 
     private func addOverloadGroupReferences(overloadGroups: [String: Set<String>]) {
-        guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
+        guard configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
         

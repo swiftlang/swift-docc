@@ -123,13 +123,15 @@ struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
     let goal: RenderGoal
+    let featureFlags: FeatureFlags
     
     private let renderer: MarkdownRenderer<ContextLinkProvider>
     
-    init(reference: ResolvedTopicReference, context: DocumentationContext, goal: RenderGoal) {
+    init(reference: ResolvedTopicReference, context: DocumentationContext, goal: RenderGoal, featureFlags: FeatureFlags = .init()) {
         self.reference = reference
         self.context = context
         self.goal = goal
+        self.featureFlags = featureFlags
         self.renderer = MarkdownRenderer(
             path: ContextLinkProvider.filePath(for: reference),
             goal: goal,
@@ -327,7 +329,7 @@ struct HTMLRenderer {
         }
         
         // Mentioned In
-        if FeatureFlags.current.isMentionedInEnabled {
+        if featureFlags.isMentionedInEnabled {
             articleElement.addChildren(
                 renderer.groupedListSection(named: "Mentioned In", groups: [
                     .swift: [.init(title: nil, references: context.articleSymbolMentions.articlesMentioning(reference).map(\.url))]

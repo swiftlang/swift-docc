@@ -124,8 +124,8 @@ extension XCTestCase {
         return (context.inputs, context)
     }
     
-    func renderNode(atPath path: String, fromTestBundleNamed testCatalogName: String) async throws -> RenderNode {
-        let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: testCatalogName))
+    func renderNode(atPath path: String, fromTestBundleNamed testCatalogName: String, configuration: DocumentationContext.Configuration = .init()) async throws -> RenderNode {
+        let context = try await loadFromDisk(catalogURL: try testCatalogURL(named: testCatalogName), configuration: configuration)
         let node = try context.entity(with: ResolvedTopicReference(bundleID: context.inputs.id, path: path, sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, identifier: node.reference)
         return try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
@@ -143,8 +143,8 @@ extension XCTestCase {
         return try inputProvider.makeInputs(contentOf: catalogURL, options: .init())
     }
     
-    func testBundleAndContext() async throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
-        let context = try await makeEmptyContext()
+    func testBundleAndContext(configuration: DocumentationContext.Configuration = .init()) async throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
+        let context = try await makeEmptyContext(configuration: configuration)
         return (context.inputs, context)
     }
     

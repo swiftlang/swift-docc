@@ -340,64 +340,48 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testExperimentalEnableDeviceFrameSupportFlag() throws {
-        let originalFeatureFlagsState = FeatureFlags.current
-        
-        defer {
-            FeatureFlags.current = originalFeatureFlagsState
-        }
-        
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalDeviceFrameSupport)
-        XCTAssertFalse(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
+        XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled)
 
         let commandWithFlag = try Docc.Convert.parse([
             "--enable-experimental-device-frame-support",
             testBundleURL.path,
         ])
-        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalDeviceFrameSupport)
-        XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
+        XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalDeviceFrameSupportEnabled)
     }
     
     func testExperimentalEnableExternalLinkSupportFlag() throws {
-        let originalFeatureFlagsState = FeatureFlags.current
-        defer {
-            FeatureFlags.current = originalFeatureFlagsState
-        }
-        
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
-        XCTAssertFalse(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
+        XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
 
         let commandWithFlag = try Docc.Convert.parse([
             "--enable-experimental-external-link-support",
             testBundleURL.path,
         ])
-        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalLinkHierarchySerialization)
-        XCTAssertTrue(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
+        XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalLinkHierarchySerializationEnabled)
     }
     
     func testExperimentalEnableOverloadedSymbolPresentation() throws {
-        let originalFeatureFlagsState = FeatureFlags.current
-        defer {
-            FeatureFlags.current = originalFeatureFlagsState
-        }
-        
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        let actionWithoutFlag  = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.featureFlags.enableExperimentalOverloadedSymbolPresentation)
-        XCTAssertFalse(FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
+        XCTAssertFalse(actionWithoutFlag.configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled)
 
         let commandWithFlag = try Docc.Convert.parse([
             "--enable-experimental-overloaded-symbol-presentation",
             testBundleURL.path,
         ])
-        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.featureFlags.enableExperimentalOverloadedSymbolPresentation)
-        XCTAssertTrue(FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
+        XCTAssertTrue(actionWithFlag.configuration.featureFlags.isExperimentalOverloadedSymbolPresentationEnabled)
     }
     
     func testLinkDependencyValidation() throws {
