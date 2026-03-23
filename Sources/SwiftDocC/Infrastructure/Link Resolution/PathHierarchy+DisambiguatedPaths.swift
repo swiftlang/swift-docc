@@ -302,48 +302,59 @@ extension PathHierarchy.DisambiguationContainer {
         includeLanguage: Bool,
         allowAdvancedDisambiguation: Bool
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
-        // This implementation uses partitioning and sorting to avoid tracking non-symbol, unique symbols, and duplicate symbols in
+        // This implementation uses partitioning and sorting to avoid tracking non-symbol, unique symbols, and duplicate symbols in their separately allocated data structures.
         var storage = storage
+        // By partitioning the non-symbols from the symbols, we can separate the non-symbols in a single linear scan  ...
         let articlePivot = storage.partition(by: { $0.node.symbol != nil })
+        // ... this also means that we only have to sort the symbol slice (which may check each element more than once)
         storage[articlePivot...].sort(by: { lhs, rhs in
             let lhsID = lhs.node.symbol!.identifier
             let rhsID = rhs.node.symbol!.identifier
             guard lhsID.precise == rhsID.precise else {
+                // By sorting the symbols by their unique identifiers we implicitly group duplicates (by them being a consecutive series with the same unique identifier)
                 return lhsID.precise < rhsID.precise
             }
             
-            // Order Swift before other language representations of the same symbol
+            // Among the duplicates, we only care about ordering the Swift language representation before the other duplicates.
             return lhsID.interfaceLanguage == "swift"
         })
        
-        // Use a new disambiguation container (with the collapsed symbols) to compute the minimal necessary disambiguation
+        // To compute how the disambiguation suffixes without needing to disambiguate between two different versions of the same symbol,
+        // we create a new disambiguation container and add the articles and non-duplicate symbols to it.
         var new = PathHierarchy.DisambiguationContainer()
         for element in storage[..<articlePivot] {
             assert(element.node.symbol == nil, "Miscategorized '\(element.node.symbol!.names.title)' as non-symbol")
             new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
         }
         
-        // Try to avoid a temporary head allocation if possible. The compiler _may_ use stack memory for this.
+        // We need some way to temporarily track the duplicates so that we can add them to the result at the end.
+        // Hoping to avoid a _heap_ allocation, we use `withUnsafeTemporaryAllocation` for this.
+        // It gives us a buffer pointer to some uninitialized memory that will be deallocated by the end of the closure's scope.
+        // Depending on the requires size, the compiler may use _stack_ memory for this.
         var symbols = storage[articlePivot...]
-        return withUnsafeTemporaryAllocation(of: Element.self, capacity: symbols.count /* There can never be more duplicates than the storage itself */) { duplicatesBuffer in
+        return withUnsafeTemporaryAllocation(of: Element.self, capacity: symbols.count /* There can never be more duplicates than the number of symbols */) { duplicatesBuffer in
+            // We keep track of how many duplicates we've found so that we know where in the buffer to write the next value and how much memory we need to deinitialize.
             var duplicatesCount = 0
             
+            // Iterate over the sorted symbols and add the first symbol (but not its duplicates) to the new disambiguation container.
             while let element = symbols.popFirst() {
                 assert(element.node.symbol != nil, "Miscategorized '\(element.node.name)' as a symbol")
                 // The first symbol is already sorted based on the interface language
                 new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
                 
-                // Track any duplicates for the next step below.
+                // Because two symbols with the same unique identifier have the same (very short) disambiguation hash, we make that cheaper comparison to identify duplicate.
                 while symbols.first?.hash == element.hash {
+                    // As long as the symbols are duplicates we save them in the temporary buffer, so that we can iterate them a few lines further down.
                     duplicatesBuffer.initializeElement(at: duplicatesCount, to: symbols.removeFirst())
                     duplicatesCount &+= 1
                 }
             }
             
-            // Disambiguate the elements with the unique symbols collapsed (duplicate symbols with the same USR are not in `new`).
+            // Now that we've added the articles and the non-duplicate symbols to the new container, compute the disambiguation suffixes based on only that information.
             var disambiguated = new.disambiguatedValues(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
             
-            // Add values for the duplicate symbols (without updating the _amount_ of necessary disambiguation)
+            // Lastly, for each duplicate, add it the result (without updating the _amount_ of necessary disambiguation for the rest).
+            // We could possibly get rid of the duplicates all together in the future but it would require changing the calling code some as well.
             for index in 0 ..< duplicatesCount {
                 let element = duplicatesBuffer[index]
                 let primaryDisambiguation = disambiguated.first(where: { $0.value.symbol?.identifier.precise == element.node.symbol?.identifier.precise })!.disambiguation
@@ -351,7 +362,7 @@ extension PathHierarchy.DisambiguationContainer {
                 disambiguated.append((element.node, primaryDisambiguation.updated(kind: element.kind, hash: element.hash)))
             }
             
-            // The closure is responsible for both deinitializing any memory that it initializes. However, the buffer will trap if deinitializing memory that it never initialized.
+            // The closure is responsible for both deinitializing any memory that it initializes. However, the buffer will trap if it deinitializes memory that it never initialized.
             duplicatesBuffer[0..<duplicatesCount].deinitialize()
             return disambiguated
         }
