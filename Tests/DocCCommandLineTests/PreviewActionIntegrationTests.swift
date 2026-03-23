@@ -11,7 +11,7 @@
 #if canImport(NIOHTTP1)
 import XCTest
 @testable import SwiftDocC
-@testable import DocCCommandLine
+@_spi(Testing) @testable import DocCCommandLine
 import DocCTestUtilities
 import NIOCore
 
@@ -305,7 +305,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         XCTAssertNotNil(servers[preview.serverIdentifier])
         
         // We have one preview running on the given port
-        let boundPort = try XCTUnwrap(servers[preview.serverIdentifier]?.channel.localAddress?.port)
+        let boundPort = try XCTUnwrap(servers[preview.serverIdentifier]?._boundPort)
 
         // Try to start another preview on the same port
         try await assert(bindPort: boundPort, expectedErrorMessage: "Port \(boundPort) is not available at the moment, try a different port number")
