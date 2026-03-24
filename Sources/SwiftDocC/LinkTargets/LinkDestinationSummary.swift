@@ -165,13 +165,19 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public let subheadingDeclarationFragments: DeclarationFragments?
 
     /// The simplified "navigator" declaration fragments for this symbol, or `nil` if the summarized element isn't a symbol.
+    @available(*, deprecated, renamed: "navigatorTitle", message: "Use 'navigatorTitle' instead. This deprecated API will be removed after 6.5 is released.")
+    public var navigatorDeclarationFragments: DeclarationFragments? {
+        navigatorTitle.map { [.init(text: $0, kind: .text)] }
+    }
+
+    /// The simplified "navigator" title of this symbol, derived from a simplification of its declaration fragments and joined together, or `nil` if the summarized element isn't a symbol.
     ///
-    /// These navigator fragments are suitable to use to refer to a symbol that's linked to in a navigator.
+    /// This text is suitable to use to refer to a symbol when it's displayed in a navigator.
     ///
     /// - Note: The navigator title does not represent the symbol's full declaration.
     ///   Different overloads may have indistinguishable navigator fragments.
-    public let navigatorDeclarationFragments: DeclarationFragments?
-
+    public let navigatorTitle: String?
+    
     /// Any previous URLs for this element.
     ///
     /// A web server can use this list of URLs to redirect to the current URL.
@@ -244,11 +250,18 @@ public struct LinkDestinationSummary: Codable, Equatable {
         }
 
         /// The simplified "navigator" declaration fragments for this symbol,  or `nil` if the navigator title is the same as the summarized element.
+        public var navigatorDeclarationFragments: VariantValue<DeclarationFragments?> {
+            navigatorTitle.map { declarationText in
+                declarationText.map { [.init(text: $0, kind: .text)] }
+            }
+        }
+        
+        /// The simplified "navigator" title of this symbol, derived from a simplification of its declaration fragments and joined together, or `nil` if the navigator title is the same as the summarized element.
         ///
-        /// These navigator fragments are suitable to use to refer to a symbol that's linked to in a navigator.
+        /// This text is suitable to use to refer to a symbol when it's displayed in a navigator.
         ///
         /// If the summarized element has a navigator title but the variant doesn't, this property will be `Optional.some(nil)`.
-        public let navigatorDeclarationFragments: VariantValue<DeclarationFragments?>
+        public let navigatorTitle: VariantValue<String?>
 
         /// Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
         ///
@@ -268,7 +281,33 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///   - usr: The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///   - plainTextDeclaration: The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the precise symbol identifier is the same as the summarized element.
         ///   - subheadingDeclarationFragments: The simplified "subheading" declaration fragments for this symbol, to display in topic groups, or `nil` if the declaration is the same as the summarized element.
-        ///   - navigatorDeclarationFragments: The simplified "navigator" declaration fragments for this symbol, to display in navigation, or `nil` if the declaration is the same as the summarized element.
+        ///   - navigatorTitle: The simplified "navigator" title for this symbol, to display in navigation, or `nil` if the declaration is the same as the summarized element.
+        public init(
+            traits: [RenderNode.Variant.Trait],
+            kind: VariantValue<DocumentationNode.Kind> = nil,
+            language: VariantValue<SourceLanguage> = nil,
+            relativePresentationURL: VariantValue<URL> = nil,
+            title: VariantValue<String> = nil,
+            abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
+            usr: VariantValue<String?> = nil,
+            plainTextDeclaration: VariantValue<String?> = nil,
+            subheadingDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
+            navigatorTitle: VariantValue<String?> = nil
+        ) {
+            self.traits = traits
+            self.kind = kind
+            self.language = language
+            self.relativePresentationURL = relativePresentationURL
+            self.title = title
+            self.abstract = abstract
+            self.usr = usr
+            self.plainTextDeclaration = plainTextDeclaration
+            self.subheadingDeclarationFragments = subheadingDeclarationFragments
+            self.navigatorTitle = navigatorTitle
+        }
+        
+        @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorTitle:)", message: "Use 'init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorTitle:)' instead. This deprecated API will be removed after 6.5 is released.")
+        @_disfavoredOverload
         public init(
             traits: [RenderNode.Variant.Trait],
             kind: VariantValue<DocumentationNode.Kind> = nil,
@@ -281,16 +320,20 @@ public struct LinkDestinationSummary: Codable, Equatable {
             subheadingDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
             navigatorDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil
         ) {
-            self.traits = traits
-            self.kind = kind
-            self.language = language
-            self.relativePresentationURL = relativePresentationURL
-            self.title = title
-            self.abstract = abstract
-            self.usr = usr
-            self.plainTextDeclaration = plainTextDeclaration
-            self.subheadingDeclarationFragments = subheadingDeclarationFragments
-            self.navigatorDeclarationFragments = navigatorDeclarationFragments
+            self.init(
+                traits: traits,
+                kind: kind,
+                language: language,
+                relativePresentationURL: relativePresentationURL,
+                title: title,
+                abstract: abstract,
+                usr: usr,
+                plainTextDeclaration: plainTextDeclaration,
+                subheadingDeclarationFragments: subheadingDeclarationFragments,
+                navigatorTitle: navigatorDeclarationFragments.map { fragments in
+                    fragments.map { $0.map(\.text).joined() }
+                }
+            )
         }
         
         @available(*, deprecated, renamed: "init(traits:kind:language:relativePresentationURL:title:abstract:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
@@ -317,7 +360,9 @@ public struct LinkDestinationSummary: Codable, Equatable {
                 usr: usr,
                 plainTextDeclaration: plainTextDeclaration,
                 subheadingDeclarationFragments: subheadingDeclarationFragments,
-                navigatorDeclarationFragments: navigatorDeclarationFragments
+                navigatorTitle: navigatorDeclarationFragments.map { fragments in
+                    fragments.map { $0.map(\.text).joined() }
+                }
             )
         }
         
@@ -370,7 +415,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     ///   - plainTextDeclaration: The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
     ///   - subheadingDeclarationFragments: The simplified "subheading" fragments for this symbol, to display in topic groups, or `nil` if the summarized element isn't a symbol.
-    ///   - navigatorDeclarationFragments: The simplified "subheading" declaration fragments for this symbol, to display in navigation, or `nil` if the summarized element isn't a symbol.
+    ///   - navigatorTitle: The simplified "navigator" declaration text for this symbol, to display in navigation, or `nil` if the summarized element isn't a symbol.
     ///   - redirects: Any previous URLs for this element, or `nil` if this element has no previous URLs.
     ///   - topicImages: Images that are used to represent the summarized element, or `nil` if this element has no topic images.
     ///   - references: References used in the content of the summarized element, or `nil` if this element has no references to other content.
@@ -387,7 +432,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         usr: String? = nil,
         plainTextDeclaration: String? = nil,
         subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
-        navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        navigatorTitle: String? = nil,
         redirects: [URL]? = nil,
         topicImages: [TopicImage]? = nil,
         references: [any RenderReference]? = nil,
@@ -406,14 +451,14 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.usr = usr
         self.plainTextDeclaration = plainTextDeclaration
         self.subheadingDeclarationFragments = subheadingDeclarationFragments
-        self.navigatorDeclarationFragments = navigatorDeclarationFragments
+        self.navigatorTitle = navigatorTitle
         self.redirects = redirects
         self.topicImages = topicImages
         self.references = references
         self.variants = variants
     }
     
-    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Use 'init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)' instead. This deprecated API will be removed after 6.5 is released.")
+    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorTitle:redirects:topicImages:references:variants:)", message: "Use 'init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorTitle:redirects:topicImages:references:variants:)' instead. This deprecated API will be removed after 6.5 is released.")
     @_disfavoredOverload
     public init(
         kind: DocumentationNode.Kind,
@@ -445,7 +490,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
             usr: usr,
             plainTextDeclaration: plainTextDeclaration,
             subheadingDeclarationFragments: subheadingDeclarationFragments,
-            navigatorDeclarationFragments: navigatorDeclarationFragments,
+            navigatorTitle: navigatorDeclarationFragments.map { $0.map(\.text).joined() },
             redirects: redirects,
             topicImages: topicImages,
             references: references,
@@ -453,7 +498,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         )
     }
     
-    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
+    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorTitle:redirects:topicImages:references:variants:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
     @_disfavoredOverload
     public init(
         kind: DocumentationNode.Kind,
@@ -493,7 +538,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
         )
     }
     
-    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Use `init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)` instead. This property will be removed after 6.4 is released")
+    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorTitle:redirects:topicImages:references:variants:)", message: "Use 'init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorTitle:redirects:topicImages:references:variants:)' instead. This property will be removed after 6.4 is released")
+    @_disfavoredOverload
     public init(
         kind: DocumentationNode.Kind,
         language: SourceLanguage,
@@ -674,7 +720,7 @@ extension LinkDestinationSummary {
         // In this case, they are assumed to be the same.
         let subheadingDeclarationFragments = symbol.subHeadingVariants[summaryTrait]?.renderDeclarationTokens()
                                           ?? symbol.declarationVariants[summaryTrait]?.renderDeclarationTokens()
-        let navigatorDeclarationFragments  = symbol.navigatorVariants[summaryTrait]?.renderDeclarationTokens()
+        let navigatorTitle  = symbol.navigatorVariants[summaryTrait]?.renderDeclarationTokens().map(\.text).joined()
 
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
             // Skip the variant for the summarized elements source language.
@@ -700,7 +746,7 @@ extension LinkDestinationSummary {
             // In this case, they are assumed to be the same.
             let subheadingDeclarationFragmentsVariant = symbol.subHeadingVariants[trait]?.renderDeclarationTokens()
                                                      ?? symbol.declarationVariants[trait]?.renderDeclarationTokens()
-            let navigatorDeclarationFragmentsVariant  = symbol.navigatorVariants[trait]?.renderDeclarationTokens()
+            let navigatorTitleVariant  = symbol.navigatorVariants[trait]?.renderDeclarationTokens().map(\.text).joined()
             return Variant(
                 traits: variantTraits,
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
@@ -711,7 +757,7 @@ extension LinkDestinationSummary {
                 usr: nil, // The symbol variant uses the same USR
                 plainTextDeclaration: nilIfEqual(main: plainTextDeclaration, variant: plainTextDeclarationVariant),
                 subheadingDeclarationFragments: nilIfEqual(main: subheadingDeclarationFragments, variant: subheadingDeclarationFragmentsVariant),
-                navigatorDeclarationFragments: nilIfEqual(main: navigatorDeclarationFragments, variant: navigatorDeclarationFragmentsVariant)
+                navigatorTitle: nilIfEqual(main: navigatorTitle, variant: navigatorTitleVariant)
             )
         }
         
@@ -732,7 +778,7 @@ extension LinkDestinationSummary {
             usr: usr,
             plainTextDeclaration: plainTextDeclaration,
             subheadingDeclarationFragments: subheadingDeclarationFragments,
-            navigatorDeclarationFragments: navigatorDeclarationFragments,
+            navigatorTitle: navigatorTitle,
             redirects: redirects,
             topicImages: topicImages.nilIfEmpty,
             references: references.nilIfEmpty,
@@ -838,6 +884,7 @@ extension LinkDestinationSummary {
         case relativePresentationURL = "path"
         case subheadingDeclarationFragments = "fragments"
         case navigatorDeclarationFragments = "navigatorFragments"
+        case navigatorTitle
     }
     
     public func encode(to encoder: any Encoder) throws {
@@ -869,7 +916,7 @@ extension LinkDestinationSummary {
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(subheadingDeclarationFragments, forKey: .subheadingDeclarationFragments)
-        try container.encodeIfPresent(navigatorDeclarationFragments, forKey: .navigatorDeclarationFragments)
+        try container.encodeIfPresent(navigatorTitle, forKey: .navigatorTitle)
         try container.encodeIfPresent(redirects, forKey: .redirects)
         try container.encodeIfPresent(topicImages, forKey: .topicImages)
         try container.encodeIfPresent(references?.map { CodableRenderReference($0) }, forKey: .references)
@@ -938,7 +985,15 @@ extension LinkDestinationSummary {
         usr = try container.decodeIfPresent(String.self, forKey: .usr)
         plainTextDeclaration = try container.decodeIfPresent(String.self, forKey: .plainTextDeclaration)
         subheadingDeclarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .subheadingDeclarationFragments)
-        navigatorDeclarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .navigatorDeclarationFragments)
+        
+        // Prefer to decode the navigator title from the string field
+        var navigatorTitle = try container.decodeIfPresent(String.self, forKey: .navigatorTitle)
+        // If the string value wasn't present, check the deprecated navigator fragments field instead.
+        if navigatorTitle == nil, let navigatorDeclarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .navigatorDeclarationFragments) {
+            navigatorTitle = navigatorDeclarationFragments.map(\.text).joined()
+        }
+        self.navigatorTitle = navigatorTitle
+        
         redirects = try container.decodeIfPresent([URL].self, forKey: .redirects)
         topicImages = try container.decodeIfPresent([TopicImage].self, forKey: .topicImages)
         references = try container.decodeIfPresent([CodableRenderReference].self, forKey: .references).map { decodedReferences in
@@ -977,6 +1032,7 @@ extension LinkDestinationSummary.Variant {
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
         case navigatorDeclarationFragments = "navigatorFragments"
+        case navigatorTitle
     }
     
     public func encode(to encoder: any Encoder) throws {
@@ -1044,8 +1100,15 @@ extension LinkDestinationSummary.Variant {
         usr = try container.decodeIfPresent(String?.self, forKey: .usr)
         plainTextDeclaration = try container.decodeIfPresent(String?.self, forKey: .plainTextDeclaration)
         subheadingDeclarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
-        navigatorDeclarationFragments = try container
-            .decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments)
+        
+        
+        // Prefer to decode the navigator title from the string field
+        var navigatorTitle = try container.decodeIfPresent(String?.self, forKey: .navigatorTitle)
+        // If the string value wasn't present, check the deprecated navigator fragments field instead.
+        if navigatorTitle == nil, let navigatorDeclarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .navigatorDeclarationFragments) {
+            navigatorTitle = navigatorDeclarationFragments.map { $0.map(\.text).joined() }
+        }
+        self.navigatorTitle = navigatorTitle
     }
 }
 
@@ -1072,7 +1135,7 @@ extension LinkDestinationSummary {
         guard lhs.isDeprecated == rhs.isDeprecated else { return false }
         guard lhs.plainTextDeclaration == rhs.plainTextDeclaration else { return false }
         guard lhs.subheadingDeclarationFragments == rhs.subheadingDeclarationFragments else { return false }
-        guard lhs.navigatorDeclarationFragments == rhs.navigatorDeclarationFragments else { return false }
+        guard lhs.navigatorTitle == rhs.navigatorTitle else { return false }
         guard lhs.redirects == rhs.redirects else { return false }
         guard lhs.topicImages == rhs.topicImages else { return false }
         guard lhs.variants == rhs.variants else { return false }

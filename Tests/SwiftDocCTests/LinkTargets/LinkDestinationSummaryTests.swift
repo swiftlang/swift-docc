@@ -54,9 +54,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: " ",      kind: .text),
                 .init(text: "Circle", kind: .identifier),
             ])
-            #expect(summary.navigatorDeclarationFragments == [
-                .init(text: "Circle", kind: .identifier),
-            ])
+            #expect(summary.navigatorTitle == "Circle")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -78,9 +76,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: "TLACircle", kind: .identifier),
                 .init(text: ";",         kind: .text),
             ])
-            #expect(variant.navigatorDeclarationFragments == [
-                .init(text: "TLACircle", kind: .identifier),
-            ])
+            #expect(variant.navigatorTitle == "TLACircle")
             
             try assertRoundTripCoding(summary)
         }
@@ -112,7 +108,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: ": ",     kind: .text),
                 .init(text: "Circle", kind: .typeIdentifier, preciseIdentifier: "c:@SA@TLACircle"),
             ])
-            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.navigatorTitle == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -129,9 +125,7 @@ struct LinkDestinationSummaryTests {
             #expect(variant.subheadingDeclarationFragments == [
                 .init(text: "TLACircleZero", kind: .identifier),
             ])
-            #expect(variant.navigatorDeclarationFragments == [
-                .init(text: "TLACircleZero", kind: .identifier),
-            ])
+            #expect(variant.navigatorTitle == "TLACircleZero")
             
             try assertRoundTripCoding(summary)
         }
@@ -163,7 +157,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: ") -> ",      kind: .text),
                 .init(text: "Bool",       kind: .typeIdentifier, preciseIdentifier: "s:Sb"),
             ])
-            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.navigatorTitle == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -180,9 +174,7 @@ struct LinkDestinationSummaryTests {
             #expect(variant.subheadingDeclarationFragments == [
                 .init(text: "TLACircleIntersects", kind: .identifier),
             ])
-            #expect(variant.navigatorDeclarationFragments == [
-                .init(text: "TLACircleIntersects", kind: .identifier),
-            ])
+            #expect(variant.navigatorTitle == "TLACircleIntersects")
             
             try assertRoundTripCoding(summary)
         }
@@ -208,9 +200,7 @@ struct LinkDestinationSummaryTests {
             #expect(summary.subheadingDeclarationFragments == [
                 .init(text: "TLACircleMake", kind: .identifier),
             ])
-            #expect(summary.navigatorDeclarationFragments == [
-                .init(text: "TLACircleMake", kind: .identifier),
-            ])
+            #expect(summary.navigatorTitle == "TLACircleMake")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -248,7 +238,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: "CGFloat", kind: .typeIdentifier, preciseIdentifier: "s:14CoreFoundation7CGFloatV"),
                 .init(text: ")",       kind: .text),
             ])
-            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.navigatorTitle == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -301,7 +291,7 @@ struct LinkDestinationSummaryTests {
         #expect(summary.usr                            == nil, "Only symbols have USRs.")
         #expect(summary.plainTextDeclaration           == nil, "Only symbols have USRs.")
         #expect(summary.subheadingDeclarationFragments == nil, "Only symbols have USRs.")
-        #expect(summary.navigatorDeclarationFragments  == nil, "Only symbols have USRs.")
+        #expect(summary.navigatorTitle                 == nil, "Only symbols have USRs.")
         
         #expect(summary.topicImages == [
             TopicImage(type: .card, identifier: RenderReferenceIdentifier("card.png")),
@@ -527,6 +517,65 @@ struct LinkDestinationSummaryTests {
         
         #expect(decoded.isDeprecated == true) // One platform has a deprecated version
         #expect(decoded.isBeta       == true) // Both platforms are "beta"
+    }
+    
+    @Test
+    func decodingLegacyNavigatorFragmentsData() throws {
+        let legacyData = """
+        {
+          "title": "ClassName",
+          "referenceURL": "doc://org.swift.docc.example/documentation/MyKit/ClassName",
+          "language": "swift",
+          "path": "documentation/MyKit/ClassName",
+          "availableLanguages": [
+            "swift",
+            "occ"
+          ],
+          "kind": "org.swift.docc.kind.class",
+          "navigatorFragments": [
+            {
+              "kind": "keyword",
+              "text": "class"
+            },
+            {
+              "kind": "text",
+              "text": " "
+            },
+            {
+              "kind": "identifier",
+               "text": "ClassName" 
+            }
+          ],
+          "variants": [
+            {
+              "traits": [
+                {
+                  "interfaceLanguage": "occ"
+                }
+              ],
+              "navigatorFragments": [
+                {
+                  "kind": "keyword",
+                  "text": "struct"
+                },
+                {
+                  "kind": "text",
+                  "text": " "
+                },
+                {
+                  "kind": "identifier",
+                   "text": "VariantClassName" 
+                }
+              ]
+            }
+          ]
+        }
+        """
+        
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
+        
+        #expect(decoded.navigatorTitle == "class ClassName")
+        #expect(decoded.variants.first?.navigatorTitle == "struct VariantClassName")
     }
     
     @Test
@@ -847,7 +896,7 @@ struct LinkDestinationSummaryTests {
         #expect(pageSummary.usr                            == nil, "Only symbols have USRs")
         #expect(pageSummary.plainTextDeclaration           == nil, "Only symbols have a plain text declaration")
         #expect(pageSummary.subheadingDeclarationFragments == nil, "Only symbols have subheading declaration fragments")
-        #expect(pageSummary.navigatorDeclarationFragments  == nil, "Only symbols have navigator titles")
+        #expect(pageSummary.navigatorTitle                 == nil, "Only symbols have navigator titles")
         #expect(pageSummary.abstract == [
             .text("Some introductory description of what this tutorial teaches.")
         ])
@@ -869,7 +918,7 @@ struct LinkDestinationSummaryTests {
         #expect(sectionSummary.usr == nil, "Only symbols have USRs")
         #expect(sectionSummary.plainTextDeclaration == nil, "Only symbols have a plain text declaration")
         #expect(sectionSummary.subheadingDeclarationFragments == nil, "Only symbols have subheading declaration fragments")
-        #expect(sectionSummary.navigatorDeclarationFragments == nil, "Only symbols have navigator titles")
+        #expect(sectionSummary.navigatorTitle == nil, "Only symbols have navigator titles")
         #expect(sectionSummary.abstract == [
             .text("Some description of what this section teaches."),
         ])

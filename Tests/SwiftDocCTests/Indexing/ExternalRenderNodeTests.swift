@@ -78,9 +78,7 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: " ", preciseIdentifier: nil),
                     .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol", preciseIdentifier: nil)
                 ]),
-                navigatorTitle: .init(declarationFragments: [
-                    .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol (navigator title)", preciseIdentifier: nil)
-                ]),
+                navigatorTitle: "NavigatorTitleSwiftSymbol (navigator title)",
                 isBeta: true
             )
         )
@@ -97,9 +95,7 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
                     .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil)
                 ]),
-                navigatorTitle: .init(declarationFragments: [
-                    .init(kind: .identifier, spelling: "NavigatorTitleObjCSymbol (navigator title)", preciseIdentifier: nil)
-                ]),
+                navigatorTitle: "NavigatorTitleObjCSymbol (navigator title)",
                 isBeta: false
             )
         )

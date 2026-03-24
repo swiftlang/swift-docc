@@ -162,7 +162,7 @@ extension LinkDestinationSummary {
         var titleVariants = VariantCollection(defaultValue: title)
         var abstractVariants = VariantCollection(defaultValue: abstract ?? [])
         var fragmentVariants = VariantCollection(defaultValue: subheadingDeclarationFragments)
-        var navigatorTitleVariants = VariantCollection(defaultValue: navigatorDeclarationFragments)
+        var navigatorTitleVariants = VariantCollection(defaultValue: navigatorTitle.map { [DeclarationRenderSection.Token(text: $0, kind: .text)] })
         
         for variant in variants {
             let traits = variant.traits
@@ -175,8 +175,8 @@ extension LinkDestinationSummary {
             if let fragment = variant.subheadingDeclarationFragments {
                 fragmentVariants.variants.append(.init(traits: traits, patch: [.replace(value: fragment)]))
             }
-            if let navigatorTitle = variant.navigatorDeclarationFragments {
-                navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle)]))
+            if let navigatorTitle = variant.navigatorTitle {
+                navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle.map { [DeclarationRenderSection.Token(text: $0, kind: .text)] })]))
             }
         }
         
