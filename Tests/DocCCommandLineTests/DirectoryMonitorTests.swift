@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import DocCCommandLine
+import DocCTestUtilities
 
 #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
 fileprivate extension NSNotification.Name {

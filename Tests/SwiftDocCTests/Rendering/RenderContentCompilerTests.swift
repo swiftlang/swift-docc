@@ -13,6 +13,7 @@ import Markdown
 @testable import SwiftDocC
 import DocCTestUtilities
 import XCTest
+import DocCCommon
 
 typealias Position = RenderBlockContent.CodeBlockOptions.Position
 

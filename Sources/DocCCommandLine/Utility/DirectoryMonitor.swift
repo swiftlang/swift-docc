@@ -9,13 +9,13 @@
 */
 
 import Foundation
-import SwiftDocC
+private import SwiftDocC
 
 #if !os(Linux) && !os(Android) && !os(Windows) && !os(FreeBSD) && !os(OpenBSD)
-import Darwin
+private import Darwin
 
 /// A throttle object to filter events that come too fast.
-fileprivate var throttle = Throttle(interval: .seconds(1))
+fileprivate var throttle = Throttle(interval: .milliseconds(300))
 
 /// Monitors a directory subtree for file changes.
 class DirectoryMonitor {

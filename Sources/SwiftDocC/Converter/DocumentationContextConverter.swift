@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A converter from documentation nodes to render nodes.
 ///
 /// As this type makes use of a `RenderContext` to look up commonly used pieces of content,

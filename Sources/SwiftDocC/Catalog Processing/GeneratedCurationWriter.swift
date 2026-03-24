@@ -9,7 +9,8 @@
 */
 
 public import Foundation
-import SymbolKit
+private import SymbolKit
+private import DocCCommon
 
 /// A type that writes the auto-generated curation into documentation extension files.
 public struct GeneratedCurationWriter {
@@ -116,7 +117,7 @@ public struct GeneratedCurationWriter {
         // Used in documentation extension page titles to reference symbols that don't already have a documentation extension file.
         let allAbsoluteLinks = linkResolver.pathHierarchy.disambiguatedAbsoluteLinks()
         
-        guard var curationCrawlRoot = linkResolver.modules().first else {
+        guard var curationCrawlRoot = linkResolver.rootPages().first else {
             return [:]
         }
         

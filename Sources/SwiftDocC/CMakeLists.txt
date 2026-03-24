@@ -457,6 +457,7 @@ add_library(SwiftDocC
   Utility/MarkupExtensions/AnyLink.swift
   Utility/MarkupExtensions/BlockDirectiveExtensions.swift
   Utility/MarkupExtensions/DocumentExtensions.swift
+  Utility/MarkupExtensions/Heading+StartsWithAnyLink.swift
   Utility/MarkupExtensions/ImageExtensions.swift
   Utility/MarkupExtensions/ListItemExtractor.swift
   Utility/MarkupExtensions/MarkupChildrenExtensions.swift
@@ -481,6 +482,9 @@ target_link_libraries(SwiftDocC PUBLIC
 target_link_libraries(SwiftDocC PUBLIC
   libcmark-gfm
   libcmark-gfm-extensions)
+
+set_target_properties(SwiftDocC PROPERTIES
+  Swift_LANGUAGE_VERSION 5)
 
 if(BUILD_SHARED_LIBS)
   install(TARGETS SwiftDocC

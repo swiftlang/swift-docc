@@ -99,25 +99,18 @@ extension StaticHostableTransformer {
     ) throws -> Data {
         let customHostingBasePathProvided = !(hostingBasePath?.isEmpty ?? true)
         
-        let indexHTMLFileName: String
-        if customHostingBasePathProvided {
-            indexHTMLFileName = HTMLTemplate.templateFileName.rawValue
+        let indexHTMLFileName = if customHostingBasePathProvided {
+            HTMLTemplate.templateFileName.rawValue
         } else {
-            indexHTMLFileName = HTMLTemplate.indexFileName.rawValue
+            HTMLTemplate.indexFileName.rawValue
         }
         
-        let indexHTMLUrl = htmlTemplateDirectory.appendingPathComponent(
-            indexHTMLFileName,
-            isDirectory: false
-        )
+        let indexHTMLFile = htmlTemplateDirectory.appendingPathComponent(indexHTMLFileName, isDirectory: false)
         
-        guard let indexHTMLData = fileManager.contents(atPath: indexHTMLUrl.path),
+        guard let indexHTMLData = try? fileManager.contents(of: indexHTMLFile),
               var indexHTML = String(data: indexHTMLData, encoding: .utf8)
         else {
-            throw TemplateOption.invalidHTMLTemplateError(
-                path: indexHTMLUrl.path,
-                expectedFile: indexHTMLFileName
-            )
+            throw TemplateOption.missingRequiredFile(fileName: indexHTMLFileName, inHTMLTemplateAt: htmlTemplateDirectory)
         }
         
         if customHostingBasePathProvided, var replacementString = hostingBasePath {

@@ -13,6 +13,7 @@ import XCTest
 import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
 
 class AutoCapitalizationTests: XCTestCase {
     

@@ -29,11 +29,6 @@ add_library(DocCCommandLine STATIC
   Action/Actions/TransformForStaticHostingAction.swift
   ArgumentParsing/ActionExtensions/Action+performAndHandleResult.swift
   ArgumentParsing/ActionExtensions/ConvertAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/EmitGeneratedCurationAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/IndexAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/InitAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/PreviewAction+CommandInitialization.swift
-  ArgumentParsing/ActionExtensions/TransformForStaticHostingAction+CommandInitialization.swift
   ArgumentParsing/ArgumentValidation/URLArgumentValidator.swift
   ArgumentParsing/Options/DirectoryPathOption.swift
   ArgumentParsing/Options/DocumentationArchiveOption.swift
@@ -54,6 +49,7 @@ add_library(DocCCommandLine STATIC
   ArgumentParsing/Subcommands/ProcessCatalog.swift
   ArgumentParsing/Subcommands/TransformForStaticHosting.swift
   Docc.swift
+  PreviewServer/LiveReloadClients.swift
   PreviewServer/PreviewHTTPHandler.swift
   PreviewServer/PreviewServer.swift
   PreviewServer/RequestHandler/DefaultRequestHandler.swift
@@ -61,6 +57,7 @@ add_library(DocCCommandLine STATIC
   PreviewServer/RequestHandler/FileRequestHandler.swift
   PreviewServer/RequestHandler/HTTPResponseHead+FromRequest.swift
   PreviewServer/RequestHandler/RequestHandlerFactory.swift
+  PreviewServer/RequestHandler/SSERequestHandler.swift
   Transformers/StaticHostableTransformer.swift
   Utility/DirectoryMonitor.swift
   Utility/FoundationExtensions/Sequence+Unique.swift
@@ -73,3 +70,5 @@ add_library(DocCCommandLine STATIC
 target_link_libraries(DocCCommandLine PUBLIC
   ArgumentParser
   SwiftDocC)
+set_target_properties(DocCCommandLine PROPERTIES
+  Swift_LANGUAGE_VERSION 5)

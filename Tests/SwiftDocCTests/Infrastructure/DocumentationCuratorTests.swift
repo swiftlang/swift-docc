@@ -15,6 +15,7 @@ import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
 import Markdown
+import DocCCommon
 
 class DocumentationCuratorTests: XCTestCase {
     fileprivate struct ParentChild: Hashable, Equatable {
@@ -155,16 +156,19 @@ class DocumentationCuratorTests: XCTestCase {
         }
         
         let crawler = DocumentationCurator(in: context)
-        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
-        
+
+        // This test has both a TechnologyRoot and symbol graph files, which is an unsupported setup that DocC warns about.
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["TechnologyRootWithSymbols"],
+                       "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+
         guard let moduleNode = context.documentationCache["SourceLocations"],
-              let pathToRoot = context.finitePaths(to: moduleNode.reference).first,
-              let root = pathToRoot.first else {
-            
+              let pathToRoot = context.shortestFinitePath(to: moduleNode.reference),
+              let root = pathToRoot.first
+        else {
             XCTFail("Module doesn't have technology root as a predecessor in its path")
             return
         }
-        
+
         XCTAssertEqual(root.path, "/documentation/Root")
         XCTAssertEqual(crawler.problems.count, 0)
     }
@@ -295,17 +299,19 @@ class DocumentationCuratorTests: XCTestCase {
 
             """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
         }
-        
-        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
-        
+
+        // This test has both a TechnologyRoot and symbol graph files, which is an unsupported setup that DocC warns about.
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["TechnologyRootWithSymbols"],
+                       "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+
         guard let moduleNode = context.documentationCache["SourceLocations"],
               let pathToRoot = context.shortestFinitePath(to: moduleNode.reference),
-              let root = pathToRoot.first else {
-            
+              let root = pathToRoot.first
+        else {
             XCTFail("Module doesn't have technology root as a predecessor in its path")
             return
         }
-        
+
         XCTAssertEqual(root.path, "/documentation/Root")
     }
 

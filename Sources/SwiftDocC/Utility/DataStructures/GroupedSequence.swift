@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A sequence that groups its elements to optimize accesses.
 ///
 /// You use a grouped sequence when you need efficient access to its elements via a grouping mechanism of your

@@ -8,8 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-import SymbolKit
+private import SymbolKit
+private import DocCCommon
 
 extension PathHierarchy {
     /// Attempts to find an element in the path hierarchy for a given path relative to another element.
@@ -29,22 +29,30 @@ extension PathHierarchy {
         // - First, parse the path into structured path components.
         // - Second, find nodes that match the beginning of the path as starting points for the search
         // - Third, traverse the hierarchy from those starting points to search for the node.
-        let (path, isAbsolute) = PathParser.parse(path: rawPath)
-        guard !path.isEmpty else {
+        let (path, isAbsolute, anchor) = PathParser.parse(path: rawPath)
+        guard !path.isEmpty || anchor != nil else {
             throw Error.notFound(pathPrefix: rawPath[...], remaining: [], availableChildren: [])
         }
         
         var remaining = path[...]
         
         // If the first path component is "tutorials" or "documentation" then use that information to narrow the search.
-        let isKnownTutorialPath      = remaining.first!.full == NodeURLGenerator.Path.tutorialsFolderName
-        let isKnownDocumentationPath = remaining.first!.full == NodeURLGenerator.Path.documentationFolderName
+        let isKnownTutorialPath      = remaining.first?.full == NodeURLGenerator.Path.tutorialsFolderName
+        let isKnownDocumentationPath = remaining.first?.full == NodeURLGenerator.Path.documentationFolderName
         if isKnownDocumentationPath || isKnownTutorialPath {
             // Skip this component since it isn't represented in the path hierarchy.
             remaining.removeFirst()
         }
         
         guard let firstComponent = remaining.first else {
+            // Check if the parent matches the anchor
+            if let anchor, let parentID {
+                let node = lookup[parentID]! // Every ID has a corresponding node
+                if let anchorMatch = node.anchors[String(anchor)] {
+                    return anchorMatch
+                }
+                throw Error.unknownAnchor(partialResult: (node, ""), anchor: String(anchor), availableAnchors: Set(node.anchors.keys))
+            }
             throw Error.notFound(pathPrefix: rawPath[...], remaining: [], availableChildren: [])
         }
         
@@ -60,20 +68,20 @@ extension PathHierarchy {
                             break lookForArticleRoot
                         }
                     }
-                    return try searchForNode(descendingFrom: articlesContainer, pathComponents: remaining.dropFirst(), onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: articlesContainer, pathComponents: remaining.dropFirst(), anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 } else if articlesContainer.anyChildMatches(firstComponent) {
-                    return try searchForNode(descendingFrom: articlesContainer, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: articlesContainer, pathComponents: remaining, anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 }
             }
             if !isKnownDocumentationPath {
                 if tutorialContainer.matches(firstComponent) {
-                    return try searchForNode(descendingFrom: tutorialContainer, pathComponents: remaining.dropFirst(), onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: tutorialContainer, pathComponents: remaining.dropFirst(), anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 } else if tutorialContainer.anyChildMatches(firstComponent)  {
-                    return try searchForNode(descendingFrom: tutorialContainer, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: tutorialContainer, pathComponents: remaining, anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 }
                 // The parent for tutorial overviews / technologies is "tutorials" which has already been removed above, so no need to check against that name.
                 else if tutorialOverviewContainer.anyChildMatches(firstComponent)  {
-                    return try searchForNode(descendingFrom: tutorialOverviewContainer, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: tutorialOverviewContainer, pathComponents: remaining, anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 }
             }
         }
@@ -82,13 +90,13 @@ extension PathHierarchy {
         func searchForNodeInModules() throws(Error) -> Node {
             // Note: This captures `parentID`, `remaining`, and `rawPathForError`.
             if let moduleMatch = modules.first(where: { $0.matches(firstComponent) }) {
-                return try searchForNode(descendingFrom: moduleMatch, pathComponents: remaining.dropFirst(), onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                return try searchForNode(descendingFrom: moduleMatch, pathComponents: remaining.dropFirst(), anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
             }
             // For absolute links, only use the single-module fallback if the first component doesn't match
             // any module name
             if modules.count == 1 && !isAbsolute {
                 do {
-                    return try searchForNode(descendingFrom: modules.first!, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: modules.first!, pathComponents: remaining, anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 } catch {
                     switch error {
                     case .notFound:
@@ -105,6 +113,7 @@ extension PathHierarchy {
                         
                     // These errors are all more specific than a module-not-found error would be.
                     case .unfindableMatch,
+                         .unknownAnchor,
                          .moduleNotFound,
                          .nonSymbolMatchForSymbolLink,
                          .unknownDisambiguation,
@@ -139,7 +148,7 @@ extension PathHierarchy {
                 } catch {
                     // If the node couldn't be found in the modules, search the non-matching parent to achieve a more specific error message
                     if let parentID {
-                        return try searchForNode(descendingFrom: lookup[parentID]!, pathComponents: path, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                        return try searchForNode(descendingFrom: lookup[parentID]!, pathComponents: path, anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                     }
                     throw error
                 }
@@ -154,7 +163,7 @@ extension PathHierarchy {
             // If the starting point's children match this component, descend the path hierarchy from there.
             if possibleStartingPoint.anyChildMatches(firstComponent) {
                 do {
-                    return try searchForNode(descendingFrom: possibleStartingPoint, pathComponents: path, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: possibleStartingPoint, pathComponents: path, anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 } catch {
                     innerMostError = error
                 }
@@ -162,7 +171,7 @@ extension PathHierarchy {
             // It's possible that the component is ambiguous at the parent. Checking if this node matches the first component avoids that ambiguity.
             if possibleStartingPoint.matches(firstComponent) {
                 do {
-                    return try searchForNode(descendingFrom: possibleStartingPoint, pathComponents: path.dropFirst(), onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: possibleStartingPoint, pathComponents: path.dropFirst(), anchor: anchor, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 } catch {
                     if innerMostError == nil {
                         innerMostError = error
@@ -211,6 +220,7 @@ extension PathHierarchy {
     private func searchForNode(
         descendingFrom startingPoint: Node,
         pathComponents: ArraySlice<PathComponent>,
+        anchor: Substring?,
         onlyFindSymbols: Bool,
         rawPathForError: String
     ) throws(Error) -> Node {
@@ -323,14 +333,36 @@ extension PathHierarchy {
         }
         
         // Run the core implementation, defined above.
-        let node = try _innerImplementation(descendingFrom: startingPoint, pathComponents: pathComponents, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
-        
-        // Perform extra validation on the return value before returning it to the caller.
-        if node.identifier == nil {
-            throw Error.unfindableMatch(node)
+        func verifyFoundNode(_ node: Node) throws(Error) {
+            if node.identifier == nil {
+                throw Error.unfindableMatch(node)
+            }
+            if onlyFindSymbols, node.symbol == nil {
+                throw Error.nonSymbolMatchForSymbolLink(path: rawPathForError)
+            }
         }
-        if onlyFindSymbols, node.symbol == nil {
-            throw Error.nonSymbolMatchForSymbolLink(path: rawPathForError)
+        
+        let node: Node
+        do {
+            node = try _innerImplementation(descendingFrom: startingPoint, pathComponents: pathComponents, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+        } catch {
+            // It's allowed to omit the # prefix for links to anchors on the same page.
+            if pathComponents.count == 1, anchor == nil, let anchorMatch = startingPoint.anchors[pathComponents.first!.full] {
+                try verifyFoundNode(anchorMatch)
+                return anchorMatch
+            }
+            throw error
+        }
+        
+        try verifyFoundNode(node)
+        
+        if let anchor {
+            if let anchorMatch = node.anchors[String(anchor)] {
+                return anchorMatch
+            } else {
+                // We found the node but not its anchor
+                throw Error.unknownAnchor(partialResult: (node, pathForError(of: rawPathForError, droppingLast: anchor.count)), anchor: String(anchor), availableAnchors: Set(node.anchors.keys))
+            }
         }
         return node
     }

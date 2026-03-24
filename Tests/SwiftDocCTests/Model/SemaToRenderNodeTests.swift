@@ -13,6 +13,7 @@ import Markdown
 import XCTest
 import SymbolKit
 import DocCTestUtilities
+import DocCCommon
 
 class SemaToRenderNodeTests: XCTestCase {
     func testCompileTutorial() async throws {
@@ -651,8 +652,8 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(firstTutorialReference.abstract.isEmpty)
         XCTAssertEqual(firstTutorialReference.estimatedTime, "20min")
         
-        renderNode.references.compactMap { $0.value as? TopicRenderReference } .forEach {
-            XCTAssertFalse($0.abstract.isEmpty)
+        for case let renderReference as TopicRenderReference in renderNode.references.values {
+            XCTAssertFalse(renderReference.abstract.isEmpty)
         }
         
         XCTAssertEqual(renderNode.metadata.estimatedTime, "1hr 20min")
@@ -907,8 +908,8 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(firstTutorialReference.abstract.isEmpty)
         XCTAssertEqual(firstTutorialReference.estimatedTime, "20min")
         
-        renderNode.references.compactMap { $0.value as? TopicRenderReference } .forEach {
-            XCTAssertFalse($0.abstract.isEmpty)
+        for case let renderReference as TopicRenderReference in renderNode.references.values {
+            XCTAssertFalse(renderReference.abstract.isEmpty)
         }
 
         XCTAssertEqual(renderNode.metadata.estimatedTime, "1hr 20min")
@@ -3580,7 +3581,7 @@ Document
     }
     
     func testTopicSectionWithUnsupportedDirectives() async throws {
-        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+        let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "root.md", utf8Content: """
                 # Main article
                 
@@ -3601,17 +3602,15 @@ Document
                 @SomeUnknownDirective()
                 
                 - <doc:article>
-                """),
+                """)
             
             TextFile(name: "article.md", utf8Content: """
                 # An article
-                """),
-        ])
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
-        
-        let (_, _, context) = try await loadBundle(from: bundleURL, diagnosticEngine: .init() /* no diagnostic consumers */)
-        
+                """)
+        }
+        let (_, context) = try await loadBundle(catalog: catalog)
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["org.swift.docc.unknownDirective"], "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+            
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         
         let documentationNode = try context.entity(with: reference)

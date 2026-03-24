@@ -9,7 +9,7 @@
 */
 
 package import Foundation
-import SymbolKit
+private import SymbolKit
 
 extension DocumentationContext {
 

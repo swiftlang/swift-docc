@@ -67,13 +67,17 @@ class DocumentationInputsProviderTests: XCTestCase {
         ])
         
         // Prepare the real on-disk file system
-        let tempDirectory = try createTempFolder(content: [folderHierarchy])
+        let tempDirectory = URL(fileURLWithPath: Foundation.NSTemporaryDirectory()).appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
+        try Folder(name: tempDirectory.lastPathComponent, content: [folderHierarchy]).write(to: tempDirectory)
+        defer {
+            try? FileManager.default.removeItem(at: tempDirectory)
+        }
         
         // Prepare the test file system
         let testFileSystem = try TestFileSystem(folders: [])
         try testFileSystem.addFolder(folderHierarchy, basePath: tempDirectory)
         
-        for fileManager in [FileManager.default as FileManagerProtocol, testFileSystem as FileManagerProtocol] {
+        for fileManager in [FileManager.default as (any FileManagerProtocol), testFileSystem as (any FileManagerProtocol)] {
             let inputsProvider = DocumentationContext.InputsProvider(fileManager: fileManager)
             let options = BundleDiscoveryOptions(fallbackIdentifier: "com.example.test", additionalSymbolGraphFiles: [
                 tempDirectory.appendingPathComponent("/path/to/SomethingAdditional.symbols.json")

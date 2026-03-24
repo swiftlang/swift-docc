@@ -10,7 +10,7 @@
 
 import Foundation
 public import Markdown
-import SymbolKit
+private import SymbolKit
 
 /// Embeds a code example from the project's code snippets.
 ///

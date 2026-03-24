@@ -11,6 +11,7 @@
 package import Foundation
 package import SymbolKit
 package import SwiftDocC
+import DocCCommon
 
 // MARK: - Symbol Graph objects
 
@@ -193,39 +194,33 @@ package func makeSymbolKind(_ kindID: SymbolGraph.Symbol.KindIdentifier) -> Symb
     return SymbolGraph.Symbol.Kind(parsedIdentifier: kindID, displayName: documentationNodeKind.name)
 }
 
+package extension SymbolGraph.Symbol.Availability.AvailabilityItem {
+    init(
+        domainName: String,
+        introduced: SymbolGraph.SemanticVersion?,
+        deprecated: SymbolGraph.SemanticVersion?,
+        obsoleted: SymbolGraph.SemanticVersion? = nil,
+        message: String? = nil,
+        renamed: String? = nil,
+        isUnconditionallyDeprecated:  Bool = false,
+        isUnconditionallyUnavailable: Bool = false,
+        willEventuallyBeDeprecated:   Bool = false
+    ) {
+        self.init(
+            domain: .init(rawValue: domainName),
+            introducedVersion: introduced,
+            deprecatedVersion: deprecated,
+            obsoletedVersion: obsoleted,
+            message: message,
+            renamed: renamed,
+            isUnconditionallyDeprecated: isUnconditionallyDeprecated,
+            isUnconditionallyUnavailable: isUnconditionallyUnavailable,
+            willEventuallyBeDeprecated: willEventuallyBeDeprecated
+        )
+    }
+}
     
 // MARK: Constants
 
 private let defaultSymbolPosition = SymbolGraph.LineList.SourceRange.Position(line: 11, character: 17) // an arbitrary non-zero start position
 private let defaultSymbolURL = URL(fileURLWithPath: "/Users/username/path/to/SomeFile.swift")
-
-// MARK: - JSON strings
-
-package import XCTest
-
-extension XCTestCase {
-    package func makeSymbolGraphString(moduleName: String, symbols: String = "", relationships: String = "", platform: String = "") -> String {
-        return """
-        {
-          "metadata": {
-              "formatVersion": {
-                  "major": 0,
-                  "minor": 6,
-                  "patch": 0
-              },
-              "generator": "unit-test"
-          },
-          "module": {
-              "name": "\(moduleName)",
-              "platform": { \(platform) }
-          },
-          "relationships" : [
-            \(relationships)
-          ],
-          "symbols" : [
-            \(symbols)
-          ]
-        }
-        """
-    }
-}

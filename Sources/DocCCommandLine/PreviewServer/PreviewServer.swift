@@ -61,13 +61,25 @@ final class PreviewServer {
         }
     }
     
-    private let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-    private let threadPool = NIOThreadPool(numberOfThreads: System.coreCount)
-
-    private var bootstrap: ServerBootstrap!
-    internal var channel: (any Channel)!
+    private struct State {
+        let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
+        let threadPool = NIOThreadPool(numberOfThreads: System.coreCount)
+        
+        var bootstrap: ServerBootstrap!
+        var channel: (any Channel)!
+    }
+    
+    private var state = Synchronized(State())
+    
+    @_spi(Testing)
+    public var _boundPort: Int? {
+        state.sync {
+            $0.channel.localAddress?.port
+        }
+    }
     
     private let contentURL: URL
+    private let fileManager: any FileManagerProtocol
     
     /// A list of server-bind destinations.
     public enum Bind: CustomStringConvertible {
@@ -99,7 +111,8 @@ final class PreviewServer {
     ///   - contentURL: The root URL on disk from which to serve content.
     ///   - bindTo: Bind destination such as a localhost port or a file socket.
     ///   - logHandle: A file handle to write logs to.
-    init(contentURL: URL, bindTo: Bind, logHandle: inout LogHandle) throws {
+    ///   - fileManager: The file manager that the server uses to read the files to respond to page requests.
+    init(contentURL: URL, bindTo: Bind, logHandle: inout LogHandle, fileManager: any FileManagerProtocol) throws {
         var isDirectory = ObjCBool(booleanLiteral: false)
         let contentPathExists = FileManager.default.fileExists(atPath: contentURL.path, isDirectory: &isDirectory)
         guard contentPathExists && isDirectory.boolValue else {
@@ -109,6 +122,7 @@ final class PreviewServer {
         self.contentURL = contentURL
         self.bindTo = bindTo
         self.logHandle = logHandle
+        self.fileManager = fileManager
     }
 
     /// Starts a new preview server and waits until it terminates.
@@ -117,76 +131,76 @@ final class PreviewServer {
     /// - Parameter onReady: A closure that's executed after the server is bound successfully
     ///   to its destination but before it has started serving content.
     func start(onReady: (() -> Void)? = nil) throws {
-        // Create a server bootstrap
-        bootstrap = ServerBootstrap(group: group)
-            // Learn more about the `listen` command pending clients backlog from its reference;
-            // do that by typing `man 2 listen` on your command line.
-            .serverChannelOption(ChannelOptions.backlog, value: 256)
-            // Enable SO_REUSEADDR for the server itself
-            .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-
-            // Configure the channel handler - it handles plain HTTP requests
-            .childChannelInitializer { [contentURL] channel in
-                // HTTP pipeline
-                return channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                    channel.pipeline.addHandler(PreviewHTTPHandler(rootURL: contentURL))
+        let closeFuture = try state.sync {
+            // Create a server bootstrap
+            $0.bootstrap = ServerBootstrap(group: $0.group)
+                // Learn more about the `listen` command pending clients backlog from its reference;
+                // do that by typing `man 2 listen` on your command line.
+                .serverChannelOption(ChannelOptions.backlog, value: 256)
+                // Enable SO_REUSEADDR for the server itself
+                .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
+                // Configure the channel handler - it handles plain HTTP requests
+                .childChannelInitializer { [contentURL, fileManager] channel in
+                    // HTTP pipeline
+                    return channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
+                        channel.pipeline.addHandler(PreviewHTTPHandler(rootURL: contentURL, fileManager: fileManager))
+                    }
                 }
-            }
+                // Enable TCP_NODELAY for the accepted Channels
+                .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
+                .childChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
+                .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 16)
+                .childChannelOption(ChannelOptions.allowRemoteHalfClosure, value: true)
             
-            // Enable TCP_NODELAY for the accepted Channels
-            .childChannelOption(ChannelOptions.socket(IPPROTO_TCP, TCP_NODELAY), value: 1)
-            .childChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-            .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 16)
-            .childChannelOption(ChannelOptions.allowRemoteHalfClosure, value: true)
-        
-        // Start the server
-        threadPool.start()
-        
-        do {
-            // Bind to the given destination
+            // Start the server
+            $0.threadPool.start()
+            
             switch bindTo {
             case .localhost(let port):
-                channel = try bootstrap.bind(host: "localhost", port: port).wait()
+                // Customize the errors when binding to a localhost port
+                do {
+                    $0.channel = try $0.bootstrap.bind(host: "localhost", port: port).wait()
+                } catch let error as NIO.IOError where error.errnoCode == EADDRINUSE {
+                    throw Error.portNotAvailable(port: port)
+                } catch {
+                    throw Error.cannotStartServer(port: port)
+                }
+                
             case .socket(let path):
-                channel = try bootstrap.bind(unixDomainSocketPath: path).wait()
+                $0.channel = try $0.bootstrap.bind(unixDomainSocketPath: path).wait()
             }
-        } catch let error as NIO.IOError where error.errnoCode == EADDRINUSE {
-            // The given port is not available.
-            switch bindTo {
-                case .localhost(let port): throw Error.portNotAvailable(port: port)
-                default: throw error
+            
+            guard let _ = $0.channel.localAddress else {
+                throw Error.failedToStart
             }
-        } catch {
-            // Cannot bind the given address/port.
-            switch bindTo {
-                case .localhost(let port): throw Error.cannotStartServer(port: port)
-                default: throw error
-            }
-        }
-        
-        guard let _ = channel.localAddress else {
-            throw Error.failedToStart
+            
+            // Return the closeFuture so that we can `wait()` it outside the synchronization scope.
+            return $0.channel.closeFuture
         }
         
         onReady?()
         
         // This will block until the server is stopped
-        try channel.closeFuture.wait()
+        try closeFuture.wait()
     }
     
     /// Stops the current preview server.
     /// - throws: If the server fails to close the communication channel or the async infrastructure.
     func stop() throws {
-        if let feature = channel?.close(mode: .all) {
-            try feature.wait()
+        try state.sync {
+            if let feature = $0.channel?.close(mode: .all) {
+                try feature.wait()
+            }
+            try $0.group.syncShutdownGracefully()
+            try $0.threadPool.syncShutdownGracefully()
         }
-        try group.syncShutdownGracefully()
-        try threadPool.syncShutdownGracefully()
         print("Stopped preview server at \(bindTo)", to: &logHandle)
     }
     
     deinit {
-        if channel?.isWritable == true {
+        // Only synchronize around the `isWritable` check (as opposed to the full deinitialization scope).
+        // The synchronization lock isn't reentrant and `stop()` also acquires the lock to close and shut down.
+        if state.sync({ $0.channel?.isWritable }) == true {
             try? stop()
         }
     }

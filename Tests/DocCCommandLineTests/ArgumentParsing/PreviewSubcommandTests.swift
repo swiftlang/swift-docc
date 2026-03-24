@@ -11,6 +11,8 @@
 #if canImport(NIOHTTP1)
 import XCTest
 @testable import DocCCommandLine
+import DocCTestUtilities
+import ArgumentParser
 
 class PreviewSubcommandTests: XCTestCase {
     func testOptionsValidation() throws {
@@ -20,15 +22,6 @@ class PreviewSubcommandTests: XCTestCase {
         // Create HTML template dir.
         let templateDir = try createTemporaryDirectory()
         try "".write(to: templateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
-        
-        let tempURL = try createTemporaryDirectory()
-        // Create Test TLS Certificate File
-        let testTLSCertificate = tempURL.appendingPathComponent("testCert.pem")
-        try "".write(to: testTLSCertificate, atomically: true, encoding: .utf8)
-        
-        // Create Test TLS Key File
-        let testTLSKey = tempURL.appendingPathComponent("testCert.pem")
-        try "".write(to: testTLSKey, atomically: true, encoding: .utf8)
         
         // Tests a single input.
         do {
@@ -73,7 +66,12 @@ class PreviewSubcommandTests: XCTestCase {
                 preview.previewOptions.convertCommand.templateOption.templateURL?.standardizedFileURL,
                 defaultTemplateDir.standardizedFileURL
             )
-            let action = try PreviewAction(fromPreviewOptions: preview.previewOptions)
+            let action = try PreviewAction(
+                port: preview.previewOptions.port,
+                createConvertAction: {
+                    try ConvertAction(fromConvertCommand: preview.previewOptions.convertCommand)
+                }
+            )
             XCTAssertEqual(
                 action.convertAction.htmlTemplateDirectory,
                 defaultTemplateDir.standardizedFileURL

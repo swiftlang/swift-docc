@@ -13,6 +13,7 @@ import XCTest
 import Markdown
 import DocCTestUtilities
 import SymbolKit
+import DocCCommon
 
 class ArticleSymbolMentionsTests: XCTestCase {
     /// Test that the recording abstraction for ``ArticleSymbolMentions`` works as expected.

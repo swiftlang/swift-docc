@@ -44,7 +44,7 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
         XCTAssertEqual(addedMemberSymbolsTypeB.count, 2)
         
         // check the symbols are connected as expected
-        [
+        for relationship in [
             SymbolGraph.Relationship(source: addedMemberSymbolsTypeA[0].identifier.precise, target: extendedTypeA.identifier.precise, kind: .memberOf, targetFallback: nil),
             SymbolGraph.Relationship(source: addedMemberSymbolsTypeA[1].identifier.precise, target: extendedTypeA.identifier.precise, kind: .memberOf, targetFallback: nil),
             SymbolGraph.Relationship(source: addedMemberSymbolsTypeATwo[0].identifier.precise, target: extendedTypeATwo.identifier.precise, kind: .memberOf, targetFallback: nil),
@@ -55,9 +55,9 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
             SymbolGraph.Relationship(source: extendedTypeA.identifier.precise, target: extendedModuleA.identifier.precise, kind: .declaredIn, targetFallback: nil),
             SymbolGraph.Relationship(source: extendedTypeATwo.identifier.precise, target: extendedModuleA.identifier.precise, kind: .declaredIn, targetFallback: nil),
             SymbolGraph.Relationship(source: extendedTypeB.identifier.precise, target: extendedModuleA.identifier.precise, kind: .declaredIn, targetFallback: nil),
-        ].forEach { test in
+        ] {
             XCTAssert(graph.relationships.contains(where: { sample in
-                sample.source == test.source && sample.target == test.target && sample.kind == test.kind
+                sample.source == relationship.source && sample.target == relationship.target && sample.kind == relationship.kind
             }))
         }
         
@@ -66,10 +66,7 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
         XCTAssertEqual(graph.relationships.count, 3 /* .declaredIn */ + 6 /* .memberOf */)
         
         // check correct module name was prepended to pathComponents
-        ([extendedModuleA, extendedTypeA, extendedTypeATwo, extendedTypeB]
-         + addedMemberSymbolsTypeA
-         + addedMemberSymbolsTypeATwo
-         + addedMemberSymbolsTypeB).forEach { symbol in
+        for symbol in ([extendedModuleA, extendedTypeA, extendedTypeATwo, extendedTypeB] + addedMemberSymbolsTypeA + addedMemberSymbolsTypeATwo) {
             XCTAssertEqual(symbol.pathComponents.first, "A")
         }
     }

@@ -44,6 +44,7 @@ Converting in-memory documentation into rendering nodes and persisting them on d
 ### Diagnostics and Analysis
 
 - <doc:EmittingDiagnostics>
+- <doc:Adding-Diagnostics>
 - <doc:StaticAnalysis>
 - <doc:Benchmarking>
 

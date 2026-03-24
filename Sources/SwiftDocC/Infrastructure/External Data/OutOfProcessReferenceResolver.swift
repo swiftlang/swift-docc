@@ -10,6 +10,7 @@
 
 public import Foundation
 private import Markdown
+private import SymbolKit
 
 /// A reference resolver that launches and interactively communicates with another process or service to resolve links.
 ///

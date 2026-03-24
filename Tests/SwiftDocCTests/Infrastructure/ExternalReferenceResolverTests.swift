@@ -13,6 +13,7 @@ import XCTest
 import Markdown
 import SymbolKit
 import DocCTestUtilities
+import DocCCommon
 
 class ExternalReferenceResolverTests: XCTestCase {
     class TestExternalReferenceResolver: ExternalDocumentationSource {

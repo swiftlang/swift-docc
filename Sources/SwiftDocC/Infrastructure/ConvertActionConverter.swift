@@ -8,11 +8,13 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
+private import Foundation
 
 #if canImport(os)
 package import os
 #endif
+
+private import DocCHTML
 
 package enum ConvertActionConverter {
 #if canImport(os)
@@ -52,9 +54,6 @@ package enum ConvertActionConverter {
         }
         
         guard !context.problems.containsErrors else {
-            if emitDigest {
-                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
-            }
             return
         }
         
@@ -199,7 +198,6 @@ package enum ConvertActionConverter {
                     // Only emit the other digest files if `--emit-digest` is passed
                     try outputConsumer.consume(indexingRecords: supplementaryRenderInfo.indexingRecords)
                     try outputConsumer.consume(assets: supplementaryRenderInfo.assets)
-                    try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems)
                 }
             }
         }

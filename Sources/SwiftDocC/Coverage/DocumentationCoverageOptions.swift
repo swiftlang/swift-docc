@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// Resolves and validates the arguments needed to enable the documentation coverage feature.
 ///
 /// These options are used by the `Convert` subcommand.

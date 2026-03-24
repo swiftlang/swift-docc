@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-
 /// A color in the sRGB color space, with normalized components.
 public struct SRGBColor: Codable, Equatable {
     /// The normalized red component of the color.

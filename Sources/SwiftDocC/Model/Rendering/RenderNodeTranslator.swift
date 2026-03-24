@@ -11,7 +11,7 @@
 public import Foundation
 public import Markdown
 import SymbolKit
-import DocCCommon
+private import DocCCommon
 
 /// A visitor which converts a semantic model into a render node.
 ///
@@ -73,7 +73,30 @@ public struct RenderNodeTranslator: SemanticVisitor {
         )
         return assetReference
     }
-    
+
+    /// Converts `@Available` directives to render availability items.
+    private func renderAvailabilities(
+        from availabilities: [Metadata.Availability],
+        currentPlatforms: [String: PlatformVersion]?
+    ) -> [String: AvailabilityRenderItem] {
+        var result = [String: AvailabilityRenderItem]()
+        result.reserveCapacity(availabilities.count)
+        
+        for availability in availabilities {
+            let current: PlatformVersion? = if let currentPlatforms, let name = PlatformName(metadataPlatform: availability.platform) {
+                currentPlatforms[name.displayName]
+            } else {
+                nil
+            }
+            let renderItem = AvailabilityRenderItem(availability, current: current)
+            if let name = renderItem.name {
+                result[name] = renderItem
+            }
+        }
+        
+        return result
+    }
+
     private func fileContents(with fileReference: ResourceReference) -> String? {
         // Check if the file is a local asset that can be read directly from the context
         if let fileData = try? context.resource(with: fileReference) {
@@ -277,7 +300,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Set the Intro's background image to the video's poster image.
         section.backgroundImage = intro.video?.poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
-            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source) }
+            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source, altText: $0.altText) }
         
         return section
     }
@@ -761,7 +784,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
        
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
-                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
                 return renderReference.map {
                     TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
                 }
@@ -839,41 +862,37 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
 
         if let availabilities = article.metadata?.availability, !availabilities.isEmpty {
-            let platforms = availabilities.map { PlatformName(metadataPlatform: $0.platform) }
-            // Render availabilities for declared platforms
-            let renderAvailabilities = zip(availabilities, platforms).compactMap { availability, platform -> AvailabilityRenderItem? in
-                let currentVersion = platform.flatMap {
-                    context.configuration.externalMetadata.currentPlatforms?[$0.displayName]
+            // FIXME: Move this logic out of the rendering code (rdar://172280267)
+            let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
+            // These are the same for all platforms, so we only need to compute them once.
+            var directiveAvailabilityByPlatform = documentationNode.metadata.map {
+                renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
+            } ?? .init()
+            
+            if let iOSAvailability = directiveAvailabilityByPlatform[PlatformName.iOS.displayName] {
+                var unavailableDefaultPlatformNames = Set<String>()
+                if let defaultAvailability = context.inputs.info.defaultAvailability {
+                    for availabilities in defaultAvailability.modules.values {
+                        for availability in availabilities where availability.versionInformation == .unavailable {
+                            unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
+                        }
+                    }
                 }
-                return .init(availability, current: currentVersion)
+                
+                func addFallbackIfNeeded(named name: String) {
+                    guard directiveAvailabilityByPlatform[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
+                        return
+                    }
+                    var copy = iOSAvailability
+                    copy.name = name
+                    directiveAvailabilityByPlatform[name] = copy
+                }
+                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
+                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
             }
-            // Render availabilities for fallback platforms
-            let fallbackRenderAvailabilities = DefaultAvailability.fallbackPlatforms.compactMap { platform, fallback -> AvailabilityRenderItem? in
-                // Skip if the platform already has explicit availability,
-                // or if the fallback platform is not available.
-                guard !platforms.contains(platform),
-                let fallbackIndex = platforms.firstIndex(of: fallback) else {
-                    return nil
-                }
-
-                // Clone the fallback platform's availability with the new platform name.
-                // The `availabilities` array is mapped to the `platforms` array,
-                // so the indices of elements across them are guaranteed to be consistent.
-                let fallbackAvailability = Metadata.Availability(from: availabilities[fallbackIndex].originalMarkup, for: context.inputs)!
-                fallbackAvailability.platform = Metadata.Availability.Platform(rawValue: platform.rawValue)!
-                // Use the fallback platform's version to correctly determine beta status
-                let currentVersion = platforms[fallbackIndex].flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
-                }
-
-                return .init(fallbackAvailability, current: currentVersion)
-            }
-
-            let allRenderAvailabilities = (renderAvailabilities + fallbackRenderAvailabilities)
-            .sorted(by: AvailabilityRenderOrder.compare)
-
-            if !allRenderAvailabilities.isEmpty {
-                node.metadata.platformsVariants = .init(defaultValue: allRenderAvailabilities)
+            
+            if !directiveAvailabilityByPlatform.isEmpty {
+                node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderOrder.compare))
             }
         }
         
@@ -1267,47 +1286,101 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
-        let defaultAvailability = defaultAvailability(moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
-            .filter { $0.unconditionallyUnavailable != true }
-            .sorted(by: AvailabilityRenderOrder.compare)
+        let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
+        // These are the same for all platforms, so we only need to compute them once.
+        let baseAvailabilityByPlatform = defaultAvailability(moduleName: moduleName.symbolName, currentPlatforms: currentPlatforms) ?? .init()
+        let directiveAvailabilityByPlatform = documentationNode.metadata.map {
+            renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
+        } ?? .init()
         
-        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
-            guard !availability.availability.isEmpty else {
-                return defaultAvailability
+        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
+            // Different sources of availability information are added in-order to compute the complete availability information.
+            // FIXME: Move this logic out of the rendering code (rdar://172280267)
+            
+            // The "default" information provided by the Info.plist is the base information because it applies to every thing in the module.
+            var information = baseAvailabilityByPlatform
+            
+            var unavailablePlatformNamesToRemove = [String]()
+            
+            // The symbol's individual in-source attributes is more specific information that reflects the source-availability of the API.
+            for availability in inSourceAvailability.availability {
+                guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue).displayName }) else {
+                    // Don't include wildcard information
+                    continue
+                }
+                guard availability.obsoletedVersion == nil && !availability.isUnconditionallyUnavailable /* Don't include obsoleted or unavailable API */ else {
+                    unavailablePlatformNamesToRemove.append(name)
+                    continue
+                }
+                
+                let renderItem = AvailabilityRenderItem(availability, current: currentPlatforms?[name])
+                assert(renderItem.unconditionallyUnavailable != true, "Unavailable API should have already been filtered out above.")
+                information[name] = renderItem
             }
             
-            return availability.availability
-                .compactMap { availability -> AvailabilityRenderItem? in
-                    // Allow availability items without introduced and/or deprecated version,
-                    // but filter out items that are obsoleted.
-                    if availability.obsoletedVersion != nil {
-                        return nil
+            // FIXME: Combine the in-source attributes with the Available directives as a per-platform override (rdar://171807245)
+            
+            // After we've gathered all the information, see if we need to fill in inferred information for iPadOS and Mac Catalyst.
+            if let iOSAvailability = information[PlatformName.iOS.displayName],
+               iOSAvailability.introduced != nil // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+            {
+                var unavailableDefaultPlatformNames = Set<String>()
+                if let defaultAvailability = context.inputs.info.defaultAvailability?.modules[moduleName.symbolName] {
+                    for availability in defaultAvailability where availability.versionInformation == .unavailable {
+                        unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
                     }
-                    // Filter out this availability item if it has a missing or invalid domain.
-                    guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }) else {
-                        return nil
-                    }
-                    guard let currentPlatform = context.configuration.externalMetadata.currentPlatforms?[name.displayName] else {
-                        // No current platform provided by the context
-                        return AvailabilityRenderItem(availability, current: nil)
-                    }
-                    return AvailabilityRenderItem(availability, current: currentPlatform)
                 }
-                .filter { $0.unconditionallyUnavailable != true }
-                .sorted(by: AvailabilityRenderOrder.compare)
-        } ?? .init(defaultValue: defaultAvailability)
-
-        if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
-            let renderAvailability = availability.compactMap({
-                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
+                
+                func addFallbackIfNeeded(named name: String) {
+                    guard information[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
+                        return
+                    }
+                    var copy = iOSAvailability
+                    copy.name = name
+                    information[name] = copy
                 }
-                return .init($0, current: currentPlatform)
-            }).sorted(by: AvailabilityRenderOrder.compare)
-
-            if !renderAvailability.isEmpty {
-                node.metadata.platformsVariants.defaultValue = renderAvailability
+                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
+                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
             }
+            
+            // Lastly, remove any inferred or default information for platforms that were marked explicitly unavailable.
+            for name in unavailablePlatformNamesToRemove {
+                information[name] = nil
+            }
+            
+            guard !information.isEmpty else {
+                return nil
+            }
+            
+            return information.values.sorted(by: AvailabilityRenderOrder.compare)
+        } ?? .init(defaultValue: {
+            assertionFailure("This default value is never used")
+            return nil
+        }())
+
+        // FIXME: Adding even a single Available directive discards all the in-source information (rdar://171807245)
+        if !directiveAvailabilityByPlatform.isEmpty {
+            var information = baseAvailabilityByPlatform
+                .merging(directiveAvailabilityByPlatform, uniquingKeysWith: { _, new in new }) // override any value with the directive information
+            
+            if let iOSAvailability = information[PlatformName.iOS.displayName],
+               iOSAvailability.introduced != nil // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+            {
+                func addFallbackIfNeeded(named name: String) {
+                    guard information[name] == nil,
+                          context.inputs.info.defaultAvailability?.modules[moduleName.symbolName]?.contains(where: { $0.platformName.displayName == name && $0.versionInformation == .unavailable }) != true
+                    else {
+                        return
+                    }
+                    var copy = iOSAvailability
+                    copy.name = name
+                    information[name] = copy
+                }
+                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
+                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
+            }
+            
+            node.metadata.platforms = information.values.sorted(by: AvailabilityRenderOrder.compare)
         }
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
@@ -1333,7 +1406,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if let pageImages = documentationNode.metadata?.pageImages {
             node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
-                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source, altText: pageImage.alt)
                 return renderReference.map {
                     TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
                 }
@@ -1807,7 +1880,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var requirementReferences: [String: XcodeRequirementReference] = [:]
     var downloadReferences: [String: DownloadReference] = [:]
     
-    private var bundleAvailability: [BundleModuleIdentifier: [AvailabilityRenderItem]] = [:]
+    private var defaultAvailabilityCacheByModuleName: [String /* module name */: [String /* platform name*/ : AvailabilityRenderItem]?] = [:]
     
     /// Given module availability and the current platforms we're building against return if the module is a beta framework.
     private func isModuleBeta(moduleAvailability: DefaultAvailability.ModuleAvailability, currentPlatforms: [String: PlatformVersion]) -> Bool {
@@ -1832,36 +1905,34 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     /// The default availability for modules in a given bundle and module.
-    private mutating func defaultAvailability(moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [AvailabilityRenderItem]? {
-        let identifier = BundleModuleIdentifier(bundle: context.inputs, moduleName: moduleName)
-        
-        // Cached availability
-        if let availability = bundleAvailability[identifier] {
-            return availability
+    private mutating func defaultAvailability(moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [String: AvailabilityRenderItem]? {
+        // FIXME: Move this logic out of the rendering code (rdar://172280267)
+        if let cached = defaultAvailabilityCacheByModuleName[moduleName] {
+            return cached
         }
         
-        // Find default module availability if existing
-        guard let bundleDefaultAvailability = context.inputs.info.defaultAvailability,
-            let moduleAvailability = bundleDefaultAvailability.modules[moduleName] else {
+        guard let defaultAvailabilityForModule = context.inputs.info.defaultAvailability?.modules[moduleName] else {
+            // Don't repeatedly look up the default availability in the Info.plist for every symbol
+            defaultAvailabilityCacheByModuleName[moduleName] = nil
             return nil
         }
         
-        // Prepare for rendering
-        let renderedAvailability = moduleAvailability
-            .filter({ $0.versionInformation != .unavailable })
-            .compactMap({ availability -> AvailabilityRenderItem? in
-                return AvailabilityRenderItem(
-                    name: availability.platformName.displayName,
-                    introduced: availability.introducedVersion,
-                    isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
-                )
-            })
+        var result = [String: AvailabilityRenderItem]()
+        for availability in defaultAvailabilityForModule where availability.versionInformation != .unavailable {
+            let name = availability.platformName.displayName
+            let renderItem = AvailabilityRenderItem(
+                name: name,
+                introduced: availability.introducedVersion,
+                isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
+            )
+            assert(renderItem.unconditionallyUnavailable != true, "Default availability shouldn't ever be unconditionally unavailable")
+            
+            // Override any previous value if the same platform is specified multiple times
+            result[name] = renderItem
+        }
         
-        // Cache the availability to use for further symbols
-        bundleAvailability[identifier] = renderedAvailability
-        
-        // Return the availability
-        return renderedAvailability
+        defaultAvailabilityCacheByModuleName[moduleName] = result
+        return result
     }
    
     mutating func createRenderSections(
@@ -1999,7 +2070,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             // Extract the availability information
             if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
-                availabilityItems.forEach { item in
+                for item in availabilityItems {
                     if deprecated == nil && (item.isUnconditionallyDeprecated || item.deprecatedVersion != nil) {
                         deprecated = true
                     }
@@ -2041,14 +2112,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
         self.sourceRepository = sourceRepository
         self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
-    }
-}
-
-fileprivate typealias BundleModuleIdentifier = String
-
-extension BundleModuleIdentifier {
-    fileprivate init(bundle: DocumentationBundle, moduleName: String) {
-        self = "\(bundle.id):\(moduleName)"
     }
 }
 

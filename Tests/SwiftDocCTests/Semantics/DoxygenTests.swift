@@ -14,6 +14,8 @@ import XCTest
 @testable import SwiftDocC
 import DocCTestUtilities
 @testable import SymbolKit
+import Markdown
+import DocCCommon
 
 class DoxygenTests: XCTestCase {
     func testDoxygenDiscussionAndNote() async throws {

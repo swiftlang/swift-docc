@@ -9,8 +9,8 @@
 */
 
 public import ArgumentParser
-import Foundation
-import SwiftDocC
+private import Foundation
+private import SwiftDocC
 
 /// Command-line arguments for specifying the catalog's source repository information.
 public struct SourceRepositoryArguments: ParsableArguments {

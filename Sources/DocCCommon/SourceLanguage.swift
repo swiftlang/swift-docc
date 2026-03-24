@@ -9,7 +9,7 @@
 */
 
 /// A programming language, for example "Swift" or "Objective-C".
-public struct SourceLanguage: Hashable, Codable, Comparable, Sendable {
+public struct SourceLanguage: Hashable, Codable, Comparable, Sendable, CustomDebugStringConvertible {
     /// Using only an 8-bit value as an identifier technically limits a single DocC execution to 256 different languages.
     /// This may sound like a significant limitation. However, in practice almost all content deals with either 1 or 2 languages.
     /// There is some known content with 3 languages but beyond that 4 or 5 or more languages is increasingly less common/realistic.
@@ -372,6 +372,14 @@ public extension SourceLanguage {
             // Otherwise, sort by ID (a string) for a stable order.
             lhs.id < rhs.id
         }
+    }
+}
+
+// Among other things; parameterized tests with language parameters display this value.
+public extension SourceLanguage {
+    var debugDescription: String {
+        let info = _accessInfo()
+        return "\(info.name) (\(info.id))"
     }
 }
 

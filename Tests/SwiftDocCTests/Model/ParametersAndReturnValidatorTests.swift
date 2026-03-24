@@ -14,6 +14,7 @@ import Markdown
 @testable import SymbolKit
 @testable import SwiftDocC
 import DocCTestUtilities
+import DocCCommon
 
 class ParametersAndReturnValidatorTests: XCTestCase {
     

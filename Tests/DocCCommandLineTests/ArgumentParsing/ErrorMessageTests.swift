@@ -11,6 +11,8 @@
 import XCTest
 import Foundation
 @testable import DocCCommandLine
+import DocCTestUtilities
+import ArgumentParser
 
 class ErrorMessageTests: XCTestCase {
     

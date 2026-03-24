@@ -10,7 +10,11 @@
 
 import Foundation
 import SymbolKit
-import DocCCommon
+private import DocCCommon
+
+#if canImport(os)
+private import os
+#endif
 
 /// Loads symbol graph files from a documentation bundle.
 ///
@@ -39,17 +43,6 @@ struct SymbolGraphLoader {
         self.dataProvider = dataProvider
         self.symbolGraphTransformer = symbolGraphTransformer
     }
-
-    /// A strategy to decode symbol graphs.
-    enum DecodingConcurrencyStrategy {
-        /// Decode all symbol graph files on separate threads concurrently.
-        case concurrentlyAllFiles
-        /// Decode all symbol graph files sequentially, each one split into batches that are decoded concurrently.
-        case concurrentlyEachFileInBatches
-    }
-    
-    /// The symbol graph decoding strategy to use.
-    private(set) var decodingStrategy: DecodingConcurrencyStrategy = .concurrentlyEachFileInBatches
 
     /// Loads all symbol graphs in the given bundle.
     ///
@@ -107,28 +100,9 @@ struct SymbolGraphLoader {
             }
         }
         
-        // If we have symbol graph files for multiple platforms
-        // load and decode each one on a separate thread.
-        // This strategy benchmarks better when we have multiple
-        // "larger" symbol graphs.
-        #if os(macOS) || os(iOS)
-        if bundle.symbolGraphURLs.filter({ !$0.lastPathComponent.contains("@") }).count > 1 {
-            // There are multiple main symbol graphs, better parallelize all files decoding.
-            decodingStrategy = .concurrentlyAllFiles
-        }
-        #endif
-        
         let numberOfSymbolGraphs = bundle.symbolGraphURLs.count
         let decodeSignpostHandle = signposter.beginInterval("Decode symbol graphs", id: signposter.makeSignpostID(), "Decode \(numberOfSymbolGraphs) symbol graphs")
-        switch decodingStrategy {
-        case .concurrentlyAllFiles:
-            // Concurrently load and decode all symbol graphs
-            bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
-            
-        case .concurrentlyEachFileInBatches:
-            // Serially load and decode all symbol graphs, each one in concurrent batches.
-            bundle.symbolGraphURLs.forEach(loadGraphAtURL)
-        }
+        bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
         signposter.endInterval("Decode symbol graphs", decodeSignpostHandle)
         
         // define an appropriate merging strategy based on the graph formats
@@ -214,23 +188,20 @@ struct SymbolGraphLoader {
             !registeredPlatforms.contains($0.platformName)
         }
         
-        unifiedGraph.symbols.values.forEach { symbol in
+        for symbol in unifiedGraph.symbols.values {
             for (selector, _) in symbol.mixins {
                 if var symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
                     guard !symbolAvailability.availability.isEmpty else { continue }
                     // For platforms with a fallback option (e.g. Catalyst and iPadOS),
                     // if the availability is not explicitly available for the platform,
                     // apply the explicit availability annotation of the fallback platform.
-                    DefaultAvailability.fallbackPlatforms.forEach { (platform, fallback) in
-                        guard
-                            var fallbackAvailability = symbolAvailability.availability.first(where: {
-                                $0.matches(fallback)
-                            }),
-                            let platformAvailabilityIntroducedVersion = symbolAvailability.availability.first(where: {
-                                $0.matches(platform)
-                            })?.introducedVersion,
-                            let defaultAvailabilityIntroducedVersion = defaultAvailabilities.first(where: { $0.platformName ==  platform })?.introducedVersion
-                        else { return }
+                    for (platform, fallback) in DefaultAvailability.fallbackPlatforms {
+                        guard var fallbackAvailability = symbolAvailability.availability.first(where: { $0.matches(fallback) }),
+                              let platformAvailabilityIntroducedVersion = symbolAvailability.availability.first(where: { $0.matches(platform) })?.introducedVersion,
+                              let defaultAvailabilityIntroducedVersion = defaultAvailabilities.first(where: { $0.platformName ==  platform })?.introducedVersion
+                        else {
+                            continue
+                        }
                         // Ensure that the availability version is not overwritten if the symbol has an explicit availability annotation for that platform.
                         if SymbolGraph.SemanticVersion(string: defaultAvailabilityIntroducedVersion) == platformAvailabilityIntroducedVersion {
                             fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: platform.rawValue)
@@ -255,9 +226,8 @@ struct SymbolGraphLoader {
                         }
                     }
                     // Add the missing default platform availability.
-                    missingAvailabilities.forEach { missingAvailability in
-                        if !symbolAvailability.contains(missingAvailability.platformName) {
-                            guard let defaultAvailability = AvailabilityItem(missingAvailability) else { return }
+                    for missingAvailability in missingAvailabilities where !symbolAvailability.contains(missingAvailability.platformName) {
+                        if let defaultAvailability = AvailabilityItem(missingAvailability) {
                             symbolAvailability.availability.append(defaultAvailability)
                         }
                     }

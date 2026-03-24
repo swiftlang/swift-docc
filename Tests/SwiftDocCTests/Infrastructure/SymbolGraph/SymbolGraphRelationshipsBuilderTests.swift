@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
+import DocCCommon
 
 class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     

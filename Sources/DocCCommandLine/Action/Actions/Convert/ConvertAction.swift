@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,11 @@ package import Foundation
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
 public import SwiftDocC
+private import Markdown
+
+#if canImport(os)
+private import os
+#endif
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: AsyncAction {
@@ -138,7 +143,7 @@ public struct ConvertAction: AsyncAction {
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
         if let diagnosticFilePath {
-            engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
+            engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath, fileManager: fileManager))
         }
         
         self.diagnosticEngine = engine
@@ -347,13 +352,6 @@ public struct ConvertAction: AsyncAction {
                 documentationCoverageOptions: documentationCoverageOptions
             )
             signposter.endInterval("Process", processInterval)
-        } catch {
-            if emitDigest {
-                let problem = Problem(description: (error as? (any DescribedError))?.errorDescription ?? error.localizedDescription, source: nil)
-                try (_Deprecated(outputConsumer) as (any _DeprecatedConsumeProblemsAccess))._consume(problems: context.problems + [problem])
-                try moveOutput(from: temporaryFolder, to: targetDirectory)
-            }
-            throw error
         }
 
         var didEncounterError = context.problems.containsErrors
@@ -366,7 +364,7 @@ public struct ConvertAction: AsyncAction {
         if context.tutorialTableOfContentsReferences.isEmpty, hasTutorial {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
-            var replacements = [Replacement]()
+            var replacements = [SwiftDocC.Replacement]()
             if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(inputs.displayName)[tableOfContentsFilename] {
                 replacements.append(
                     Replacement(
@@ -380,13 +378,13 @@ public struct ConvertAction: AsyncAction {
                     diagnostic: Diagnostic(
                         source: source,
                         severity: .warning,
-                        identifier: "org.swift.docc.MissingTableOfContents",
-                        summary: "Missing tutorial table of contents page.",
-                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the documentation hierarchy."
+                        identifier: "MissingTableOfContentsPage",
+                        summary: "Missing tutorial table of contents (`@Tutorials`) page",
+                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define your documentation's hierarchy and recommended reading order."
                     ),
                     possibleSolutions: [
                         Solution(
-                            summary: "Create a `@Tutorials` table of content page.",
+                            summary: "Create a `@Tutorials` table of contents page",
                             replacements: replacements
                         )
                     ]
