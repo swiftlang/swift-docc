@@ -628,6 +628,28 @@ class ConvertSubcommandTests: XCTestCase {
             """)
         }
     }
+    
+    func testExplicitDiagnosticSeverities() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        XCTAssertEqual(noFlagConvert.diagnosticOptions.warningGroupsWithErrorSeverity, [])
+        XCTAssertEqual(noFlagConvert.diagnosticOptions.warningGroupsWithWarningSeverity, [])
+        
+        // The flags can be used to specify explicit diagnostic severities
+        let explicitlySetSeverities = try Docc.Convert.parse(["--Wwarning", "First", "--Wwarning", "Second", "--Werror", "Third"])
+        XCTAssertEqual(explicitlySetSeverities.diagnosticOptions.warningGroupsWithErrorSeverity, ["Third"])
+        XCTAssertEqual(explicitlySetSeverities.diagnosticOptions.warningGroupsWithWarningSeverity, ["First", "Second"])
+        
+        // It's allowed (but redundant) to repeat the same configuration
+        let repeatedSeverity = try Docc.Convert.parse(["--Wwarning", "Something", "--Wwarning", "Something"])
+        XCTAssertEqual(repeatedSeverity.diagnosticOptions.warningGroupsWithErrorSeverity, [])
+        XCTAssertEqual(repeatedSeverity.diagnosticOptions.warningGroupsWithWarningSeverity, ["Something", "Something"], "The duplication doesn't matter. Later stages turn this into a Set")
+        
+        // Specifying both an explicit warning severity and error severity for the same diagnostic raises a warning.
+        let conflictingSeverity = try Docc.Convert.parse(["--Wwarning", "First", "--Werror", "First", "--Werror", "Second"])
+        XCTAssertEqual(conflictingSeverity.diagnosticOptions.warningGroupsWithErrorSeverity, ["Second"], "'First' is excluded from both lists")
+        XCTAssertEqual(conflictingSeverity.diagnosticOptions.warningGroupsWithWarningSeverity, [],       "'First' is excluded from both lists")
+    }
 
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.

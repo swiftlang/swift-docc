@@ -77,6 +77,8 @@ extension ConvertAction {
             formatConsoleOutputForTools: convert.diagnosticOptions.formatConsoleOutputForTools,
             inheritDocs: convert.featureFlags.enableInheritedDocs,
             treatWarningsAsErrors: convert.diagnosticOptions.warningsAsErrors,
+            diagnosticIDsWithWarningSeverity: Set(convert.diagnosticOptions.warningGroupsWithWarningSeverity),
+            diagnosticIDsWithErrorSeverity: Set(convert.diagnosticOptions.warningGroupsWithErrorSeverity),
             experimentalEnableCustomTemplates: convert.featureFlags.experimentalEnableCustomTemplates,
             experimentalModifyCatalogWithGeneratedCuration: convert.featureFlags.experimentalModifyCatalogWithGeneratedCuration,
             transformForStaticHosting: convert.hostingOptions.transformForStaticHosting,
