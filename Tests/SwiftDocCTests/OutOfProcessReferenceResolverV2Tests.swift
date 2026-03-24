@@ -82,10 +82,6 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 .init(name: "Language Name 2", id: "com.test.another-language.id"),
                 .objectiveC,
             ],
-            platforms: [
-                .init(name: "firstOS",  introduced: "1.2.3", isBeta: false),
-                .init(name: "secondOS", introduced: "4.5.6", isBeta: false),
-            ],
             usr: "some-unique-symbol-id",
             subheadingDeclarationFragments: .init([
                 .init(text: "struct", kind: .keyword, preciseIdentifier: nil),
@@ -678,64 +674,6 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
         } else {
             XCTFail("Unexpectedly resolved the link from an identifier and capabilities response")
         }
-    }
-    
-    func testResolvingSymbolBetaStatusProcess() throws {
-        func betaStatus(forSymbolWithPlatforms platforms: [LinkDestinationSummary.PlatformAvailability], file: StaticString = #filePath, line: UInt = #line) throws -> Bool {
-            let summary = LinkDestinationSummary(
-                kind: .class,
-                language: .swift,
-                relativePresentationURL: URL(string: "/documentation/ModuleName/Something")!,
-                referenceURL: URL(string: "/documentation/ModuleName/Something")!,
-                title: "Something",
-                availableLanguages: [.swift, .objectiveC],
-                platforms: platforms,
-                variants: []
-            )
-            
-            let resolver: OutOfProcessReferenceResolver
-            do {
-                let temporaryFolder = try createTemporaryDirectory()
-                let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
-                
-                let encodedLinkSummary = try String(data: JSONEncoder().encode(summary), encoding: .utf8)!
-                
-                try """
-                #!/bin/bash
-                #!/bin/bash
-                echo '{"identifier":"com.test.bundle","capabilities": 0}'  # Write this resolver's identifier & capabilities
-                read                                                       # Wait for docc to send a request
-                echo '{"resolved":\(encodedLinkSummary)}'                  # Respond with the test link summary (above)
-                """.write(to: executableLocation, atomically: true, encoding: .utf8)
-                
-                // `0o0700` is `-rwx------` (read, write, & execute only for owner)
-                try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
-                XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-                
-                resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
-                XCTAssertEqual(resolver.bundleID, "com.test.bundle", file: file, line: line)
-            }
-
-            let (_, symbolEntity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")
-            return symbolEntity.makeTopicRenderReference().isBeta
-        }
-        
-        // All platforms are in beta
-        XCTAssertEqual(true, try betaStatus(forSymbolWithPlatforms: [
-            .init(name: "fooOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
-        ]))
-        
-        // One platform is stable, the other two are in beta
-        XCTAssertEqual(false, try betaStatus(forSymbolWithPlatforms: [
-            .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
-            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
-            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
-        ]))
-        
-        // No platforms explicitly supported
-        XCTAssertEqual(false, try betaStatus(forSymbolWithPlatforms: []))
     }
 }
 #endif

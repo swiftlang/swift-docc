@@ -31,7 +31,8 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
         var declarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
         var navigatorTitle: SymbolGraph.Symbol.DeclarationFragments? = nil
         var topicImages: [(TopicImage, alt: String)]? = nil
-        var platforms: [AvailabilityRenderItem]? = nil
+        var isDeprecated: Bool = false
+        var isBeta: Bool = false
     }
     
     // When more tests use this we may find that there's a better way to describe this (for example by separating
@@ -93,7 +94,8 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             referenceURL: reference.url,
             title: entityInfo.title,
             availableLanguages: [entityInfo.language],
-            platforms: entityInfo.platforms,
+            isDeprecated: entityInfo.isDeprecated,
+            isBeta: entityInfo.isBeta,
             subheadingDeclarationFragments: entityInfo.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
             navigatorDeclarationFragments: entityInfo.navigatorTitle?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
             topicImages: entityInfo.topicImages?.map(\.0),

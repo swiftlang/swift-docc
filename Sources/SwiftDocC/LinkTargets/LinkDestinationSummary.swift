@@ -104,9 +104,16 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public let availableLanguages: Set<SourceLanguage>
 
     /// The availability information for a platform.
+    @available(*, deprecated, message: "Use 'isDeprecated' or 'isBeta' instead. This deprecated API will be removed after 6.5 is released.")
     public typealias PlatformAvailability = AvailabilityRenderItem
     /// Information about the platforms for which the summarized element is available.
-    public let platforms: [PlatformAvailability]?
+    @available(*, deprecated, message: "Use 'isDeprecated' or 'isBeta' instead. This deprecated API will be removed after 6.5 is released.")
+    public var platforms: [PlatformAvailability]? { nil }
+    
+    /// A value that indicates whether the the summarized element is deprecated.
+    public let isDeprecated: Bool
+    /// A value that indicates whether the summarized element is under development and likely to change.
+    public let isBeta: Bool
     
     // Note to implementors when adding new properties:
     //  Any new property that DocC doesn't need to get back when resolving references should be optional
@@ -358,7 +365,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - title: The title of the summarized element.
     ///   - abstract: The abstract of the summarized element.
     ///   - availableLanguages: All the languages in which the summarized element is available.
-    ///   - platforms: Information about the platforms for which the summarized element is available.
+    ///   - isDeprecated: A value that indicates whether this symbol is considered deprecated.
+    ///   - isBeta: A value that indicates whether the summarized element is under development and likely to change.
     ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
     ///   - plainTextDeclaration: The plain text declaration of this symbol, derived from its full declaration fragments, or `nil` if the summarized element isn't a symbol.
     ///   - subheadingDeclarationFragments: The simplified "subheading" fragments for this symbol, to display in topic groups, or `nil` if the summarized element isn't a symbol.
@@ -374,7 +382,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
         referenceURL: URL, title: String,
         abstract: LinkDestinationSummary.Abstract? = nil,
         availableLanguages: Set<SourceLanguage>,
-        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
+        isDeprecated: Bool = false,
+        isBeta: Bool = false,
         usr: String? = nil,
         plainTextDeclaration: String? = nil,
         subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
@@ -392,7 +401,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.title = title
         self.abstract = abstract
         self.availableLanguages = availableLanguages
-        self.platforms = platforms
+        self.isDeprecated = isDeprecated
+        self.isBeta = isBeta
         self.usr = usr
         self.plainTextDeclaration = plainTextDeclaration
         self.subheadingDeclarationFragments = subheadingDeclarationFragments
@@ -403,7 +413,48 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.variants = variants
     }
     
-    @available(*, deprecated, renamed: "iinit(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
+    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Use 'init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)' instead. This deprecated API will be removed after 6.5 is released.")
+    @_disfavoredOverload
+    public init(
+        kind: DocumentationNode.Kind,
+        language: SourceLanguage,
+        relativePresentationURL: URL,
+        referenceURL: URL, title: String,
+        abstract: LinkDestinationSummary.Abstract? = nil,
+        availableLanguages: Set<SourceLanguage>,
+        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
+        usr: String? = nil,
+        plainTextDeclaration: String? = nil,
+        subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        redirects: [URL]? = nil,
+        topicImages: [TopicImage]? = nil,
+        references: [any RenderReference]? = nil,
+        variants: [LinkDestinationSummary.Variant]
+    ) {
+        self.init(
+            kind: kind,
+            language: language,
+            relativePresentationURL: relativePresentationURL,
+            referenceURL: referenceURL,
+            title: title,
+            abstract: abstract,
+            availableLanguages: availableLanguages,
+            isDeprecated: platforms?.isDeprecated ?? false,
+            isBeta: platforms?.isBeta ?? false,
+            usr: usr,
+            plainTextDeclaration: plainTextDeclaration,
+            subheadingDeclarationFragments: subheadingDeclarationFragments,
+            navigatorDeclarationFragments: navigatorDeclarationFragments,
+            redirects: redirects,
+            topicImages: topicImages,
+            references: references,
+            variants: variants
+        )
+    }
+    
+    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:isDeprecated:isBeta:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Link summaries aren't meant as a source of _hierarchy_ information. This deprecated API will be removed after 6.4 is released.")
+    @_disfavoredOverload
     public init(
         kind: DocumentationNode.Kind,
         language: SourceLanguage,
@@ -505,10 +556,22 @@ public extension DocumentationNode {
         
         var compiler = RenderContentCompiler(context: context, identifier: reference)
 
-        let platforms = renderNode.metadata.platforms
+        let isBeta = semantic is Symbol
+            ? DocumentationContentRenderer(context: context).isBeta(self)
+            : renderNode.metadata.platforms?.isBeta ?? false
+        let isDeprecated: Bool = (semantic as? Symbol).map { symbol in
+            symbol.isDeprecated == true || symbol.deprecatedSummary != nil
+        } ?? renderNode.metadata.platforms?.isDeprecated ?? false
         
         let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).compactMap {
-            LinkDestinationSummary(landmark: $0, relativeParentPresentationURL: relativePresentationURL, page: self, platforms: platforms, compiler: &compiler)
+            LinkDestinationSummary(
+                landmark: $0,
+                relativeParentPresentationURL: relativePresentationURL,
+                page: self,
+                isPageDeprecated: isDeprecated,
+                isPageBeta: isBeta,
+                compiler: &compiler
+            )
         }
         
         return [
@@ -516,7 +579,8 @@ public extension DocumentationNode {
                 documentationNode: self,
                 renderNode: renderNode,
                 relativePresentationURL: relativePresentationURL,
-                platforms: platforms,
+                isDeprecated: isDeprecated,
+                isBeta: isBeta,
                 compiler: &compiler
             )
         ] + landmarkSummaries
@@ -543,14 +607,18 @@ extension LinkDestinationSummary {
     /// Creates a link destination summary for this page.
     ///
     /// - Parameters:
-    ///   - documentationNode: The render node to summarize.
+    ///   - documentationNode: The node to summarize.
+    ///   - renderNode: The corresponding render node for that page.
     ///   - relativePresentationURL: The relative presentation URL for this page.
+    ///   - isDeprecated: A value that indicates whether this symbol is considered deprecated.
+    ///   - isBeta: A value that indicates whether the summarized element is under development and likely to change.
     ///   - compiler: The content compiler that's used to render the node's abstract.
     init(
         documentationNode: DocumentationNode,
         renderNode: RenderNode,
         relativePresentationURL: URL,
-        platforms: [PlatformAvailability]?,
+        isDeprecated: Bool,
+        isBeta: Bool,
         compiler: inout RenderContentCompiler
     ) {
         let redirects = (documentationNode.semantic as? (any Redirected))?.redirects?.map { $0.oldPath }
@@ -573,7 +641,8 @@ extension LinkDestinationSummary {
                 title: ReferenceResolver.title(forNode: documentationNode),
                 abstract: (documentationNode.semantic as? (any Abstracted))?.renderedAbstract(using: &compiler),
                 availableLanguages: documentationNode.availableSourceLanguages,
-                platforms: platforms,
+                isDeprecated: isDeprecated,
+                isBeta: isBeta,
                 usr: nil,
                 subheadingDeclarationFragments: nil,
                 redirects: redirects,
@@ -658,7 +727,8 @@ extension LinkDestinationSummary {
             title: title,
             abstract: abstract,
             availableLanguages: documentationNode.availableSourceLanguages,
-            platforms: platforms,
+            isDeprecated: isDeprecated,
+            isBeta: isBeta,
             usr: usr,
             plainTextDeclaration: plainTextDeclaration,
             subheadingDeclarationFragments: subheadingDeclarationFragments,
@@ -690,6 +760,16 @@ private extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
     }
 }
 
+private extension [AvailabilityRenderItem] {
+    var isBeta: Bool {
+        !isEmpty && allSatisfy { $0.isBeta == true }
+    }
+    
+    var isDeprecated: Bool {
+        contains(where: { $0.unconditionallyDeprecated == true || $0.deprecated != nil })
+    }
+}
+
 extension LinkDestinationSummary {
     
     /// Creates a link destination summary for a landmark on a page.
@@ -698,8 +778,17 @@ extension LinkDestinationSummary {
     ///   - landmark: The landmark to summarize.
     ///   - relativeParentPresentationURL: The bundle-relative path of the page that contain this section.
     ///   - page: The topic reference of the page that contain this section.
+    ///   - isPageDeprecated: A value that indicates whether the containing page is considered deprecated.
+    ///   - isPageBeta: A value that indicates whether the containing page is under development and likely to change.
     ///   - compiler: The content compiler that's used to render the section's abstract.
-    init?(landmark: any Landmark, relativeParentPresentationURL: URL, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
+    init?(
+        landmark: any Landmark,
+        relativeParentPresentationURL: URL,
+        page: DocumentationNode,
+        isPageDeprecated: Bool,
+        isPageBeta: Bool,
+        compiler: inout RenderContentCompiler
+    ) {
         let anchor = urlReadableFragment(landmark.title)
         
         guard let relativePresentationURL: URL = {
@@ -727,7 +816,8 @@ extension LinkDestinationSummary {
             title: landmark.title,
             abstract: abstract,
             availableLanguages: page.availableSourceLanguages,
-            platforms: platforms,
+            isDeprecated: isPageDeprecated,
+            isBeta: isPageBeta,
             usr: nil, // Only symbols have a USR
             subheadingDeclarationFragments: nil, // Only symbols have declarations
             redirects: (landmark as? (any Redirected))?.redirects?.map { $0.oldPath },
@@ -744,6 +834,7 @@ extension LinkDestinationSummary {
 extension LinkDestinationSummary {
     enum CodingKeys: String, CodingKey {
         case kind, referenceURL, title, abstract, language, usr, availableLanguages, platforms, redirects, topicImages, references, variants, plainTextDeclaration
+        case isBeta = "beta", isDeprecated = "deprecated"
         case relativePresentationURL = "path"
         case subheadingDeclarationFragments = "fragments"
         case navigatorDeclarationFragments = "navigatorFragments"
@@ -773,7 +864,8 @@ extension LinkDestinationSummary {
                 try languagesContainer.encode(language)
             }
         }
-        try container.encodeIfPresent(platforms, forKey: .platforms)
+        try container.encodeIfTrue(isBeta, forKey: .isBeta)
+        try container.encodeIfTrue(isDeprecated, forKey: .isDeprecated)
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(subheadingDeclarationFragments, forKey: .subheadingDeclarationFragments)
@@ -832,7 +924,17 @@ extension LinkDestinationSummary {
         }
         availableLanguages = decodedLanguages
         
-        platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
+        // Prefer to decode deprecation and beta information from the new boolean fields
+        var isBeta       = try container.decodeIfPresent(Bool.self, forKey: .isBeta)
+        var isDeprecated = try container.decodeIfPresent(Bool.self, forKey: .isDeprecated)
+        // If neither value was present, check if the data contained the deprecated platforms field instead.
+        if isBeta == nil, isDeprecated == nil, let platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms) {
+            isBeta       = platforms.isBeta
+            isDeprecated = platforms.isDeprecated
+        }
+        self.isBeta       = isBeta       ?? false
+        self.isDeprecated = isDeprecated ?? false
+        
         usr = try container.decodeIfPresent(String.self, forKey: .usr)
         plainTextDeclaration = try container.decodeIfPresent(String.self, forKey: .plainTextDeclaration)
         subheadingDeclarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .subheadingDeclarationFragments)
@@ -966,7 +1068,8 @@ extension LinkDestinationSummary {
         guard lhs.title == rhs.title else { return false }
         guard lhs.abstract == rhs.abstract else { return false }
         guard lhs.availableLanguages == rhs.availableLanguages else { return false }
-        guard lhs.platforms == rhs.platforms else { return false }
+        guard lhs.isBeta == rhs.isBeta else { return false }
+        guard lhs.isDeprecated == rhs.isDeprecated else { return false }
         guard lhs.plainTextDeclaration == rhs.plainTextDeclaration else { return false }
         guard lhs.subheadingDeclarationFragments == rhs.subheadingDeclarationFragments else { return false }
         guard lhs.navigatorDeclarationFragments == rhs.navigatorDeclarationFragments else { return false }

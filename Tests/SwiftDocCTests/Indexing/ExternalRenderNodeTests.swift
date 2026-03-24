@@ -25,7 +25,7 @@ class ExternalRenderNodeTests: XCTestCase {
                 title: "SwiftArticle",
                 kind: .article,
                 language: .swift,
-                platforms: [.init(name: "iOS", introduced: nil, isBeta: false)]
+                isBeta: false
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/objCArticle"] = .success(
@@ -34,7 +34,7 @@ class ExternalRenderNodeTests: XCTestCase {
                 title: "ObjCArticle",
                 kind: .article,
                 language: .objectiveC,
-                platforms: [.init(name: "macOS", introduced: nil, isBeta: true)]
+                isBeta: true
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/swiftSymbol"] = .success(
@@ -48,7 +48,7 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: " ", preciseIdentifier: nil),
                     .init(kind: .identifier, spelling: "SwiftSymbol", preciseIdentifier: nil)
                 ]),
-                platforms: [.init(name: "iOS", introduced: nil, isBeta: true)]
+                isBeta: true
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/objCSymbol"] = .success(
@@ -64,7 +64,7 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
                     .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil)
                 ]),
-                platforms: [.init(name: "macOS", introduced: nil, isBeta: false)]
+                isBeta: false
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/navigatorTitleSwiftSymbol"] = .success(
@@ -81,7 +81,7 @@ class ExternalRenderNodeTests: XCTestCase {
                 navigatorTitle: .init(declarationFragments: [
                     .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol (navigator title)", preciseIdentifier: nil)
                 ]),
-                platforms: [.init(name: "iOS", introduced: nil, isBeta: true)]
+                isBeta: true
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/navigatorTitleObjCSymbol"] = .success(
@@ -100,7 +100,7 @@ class ExternalRenderNodeTests: XCTestCase {
                 navigatorTitle: .init(declarationFragments: [
                     .init(kind: .identifier, spelling: "NavigatorTitleObjCSymbol (navigator title)", preciseIdentifier: nil)
                 ]),
-                platforms: [.init(name: "macOS", introduced: nil, isBeta: false)]
+                isBeta: false
             )
         )
         return externalResolver
@@ -480,7 +480,7 @@ class ExternalRenderNodeTests: XCTestCase {
             referenceURL: reference.url,
             title: swiftTitle,
             availableLanguages: [.swift, .objectiveC],
-            platforms: [.init(name: "Platform name", introduced: "1.2.3", isBeta: true)],
+            isBeta: true,
             usr: "some-unique-symbol-id",
             subheadingDeclarationFragments: swiftFragments,
             variants: [

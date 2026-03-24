@@ -45,7 +45,8 @@ struct LinkDestinationSummaryTests {
             #expect(summary.kind     == .structure)
             #expect(summary.abstract == [.text("A circle.")])
             #expect(summary.availableLanguages == [.swift, .objectiveC])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "c:@SA@TLACircle")
             #expect(summary.plainTextDeclaration == "struct Circle")
             #expect(summary.subheadingDeclarationFragments == [
@@ -98,7 +99,8 @@ struct LinkDestinationSummaryTests {
             #expect(summary.kind     == .typeProperty)
             #expect(summary.abstract == [.text("The empty circle.")])
             #expect(summary.availableLanguages == [.swift, .objectiveC])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "c:@TLACircleZero")
             #expect(summary.plainTextDeclaration == "static let zero: Circle")
             #expect(summary.subheadingDeclarationFragments == [
@@ -148,7 +150,8 @@ struct LinkDestinationSummaryTests {
             #expect(summary.kind     == .instanceMethod)
             #expect(summary.abstract == [.text("Returns whether two circles intersect.")])
             #expect(summary.availableLanguages == [.swift, .objectiveC])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "c:@F@TLACircleIntersects")
             #expect(summary.plainTextDeclaration == "func intersects(_ otherCircle: Circle) -> Bool")
             #expect(summary.subheadingDeclarationFragments == [
@@ -198,7 +201,8 @@ struct LinkDestinationSummaryTests {
             #expect(summary.kind     == .function)
             #expect(summary.abstract == [.text("Creates a circle with the specified center location and radius.")])
             #expect(summary.availableLanguages == [.objectiveC])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "c:@F@TLACircleMake")
             #expect(summary.plainTextDeclaration == "TLACircle TLACircleMake(CGPoint center, CGFloat radius);")
             #expect(summary.subheadingDeclarationFragments == [
@@ -228,7 +232,8 @@ struct LinkDestinationSummaryTests {
             #expect(summary.kind     == .initializer)
             #expect(summary.abstract == nil, "This symbol doesn't have a documentation comment")
             #expect(summary.availableLanguages == [.swift])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "s:So9TLACirclea6center6radiusABSo7CGPointV_14CoreFoundation7CGFloatVtcfc")
             #expect(summary.plainTextDeclaration == "init(center: CGPoint, radius: CGFloat)")
             #expect(summary.subheadingDeclarationFragments == [
@@ -291,7 +296,8 @@ struct LinkDestinationSummaryTests {
         #expect(summary.kind     == .article)
         #expect(summary.abstract == [.text("This article has two page images.")])
         #expect(summary.availableLanguages == [.swift])
-        #expect(summary.platforms == nil)
+        #expect(summary.isDeprecated == false)
+        #expect(summary.isBeta       == false)
         #expect(summary.usr                            == nil, "Only symbols have USRs.")
         #expect(summary.plainTextDeclaration           == nil, "Only symbols have USRs.")
         #expect(summary.subheadingDeclarationFragments == nil, "Only symbols have USRs.")
@@ -472,9 +478,8 @@ struct LinkDestinationSummaryTests {
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
         
         #expect(decoded.referenceURL == ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
-        #expect(decoded.platforms?.count == 1)
-        #expect(decoded.platforms?.first?.name == "PlatformName")
-        #expect(decoded.platforms?.first?.introduced == "1.0")
+        #expect(decoded.isDeprecated == false)
+        #expect(decoded.isBeta == false)
         #expect(decoded.kind  == .class)
         #expect(decoded.title == "ClassName")
         #expect(decoded.abstract?.plainText == "A brief explanation of my class.")
@@ -488,6 +493,40 @@ struct LinkDestinationSummaryTests {
         #expect(decoded.references  == nil)
         
         #expect(decoded.variants.isEmpty)
+    }
+    
+    @Test
+    func decodingLegacyPlatformsData() throws {
+        let legacyData = """
+        {
+          "title": "ClassName",
+          "referenceURL": "doc://org.swift.docc.example/documentation/MyKit/ClassName",
+          "language": "swift",
+          "path": "documentation/MyKit/ClassName",
+          "availableLanguages": [
+            "swift"
+          ],
+          "kind": "org.swift.docc.kind.class",
+          "platforms": [
+            {
+              "name": "FirstPlatformName",
+              "introducedAt": "1.0",
+              "beta": true
+            },
+            {
+              "name": "SecondPlatformName",
+              "introducedAt": "2.0",
+              "beta": true,
+              "deprecatedAt": "3.0",
+            }
+          ]
+        }
+        """
+        
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
+        
+        #expect(decoded.isDeprecated == true) // One platform has a deprecated version
+        #expect(decoded.isBeta       == true) // Both platforms are "beta"
     }
     
     @Test
@@ -630,7 +669,8 @@ struct LinkDestinationSummaryTests {
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
 
-        #expect(summary.platforms == renderNode.metadata.platforms)
+        #expect(summary.isBeta       == isBeta)
+        #expect(summary.isDeprecated == isDeprecated)
         try assertRoundTripCoding(summary)
         
         let summaryRenderReference = summary.makeTopicRenderReference()
@@ -709,7 +749,8 @@ struct LinkDestinationSummaryTests {
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
 
-        #expect(summary.platforms == renderNode.metadata.platforms)
+        #expect(summary.isBeta       == isBeta)
+        #expect(summary.isDeprecated == isDeprecated)
         try assertRoundTripCoding(summary)
         
         let summaryRenderReference = summary.makeTopicRenderReference()
@@ -797,7 +838,8 @@ struct LinkDestinationSummaryTests {
         #expect(pageSummary.language == .swift)
         #expect(pageSummary.kind     == .tutorial)
         #expect(pageSummary.availableLanguages == [.swift])
-        #expect(pageSummary.platforms == nil)
+        #expect(pageSummary.isDeprecated == false)
+        #expect(pageSummary.isBeta == false)
         #expect(pageSummary.redirects?.map(\.absoluteString) == [
             "old/path/to/this/page",
             "even/older/path/to/this/page",
@@ -819,7 +861,8 @@ struct LinkDestinationSummaryTests {
         #expect(sectionSummary.language == .swift)
         #expect(sectionSummary.kind     == .onPageLandmark)
         #expect(sectionSummary.availableLanguages == [.swift])
-        #expect(sectionSummary.platforms == nil)
+        #expect(sectionSummary.isDeprecated == false)
+        #expect(sectionSummary.isBeta == false)
         #expect(sectionSummary.redirects == [
             URL(string: "old/path/to/this/landmark")!,
         ])
