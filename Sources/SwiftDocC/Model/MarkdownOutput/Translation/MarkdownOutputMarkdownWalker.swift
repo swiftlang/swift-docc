@@ -358,7 +358,7 @@ extension MarkdownOutputMarkupWalker {
         return
     }
     
-    // Inline HTML is stripped of any tags, but included in render JSON output, so the same path is followed here
+    // Inline HTML is stripped of any tags, but its content is included in render JSON output, so the same path is followed here
     mutating func visitInlineHTML(_ inlineHTML: InlineHTML)  {
         return
     }
